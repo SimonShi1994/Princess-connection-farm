@@ -262,7 +262,7 @@ def shuatuzuobiao(x,y,times):#刷图函数，xy为该图的坐标，times为刷�
         a.guochang(screen_shot,['img/jiahao.jpg'])
         time.sleep(0.2)
     time.sleep(0.3)
-    a.d.click(758.330)#使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
+    a.d.click(758,330)#使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
     time.sleep(0.3)
     # screen_shot = a.d.screenshot(format="opencv")
     # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
