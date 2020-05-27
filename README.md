@@ -4,7 +4,7 @@
 
 ## 简介
 
-此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection)开发。
+此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
 目前实现的功能有
 
@@ -31,6 +31,7 @@ pip install uiautomator2 -i https://mirrors.aliyun.com/pypi/simple/
 windows端需要adb工具，在adb文件夹，请自行手动添加到path中
 
 若使用模拟器,则需要将模拟器设置为桥接模式.  具体参考这个项目(https://github.com/Jiahonzheng/JGM-Automator)
+
 mumu模拟器无需设置，建议使用mumu模拟器
 
 **重要：模拟器分辨率要求540*960**
