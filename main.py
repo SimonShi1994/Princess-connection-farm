@@ -76,6 +76,8 @@ def shouqu():#收取全部礼物
         screen_shot_ = a.d.screenshot(format="opencv")
         if a.is_there_img(screen_shot_,'img/shouqulvli.jpg'):
             a.guochang(screen_shot_, ['img/quanbushouqu.jpg'],suiji=0)
+            time.sleep(1)
+            a.d.click(589.472)#2020-5-28 21:42 增加点击ok            
             break
     while True:#锁定回到首页
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -432,14 +434,15 @@ for account in account_dic:
 
     init_home()#初始化，确保进入首页
     shouqu()#收取所有礼物
-    hanghui()#行会捐赠
     dixiacheng()#地下城
     goumaitili()#购买3次体力
     shouqurenwu()#收取任务
     shuatu()#刷全部10图3次
+    hanghui()#行会捐赠
 
     #box管理功能，未启用
     # niudan()#扭蛋扭光钻石
     # write_log(account, account_dic[account])#列出box内容在jieguo.txt
     
     change_acc()#退出当前账号，切换下一个
+    time.sleep(3)#确保切换账号稳定性
