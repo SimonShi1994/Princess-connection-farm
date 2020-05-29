@@ -77,7 +77,7 @@ def shouqu():#收取全部礼物
         if a.is_there_img(screen_shot_,'img/shouqulvli.jpg'):
             a.guochang(screen_shot_, ['img/quanbushouqu.jpg'],suiji=0)
             time.sleep(1)
-            a.d.click(589.472)#2020-5-28 21:42 增加点击ok            
+            a.d.click(589,472)#2020-5-29 19:41 bug fixed            
             break
     while True:#锁定回到首页
         screen_shot_ = a.d.screenshot(format="opencv")
