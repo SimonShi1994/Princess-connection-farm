@@ -54,26 +54,37 @@ def hanghui():#自动行会捐赠
         if a.is_there_img(screen_shot_,'img/liwu.jpg'):
             break
         a.d.click(100,505)
-        a.d.click(1,1)
         time.sleep(1)#首页锁定，保证回到首页
     time.sleep(1)
     a.d.click(693, 436)
     time.sleep(1)
-    while True:
+    while True:#6-17修改：减少opencv使用量提高稳定性
         screen_shot_ = a.d.screenshot(format="opencv")
-        state_flag = a.get_screen_state(screen_shot_)
-        if state_flag == 'hanghui':
+        if a.is_there_img(screen_shot_,'img/zhiyuansheding.jpg'):
+            time.sleep(3)#加载行会聊天界面会有延迟
             screen_shot = a.d.screenshot(format="opencv")
-            a.guochang(screen_shot, ['img/juanzeng.jpg'],suiji=0)
-            time.sleep(1)
-            screen_shot = a.d.screenshot(format="opencv")
-            a.guochang(screen_shot, ['img/max.jpg'],suiji=0)
-            time.sleep(1)
-            screen_shot = a.d.screenshot(format="opencv")
-            a.guochang(screen_shot, ['img/hanghui_ok.jpg'],suiji=0)
-            time.sleep(1)
+            if a.is_there_img(screen_shot,'img/juanzengqingqiu.jpg'):
+                a.d.click(367, 39)#点击定位捐赠按钮
+                time.sleep(2)
+                screen_shot = a.d.screenshot(format="opencv")
+                a.guochang(screen_shot, ['img/juanzeng.jpg'],suiji=0)
+                time.sleep(1)
+                a.d.click(644, 385)#点击max
+                time.sleep(1)
+                screen_shot = a.d.screenshot(format="opencv")
+                a.guochang(screen_shot, ['img/ok.jpg'],suiji=0)
+                time.sleep(1)
+                while True:
+                    a.d.click(1, 1)
+                    time.sleep(1)
+                    screen_shot = a.d.screenshot(format="opencv")
+                    if a.is_there_img(screen_shot,'img/zhiyuansheding.jpg'):
+                        break
             break
-    a.d.click(100, 505)
+        a.d.click(1, 1)#处理被点赞的情况
+        time.sleep(1)
+
+    a.d.click(100, 505)#回到首页
     time.sleep(1)
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")

@@ -34,10 +34,10 @@ class Automator:
 
     def login(self,ac,pwd):
         while True:
-            if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").exists(timeout=0.1):
-                self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").click(timeout=0.1)
-            if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists(timeout=0.1):
-                self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click(timeout=0.1)
+            if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").exists():
+                self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").click()
+            if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
+                self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
                 break
             else:
                 self.d.click(self.dWidth * 0.965, self.dHeight * 0.029)

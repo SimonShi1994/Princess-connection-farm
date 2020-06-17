@@ -75,9 +75,9 @@ def shouqu():#收取全部礼物
     while True:#锁定收取履历（礼品盒）
         screen_shot_ = a.d.screenshot(format="opencv")
         if a.is_there_img(screen_shot_,'img/shouqulvli.jpg'):
-            a.guochang(screen_shot_, ['img/quanbushouqu.jpg'],suiji=0)
+            a.d.click(809,471)#点击全部收取
             time.sleep(1)
-            a.d.click(589,472)#2020-5-29 19:41 bug fixed            
+            a.d.click(589,472)#2020-5-29 19:41 bug fixed
             break
     while True:#锁定回到首页
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -96,18 +96,13 @@ def shouqurenwu():#收取任务报酬
             break
         a.d.click(1,1)
         time.sleep(1)
-    while True:#锁定全部收取
-        screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_,'img/quanbushouqu.jpg'):
-            a.guochang(screen_shot_, ['img/quanbushouqu.jpg'],suiji=0)
-            time.sleep(1)
-            break
-    while True:#锁定ok
-        screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_,'img/guanbi.jpg'):
-            a.guochang(screen_shot_, ['img/guanbi.jpg'],suiji=0)
-            time.sleep(1)
-            break
+    time.sleep(2)
+    a.d.click(846,437)#全部收取
+    time.sleep(1)
+    a.d.click(100,505)
+    time.sleep(0.5)
+    a.d.click(100,505)
+    time.sleep(1.5)
     while True:#锁定回到首页
         screen_shot_ = a.d.screenshot(format="opencv")
         if a.is_there_img(screen_shot_,'img/liwu.jpg'):
@@ -131,7 +126,7 @@ def niudan():#扭蛋函数
             a.d.click(373, 370)
             break
 
-def goumaimana():
+def goumaimana():#该函数只能在首页运行但未写首页锁定，请注意debug
     a.d.click(189,62)
     while True:#锁定取消2
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -226,21 +221,33 @@ def hanghui():#自动行会捐赠
     time.sleep(1)
     a.d.click(693, 436)
     time.sleep(1)
-    while True:
+    while True:#6-17修改：减少opencv使用量提高稳定性
         screen_shot_ = a.d.screenshot(format="opencv")
-        state_flag = a.get_screen_state(screen_shot_)
-        if state_flag == 'hanghui':
+        if a.is_there_img(screen_shot_,'img/zhiyuansheding.jpg'):
+            time.sleep(3)#加载行会聊天界面会有延迟
             screen_shot = a.d.screenshot(format="opencv")
-            a.guochang(screen_shot, ['img/juanzeng.jpg'],suiji=0)
-            time.sleep(1)
-            screen_shot = a.d.screenshot(format="opencv")
-            a.guochang(screen_shot, ['img/max.jpg'],suiji=0)
-            time.sleep(1)
-            screen_shot = a.d.screenshot(format="opencv")
-            a.guochang(screen_shot, ['img/hanghui_ok.jpg'],suiji=0)
-            time.sleep(1)
+            if a.is_there_img(screen_shot,'img/juanzengqingqiu.jpg'):
+                a.d.click(367, 39)#点击定位捐赠按钮
+                time.sleep(2)
+                screen_shot = a.d.screenshot(format="opencv")
+                a.guochang(screen_shot, ['img/juanzeng.jpg'],suiji=0)
+                time.sleep(1)
+                a.d.click(644, 385)#点击max
+                time.sleep(1)
+                screen_shot = a.d.screenshot(format="opencv")
+                a.guochang(screen_shot, ['img/ok.jpg'],suiji=0)
+                time.sleep(1)
+                while True:
+                    a.d.click(1, 1)
+                    time.sleep(1)
+                    screen_shot = a.d.screenshot(format="opencv")
+                    if a.is_there_img(screen_shot,'img/zhiyuansheding.jpg'):
+                        break
             break
-    a.d.click(100, 505)
+        a.d.click(1, 1)#处理被点赞的情况
+        time.sleep(1)
+
+    a.d.click(100, 505)#回到首页
     time.sleep(1)
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -331,8 +338,7 @@ def dixiacheng():#地下城
     time.sleep(1) 
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
-        state_flag = a.get_screen_state(screen_shot_)
-        if state_flag == 'maoxian':
+        if a.is_there_img(screen_shot_,'img/maoxian.jpg'):
             break
         a.d.click(480, 505)
         time.sleep(1)
@@ -342,15 +348,16 @@ def dixiacheng():#地下城
     #下面这段因为调试而注释了，实际使用时要加上
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
-        state_flag = a.get_screen_state(screen_shot_)
-        if state_flag == 'yunhai':
+        if a.is_there_img(screen_shot_,'img/chetui.jpg'):#避免某些农场号刚买回来已经进了地下城
+            break
+        if a.is_there_img(screen_shot_,'img/yunhai.jpg'):
             a.d.click(233, 311)
             time.sleep(1)
             while True:
                 screen_shot_ = a.d.screenshot(format="opencv")
                 if a.is_there_img(screen_shot_,'img/ok.jpg'):
                     break
-            a.guochang(screen_shot_, ['img/ok.jpg'],suiji=0)
+            a.d.click(592, 369)#点击ok
             time.sleep(1) 
             break
 
@@ -359,6 +366,14 @@ def dixiacheng():#地下城
         screen_shot_ = a.d.screenshot(format="opencv")
         if a.is_there_img(screen_shot_,'img/chetui.jpg'):
             break
+        if a.is_there_img(screen_shot_,'img/caidan_yuan.jpg'):
+            a.d.click(917, 39)#菜单
+            time.sleep(1)
+            a.d.click(807, 44)#跳过
+            time.sleep(1)
+            a.d.click(589, 367)#跳过ok
+            time.sleep(1)
+
     a.d.click(667, 360)#1层
     time.sleep(1)
     a.d.click(833, 456)#挑战
@@ -391,8 +406,13 @@ def dixiacheng():#地下城
     while True:#战斗中快进
         screen_shot_ = a.d.screenshot(format="opencv")
         if a.is_there_img(screen_shot_,'img/caidan.jpg'):
-            a.guochang(screen_shot_, ['img/kuaijin.jpg'],suiji=0)
-            a.guochang(screen_shot_, ['img/kuaijin_1.jpg'],suiji=0)
+            if a.is_there_img(screen_shot_,'img/kuaijin.jpg'):
+                a.d.click(913, 494)#点击快进
+                time.sleep(1)
+                a.d.click(913, 494)#点击快进
+            if a.is_there_img(screen_shot_,'img/kuaijin_1.jpg'):
+                a.d.click(913, 494)#点击快进
+                time.sleep(1)
             break
     while True:#结束战斗返回
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -400,6 +420,11 @@ def dixiacheng():#地下城
             a.guochang(screen_shot_,['img/xiayibu.jpg','img/qianwangdixiacheng.jpg'], suiji=0)
             break
     a.d.click(1, 1)#取消显示结算动画
+    time.sleep(1)
+    while True:#撤退地下城
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_,'img/chetui.jpg'):
+            break;#解决issues中截图可能截到撤退按钮的问题
     time.sleep(1)
     while True:#撤退地下城
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -434,15 +459,14 @@ for account in account_dic:
 
     init_home()#初始化，确保进入首页
     shouqu()#收取所有礼物
+    hanghui()#行会捐赠
     dixiacheng()#地下城
     goumaitili()#购买3次体力
     shouqurenwu()#收取任务
     shuatu()#刷全部10图3次
-    hanghui()#行会捐赠
 
     #box管理功能，未启用
     # niudan()#扭蛋扭光钻石
     # write_log(account, account_dic[account])#列出box内容在jieguo.txt
     
     change_acc()#退出当前账号，切换下一个
-    time.sleep(3)#确保切换账号稳定性
