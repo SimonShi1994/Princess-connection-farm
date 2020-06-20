@@ -513,6 +513,7 @@ for account in account_dic:
 
     init_home()#初始化，确保进入首页
     gonghuizhijia()  #家园一键领取（请自行跳过剧情，我这没有= =）
+    shouqu()  # 收取所有礼物
     dianzan()  # 公会点赞
     shouqu()# 收取所有礼物
     hanghui()#行会捐赠
