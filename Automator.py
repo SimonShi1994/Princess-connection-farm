@@ -1,3 +1,4 @@
+# coding=utf-8
 import uiautomator2 as u2
 import time
 from utils import *
@@ -131,20 +132,24 @@ class Automator:
         gray = cv2.cvtColor(screen, cv2.COLOR_RGB2GRAY)
         ret, binary = cv2.threshold(gray, 130, 255, cv2.THRESH_BINARY)
         num_of_white = len(np.argwhere(binary == 255))
-        active_path = self.get_butt_stat(screen, ['img/tiaozhan.jpg','img/yunhai.jpg','img/maoxian.jpg','img/liwu.jpg','img/zhiyuansheding.jpg','img/kuaijin.jpg','img/shouye.jpg','img/baoshigoumai.jpg','img/kuaijin_1.jpg'])
+        active_path = self.get_butt_stat(screen, ['img/tiaozhan.jpg','img/yunhai.jpg','img/dixiacheng.jpg','img/liwu.jpg',
+                                                  'img/zhiyuansheding.jpg','img/kuaijin.jpg','img/shouye.jpg',
+                                                  'img/baoshigoumai.jpg','img/kuaijin_1.jpg','img/jyquanbushouqu.jpg'])
 
         if 'img/tiaozhan.jpg' in active_path:
             return 'tiaozhan'
 
-        
+        if 'img/jyquanbushouqu.jpg' in active_path:
+            return 'jyquanbushouqu'
+
         if 'img/yunhai.jpg' in active_path:
             return 'yunhai'
 
         if 'img/baoshigoumai.jpg' in active_path:
             return 'baoshigoumai'
 
-        if 'img/maoxian.jpg' in active_path:
-            return 'maoxian'
+        if 'img/dixiacheng.jpg' in active_path:
+            return 'dixiacheng'
 
         if 'img/zhiyuansheding.jpg' in active_path:
             return 'hanghui'

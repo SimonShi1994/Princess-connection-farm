@@ -1,3 +1,4 @@
+# coding=utf-8
 import uiautomator2 as u2
 import time
 from utils import *
@@ -60,7 +61,57 @@ def init_home():
         time.sleep(0.2)#保证回到首页
         a.d.click(100,505)
 
+def gonghuizhijia():  # 家园领取
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_,'img/liwu.jpg'):
+            break
+        a.d.click(100,505)
+        time.sleep(1)# 首页锁定，保证回到首页
+    a.d.click(622, 509)
+    time.sleep(8)
+    for i in range(2): # 重复两次防止卡顿意外
+        a.d.click(899, 429)  # 一键领取
+        time.sleep(3)
+        screen_shot_ = a.d.screenshot(format="opencv")
+        a.guochang(screen_shot_, ['img/jyquanbushouqu.jpg'], suiji=0)
+        screen_shot_ = a.d.screenshot(format="opencv")
+        a.guochang(screen_shot_, ['img/guanbi.jpg'], suiji=0)
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_,'img/liwu.jpg'):
+            break
+        a.d.click(100,505)
+        time.sleep(1)# 首页锁定，保证回到首页
 
+def dianzan():  # 行会点赞
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_,'img/liwu.jpg'):
+            break
+        a.d.click(100,505)
+        time.sleep(1)#首页锁定，保证回到首页
+    # 进入行会
+    time.sleep(3)
+    screen_shot_ = a.d.screenshot(format="opencv")
+    for i in range(2):
+        time.sleep(3)
+        a.guochang(screen_shot_, ['img/zhandou_ok.jpg'], suiji=0)
+    a.d.click(688, 432)
+    time.sleep(3)
+    a.d.click(239, 351)
+    time.sleep(2)
+    a.d.click(829, 316)  #点赞 职务降序（默认） 第二个人，副会长
+    time.sleep(2)
+    a.d.click(479, 381)
+    a.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_,'img/liwu.jpg'):
+            break
+        a.d.click(100,505)
+        a.d.click(1,1)
+        time.sleep(1)#首页锁定，保证回到首页
 
 def shouqu():#收取全部礼物
 
@@ -192,6 +243,9 @@ def change_acc():#切换账号
     time.sleep(1)
     a.d.click(591, 369)
     time.sleep(1)
+    print('-----------------------------')
+    print('完成该任务')
+    print('-----------------------------')
 
 def goumaitili():#购买体力，注意此函数参数默认在首页执行，其他地方执行要调整参数
     for i in range(3):
@@ -338,7 +392,7 @@ def dixiacheng():#地下城
     time.sleep(1) 
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_,'img/maoxian.jpg'):
+        if a.is_there_img(screen_shot_,'img/dixiacheng.jpg'):
             break
         a.d.click(480, 505)
         time.sleep(1)
@@ -452,13 +506,16 @@ with open('zhanghao.txt','r') as f:
         account_dic[account]=password.strip()
 
 for account in account_dic:
-    print(account, account_dic[account])
+    print('>>>>>>>即将登陆的账号为：',account, '密码：',account_dic[account],'<<<<<<<')
     login_auth(account, account_dic[account])
     #init_acc()#账号初始化
 
 
     init_home()#初始化，确保进入首页
-    shouqu()#收取所有礼物
+    gonghuizhijia()  #家园一键领取（请自行跳过剧情，我这没有= =）
+    shouqu()  # 收取所有礼物
+    dianzan()  # 公会点赞
+    shouqu()# 收取所有礼物
     hanghui()#行会捐赠
     dixiacheng()#地下城
     goumaitili()#购买3次体力
