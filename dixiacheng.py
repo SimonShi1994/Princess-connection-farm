@@ -335,7 +335,7 @@ with open('zhanghao2.txt','r') as f:#注意！请把账号密码写在zhanghao2.
 
 for account in account_dic:
     print(account, account_dic[account])
-    login_auth(account, account_dic[account]):#注意！请把账号密码写在zhanghao2.txt内
+    login_auth(account, account_dic[account])#注意！请把账号密码写在zhanghao2.txt内
     init_home()#初始化，确保进入首页
     
     tansuo()#探索
