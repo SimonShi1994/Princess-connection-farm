@@ -64,13 +64,24 @@ def init_home():
 def gonghuizhijia():  # 家园领取
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_,'img/liwu.jpg'):
+        if a.is_there_img(screen_shot_, 'img/liwu.jpg'):
             break
-        a.d.click(100,505)
-        time.sleep(1)# 首页锁定，保证回到首页
+        a.d.click(100, 505)
+        time.sleep(1)  # 首页锁定，保证回到首页
     a.d.click(622, 509)
     time.sleep(8)
-    for i in range(2): # 重复两次防止卡顿意外
+    while True:
+        if a.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
+            a.d.click(917, 39)  # 菜单
+            time.sleep(1)
+            a.d.click(807, 44)  # 跳过
+            time.sleep(1)
+            a.d.click(589, 367)  # 跳过ok
+            time.sleep(1)
+            time.sleep(8)
+        else:
+            break
+    for i in range(2):
         a.d.click(899, 429)  # 一键领取
         time.sleep(3)
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -79,10 +90,10 @@ def gonghuizhijia():  # 家园领取
         a.guochang(screen_shot_, ['img/guanbi.jpg'], suiji=0)
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_,'img/liwu.jpg'):
+        if a.is_there_img(screen_shot_, 'img/liwu.jpg'):
             break
-        a.d.click(100,505)
-        time.sleep(1)# 首页锁定，保证回到首页
+        a.d.click(100, 505)
+        time.sleep(1)  # 首页锁定，保证回到首页
 
 def dianzan():  # 行会点赞
     while True:
@@ -346,7 +357,7 @@ def shuatu():#刷图函数 注意此函数要在首页运行
     time.sleep(0.5) 
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_,'img/maoxian.jpg'):
+        if a.is_there_img(screen_shot_,'img/dixiacheng.jpg'):
             break
     a.d.click(562, 253)
     time.sleep(1)
