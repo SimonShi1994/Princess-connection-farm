@@ -109,6 +109,20 @@ def mianfeiniudan():
             a.d.click(750, 510) # 点进扭蛋界面
             time.sleep(1)
             break
+
+    while True:
+        # 跳过抽奖提示
+        time.sleep(1)
+        if a.is_there_img(screen_shot_, 'img/niudan_sheding.jpg'):
+            screen_shot_ = a.d.screenshot(format="opencv")
+            a.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
+            break
+        else:
+            time.sleep(1)
+            a.d.click(473, 436)  # 手动点击
+            time.sleep(2)
+            break
+
     while True:
         if a.is_there_img(screen_shot_, 'img/niudanputong.jpg'):
             screen_shot_ = a.d.screenshot(format="opencv")
