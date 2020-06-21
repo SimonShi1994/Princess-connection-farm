@@ -95,6 +95,42 @@ def gonghuizhijia():  # 家园领取
         a.d.click(100, 505)
         time.sleep(1)  # 首页锁定，保证回到首页
 
+def mianfeiniudan():
+    # 免费扭蛋
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_, 'img/liwu.jpg'):
+            break
+        a.d.click(100, 505)
+        time.sleep(1)  # 首页锁定，保证回到首页
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_, 'img/liwu.jpg'):
+            a.d.click(750, 510) # 点进扭蛋界面
+            time.sleep(1)
+            break
+    while True:
+        if a.is_there_img(screen_shot_, 'img/niudanputong.jpg'):
+            screen_shot_ = a.d.screenshot(format="opencv")
+            a.guochang(screen_shot_, ['img/niudanputong.jpg'], suiji=0)
+            a.d.click(722, 351)  # 点进扭蛋
+            time.sleep(0.5)
+            a.d.click(584, 384)
+            break
+        else:
+            a.d.click(821, 75) # 手动点击
+            time.sleep(0.5)
+            a.d.click(722, 351)  # 点进扭蛋
+            time.sleep(0.5)
+            a.d.click(584, 384)
+            break
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_, 'img/liwu.jpg'):
+            break
+        a.d.click(100, 505)
+        time.sleep(1)  # 首页锁定，保证回到首页
+
 def dianzan():  # 行会点赞
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -349,7 +385,52 @@ def shuatuzuobiao(x,y,times):#刷图函数，xy为该图的坐标，times为刷�
         if a.is_there_img(screen_shot_,'img/normal.jpg'):
             break
 
+def shuajingyan():
+    """
+    刷图刷1-1
+    """
+    # 体力单独设置
+    for i in range(7):
+        while True:
+            screen_shot_ = a.d.screenshot(format="opencv")
+            if a.is_there_img(screen_shot_, 'img/liwu.jpg'):
+                break
+            a.d.click(100, 505)
+            time.sleep(1)  # 首页锁定，保证回到首页
+        a.d.click(320, 31)
+        time.sleep(0.5)
+        screen_shot = a.d.screenshot(format="opencv")
+        a.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+        time.sleep(0.5)
+        screen_shot = a.d.screenshot(format="opencv")
+        a.guochang(screen_shot, ['img/zhandou_ok.jpg'], suiji=1)
+        a.d.click(100, 505)  # 点击一下首页比较保险
+    # 进入冒险
+    time.sleep(2)
+    a.d.click(480, 505)
+    time.sleep(2)
 
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
+            break
+    a.d.click(562, 253)
+    time.sleep(2)
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_, 'img/normal.jpg'):
+            break
+    for i in range(10):
+        a.d.click(27, 272)
+        time.sleep(3)
+    shuatuzuobiao(106, 279, 160)  # 1-1 刷7次体力为佳
+
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        if a.is_there_img(screen_shot_, 'img/liwu.jpg'):
+            break
+        a.d.click(100, 505)
+        time.sleep(1)  # 保证回到首页
 
 def shuatu():#刷图函数 注意此函数要在首页运行
     #进入冒险
@@ -523,7 +604,8 @@ for account in account_dic:
 
 
     init_home()#初始化，确保进入首页
-    gonghuizhijia()  #家园一键领取（请自行跳过剧情，我这没有= =）
+    gonghuizhijia()  #家园一键领取
+    mianfeiniudan() # 免费扭蛋
     shouqu()  # 收取所有礼物
     dianzan()  # 公会点赞
     shouqu()# 收取所有礼物
@@ -532,6 +614,8 @@ for account in account_dic:
     goumaitili()#购买3次体力
     shouqurenwu()#收取任务
     shuatu()#刷全部10图3次
+    shuajingyan() # 刷1-1经验（自带体力购买）
+    shouqurenwu()  # 二次收取任务
 
     #box管理功能，未启用
     # niudan()#扭蛋扭光钻石
