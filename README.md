@@ -8,7 +8,7 @@
 
 ## 特点
 
-- [x] 多线程多开 new
+- [x] 多线程多开 **new**
 - [x] 家园领取
 - [x] 行会点赞
 - [x] 自动捐赠
@@ -127,7 +127,7 @@ python main.py
 
 9. 您的一点支持会是我们完善本项目的强大动力！(*/ω＼*)
 
-   ![image](https://s1.ax1x.com/2020/06/22/NYtMHs.jpg)
+   <img src="https://s1.ax1x.com/2020/06/22/NYtMHs.jpg" alt="image" style="zoom:25%;" />
 
 ## 更新计划
 
