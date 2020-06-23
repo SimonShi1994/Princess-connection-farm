@@ -740,6 +740,7 @@ class Automator:
                 print('>>>识别卡死跳过\r\n')
                 break
         while True:  # 结束战斗返回
+            time.sleep(5)
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
                 if self.is_there_img(screen_shot_, 'img/yunhai.jpg'):
