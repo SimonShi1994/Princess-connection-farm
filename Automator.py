@@ -604,7 +604,7 @@ class Automator:
 
     def dixiacheng(self):  # 地下城
         time.sleep(5)
-        self.d.click(1, 1) # 可可萝教程跳过
+        self.d.click(1, 1)  # 可可萝教程跳过
         time.sleep(0.5)
         tmp_cout = 0
         tmp_cout2 = 0
@@ -625,6 +625,11 @@ class Automator:
                 self.d.click(588, 371)
                 break
             else:
+                time.sleep(3)
+                # 撤退
+                self.d.click(808, 435)
+                time.sleep(1)
+                self.d.click(588, 371)
                 break
         if self.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
             self.d.click(917, 39)  # 菜单
@@ -752,6 +757,13 @@ class Automator:
                         time.sleep(3)
                         self.d.click(828, 502)
                         break
+                elif self.is_there_img(screen_shot_, 'img/chetui.jpg'):
+                    time.sleep(3)
+                    # 撤退
+                    self.d.click(808, 435)
+                    time.sleep(1)
+                    self.d.click(588, 371)
+                    break
             else:
                 tmp_cout = 0
                 print('>>>识别卡死跳过\r\n')
