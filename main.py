@@ -22,22 +22,24 @@ def runmain(address,account,password):
     # fig, ax = plt.subplots(1)
     # plt.show()
 
-    print('>>>>>>>即将登陆的账号为：',account,'密码：',password,'<<<<<<<')
-    a.login_auth(account, password)#注意！请把账号密码写在zhanghao2.txt内
+    print('>>>>>>>即将登陆的账号为：',account,'密码：',password,'<<<<<<<','\r\n')
+    a.login_auth(account, password)#注意！请把账号密码写在zhanghao.txt内
     a.init_home()#初始化，确保进入首页
+    a.sw_init()  # 初始化刷图
     
 
     a.gonghuizhijia()  #家园一键领取
+    a.goumaimana(1) #购买mana 10次
     a.mianfeiniudan() # 免费扭蛋
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞
     a.shouqu()# 收取所有礼物
     a.hanghui()#行会捐赠
     a.dixiacheng()#地下城
-    a.goumaitili()#购买3次体力
+    a.goumaitili(3)#购买3次体力
     a.shouqurenwu()#收取任务
-    a.shuatu()#刷全部10图3次
-    a.shuajingyan() # 刷1-1经验（自带体力购买）
+    a.shuatu(3)#刷全部10图3次
+    # a.shuajingyan() # 刷1-1经验（自带体力购买）
     a.shouqurenwu()  # 二次收取任务
 
 
@@ -46,13 +48,13 @@ def runmain(address,account,password):
 
 def connect():#连接adb与uiautomator
     try:
-        os.system('adb connect 127.0.0.1:5554')#雷电模拟器
+        os.system('cd adb & adb connect 127.0.0.1:5554')#雷电模拟器
         # os.system('adb connect 127.0.0.1:7555') #mumu模拟器
         os.system('python -m uiautomator2 init')
     except:
         print('连接失败')
 
-    result = os.popen('adb devices')#返回adb devices列表
+    result = os.popen('cd adb & adb devices')#返回adb devices列表
     res = result.read()
     lines=res.splitlines()[1:]
 
@@ -105,4 +107,4 @@ if __name__ == '__main__':
         count+=1
 
     #退出adb
-    os.system('adb kill-server')
+    os.system('cd adb & adb kill-server')

@@ -15,6 +15,7 @@ class Automator:
         self.d = u2.connect(address)
         self.dWidth, self.dHeight = self.d.window_size()
         self.appRunning = False
+        self.switch = 0
 
 
     def start(self):
@@ -141,6 +142,8 @@ class Automator:
             time.sleep(0.2)#保证回到首页
             self.d.click(100,505)
 
+    def sw_init(self):
+        self.switch = 0
 
     def gonghuizhijia(self):  # 家园领取
         while True:
@@ -194,7 +197,7 @@ class Automator:
 
         while True:
             # 跳过抽奖提示
-            time.sleep(1)
+            time.sleep(6)
             if self.is_there_img(screen_shot_, 'img/niudan_sheding.jpg'):
                 screen_shot_ = self.d.screenshot(format="opencv")
                 self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
@@ -236,13 +239,12 @@ class Automator:
             self.d.click(100,505)
             time.sleep(1)#首页锁定，保证回到首页
         # 进入行会
+        self.d.click(688, 432)
         time.sleep(3)
         screen_shot_ = self.d.screenshot(format="opencv")
         for i in range(2):
             time.sleep(3)
             self.guochang(screen_shot_, ['img/zhandou_ok.jpg'], suiji=0)
-        self.d.click(688, 432)
-        time.sleep(3)
         self.d.click(239, 351)
         time.sleep(2)
         self.d.click(829, 316)  #点赞 职务降序（默认） 第二个人，副会长
@@ -353,11 +355,11 @@ class Automator:
         time.sleep(1)
         print('-----------------------------')
         print('完成该任务')
-        print('-----------------------------')
+        print('-----------------------------\r\n')
 
 
-    def goumaitili(self):#购买体力，注意此函数参数默认在首页执行，其他地方执行要调整参数
-        for i in range(3):
+    def goumaitili(self, times):#购买体力，注意此函数参数默认在首页执行，其他地方执行要调整参数
+        for i in range(times):
             while True:
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if self.is_there_img(screen_shot_,'img/liwu.jpg'):
@@ -373,79 +375,138 @@ class Automator:
             self.guochang(screen_shot,['img/zhandou_ok.jpg'], suiji=1)
             self.d.click(100,505)#点击一下首页比较保险
 
+    def goumaimana(self,times):
+        time.sleep(2)
+        self.d.click(189, 62)
+        while True:  # 锁定取消2
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/quxiao2.jpg'):
+                break
+            self.d.click(189, 62)
+            time.sleep(2)
+        self.d.click(596, 471)  # 第一次购买的位置
+        while True:  # 锁定ok
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/ok.jpg'):
+                self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+                break
+        for i in range(times):  # 购买剩下的times次
+            while True:  # 锁定取消2
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/quxiao2.jpg'):
+                    break
+            time.sleep(3)
+            self.d.click(816, 478)  # 购买10次
+            while True:  # 锁定ok
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/ok.jpg'):
+                    self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+                    break
+        while True:  # 锁定首页
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+                break
+            self.d.click(1, 1)
+            time.sleep(0.5)  # 保证回到首页
 
-    def hanghui(self):#自动行会捐赠
+    def hanghui(self):  # 自动行会捐赠
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/liwu.jpg'):
+            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
                 break
-            self.d.click(100,505)
-            time.sleep(1)#首页锁定，保证回到首页
+            self.d.click(100, 505)
+            time.sleep(1)  # 首页锁定，保证回到首页
         time.sleep(1)
         self.d.click(693, 436)
         time.sleep(1)
-        while True:#6-17修改：减少opencv使用量提高稳定性
+        while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/zhiyuansheding.jpg'):
-                time.sleep(3)#加载行会聊天界面会有延迟
-                screen_shot = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot,'img/juanzengqingqiu.jpg'):
-                    self.d.click(367, 39)#点击定位捐赠按钮
-                    time.sleep(2)
-                    screen_shot = self.d.screenshot(format="opencv")
-                    self.guochang(screen_shot, ['img/juanzeng.jpg'],suiji=0)
-                    time.sleep(1)
-                    self.d.click(644, 385)#点击max
-                    time.sleep(1)
-                    screen_shot = self.d.screenshot(format="opencv")
-                    self.guochang(screen_shot, ['img/ok.jpg'],suiji=0)
-                    time.sleep(1)
-                    while True:
-                        self.d.click(1, 1)
-                        time.sleep(1)
-                        screen_shot = self.d.screenshot(format="opencv")
-                        if self.is_there_img(screen_shot,'img/zhiyuansheding.jpg'):
-                            break
-                break
             self.d.click(1, 1)#处理被点赞的情况
             time.sleep(1)
-
-        self.d.click(100, 505)#回到首页
+            if self.is_there_img(screen_shot_, 'img/zhiyuansheding.jpg'):
+                screen_shot = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/juanzeng.jpg'):
+                    self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
+                else:
+                    self.d.click(810, 366)
+                time.sleep(1)
+                screen_shot = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/max.jpg'):
+                    self.guochang(screen_shot, ['img/max.jpg'], suiji=0)
+                else:
+                    self.d.click(643, 387)
+                time.sleep(1)
+                screen_shot = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/hanghui_ok.jpg'):
+                    self.guochang(screen_shot, ['img/hanghui_ok.jpg'], suiji=0)
+                else:
+                    self.d.click(587, 464)
+                time.sleep(1)
+                break
+        self.d.click(100, 505)
         time.sleep(1)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/liwu.jpg'):
+            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
                 break
-            self.d.click(100,505)
-            self.d.click(1,1)
-            time.sleep(1)#首页锁定，保证回到首页
+            self.d.click(100, 505)
+            self.d.click(1, 1)
+            time.sleep(1)  # 首页锁定，保证回到首页
 
-
-    def shuatuzuobiao(self,x,y,times):#刷图函数，xy为该图的坐标，times为刷图次数
-        self.d.click(x,y)
-        time.sleep(0.5)
-        while True:#锁定加号
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/jiahao.jpg'):
-                break
-            self.d.click(x,y)
+    def shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数
+        if self.switch == 0:
+            tmp_cout = 0
+            self.d.click(x, y)
             time.sleep(0.5)
-        screen_shot = self.d.screenshot(format="opencv")
-        for i in range(times-1):#基础1次
-            self.guochang(screen_shot,['img/jiahao.jpg'])
-            time.sleep(0.2)
-        time.sleep(0.3)
-        self.d.click(758,330)#使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
-        time.sleep(0.3)
-        # screen_shot = self.d.screenshot(format="opencv")
-        # self.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
-        screen_shot = self.d.screenshot(format="opencv") 
-        self.guochang(screen_shot,['img/ok.jpg'])
+        else:
+            print('>>>无扫荡券或者无体力！', '结束 全部 刷图任务！<<<\r\n')
+        if self.switch == 0:
+            while True:  # 锁定加号
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/jiahao.jpg'):
+                    # screen_shot = a.d.screenshot(format="opencv")
+                    for i in range(times - 1):  # 基础1次
+                        # a.guochang(screen_shot,['img/jiahao.jpg'])
+                        # 扫荡券不必使用opencv来识别，降低效率
+                        self.d.click(876, 334)
+                        # time.sleep(0.2)
+                    time.sleep(0.3)
+                    self.d.click(758, 330)  # 使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
+                    time.sleep(0.3)
+                    screen_shot = self.d.screenshot(format="opencv")
+                    if self.is_there_img(screen_shot, 'img/ok.jpg'):
+                        self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+                    else:
+                        time.sleep(0.5)
+                        self.d.click(588, 370)
+                    # screen_shot = a.d.screenshot(format="opencv")
+                    # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
+                    if self.is_there_img(screen_shot, 'img/tiaoguo.jpg'):
+                        self.guochang(screen_shot, ['img/tiaoguo.jpg'], suiji=0)
+                        self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+                    else:
+                        time.sleep(1)
+                        self.d.click(475, 481) # 手动点击跳过
+                        self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+                    break
+                else:
+                    if tmp_cout < 5:
+                        # 计时5次就失败
+                        self.d.click(x, y)
+                        time.sleep(0.5)
+                        tmp_cout = tmp_cout + 1
+                    else:
+                        print('>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
+                        self.switch = 1
+                        self.d.click(677, 458)  # 取消
+                        break
+        else:
+            print('>>>无扫荡券或者无体力！结束刷图任务！<<<\r\n')
         while True:
-            self.d.click(1,1)
+            self.d.click(1, 1)
             time.sleep(0.3)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/normal.jpg'):
+            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
 
 
@@ -487,7 +548,7 @@ class Automator:
         for i in range(10):
             self.d.click(27, 272)
             time.sleep(3)
-        shuatuzuobiao(106, 279, 160)  # 1-1 刷7次体力为佳
+        self.shuatuzuobiao(106, 279, 160)  # 1-1 刷7次体力为佳
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
@@ -496,161 +557,239 @@ class Automator:
             self.d.click(100, 505)
             time.sleep(1)  # 保证回到首页
 
-
-    def shuatu(self):#刷图函数 注意此函数要在首页运行
-        #进入冒险
+    def shuatu(self, times):  # 刷图函数 注意此函数要在首页运行
+        # 进入冒险
+        time.sleep(2)
         self.d.click(480, 505)
-        time.sleep(0.5) 
+        time.sleep(2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/dixiacheng.jpg'):
+            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
-        time.sleep(1)
+        time.sleep(2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/normal.jpg'):
+            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
 
-        self.shuatuzuobiao(821,299,3)#10-17
-        self.shuatuzuobiao(703,328,3)#10-16
-        self.shuatuzuobiao(608,391,3)#10-15
-        self.shuatuzuobiao(485,373,3)#10-14
-        self.shuatuzuobiao(372,281,3)#10-13
-        self.shuatuzuobiao(320,421,3)#10-12
-        self.shuatuzuobiao(172,378,3)#10-11
-        self.shuatuzuobiao(251,235,3)#10-10
-        self.shuatuzuobiao(111,274,3)#10-9
+        self.shuatuzuobiao(821, 299, times)  # 10-17
+        self.shuatuzuobiao(703, 328, times)  # 10-16
+        self.shuatuzuobiao(608, 391, times)  # 10-15
+        self.shuatuzuobiao(485, 373, times)  # 10-14
+        self.shuatuzuobiao(372, 281, times)  # 10-13
+        self.shuatuzuobiao(320, 421, times)  # 10-12
+        self.shuatuzuobiao(172, 378, times)  # 10-11
+        self.shuatuzuobiao(251, 235, times)  # 10-10
+        self.shuatuzuobiao(111, 274, times)  # 10-9
 
-        self.d.drag(200,270,600,270,0.1)#拖拽到最左
+        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(2)
 
-        self.shuatuzuobiao(690,362,3)#10-8
-        self.shuatuzuobiao(594,429,3)#10-7
-        self.shuatuzuobiao(411,408,3)#10-6
-        self.shuatuzuobiao(518,332,3)#10-5
-        self.shuatuzuobiao(603,238,3)#10-4
-        self.shuatuzuobiao(430,239,3)#10-3
-        self.shuatuzuobiao(287,206,3)#10-2
-        self.shuatuzuobiao(146,197,3)#10-1
+        self.shuatuzuobiao(690, 362, times)  # 10-8
+        self.shuatuzuobiao(594, 429, times)  # 10-7
+        self.shuatuzuobiao(411, 408, times)  # 10-6
+        self.shuatuzuobiao(518, 332, times)  # 10-5
+        self.shuatuzuobiao(603, 238, times)  # 10-4
+        self.shuatuzuobiao(430, 239, times)  # 10-3
+        self.shuatuzuobiao(287, 206, times)  # 10-2
+        self.shuatuzuobiao(146, 197, times)  # 10-1
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/liwu.jpg'):
+            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
                 break
-            self.d.click(100,505)
-            time.sleep(1)#保证回到首页
+            self.d.click(100, 505)
+            time.sleep(1)  # 保证回到首页
 
-
-    def dixiacheng(self):#地下城
-        self.d.click(480, 505)
-        time.sleep(1) 
+    def dixiacheng(self):  # 地下城
+        time.sleep(5)
+        self.d.click(1, 1) # 可可萝教程跳过
+        time.sleep(0.5)
+        tmp_cout = 0
+        tmp_cout2 = 0
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/dixiacheng.jpg'):
+            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
                 break
             self.d.click(480, 505)
             time.sleep(1)
         self.d.click(900, 138)
-        time.sleep(1)
-
-        #下面这段因为调试而注释了，实际使用时要加上
+        time.sleep(3)
+        while True:
+            time.sleep(4)
+            if self.is_there_img(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
+                # 撤退
+                self.d.click(808, 435)
+                time.sleep(1)
+                self.d.click(588, 371)
+                break
+            else:
+                break
+        if self.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
+            self.d.click(917, 39)  # 菜单
+            time.sleep(1)
+            self.d.click(807, 44)  # 跳过
+            time.sleep(1)
+            self.d.click(589, 367)  # 跳过ok
+            time.sleep(1)
+        # 下面这段因为调试而注释了，实际使用时要加上
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/chetui.jpg'):#避免某些农场号刚买回来已经进了地下城
-                break
-            if self.is_there_img(screen_shot_,'img/yunhai.jpg'):
-                self.d.click(233, 311)
+            if self.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
+                self.d.click(917, 39)  # 菜单
                 time.sleep(1)
-                while True:
-                    screen_shot_ = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot_,'img/ok.jpg'):
-                        break
-                self.d.click(592, 369)#点击ok
-                time.sleep(1) 
+                self.d.click(807, 44)  # 跳过
+                time.sleep(1)
+                self.d.click(589, 367)  # 跳过ok
+                time.sleep(1)
+            if tmp_cout < 3:  # 预防卡死，3次错误失败后直接进行下一步
+                tmp_cout = tmp_cout + 1
+                # print(tmp_cout)
+                if self.is_there_img(screen_shot_, 'img/yunhai.jpg'):
+                    self.d.click(233, 311)
+                    time.sleep(1)
+                    while True:
+                        screen_shot_ = self.d.screenshot(format="opencv")
+                        if tmp_cout2 < 3:  # 预防卡死，10次错误失败后直接进行下一步
+                            tmp_cout2 = tmp_cout2 + 1
+                            if self.is_there_img(screen_shot_, 'img/ok.jpg'):
+                                self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+                                time.sleep(1)
+                                break
+                            else:
+                                self.d.click(592, 369)  # 点击ok
+                                break
+                        else:
+                            tmp_cout2 = 0
+                            print('>>>识别卡死跳过\r\n')
+                            break
+            else:
+                tmp_cout = 0
+                print('>>>识别卡死跳过\r\n')
                 break
-
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/chetui.jpg'):
+            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+                tmp_cout = tmp_cout + 1
+                if self.is_there_img(screen_shot_, 'img/chetui.jpg'):
+                    self.d.click(667, 360)  # 1层
+                    time.sleep(1)
+                    self.d.click(833, 456)  # 挑战
+                    time.sleep(1)
+                    break
+            else:
+                tmp_cout = 0
+                print('>>>识别卡死跳过\r\n')
                 break
-            if self.is_there_img(screen_shot_,'img/caidan_yuan.jpg'):
-                self.d.click(917, 39)#菜单
-                time.sleep(1)
-                self.d.click(807, 44)#跳过
-                time.sleep(1)
-                self.d.click(589, 367)#跳过ok
-                time.sleep(1)
-
-        self.d.click(667, 360)#1层
-        time.sleep(1)
-        self.d.click(833, 456)#挑战
-        time.sleep(1)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/zhiyuan.jpg'):
+            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+                tmp_cout = tmp_cout + 1
+                if self.is_there_img(screen_shot_, 'img/zhiyuan.jpg'):
+                    self.d.click(100, 173)  # 第一个人
+                    time.sleep(1)
+                    screen_shot = self.d.screenshot(format="opencv")
+                    self.guochang(screen_shot, ['img/zhiyuan.jpg'], suiji=0)
+                    break
+            else:
+                tmp_cout = 0
+                print('>>>识别卡死跳过\r\n')
                 break
-        self.d.click(100, 173)#第一个人
-        time.sleep(1)
-        screen_shot = self.d.screenshot(format="opencv")
-        self.guochang(screen_shot, ['img/zhiyuan.jpg'],suiji=0)
-        
-        if self.is_there_img(screen_shot_,'img/dengjixianzhi.jpg'):
-            self.d.click(213, 208)#如果等级不足，就支援的第二个人
-            time.sleep(1)    
+
+        if self.is_there_img(screen_shot_, 'img/dengjixianzhi.jpg'):
+            self.d.click(213, 208)  # 如果等级不足，就支援的第二个人
+            time.sleep(1)
         else:
-            self.d.click(100, 173)#支援的第一个人
+            self.d.click(100, 173)  # 支援的第一个人
             time.sleep(1)
-        
-        self.d.click(833, 470)#战斗开始
+            self.d.click(213, 208)  # 以防万一
+
+        self.d.click(833, 470)  # 战斗开始
         time.sleep(1)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/ok.jpg'):
-                self.guochang(screen_shot_, ['img/ok.jpg'],suiji=0)
+            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+                tmp_cout = tmp_cout + 1
+                if self.is_there_img(screen_shot_, 'img/ok.jpg'):
+                    self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+                    break
+            else:
+                tmp_cout = 0
+                print('>>>识别卡死跳过\r\n')
                 break
 
+        while True:  # 战斗中快进
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+                tmp_cout = tmp_cout + 1
+                if self.is_there_img(screen_shot_, 'img/kuaijin.jpg'):
+                    self.d.click(913, 494)  # 点击快进
+                    time.sleep(1)
+                if self.is_there_img(screen_shot_, 'img/kuaijin_1.jpg'):
+                    self.d.click(913, 494)  # 点击快进
+                    time.sleep(1)
+            else:
+                tmp_cout = 0
+                print('>>>识别卡死跳过\r\n')
+                break
+        while True:  # 结束战斗返回
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+                if self.is_there_img(screen_shot_, 'img/yunhai.jpg'):
+                    print('>>>今天次数用完!\r\n')
+                    break
+                if self.is_there_img(screen_shot_, 'img/shanghaibaogao.jpg'):
+                    time.sleep(3)
+                    self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
+                    if self.is_there_img(screen_shot_, 'img/duiwu.jpg'):
+                        self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
+                        break
+                    else:
+                        tmp_cout = tmp_cout + 1
+                        print('>>>无法识别到图像，坐标点击\r\n')
+                        time.sleep(3)
+                        self.d.click(828, 502)
+                        break
+            else:
+                tmp_cout = 0
+                print('>>>识别卡死跳过\r\n')
+                break
 
-        while True:#战斗中快进
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/caidan.jpg'):
-                if self.is_there_img(screen_shot_,'img/kuaijin.jpg'):
-                    self.d.click(913, 494)#点击快进
-                    time.sleep(1)
-                    self.d.click(913, 494)#点击快进
-                if self.is_there_img(screen_shot_,'img/kuaijin_1.jpg'):
-                    self.d.click(913, 494)#点击快进
-                    time.sleep(1)
-                break
-        while True:#结束战斗返回
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/shanghaibaogao.jpg'):
-                self.guochang(screen_shot_,['img/xiayibu.jpg','img/qianwangdixiacheng.jpg'], suiji=0)
-                break
-        self.d.click(1, 1)#取消显示结算动画
+        self.d.click(1, 1)  # 取消显示结算动画
         time.sleep(1)
-        while True:#撤退地下城
+        while True:  # 撤退地下城
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/chetui.jpg'):
-                break;#解决issues中截图可能截到撤退按钮的问题
-        time.sleep(1)
-        while True:#撤退地下城
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/chetui.jpg'):
-                self.guochang(screen_shot_,['img/chetui.jpg'], suiji=0)
-                screen_shot = self.d.screenshot(format="opencv")
-                self.guochang(screen_shot,['img/ok.jpg'], suiji=0)
-                break
-            self.d.click(1, 1)#
+            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+                tmp_cout = tmp_cout + 1
+                if self.is_there_img(screen_shot_, 'img/chetui.jpg'):
+                    for i in range(3):
+                        # 保险措施
+                        self.d.click(808, 435)
+                        time.sleep(1)
+                        self.d.click(588, 371)
+                    self.guochang(screen_shot_, ['img/chetui.jpg'], suiji=0)
+                    screen_shot = self.d.screenshot(format="opencv")
+                    self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+                    break
+                else:
+                    tmp_cout = 0
+                    print('>>>识别卡死跳过\r\n')
+                    break
+            self.d.click(1, 1)  #
             time.sleep(1)
-        while True:#首页锁定
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_,'img/liwu.jpg'):
-                break
-            self.d.click(100,505)
-            time.sleep(1)#保证回到首页
 
+        while True:  # 首页锁定
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+                break
+            self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)  # 防卡死
+            self.guochang(screen_shot_, ['img/chetui.jpg'], suiji=0)
+            screen_shot = self.d.screenshot(format="opencv")
+            self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+            self.d.click(100, 505)
+            time.sleep(1)  # 保证回到首页
 
     def dixiachengzuobiao(self,x,y,auto,team=0):
     #完整刷完地下城函数
