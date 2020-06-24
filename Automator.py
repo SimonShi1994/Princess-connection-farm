@@ -573,27 +573,27 @@ class Automator:
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
 
-        self.shuatuzuobiao(821, 299, times)  # 10-17
-        self.shuatuzuobiao(703, 328, times)  # 10-16
-        self.shuatuzuobiao(608, 391, times)  # 10-15
-        self.shuatuzuobiao(485, 373, times)  # 10-14
-        self.shuatuzuobiao(372, 281, times)  # 10-13
-        self.shuatuzuobiao(320, 421, times)  # 10-12
-        self.shuatuzuobiao(172, 378, times)  # 10-11
-        self.shuatuzuobiao(251, 235, times)  # 10-10
-        self.shuatuzuobiao(111, 274, times)  # 10-9
+        self.shuatuzuobiao(663, 408, times)  # 11-17
+        self.shuatuzuobiao(542, 338, times)  # 11-16
+        self.shuatuzuobiao(468, 429, times)  # 11-15
+        self.shuatuzuobiao(398, 312, times)  # 11-14
+        self.shuatuzuobiao(302, 428, times)  # 11-13
+        self.shuatuzuobiao(182, 362, times)  # 11-12
+        self.shuatuzuobiao(253, 237, times)  # 11-11
+        self.shuatuzuobiao(107, 247, times)  # 11-10
 
         self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(2)
 
-        self.shuatuzuobiao(690, 362, times)  # 10-8
-        self.shuatuzuobiao(594, 429, times)  # 10-7
-        self.shuatuzuobiao(411, 408, times)  # 10-6
-        self.shuatuzuobiao(518, 332, times)  # 10-5
-        self.shuatuzuobiao(603, 238, times)  # 10-4
-        self.shuatuzuobiao(430, 239, times)  # 10-3
-        self.shuatuzuobiao(287, 206, times)  # 10-2
-        self.shuatuzuobiao(146, 197, times)  # 10-1
+        self.shuatuzuobiao(648, 316, times)  # 11-9
+        self.shuatuzuobiao(594, 420, times)  # 11-8
+        self.shuatuzuobiao(400, 432, times)  # 11-7
+        self.shuatuzuobiao(497, 337, times)  # 11-6
+        self.shuatuzuobiao(558, 240, times)  # 11-5
+        self.shuatuzuobiao(424, 242, times)  # 11-4
+        self.shuatuzuobiao(290, 285, times)  # 11-3
+        self.shuatuzuobiao(244, 412, times)  # 11-2
+        self.shuatuzuobiao(161, 326, times)  # 11-1
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
