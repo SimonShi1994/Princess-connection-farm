@@ -4,7 +4,6 @@ import time
 from utils import *
 from cv import *
 from Automator import *
-from math import ceil
 #import matplotlib.pylab as plt
 import os
 import threading
@@ -38,7 +37,7 @@ def runmain(address,account,password):
     a.dixiacheng()#地下城
     a.goumaitili(3)#购买3次体力
     a.shouqurenwu()#收取任务
-    a.shuatu(3)#刷全部10图3次
+    a.shuatu(3)#刷全部11图3次
     # a.shuajingyan() # 刷1-1经验（自带体力购买）
     a.shouqurenwu()  # 二次收取任务
 
@@ -104,7 +103,7 @@ if __name__ == '__main__':
     i = 0
     while count != accountnum:
         t = threading.Thread(target=runmain,
-                             args=(lines[i], account_list[count + i], account_dic[account_list[count + i]]))
+                             args=(lines[i], account_list[count], account_dic[account_list[count]]))
         thread_list.append(t)
         i += 1
         count += 1

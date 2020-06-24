@@ -70,7 +70,7 @@ class Automator:
         self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
 
-    def get_butt_stat(self,screen_shot,template_paths,threshold=0.84):
+    def get_butt_stat(self,screen_shot,template_paths,threshold=0.8):
         #此函数输入要判断的图片path,屏幕截图,阈值,返回大于阈值的path坐标字典
         self.dWidth, self.dHeight = self.d.window_size()
         return_dic = {}
@@ -573,6 +573,18 @@ class Automator:
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
 
+#10图，如使用请注释11图坐标；请确保点主线就是10图，否则需要点击屏幕左侧
+        # self.shuatuzuobiao(821, 299, times)  # 10-17
+        # self.shuatuzuobiao(703, 328, times)  # 10-16
+        # self.shuatuzuobiao(608, 391, times)  # 10-15
+        # self.shuatuzuobiao(485, 373, times)  # 10-14
+        # self.shuatuzuobiao(372, 281, times)  # 10-13
+        # self.shuatuzuobiao(320, 421, times)  # 10-12
+        # self.shuatuzuobiao(172, 378, times)  # 10-11
+        # self.shuatuzuobiao(251, 235, times)  # 10-10
+        # self.shuatuzuobiao(111, 274, times)  # 10-9
+
+#11图
         self.shuatuzuobiao(663, 408, times)  # 11-17
         self.shuatuzuobiao(542, 338, times)  # 11-16
         self.shuatuzuobiao(468, 429, times)  # 11-15
@@ -585,6 +597,17 @@ class Automator:
         self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(2)
 
+#10图
+        # self.shuatuzuobiao(690, 362, times)  # 10-8
+        # self.shuatuzuobiao(594, 429, times)  # 10-7
+        # self.shuatuzuobiao(411, 408, times)  # 10-6
+        # self.shuatuzuobiao(518, 332, times)  # 10-5
+        # self.shuatuzuobiao(603, 238, times)  # 10-4
+        # self.shuatuzuobiao(430, 239, times)  # 10-3
+        # self.shuatuzuobiao(287, 206, times)  # 10-2
+        # self.shuatuzuobiao(146, 197, times)  # 10-1
+
+#11图
         self.shuatuzuobiao(648, 316, times)  # 11-9
         self.shuatuzuobiao(594, 420, times)  # 11-8
         self.shuatuzuobiao(400, 432, times)  # 11-7

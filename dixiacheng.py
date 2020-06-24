@@ -4,7 +4,6 @@ import time
 from utils import *
 from cv import *
 from Automator import *
-from math import ceil
 #import matplotlib.pylab as plt
 import os
 import threading
@@ -75,26 +74,33 @@ if __name__ == '__main__':
     #读取账号
     account_list,account_dic,accountnum = read()
 
-    #多线程执行
-    count = 0 #完成账号数
-    #完整循环 join()方法确保完成后再进行下一次循环
-    for i in range(ceil(accountnum/emulatornum)-1):#完整循环 join()方法确保完成后再进行下一次循环
-        for j in range(emulatornum-1):
-            t = threading.Thread(target=runmain, args=(lines[j],account_list[i*emulatornum+j],account_dic[account_list[i*emulatornum+j]]))
+    # 多线程执行
+    count = 0  # 完成账号数
+    thread_list = []
+    # 完整循环 join()方法确保完成后再进行下一次循环
+    for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
+        for j in range(emulatornum):
+            t = threading.Thread(target=runmain, args=(
+                lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]]))
+            thread_list.append(t)
+            count += 1
+        for t in thread_list:
             t.start()
-            count+=1
-        t = threading.Thread(target=runmain, args=(lines[emulatornum-1],account_list[i*emulatornum+emulatornum-1],account_dic[account_list[i*emulatornum+emulatornum-1]]))
-        t.start()
-        t.join()
-        count+=1
-    
-    #剩余账号无需使用join()方法
-    i=0
+        for t in thread_list:
+            t.join()
+        thread_list = []
+    # 剩余账号
+    i = 0
     while count != accountnum:
-        t = threading.Thread(target=runmain, args=(lines[i],account_list[count+i],account_dic[account_list[count+i]]))
+        t = threading.Thread(target=runmain,
+                             args=(lines[i], account_list[count], account_dic[account_list[count]]))
+        thread_list.append(t)
+        i += 1
+        count += 1
+    for t in thread_list:
         t.start()
-        i+=1
-        count+=1
+    for t in thread_list:
+        t.join()
 
     #退出adb
-    os.system('adb kill-server')
+    os.system('cd adb & adb kill-server')
