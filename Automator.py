@@ -70,7 +70,7 @@ class Automator:
         self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
 
-    def get_butt_stat(self,screen_shot,template_paths,threshold=0.8):
+    def get_butt_stat(self,screen_shot,template_paths,threshold=0.84):
         #此函数输入要判断的图片path,屏幕截图,阈值,返回大于阈值的path坐标字典
         self.dWidth, self.dHeight = self.d.window_size()
         return_dic = {}
@@ -83,10 +83,10 @@ class Automator:
         return return_dic
 
 
-    def is_there_img(self,screen,img):
+    def is_there_img(self,screen,img,threshold=0.84):
         #输入要判断的图片path，屏幕截图，返回是否存在大于阈值的图片的布尔值
         self.dWidth, self.dHeight = self.d.window_size()
-        active_path = self.get_butt_stat(screen,[img])
+        active_path = self.get_butt_stat(screen,[img],threshold)
         if img in active_path:
             return True
         else:
@@ -410,49 +410,51 @@ class Automator:
             self.d.click(1, 1)
             time.sleep(0.5)  # 保证回到首页
 
-    def hanghui(self):  # 自动行会捐赠
+    def hanghui(self):#自动行会捐赠
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+            if self.is_there_img(screen_shot_,'img/liwu.jpg'):
                 break
-            self.d.click(100, 505)
-            time.sleep(1)  # 首页锁定，保证回到首页
+            self.d.click(100,505)
+            time.sleep(1)#首页锁定，保证回到首页
         time.sleep(1)
         self.d.click(693, 436)
         time.sleep(1)
-        while True:
+        while True:#6-17修改：减少opencv使用量提高稳定性
             screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_,'img/zhiyuansheding.jpg'):
+                time.sleep(3)#加载行会聊天界面会有延迟
+                screen_shot = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot,'img/juanzengqingqiu.jpg'):
+                    self.d.click(367, 39)#点击定位捐赠按钮
+                    time.sleep(2)
+                    screen_shot = self.d.screenshot(format="opencv")
+                    self.guochang(screen_shot, ['img/juanzeng.jpg'],suiji=0)
+                    time.sleep(1)
+                    self.d.click(644, 385)#点击max
+                    time.sleep(1)
+                    screen_shot = self.d.screenshot(format="opencv")
+                    self.guochang(screen_shot, ['img/ok.jpg'],suiji=0)
+                    time.sleep(1)
+                    while True:
+                        self.d.click(1, 1)
+                        time.sleep(1)
+                        screen_shot = self.d.screenshot(format="opencv")
+                        if self.is_there_img(screen_shot,'img/zhiyuansheding.jpg'):
+                            break
+                break
             self.d.click(1, 1)#处理被点赞的情况
             time.sleep(1)
-            if self.is_there_img(screen_shot_, 'img/zhiyuansheding.jpg'):
-                screen_shot = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/juanzeng.jpg'):
-                    self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
-                else:
-                    self.d.click(810, 366)
-                time.sleep(1)
-                screen_shot = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/max.jpg'):
-                    self.guochang(screen_shot, ['img/max.jpg'], suiji=0)
-                else:
-                    self.d.click(643, 387)
-                time.sleep(1)
-                screen_shot = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/hanghui_ok.jpg'):
-                    self.guochang(screen_shot, ['img/hanghui_ok.jpg'], suiji=0)
-                else:
-                    self.d.click(587, 464)
-                time.sleep(1)
-                break
-        self.d.click(100, 505)
+
+        self.d.click(100, 505)#回到首页
         time.sleep(1)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+            if self.is_there_img(screen_shot_,'img/liwu.jpg'):
                 break
-            self.d.click(100, 505)
-            self.d.click(1, 1)
-            time.sleep(1)  # 首页锁定，保证回到首页
+            self.d.click(100,505)
+            self.d.click(1,1)
+            time.sleep(1)#首页锁定，保证回到首页
 
     def shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数
         if self.switch == 0:
@@ -774,7 +776,7 @@ class Automator:
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
-                if self.is_there_img(screen_shot_, 'img/yunhai.jpg'):
+                if self.is_there_img(screen_shot_, 'img/yunhai.jpg', threshold=0.8):
                     print('>>>今天次数用完!\r\n')
                     break
                 if self.is_there_img(screen_shot_, 'img/shanghaibaogao.jpg'):
