@@ -4,14 +4,14 @@ import time
 from utils import *
 from cv import *
 from Automator import *
-#import matplotlib.pylab as plt
+# import matplotlib.pylab as plt
 import os
 import threading
 
 
-def runmain(address,account,password):
-    #主功能体函数
-    #请在本函数中自定义需要的功能
+def runmain(address, account, password):
+    # 主功能体函数
+    # 请在本函数中自定义需要的功能
 
     a = Automator(address)
     a.start()
@@ -21,68 +21,80 @@ def runmain(address,account,password):
     # fig, ax = plt.subplots(1)
     # plt.show()
 
-    print('>>>>>>>即将登陆的账号为：',account,'密码：',password,'<<<<<<<','\r\n')
-    a.login_auth(account, password)#注意！请把账号密码写在zhanghao.txt内
-    a.init_home()#初始化，确保进入首页
+    print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
+    a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
+    a.init_home()  # 初始化，确保进入首页
     a.sw_init()  # 初始化刷图
-    
 
-    a.gonghuizhijia()  #家园一键领取
-    a.goumaimana(1) #购买mana 10次
-    a.mianfeiniudan() # 免费扭蛋
+    a.gonghuizhijia()  # 家园一键领取
+    a.goumaimana(1)  # 购买mana 10次
+    a.mianfeiniudan()  # 免费扭蛋
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞
-    a.shouqu()# 收取所有礼物
-    a.hanghui()#行会捐赠
-    a.dixiacheng()#地下城
-    a.goumaitili(3)#购买3次体力
-    a.shouqurenwu()#收取任务
-    a.shuatu(3)#刷全部11图3次
+    a.shouqu()  # 收取所有礼物
+    a.hanghui()  # 行会捐赠
+    a.dixiacheng()  # 地下城
+    a.goumaitili(3)  # 购买3次体力
+    a.shouqurenwu()  # 收取任务
+    shuatu(address, account)  # 刷图控制中心
     # a.shuajingyan() # 刷1-1经验（自带体力购买）
     a.shouqurenwu()  # 二次收取任务
 
+    a.change_acc()  # 退出当前账号，切换下一个
 
-    a.change_acc()#退出当前账号，切换下一个
 
-
-def connect():#连接adb与uiautomator
+def connect():  # 连接adb与uiautomator
     try:
-        os.system('cd adb & adb connect 127.0.0.1:5554')#雷电模拟器
+        os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
         # os.system('adb connect 127.0.0.1:7555') #mumu模拟器
         os.system('python -m uiautomator2 init')
     except:
         print('连接失败')
 
-    result = os.popen('cd adb & adb devices')#返回adb devices列表
+    result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()
-    lines=res.splitlines()[1:]
+    lines = res.splitlines()[1:]
 
-    for i in range(0,len(lines)):
-        lines[i]=lines[i].split('\t')[0]
-    lines=lines[0:-1]
+    for i in range(0, len(lines)):
+        lines[i] = lines[i].split('\t')[0]
+    lines = lines[0:-1]
     print(lines)
-    emulatornum=len(lines)
-    return(lines,emulatornum)
+    emulatornum = len(lines)
+    return lines, emulatornum
 
-def read():#读取账号
+
+def read():  # 读取账号
     account_dic = {}
-    with open('zhanghao.txt','r') as f:#注意！请把账号密码写在zhanghao.txt内
-        for i,line in enumerate(f):
-            account,password = line.split('\t')[0:2]
-            account_dic[account]=password.strip()
-    account_list=list(account_dic.keys())
-    accountnum=len(account_list)
-    return(account_list,account_dic,accountnum)
+    with open('zhanghao.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
+        for i, line in enumerate(f):
+            account, password = line.split('\t')[0:2]
+            account_dic[account] = password.strip()
+    account_list = list(account_dic.keys())
+    accountnum = len(account_list)
+    return account_list, account_dic, accountnum
 
 
+def shuatu(address, account):  # 刷图总控制
+    a = Automator(address)
+    shuatu_dic = {
+        '08': 'a.shuatu8()',
+        '10': 'a.shuatu10()',
+        '11': 'a.shuatu11()'
+    }
+    _, _, _, fun_list, fun_dic = read()
+    if fun_dic[account] == '[]':
+        eval(shuatu_dic['10'])
+    else:
+        eval(shuatu_dic[fun_dic[account][2:4]])
 
-#主程序
+
+# 主程序
 if __name__ == '__main__':
-    
-    #连接adb与uiautomator
-    lines,emulatornum = connect()
-    #读取账号
-    account_list,account_dic,accountnum = read()
+
+    # 连接adb与uiautomator
+    lines, emulatornum = connect()
+    # 读取账号
+    account_list, account_dic, accountnum, _, _ = read()
 
     # 多线程执行
     count = 0  # 完成账号数
@@ -112,5 +124,5 @@ if __name__ == '__main__':
     for t in thread_list:
         t.join()
 
-    #退出adb
+    # 退出adb
     os.system('cd adb & adb kill-server')
