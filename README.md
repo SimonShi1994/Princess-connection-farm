@@ -126,7 +126,9 @@ python main.py
 
 6. **刷图购买体力和刷经验是相冲的！！！**
 
-7. 请不要用于商业用途。代码交流和bug反馈请联系qq 2785242720
+7. 请不要用于商业用途。代码交流和bug反馈请加群加qq群 1130884619
+
+   ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
 8. 感谢CyiceK(https://github.com/1076472672) 对本项目的倾力帮助。
 
@@ -134,7 +136,7 @@ python main.py
 
 10. 您的一点支持会是我们完善本项目的强大动力！(*/ω＼*)
 
-   <img src="https://s1.ax1x.com/2020/06/22/NYtMHs.jpg" alt="image" style="zoom:25%;" />
+   ![image](https://s1.ax1x.com/2020/06/22/NYtMHs.md.jpg)
 
 ## 更新计划
 
