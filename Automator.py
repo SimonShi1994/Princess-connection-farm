@@ -135,7 +135,7 @@ class Automator:
                 break
             self.d.click(1, 1)
             time.sleep(0.2)  # 保证回到首页
-            self.d.click(100, 505)
+            # self.d.click(100, 505)
 
     def sw_init(self):
         self.switch = 0
@@ -382,18 +382,6 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/zhiyuansheding.jpg'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
-                screen_shot = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/juanzeng.jpg'):
-                    self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
-                else:
-                    self.d.click(810, 366)
-                time.sleep(1)
-                screen_shot = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/max.jpg'):
-                    self.guochang(screen_shot, ['img/max.jpg'], suiji=0)
-                else:
-                    self.d.click(643, 387)
-                time.sleep(1)
                 screen_shot = self.d.screenshot(format="opencv")
                 if self.is_there_img(screen_shot, 'img/juanzengqingqiu.jpg'):
                     self.d.click(367, 39)  # 点击定位捐赠按钮
