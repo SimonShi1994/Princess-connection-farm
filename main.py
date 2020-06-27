@@ -37,7 +37,7 @@ def runmain(address, account, password):
     a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
     shuatu_auth(a, account)  # 刷图控制中心
-    # a.shuajingyan() # 刷1-1经验（自带体力购买）
+    # a.shuajingyan(10) # 刷1-1经验（自带体力购买）,10为主图
     a.shouqurenwu()  # 二次收取任务
 
     a.change_acc()  # 退出当前账号，切换下一个

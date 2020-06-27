@@ -577,6 +577,10 @@ class Automator:
                 break
         self.d.click(562, 253)
         time.sleep(2)
+        for _ in range(1):
+            # 左移到10图
+            self.d.click(27, 272)
+            time.sleep(3)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
