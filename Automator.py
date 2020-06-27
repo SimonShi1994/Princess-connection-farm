@@ -194,7 +194,6 @@ class Automator:
             time.sleep(6)
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/niudan_sheding.jpg'):
-                screen_shot_ = self.d.screenshot(format="opencv")
                 self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
                 break
             else:
@@ -206,14 +205,13 @@ class Automator:
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/niudanputong.jpg'):
-                screen_shot_ = self.d.screenshot(format="opencv")
                 self.guochang(screen_shot_, ['img/niudanputong.jpg'], suiji=0)
                 self.d.click(722, 351)  # 点进扭蛋
                 time.sleep(0.5)
                 self.d.click(584, 384)
                 break
             else:
-                self.d.click(821, 75)  # 手动点击
+                self.d.click(876, 75)  # 手动点击
                 time.sleep(0.5)
                 self.d.click(722, 351)  # 点进扭蛋
                 time.sleep(0.5)
@@ -223,6 +221,39 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
                 break
+            self.d.click(100, 505)
+            time.sleep(1)  # 首页锁定，保证回到首页
+
+    def mianfeishilian(self):
+        # 免费十连
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+                break
+            self.d.click(100, 505)
+            time.sleep(1)  # 首页锁定，保证回到首页
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+                self.d.click(750, 510)  # 点进扭蛋界面
+                time.sleep(1)
+                break
+
+        time.sleep(1)
+        screen_shot_ = self.d.screenshot(format="opencv")
+        if self.is_there_img(screen_shot_, 'img/mianfeishilian.jpg'):  # 仅当有免费十连时抽取免费十连
+            self.d.click(872, 355)  # 点击十连
+            time.sleep(1)
+            self.d.click(592, 369)  # 确认
+
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+                break
+            self.d.click(900, 40)
+            time.sleep(0.5)
+            self.d.click(100, 505)
+            time.sleep(0.5)
             self.d.click(100, 505)
             time.sleep(1)  # 首页锁定，保证回到首页
 
