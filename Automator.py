@@ -213,7 +213,7 @@ class Automator:
                 self.d.click(584, 384)
                 break
             else:
-                self.d.click(821, 75)  # 手动点击
+                self.d.click(876, 75)  # 手动点击
                 time.sleep(0.5)
                 self.d.click(722, 351)  # 点进扭蛋
                 time.sleep(0.5)
@@ -241,28 +241,21 @@ class Automator:
                 time.sleep(1)
                 break
 
-        while True:
-            # 跳过抽奖提示
-            time.sleep(6)
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/niudan_sheding.jpg'):
-                self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
-                break
-            else:
-                time.sleep(1)
-                self.d.click(473, 436)  # 手动点击
-                time.sleep(2)
-                break
-
+        time.sleep(1)
+        screen_shot_ = self.d.screenshot(format="opencv")
         if self.is_there_img(screen_shot_, 'img/mianfeishilian.jpg'):
             self.d.click(872, 355)  # 点进扭蛋
-            time.sleep(0.5)
-            self.d.click(584, 384)
+            time.sleep(1)
+            self.d.click(592, 369)
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
                 break
+            self.d.click(900, 40)
+            time.sleep(0.5)
+            self.d.click(100, 505)
+            time.sleep(0.5)
             self.d.click(100, 505)
             time.sleep(1)  # 首页锁定，保证回到首页
 
