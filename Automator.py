@@ -194,7 +194,6 @@ class Automator:
             time.sleep(6)
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/niudan_sheding.jpg'):
-                screen_shot_ = self.d.screenshot(format="opencv")
                 self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
                 break
             else:
@@ -206,7 +205,6 @@ class Automator:
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/niudanputong.jpg'):
-                screen_shot_ = self.d.screenshot(format="opencv")
                 self.guochang(screen_shot_, ['img/niudanputong.jpg'], suiji=0)
                 self.d.click(722, 351)  # 点进扭蛋
                 time.sleep(0.5)
