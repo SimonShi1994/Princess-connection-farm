@@ -213,7 +213,7 @@ class Automator:
                 self.d.click(584, 384)
                 break
             else:
-                self.d.click(821, 75)  # 手动点击
+                self.d.click(876, 75)  # 手动点击
                 time.sleep(0.5)
                 self.d.click(722, 351)  # 点进扭蛋
                 time.sleep(0.5)
