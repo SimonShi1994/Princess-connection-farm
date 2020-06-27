@@ -241,10 +241,10 @@ class Automator:
 
         time.sleep(1)
         screen_shot_ = self.d.screenshot(format="opencv")
-        if self.is_there_img(screen_shot_, 'img/mianfeishilian.jpg'):
-            self.d.click(872, 355)  # 点进扭蛋
+        if self.is_there_img(screen_shot_, 'img/mianfeishilian.jpg'):  # 仅当有免费十连时抽取免费十连
+            self.d.click(872, 355)  # 点击十连
             time.sleep(1)
-            self.d.click(592, 369)
+            self.d.click(592, 369)  # 确认
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
