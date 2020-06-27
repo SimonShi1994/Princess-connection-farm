@@ -36,7 +36,7 @@ def runmain(address, account, password):
     a.dixiacheng()  # 地下城
     a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
-    shuatu(address, account)  # 刷图控制中心
+    shuatu_auth(a, account)  # 刷图控制中心
     # a.shuajingyan() # 刷1-1经验（自带体力购买）
     a.shouqurenwu()  # 二次收取任务
 
@@ -65,17 +65,22 @@ def connect():  # 连接adb与uiautomator
 
 def read():  # 读取账号
     account_dic = {}
+    fun_dic = {}
+    fun_list = []
     with open('zhanghao.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
         for i, line in enumerate(f):
+            line = line.rstrip("\n")
             account, password = line.split('\t')[0:2]
+            fun = line.split('\t')[2:]
             account_dic[account] = password.strip()
+            fun_dic[account] = str(fun).strip()
+            fun_list.append(fun_dic[account])
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
-    return account_list, account_dic, accountnum
+    return account_list, account_dic, accountnum, fun_list, fun_dic
 
 
-def shuatu(address, account):  # 刷图总控制
-    a = Automator(address)
+def shuatu_auth(a, account):  # 刷图总控制
     shuatu_dic = {
         '08': 'a.shuatu8()',
         '10': 'a.shuatu10()',
