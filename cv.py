@@ -69,6 +69,7 @@ class UIMatcher:
             screen = UIMatcher.RotateClockWise90(screen)
         gray = cv2.cvtColor(screen, cv2.COLOR_RGB2GRAY)
         ret, binary = cv2.threshold(gray, 130, 255, cv2.THRESH_BINARY)
+        num_of_white = len(np.argwhere(binary == 255))
         index_1 = np.mean(np.argwhere(binary[63:,:] == 255), axis=0).astype(int)
 
         screen = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
@@ -78,7 +79,7 @@ class UIMatcher:
         # plt.imshow(screen)
         # plt.pause(0.01)
         print(len(np.argwhere(binary == 255)),len(np.argwhere(binary == 0)))
-        return index_1[1]/screen.shape[1], (index_1[0]+63)/screen.shape[0]
+        return num_of_white, index_1[1]/screen.shape[1], (index_1[0]+63)/screen.shape[0]
 
 
 #

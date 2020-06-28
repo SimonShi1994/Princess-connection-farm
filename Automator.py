@@ -1089,3 +1089,179 @@ class Automator:
                 break
             self.d.click(100, 505)
             time.sleep(1)  # 保证回到首页
+
+    def shoushuazuobiao(self, x, y, jiaocheng=0):  #不使用挑战券挑战，xy为该图坐标
+
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+                break
+            self.d.click(1,138)
+            time.sleep(1)
+        self.d.click(x, y)
+        time.sleep(2)
+        self.d.click(840,454)
+        time.sleep(0.7)
+
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.get_butt_stat(screen_shot_, ['img/kuaijin.jpg','img/kuaijin_1.jpg']) != {}:
+                break
+            self.d.click(840, 454)  # 点到进入战斗画面
+            time.sleep(0.7)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            result = self.get_butt_stat(screen_shot_, ['img/kuaijin.jpg','img/auto.jpg','img/wanjiadengji.jpg'])
+            if 'img/kuaijin.jpg' in result:
+                x,y = result['img/kuaijin.jpg']
+                self.d.click(x,y)
+                time.sleep(1)
+            if 'img/auto.jpg' in result:
+                x,y = result['img/auto.jpg']
+                self.d.click(x,y)
+                time.sleep(1)
+            if 'img/wanjiadengji.jpg' in result: #战斗结束
+                break
+            self.d.click(1,138)
+            time.sleep(0.5)
+        if jiaocheng == 1: #有复杂的教程，交给教程函数处理
+            self.chulijiaocheng()
+        else: # 无复杂的教程，自己处理掉“下一步”
+            while True:
+                self.d.click(832, 506)
+                time.sleep(0.5)
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+                    break
+            time.sleep(2)
+            while True: # 两次确认回到挑战界面
+                self.d.click(1, 100)
+                time.sleep(0.5)
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+                    break
+
+
+    def chulijiaocheng(self):  # 处理教程
+        """
+        有引导点引导
+        有下一步点下一步
+        有主页点主页
+        有圆menu就点跳过，跳过
+        有跳过点跳过
+        都没有就点边界点
+        # 有取消点取消
+        :return:
+        """
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+
+            num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+            if num_of_white < 77000:
+                try:
+                    self.d.click(x * self.dWidth, y * self.dHeight + 20)
+                except:
+                    pass
+                time.sleep(1)
+                continue
+
+            active_path = self.get_butt_stat(screen_shot_, ['img/liwu.jpg', 'img/jiaruhanghui.jpg', 'img/xiayibu.jpg','img/wuyuyin.jpg', 'img/tiaoguo.jpg', 'img/zhuye.jpg', 'img/caidan_yuan.jpg'])
+            if 'img/liwu.jpg' in active_path:
+                break
+            elif 'img/jiaruhanghui.jpg' in active_path:
+                break
+            elif 'img/xiayibu.jpg' in active_path:
+                x,y = active_path['img/xiayibu.jpg']
+                self.d.click(x,y)
+                time.sleep(2)
+            elif 'img/wuyuyin.jpg' in active_path:
+                x,y = active_path['img/wuyuyin.jpg']
+                self.d.click(x,y)
+                time.sleep(3)
+            elif 'img/tiaoguo.jpg' in active_path:
+                x, y = active_path['img/tiaoguo.jpg']
+                self.d.click(x, y)
+                time.sleep(3)
+            elif 'img/zhuye.jpg' in active_path:
+                x,y = active_path['img/zhuye.jpg']
+                self.d.click(x,y)
+            elif 'img/caidan_yuan.jpg' in active_path:
+                x,y = active_path['img/caidan_yuan.jpg']
+                self.d.click(x,y)
+                time.sleep(0.7)
+                self.d.click(804,45)
+                time.sleep(0.7)
+                self.d.click(593,372)
+                time.sleep(2)
+            elif 'img/tiaoguo.jpg' in active_path:
+                self.d.click(593,372)
+                time.sleep(1)
+            else:
+                self.d.click(1,100)
+                time.sleep(2)
+            time.sleep(0.5)
+        # 返回冒险
+        self.d.click(480, 505)
+        time.sleep(2)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
+                break
+            self.d.click(480,513)
+        self.d.click(562, 253)
+        time.sleep(3)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+                break
+            self.d.click(704,84)
+
+    def qianghua(self):
+        time.sleep(2)
+        self.d.click(215,513)#角色
+        time.sleep(2)
+        self.d.click(177,145)#First
+        for i in range(5):
+            while True:
+                time.sleep(2)
+                screen_shot_ = self.d.screenshot(format="opencv")
+                active_list = self.get_butt_stat(screen_shot_, ['img/ranktisheng.jpg'])
+                if 'img/ranktisheng.jpg' in active_list:
+                    self.d.click(250,338)
+                    time.sleep(2)
+                    screen_shot_ = self.d.screenshot(format="opencv")
+                    active_list = self.get_butt_stat(screen_shot_, ['img/queren.jpg', 'img/ok.jpg'])
+                    if 'img/queren.jpg' in active_list:
+                        x,y = active_list['img/queren.jpg']
+                        self.d.click(x,y)
+                    if 'img/ok.jpg' in active_list:
+                        x,y = active_list['img/ok.jpg']
+                        self.d.click(x,y)
+                    time.sleep(9)
+                    self.d.click(481,369)
+                else:
+                    break
+            self.d.click(375,435) # 自动强化
+            time.sleep(0.8)
+            self.d.click(542,474) # 确定/取消
+            time.sleep(2)
+            self.d.click(933,267) # 下一位
+        while True:  # 首页锁定
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+                break
+            self.d.click(100, 505)
+            time.sleep(1)  # 保证回到首页
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
+                break
+            self.d.click(480, 513)
+        self.d.click(562, 253)
+        time.sleep(3)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+                break
+            self.d.click(704, 84)
+
