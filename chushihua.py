@@ -15,15 +15,12 @@ def runmain(address, account, password):
     a.start()
 
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')
+    t0 = time.time()
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao2.txt内
     a.init_home()  # 初始化，确保进入首页
+    time.sleep(2)
+    a.setting() # 设置无动画、低帧率
 
-    while True:  # 首页锁定
-        screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_, 'img/liwu.jpg'):
-            break
-        a.d.click(100, 505)
-        time.sleep(1)  # 保证回到首页
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
         if a.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
@@ -68,6 +65,8 @@ def runmain(address, account, password):
     a.shoushuazuobiao(138,188,1) # 3-1
 
     a.change_acc()  # 退出当前账号，切换下一个
+    t = time.time()
+    print('>>>>>>>账号：', account, '已刷完, 用时', t-t0,  '秒<<<<<<<')
 
 
 def connect():  # 连接adb与uiautomator
