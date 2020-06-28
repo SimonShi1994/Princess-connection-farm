@@ -61,7 +61,7 @@ def runmain(address, account, password):
     a.shoushuazuobiao(353,161) # 2-6
     a.shoushuazuobiao(453,231) # 2-7
     a.shoushuazuobiao(479,316,1) # 2-8
-    a.shoushuazuobiao(527,380) # 2-9 装备危险
+    a.shoushuazuobiao(602,380) # 2-9 装备危险 602 375 -> 527,380
     a.shoushuazuobiao(646,371) # 2-10
     a.shoushuazuobiao(757,344) # 2-11
     a.shoushuazuobiao(745,229,1) # 2-12

@@ -1223,7 +1223,7 @@ class Automator:
         self.d.click(177,145)#First
         for i in range(5):
             while True:
-                time.sleep(3)
+                time.sleep(2)
                 screen_shot_ = self.d.screenshot(format="opencv")
                 active_list = self.get_butt_stat(screen_shot_, ['img/ranktisheng.jpg'])
                 if 'img/ranktisheng.jpg' in active_list:
