@@ -17,13 +17,8 @@ def runmain(address, account, password):
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao2.txt内
     a.init_home()  # 初始化，确保进入首页
+    a.setting() # 设置无动画、低帧率
 
-    while True:  # 首页锁定
-        screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_, 'img/liwu.jpg'):
-            break
-        a.d.click(100, 505)
-        time.sleep(1)  # 保证回到首页
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
         if a.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):

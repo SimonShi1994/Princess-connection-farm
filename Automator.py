@@ -1215,6 +1215,7 @@ class Automator:
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
             self.d.click(704,84)
+            time.sleep(0.5)
 
     def qianghua(self):
         time.sleep(2)
@@ -1264,4 +1265,21 @@ class Automator:
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
             self.d.click(704, 84)
+
+
+    def setting(self):
+        self.d.click(875,517)
+        time.sleep(2)
+        self.d.click(149,269)
+        time.sleep(2)
+        self.d.click(769,87)
+        time.sleep(1)
+        self.d.click(735,238)
+        time.sleep(0.5)
+        self.d.click(735,375)
+        time.sleep(0.5)
+        self.d.click(479,479)
+        time.sleep(1)
+        self.d.click(95,516)
+
 
