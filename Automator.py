@@ -1090,8 +1090,14 @@ class Automator:
             self.d.click(100, 505)
             time.sleep(1)  # 保证回到首页
 
-    def shoushuazuobiao(self, x, y, jiaocheng=0):  #不使用挑战券挑战，xy为该图坐标
-
+    def shoushuazuobiao(self, x, y, jiaocheng=0):
+        """
+        不使用挑战券挑战，xy为该图坐标
+        jiaocheng=0 只处理简单的下一步和解锁内容
+        jiaocheng=1 要处理复杂的教程
+        jiaocheng=2 todo 只处理下一步
+        :return:
+        """
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
@@ -1099,7 +1105,7 @@ class Automator:
             self.d.click(1,138)
             time.sleep(1)
         self.d.click(x, y)
-        time.sleep(2)
+        time.sleep(1)
         self.d.click(840,454)
         time.sleep(0.7)
 
@@ -1142,7 +1148,7 @@ class Automator:
                     break
 
 
-    def chulijiaocheng(self):  # 处理教程
+    def chulijiaocheng(self):  # 处理教程, 最终返回刷图页面
         """
         有引导点引导
         有下一步点下一步
