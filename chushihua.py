@@ -4,13 +4,12 @@ import time
 from utils import *
 from cv import *
 from Automator import *
-#import matplotlib.pylab as plt
+# import matplotlib.pylab as plt
 import os
 import threading
 
 
 def runmain(address, account, password):
-
     a = Automator(address)
     a.start()
 
@@ -19,7 +18,7 @@ def runmain(address, account, password):
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao2.txt内
     a.init_home()  # 初始化，确保进入首页
     time.sleep(2)
-    a.setting() # 设置无动画、低帧率
+    a.setting()  # 设置无动画、低帧率
 
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -38,35 +37,35 @@ def runmain(address, account, password):
         if a.is_there_img(screen_shot_, 'img/normal.jpg'):
             break
         a.d.click(704, 84)
-    #初始化至主线关卡结束
+    # 初始化至主线关卡结束
 
     a.shoushuazuobiao(313, 341)  # 1-3
-    a.shoushuazuobiao(379,240,1) #1-4
-    a.shoushuazuobiao(481,286) # 1-5
-    a.shoushuazuobiao(545,381,1) # 1-6
-    a.shoushuazuobiao(607,304) # 1-7
-    a.shoushuazuobiao(620,209) # 1-8
-    a.shoushuazuobiao(747,243) # 1-9
+    a.shoushuazuobiao(379, 240, 1)  # 1-4
+    a.shoushuazuobiao(481, 286)  # 1-5
+    a.shoushuazuobiao(545, 381, 1)  # 1-6
+    a.shoushuazuobiao(607, 304)  # 1-7
+    a.shoushuazuobiao(620, 209)  # 1-8
+    a.shoushuazuobiao(747, 243)  # 1-9
     a.qianghua()
-    a.shoushuazuobiao(824,348,1) # 1-10 虽然没有繁琐教程，但解锁东西过多，还是去用函数
-    a.shoushuazuobiao(129,413,1) # 2-1
-    a.shoushuazuobiao(255,413,1) # 2-2
+    a.shoushuazuobiao(824, 348, 1)  # 1-10 虽然没有繁琐教程，但解锁东西过多，还是去用函数
+    a.shoushuazuobiao(129, 413, 1)  # 2-1
+    a.shoushuazuobiao(255, 413, 1)  # 2-2
     a.qianghua()
-    a.shoushuazuobiao(379,379) # 2-3
-    a.shoushuazuobiao(332,269) # 2-4
-    a.shoushuazuobiao(237,206,1) # 2-5
-    a.shoushuazuobiao(353,161) # 2-6
-    a.shoushuazuobiao(453,231) # 2-7
-    a.shoushuazuobiao(479,316,1) # 2-8
-    a.shoushuazuobiao(602,380) # 2-9 装备危险 602 375 -> 527,380
-    a.shoushuazuobiao(646,371) # 2-10
-    a.shoushuazuobiao(757,344) # 2-11
-    a.shoushuazuobiao(745,229,1) # 2-12
-    a.shoushuazuobiao(138,188,1) # 3-1
+    a.shoushuazuobiao(379, 379)  # 2-3
+    a.shoushuazuobiao(332, 269)  # 2-4
+    a.shoushuazuobiao(237, 206, 1)  # 2-5
+    a.shoushuazuobiao(353, 161)  # 2-6
+    a.shoushuazuobiao(453, 231)  # 2-7
+    a.shoushuazuobiao(479, 316, 1)  # 2-8
+    a.shoushuazuobiao(602, 380)  # 2-9 装备危险 602 375 -> 527,380
+    a.shoushuazuobiao(646, 371)  # 2-10
+    a.shoushuazuobiao(757, 344)  # 2-11
+    a.shoushuazuobiao(745, 229, 1)  # 2-12
+    a.shoushuazuobiao(138, 188, 1)  # 3-1
 
     a.change_acc()  # 退出当前账号，切换下一个
     t = time.time()
-    print('>>>>>>>账号：', account, '已刷完, 用时', t-t0,  '秒<<<<<<<')
+    print('>>>>>>>账号：', account, '已刷完, 用时', t - t0, '秒<<<<<<<')
 
 
 def connect():  # 连接adb与uiautomator
@@ -86,7 +85,7 @@ def connect():  # 连接adb与uiautomator
     lines = lines[0:-1]
     print(lines)
     emulatornum = len(lines)
-    return (lines, emulatornum)
+    return lines, emulatornum
 
 
 def read():  # 读取账号
@@ -97,7 +96,7 @@ def read():  # 读取账号
             account_dic[account] = password.strip()
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
-    return (account_list, account_dic, accountnum)
+    return account_list, account_dic, accountnum
 
 
 # 主程序

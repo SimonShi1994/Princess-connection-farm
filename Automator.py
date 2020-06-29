@@ -547,9 +547,9 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
-        for i in range(map):
+        for i in range(map + 1):
             self.d.click(27, 272)
-            time.sleep(3)
+            time.sleep(2)
         self.shuatuzuobiao(106, 279, 160)  # 1-1 刷7次体力为佳
 
         while True:
