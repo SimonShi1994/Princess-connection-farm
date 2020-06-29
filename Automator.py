@@ -413,6 +413,7 @@ class Automator:
             if self.is_there_img(screen_shot_, 'img/zhiyuansheding.jpg'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 for _ in range(3):
+                    time.sleep(2)
                     screen_shot = self.d.screenshot(format="opencv")
                     if self.is_there_img(screen_shot, 'img/juanzengqingqiu.jpg'):
                         self.d.click(367, 39)  # 点击定位捐赠按钮
@@ -422,6 +423,9 @@ class Automator:
                         time.sleep(1)
                         self.d.click(644, 385)  # 点击max
                         time.sleep(3)
+                        screen_shot = self.d.screenshot(format="opencv")
+                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
+                        time.sleep(2)
                         screen_shot = self.d.screenshot(format="opencv")
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                         time.sleep(1)
@@ -564,22 +568,22 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
-            self.shuatuzuobiao(584, 260, self.times)  # 8-14
-            self.shuatuzuobiao(715, 319, self.times)  # 8-13
-            self.shuatuzuobiao(605, 398, self.times)  # 8-12
-            self.shuatuzuobiao(478, 374, self.times)  # 8-11
-            self.shuatuzuobiao(357, 405, self.times)  # 8-10
-            self.shuatuzuobiao(263, 324, self.times)  # 8-9
-            self.shuatuzuobiao(130, 352, self.times)  # 8-8
-            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-            time.sleep(2)
-            self.shuatuzuobiao(580, 401, self.times)  # 8-7
-            self.shuatuzuobiao(546, 263, self.times)  # 8-6
-            self.shuatuzuobiao(457, 334, self.times)  # 8-5
-            self.shuatuzuobiao(388, 240, self.times)  # 8-4
-            self.shuatuzuobiao(336, 314, self.times)  # 8-3
-            self.shuatuzuobiao(230, 371, self.times)  # 8-2
-            self.shuatuzuobiao(193, 255, self.times)  # 8-1
+        self.shuatuzuobiao(584, 260, self.times)  # 8-14
+        self.shuatuzuobiao(715, 319, self.times)  # 8-13
+        self.shuatuzuobiao(605, 398, self.times)  # 8-12
+        self.shuatuzuobiao(478, 374, self.times)  # 8-11
+        self.shuatuzuobiao(357, 405, self.times)  # 8-10
+        self.shuatuzuobiao(263, 324, self.times)  # 8-9
+        self.shuatuzuobiao(130, 352, self.times)  # 8-8
+        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+        time.sleep(2)
+        self.shuatuzuobiao(580, 401, self.times)  # 8-7
+        self.shuatuzuobiao(546, 263, self.times)  # 8-6
+        self.shuatuzuobiao(457, 334, self.times)  # 8-5
+        self.shuatuzuobiao(388, 240, self.times)  # 8-4
+        self.shuatuzuobiao(336, 314, self.times)  # 8-3
+        self.shuatuzuobiao(230, 371, self.times)  # 8-2
+        self.shuatuzuobiao(193, 255, self.times)  # 8-1
         self.lockimg('img/liwu.bmp',elseclick=[(131,533)],elsedelay=1)  # 回首页
 
     def shuatu10(self):
@@ -601,25 +605,25 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
-            self.shuatuzuobiao(821, 299, self.times)  # 10-17
-            self.shuatuzuobiao(703, 328, self.times)  # 10-16
-            self.shuatuzuobiao(608, 391, self.times)  # 10-15
-            self.shuatuzuobiao(485, 373, self.times)  # 10-14
-            self.shuatuzuobiao(372, 281, self.times)  # 10-13
-            self.shuatuzuobiao(320, 421, self.times)  # 10-12
-            self.shuatuzuobiao(172, 378, self.times)  # 10-11
-            self.shuatuzuobiao(251, 235, self.times)  # 10-10
-            self.shuatuzuobiao(111, 274, self.times)  # 10-9
-            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-            time.sleep(2)
-            self.shuatuzuobiao(690, 362, self.times)  # 10-8
-            self.shuatuzuobiao(594, 429, self.times)  # 10-7
-            self.shuatuzuobiao(411, 408, self.times)  # 10-6
-            self.shuatuzuobiao(518, 332, self.times)  # 10-5
-            self.shuatuzuobiao(603, 238, self.times)  # 10-4
-            self.shuatuzuobiao(430, 239, self.times)  # 10-3
-            self.shuatuzuobiao(287, 206, self.times)  # 10-2
-            self.shuatuzuobiao(146, 197, self.times)  # 10-1
+        self.shuatuzuobiao(821, 299, self.times)  # 10-17
+        self.shuatuzuobiao(703, 328, self.times)  # 10-16
+        self.shuatuzuobiao(608, 391, self.times)  # 10-15
+        self.shuatuzuobiao(485, 373, self.times)  # 10-14
+        self.shuatuzuobiao(372, 281, self.times)  # 10-13
+        self.shuatuzuobiao(320, 421, self.times)  # 10-12
+        self.shuatuzuobiao(172, 378, self.times)  # 10-11
+        self.shuatuzuobiao(251, 235, self.times)  # 10-10
+        self.shuatuzuobiao(111, 274, self.times)  # 10-9
+        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+        time.sleep(2)
+        self.shuatuzuobiao(690, 362, self.times)  # 10-8
+        self.shuatuzuobiao(594, 429, self.times)  # 10-7
+        self.shuatuzuobiao(411, 408, self.times)  # 10-6
+        self.shuatuzuobiao(518, 332, self.times)  # 10-5
+        self.shuatuzuobiao(603, 238, self.times)  # 10-4
+        self.shuatuzuobiao(430, 239, self.times)  # 10-3
+        self.shuatuzuobiao(287, 206, self.times)  # 10-2
+        self.shuatuzuobiao(146, 197, self.times)  # 10-1
         self.lockimg('img/liwu.bmp',elseclick=[(131,533)],elsedelay=1)  # 回首页
 
     def shuatu11(self):
@@ -637,25 +641,25 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                 break
-            self.shuatuzuobiao(663, 408, self.times)  # 11-17
-            self.shuatuzuobiao(542, 338, self.times)  # 11-16
-            self.shuatuzuobiao(468, 429, self.times)  # 11-15
-            self.shuatuzuobiao(398, 312, self.times)  # 11-14
-            self.shuatuzuobiao(302, 428, self.times)  # 11-13
-            self.shuatuzuobiao(182, 362, self.times)  # 11-12
-            self.shuatuzuobiao(253, 237, self.times)  # 11-11
-            self.shuatuzuobiao(107, 247, self.times)  # 11-10
-            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-            time.sleep(2)
-            self.shuatuzuobiao(648, 316, self.times)  # 11-9
-            self.shuatuzuobiao(594, 420, self.times)  # 11-8
-            self.shuatuzuobiao(400, 432, self.times)  # 11-7
-            self.shuatuzuobiao(497, 337, self.times)  # 11-6
-            self.shuatuzuobiao(558, 240, self.times)  # 11-5
-            self.shuatuzuobiao(424, 242, self.times)  # 11-4
-            self.shuatuzuobiao(290, 285, self.times)  # 11-3
-            self.shuatuzuobiao(244, 412, self.times)  # 11-2
-            self.shuatuzuobiao(161, 326, self.times)  # 11-1
+        self.shuatuzuobiao(663, 408, self.times)  # 11-17
+        self.shuatuzuobiao(542, 338, self.times)  # 11-16
+        self.shuatuzuobiao(468, 429, self.times)  # 11-15
+        self.shuatuzuobiao(398, 312, self.times)  # 11-14
+        self.shuatuzuobiao(302, 428, self.times)  # 11-13
+        self.shuatuzuobiao(182, 362, self.times)  # 11-12
+        self.shuatuzuobiao(253, 237, self.times)  # 11-11
+        self.shuatuzuobiao(107, 247, self.times)  # 11-10
+        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+        time.sleep(2)
+        self.shuatuzuobiao(648, 316, self.times)  # 11-9
+        self.shuatuzuobiao(594, 420, self.times)  # 11-8
+        self.shuatuzuobiao(400, 432, self.times)  # 11-7
+        self.shuatuzuobiao(497, 337, self.times)  # 11-6
+        self.shuatuzuobiao(558, 240, self.times)  # 11-5
+        self.shuatuzuobiao(424, 242, self.times)  # 11-4
+        self.shuatuzuobiao(290, 285, self.times)  # 11-3
+        self.shuatuzuobiao(244, 412, self.times)  # 11-2
+        self.shuatuzuobiao(161, 326, self.times)  # 11-1
         self.lockimg('img/liwu.bmp',elseclick=[(131,533)],elsedelay=1)  # 回首页
 
     def dixiacheng(self):  # 地下城
@@ -736,7 +740,7 @@ class Automator:
         while True:
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+            if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
                 if self.is_there_img(screen_shot_, 'img/chetui.jpg'):
                     self.d.click(667, 360)  # 1层
@@ -751,7 +755,7 @@ class Automator:
         while True:
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+            if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
                 if self.is_there_img(screen_shot_, 'img/zhiyuan.jpg'):
                     self.d.click(100, 173)  # 第一个人
@@ -778,7 +782,7 @@ class Automator:
         while True:
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+            if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
                 if self.is_there_img(screen_shot_, 'img/ok.bmp'):
                     self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
@@ -791,7 +795,7 @@ class Automator:
         while True:  # 战斗中快进
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+            if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
                 if self.is_there_img(screen_shot_, 'img/kuaijin.jpg'):
                     self.d.click(913, 494)  # 点击快进
@@ -806,7 +810,7 @@ class Automator:
         while True:  # 结束战斗返回
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+            if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 if self.is_there_img(screen_shot_, 'img/yunhai.bmp', threshold=0.8):
                     print('>>>今天次数用完!\r\n')
                     break
@@ -839,7 +843,7 @@ class Automator:
         while True:  # 撤退地下城
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
+            if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
                 if self.is_there_img(screen_shot_, 'img/chetui.jpg'):
                     for i in range(3):
