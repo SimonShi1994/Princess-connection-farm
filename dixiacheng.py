@@ -38,7 +38,7 @@ def runmain(address,account,password):
 def connect():  # 连接adb与uiautomator
     try:
         os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
-        # os.system('adb connect 127.0.0.1:7555') #mumu模拟器
+        # os.system('cd adb & adb connect 127.0.0.1:7555') #mumu模拟器
         os.system('python -m uiautomator2 init')
     except:
         print('连接失败')

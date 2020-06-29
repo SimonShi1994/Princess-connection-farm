@@ -60,7 +60,7 @@ def acceptmain(address, account, password):
 def connect():  # 连接adb与uiautomator
     try:
         os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
-        # os.system('adb connect 127.0.0.1:7555') #mumu模拟器
+        # os.system('cd adb & adb connect 127.0.0.1:7555') #mumu模拟器
         os.system('python -m uiautomator2 init')
     except:
         print('连接失败')
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     account_boss, password_boss, UID, account_1, password_1, account_2, password_2 = readauth()
     #执行会长1的日常任务+踢出大号
     t = threading.Thread(target=runmain, 
-                         args=(lines[0], account_1, password_1, kickflag=1))
+                         args=(lines[0], account_1, password_1, 1))
     t.start()
     t.join()
     #执行会长2的邀请大号任务
@@ -211,7 +211,7 @@ if __name__ == '__main__':
 
     #执行会长2的日常任务+踢出大号
     t = threading.Thread(target=runmain, 
-                         args=(lines[0], account_2, password_2, kickflag=1))
+                         args=(lines[0], account_2, password_2, 1))
     t.start()
     t.join()
     #执行会长1的邀请大号任务
