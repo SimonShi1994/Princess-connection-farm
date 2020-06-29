@@ -28,11 +28,11 @@ def runmain(address, account, password):
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
     a.shouqu()  # 收取所有礼物
-    a.hanghui()  # 行会捐赠
     a.dixiacheng()  # 地下城
     a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
     shuatu_auth(a, account)  # 刷图控制中心
+    a.hanghui()  # 行会捐赠
     # a.shuajingyan(10) # 刷1-1经验（自带体力购买）,10为主图
     a.shouqurenwu()  # 二次收取任务
 
@@ -50,16 +50,16 @@ def connect():  # 连接adb与uiautomator
     result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()
     lines = res.splitlines()[0:]
-    while lines[0]!='List of devices attached ':
+    while lines[0] != 'List of devices attached ':
         del lines[0]
     del lines[0]  # 删除表头
 
     device_dic = {}  # 存储设备状态
-    for i in range(0, len(lines)-1):
-        lines[i],device_dic[lines[i]]= lines[i].split('\t')[0:]
+    for i in range(0, len(lines) - 1):
+        lines[i], device_dic[lines[i]] = lines[i].split('\t')[0:]
     lines = lines[0:-1]
     for i in range(len(lines)):
-        if device_dic[lines[i]]!='device':
+        if device_dic[lines[i]] != 'device':
             del lines[i]
     print(lines)
     emulatornum = len(lines)
@@ -134,5 +134,3 @@ if __name__ == '__main__':
 
     # 退出adb
     os.system('cd adb & adb kill-server')
-
-

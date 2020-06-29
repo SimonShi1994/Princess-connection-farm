@@ -145,10 +145,10 @@ class Automator:
         self.lockimg('img/zhiyuansheding.jpg',elseclick=[(1,1)],alldelay=0.5)# 锁定行会界面
         self.d.click(241,350)# 点击成员
         self.lockimg('img/chengyuanliebiao.bmp',ifclick=[(720,97)],ifdelay=1)# 点击排序按钮
-        self.lockimg('img/ok.jpg',ifclick=[(289,303),(587,372)],ifdelay=1)# 按战力降序 这里可以加一步调降序
+        self.lockimg('img/ok.bmp',ifclick=[(289,303),(587,372)],ifdelay=1)# 按战力降序 这里可以加一步调降序
         self.lockimg('img/chengyuanliebiao.bmp',ifclick=[(737,200)],ifdelay=1)# 点第一个人
         self.lockimg('img/jiaojie.bmp',ifclick=[(651,174)],ifdelay=1)# 踢出行会
-        self.lockimg('img/ok.jpg',ifclick=[(590,369)],ifdelay=1)# 确认踢出
+        self.lockimg('img/ok.bmp',ifclick=[(590,369)],ifdelay=1)# 确认踢出
         self.lockimg('img/chengyuanliebiao.bmp',elseclick=[(1,1)],alldelay=1)# 锁定成员列表
         self.lockimg('img/liwu.bmp',elseclick=[(131,533),(1,1)],elsedelay=0.5)# 回首页
 
@@ -158,13 +158,13 @@ class Automator:
         self.d.click(241,350)# 点击成员
         self.lockimg('img/chengyuanliebiao.bmp',ifclick=[(717,33)],ifdelay=1)# 点击搜索成员
         self.lockimg('img/sousuochengyuan.bmp',ifclick=[(845,90)],ifdelay=1)# 点击搜索设定
-        self.lockimg('img/ok.jpg',ifclick=[(487,236)],ifdelay=1)# 点击输入框
+        self.lockimg('img/ok.bmp',ifclick=[(487,236)],ifdelay=1)# 点击输入框
         self.d.send_keys(inviteUID)
         time.sleep(1)
         self.d.click(1,1)
-        self.lockimg('img/ok.jpg',ifclick=[(585,366)],ifdelay=1)# 点击ok
+        self.lockimg('img/ok.bmp',ifclick=[(585,366)],ifdelay=1)# 点击ok
         self.lockimg('img/sousuochengyuan.bmp',ifclick=[(844,181)],ifdelay=1)# 点击邀请
-        self.lockimg('img/ok.jpg',ifclick=[(588,439)],ifdelay=1)# 点击ok
+        self.lockimg('img/ok.bmp',ifclick=[(588,439)],ifdelay=1)# 点击ok
         self.lockimg('img/liwu.bmp',elseclick=[(131,533),(1,1)],elsedelay=0.5)# 回首页
 
     def jieshouhanghui(self):
@@ -174,24 +174,24 @@ class Automator:
         time.sleep(1)
         self.d.click(704,170)# 点击邀请列表
         self.lockimg('img/jiaru.bmp',ifclick=[(839,443)],ifdelay=1)# 点击加入
-        self.lockimg('img/ok.jpg',ifclick=[(597,372)],ifdelay=1)# 点击ok
+        self.lockimg('img/ok.bmp',ifclick=[(597,372)],ifdelay=1)# 点击ok
         time.sleep(1)
         self.lockimg('img/zhiyuansheding.jpg',ifclick=[(85,350)],alldelay=0.5)# 点击支援设定
         self.lockimg('img/zhiyuanjiemian.bmp',elseclick=[(1,1)],alldelay=0.5)# 锁定支援界面
         self.d.click(109,234)# 点击支援
         time.sleep(1)
         self.lockimg('img/quxiao3.bmp',ifclick=[(739,91)],ifdelay=1)# 点击排序设定
-        self.lockimg('img/ok.jpg',ifclick=[(291,142),(588,483)],ifdelay=1)# 点击战力和ok
+        self.lockimg('img/ok.bmp',ifclick=[(291,142),(588,483)],ifdelay=1)# 点击战力和ok
         self.lockimg('img/quxiao3.bmp',ifclick=[(109,175)],ifdelay=1)# 点击第一个人
         time.sleep(1)
         self.d.click(833,456)# 点击设定
-        self.lockimg('img/ok.jpg',ifclick=[(591,440)],ifdelay=1)# 点击ok
+        self.lockimg('img/ok.bmp',ifclick=[(591,440)],ifdelay=1)# 点击ok
 
         self.lockimg('img/zhiyuanjiemian.bmp',ifclick=[(105,356)],ifdelay=1)# 点击第二个+号
         self.lockimg('img/quxiao3.bmp',ifclick=[(109,175)],ifdelay=1)# 点击第一个人
         time.sleep(1)
         self.d.click(833,456)# 点击设定
-        self.lockimg('img/ok.jpg',ifclick=[(591,440)],ifdelay=1)# 点击ok
+        self.lockimg('img/ok.bmp',ifclick=[(591,440)],ifdelay=1)# 点击ok
         self.lockimg('img/liwu.bmp',elseclick=[(131,533),(1,1)],elsedelay=0.5)# 回首页
 
 
@@ -214,6 +214,7 @@ class Automator:
         self.d.click(622, 509)
         time.sleep(8)
         while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
                 self.d.click(917, 39)  # 菜单
                 time.sleep(1)
@@ -224,7 +225,7 @@ class Automator:
                 time.sleep(8)
             else:
                 break
-        for i in range(2):
+        for _ in range(2):
             self.d.click(899, 429)  # 一键领取
             time.sleep(3)
             screen_shot_ = self.d.screenshot(format="opencv")
@@ -281,7 +282,7 @@ class Automator:
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+            if self.is_there_img(screen_shot_, 'img/liwu.bmp'):
                 break
             self.d.click(900, 40)
             time.sleep(0.5)
@@ -303,7 +304,7 @@ class Automator:
         time.sleep(3)
         if sortflag == 1:
             self.lockimg('img/chengyuanliebiao.bmp',ifclick=[(720,97)],ifdelay=1)# 点击排序按钮
-            self.lockimg('img/ok.jpg',ifclick=[(289,303),(587,372)],ifdelay=1)# 按战力降序 这里可以加一步调降序
+            self.lockimg('img/ok.bmp',ifclick=[(289,303),(587,372)],ifdelay=1)# 按战力降序 这里可以加一步调降序
             self.d.click(818, 198)  # 点赞 战力降序第一个人
             time.sleep(2)
         else:
@@ -311,12 +312,13 @@ class Automator:
             time.sleep(2)
         self.d.click(479, 381)
         screen_shot_ = self.d.screenshot(format="opencv")
-        self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+        self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
         self.lockimg('img/liwu.bmp',elseclick=[(131,533),(1,1)],elsedelay=1)  # 回首页
 
     def shouqu(self):  # 收取全部礼物
         self.lockimg('img/liwu.bmp',elseclick=[(131,533),(1,1)],elsedelay=1)  # 回首页
-        self.guochang(screen_shot_, ['img/liwu.jpg'], suiji=0)
+        screen_shot_ = self.d.screenshot(format="opencv")
+        self.guochang(screen_shot_, ['img/liwu.bmp'], suiji=0)
         while True:  # 锁定收取履历（礼品盒）
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/shouqulvli.jpg'):
@@ -347,12 +349,12 @@ class Automator:
         self.d.click(871, 513)  # 主菜单
         while True:  # 锁定帮助
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/bangzhu.jpg'):
+            if self.is_there_img(screen_shot_, 'img/bangzhu.bmp'):
                 break
         self.d.click(165, 411)  # 退出账号
         while True:  # 锁定帮助
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/ok.jpg'):
+            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
                 break
         self.d.click(591, 369)  # ok
         time.sleep(1)
@@ -366,7 +368,7 @@ class Automator:
             self.d.click(320, 31)
             time.sleep(1)
             screen_shot = self.d.screenshot(format="opencv")
-            self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+            self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
             time.sleep(1)
             screen_shot = self.d.screenshot(format="opencv")
             self.guochang(screen_shot, ['img/zhandou_ok.jpg'], suiji=1)
@@ -384,8 +386,8 @@ class Automator:
         self.d.click(596, 471)  # 第一次购买的位置
         while True:  # 锁定ok
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/ok.jpg'):
-                self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                 break
         for i in range(times):  # 购买剩下的times次
             while True:  # 锁定取消2
@@ -396,8 +398,8 @@ class Automator:
             self.d.click(816, 478)  # 购买10次
             while True:  # 锁定ok
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/ok.jpg'):
-                    self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+                if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                    self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                     break
         self.lockimg('img/liwu.bmp',elseclick=[(1,1)],elsedelay=0.5)  # 回首页
 
@@ -410,29 +412,30 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/zhiyuansheding.jpg'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
-                screen_shot = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot, 'img/juanzengqingqiu.jpg'):
-                    self.d.click(367, 39)  # 点击定位捐赠按钮
-                    time.sleep(2)
+                for _ in range(3):
                     screen_shot = self.d.screenshot(format="opencv")
-                    self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
-                    time.sleep(1)
-                    self.d.click(644, 385)  # 点击max
-                    time.sleep(1)
-                    screen_shot = self.d.screenshot(format="opencv")
-                    self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
-                    time.sleep(1)
-                    while True:
-                        self.d.click(1, 1)
-                        time.sleep(1)
+                    if self.is_there_img(screen_shot, 'img/juanzengqingqiu.jpg'):
+                        self.d.click(367, 39)  # 点击定位捐赠按钮
+                        time.sleep(2)
                         screen_shot = self.d.screenshot(format="opencv")
-                        if self.is_there_img(screen_shot, 'img/zhiyuansheding.jpg'):
-                            break
+                        self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
+                        time.sleep(1)
+                        self.d.click(644, 385)  # 点击max
+                        time.sleep(3)
+                        screen_shot = self.d.screenshot(format="opencv")
+                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
+                        time.sleep(1)
+                while True:
+                    self.d.click(1, 1)
+                    time.sleep(1)
+                    screen_shot = self.d.screenshot(format="opencv")
+                    if self.is_there_img(screen_shot, 'img/zhiyuansheding.jpg'):
+                        break
                 break
             time.sleep(2)
             # 处理多开捐赠失败的情况
             screen_shot = self.d.screenshot(format="opencv")
-            self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+            self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
             self.d.click(1, 1)  # 处理被点赞的情况
             time.sleep(1)
 
@@ -450,10 +453,10 @@ class Automator:
         if self.switch == 0:
             while True:  # 锁定加号
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/jiahao.jpg'):
+                if self.is_there_img(screen_shot_, 'img/jiahao.bmp'):
                     # screen_shot = a.d.screenshot(format="opencv")
                     for i in range(times - 1):  # 基础1次
-                        # a.guochang(screen_shot,['img/jiahao.jpg'])
+                        # a.guochang(screen_shot,['img/jiahao.bmp'])
                         # 扫荡券不必使用opencv来识别，降低效率
                         self.d.click(876, 334)
                         # time.sleep(0.2)
@@ -461,8 +464,8 @@ class Automator:
                     self.d.click(758, 330)  # 使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
                     time.sleep(0.3)
                     screen_shot = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot, 'img/ok.jpg'):
-                        self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+                    if self.is_there_img(screen_shot, 'img/ok.bmp'):
+                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     else:
                         time.sleep(0.5)
                         self.d.click(588, 370)
@@ -474,13 +477,14 @@ class Automator:
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
+                    screen_shot = self.d.screenshot(format="opencv")
                     if self.is_there_img(screen_shot, 'img/tiaoguo.jpg'):
                         self.guochang(screen_shot, ['img/tiaoguo.jpg'], suiji=0)
-                        self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     else:
                         time.sleep(1)
                         self.d.click(475, 481)  # 手动点击跳过
-                        self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     break
                 else:
                     if tmp_cout < 5:
@@ -511,14 +515,14 @@ class Automator:
         for i in range(7):
             while True:
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+                if self.is_there_img(screen_shot_, 'img/liwu.bmp'):
                     break
                 self.d.click(100, 505)
                 time.sleep(1)  # 首页锁定，保证回到首页
             self.d.click(320, 31)
             time.sleep(0.5)
             screen_shot = self.d.screenshot(format="opencv")
-            self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+            self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
             time.sleep(0.5)
             screen_shot = self.d.screenshot(format="opencv")
             self.guochang(screen_shot, ['img/zhandou_ok.jpg'], suiji=1)
@@ -684,6 +688,7 @@ class Automator:
                 time.sleep(1)
                 self.d.click(588, 371)
                 break
+        screen_shot_ = self.d.screenshot(format="opencv")
         if self.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
             self.d.click(917, 39)  # 菜单
             time.sleep(1)
@@ -705,15 +710,15 @@ class Automator:
             if tmp_cout < 3:  # 预防卡死，3次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
                 # print(tmp_cout)
-                if self.is_there_img(screen_shot_, 'img/yunhai.jpg'):
+                if self.is_there_img(screen_shot_, 'img/yunhai.bmp'):
                     self.d.click(233, 311)
                     time.sleep(1)
                     while True:
                         screen_shot_ = self.d.screenshot(format="opencv")
                         if tmp_cout2 < 3:  # 预防卡死，10次错误失败后直接进行下一步
                             tmp_cout2 = tmp_cout2 + 1
-                            if self.is_there_img(screen_shot_, 'img/ok.jpg'):
-                                self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+                            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                                self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                                 time.sleep(1)
                                 break
                             else:
@@ -775,8 +780,8 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
-                if self.is_there_img(screen_shot_, 'img/ok.jpg'):
-                    self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+                if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                    self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                     break
             else:
                 tmp_cout = 0
@@ -802,7 +807,7 @@ class Automator:
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 10:  # 预防卡死，10次错误失败后直接进行下一步
-                if self.is_there_img(screen_shot_, 'img/yunhai.jpg', threshold=0.8):
+                if self.is_there_img(screen_shot_, 'img/yunhai.bmp', threshold=0.8):
                     print('>>>今天次数用完!\r\n')
                     break
                 if self.is_there_img(screen_shot_, 'img/shanghaibaogao.jpg'):
@@ -844,7 +849,7 @@ class Automator:
                         self.d.click(588, 371)
                     self.guochang(screen_shot_, ['img/chetui.jpg'], suiji=0)
                     screen_shot = self.d.screenshot(format="opencv")
-                    self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+                    self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     break
                 else:
                     tmp_cout = 0
@@ -855,12 +860,12 @@ class Automator:
 
         while True:  # 首页锁定
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/liwu.jpg'):
+            if self.is_there_img(screen_shot_, 'img/liwu.bmp'):
                 break
             self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)  # 防卡死
             self.guochang(screen_shot_, ['img/chetui.jpg'], suiji=0)
             screen_shot = self.d.screenshot(format="opencv")
-            self.guochang(screen_shot, ['img/ok.jpg'], suiji=0)
+            self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
             self.d.click(100, 505)
             time.sleep(1)  # 保证回到首页
 
@@ -969,7 +974,7 @@ class Automator:
         time.sleep(0.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/ok.jpg'):
+            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
                 self.d.click(590, 363)  # ok
                 time.sleep(0.5)
                 break
@@ -996,7 +1001,7 @@ class Automator:
         time.sleep(0.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/ok.jpg'):
+            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
                 self.d.click(590, 363)  # ok
                 time.sleep(0.5)
                 break
@@ -1026,12 +1031,12 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
                 break
-            if self.is_there_img(screen_shot_, 'img/yunhai.jpg'):
+            if self.is_there_img(screen_shot_, 'img/yunhai.bmp'):
                 self.d.click(712, 267)  # 断崖
                 time.sleep(1)
                 while True:
                     screen_shot_ = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot_, 'img/ok.jpg'):
+                    if self.is_there_img(screen_shot_, 'img/ok.bmp'):
                         break
                 self.d.click(592, 369)  # 点击ok
                 time.sleep(1)
@@ -1132,8 +1137,8 @@ class Automator:
                 time.sleep(1)
                 continue
 
-            active_path = self.get_butt_stat(screen_shot_, ['img/liwu.jpg', 'img/jiaruhanghui.jpg', 'img/xiayibu.jpg','img/wuyuyin.jpg', 'img/tiaoguo.jpg', 'img/zhuye.jpg', 'img/caidan_yuan.jpg'])
-            if 'img/liwu.jpg' in active_path:
+            active_path = self.get_butt_stat(screen_shot_, ['img/liwu.bmp', 'img/jiaruhanghui.jpg', 'img/xiayibu.jpg','img/wuyuyin.jpg', 'img/tiaoguo.jpg', 'img/zhuye.jpg', 'img/caidan_yuan.jpg'])
+            if 'img/liwu.bmp' in active_path:
                 break
             elif 'img/jiaruhanghui.jpg' in active_path:
                 break
@@ -1198,12 +1203,12 @@ class Automator:
                     self.d.click(250,338)
                     time.sleep(2)
                     screen_shot_ = self.d.screenshot(format="opencv")
-                    active_list = self.get_butt_stat(screen_shot_, ['img/queren.jpg', 'img/ok.jpg'])
+                    active_list = self.get_butt_stat(screen_shot_, ['img/queren.jpg', 'img/ok.bmp'])
                     if 'img/queren.jpg' in active_list:
                         x,y = active_list['img/queren.jpg']
                         self.d.click(x,y)
-                    if 'img/ok.jpg' in active_list:
-                        x,y = active_list['img/ok.jpg']
+                    if 'img/ok.bmp' in active_list:
+                        x,y = active_list['img/ok.bmp']
                         self.d.click(x,y)
                     time.sleep(9)
                     self.d.click(481,369)
