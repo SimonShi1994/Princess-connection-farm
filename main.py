@@ -29,15 +29,15 @@ def runmain(address, account, password):
     a.gonghuizhijia()  # 家园一键领取
     a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
-    #a.mianfeishilian()  # 免费十连
+    # a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞
     a.shouqu()  # 收取所有礼物
-    a.hanghui()  # 行会捐赠
     a.dixiacheng()  # 地下城
     a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
     shuatu_auth(a, account)  # 刷图控制中心
+    a.hanghui()  # 行会捐赠
     # a.shuajingyan(10) # 刷1-1经验（自带体力购买）,10为主图
     a.shouqurenwu()  # 二次收取任务
 
@@ -47,7 +47,7 @@ def runmain(address, account, password):
 def connect():  # 连接adb与uiautomator
     try:
         os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
-        # os.system('adb connect 127.0.0.1:7555') #mumu模拟器
+        # os.system('cd adb & adb connect 127.0.0.1:7555') #mumu模拟器
         os.system('python -m uiautomator2 init')
     except:
         print('连接失败')
