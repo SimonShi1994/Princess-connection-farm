@@ -15,23 +15,18 @@ def runmain(address, account, password):
 
     a = Automator(address)
     a.start()
-
-    # #opencv识别可视化 无法在多线程中使用
-    # plt.ion()
-    # fig, ax = plt.subplots(1)
-    # plt.show()
-
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
     a.init_home()  # 初始化，确保进入首页
     a.sw_init()  # 初始化刷图
+    a.hanghui()  # 行会捐赠
 
     a.gonghuizhijia()  # 家园一键领取
     a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
-    #a.mianfeishilian()  # 免费十连
+    # #a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
-    a.dianzan()  # 公会点赞
+    a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
     a.shouqu()  # 收取所有礼物
     a.hanghui()  # 行会捐赠
     a.dixiacheng()  # 地下城
@@ -54,11 +49,18 @@ def connect():  # 连接adb与uiautomator
 
     result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()
-    lines = res.splitlines()[1:]
+    lines = res.splitlines()[0:]
+    while lines[0]!='List of devices attached ':
+        del lines[0]
+    del lines[0]  # 删除表头
 
-    for i in range(0, len(lines)):
-        lines[i] = lines[i].split('\t')[0]
+    device_dic = {}  # 存储设备状态
+    for i in range(0, len(lines)-1):
+        lines[i],device_dic[lines[i]]= lines[i].split('\t')[0:]
     lines = lines[0:-1]
+    for i in range(len(lines)):
+        if device_dic[lines[i]]!='device':
+            del lines[i]
     print(lines)
     emulatornum = len(lines)
     return lines, emulatornum
@@ -132,3 +134,5 @@ if __name__ == '__main__':
 
     # 退出adb
     os.system('cd adb & adb kill-server')
+
+

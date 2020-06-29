@@ -79,14 +79,21 @@ def connect():  # 连接adb与uiautomator
 
     result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()
-    lines = res.splitlines()[1:]
+    lines = res.splitlines()[0:]
+    while lines[0]!='List of devices attached ':
+        del lines[0]
+    del lines[0]  # 删除表头
 
-    for i in range(0, len(lines)):
-        lines[i] = lines[i].split('\t')[0]
+    device_dic = {}  # 存储设备状态
+    for i in range(0, len(lines)-1):
+        lines[i],device_dic[lines[i]]= lines[i].split('\t')[0:]
     lines = lines[0:-1]
+    for i in range(len(lines)):
+        if device_dic[lines[i]]!='device':
+            del lines[i]
     print(lines)
     emulatornum = len(lines)
-    return (lines, emulatornum)
+    return lines, emulatornum
 
 
 def read():  # 读取账号
