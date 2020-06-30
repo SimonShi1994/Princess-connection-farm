@@ -403,6 +403,26 @@ class Automator:
                     break
         self.lockimg('img/liwu.bmp',elseclick=[(1,1)],elsedelay=0.5)  # 回首页
 
+    def goumaijingyan(self):
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+        self.d.click(617, 435)
+        time.sleep(2)
+        self.lockimg('img/tongchang.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=1)
+        self.d.click(387, 151)
+        time.sleep(0.3)
+        self.d.click(557, 151)
+        time.sleep(0.3)
+        self.d.click(729, 151)
+        time.sleep(0.3)
+        self.d.click(900, 151)
+        time.sleep(0.3)
+        self.d.click(785, 438)
+        time.sleep(1.5)
+        self.d.click(590, 476)
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+
+
+
     def hanghui(self):  # 自动行会捐赠
         self.lockimg('img/liwu.bmp',elseclick=[(131,533)],elsedelay=1)  # 回首页
         time.sleep(1)
@@ -1065,7 +1085,6 @@ class Automator:
         不使用挑战券挑战，xy为该图坐标
         jiaocheng=0 只处理简单的下一步和解锁内容
         jiaocheng=1 要处理复杂的教程
-        jiaocheng=2 todo 只处理下一步
         :return:
         """
         while True:
@@ -1131,7 +1150,6 @@ class Automator:
         """
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-
             num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 try:
@@ -1141,7 +1159,7 @@ class Automator:
                 time.sleep(1)
                 continue
 
-            active_path = self.get_butt_stat(screen_shot_, ['img/liwu.bmp', 'img/jiaruhanghui.jpg', 'img/xiayibu.jpg','img/wuyuyin.jpg', 'img/tiaoguo.jpg', 'img/zhuye.jpg', 'img/caidan_yuan.jpg'])
+            active_path = self.get_butt_stat(screen_shot_, ['img/liwu.bmp', 'img/jiaruhanghui.jpg', 'img/xiayibu.jpg','img/niudan_jiasu.jpg','img/wuyuyin.jpg', 'img/tiaoguo.jpg', 'img/zhuye.jpg', 'img/caidan_yuan.jpg'])
             if 'img/liwu.bmp' in active_path:
                 break
             elif 'img/jiaruhanghui.jpg' in active_path:
@@ -1150,6 +1168,9 @@ class Automator:
                 x,y = active_path['img/xiayibu.jpg']
                 self.d.click(x,y)
                 time.sleep(2)
+            elif 'img/niudan_jiasu.jpg' in active_path:
+                x,y = active_path['img/xiayibu.jpg']
+                self.d.click(x,y)
             elif 'img/wuyuyin.jpg' in active_path:
                 x,y = active_path['img/wuyuyin.jpg']
                 self.d.click(x,y)
@@ -1169,9 +1190,6 @@ class Automator:
                 time.sleep(0.7)
                 self.d.click(593,372)
                 time.sleep(2)
-            elif 'img/tiaoguo.jpg' in active_path:
-                self.d.click(593,372)
-                time.sleep(1)
             else:
                 self.d.click(1,100)
                 time.sleep(2)
@@ -1179,12 +1197,14 @@ class Automator:
         # 返回冒险
         self.d.click(480, 505)
         time.sleep(2)
+        self.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=0.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
+                self.d.click(562, 253)
+                time.sleep(0.5)
+            else:
                 break
-            self.d.click(480,513)
-        self.d.click(562, 253)
         time.sleep(3)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
@@ -1198,45 +1218,74 @@ class Automator:
         self.d.click(215,513)#角色
         time.sleep(2)
         self.d.click(177,145)#First
+        time.sleep(2)
         for i in range(5):
             while True:
-                time.sleep(2)
-                screen_shot_ = self.d.screenshot(format="opencv")
-                active_list = self.get_butt_stat(screen_shot_, ['img/ranktisheng.jpg'])
-                if 'img/ranktisheng.jpg' in active_list:
-                    self.d.click(250,338)
-                    time.sleep(2)
-                    screen_shot_ = self.d.screenshot(format="opencv")
-                    active_list = self.get_butt_stat(screen_shot_, ['img/queren.jpg', 'img/ok.bmp'])
-                    if 'img/queren.jpg' in active_list:
-                        x,y = active_list['img/queren.jpg']
-                        self.d.click(x,y)
-                    if 'img/ok.bmp' in active_list:
-                        x,y = active_list['img/ok.bmp']
-                        self.d.click(x,y)
-                    time.sleep(9)
-                    self.d.click(481,369)
+                screen_shot_ = self.d.screenshot(format='opencv')
+                if self.is_there_img(screen_shot_, 'img/keyihuode.jpg'):
+                    self.d.click(374, 435)
+                    time.sleep(1)
+                    screen_shot_ = self.d.screenshot(format='opencv')
+                    if self.is_there_img(screen_shot_, 'img/tuijianguanqia.jpg'):
+                        if self.is_there_img(screen_shot_, 'img/sanxingtongguan.jpg'):
+                            #装备可刷
+                            self.guochang(screen_shot_, ['img/sanxingtongguan.jpg'], suiji=0)
+                            time.sleep(1)
+                            self.d.click(877, 333)
+                            time.sleep(0.3)
+                            self.d.click(877, 333)
+                            time.sleep(0.3)
+                            self.d.click(752, 333)
+                            time.sleep(0.7)
+                            self.d.click(589, 371)
+                            self.lockimg('img/zidongqianghua.jpg', elseclick=[(1,100)], elsedelay=0.5, alldelay=1)
+                            self.d.click(371, 437)
+                            time.sleep(0.7)
+                            self.d.click(501,468) #important
+                            time.sleep(2)
+                            continue
+                        else:
+                            #装备不可刷
+                            self.d.click(501,468) #important
+                            time.sleep(1)
+                            break
+                    else:
+                        self.d.click(501,468) #important
+                        time.sleep(3)
+                        continue
                 else:
-                    break
-            self.d.click(375,435) # 自动强化
-            time.sleep(0.8)
-            self.d.click(542,474) # 确定/取消
-            time.sleep(2)
+                    #没有可以获得
+                    if self.is_there_img(screen_shot_, 'img/ranktisheng.jpg'):
+                        self.d.click(250, 338)
+                        time.sleep(2)
+                        screen_shot_ = self.d.screenshot(format='opencv')
+                        active_list = self.get_butt_stat(screen_shot_, ['img/queren.jpg', 'img/ok.bmp'])
+                        if 'img/queren.jpg' in active_list:
+                            x, y = active_list['img/queren.jpg']
+                            self.d.click(x, y)
+                        if 'img/ok.bmp' in active_list:
+                            x, y = active_list['img/ok.bmp']
+                            self.d.click(x, y)
+                        time.sleep(8)
+                        self.d.click(481, 369)
+                        time.sleep(1)
+                        continue
+                    else:
+                        self.d.click(371, 437)
+                        time.sleep(0.7)
+                        self.d.click(501, 468) # important
+                        time.sleep(2)
+                        break
             self.d.click(933,267) # 下一位
+            time.sleep(2)
+
         self.lockimg('img/liwu.bmp',elseclick=[(131,533)],elsedelay=1)  # 回首页
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
-                break
-            self.d.click(480, 513)
+        self.lockimg('img/zhuxianguanqia.jpg',elseclick=[(480,513)],elsedelay=3)
         self.d.click(562, 253)
         time.sleep(3)
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
-                break
-            self.d.click(704, 84)
-
+        self.lockimg('img/normal.jpg', elseclick=[(704,84)], elsedelay=0.5,alldelay=1)
+        self.d.click(923,272)
+        time.sleep(3)
 
     def setting(self):
         self.d.click(875,517)

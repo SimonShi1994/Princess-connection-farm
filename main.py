@@ -24,7 +24,7 @@ def runmain(address, account, password):
     a.gonghuizhijia()  # 家园一键领取
     a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
-    # #a.mianfeishilian()  # 免费十连
+    # a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
     a.shouqu()  # 收取所有礼物
