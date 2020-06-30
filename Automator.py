@@ -1131,7 +1131,6 @@ class Automator:
         """
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-
             num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 try:

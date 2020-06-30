@@ -17,27 +17,31 @@ def runmain(address, account, password):
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')
     t0 = time.time()
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao2.txt内
-    a.init_home()  # 初始化，确保进入首页
+
+#========现在开始完成新手教程========
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+        if num_of_white < 70000:
+            try:
+                a.d.click(x * a.dWidth, y * a.dHeight + 20)
+            except:
+                pass
+            time.sleep(1)
+            continue
+        if a.is_there_img(screen_shot_, 'img/shouye.jpg'):
+            break
+        template_path = []
+        active_path = a.get_butt_stat(screen_shot_,template_path)
+
+
+    #===========新手教程完成============
+
     time.sleep(2)
     a.setting() # 设置无动画、低帧率
 
-    while True:
-        screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
-            break
-        a.d.click(480, 513)
-    while True:
-        screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
-            a.d.click(562, 253)
-            continue
-        break
-    time.sleep(3)
-    while True:
-        screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_, 'img/normal.jpg'):
-            break
-        a.d.click(704, 84)
+    a.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480,513)],elsedelay=0.5,alldelay=1)
+    a.lockimg('img/zhuxianguanqia.jpg', ifclick=[(562,235)],ifdelay=3,alldelay=0)
     #初始化至主线关卡结束
 
     a.shoushuazuobiao(313, 341)  # 1-3
