@@ -323,7 +323,7 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot_, 'img/shouqulvli.jpg'):
                 self.d.click(809, 471)  # 点击全部收取
-                time.sleep(2.5)
+                time.sleep(1)
                 self.d.click(589, 472)  # 2020-5-29 19:41 bug fixed
                 break
         self.lockimg('img/liwu.bmp',elseclick=[(1,1)],elsedelay=0.3)  # 回首页
