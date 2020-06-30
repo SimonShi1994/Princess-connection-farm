@@ -125,7 +125,6 @@ def runmain(address, account, password):
     a.shoushuazuobiao(353, 161)  # 2-6
     a.shoushuazuobiao(453, 231)  # 2-7
     a.shoushuazuobiao(479, 316, 1)  # 2-8
-    a.qianghua() #这个强化不要也大概率可以刷到3-1，但是不能满星，且有风险
     a.shoushuazuobiao(602, 380)  # 2-9 装备危险
     a.shoushuazuobiao(646, 371)  # 2-10
     a.shoushuazuobiao(757, 344)  # 2-11
