@@ -32,24 +32,31 @@ def runmain(address,account,password):
     a.change_acc()#退出当前账号，切换下一个
 
 
-def connect():#连接adb与uiautomator
+def connect():  # 连接adb与uiautomator
     try:
-        os.system('adb connect 127.0.0.1:5554')#雷电模拟器
-        # os.system('adb connect 127.0.0.1:7555') #mumu模拟器
+        os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
+        # os.system('cd adb & adb connect 127.0.0.1:7555') #mumu模拟器
         os.system('python -m uiautomator2 init')
     except:
         print('连接失败')
 
-    result = os.popen('adb devices')#返回adb devices列表
+    result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()
-    lines=res.splitlines()[1:]
+    lines = res.splitlines()[0:]
+    while lines[0]!='List of devices attached ':
+        del lines[0]
+    del lines[0]  # 删除表头
 
-    for i in range(0,len(lines)):
-        lines[i]=lines[i].split('\t')[0]
-    lines=lines[0:-1]
+    device_dic = {}  # 存储设备状态
+    for i in range(0, len(lines)-1):
+        lines[i],device_dic[lines[i]]= lines[i].split('\t')[0:]
+    lines = lines[0:-1]
+    for i in range(len(lines)):
+        if device_dic[lines[i]]!='device':
+            del lines[i]
     print(lines)
-    emulatornum=len(lines)
-    return(lines,emulatornum)
+    emulatornum = len(lines)
+    return lines, emulatornum
 
 def read():#读取账号
     account_dic = {}

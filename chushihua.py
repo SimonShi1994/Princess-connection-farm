@@ -4,85 +4,97 @@ import time
 from utils import *
 from cv import *
 from Automator import *
-# import matplotlib.pylab as plt
+#import matplotlib.pylab as plt
 import os
 import threading
 
 
 def runmain(address, account, password):
+
     a = Automator(address)
     a.start()
 
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')
     t0 = time.time()
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao2.txt内
-    a.init_home()  # 初始化，确保进入首页
-    time.sleep(2)
-    a.setting()  # 设置无动画、低帧率
 
+#========现在开始完成新手教程========
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
-            break
-        a.d.click(480, 513)
-    while True:
-        screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
-            a.d.click(562, 253)
+        num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+        if num_of_white < 70000:
+            try:
+                a.d.click(x * a.dWidth, y * a.dHeight + 20)
+            except:
+                pass
+            time.sleep(1)
             continue
-        break
-    time.sleep(3)
-    while True:
-        screen_shot_ = a.d.screenshot(format="opencv")
-        if a.is_there_img(screen_shot_, 'img/normal.jpg'):
+        if a.is_there_img(screen_shot_, 'img/shouye.jpg'):
             break
-        a.d.click(704, 84)
-    # 初始化至主线关卡结束
+        template_path = []
+        active_path = a.get_butt_stat(screen_shot_,template_path)
+
+
+    #===========新手教程完成============
+
+    time.sleep(2)
+    a.setting() # 设置无动画、低帧率
+
+    a.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480,513)],elsedelay=0.5,alldelay=1)
+    a.lockimg('img/zhuxianguanqia.jpg', ifclick=[(562,235)],ifdelay=3,alldelay=0)
+    #初始化至主线关卡结束
 
     a.shoushuazuobiao(313, 341)  # 1-3
-    a.shoushuazuobiao(379, 240, 1)  # 1-4
-    a.shoushuazuobiao(481, 286)  # 1-5
-    a.shoushuazuobiao(545, 381, 1)  # 1-6
-    a.shoushuazuobiao(607, 304)  # 1-7
-    a.shoushuazuobiao(620, 209)  # 1-8
-    a.shoushuazuobiao(747, 243)  # 1-9
+    a.shoushuazuobiao(379,240,1) #1-4
+    a.shoushuazuobiao(481,286) # 1-5
+    a.shoushuazuobiao(545,381,1) # 1-6
+    a.shoushuazuobiao(607,304) # 1-7
+    a.shoushuazuobiao(620,209) # 1-8
+    a.shoushuazuobiao(747,243) # 1-9
     a.qianghua()
-    a.shoushuazuobiao(824, 348, 1)  # 1-10 虽然没有繁琐教程，但解锁东西过多，还是去用函数
-    a.shoushuazuobiao(129, 413, 1)  # 2-1
-    a.shoushuazuobiao(255, 413, 1)  # 2-2
+    a.shoushuazuobiao(824,348,1) # 1-10 虽然没有繁琐教程，但解锁东西过多，还是去用函数
+    a.shoushuazuobiao(129,413,1) # 2-1
+    a.shoushuazuobiao(255,413,1) # 2-2
     a.qianghua()
-    a.shoushuazuobiao(379, 379)  # 2-3
-    a.shoushuazuobiao(332, 269)  # 2-4
-    a.shoushuazuobiao(237, 206, 1)  # 2-5
-    a.shoushuazuobiao(353, 161)  # 2-6
-    a.shoushuazuobiao(453, 231)  # 2-7
-    a.shoushuazuobiao(479, 316, 1)  # 2-8
-    a.shoushuazuobiao(602, 380)  # 2-9 装备危险 602 375 -> 527,380
-    a.shoushuazuobiao(646, 371)  # 2-10
-    a.shoushuazuobiao(757, 344)  # 2-11
-    a.shoushuazuobiao(745, 229, 1)  # 2-12
-    a.shoushuazuobiao(138, 188, 1)  # 3-1
+    a.shoushuazuobiao(379,379) # 2-3
+    a.shoushuazuobiao(332,269) # 2-4
+    a.shoushuazuobiao(237,206,1) # 2-5
+    a.shoushuazuobiao(353,161) # 2-6
+    a.shoushuazuobiao(453,231) # 2-7
+    a.shoushuazuobiao(479,316,1) # 2-8
+    a.shoushuazuobiao(602,380) # 2-9 装备危险 602 375 -> 527,380
+    a.shoushuazuobiao(646,371) # 2-10
+    a.shoushuazuobiao(757,344) # 2-11
+    a.shoushuazuobiao(745,229,1) # 2-12
+    a.shoushuazuobiao(138,188,1) # 3-1
 
     a.change_acc()  # 退出当前账号，切换下一个
     t = time.time()
-    print('>>>>>>>账号：', account, '已刷完, 用时', t - t0, '秒<<<<<<<')
+    print('>>>>>>>账号：', account, '已刷完, 用时', t-t0,  '秒<<<<<<<')
 
 
 def connect():  # 连接adb与uiautomator
     try:
         os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
-        # os.system('adb connect 127.0.0.1:7555') #mumu模拟器
+        # os.system('cd adb & adb connect 127.0.0.1:7555') #mumu模拟器
         os.system('python -m uiautomator2 init')
     except:
         print('连接失败')
 
     result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()
-    lines = res.splitlines()[1:]
+    lines = res.splitlines()[0:]
+    while lines[0]!='List of devices attached ':
+        del lines[0]
+    del lines[0]  # 删除表头
 
-    for i in range(0, len(lines)):
-        lines[i] = lines[i].split('\t')[0]
+    device_dic = {}  # 存储设备状态
+    for i in range(0, len(lines)-1):
+        lines[i],device_dic[lines[i]]= lines[i].split('\t')[0:]
     lines = lines[0:-1]
+    for i in range(len(lines)):
+        if device_dic[lines[i]]!='device':
+            del lines[i]
     print(lines)
     emulatornum = len(lines)
     return lines, emulatornum
@@ -96,7 +108,7 @@ def read():  # 读取账号
             account_dic[account] = password.strip()
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
-    return account_list, account_dic, accountnum
+    return (account_list, account_dic, accountnum)
 
 
 # 主程序

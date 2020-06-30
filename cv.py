@@ -5,7 +5,7 @@ import os
 import uiautomator2 as u2
 
 
-def cv_imread(file_path):
+def cv_imread(file_path):#用于中文目录的imread函数
     cv_img = cv2.imdecode(np.fromfile(file_path,dtype=np.uint8),-1)
     return cv_img
 
@@ -34,7 +34,8 @@ class UIMatcher:
         # plt.imshow(screen)
         # plt.show()
         for template_path in template_paths:
-            template = cv_imread(template_path)
+            # template = cv_imread(template_path)#用于中文目录
+            template = cv2.imread(template_path)
             # template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)cv_imread
             h, w = template.shape[:2]  # rows->h, cols->w
             res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
