@@ -71,7 +71,7 @@ def CreatIDnum():
 
     return result
 
-
-# print(CreatIDnum())
+if __name__ == '__main__':
+    print(CreatIDnum())
 
 

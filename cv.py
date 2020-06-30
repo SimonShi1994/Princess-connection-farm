@@ -79,7 +79,7 @@ class UIMatcher:
         # plt.cla()
         # plt.imshow(screen)
         # plt.pause(0.01)
-        print(len(np.argwhere(binary == 255)),len(np.argwhere(binary == 0)))
+        print('暗点个数:', len(np.argwhere(binary == 255)),'亮点个数:', len(np.argwhere(binary == 0)))
         return num_of_white, index_1[1]/screen.shape[1], (index_1[0]+63)/screen.shape[0]
 
 
