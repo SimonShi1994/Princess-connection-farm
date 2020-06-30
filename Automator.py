@@ -1169,7 +1169,7 @@ class Automator:
                 self.d.click(x,y)
                 time.sleep(2)
             elif 'img/niudan_jiasu.jpg' in active_path:
-                x,y = active_path['img/xiayibu.jpg']
+                x,y = active_path['img/niudan_jiasu.jpg']
                 self.d.click(x,y)
             elif 'img/wuyuyin.jpg' in active_path:
                 x,y = active_path['img/wuyuyin.jpg']
