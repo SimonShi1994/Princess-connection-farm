@@ -166,7 +166,7 @@ def connect():  # 连接adb与uiautomator
 
 def read():  # 读取账号
     account_dic = {}
-    with open('zhanghao_init.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao2.txt内,不是zhanghao.txt!!!!!
+    with open('zhanghao_init.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao_init.txt内,不是zhanghao.txt!!!!!
         for i, line in enumerate(f):
             account, password = line.split('\t')[0:2]
             account_dic[account] = password.strip()
