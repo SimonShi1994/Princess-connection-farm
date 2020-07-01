@@ -1115,13 +1115,15 @@ class Automator:
         if jiaocheng == 1:  # 有复杂的教程，交给教程函数处理
             self.chulijiaocheng()
         else:  # 无复杂的教程，自己处理掉“下一步”
+            time.sleep(0.2)
+            self.d.click(832, 506)
+            time.sleep(0.7)
             while True:
                 self.d.click(832, 506)
-                time.sleep(1)
+                time.sleep(5)
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                     break
-            time.sleep(2)
             while True:  # 两次确认回到挑战界面
                 self.d.click(1, 100)
                 time.sleep(0.5)
