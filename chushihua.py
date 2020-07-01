@@ -105,28 +105,49 @@ def runmain(address, account, password):
 
     # ===========前期准备结束============
     # =============开始刷图==============
+    print("emu:", address, "stage:1-3")
     a.shoushuazuobiao(313, 341)  # 1-3
+    print("emu:", address, "stage:1-4")
     a.shoushuazuobiao(379, 240, 1)  # 1-4
+    print("emu:", address, "stage:1-5")
     a.shoushuazuobiao(481, 286)  # 1-5
+    print("emu:", address, "stage:1-6")
     a.shoushuazuobiao(545, 381, 1)  # 1-6
+    print("emu:", address, "stage:1-7")
     a.shoushuazuobiao(607, 304)  # 1-7
+    print("emu:", address, "stage:1-8")
     a.shoushuazuobiao(620, 209)  # 1-8
+    print("emu:", address, "stage:1-9")
     a.shoushuazuobiao(747, 243)  # 1-9
     a.qianghua()
-    a.shoushuazuobiao(824, 348, 1)  # 1-10 虽然没有繁琐教程，但解锁东西过多，还是去用函数
+    print("emu:", address, "stage:1-10")
+    a.shoushuazuobiao(824, 348, 1)  # 1-10
+    print("emu:", address, "stage:2-1")
     a.shoushuazuobiao(129, 413, 1)  # 2-1
+    print("emu:", address, "stage:2-2")
     a.shoushuazuobiao(255, 413, 1)  # 2-2
     a.qianghua()
+    print("emu:", address, "stage:2-3")
     a.shoushuazuobiao(379, 379)  # 2-3
+    print("emu:", address, "stage:2-4")
     a.shoushuazuobiao(332, 269)  # 2-4
+    print("emu:", address, "stage:2-5")
     a.shoushuazuobiao(237, 206, 1)  # 2-5
+    print("emu:", address, "stage:2-6")
     a.shoushuazuobiao(353, 161)  # 2-6
+    print("emu:", address, "stage:2-7")
     a.shoushuazuobiao(453, 231)  # 2-7
+    print("emu:", address, "stage:2-8")
     a.shoushuazuobiao(479, 316, 1)  # 2-8
+    print("emu:", address, "stage:2-9")
     a.shoushuazuobiao(602, 380)  # 2-9 装备危险
+    print("emu:", address, "stage:2-10")
     a.shoushuazuobiao(646, 371)  # 2-10
+    print("emu:", address, "stage:2-11")
     a.shoushuazuobiao(757, 344)  # 2-11
+    print("emu:", address, "stage:2-12")
     a.shoushuazuobiao(745, 229, 1)  # 2-12
+    print("emu:", address, "stage:3-1")
     a.shoushuazuobiao(138, 188, 1)  # 3-1
 
     a.change_acc()  # 退出当前账号，切换下一个
