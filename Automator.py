@@ -1087,8 +1087,7 @@ class Automator:
                 break
             self.d.click(1, 138)
             time.sleep(1)
-        self.d.click(x, y)
-        time.sleep(1.5)
+        self.lockimg('img/tiaozhan.jpg', elseclick=[(x, y)], elsedelay=3)
         self.d.click(840, 454)
         time.sleep(0.7)
 
@@ -1226,10 +1225,9 @@ class Automator:
                             # 装备可刷
                             self.guochang(screen_shot_, ['img/sanxingtongguan.jpg'], suiji=0)
                             time.sleep(1)
-                            self.d.click(877, 333)
-                            time.sleep(0.3)
-                            self.d.click(877, 333)
-                            time.sleep(0.3)
+                            for _ in range(3):
+                                self.d.click(877, 333)
+                                time.sleep(0.3)
                             self.d.click(752, 333)
                             time.sleep(0.7)
                             self.d.click(589, 371)
