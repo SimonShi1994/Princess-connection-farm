@@ -4,7 +4,6 @@ import time
 from utils import *
 from cv import *
 from Automator import *
-# import matplotlib.pylab as plt
 import os
 import threading
 
@@ -20,7 +19,6 @@ def runmain(address, account, password):
     if need_auth:
         auth_name, auth_id = random_name(), CreatIDnum()
         a.auth(auth_name=auth_name, auth_id=auth_id)
-
 
     # ========现在开始完成新手教程========
     """
@@ -39,8 +37,8 @@ def runmain(address, account, password):
 
     默认，点击(1,100)
     """
-    count = 0 #记录跳过战斗的数量
-    times = 0 #记录主页出现的次数
+    skipped_fight = 0  # 记录跳过战斗的数量
+    times = 0  # 记录主页出现的次数
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
         num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
@@ -59,10 +57,10 @@ def runmain(address, account, password):
                 time.sleep(0.5)
                 break
             continue
-        template_path = ['img/caidan.jpg','img/caidan_yuan.jpg']
+        template_path = ['img/caidan.jpg', 'img/caidan_yuan.jpg']
         active_path = a.get_butt_stat(screen_shot_, template_path)
-        if count < 2 and ('img/caidan.jpg' in active_path): #有两场战斗是可以跳过的
-            count += 1
+        if skipped_fight < 2 and ('img/caidan.jpg' in active_path):  # 有两场战斗是可以跳过的
+            skipped_fight += 1
             a.d.click(900, 25)
             time.sleep(0.8)
             a.d.click(591, 370)
@@ -81,10 +79,10 @@ def runmain(address, account, password):
             time.sleep(3)
             continue
         if a.is_there_img(screen_shot_, 'img/liwu.bmp'):
-            if times==2:
+            if times == 2:
                 break
             times += 1
-            print('在主页的第',times,'次')
+            print('在主页的第', times, '次')
         # default
         a.d.click(1, 100)
         time.sleep(0.8)
@@ -93,7 +91,7 @@ def runmain(address, account, password):
     # ===========新手教程完成============
     # ===========开始前期准备============
 
-    a.lockimg('img/liwu.jpg', elseclick=[(1,100)], elsedelay=0.5, alldelay=2)
+    a.lockimg('img/liwu.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=2)
 
     a.shouqu()  # 拿一点钻石用于买扫荡券，理论上至少能拿到300钻
     a.goumaimana(1)  # 买扫荡券
