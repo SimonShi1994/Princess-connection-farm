@@ -1,4 +1,6 @@
 import random
+import string
+
 
 def random_name():
     # 删减部分，比较大众化姓氏
@@ -41,8 +43,8 @@ def random_name():
 
         return firstName_name + name_1 + boy_name
 
-def CreatIDnum():
 
+def CreatIDnum():
     jiaoyan = 10
     all_ = 0
     result = 0
@@ -72,6 +74,15 @@ def CreatIDnum():
     return result
 
 
-# print(CreatIDnum())
+def token():
+    token = ''
+    s = string.ascii_lowercase
+    for _ in range(4):
+        token += random.choice(s)
+        token += str(random.choice(range(10)))
+    return token
 
 
+if __name__ == '__main__':
+    for i in range(100):
+        print(token())
