@@ -1301,4 +1301,47 @@ class Automator:
         time.sleep(1)
         self.d.click(95,516)
 
+    def get_tili(self):
+        #利用baiduOCR获取当前体力值（要保证当前界面有‘主菜单’选项）
+        #API key存放在baiduocr.txt中
+        #格式：apiKey secretKey（中间以一个\t作为分隔符）
+        #返回值：一个int类型整数；如果读取失败返回-1
+        from aip import AipOcr
+        print('初始化百度OCR识别')
+        with open('baiduocr.txt','r') as faip:
+            fconfig=faip.read()
+        apiKey,secretKey=fconfig.split('\t')
+        if len(apiKey)==0 or len(secretKey)==0 :
+            print('读取SecretKey或apiKey失败！')
+            return -1
+        config = {
+            'appId': 'PCR',
+            'apiKey': apiKey,
+            'secretKey': secretKey
+        }
 
+        client = AipOcr(**config)
+
+        self.d.click(871, 513)  # 主菜单
+        while True:  # 锁定帮助
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if self.is_there_img(screen_shot_, 'img/bangzhu.jpg'):
+                break
+        # cv2.imwrite('all.png',screen_shot_)
+        part = screen_shot_[526:649, 494:524]  # 获取体力区域
+
+        from numpy import rot90
+        part = rot90(part)#图片旋转90度
+        filename = 'tili_part.png'
+        cv2.imwrite(filename, part)
+        with open(filename, 'rb') as fp:
+            byte_p = fp.read()
+
+        try:
+            result = client.basicGeneral(byte_p)['words_result'][1]['words'].split('/')[0]  # 当前体力
+        except:
+            print('百度云识别失败！请检查apikey和secretkey是否有误！')
+            return -1
+        # print(result)
+        # print(result)
+        return int(result)
