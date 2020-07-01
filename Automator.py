@@ -202,6 +202,17 @@ class Automator:
         self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.5)  # 首页锁定
         time.sleep(0.5)
         self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.2)  # 首页锁定
+        time.sleep(0.5)
+        # 这里防一波第二天可可萝跳脸教程
+        screen_shot_ = self.d.screenshot(format='opencv')
+        num_of_white, _, _ = UIMatcher.find_gaoliang(screen_shot_)
+        if num_of_white < 50000:
+            self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
+            self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2)  # 首页锁定
+            return
+        if self.is_there_img(screen_shot_, 'img/kekeluo.bmp'):
+            self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
+            self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2)  # 首页锁定
 
     def sw_init(self):
         self.switch = 0

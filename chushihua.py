@@ -4,7 +4,6 @@ import time
 from utils import *
 from cv import *
 from Automator import *
-# import matplotlib.pylab as plt
 import os
 import threading
 
