@@ -37,6 +37,7 @@ def runmain(address, account, password, kickflag=0):
         a.tichuhanghui()
     a.change_acc()  # 退出当前账号，切换下一个
 
+
 def invitemain(address, account, password, inviteUID):
     # 邀请入会函数，请不要更改本函数中的功能
     a = Automator(address)
@@ -47,6 +48,7 @@ def invitemain(address, account, password, inviteUID):
     a.yaoqinghanghui(inviteUID)
     a.change_acc()  # 退出当前账号，切换下一个
 
+
 def acceptmain(address, account, password):
     # 接受入会邀请函数，请不要更改本函数中的功能
     a = Automator(address)
@@ -56,6 +58,7 @@ def acceptmain(address, account, password):
     a.init_home()
     a.jieshouhanghui()
     a.change_acc()  # 退出当前账号，切换下一个
+
 
 def connect():  # 连接adb与uiautomator
     try:
@@ -68,16 +71,16 @@ def connect():  # 连接adb与uiautomator
     result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()
     lines = res.splitlines()[0:]
-    while lines[0]!='List of devices attached ':
+    while lines[0] != 'List of devices attached ':
         del lines[0]
     del lines[0]  # 删除表头
 
     device_dic = {}  # 存储设备状态
-    for i in range(0, len(lines)-1):
-        lines[i],device_dic[lines[i]]= lines[i].split('\t')[0:]
+    for i in range(0, len(lines) - 1):
+        lines[i], device_dic[lines[i]] = lines[i].split('\t')[0:]
     lines = lines[0:-1]
     for i in range(len(lines)):
-        if device_dic[lines[i]]!='device':
+        if device_dic[lines[i]] != 'device':
             del lines[i]
     print(lines)
     emulatornum = len(lines)
@@ -100,14 +103,15 @@ def read(filename):  # 读取账号
     accountnum = len(account_list)
     return account_list, account_dic, accountnum, fun_list, fun_dic
 
+
 def readauth(filename):  # 读取记有大号和会长账号的txt
     with open(filename, 'r') as f:  # 注意！请把大号和会长账号密码写在zhanghao.txt内
         line = f.readline()
-        account_boss,password_boss,UID = line.split('\t')
+        account_boss, password_boss, UID = line.split('\t')
         line = f.readline()
-        account_1,password_1 = line.split('\t')[0:2]
+        account_1, password_1 = line.split('\t')[0:2]
         line = f.readline()
-        account_2,password_2 = line.split('\t')[0:2]
+        account_2, password_2 = line.split('\t')[0:2]
     return (account_boss, password_boss, UID, account_1, password_1, account_2, password_2)
 
 
@@ -160,24 +164,24 @@ if __name__ == '__main__':
     for t in thread_list:
         t.join()
 
-    #读取大号和会长账号
+    # 读取大号和会长账号
     account_boss, password_boss, UID, account_1, password_1, account_2, password_2 = readauth()
-    #执行会长1的日常任务+踢出大号
-    t = threading.Thread(target=runmain, 
+    # 执行会长1的日常任务+踢出大号
+    t = threading.Thread(target=runmain,
                          args=(lines[0], account_1, password_1, 1))
     t.start()
     t.join()
-    #执行会长2的邀请大号任务
-    t = threading.Thread(target=invitemain, 
+    # 执行会长2的邀请大号任务
+    t = threading.Thread(target=invitemain,
                          args=(lines[0], account_2, password_2, UID))
     t.start()
     t.join()
-    #执行大号的接受邀请任务
-    t = threading.Thread(target=acceptmain, 
+    # 执行大号的接受邀请任务
+    t = threading.Thread(target=acceptmain,
                          args=(lines[0], account_boss, password_boss))
     t.start()
     t.join()
-#==============================第二轮===========================
+    # ==============================第二轮===========================
     # 读取账号
     account_list, account_dic, accountnum, _, _ = read('40_2.txt')
 
@@ -209,23 +213,21 @@ if __name__ == '__main__':
     for t in thread_list:
         t.join()
 
-    #执行会长2的日常任务+踢出大号
-    t = threading.Thread(target=runmain, 
+    # 执行会长2的日常任务+踢出大号
+    t = threading.Thread(target=runmain,
                          args=(lines[0], account_2, password_2, 1))
     t.start()
     t.join()
-    #执行会长1的邀请大号任务
-    t = threading.Thread(target=invitemain, 
+    # 执行会长1的邀请大号任务
+    t = threading.Thread(target=invitemain,
                          args=(lines[0], account_1, password_1, UID))
     t.start()
     t.join()
-    #执行大号的接受邀请任务
-    t = threading.Thread(target=acceptmain, 
+    # 执行大号的接受邀请任务
+    t = threading.Thread(target=acceptmain,
                          args=(lines[0], account_boss, password_boss))
     t.start()
     t.join()
 
     # 退出adb
     os.system('cd adb & adb kill-server')
-
-
