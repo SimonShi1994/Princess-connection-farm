@@ -1087,7 +1087,7 @@ class Automator:
                 break
             self.d.click(1, 138)
             time.sleep(1)
-        self.lockimg('img/tiaozhan.jpg', elseclick=[(x, y)], elsedelay=3)
+        self.lockimg('img/tiaozhan.jpg', elseclick=[(x, y)], elsedelay=2)
         self.d.click(840, 454)
         time.sleep(0.7)
 
@@ -1115,9 +1115,9 @@ class Automator:
         if jiaocheng == 1:  # 有复杂的教程，交给教程函数处理
             self.chulijiaocheng()
         else:  # 无复杂的教程，自己处理掉“下一步”
-            time.sleep(0.2)
-            self.d.click(832, 506)
-            time.sleep(0.7)
+            for _ in range(7):
+                self.d.click(832, 506)
+                time.sleep(0.2)
             while True:
                 self.d.click(832, 506)
                 time.sleep(5)
