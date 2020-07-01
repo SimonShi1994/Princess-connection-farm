@@ -530,21 +530,21 @@ class Automator:
         map为主图
         """
         # 体力单独设置
-        # for i in range(7):
-        #     while True:
-        #         screen_shot_ = self.d.screenshot(format="opencv")
-        #         if self.is_there_img(screen_shot_, 'img/liwu.bmp'):
-        #             break
-        #         self.d.click(100, 505)
-        #         time.sleep(1)  # 首页锁定，保证回到首页
-        #     self.d.click(320, 31)
-        #     time.sleep(0.5)
-        #     screen_shot = self.d.screenshot(format="opencv")
-        #     self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
-        #     time.sleep(0.5)
-        #     screen_shot = self.d.screenshot(format="opencv")
-        #     self.guochang(screen_shot, ['img/zhandou_ok.jpg'], suiji=1)
-        #     self.d.click(100, 505)  # 点击一下首页比较保险
+        for i in range(7):
+            while True:
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/liwu.bmp'):
+                    break
+                self.d.click(100, 505)
+                time.sleep(1)  # 首页锁定，保证回到首页
+            self.d.click(320, 31)
+            time.sleep(0.5)
+            screen_shot = self.d.screenshot(format="opencv")
+            self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
+            time.sleep(0.5)
+            screen_shot = self.d.screenshot(format="opencv")
+            self.guochang(screen_shot, ['img/zhandou_ok.jpg'], suiji=1)
+            self.d.click(100, 505)  # 点击一下首页比较保险
         # 进入冒险
         time.sleep(2)
         self.d.click(480, 505)
