@@ -1119,11 +1119,14 @@ class Automator:
                 self.d.click(832, 506)
                 time.sleep(0.2)
             while True:
-                self.d.click(832, 506)
-                time.sleep(5)
+                time.sleep(2)
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if self.is_there_img(screen_shot_, 'img/normal.jpg'):
                     break
+                elif self.is_there_img(screen_shot_, 'img/xiayibu.jpg'):
+                    self.d.click(832, 506)
+                else:
+                    self.d.click(1, 100)
             while True:  # 两次确认回到挑战界面
                 self.d.click(1, 100)
                 time.sleep(0.5)
