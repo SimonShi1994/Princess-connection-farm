@@ -1196,25 +1196,25 @@ class Automator:
         if jiaocheng == 1: #有复杂的教程，交给教程函数处理
             self.chulijiaocheng()
         else:  # 无复杂的教程，自己处理掉“下一步”
-            time.sleep(0.2)
-            self.d.click(832,586)
-            time.sleep(0.7)
-            while True:
+            for _ in range(7):
                 self.d.click(832, 506)
+                time.sleep(0.2)
+            while True:
                 time.sleep(2)
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_,lockpic,cut=screencut):
+                if self.is_there_img(screen_shot_, lockpic,cut=screencut):
                     break
                 elif self.is_there_img(screen_shot_, 'img/xiayibu.jpg'):
                     self.d.click(832, 506)
                 else:
                     self.d.click(1, 100)
-            while True: # 两次确认回到挑战界面
+            while True:  # 两次确认回到挑战界面
                 self.d.click(1, 100)
                 time.sleep(0.5)
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if self.is_there_img(screen_shot_, lockpic,cut=screencut):
                     break
+
 
 
     def chulijiaocheng(self):  # 处理教程, 最终返回刷图页面
