@@ -1112,12 +1112,11 @@ class Automator:
         # 完成战斗后
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
-    def shoushuazuobiao(self, x, y, jiaocheng=0, kuaijin=0, lockpic='img/normal.jpg', screencut=None):
+    def shoushuazuobiao(self, x, y, jiaocheng=0, lockpic='img/normal.jpg', screencut=None):
         """
         不使用挑战券挑战，xy为该图坐标
         jiaocheng=0 只处理简单的下一步和解锁内容
         jiaocheng=1 要处理复杂的教程
-        kuaijin: 是否按一次快进和自动
         lockpic: 返回时锁定的图
         screencut: 返回时锁定的图的搜索范围
         :return:
@@ -1139,12 +1138,6 @@ class Automator:
                 break
             self.d.click(840, 454)  # 点到进入战斗画面
             time.sleep(0.7)
-        if kuaijin:
-            time.sleep(5)
-            self.d.click(915, 429)
-            time.sleep(0.7)
-            self.d.click(915, 498)
-            time.sleep(1)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             result = self.get_butt_stat(screen_shot_, ['img/kuaijin.jpg', 'img/auto.jpg', 'img/wanjiadengji.jpg'])

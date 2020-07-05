@@ -4,8 +4,6 @@ import threading
 
 from Automator import *
 
-KaiGuan = False  # True：1-3时开启两倍和Auto（要求之前没开启过，否则就会关掉） False:不开启
-
 
 def runmain(address, account, password):
     a = Automator(address)
@@ -102,7 +100,7 @@ def runmain(address, account, password):
     # ===========前期准备结束============
     # =============开始刷图==============
     # 如果执行了新手教程，应该已经开成两倍速了，否则直接
-    a.shoushuazuobiao(313, 341, 0 if KaiGuan else -1)  # 1-3
+    a.shoushuazuobiao(313, 341)  # 1-3
     a.shoushuazuobiao(379, 240, 1)  # 1-4
     a.shoushuazuobiao(481, 286)  # 1-5
     a.shoushuazuobiao(545, 381, 1)  # 1-6
