@@ -1254,6 +1254,7 @@ class Automator:
             time.sleep(0.5)
 
     def qianghua(self):
+        # 此处逻辑极为复杂，代码不好理解
         time.sleep(3)
         self.d.click(215, 513)  # 角色
         time.sleep(3)
@@ -1264,33 +1265,56 @@ class Automator:
             while True:
                 screen_shot_ = self.d.screenshot(format='opencv')
                 if self.is_there_img(screen_shot_, 'img/keyihuode.jpg'):
+                    # 存在可以获得，则一直获得到没有可以获得，或者没有三星
                     self.d.click(374, 435)
                     time.sleep(1)
                     screen_shot_ = self.d.screenshot(format='opencv')
                     if self.is_there_img(screen_shot_, 'img/tuijianguanqia.jpg'):
-                        if self.is_there_img(screen_shot_, 'img/sanxingtongguan.jpg'):
-                            # 装备可刷
-                            self.guochang(screen_shot_, ['img/sanxingtongguan.jpg'], suiji=0)
-                            time.sleep(1)
-                            self.d.click(877, 333)
-                            time.sleep(0.3)
-                            self.d.click(877, 333)
-                            time.sleep(0.3)
-                            self.d.click(752, 333)
-                            time.sleep(0.7)
-                            self.d.click(589, 371)
-                            self.lockimg('img/zidongqianghua.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=1)
-                            self.d.click(371, 437)
-                            time.sleep(0.7)
-                            self.d.click(501, 468)  # important
-                            time.sleep(2)
-                            continue
-                        else:
-                            # 装备不可刷
+                        # 已经强化到最大等级，开始获取装备
+                        if not self.is_there_img(screen_shot_, 'img/sanxingtongguan.jpg'):
+                            # 装备不可刷，换人
                             self.d.click(501, 468)  # important
                             time.sleep(1)
                             break
+                        while self.is_there_img(screen_shot_, 'img/sanxingtongguan.jpg'):
+                            # 一直刷到没有有推荐关卡但没有三星或者返回到角色列表
+                            self.guochang(screen_shot_, ['img/sanxingtongguan.jpg'], suiji=0)
+                            time.sleep(1)
+                            # 使用扫荡券的数量：
+                            for _ in range(4 - 1):
+                                self.d.click(877, 333)
+                                time.sleep(0.3)
+                            self.d.click(752, 333)
+                            time.sleep(0.7)
+                            self.d.click(589, 371)
+                            while True:
+                                screen_shot_ = self.d.screenshot(format='opencv')
+                                active_paths = self.get_butt_stat(screen_shot_, ['img/tuijianguanqia.jpg', 'img/zidongqianghua.jpg', 'img/tiaoguo.jpg'])
+                                if 'img/tiaoguo.jpg' in active_paths:
+                                    x, y = active_paths['img/tiaoguo.jpg']
+                                    self.d.click(x, y)
+                                if 'img/tuijianguanqia.jpg' in active_paths:
+                                    flag = 'img/tuijianguanqia.jpg'
+                                    break
+                                elif 'img/zidongqianghua.jpg' in active_paths:
+                                    flag = 'img/zidongqianghua.jpg'
+                                    break
+                                else:
+                                    self.d.click(1,100)
+                                    time.sleep(1.3)
+                            if flag == 'img/zidongqianghua.jpg':
+                                # 装备获取完成，跳出小循环，重进大循环
+                                self.d.click(371, 437)
+                                time.sleep(0.7)
+                                break
+                            else:
+                                # 装备未获取完毕，继续尝试获取
+                                continue
+                        self.d.click(501, 468)  # important
+                        time.sleep(2)
+                        continue
                     else:
+                        # 未强化到最大等级，强化到最大登记
                         self.d.click(501, 468)  # important
                         time.sleep(3)
                         continue

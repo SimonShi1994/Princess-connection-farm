@@ -134,7 +134,7 @@ def runmain(address, account, password):
     # 结束刷图
     # 开始探索
     a.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
-    a.tansuo(mode=2)
+    # a.tansuo(mode=2) 还有问题，暂时关闭
     a.shouqurenwu()
     a.change_acc()  # 退出当前账号，切换下一个
     t = time.time()
