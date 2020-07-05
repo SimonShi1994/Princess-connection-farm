@@ -1,11 +1,8 @@
-import uiautomator2 as u2
-import time
-from utils import *
-from cv import *
-from Automator import *
 # import matplotlib.pylab as plt
 import os
 import threading
+
+from Automator import *
 
 KaiGuan = False  # True：1-3时开启两倍和Auto（要求之前没开启过，否则就会关掉） False:不开启
 

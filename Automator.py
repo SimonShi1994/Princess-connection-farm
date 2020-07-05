@@ -1,7 +1,6 @@
 # coding=utf-8
-import uiautomator2 as u2
 import time
-from utils import *
+
 from cv import *
 
 
@@ -195,7 +194,6 @@ class Automator:
         self.lockimg('img/ok.bmp', ifclick=[(591, 440)], ifdelay=1)  # 点击ok
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5)  # 回首页
 
-
     def login_auth(self, ac, pwd):
         need_auth = self.login(ac=ac, pwd=pwd)
         if need_auth:
@@ -217,6 +215,7 @@ class Automator:
         if self.is_there_img(screen_shot_, 'img/kekeluo.bmp'):
             self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
             self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2)  # 首页锁定
+
     def sw_init(self):
         self.switch = 0
 
@@ -224,19 +223,6 @@ class Automator:
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
         self.d.click(622, 509)
         time.sleep(8)
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            screen_shot_ = screen_shot_[871:960, 463:549]
-            if self.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
-                self.d.click(917, 39)  # 菜单
-                time.sleep(1)
-                self.d.click(807, 44)  # 跳过
-                time.sleep(1)
-                self.d.click(589, 367)  # 跳过ok
-                time.sleep(1)
-                time.sleep(8)
-            else:
-                break
         for _ in range(2):
             self.d.click(899, 429)  # 一键领取
             time.sleep(3)
@@ -1195,7 +1181,6 @@ class Automator:
                 if self.is_there_img(screen_shot_, lockpic, cut=screencut):
                     break
 
-
     def chulijiaocheng(self):  # 处理教程, 最终返回刷图页面
         """
         有引导点引导
@@ -1290,7 +1275,7 @@ class Automator:
                     screen_shot_ = self.d.screenshot(format='opencv')
                     if self.is_there_img(screen_shot_, 'img/tuijianguanqia.jpg'):
                         if self.is_there_img(screen_shot_, 'img/sanxingtongguan.jpg'):
-                            #装备可刷
+                            # 装备可刷
                             self.guochang(screen_shot_, ['img/sanxingtongguan.jpg'], suiji=0)
                             time.sleep(1)
                             self.d.click(877, 333)
@@ -1316,7 +1301,7 @@ class Automator:
                         time.sleep(3)
                         continue
                 else:
-                    #没有可以获得
+                    # 没有可以获得
                     if self.is_there_img(screen_shot_, 'img/ranktisheng.jpg'):
                         self.d.click(250, 338)
                         time.sleep(2)
