@@ -592,32 +592,6 @@ class Automator:
 
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
-    def shuatu3(self):
-        # 进入冒险
-        time.sleep(2)
-        self.d.click(480, 505)
-        time.sleep(2)
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
-                break
-        self.d.click(562, 253)
-        time.sleep(2)
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
-                break
-        # self.shoushuazuobiao()
-        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-        time.sleep(2)
-        self.shuatuzuobiao(580, 401, self.times)  # 8-7
-        self.shuatuzuobiao(546, 263, self.times)  # 8-6
-        self.shuatuzuobiao(457, 334, self.times)  # 8-5
-        self.shuatuzuobiao(388, 240, self.times)  # 8-4
-        self.shuatuzuobiao(336, 314, self.times)  # 8-3
-        self.shuatuzuobiao(230, 371, self.times)  # 8-2
-        self.shuatuzuobiao(193, 255, self.times)  # 8-1
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def shuatu8(self):
         # 进入冒险
