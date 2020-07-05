@@ -91,7 +91,7 @@ def runmain(address, account, password):
     a.lockimg('img/liwu.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=2)
     a.shouqu()  # 拿一点钻石用于买扫荡券，理论上至少能拿到300钻
     a.goumaimana(1)  # 买扫荡券
-    a.goumaitili(4)
+    a.goumaitili(3)
     a.goumaijingyan()
 
     a.setting()  # 设置无动画、低帧率
@@ -104,7 +104,6 @@ def runmain(address, account, password):
     a.shoushuazuobiao(379, 240, 1)  # 1-4
     a.shoushuazuobiao(481, 286)  # 1-5
     a.shoushuazuobiao(545, 381, 1)  # 1-6
-    a.qianghua()
     a.shoushuazuobiao(607, 304)  # 1-7
     a.shoushuazuobiao(620, 209)  # 1-8
     a.shoushuazuobiao(747, 243)  # 1-9
@@ -130,7 +129,6 @@ def runmain(address, account, password):
     time.sleep(1)
     a.shoushuazuobiao(741, 228, 1)  # 2-12
     a.shoushuazuobiao(138, 188, 1)  # 3-1
-    a.qianghua()
     # 结束刷图
     # 开始探索
     a.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
