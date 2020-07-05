@@ -1,7 +1,7 @@
 # coding=utf-8
-import uiautomator2 as u2
 import time
 from utils import *
+import uiautomator2 as u2
 from cv import *
 
 
@@ -81,8 +81,11 @@ class Automator:
         print('')
         return return_dic
 
-    def is_there_img(self, screen, img, threshold=0.84):
+    def is_there_img(self, screen, img, threshold=0.84, cut=None):
         # 输入要判断的图片path，屏幕截图，返回是否存在大于阈值的图片的布尔值
+        # cut: (x1,y1,x2,y2)
+        if cut is not None:
+            screen = screen[cut[1]:cut[3] + 1, cut[0]:cut[2] + 1]
         active_path = self.get_butt_stat(screen, [img], threshold)
         if img in active_path:
             return True
@@ -124,7 +127,7 @@ class Automator:
             ifdelay:上述点击后延迟的时间
         @return:无
         """
-        while True:  # 
+        while True:  #
             screen_shot = self.d.screenshot(format="opencv")
             if self.is_there_img(screen_shot, img):
                 if ifclick != []:
@@ -332,7 +335,7 @@ class Automator:
                 break
             self.d.click(1, 1)
             time.sleep(1)
-        time.sleep(2)
+        time.sleep(3.5)
         self.d.click(846, 437)  # 全部收取
         time.sleep(1)
         self.d.click(100, 505)
@@ -370,33 +373,53 @@ class Automator:
             self.guochang(screen_shot, ['img/zhandou_ok.jpg'], suiji=1)
             self.d.click(100, 505)  # 点击一下首页比较保险
 
-    def goumaimana(self, times):
-        time.sleep(2)
-        self.d.click(189, 62)
-        while True:  # 锁定取消2
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/quxiao2.jpg'):
-                break
-            self.d.click(189, 62)
+    def goumaimana(self, times, mode=1):
+        # mode 1: 购买times次10连
+        # mode 0：购买times次1连
+        if mode == 0:
             time.sleep(2)
-        self.d.click(596, 471)  # 第一次购买的位置
-        while True:  # 锁定ok
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
-                self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
-                break
-        for i in range(times):  # 购买剩下的times次
+            self.d.click(189, 62)
+            for i in range(times):
+                while True:  # 锁定取消2
+                    screen_shot_ = self.d.screenshot(format="opencv")
+                    if self.is_there_img(screen_shot_, 'img/quxiao2.jpg'):
+                        break
+                    self.d.click(189, 62)
+                    time.sleep(2)
+                self.d.click(596, 471)  # 第一次购买的位置
+                while True:  # 锁定ok
+                    screen_shot_ = self.d.screenshot(format="opencv")
+                    if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                        self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
+                        break
+        else:
+            time.sleep(2)
+            self.d.click(189, 62)
             while True:  # 锁定取消2
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if self.is_there_img(screen_shot_, 'img/quxiao2.jpg'):
                     break
-            time.sleep(3)
-            self.d.click(816, 478)  # 购买10次
+                self.d.click(189, 62)
+                time.sleep(2)
+            self.d.click(596, 471)  # 第一次购买的位置
             while True:  # 锁定ok
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if self.is_there_img(screen_shot_, 'img/ok.bmp'):
                     self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                     break
+            for i in range(times):  # 购买剩下的times次
+                while True:  # 锁定取消2
+                    screen_shot_ = self.d.screenshot(format="opencv")
+                    if self.is_there_img(screen_shot_, 'img/quxiao2.jpg'):
+                        break
+                time.sleep(3)
+                self.d.click(816, 478)  # 购买10次
+                while True:  # 锁定ok
+                    screen_shot_ = self.d.screenshot(format="opencv")
+                    if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                        self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
+                        break
+
         self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.5)  # 回首页
 
     def goumaijingyan(self):
@@ -959,7 +982,13 @@ class Automator:
         self.d.click(1, 1)  # 取消显示结算动画
         time.sleep(1)
 
-    def tansuo(self):  # 探索函数
+    def tansuo(self, mode=0):  # 探索函数
+        """
+        mode 0: 刷最上面的
+        mode 1: 刷次上面的
+        mode 2: 第一次手动过最上面的，再刷一次次上面的
+        mode 3: 第一次手动过最上面的，再刷一次最上面的
+        """
         self.d.click(480, 505)
         time.sleep(1)
         while True:  # 锁定地下城
@@ -970,16 +999,21 @@ class Automator:
             time.sleep(1)
         self.d.click(734, 142)  # 探索
         time.sleep(3.5)
-        while True:  # 锁定凯留头
+        while True:  # 锁定凯留头（划掉）返回按钮
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/kailiu.jpg'):
+            if self.is_there_img(screen_shot_, 'img/fanhui.bmp', cut=(16, 12, 54, 48)):
                 break
             self.d.click(1, 1)
             time.sleep(0.5)
         # 经验
         self.d.click(592, 255)  # 经验
         time.sleep(3)
-        self.d.click(704, 152)  # 5级
+        if mode >= 2:
+            self.shoushuazuobiao(704, 152, lockpic='img/fanhui.bmp', screencut=(16, 12, 54, 48))
+        if mode == 0 or mode == 3:
+            self.d.click(704, 152)  # 5级
+        else:
+            self.d.click(707, 265)  # 倒数第二
         time.sleep(1.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
@@ -1002,11 +1036,15 @@ class Automator:
                 break
             self.d.click(1, 1)
             time.sleep(1)
-
         # mana
         self.d.click(802, 267)  # mana
         time.sleep(3)
-        self.d.click(704, 152)  # 5级
+        if mode >= 2:
+            self.shoushuazuobiao(704, 152, lockpic='img/fanhui.bmp', screencut=(16, 12, 54, 48))
+        if mode == 0 or mode == 3:
+            self.d.click(704, 152)  # 5级
+        else:
+            self.d.click(707, 265)  # 倒数第二
         time.sleep(1.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
@@ -1074,20 +1112,23 @@ class Automator:
         # 完成战斗后
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
-    def shoushuazuobiao(self, x, y, jiaocheng=0):
+    def shoushuazuobiao(self, x, y, jiaocheng=0, lockpic='img/normal.jpg', screencut=None):
         """
         不使用挑战券挑战，xy为该图坐标
         jiaocheng=0 只处理简单的下一步和解锁内容
         jiaocheng=1 要处理复杂的教程
+        lockpic: 返回时锁定的图
+        screencut: 返回时锁定的图的搜索范围
         :return:
         """
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+            if self.is_there_img(screen_shot_, lockpic, cut=screencut):
                 break
             self.d.click(1, 138)
             time.sleep(1)
-        self.lockimg('img/tiaozhan.jpg', elseclick=[(x, y)], elsedelay=2)
+        self.d.click(x, y)
+        time.sleep(1.5)
         self.d.click(840, 454)
         time.sleep(0.7)
 
@@ -1121,7 +1162,7 @@ class Automator:
             while True:
                 time.sleep(2)
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+                if self.is_there_img(screen_shot_, lockpic, cut=screencut):
                     break
                 elif self.is_there_img(screen_shot_, 'img/xiayibu.jpg'):
                     self.d.click(832, 506)
@@ -1131,7 +1172,7 @@ class Automator:
                 self.d.click(1, 100)
                 time.sleep(0.5)
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+                if self.is_there_img(screen_shot_, lockpic, cut=screencut):
                     break
 
     def chulijiaocheng(self):  # 处理教程, 最终返回刷图页面
@@ -1213,12 +1254,13 @@ class Automator:
             time.sleep(0.5)
 
     def qianghua(self):
-        time.sleep(2)
+        time.sleep(3)
         self.d.click(215, 513)  # 角色
-        time.sleep(2)
+        time.sleep(3)
         self.d.click(177, 145)  # First
-        time.sleep(2)
+        time.sleep(3)
         for i in range(5):
+            print("Now: ", i)
             while True:
                 screen_shot_ = self.d.screenshot(format='opencv')
                 if self.is_there_img(screen_shot_, 'img/keyihuode.jpg'):
@@ -1230,9 +1272,10 @@ class Automator:
                             # 装备可刷
                             self.guochang(screen_shot_, ['img/sanxingtongguan.jpg'], suiji=0)
                             time.sleep(1)
-                            for _ in range(3):
-                                self.d.click(877, 333)
-                                time.sleep(0.3)
+                            self.d.click(877, 333)
+                            time.sleep(0.3)
+                            self.d.click(877, 333)
+                            time.sleep(0.3)
                             self.d.click(752, 333)
                             time.sleep(0.7)
                             self.d.click(589, 371)
@@ -1298,12 +1341,12 @@ class Automator:
         time.sleep(0.5)
         self.d.click(479, 479)
         time.sleep(1)
-        self.d.click(95,516)
+        self.d.click(95, 516)
 
-    #对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
-    #使用Baidu OCR接口
-    #离线接口还没写
-    def baidu_ocr(self,x1,y1,x2,y2):
+    # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
+    # 使用Baidu OCR接口
+    # 离线接口还没写
+    def baidu_ocr(self, x1, y1, x2, y2):
         from aip import AipOcr
         print('初始化百度OCR识别')
         with open('baiduocr.txt', 'r') as faip:
@@ -1320,10 +1363,10 @@ class Automator:
         client = AipOcr(**config)
 
         screen_shot_ = self.d.screenshot(format="opencv")
-        part=screen_shot_[y1:y2,x1:x2]
+        part = screen_shot_[y1:y2, x1:x2]
         from numpy import rot90
         part = rot90(part)  # 图片旋转90度
-        partbin = cv2.imencode('.jpg', part)[1]#转成base64编码（误）
+        partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
         try:
             print('识别成功！')
             result = client.basicGeneral(partbin)
@@ -1333,10 +1376,10 @@ class Automator:
             return -1
 
     def get_tili(self):
-        #利用baiduOCR获取当前体力值（要保证当前界面有‘主菜单’选项）
-        #API key存放在baiduocr.txt中
-        #格式：apiKey secretKey（中间以一个\t作为分隔符）
-        #返回值：一个int类型整数；如果读取失败返回-1
+        # 利用baiduOCR获取当前体力值（要保证当前界面有‘主菜单’选项）
+        # API key存放在baiduocr.txt中
+        # 格式：apiKey secretKey（中间以一个\t作为分隔符）
+        # 返回值：一个int类型整数；如果读取失败返回-1
 
         self.d.click(871, 513)  # 主菜单
         while True:  # 锁定帮助
@@ -1344,8 +1387,8 @@ class Automator:
             if self.is_there_img(screen_shot_, 'img/bangzhu.jpg'):
                 break
         # cv2.imwrite('all.png',screen_shot_)
-        #part = screen_shot_[526:649, 494:524]
-        ret=self.baidu_ocr(494,526,524,649)# 获取体力区域的ocr结果
+        # part = screen_shot_[526:649, 494:524]
+        ret = self.baidu_ocr(494, 526, 524, 649)  # 获取体力区域的ocr结果
         if ret == -1:
             print('体力识别失败！')
             return -1
