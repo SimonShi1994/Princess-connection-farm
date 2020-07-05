@@ -1,14 +1,12 @@
-import uiautomator2 as u2
-import time
-from utils import *
-from cv import *
-from Automator import *
 # import matplotlib.pylab as plt
 import os
 import threading
 
-XinShouJiaoCheng=True  # True：全新开始 False：从1-3开始
-KaiGuan=False  # True：1-3时开启两倍和Auto（要求之前没开启过，否则就会关掉） False:不开启
+from Automator import *
+
+KaiGuan = False  # True：1-3时开启两倍和Auto（要求之前没开启过，否则就会关掉） False:不开启
+
+
 # 如果开启了新手教程，请将KaiGuans和设置为False。如果你的号从1-3开始并且默认没开加速，打开KaiGuan
 def runmain(address, account, password):
     a = Automator(address)
@@ -21,7 +19,6 @@ def runmain(address, account, password):
     if need_auth:
         auth_name, auth_id = random_name(), CreatIDnum()
         a.auth(auth_name=auth_name, auth_id=auth_id)
-
 
     # ========现在开始完成新手教程========
     '''
@@ -40,62 +37,61 @@ def runmain(address, account, password):
 
     默认，点击(1,100)
     '''
-    
-    count = 0 #记录跳过战斗的数量
-    times = 0 #记录主页出现的次数
-    if XinShouJiaoCheng:
-        while True:
-            screen_shot_ = a.d.screenshot(format="opencv")
-            num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
-            if num_of_white < 70000:
-                try:
-                    a.d.click(x * a.dWidth, y * a.dHeight + 20)
-                except:
-                    pass
-                time.sleep(1)
-                continue
-            template_path = ['img/tongyi.jpg', 'img/tiaoguo.jpg', 'img/dengji.jpg', 'img/ok.bmp', 'img/niudan_jiasu.jpg']
-            active_path = a.get_butt_stat(screen_shot_, template_path)
-            if len(active_path) > 0:
-                for (x, y) in active_path.values():
-                    a.d.click(x, y)
-                    time.sleep(0.5)
-                    break
-                continue
-            template_path = ['img/caidan.jpg','img/caidan_yuan.jpg']
-            active_path = a.get_butt_stat(screen_shot_, template_path)
-            if count < 2 and ('img/caidan.jpg' in active_path): #有两场战斗是可以跳过的
-                count += 1
-                a.d.click(900, 25)
-                time.sleep(0.8)
-                a.d.click(591, 370)
+
+    count = 0  # 记录跳过战斗的数量
+    times = 0  # 记录主页出现的次数
+    while True:
+        screen_shot_ = a.d.screenshot(format="opencv")
+        num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+        if num_of_white < 70000:
+            try:
+                a.d.click(x * a.dWidth, y * a.dHeight + 20)
+            except:
+                pass
+            time.sleep(1)
+            continue
+        template_path = ['img/tongyi.jpg', 'img/tiaoguo.jpg', 'img/dengji.jpg', 'img/ok.bmp', 'img/niudan_jiasu.jpg']
+        active_path = a.get_butt_stat(screen_shot_, template_path)
+        if len(active_path) > 0:
+            for (x, y) in active_path.values():
+                a.d.click(x, y)
                 time.sleep(0.5)
-                continue
-            if 'img/caidan_yuan.jpg' in active_path:
-                a.d.click(919, 45)
-                time.sleep(0.8)
-                a.d.click(806, 46)
-                time.sleep(1)
-                a.d.click(589, 370)
-                time.sleep(0.5)
-                continue
-            if a.is_there_img(screen_shot_, 'img/kuaijin.jpg'):
-                a.d.click(911, 493)
-                time.sleep(3)
-                continue
-            if a.is_there_img(screen_shot_, 'img/liwu.bmp'):
-                if times==2:
-                    break
-                times += 1
-                print('在主页的第',times,'次')
-            # default
-            a.d.click(1, 100)
+                break
+            continue
+        template_path = ['img/caidan.jpg', 'img/caidan_yuan.jpg']
+        active_path = a.get_butt_stat(screen_shot_, template_path)
+        if count < 2 and ('img/caidan.jpg' in active_path):  # 有两场战斗是可以跳过的
+            count += 1
+            a.d.click(900, 25)
             time.sleep(0.8)
-        print('新手教程已完成')
+            a.d.click(591, 370)
+            time.sleep(0.5)
+            continue
+        if 'img/caidan_yuan.jpg' in active_path:
+            a.d.click(919, 45)
+            time.sleep(0.8)
+            a.d.click(806, 46)
+            time.sleep(1)
+            a.d.click(589, 370)
+            time.sleep(0.5)
+            continue
+        if a.is_there_img(screen_shot_, 'img/kuaijin.jpg'):
+            a.d.click(911, 493)
+            time.sleep(3)
+            continue
+        if a.is_there_img(screen_shot_, 'img/liwu.bmp'):
+            if times == 2:
+                break
+            times += 1
+            print('在主页的第', times, '次')
+        # default
+        a.d.click(1, 100)
+        time.sleep(0.8)
+    print('新手教程已完成')
     # ===========新手教程完成============
     # ===========开始前期准备============
 
-    a.lockimg('img/liwu.jpg', elseclick=[(1,100)], elsedelay=0.5, alldelay=2)
+    a.lockimg('img/liwu.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=2)
     a.shouqu()  # 拿一点钻石用于买扫荡券，理论上至少能拿到300钻
     a.goumaimana(1)  # 买扫荡券
     a.goumaitili(4)
@@ -107,7 +103,7 @@ def runmain(address, account, password):
     # ===========前期准备结束============
     # =============开始刷图==============
     # 如果执行了新手教程，应该已经开成两倍速了，否则直接
-    a.shoushuazuobiao(313, 341,0 if KaiGuan else -1)  # 1-3
+    a.shoushuazuobiao(313, 341, 0 if KaiGuan else -1)  # 1-3
     a.shoushuazuobiao(379, 240, 1)  # 1-4
     a.shoushuazuobiao(481, 286)  # 1-5
     a.shoushuazuobiao(545, 381, 1)  # 1-6
@@ -125,7 +121,6 @@ def runmain(address, account, password):
     a.shoushuazuobiao(353, 161)  # 2-6
     a.shoushuazuobiao(453, 231)  # 2-7
     a.shoushuazuobiao(479, 316, 1)  # 2-8
-    a.qianghua()
     a.shoushuazuobiao(602, 380)  # 2-9 装备危险
     a.shoushuazuobiao(646, 371)  # 2-10
     a.shoushuazuobiao(757, 344)  # 2-11
@@ -163,11 +158,11 @@ def connect():  # 连接adb与uiautomator
     for i in range(0, len(lines) - 1):
         lines[i], device_dic[lines[i]] = lines[i].split('\t')[0:]
     lines = lines[0:-1]
-    newlines=[]
+    newlines = []
     for i in lines:
         if device_dic[i] == 'device':
-            newlines+=[i]
-    lines=newlines
+            newlines += [i]
+    lines = newlines
     print(lines)
     emulatornum = len(lines)
     return lines, emulatornum
@@ -183,7 +178,7 @@ def read():  # 读取账号
     accountnum = len(account_list)
     print("读取到的账号：")
     for i in account_dic:
-        print(i," -- ",account_dic[i])
+        print(i, " -- ", account_dic[i])
     return (account_list, account_dic, accountnum)
 
 
