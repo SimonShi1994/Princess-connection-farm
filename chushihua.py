@@ -7,8 +7,7 @@ from Automator import *
 import os
 import threading
 
-KaiGuan = True  # True：1-3时开启两倍和Auto（要求之前没开启过，否则就会关掉） False:不开启
-ZiDongGuanJi = True  # 开启后，全部运行完毕执行shutdown 命令
+KaiGuan = False  # True：1-3时开启两倍和Auto（要求之前没开启过，否则就会关掉） False:不开启
 
 
 def runmain(address, account, password):
@@ -22,7 +21,6 @@ def runmain(address, account, password):
     if need_auth:
         auth_name, auth_id = random_name(), CreatIDnum()
         a.auth(auth_name=auth_name, auth_id=auth_id)
-
 
     # ========现在开始完成新手教程========
     '''
@@ -221,5 +219,3 @@ if __name__ == '__main__':
 
     # 退出adb
     os.system('cd adb & adb kill-server')
-    if ZiDongGuanJi:
-        os.system('shutdown -s -f -t 120')
