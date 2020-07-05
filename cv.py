@@ -1,8 +1,8 @@
 import cv2, numpy as np
 from utils import *
+import uiautomator2 as u2
 # import matplotlib.pylab as plt
 import os
-import uiautomator2 as u2
 
 
 def cv_imread(file_path):  # 用于中文目录的imread函数
