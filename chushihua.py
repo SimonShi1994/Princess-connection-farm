@@ -119,11 +119,16 @@ def runmain(address, account, password):
     a.shoushuazuobiao(353, 161)  # 2-6
     a.shoushuazuobiao(453, 231)  # 2-7
     a.shoushuazuobiao(479, 316, 1)  # 2-8
-    a.shoushuazuobiao(602, 380)  # 2-9 装备危险
-    a.shoushuazuobiao(646, 371)  # 2-10
-    a.shoushuazuobiao(757, 344)  # 2-11
     a.qianghua()
-    a.shoushuazuobiao(745, 229, 1)  # 2-12
+    a.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右，固定后面的点击位置
+    time.sleep(1)
+    a.shoushuazuobiao(526, 372)  # 2-9 装备危险
+    a.shoushuazuobiao(647, 375)  # 2-10
+    a.shoushuazuobiao(756, 346)  # 2-11
+    a.qianghua()
+    a.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右，固定后面的点击位置
+    time.sleep(1)
+    a.shoushuazuobiao(741, 228, 1)  # 2-12
     a.shoushuazuobiao(138, 188, 1)  # 3-1
     a.qianghua()
     # 结束刷图
