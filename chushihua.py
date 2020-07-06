@@ -48,15 +48,16 @@ def runmain(address, account, password):
             time.sleep(1)
             continue
         template_path = ['img/tongyi.jpg', 'img/tiaoguo.jpg', 'img/dengji.jpg', 'img/ok.bmp', 'img/niudan_jiasu.jpg']
-        active_path = a.get_butt_stat(screen_shot_, template_path)
+        active_path = UIMatcher.imgs_where(screen_shot_, template_path)
         if len(active_path) > 0:
             for (x, y) in active_path.values():
                 a.d.click(x, y)
                 time.sleep(0.5)
+                # 看下面的break，我的目的是从active_path中随便取一个value点，但是我没有更优雅的写法，求改正
                 break
             continue
         template_path = ['img/caidan.jpg', 'img/caidan_yuan.jpg']
-        active_path = a.get_butt_stat(screen_shot_, template_path)
+        active_path = UIMatcher.imgs_where(screen_shot_, template_path)
         if count < 2 and ('img/caidan.jpg' in active_path):  # 有两场战斗是可以跳过的
             count += 1
             a.d.click(900, 25)
@@ -72,11 +73,11 @@ def runmain(address, account, password):
             a.d.click(589, 370)
             time.sleep(0.5)
             continue
-        if a.is_there_img(screen_shot_, 'img/kuaijin.jpg'):
+        if UIMatcher.img_where(screen_shot_, 'img/kuaijin.jpg'):
             a.d.click(911, 493)
             time.sleep(3)
             continue
-        if a.is_there_img(screen_shot_, 'img/liwu.bmp'):
+        if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp'):
             if times == 2:
                 break
             times += 1

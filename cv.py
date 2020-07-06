@@ -21,6 +21,7 @@ class UIMatcher:
     @staticmethod
     def findpic(screen, template_paths=['img/tiaoguo.jpg']):
         # 返回相对坐标
+        # 已使用img_where代替
         '''
         检测各种按钮(头像?)
         @return: 中心坐标lists, 对应的可信度list
@@ -62,6 +63,55 @@ class UIMatcher:
         # ax.hist(res.reshape(-1,1), 100, facecolor='b', alpha=0.5, label="rand_mat")
         # plt.show()
         return zhongxings, max_vals
+
+    @staticmethod
+    def img_where(screen, template_path, threshold=0.84, at=None):
+        """
+        在screen里寻找template，若找到则返回坐标，若没找到则返回False
+        注：可以使用if img_where():  来判断图片是否存在
+        :param at: 缩小查找范围
+        :return:
+        """
+        if screen.shape[0] > screen.shape[1]:
+            screen = UIMatcher.RotateClockWise90(screen)
+        if at is not None:
+            try:
+                x1, y1, x2, y2 = at
+                screen = screen[y1:y2 + 1, x1:x2 + 1]
+            except:
+                print("检测区域填写错误")
+                exit(-1)
+        else:
+            x1, y1 = 0, 0
+
+        template = cv2.imread(template_path)
+        th, tw = template.shape[:2]  # rows->h, cols->w
+        res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        if max_val > threshold:
+            x = x1 + max_loc[0] + tw // 2
+            y = y1 + max_loc[1] + th // 2
+            print(template_path, "--", round(max_val, 3), "--(", x, ",", y, ")")
+            return x, y
+        else:
+            print(template_path, "--", round(max_val, 3))
+            return False
+
+    @staticmethod
+    def imgs_where(screen, template_paths, threshold=0.84):
+        """
+        依次检测template_paths中模板是否存在，返回字典
+        :param screen:
+        :param template_paths:
+        :param threshold:
+        :return:
+        """
+        return_dic = {}
+        for template_path in template_paths:
+            pos = UIMatcher.img_where(screen, template_path, threshold)
+            if pos:
+                return_dic[template_path] = pos
+        return return_dic
 
     @staticmethod
     def find_gaoliang(screen):

@@ -55,7 +55,7 @@ def accept_main(address, account, password, token):
     time.sleep(1)
     while True:
         screen_shot_ = a.d.screenshot(format='opencv')
-        if a.is_there_img(screen_shot_, 'img/xvke.bmp'):
+        if UIMatcher.img_where(screen_shot_, 'img/xvke.bmp'):
             a.d.click(845, 177)
             time.sleep(0.8)
             a.d.click(1, 100)

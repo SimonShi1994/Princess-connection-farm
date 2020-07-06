@@ -71,6 +71,7 @@ class Automator:
 
     def get_butt_stat(self, screen_shot, template_paths, threshold=0.84):
         # 此函数输入要判断的图片path,屏幕截图,阈值,返回大于阈值的path坐标字典
+        # 可由UIMatcher.imgs_where代替
         self.dWidth, self.dHeight = self.d.window_size()
         return_dic = {}
         zhongxings, max_vals = UIMatcher.findpic(screen_shot, template_paths=template_paths)
@@ -82,6 +83,7 @@ class Automator:
         return return_dic
 
     def is_there_img(self, screen, img, threshold=0.84, cut=None):
+        # 可由UIMatcher.img_where代替
         # 输入要判断的图片path，屏幕截图，返回是否存在大于阈值的图片的布尔值
         # cut: (x1,y1,x2,y2)
         if cut is not None:
@@ -99,7 +101,7 @@ class Automator:
         self.dWidth, self.dHeight = self.d.window_size()
         screen_shot = screen_shot
         template_paths = template_paths
-        active_path = self.get_butt_stat(screen_shot, template_paths)
+        active_path = UIMatcher.imgs_where(screen_shot, template_paths)
         if active_path:
             print(active_path)
             if 'img/caidan_tiaoguo.jpg' in active_path:
@@ -129,7 +131,7 @@ class Automator:
         """
         while True:  #
             screen_shot = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot, img):
+            if UIMatcher.img_where(screen_shot, img):
                 if ifclick != []:
                     for clicks in ifclick:
                         self.d.click(clicks[0], clicks[1])
@@ -215,7 +217,7 @@ class Automator:
             self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
             self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2)  # 首页锁定
             return
-        if self.is_there_img(screen_shot_, 'img/kekeluo.bmp'):
+        if UIMatcher.img_where(screen_shot_, 'img/kekeluo.bmp'):
             self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
             self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2)  # 首页锁定
 
@@ -243,7 +245,7 @@ class Automator:
             # 跳过抽奖提示
             time.sleep(4)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/niudan_sheding.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/niudan_sheding.jpg'):
                 self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
                 break
             else:
@@ -254,7 +256,7 @@ class Automator:
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/niudanputong.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/niudanputong.jpg'):
                 self.guochang(screen_shot_, ['img/niudanputong.jpg'], suiji=0)
                 self.d.click(722, 351)  # 点进扭蛋
                 time.sleep(0.5)
@@ -276,14 +278,14 @@ class Automator:
 
         time.sleep(1)
         screen_shot_ = self.d.screenshot(format="opencv")
-        if self.is_there_img(screen_shot_, 'img/mianfeishilian.jpg'):  # 仅当有免费十连时抽取免费十连
+        if UIMatcher.img_where(screen_shot_, 'img/mianfeishilian.jpg'):  # 仅当有免费十连时抽取免费十连
             self.d.click(872, 355)  # 点击十连
             time.sleep(1)
             self.d.click(592, 369)  # 确认
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/liwu.bmp'):
+            if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp'):
                 break
             self.d.click(900, 40)
             time.sleep(0.5)
@@ -322,7 +324,7 @@ class Automator:
         self.guochang(screen_shot_, ['img/liwu.bmp'], suiji=0)
         while True:  # 锁定收取履历（礼品盒）
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/shouqulvli.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/shouqulvli.jpg'):
                 self.d.click(809, 471)  # 点击全部收取
                 time.sleep(1)
                 self.d.click(589, 472)  # 2020-5-29 19:41 bug fixed
@@ -332,7 +334,7 @@ class Automator:
     def shouqurenwu(self):  # 收取任务报酬
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/renwu.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/renwu.jpg'):
                 self.guochang(screen_shot_, ['img/renwu.jpg'], suiji=0)
                 break
             self.d.click(1, 1)
@@ -350,12 +352,12 @@ class Automator:
         self.d.click(871, 513)  # 主菜单
         while True:  # 锁定帮助
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/bangzhu.bmp'):
+            if UIMatcher.img_where(screen_shot_, 'img/bangzhu.bmp'):
                 break
         self.d.click(165, 411)  # 退出账号
         while True:  # 锁定帮助
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+            if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                 break
         self.d.click(591, 369)  # ok
         time.sleep(1)
@@ -384,14 +386,14 @@ class Automator:
             for i in range(times):
                 while True:  # 锁定取消2
                     screen_shot_ = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot_, 'img/quxiao2.jpg'):
+                    if UIMatcher.img_where(screen_shot_, 'img/quxiao2.jpg'):
                         break
                     self.d.click(189, 62)
                     time.sleep(2)
                 self.d.click(596, 471)  # 第一次购买的位置
                 while True:  # 锁定ok
                     screen_shot_ = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                    if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                         self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                         break
         else:
@@ -399,26 +401,26 @@ class Automator:
             self.d.click(189, 62)
             while True:  # 锁定取消2
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/quxiao2.jpg'):
+                if UIMatcher.img_where(screen_shot_, 'img/quxiao2.jpg'):
                     break
                 self.d.click(189, 62)
                 time.sleep(2)
             self.d.click(596, 471)  # 第一次购买的位置
             while True:  # 锁定ok
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                     self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                     break
             for i in range(times):  # 购买剩下的times次
                 while True:  # 锁定取消2
                     screen_shot_ = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot_, 'img/quxiao2.jpg'):
+                    if UIMatcher.img_where(screen_shot_, 'img/quxiao2.jpg'):
                         break
                 time.sleep(3)
                 self.d.click(816, 478)  # 购买10次
                 while True:  # 锁定ok
                     screen_shot_ = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                    if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                         self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                         break
 
@@ -449,12 +451,12 @@ class Automator:
         time.sleep(1)
         while True:  # 6-17修改：减少opencv使用量提高稳定性
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/zhiyuansheding.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/zhiyuansheding.jpg'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 for _ in range(3):
                     time.sleep(2)
                     screen_shot = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot, 'img/juanzengqingqiu.jpg'):
+                    if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):
                         self.d.click(367, 39)  # 点击定位捐赠按钮
                         time.sleep(2)
                         screen_shot = self.d.screenshot(format="opencv")
@@ -472,7 +474,7 @@ class Automator:
                     self.d.click(1, 1)
                     time.sleep(1)
                     screen_shot = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot, 'img/zhiyuansheding.jpg'):
+                    if UIMatcher.img_where(screen_shot, 'img/zhiyuansheding.jpg'):
                         break
                 break
             time.sleep(2)
@@ -496,7 +498,7 @@ class Automator:
         if self.switch == 0:
             while True:  # 锁定加号
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/jiahao.bmp'):
+                if UIMatcher.img_where(screen_shot_, 'img/jiahao.bmp'):
                     # screen_shot = a.d.screenshot(format="opencv")
                     for i in range(times - 1):  # 基础1次
                         # a.guochang(screen_shot,['img/jiahao.bmp'])
@@ -507,7 +509,7 @@ class Automator:
                     self.d.click(758, 330)  # 使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
                     time.sleep(0.3)
                     screen_shot = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot, 'img/ok.bmp'):
+                    if UIMatcher.img_where(screen_shot, 'img/ok.bmp'):
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     else:
                         time.sleep(0.5)
@@ -515,13 +517,13 @@ class Automator:
                     # screen_shot = a.d.screenshot(format="opencv")
                     # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
                     screen_shot_ = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot_, 'img/tilibuzu.jpg'):
+                    if UIMatcher.img_where(screen_shot_, 'img/tilibuzu.jpg'):
                         print('>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
                     screen_shot = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot, 'img/tiaoguo.jpg'):
+                    if UIMatcher.img_where(screen_shot, 'img/tiaoguo.jpg'):
                         self.guochang(screen_shot, ['img/tiaoguo.jpg'], suiji=0)
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     else:
@@ -546,7 +548,7 @@ class Automator:
             self.d.click(1, 1)
             time.sleep(0.3)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
 
     def shuajingyan(self, map):
@@ -561,13 +563,13 @@ class Automator:
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
         time.sleep(2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
         for i in range(map):
             self.d.click(27, 272)
@@ -583,13 +585,13 @@ class Automator:
         time.sleep(2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
         time.sleep(2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
         self.shuatuzuobiao(584, 260, self.times)  # 8-14
         self.shuatuzuobiao(715, 319, self.times)  # 8-13
@@ -616,7 +618,7 @@ class Automator:
         time.sleep(2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
         time.sleep(2)
@@ -626,7 +628,7 @@ class Automator:
             time.sleep(3)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
         self.shuatuzuobiao(821, 299, self.times)  # 10-17
         self.shuatuzuobiao(703, 328, self.times)  # 10-16
@@ -656,13 +658,13 @@ class Automator:
         time.sleep(2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
         time.sleep(2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
         self.shuatuzuobiao(663, 408, self.times)  # 11-17
         self.shuatuzuobiao(542, 338, self.times)  # 11-16
@@ -693,7 +695,7 @@ class Automator:
         tmp_cout2 = 0
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
             self.d.click(480, 505)
             time.sleep(1)
@@ -702,7 +704,7 @@ class Automator:
         while True:
             time.sleep(4)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
+            if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
                 # 撤退
                 self.d.click(808, 435)
                 time.sleep(1)
@@ -716,7 +718,7 @@ class Automator:
                 self.d.click(588, 371)
                 break
         screen_shot_ = self.d.screenshot(format="opencv")
-        if self.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
+        if UIMatcher.img_where(screen_shot_, 'img/caidan_yuan.jpg'):
             self.d.click(917, 39)  # 菜单
             time.sleep(1)
             self.d.click(807, 44)  # 跳过
@@ -727,7 +729,7 @@ class Automator:
         while True:
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/caidan_yuan.jpg'):
                 self.d.click(917, 39)  # 菜单
                 time.sleep(1)
                 self.d.click(807, 44)  # 跳过
@@ -737,14 +739,14 @@ class Automator:
             if tmp_cout < 3:  # 预防卡死，3次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
                 # print(tmp_cout)
-                if self.is_there_img(screen_shot_, 'img/yunhai.bmp'):
+                if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp'):
                     self.d.click(233, 311)
                     time.sleep(1)
                     while True:
                         screen_shot_ = self.d.screenshot(format="opencv")
                         if tmp_cout2 < 3:  # 预防卡死，10次错误失败后直接进行下一步
                             tmp_cout2 = tmp_cout2 + 1
-                            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                            if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                                 self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                                 time.sleep(1)
                                 break
@@ -765,7 +767,7 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
-                if self.is_there_img(screen_shot_, 'img/chetui.jpg'):
+                if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     self.d.click(667, 360)  # 1层
                     time.sleep(1)
                     self.d.click(833, 456)  # 挑战
@@ -780,7 +782,7 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
-                if self.is_there_img(screen_shot_, 'img/zhiyuan.jpg'):
+                if UIMatcher.img_where(screen_shot_, 'img/zhiyuan.jpg'):
                     self.d.click(100, 173)  # 第一个人
                     time.sleep(1)
                     screen_shot = self.d.screenshot(format="opencv")
@@ -792,7 +794,7 @@ class Automator:
                 break
 
         screen_shot_ = self.d.screenshot(format="opencv")
-        if self.is_there_img(screen_shot_, 'img/dengjixianzhi.jpg'):
+        if UIMatcher.img_where(screen_shot_, 'img/dengjixianzhi.jpg'):
             self.d.click(213, 208)  # 如果等级不足，就支援的第二个人
             time.sleep(1)
         else:
@@ -807,7 +809,7 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
-                if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                     self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
                     break
             else:
@@ -820,10 +822,10 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
-                if self.is_there_img(screen_shot_, 'img/kuaijin.jpg'):
+                if UIMatcher.img_where(screen_shot_, 'img/kuaijin.jpg'):
                     self.d.click(913, 494)  # 点击快进
                     time.sleep(1)
-                if self.is_there_img(screen_shot_, 'img/kuaijin_1.jpg'):
+                if UIMatcher.img_where(screen_shot_, 'img/kuaijin_1.jpg'):
                     self.d.click(913, 494)  # 点击快进
                     time.sleep(1)
             else:
@@ -834,13 +836,13 @@ class Automator:
             time.sleep(2)
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
-                if self.is_there_img(screen_shot_, 'img/yunhai.bmp', threshold=0.8):
+                if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp', threshold=0.8):
                     print('>>>今天次数用完!\r\n')
                     break
-                if self.is_there_img(screen_shot_, 'img/shanghaibaogao.jpg'):
+                if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):
                     time.sleep(3)
                     self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
-                    if self.is_there_img(screen_shot_, 'img/duiwu.jpg'):
+                    if UIMatcher.img_where(screen_shot_, 'img/duiwu.jpg'):
                         self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
                         break
                     else:
@@ -849,7 +851,7 @@ class Automator:
                         time.sleep(3)
                         self.d.click(828, 502)
                         break
-                elif self.is_there_img(screen_shot_, 'img/chetui.jpg'):
+                elif UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     time.sleep(3)
                     # 撤退
                     self.d.click(808, 435)
@@ -868,7 +870,7 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if tmp_cout < 5:  # 预防卡死，10次错误失败后直接进行下一步
                 tmp_cout = tmp_cout + 1
-                if self.is_there_img(screen_shot_, 'img/chetui.jpg'):
+                if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     for i in range(3):
                         # 保险措施
                         self.d.click(808, 435)
@@ -887,7 +889,7 @@ class Automator:
 
         while True:  # 首页锁定
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/liwu.bmp'):
+            if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp'):
                 break
             self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)  # 防卡死
             self.guochang(screen_shot_, ['img/chetui.jpg'], suiji=0)
@@ -906,14 +908,14 @@ class Automator:
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/chetui.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                 break
             self.d.click(1, 1)
             time.sleep(1)
         time.sleep(1)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/chetui.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                 break
             self.d.click(1, 1)
             time.sleep(1)
@@ -927,7 +929,7 @@ class Automator:
 
         while True:  # 锁定战斗开始
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/zhandoukaishi.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg'):
                 break
 
         if team != 0:  # 换队
@@ -940,7 +942,7 @@ class Automator:
             time.sleep(0.5)
             while True:  # 锁定战斗开始
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, 'img/zhandoukaishi.jpg'):
+                if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg'):
                     break
                 time.sleep(0.5)
 
@@ -949,7 +951,7 @@ class Automator:
 
         while True:  # 战斗中快进
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/caidan.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/caidan.jpg'):
                 if auto == 1:
                     time.sleep(0.5)
                     self.d.click(912, 423)  # 点auto按钮
@@ -957,10 +959,10 @@ class Automator:
                 break
         while True:  # 结束战斗返回
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/shanghaibaogao.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):
                 while True:
                     screen_shot = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot, 'img/xiayibu.jpg'):
+                    if UIMatcher.img_where(screen_shot, 'img/xiayibu.jpg'):
                         break
                 self.d.click(830, 503)  # 点下一步 避免guochang可能失败
                 break
@@ -979,7 +981,7 @@ class Automator:
         time.sleep(1)
         while True:  # 锁定地下城
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
             self.d.click(480, 505)
             time.sleep(1)
@@ -987,7 +989,7 @@ class Automator:
         time.sleep(3.5)
         while True:  # 锁定凯留头（划掉）返回按钮
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/fanhui.bmp', cut=(16, 12, 54, 48)):
+            if UIMatcher.img_where(screen_shot_, 'img/fanhui.bmp', cut=(16, 12, 54, 48)):
                 break
             self.d.click(1, 1)
             time.sleep(0.5)
@@ -1003,7 +1005,7 @@ class Automator:
         time.sleep(1.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/tiaozhan.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/tiaozhan.jpg'):
                 break
             time.sleep(0.5)
         self.d.drag(876, 329, 876, 329, 0.5)  # +号
@@ -1012,13 +1014,13 @@ class Automator:
         time.sleep(0.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+            if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                 self.d.click(590, 363)  # ok
                 time.sleep(0.5)
                 break
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/home.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/home.jpg'):
                 break
             self.d.click(1, 1)
             time.sleep(1)
@@ -1034,7 +1036,7 @@ class Automator:
         time.sleep(1.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/tiaozhan.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/tiaozhan.jpg'):
                 break
             time.sleep(0.5)
         self.d.drag(876, 329, 876, 329, 0.5)  # +号
@@ -1043,13 +1045,13 @@ class Automator:
         time.sleep(0.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+            if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                 self.d.click(590, 363)  # ok
                 time.sleep(0.5)
                 break
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/home.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/home.jpg'):
                 break
             self.d.click(1, 1)
             time.sleep(1)
@@ -1061,7 +1063,7 @@ class Automator:
         time.sleep(1)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/dixiacheng.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
             self.d.click(480, 505)
             time.sleep(1)
@@ -1071,14 +1073,14 @@ class Automator:
         # 下面这段因为调试而注释了，实际使用时要加上
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
+            if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
                 break
-            if self.is_there_img(screen_shot_, 'img/yunhai.bmp'):
+            if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp'):
                 self.d.click(712, 267)  # 断崖
                 time.sleep(1)
                 while True:
                     screen_shot_ = self.d.screenshot(format="opencv")
-                    if self.is_there_img(screen_shot_, 'img/ok.bmp'):
+                    if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                         break
                 self.d.click(592, 369)  # 点击ok
                 time.sleep(1)
@@ -1109,7 +1111,7 @@ class Automator:
         """
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, lockpic, cut=screencut):
+            if UIMatcher.img_where(screen_shot_, lockpic, cut=screencut):
                 break
             self.d.click(1, 138)
             time.sleep(1)
@@ -1120,13 +1122,13 @@ class Automator:
 
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.get_butt_stat(screen_shot_, ['img/kuaijin.jpg', 'img/kuaijin_1.jpg']) != {}:
+            if UIMatcher.imgs_where(screen_shot_, ['img/kuaijin.jpg', 'img/kuaijin_1.jpg']) != {}:
                 break
             self.d.click(840, 454)  # 点到进入战斗画面
             time.sleep(0.7)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            result = self.get_butt_stat(screen_shot_, ['img/kuaijin.jpg', 'img/auto.jpg', 'img/wanjiadengji.jpg'])
+            result = UIMatcher.imgs_where(screen_shot_, ['img/kuaijin.jpg', 'img/auto.jpg', 'img/wanjiadengji.jpg'])
             if 'img/kuaijin.jpg' in result:
                 x, y = result['img/kuaijin.jpg']
                 self.d.click(x, y)
@@ -1148,9 +1150,9 @@ class Automator:
             while True:
                 time.sleep(2)
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, lockpic, cut=screencut):
+                if UIMatcher.img_where(screen_shot_, lockpic, cut=screencut):
                     break
-                elif self.is_there_img(screen_shot_, 'img/xiayibu.jpg'):
+                elif UIMatcher.img_where(screen_shot_, 'img/xiayibu.jpg'):
                     self.d.click(832, 506)
                 else:
                     self.d.click(1, 100)
@@ -1158,7 +1160,7 @@ class Automator:
                 self.d.click(1, 100)
                 time.sleep(0.5)
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if self.is_there_img(screen_shot_, lockpic, cut=screencut):
+                if UIMatcher.img_where(screen_shot_, lockpic, cut=screencut):
                     break
 
     def chulijiaocheng(self):  # 处理教程, 最终返回刷图页面
@@ -1183,7 +1185,7 @@ class Automator:
                 time.sleep(1)
                 continue
 
-            active_path = self.get_butt_stat(screen_shot_, ['img/liwu.bmp', 'img/jiaruhanghui.jpg', 'img/xiayibu.jpg',
+            active_path = UIMatcher.imgs_where(screen_shot_, ['img/liwu.bmp', 'img/jiaruhanghui.jpg', 'img/xiayibu.jpg',
                                                             'img/niudan_jiasu.jpg', 'img/wuyuyin.jpg',
                                                             'img/tiaoguo.jpg', 'img/zhuye.jpg', 'img/caidan_yuan.jpg'])
             if 'img/liwu.bmp' in active_path:
@@ -1226,7 +1228,7 @@ class Automator:
         self.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=0.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/zhuxianguanqia.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/zhuxianguanqia.jpg'):
                 self.d.click(562, 253)
                 time.sleep(0.5)
             else:
@@ -1234,7 +1236,7 @@ class Automator:
         time.sleep(3)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/normal.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
             self.d.click(704, 84)
             time.sleep(0.5)
@@ -1250,19 +1252,19 @@ class Automator:
             print("Now: ", i)
             while True:
                 screen_shot_ = self.d.screenshot(format='opencv')
-                if self.is_there_img(screen_shot_, 'img/keyihuode.jpg'):
+                if UIMatcher.img_where(screen_shot_, 'img/keyihuode.jpg'):
                     # 存在可以获得，则一直获得到没有可以获得，或者没有三星
                     self.d.click(374, 435)
                     time.sleep(1)
                     screen_shot_ = self.d.screenshot(format='opencv')
-                    if self.is_there_img(screen_shot_, 'img/tuijianguanqia.jpg'):
+                    if UIMatcher.img_where(screen_shot_, 'img/tuijianguanqia.jpg'):
                         # 已经强化到最大等级，开始获取装备
-                        if not self.is_there_img(screen_shot_, 'img/sanxingtongguan.jpg'):
+                        if not UIMatcher.img_where(screen_shot_, 'img/sanxingtongguan.jpg'):
                             # 装备不可刷，换人
                             self.d.click(501, 468)  # important
                             time.sleep(1)
                             break
-                        while self.is_there_img(screen_shot_, 'img/sanxingtongguan.jpg'):
+                        while UIMatcher.img_where(screen_shot_, 'img/sanxingtongguan.jpg'):
                             # 一直刷到没有有推荐关卡但没有三星或者返回到角色列表
                             self.guochang(screen_shot_, ['img/sanxingtongguan.jpg'], suiji=0)
                             time.sleep(1)
@@ -1275,7 +1277,7 @@ class Automator:
                             self.d.click(589, 371)
                             while True:
                                 screen_shot_ = self.d.screenshot(format='opencv')
-                                active_paths = self.get_butt_stat(screen_shot_, ['img/tuijianguanqia.jpg', 'img/zidongqianghua.jpg', 'img/tiaoguo.jpg'])
+                                active_paths = UIMatcher.imgs_where(screen_shot_, ['img/tuijianguanqia.jpg', 'img/zidongqianghua.jpg', 'img/tiaoguo.jpg'])
                                 if 'img/tiaoguo.jpg' in active_paths:
                                     x, y = active_paths['img/tiaoguo.jpg']
                                     self.d.click(x, y)
@@ -1306,11 +1308,11 @@ class Automator:
                         continue
                 else:
                     # 没有可以获得
-                    if self.is_there_img(screen_shot_, 'img/ranktisheng.jpg'):
+                    if UIMatcher.img_where(screen_shot_, 'img/ranktisheng.jpg'):
                         self.d.click(250, 338)
                         time.sleep(2)
                         screen_shot_ = self.d.screenshot(format='opencv')
-                        active_list = self.get_butt_stat(screen_shot_, ['img/queren.jpg', 'img/ok.bmp'])
+                        active_list = UIMatcher.imgs_where(screen_shot_, ['img/queren.jpg', 'img/ok.bmp'])
                         if 'img/queren.jpg' in active_list:
                             x, y = active_list['img/queren.jpg']
                             self.d.click(x, y)
@@ -1394,7 +1396,7 @@ class Automator:
         self.d.click(871, 513)  # 主菜单
         while True:  # 锁定帮助
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/bangzhu.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/bangzhu.jpg'):
                 break
         # cv2.imwrite('all.png',screen_shot_)
         # part = screen_shot_[526:649, 494:524]
