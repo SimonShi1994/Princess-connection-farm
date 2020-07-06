@@ -19,7 +19,6 @@ def runmain(address, account, password):
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
     a.init_home()  # 初始化，确保进入首页
     a.sw_init()  # 初始化刷图
-    a.hanghui()  # 行会捐赠
 
     a.gonghuizhijia()  # 家园一键领取
     a.goumaimana(1)  # 购买mana 10次
@@ -27,13 +26,13 @@ def runmain(address, account, password):
     # a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
-    a.shouqu()  # 收取所有礼物
     a.dixiacheng()  # 地下城
     a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
     shuatu_auth(a, account)  # 刷图控制中心
     a.hanghui()  # 行会捐赠
-    # a.shuajingyan(10) # 刷1-1经验（自带体力购买）,10为主图
+    #a.goumaitili(times=3)  # 购买times次体力
+    #a.shuajingyan(map=3)  # 刷1-1经验,map为主图
     a.shouqurenwu()  # 二次收取任务
 
     a.change_acc()  # 退出当前账号，切换下一个
