@@ -199,6 +199,27 @@ class Automator:
         self.lockimg('img/ok.bmp', ifclick=[(591, 440)], ifdelay=1)  # 点击ok
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5)  # 回首页
 
+
+    def joinhanghui(self,clubname):  # 小号加入行会
+        print('>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
+        self.d.click(693,430)# 点击行会
+        self.lockimg('img/zujianhanghui.bmp',elseclick=[(1,1)],alldelay=0.5)# 锁定行会界面
+        time.sleep(1)
+        self.lockimg('img/zujianhanghui.bmp',elseclick=[(1,1)],alldelay=0.5)# 锁定行会界面
+        self.d.click(860,81)# 点击设定
+        self.lockimg('img/quxiao2.jpg',ifclick=[(477,177)],ifdelay=1)# 点击输入框
+        self.d.send_keys(clubname)
+        time.sleep(1)
+        self.d.click(1,1)
+        time.sleep(1)
+        self.d.click(587,432)
+        time.sleep(5)
+        self.d.click(720,172)
+        time.sleep(1)
+        self.lockimg('img/jiaru.bmp',ifclick=[(839,443)],ifdelay=1)# 点击加入
+        self.lockimg('img/ok.jpg',ifclick=[(597,372)],ifdelay=1)# 点击ok
+        self.lockimg('img/liwu.bmp',elseclick=[(131,533),(1,1)],elsedelay=0.5)# 回首页
+
     def login_auth(self, ac, pwd):
         need_auth = self.login(ac=ac, pwd=pwd)
         if need_auth:
@@ -699,7 +720,7 @@ class Automator:
         self.shuatuzuobiao(161, 326, self.times)  # 11-1
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
-    def dixiacheng(self):  # 地下城
+    def dixiacheng(self,firsttime=False):  # 地下城
         time.sleep(2)
         self.d.click(1, 1)  # 可可萝教程跳过
         time.sleep(0.5)
@@ -773,6 +794,18 @@ class Automator:
                 tmp_cout = 0
                 print('>>>识别卡死跳过\r\n')
                 break
+
+        if firsttime:  # 第一次跳过剧情
+            while True:
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if self.is_there_img(screen_shot_, 'img/caidan_yuan.jpg'):
+                    self.d.click(917, 39)  # 菜单
+                    time.sleep(1)
+                    self.d.click(807, 44)  # 跳过
+                    time.sleep(1)
+                    self.d.click(589, 367)  # 跳过ok
+                    time.sleep(3)
+                    break
 
         while True:
             time.sleep(2)
