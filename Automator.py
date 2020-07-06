@@ -227,7 +227,7 @@ class Automator:
             self.auth(auth_name=auth_name, auth_id=auth_id)
 
     def init_home(self):
-        self.lockimg('img/liwu.bmp', elseclick=[(1, 1), (588, 370), (1, 1)], elsedelay=0.5)  # 首页锁定
+        self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.5)  # 首页锁定
         time.sleep(0.5)
         self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.2)  # 首页锁定
         time.sleep(0.5)
