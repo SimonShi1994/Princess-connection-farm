@@ -83,7 +83,7 @@ class Automator:
         return return_dic
 
     def is_there_img(self, screen, img, threshold=0.84, cut=None):
-        # 可由UIMatcher.img_where代替
+        # 已由UIMatcher.img_where代替
         # 输入要判断的图片path，屏幕截图，返回是否存在大于阈值的图片的布尔值
         # cut: (x1,y1,x2,y2)
         if cut is not None:
@@ -179,7 +179,7 @@ class Automator:
         self.lockimg('img/jiaru.bmp', ifclick=[(839, 443)], ifdelay=1)  # 点击加入
         self.lockimg('img/ok.bmp', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
         time.sleep(1)
-        self.lockimg('img/ok.jpg')# 锁定ok
+        self.lockimg('img/ok.jpg')  # 锁定ok
         self.guochang('img/ok.jpg')
         self.lockimg('img/zhiyuansheding.jpg', ifclick=[(85, 350)], alldelay=0.5)  # 点击支援设定
         self.lockimg('img/zhiyuanjiemian.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定支援界面
@@ -228,6 +228,18 @@ class Automator:
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
         self.d.click(622, 509)
         time.sleep(8)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
+                self.d.click(917, 39)  # 菜单
+                time.sleep(1)
+                self.d.click(807, 44)  # 跳过
+                time.sleep(1)
+                self.d.click(589, 367)  # 跳过ok
+                time.sleep(1)
+                time.sleep(8)
+            else:
+                break
         for _ in range(2):
             self.d.click(899, 429)  # 一键领取
             time.sleep(3)
@@ -306,7 +318,7 @@ class Automator:
         self.d.click(239, 351)
         time.sleep(3)
         if sortflag == 1:
-            self.d.click(720,97)  # 点击排序
+            self.d.click(720, 97)  # 点击排序
             self.lockimg('img/ok.bmp', ifclick=[(289, 303), (587, 372)], ifdelay=1)  # 按战力降序 这里可以加一步调降序
             self.d.click(818, 198)  # 点赞 战力降序第一个人
             time.sleep(2)
@@ -1186,8 +1198,9 @@ class Automator:
                 continue
 
             active_path = UIMatcher.imgs_where(screen_shot_, ['img/liwu.bmp', 'img/jiaruhanghui.jpg', 'img/xiayibu.jpg',
-                                                            'img/niudan_jiasu.jpg', 'img/wuyuyin.jpg',
-                                                            'img/tiaoguo.jpg', 'img/zhuye.jpg', 'img/caidan_yuan.jpg'])
+                                                              'img/niudan_jiasu.jpg', 'img/wuyuyin.jpg',
+                                                              'img/tiaoguo.jpg', 'img/zhuye.jpg',
+                                                              'img/caidan_yuan.jpg'])
             if 'img/liwu.bmp' in active_path:
                 break
             elif 'img/jiaruhanghui.jpg' in active_path:
@@ -1277,7 +1290,9 @@ class Automator:
                             self.d.click(589, 371)
                             while True:
                                 screen_shot_ = self.d.screenshot(format='opencv')
-                                active_paths = UIMatcher.imgs_where(screen_shot_, ['img/tuijianguanqia.jpg', 'img/zidongqianghua.jpg', 'img/tiaoguo.jpg'])
+                                active_paths = UIMatcher.imgs_where(screen_shot_,
+                                                                    ['img/tuijianguanqia.jpg', 'img/zidongqianghua.jpg',
+                                                                     'img/tiaoguo.jpg'])
                                 if 'img/tiaoguo.jpg' in active_paths:
                                     x, y = active_paths['img/tiaoguo.jpg']
                                     self.d.click(x, y)
@@ -1288,7 +1303,7 @@ class Automator:
                                     flag = 'img/zidongqianghua.jpg'
                                     break
                                 else:
-                                    self.d.click(1,100)
+                                    self.d.click(1, 100)
                                     time.sleep(1.3)
                             if flag == 'img/zidongqianghua.jpg':
                                 # 装备获取完成，跳出小循环，重进大循环

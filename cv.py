@@ -91,10 +91,10 @@ class UIMatcher:
         if max_val > threshold:
             x = x1 + max_loc[0] + tw // 2
             y = y1 + max_loc[1] + th // 2
-            print(template_path, "--", round(max_val, 3), "--(", x, ",", y, ")")
+            print("{}--{}--({},{})".format(template_path, round(max_val, 3), x, y))
             return x, y
         else:
-            print(template_path, "--", round(max_val, 3))
+            print("{}--{}".format(template_path, round(max_val, 3)))
             return False
 
     @staticmethod
