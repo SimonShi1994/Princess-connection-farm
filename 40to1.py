@@ -26,11 +26,14 @@ def runmain(address, account, password, kickflag=0):
     # a.mianfeishilian()  # 免费十连
     a.dianzan(sortflag=1)  # 公会点赞
     # a.hanghui()  # 行会捐赠
-    a.dixiacheng()  # 地下城
+    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
     # a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
-    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数
-    # # a.shuajingyan(10) # 刷1-1经验（自带体力购买）,10为主图
+    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数，转为使用下面三个函数
+    # a.shuatu11()  # 刷11图
+    # a.shuatu10()  # 刷10图
+    # a.shuatu8()  #刷8图
+    # # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
     a.shouqu()  # 收取所有礼物
 
     if kickflag == 1:
@@ -107,11 +110,14 @@ def read(filename):  # 读取账号
 def readauth(filename):  # 读取记有大号和会长账号的txt
     with open(filename, 'r') as f:  # 注意！请把大号和会长账号密码写在zhanghao.txt内
         line = f.readline()
-        account_boss, password_boss, UID = line.split('\t')
+        account_boss,password_boss,UID = line.split('\t')
+        password_boss=password_boss.strip()
         line = f.readline()
-        account_1, password_1 = line.split('\t')[0:2]
+        account_1,password_1 = line.split('\t')[0:2]
+        password_1=password_1.strip()
         line = f.readline()
-        account_2, password_2 = line.split('\t')[0:2]
+        account_2,password_2 = line.split('\t')[0:2]
+        password_2=password_2.strip()
     return (account_boss, password_boss, UID, account_1, password_1, account_2, password_2)
 
 
@@ -165,7 +171,7 @@ if __name__ == '__main__':
         t.join()
 
     # 读取大号和会长账号
-    account_boss, password_boss, UID, account_1, password_1, account_2, password_2 = readauth()
+    account_boss, password_boss, UID, account_1, password_1, account_2, password_2 = readauth('40_huizhang.txt')
     # 执行会长1的日常任务+踢出大号
     t = threading.Thread(target=runmain,
                          args=(lines[0], account_1, password_1, 1))

@@ -48,15 +48,16 @@ def runmain(address, account, password):
             time.sleep(1)
             continue
         template_path = ['img/tongyi.jpg', 'img/tiaoguo.jpg', 'img/dengji.jpg', 'img/ok.bmp', 'img/niudan_jiasu.jpg']
-        active_path = a.get_butt_stat(screen_shot_, template_path)
+        active_path = UIMatcher.imgs_where(screen_shot_, template_path)
         if len(active_path) > 0:
             for (x, y) in active_path.values():
                 a.d.click(x, y)
                 time.sleep(0.5)
+                # 看下面的break，我的目的是从active_path中随便取一个value点，但是我没有更优雅的写法，求改正
                 break
             continue
         template_path = ['img/caidan.jpg', 'img/caidan_yuan.jpg']
-        active_path = a.get_butt_stat(screen_shot_, template_path)
+        active_path = UIMatcher.imgs_where(screen_shot_, template_path)
         if count < 2 and ('img/caidan.jpg' in active_path):  # 有两场战斗是可以跳过的
             count += 1
             a.d.click(900, 25)
@@ -72,11 +73,11 @@ def runmain(address, account, password):
             a.d.click(589, 370)
             time.sleep(0.5)
             continue
-        if a.is_there_img(screen_shot_, 'img/kuaijin.jpg'):
+        if UIMatcher.img_where(screen_shot_, 'img/kuaijin.jpg'):
             a.d.click(911, 493)
             time.sleep(3)
             continue
-        if a.is_there_img(screen_shot_, 'img/liwu.bmp'):
+        if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp'):
             if times == 2:
                 break
             times += 1
@@ -91,7 +92,7 @@ def runmain(address, account, password):
     a.lockimg('img/liwu.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=2)
     a.shouqu()  # 拿一点钻石用于买扫荡券，理论上至少能拿到300钻
     a.goumaimana(1)  # 买扫荡券
-    a.goumaitili(4)
+    a.goumaitili(3)
     a.goumaijingyan()
 
     a.setting()  # 设置无动画、低帧率
@@ -104,7 +105,6 @@ def runmain(address, account, password):
     a.shoushuazuobiao(379, 240, 1)  # 1-4
     a.shoushuazuobiao(481, 286)  # 1-5
     a.shoushuazuobiao(545, 381, 1)  # 1-6
-    a.qianghua()
     a.shoushuazuobiao(607, 304)  # 1-7
     a.shoushuazuobiao(620, 209)  # 1-8
     a.shoushuazuobiao(747, 243)  # 1-9
@@ -130,11 +130,10 @@ def runmain(address, account, password):
     time.sleep(1)
     a.shoushuazuobiao(741, 228, 1)  # 2-12
     a.shoushuazuobiao(138, 188, 1)  # 3-1
-    a.qianghua()
     # 结束刷图
     # 开始探索
     a.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
-    a.tansuo(mode=2)
+    # a.tansuo(mode=2) 还有问题，暂时关闭
     a.shouqurenwu()
     a.change_acc()  # 退出当前账号，切换下一个
     t = time.time()
