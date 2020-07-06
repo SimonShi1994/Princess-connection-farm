@@ -1034,7 +1034,7 @@ class Automator:
         time.sleep(3.5)
         while True:  # 锁定凯留头（划掉）返回按钮
             screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/fanhui.bmp', cut=(16, 12, 54, 48)):
+            if UIMatcher.img_where(screen_shot_, 'img/fanhui.bmp', at=(16, 12, 54, 48)):
                 break
             self.d.click(1, 1)
             time.sleep(0.5)
@@ -1156,7 +1156,7 @@ class Automator:
         """
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, lockpic, cut=screencut):
+            if UIMatcher.img_where(screen_shot_, lockpic, at=screencut):
                 break
             self.d.click(1, 138)
             time.sleep(1)
@@ -1195,7 +1195,7 @@ class Automator:
             while True:
                 time.sleep(2)
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if UIMatcher.img_where(screen_shot_, lockpic, cut=screencut):
+                if UIMatcher.img_where(screen_shot_, lockpic, at=screencut):
                     break
                 elif UIMatcher.img_where(screen_shot_, 'img/xiayibu.jpg'):
                     self.d.click(832, 506)
@@ -1205,7 +1205,7 @@ class Automator:
                 self.d.click(1, 100)
                 time.sleep(0.5)
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if UIMatcher.img_where(screen_shot_, lockpic, cut=screencut):
+                if UIMatcher.img_where(screen_shot_, lockpic, at=screencut):
                     break
 
     def chulijiaocheng(self):  # 处理教程, 最终返回刷图页面
