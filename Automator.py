@@ -177,6 +177,8 @@ class Automator:
         self.lockimg('img/jiaru.bmp', ifclick=[(839, 443)], ifdelay=1)  # 点击加入
         self.lockimg('img/ok.bmp', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
         time.sleep(1)
+        self.lockimg('img/ok.jpg')# 锁定ok
+        self.guochang('img/ok.jpg')
         self.lockimg('img/zhiyuansheding.jpg', ifclick=[(85, 350)], alldelay=0.5)  # 点击支援设定
         self.lockimg('img/zhiyuanjiemian.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定支援界面
         self.d.click(109, 234)  # 点击支援
@@ -302,7 +304,7 @@ class Automator:
         self.d.click(239, 351)
         time.sleep(3)
         if sortflag == 1:
-            self.lockimg('img/chengyuanliebiao.bmp', ifclick=[(720, 97)], ifdelay=1)  # 点击排序按钮
+            self.d.click(720,97)  # 点击排序
             self.lockimg('img/ok.bmp', ifclick=[(289, 303), (587, 372)], ifdelay=1)  # 按战力降序 这里可以加一步调降序
             self.d.click(818, 198)  # 点赞 战力降序第一个人
             time.sleep(2)

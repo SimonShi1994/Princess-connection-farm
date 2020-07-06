@@ -29,7 +29,10 @@ def runmain(address, account, password, kickflag=0):
     a.dixiacheng()  # 地下城
     # a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
-    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数
+    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数，转为使用下面三个函数
+    # a.shuatu11()  # 刷11图
+    # a.shuatu10()  # 刷10图
+    # a.shuatu8()  #刷8图
     # # a.shuajingyan(10) # 刷1-1经验（自带体力购买）,10为主图
     a.shouqu()  # 收取所有礼物
 
@@ -165,7 +168,7 @@ if __name__ == '__main__':
         t.join()
 
     # 读取大号和会长账号
-    account_boss, password_boss, UID, account_1, password_1, account_2, password_2 = readauth()
+    account_boss, password_boss, UID, account_1, password_1, account_2, password_2 = readauth('40_huizhang.txt')
     # 执行会长1的日常任务+踢出大号
     t = threading.Thread(target=runmain,
                          args=(lines[0], account_1, password_1, 1))
