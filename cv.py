@@ -100,7 +100,7 @@ class UIMatcher:
     @staticmethod
     def imgs_where(screen, template_paths, threshold=0.84):
         """
-        依次检测template_paths中模板是否存在，返回字典
+        依次检测template_paths中模板是否存在，返回存在图片字典
         :param screen:
         :param template_paths:
         :param threshold:
