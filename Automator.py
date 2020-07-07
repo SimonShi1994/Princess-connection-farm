@@ -180,7 +180,8 @@ class Automator:
         self.lockimg('img/ok.bmp', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
         time.sleep(1)
         self.lockimg('img/ok.jpg')  # 锁定ok
-        self.guochang('img/ok.jpg')
+        screen_shot_ = self.d.screenshot(format="opencv")
+        self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
         self.lockimg('img/zhiyuansheding.jpg', ifclick=[(85, 350)], alldelay=0.5)  # 点击支援设定
         self.lockimg('img/zhiyuanjiemian.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定支援界面
         self.d.click(109, 234)  # 点击支援
