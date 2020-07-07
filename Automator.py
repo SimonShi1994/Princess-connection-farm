@@ -420,11 +420,12 @@ class Automator:
     def hanghui(self):  # 自动行会捐赠
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
         time.sleep(1)
-        self.d.click(693, 436)
+        #self.d.click(693, 436)
+        self.lockimg('img/hanghui.bmp',elseclick=[(693,436)],elsedelay=1)#锁定进入行会
         time.sleep(1)
         while True:  # 6-17修改：减少opencv使用量提高稳定性
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.is_there_img(screen_shot_, 'img/zhiyuansheding.jpg'):
+            if self.is_there_img(screen_shot_, 'img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 for _ in range(3):
                     time.sleep(2)

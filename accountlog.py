@@ -9,93 +9,67 @@ import os
 import threading
 import log_handler
 
+log=log_handler.LOG()#初始化日志文件
+
+#测试程序
+
 def runmain(address, account, password):
     # 主功能体函数
     # 请在本函数中自定义需要的功能
 
     a = Automator(address)
-    log = log_handler.LOG()#初始化日志
     a.start()
-    print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
-    a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
+
+    # #opencv识别可视化无法在多线程中使用
+    # plt.ion()
+    # fig, ax = plt.subplots(1)
+    # plt.show()
+
+    print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')
+    a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao2.txt内
     log.Account_Login(account)
     a.init_home()  # 初始化，确保进入首页
-    a.sw_init()  # 初始化刷图
-    a.hanghui()  # 行会捐赠
 
-    a.gonghuizhijia()  # 家园一键领取
-    #a.goumaimana(1)  # 购买mana 10次
-    a.mianfeiniudan()  # 免费扭蛋
-    a.mianfeishilian()  # 免费十连
-    a.shouqu()  # 收取所有礼物
-    a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
-    a.shouqu()  # 收取所有礼物
-    a.dixiacheng()  # 地下城
-    a.goumaitili(3)  # 购买3次体力
-    a.shouqurenwu()  # 收取任务
-    shuatu_auth(a, account)  # 刷图控制中心
-    a.hanghui()  # 行会捐赠
-    # a.shuajingyan(10) # 刷1-1经验（自带体力购买）,10为主图
-    a.shouqurenwu()  # 二次收取任务
 
+    #a.tansuo()  # 探索
+    #a.dixiachengDuanya()  # 地下城，请把队伍列表里1队设置为打boss队，2队设置为aoe队
+    #a.shouqurenwu()  # 收取任务
+    #a.shouqu()  # 收取所有礼物
+
+    #print(a.baidu_ocr(394,502,442,666))
     a.change_acc()  # 退出当前账号，切换下一个
     log.Account_Logout(account)
+
 
 def connect():  # 连接adb与uiautomator
     try:
         os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
-        # os.system('cd adb & adb connect 127.0.0.1:7555') #mumu模拟器
+        # os.system('adb connect 127.0.0.1:7555') #mumu模拟器
         os.system('python -m uiautomator2 init')
     except:
         print('连接失败')
 
     result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()
-    lines = res.splitlines()[0:]
-    while lines[0] != 'List of devices attached ':
-        del lines[0]
-    del lines[0]  # 删除表头
+    lines = res.splitlines()[1:]
 
-    device_dic = {}  # 存储设备状态
-    for i in range(0, len(lines) - 1):
-        lines[i], device_dic[lines[i]] = lines[i].split('\t')[0:]
+    for i in range(0, len(lines)):
+        lines[i] = lines[i].split('\t')[0]
     lines = lines[0:-1]
-    for i in range(len(lines)):
-        if device_dic[lines[i]] != 'device':
-            del lines[i]
     print(lines)
     emulatornum = len(lines)
-    return lines, emulatornum
+    return (lines, emulatornum)
 
 
 def read():  # 读取账号
     account_dic = {}
-    fun_dic = {}
-    fun_list = []
-    with open('zhanghao.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
+    with open('zhanghao2.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao2.txt内,不是zhanghao.txt!!!!!
         for i, line in enumerate(f):
-            line = line.rstrip("\n")
             account, password = line.split('\t')[0:2]
-            fun = line.split('\t')[2:]
             account_dic[account] = password.strip()
-            fun_dic[account] = str(fun).strip()
-            fun_list.append(fun_dic[account])
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
-    return account_list, account_dic, accountnum, fun_list, fun_dic
-
-
-def shuatu_auth(a, account):  # 刷图总控制
-    shuatu_dic = {
-        '08': 'a.shuatu8()',
-        '10': 'a.shuatu10()',
-        '11': 'a.shuatu11()'
-    }
-    _, _, _, fun_list, fun_dic = read()
-    if fun_dic[account] == '[]':
-        eval(shuatu_dic['10'])
-    else:
-        eval(shuatu_dic[fun_dic[account][2:4]])
+    return (account_list, account_dic, accountnum)
 
 
 # 主程序
@@ -104,7 +78,9 @@ if __name__ == '__main__':
     # 连接adb与uiautomator
     lines, emulatornum = connect()
     # 读取账号
-    account_list, account_dic, accountnum, _, _ = read()
+    account_list, account_dic, accountnum = read()
+
+
 
     # 多线程执行
     count = 0  # 完成账号数
