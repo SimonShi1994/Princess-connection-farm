@@ -7,6 +7,7 @@ from Automator import *
 # import matplotlib.pylab as plt
 import os
 import threading
+import re
 
 
 def runmain(address, account, password):
@@ -69,13 +70,16 @@ def read():  # 读取账号
     account_dic = {}
     fun_dic = {}
     fun_list = []
+    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s-]*(.*)')
     with open('zhanghao.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
-        for i, line in enumerate(f):
-            line = line.rstrip("\n")
-            account, password = line.split('\t')[0:2]
-            fun = line.split('\t')[2:]
-            account_dic[account] = password.strip()
-            fun_dic[account] = str(fun).strip()
+        for line in f:
+            result = pattern.findall(line)
+            if len(result) != 0:
+                account, password, fun = result[0]
+            else:
+                continue
+            account_dic[account] = password
+            fun_dic[account] = fun
             fun_list.append(fun_dic[account])
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
@@ -92,7 +96,7 @@ def shuatu_auth(a, account):  # 刷图总控制
     if fun_dic[account] == '[]':
         eval(shuatu_dic['10'])
     else:
-        eval(shuatu_dic[fun_dic[account][2:4]])
+        eval(shuatu_dic[fun_dic[account][0:2]])
 
 
 # 主程序

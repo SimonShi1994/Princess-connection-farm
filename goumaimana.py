@@ -7,6 +7,7 @@ from Automator import *
 # import matplotlib.pylab as plt
 import os
 import threading
+import re
 
 
 def runmain(address, account, password):
@@ -59,13 +60,18 @@ def connect():  # 连接adb与uiautomator
 
 def read():  # 读取账号
     account_dic = {}
+    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)')
     with open('zhanghao.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
-        for i, line in enumerate(f):
-            account, password = line.split('\t')[0:2]
-            account_dic[account] = password.strip()
+        for line in f:
+            result = pattern.findall(line)
+            if len(result) != 0:
+                account, password = result[0]
+            else:
+                continue
+            account_dic[account] = password
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
-    return (account_list, account_dic, accountnum)
+    return account_list, account_dic, accountnum
 
 
 # 主程序

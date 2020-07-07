@@ -3,6 +3,7 @@ import os
 import threading
 
 from Automator import *
+import re
 
 
 def runmain(address, account, password):
@@ -171,13 +172,18 @@ def connect():  # 连接adb与uiautomator
 
 def read():  # 读取账号
     account_dic = {}
-    with open('zhanghao_init.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao_init.txt内,不是zhanghao.txt!!!!!
-        for i, line in enumerate(f):
-            account, password = line.strip().split('\t')[0:2]
-            account_dic[account] = password.strip()
+    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)')
+    with open('zhanghao_init.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao_init.txt内
+        for line in f:
+            result = pattern.findall(line)
+            if len(result) != 0:
+                account, password = result[0]
+            else:
+                continue
+            account_dic[account] = password
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
-    return (account_list, account_dic, accountnum)
+    return account_list, account_dic, accountnum
 
 
 # 主程序
