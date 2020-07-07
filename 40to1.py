@@ -135,6 +135,7 @@ def readauth(filename):  # 读取记有大号和会长账号的txt
             account_2, password_2 = result[0]
         else:
             print("会长2账号格式有误，请检查")
+            exit(-1)
     return account_boss, password_boss, UID, account_1, password_1, account_2, password_2
 
 
