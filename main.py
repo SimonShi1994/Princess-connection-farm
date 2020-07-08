@@ -8,6 +8,7 @@ from Automator import *
 import os
 import threading
 import log_handler
+import re
 
 def runmain(address, account, password):
     # 主功能体函数
@@ -21,7 +22,6 @@ def runmain(address, account, password):
     log.Account_Login(account)
     a.init_home()  # 初始化，确保进入首页
     a.sw_init()  # 初始化刷图
-    a.hanghui()  # 行会捐赠
 
     a.gonghuizhijia()  # 家园一键领取
     #a.goumaimana(1)  # 购买mana 10次
@@ -29,13 +29,13 @@ def runmain(address, account, password):
     a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
-    a.shouqu()  # 收取所有礼物
     a.dixiacheng()  # 地下城
     a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
     shuatu_auth(a, account)  # 刷图控制中心
     a.hanghui()  # 行会捐赠
-    # a.shuajingyan(10) # 刷1-1经验（自带体力购买）,10为主图
+    #a.goumaitili(times=3)  # 购买times次体力
+    #a.shuajingyan(map=3)  # 刷1-1经验,map为主图
     a.shouqurenwu()  # 二次收取任务
 
     a.change_acc()  # 退出当前账号，切换下一个
@@ -72,13 +72,16 @@ def read():  # 读取账号
     account_dic = {}
     fun_dic = {}
     fun_list = []
+    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s-]*(.*)')
     with open('zhanghao.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
-        for i, line in enumerate(f):
-            line = line.rstrip("\n")
-            account, password = line.split('\t')[0:2]
-            fun = line.split('\t')[2:]
-            account_dic[account] = password.strip()
-            fun_dic[account] = str(fun).strip()
+        for line in f:
+            result = pattern.findall(line)
+            if len(result) != 0:
+                account, password, fun = result[0]
+            else:
+                continue
+            account_dic[account] = password
+            fun_dic[account] = fun
             fun_list.append(fun_dic[account])
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
@@ -95,7 +98,7 @@ def shuatu_auth(a, account):  # 刷图总控制
     if fun_dic[account] == '[]':
         eval(shuatu_dic['10'])
     else:
-        eval(shuatu_dic[fun_dic[account][2:4]])
+        eval(shuatu_dic[fun_dic[account][0:2]])
 
 
 # 主程序
