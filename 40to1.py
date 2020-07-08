@@ -21,15 +21,17 @@ def runmain(address, account, password, fun, kickflag=0):
     a.init_home()  # 初始化，确保进入首页
     a.sw_init()  # 初始化刷图
 
-    a.gonghuizhijia()  # 家园一键领取
+    # a.gonghuizhijia()  # 家园一键领取
     # a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
     # a.mianfeishilian()  # 免费十连
     a.dianzan(sortflag=1)  # 公会点赞
+    a.tansuo()  # 探索
     # a.hanghui()  # 行会捐赠
     a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
-    # a.goumaitili(3)  # 购买3次体力
+    a.goumaitili(7)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
+    a.gonghuizhijia()  # 家园一键领取
     ok = shuatu_auth(a, account, fun)  # 刷图控制中心
     if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
         a.hanghui()  # 行会捐赠
@@ -39,6 +41,7 @@ def runmain(address, account, password, fun, kickflag=0):
         pass
     # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
     a.shouqu()  # 收取所有礼物
+    # a.shouqurenwu()  # 收取任务
 
     if kickflag == 1:
         a.tichuhanghui()
@@ -55,21 +58,27 @@ def runmain2(address, account, password, kickflag=0):
     a.init_home()  # 初始化，确保进入首页
     a.sw_init()  # 初始化刷图
 
-    a.gonghuizhijia()  # 家园一键领取
+    # a.gonghuizhijia()  # 家园一键领取
     # a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
     # a.mianfeishilian()  # 免费十连
     # a.dianzan(sortflag=1)  # 公会点赞
+    a.tansuo()  # 探索
     # a.hanghui()  # 行会捐赠
-    # a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
-    # a.goumaitili(3)  # 购买3次体力
+    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
+    a.goumaitili(7)  # 购买3次体力    
     a.shouqurenwu()  # 收取任务
-    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数，转为使用下面三个函数
-    # a.shuatu11()  # 刷11图
-    # a.shuatu10()  # 刷10图
-    # a.shuatu8()  #刷8图
-    # # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
+    a.gonghuizhijia()  # 家园一键领取
+    ok = shuatu_auth(a, account, fun)  # 刷图控制中心
+    # if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
+        # a.hanghui()  # 行会捐赠
+    # else:  # 刷图没有被激活的可以去刷经验
+        # a.goumaitili(times=3)  # 购买times次体力
+        # a.shuajingyan(map=3)  # 刷1-1经验,map为主图
+        # pass
+    # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
     a.shouqu()  # 收取所有礼物
+    # a.shouqurenwu()  # 收取任务
 
     if kickflag == 1:
         a.tichuhanghui()
@@ -88,13 +97,13 @@ def runmain_hz(address, account, password, kickflag=0):
 
     a.gonghuizhijia()  # 家园一键领取
     # a.goumaimana(1)  # 购买mana 10次
-    a.mianfeiniudan()  # 免费扭蛋
+    # a.mianfeiniudan()  # 免费扭蛋
     # a.mianfeishilian()  # 免费十连
-    a.dianzan(sortflag=1)  # 公会点赞
+    # a.dianzan(sortflag=1)  # 公会点赞
     # a.hanghui()  # 行会捐赠
-    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
+    # a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
     # a.goumaitili(3)  # 购买3次体力
-    a.shouqurenwu()  # 收取任务
+    # a.shouqurenwu()  # 收取任务
     # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数，转为使用下面三个函数
     # a.shuatu11()  # 刷11图
     # a.shuatu10()  # 刷10图
@@ -263,7 +272,7 @@ if __name__ == '__main__':
     # 读取大号和会长账号
     account_boss, password_boss, UID, account_1, password_1, account_2, password_2 = readauth('40_huizhang.txt')
     # 执行会长1的日常任务+踢出大号
-    t = threading.Thread(target=runmain,
+    t = threading.Thread(target=runmain_hz,
                          args=(lines[0], account_1, password_1, 1))
     t.start()
     t.join()
@@ -312,7 +321,7 @@ if __name__ == '__main__':
         t.join()
 
     # 执行会长2的日常任务+踢出大号
-    t = threading.Thread(target=runmain,
+    t = threading.Thread(target=runmain_hz,
                          args=(lines[0], account_2, password_2, 1))
     t.start()
     t.join()

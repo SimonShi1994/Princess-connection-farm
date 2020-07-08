@@ -665,25 +665,30 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
-        self.shuatuzuobiao(821, 299, self.times)  # 10-17
-        self.shuatuzuobiao(703, 328, self.times)  # 10-16
-        self.shuatuzuobiao(608, 391, self.times)  # 10-15
-        self.shuatuzuobiao(485, 373, self.times)  # 10-14
-        self.shuatuzuobiao(372, 281, self.times)  # 10-13
-        self.shuatuzuobiao(320, 421, self.times)  # 10-12
-        self.shuatuzuobiao(172, 378, self.times)  # 10-11
-        self.shuatuzuobiao(251, 235, self.times)  # 10-10
-        self.shuatuzuobiao(111, 274, self.times)  # 10-9
+        # self.shuatuzuobiao(821, 299, self.times)  # 10-17
+        # self.shuatuzuobiao(703, 328, self.times)  # 10-16
+        # self.shuatuzuobiao(608, 391, self.times)  # 10-15
+        # self.shuatuzuobiao(485, 373, self.times)  # 10-14
+        # self.shuatuzuobiao(372, 281, self.times)  # 10-13
+        # self.shuatuzuobiao(320, 421, self.times)  # 10-12
+        # self.shuatuzuobiao(172, 378, self.times)  # 10-11
+        # self.shuatuzuobiao(251, 235, self.times)  # 10-10
+        # self.shuatuzuobiao(111, 274, self.times)  # 10-9
         self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(2)
-        self.shuatuzuobiao(690, 362, self.times)  # 10-8
-        self.shuatuzuobiao(594, 429, self.times)  # 10-7
-        self.shuatuzuobiao(411, 408, self.times)  # 10-6
-        self.shuatuzuobiao(518, 332, self.times)  # 10-5
-        self.shuatuzuobiao(603, 238, self.times)  # 10-4
-        self.shuatuzuobiao(430, 239, self.times)  # 10-3
-        self.shuatuzuobiao(287, 206, self.times)  # 10-2
-        self.shuatuzuobiao(146, 197, self.times)  # 10-1
+        # self.shuatuzuobiao(690, 362, self.times)  # 10-8
+        # self.shuatuzuobiao(594, 429, self.times)  # 10-7
+        # self.shuatuzuobiao(411, 408, self.times)  # 10-6
+        # self.shuatuzuobiao(518, 332, self.times)  # 10-5
+        # self.shuatuzuobiao(603, 238, self.times)  # 10-4
+        # self.shuatuzuobiao(430, 239, self.times)  # 10-3
+        # self.shuatuzuobiao(287, 206, self.times)  # 10-2
+        # self.shuatuzuobiao(146, 197, self.times)  # 10-1
+        
+        self.shuatuzuobiao(251, 235, 10)  # 10-10
+        self.shuatuzuobiao(594, 429, 10)  # 10-7
+        self.shuatuzuobiao(430, 239, 10)  # 10-3
+        self.shuatuzuobiao(287, 206, 60)  # 10-2
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def shuatu11(self):
@@ -701,25 +706,30 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
-        self.shuatuzuobiao(663, 408, self.times)  # 11-17
-        self.shuatuzuobiao(542, 338, self.times)  # 11-16
-        self.shuatuzuobiao(468, 429, self.times)  # 11-15
-        self.shuatuzuobiao(398, 312, self.times)  # 11-14
-        self.shuatuzuobiao(302, 428, self.times)  # 11-13
-        self.shuatuzuobiao(182, 362, self.times)  # 11-12
-        self.shuatuzuobiao(253, 237, self.times)  # 11-11
-        self.shuatuzuobiao(107, 247, self.times)  # 11-10
+        # self.shuatuzuobiao(663, 408, self.times)  # 11-17
+        # self.shuatuzuobiao(542, 338, self.times)  # 11-16
+        # self.shuatuzuobiao(468, 429, self.times)  # 11-15
+        # self.shuatuzuobiao(398, 312, self.times)  # 11-14
+        # self.shuatuzuobiao(302, 428, self.times)  # 11-13
+        # self.shuatuzuobiao(182, 362, self.times)  # 11-12
+        # self.shuatuzuobiao(253, 237, self.times)  # 11-11
+        # self.shuatuzuobiao(107, 247, self.times)  # 11-10
         self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(2)
-        self.shuatuzuobiao(648, 316, self.times)  # 11-9
-        self.shuatuzuobiao(594, 420, self.times)  # 11-8
+        # self.shuatuzuobiao(648, 316, self.times)  # 11-9
+        # self.shuatuzuobiao(594, 420, self.times)  # 11-8
+        # self.shuatuzuobiao(400, 432, self.times)  # 11-7
+        # self.shuatuzuobiao(497, 337, self.times)  # 11-6
+        # self.shuatuzuobiao(558, 240, self.times)  # 11-5
+        # self.shuatuzuobiao(424, 242, self.times)  # 11-4
+        # self.shuatuzuobiao(290, 285, self.times)  # 11-3
+        # self.shuatuzuobiao(244, 412, self.times)  # 11-2
+        # self.shuatuzuobiao(161, 326, self.times)  # 11-1
+        self.shuatuzuobiao(182, 362, self.50)  # 11-12
+        self.shuatuzuobiao(400, 432, self.40)  # 11-7
         self.shuatuzuobiao(400, 432, self.times)  # 11-7
-        self.shuatuzuobiao(497, 337, self.times)  # 11-6
-        self.shuatuzuobiao(558, 240, self.times)  # 11-5
-        self.shuatuzuobiao(424, 242, self.times)  # 11-4
-        self.shuatuzuobiao(290, 285, self.times)  # 11-3
-        self.shuatuzuobiao(244, 412, self.times)  # 11-2
-        self.shuatuzuobiao(161, 326, self.times)  # 11-1
+        self.shuatuzuobiao(400, 432, self.times)  # 11-7
+        self.shuatuzuobiao(182, 362, self.times)  # 11-12
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def dixiacheng(self,firsttime=False):  # 地下城
