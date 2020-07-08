@@ -10,7 +10,7 @@ import threading
 import re
 
 
-def runmain(address, account, password, kickflag=0):
+def runmain(address, account, password, fun, kickflag=0):
     # 主功能体函数
     # 请在本函数中自定义需要的功能
 
@@ -30,11 +30,14 @@ def runmain(address, account, password, kickflag=0):
     a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
     # a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
-    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数，转为使用下面三个函数
-    # a.shuatu11()  # 刷11图
-    # a.shuatu10()  # 刷10图
-    # a.shuatu8()  #刷8图
-    # # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
+    ok = shuatu_auth(a, account, fun)  # 刷图控制中心
+    if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
+        a.hanghui()  # 行会捐赠
+    else:  # 刷图没有被激活的可以去刷经验
+        # a.goumaitili(times=3)  # 购买times次体力
+        # a.shuajingyan(map=3)  # 刷1-1经验,map为主图
+        pass
+    # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
     a.shouqu()  # 收取所有礼物
 
     if kickflag == 1:
@@ -139,17 +142,23 @@ def readauth(filename):  # 读取记有大号和会长账号的txt
     return account_boss, password_boss, UID, account_1, password_1, account_2, password_2
 
 
-def shuatu_auth(a, account):  # 刷图总控制
+def shuatu_auth(a, account, fun):  # 刷图总控制
     shuatu_dic = {
         '08': 'a.shuatu8()',
         '10': 'a.shuatu10()',
         '11': 'a.shuatu11()'
     }
-    _, _, _, fun_list, fun_dic = read('zhanghao.txt')
-    if fun_dic[account] == '[]':
-        eval(shuatu_dic['10'])
+    if len(fun) < 2:
+        print("账号{}不刷图".format(account))
+        return False
+    tu_hao = fun[0:2]
+    if tu_hao in shuatu_dic:
+        print("账号{}将刷{}图".format(account, tu_hao))
+        eval(shuatu_dic[tu_hao])
+        return True
     else:
-        eval(shuatu_dic[fun_dic[account][0:2]])
+        print("账号{}的图号填写有误，请检查图号，图号应为两位数字，该账号将不刷图".format(account))
+        return False
 
 
 # 主程序
@@ -158,7 +167,7 @@ if __name__ == '__main__':
     # 连接adb与uiautomator
     lines, emulatornum = connect()
     # 读取账号
-    account_list, account_dic, accountnum, _, _ = read('40_1.txt')
+    account_list, account_dic, accountnum, fun_list, fun_dic = read('40_1.txt')
 
     # 多线程执行
     count = 0  # 完成账号数
@@ -167,7 +176,8 @@ if __name__ == '__main__':
     for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
         for j in range(emulatornum):
             t = threading.Thread(target=runmain, args=(
-                lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]]))
+                lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]],
+                fun_dic[account_list[i * emulatornum + j]]))
             thread_list.append(t)
             count += 1
         for t in thread_list:
@@ -179,7 +189,8 @@ if __name__ == '__main__':
     i = 0
     while count != accountnum:
         t = threading.Thread(target=runmain,
-                             args=(lines[i], account_list[count], account_dic[account_list[count]]))
+                             args=(lines[i], account_list[count], account_dic[account_list[count]],
+                                   fun_dic[account_list[count]]))
         thread_list.append(t)
         i += 1
         count += 1
@@ -207,7 +218,7 @@ if __name__ == '__main__':
     t.join()
     # ==============================第二轮===========================
     # 读取账号
-    account_list, account_dic, accountnum, _, _ = read('40_2.txt')
+    account_list, account_dic, accountnum, fun_list, fun_dic = read('40_2.txt')
 
     # 多线程执行
     count = 0  # 完成账号数
@@ -216,7 +227,8 @@ if __name__ == '__main__':
     for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
         for j in range(emulatornum):
             t = threading.Thread(target=runmain, args=(
-                lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]]))
+                lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]],
+                fun_dic[account_list[i * emulatornum + j]]))
             thread_list.append(t)
             count += 1
         for t in thread_list:
@@ -228,7 +240,8 @@ if __name__ == '__main__':
     i = 0
     while count != accountnum:
         t = threading.Thread(target=runmain,
-                             args=(lines[i], account_list[count], account_dic[account_list[count]]))
+                             args=(lines[i], account_list[count], account_dic[account_list[count]],
+                                   fun_dic[account_list[count]]))
         thread_list.append(t)
         i += 1
         count += 1

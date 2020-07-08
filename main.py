@@ -32,10 +32,13 @@ def runmain(address, account, password):
     a.dixiacheng()  # 地下城
     a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
-    shuatu_auth(a, account)  # 刷图控制中心
-    a.hanghui()  # 行会捐赠
-    #a.goumaitili(times=3)  # 购买times次体力
-    #a.shuajingyan(map=3)  # 刷1-1经验,map为主图
+    ok = shuatu_auth(a, account)  # 刷图控制中心
+    if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
+        a.hanghui()  # 行会捐赠
+    else:  # 刷图没有被激活的可以去刷经验
+        # a.goumaitili(times=3)  # 购买times次体力
+        # a.shuajingyan(map=3)  # 刷1-1经验,map为主图
+        pass
     a.shouqurenwu()  # 二次收取任务
 
     a.change_acc()  # 退出当前账号，切换下一个
@@ -95,10 +98,18 @@ def shuatu_auth(a, account):  # 刷图总控制
         '11': 'a.shuatu11()'
     }
     _, _, _, fun_list, fun_dic = read()
-    if fun_dic[account] == '[]':
-        eval(shuatu_dic['10'])
+    if len(fun_dic[account]) < 2:
+        print("账号{}不刷图".format(account))
+        return False
+    tu_hao = fun_dic[account][0:2]
+    if tu_hao in shuatu_dic:
+        print("账号{}将刷{}图".format(account, tu_hao))
+        eval(shuatu_dic[tu_hao])
+        return True
     else:
-        eval(shuatu_dic[fun_dic[account][0:2]])
+        print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为两位数字，该账号将不刷图".format(account))
+        return False
+
 
 
 # 主程序
