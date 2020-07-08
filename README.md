@@ -99,16 +99,19 @@ python main.py
 ## 额外说明
 
 1. **本项目下zhanghao.txt为待刷账号与密码**;
-   账号与密码之间用tab键作为分割，不要用空格；
+   账号与密码之间用tab键或空格作为分割；
 
    不同账号之间按行分割；
 
    第一行的zhanghao mima请也改成自己的账号密码。
 
-   下面为实例，刷8图，留空即默认刷10图
+   下面为实例，标注图号的将进行刷图，不标注图号的不刷图
    
    ```
-   zhanghao	mima	08
+   zhanghao1    mima1   11
+   zhanghao5    mima5   11
+   zhanghao6    mima6
+   zhanghao7    mima7
    ```
    
 2. **本项目下40to1.py为39对1行会管理**，执行方法参照main.py；
@@ -251,3 +254,7 @@ python main.py
 2020/7/6
 
 * 更新农场号自动加入指定行会功能（zujianhanghui.py）
+
+2020/7/8 By:Dr_Bluemond
+
+- 优化刷图控制
