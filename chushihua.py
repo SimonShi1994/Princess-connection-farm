@@ -1,11 +1,9 @@
-# coding=utf-8
-import uiautomator2 as u2
-import time
-from utils import *
-from cv import *
-from Automator import *
+# import matplotlib.pylab as plt
 import os
 import threading
+
+from Automator import *
+import re
 
 
 def runmain(address, account, password):
@@ -21,7 +19,7 @@ def runmain(address, account, password):
         a.auth(auth_name=auth_name, auth_id=auth_id)
 
     # ========现在开始完成新手教程========
-    """
+    '''
     最高优先级
     引导， 结束标志
 
@@ -36,8 +34,9 @@ def runmain(address, account, password):
     未激活的加速战斗
 
     默认，点击(1,100)
-    """
-    skipped_fight = 0  # 记录跳过战斗的数量
+    '''
+
+    count = 0  # 记录跳过战斗的数量
     times = 0  # 记录主页出现的次数
     while True:
         screen_shot_ = a.d.screenshot(format="opencv")
@@ -50,17 +49,18 @@ def runmain(address, account, password):
             time.sleep(1)
             continue
         template_path = ['img/tongyi.jpg', 'img/tiaoguo.jpg', 'img/dengji.jpg', 'img/ok.bmp', 'img/niudan_jiasu.jpg']
-        active_path = a.get_butt_stat(screen_shot_, template_path)
+        active_path = UIMatcher.imgs_where(screen_shot_, template_path)
         if len(active_path) > 0:
             for (x, y) in active_path.values():
                 a.d.click(x, y)
                 time.sleep(0.5)
+                # 看下面的break，我的目的是从active_path中随便取一个value点，但是我没有更优雅的写法，求改正
                 break
             continue
         template_path = ['img/caidan.jpg', 'img/caidan_yuan.jpg']
-        active_path = a.get_butt_stat(screen_shot_, template_path)
-        if skipped_fight < 2 and ('img/caidan.jpg' in active_path):  # 有两场战斗是可以跳过的
-            skipped_fight += 1
+        active_path = UIMatcher.imgs_where(screen_shot_, template_path)
+        if count < 2 and ('img/caidan.jpg' in active_path):  # 有两场战斗是可以跳过的
+            count += 1
             a.d.click(900, 25)
             time.sleep(0.8)
             a.d.click(591, 370)
@@ -74,11 +74,11 @@ def runmain(address, account, password):
             a.d.click(589, 370)
             time.sleep(0.5)
             continue
-        if a.is_there_img(screen_shot_, 'img/kuaijin.jpg'):
+        if UIMatcher.img_where(screen_shot_, 'img/kuaijin.jpg'):
             a.d.click(911, 493)
             time.sleep(3)
             continue
-        if a.is_there_img(screen_shot_, 'img/liwu.bmp'):
+        if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp'):
             if times == 2:
                 break
             times += 1
@@ -87,69 +87,55 @@ def runmain(address, account, password):
         a.d.click(1, 100)
         time.sleep(0.8)
     print('新手教程已完成')
-
     # ===========新手教程完成============
     # ===========开始前期准备============
 
     a.lockimg('img/liwu.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=2)
-
     a.shouqu()  # 拿一点钻石用于买扫荡券，理论上至少能拿到300钻
     a.goumaimana(1)  # 买扫荡券
-    a.goumaitili(2)
+    a.goumaitili(3)
     a.goumaijingyan()
 
     a.setting()  # 设置无动画、低帧率
-
     a.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=0.5, alldelay=1)
     a.lockimg('img/zhuxianguanqia.jpg', ifclick=[(562, 235)], ifdelay=3, alldelay=0)
-
     # ===========前期准备结束============
     # =============开始刷图==============
-    print("emu:", address, "stage:1-3")
+    # 如果执行了新手教程，应该已经开成两倍速了，否则直接
     a.shoushuazuobiao(313, 341)  # 1-3
-    print("emu:", address, "stage:1-4")
     a.shoushuazuobiao(379, 240, 1)  # 1-4
-    print("emu:", address, "stage:1-5")
     a.shoushuazuobiao(481, 286)  # 1-5
-    print("emu:", address, "stage:1-6")
     a.shoushuazuobiao(545, 381, 1)  # 1-6
-    print("emu:", address, "stage:1-7")
     a.shoushuazuobiao(607, 304)  # 1-7
-    print("emu:", address, "stage:1-8")
     a.shoushuazuobiao(620, 209)  # 1-8
-    print("emu:", address, "stage:1-9")
     a.shoushuazuobiao(747, 243)  # 1-9
     a.qianghua()
-    print("emu:", address, "stage:1-10")
-    a.shoushuazuobiao(824, 348, 1)  # 1-10
-    print("emu:", address, "stage:2-1")
+    a.shoushuazuobiao(824, 348, 1)  # 1-10 虽然没有繁琐教程，但解锁东西过多，还是去用函数
     a.shoushuazuobiao(129, 413, 1)  # 2-1
-    print("emu:", address, "stage:2-2")
     a.shoushuazuobiao(255, 413, 1)  # 2-2
     a.qianghua()
-    print("emu:", address, "stage:2-3")
     a.shoushuazuobiao(379, 379)  # 2-3
-    print("emu:", address, "stage:2-4")
     a.shoushuazuobiao(332, 269)  # 2-4
-    print("emu:", address, "stage:2-5")
     a.shoushuazuobiao(237, 206, 1)  # 2-5
-    print("emu:", address, "stage:2-6")
     a.shoushuazuobiao(353, 161)  # 2-6
-    print("emu:", address, "stage:2-7")
     a.shoushuazuobiao(453, 231)  # 2-7
-    print("emu:", address, "stage:2-8")
     a.shoushuazuobiao(479, 316, 1)  # 2-8
-    print("emu:", address, "stage:2-9")
-    a.shoushuazuobiao(602, 380)  # 2-9 装备危险
-    print("emu:", address, "stage:2-10")
-    a.shoushuazuobiao(646, 371)  # 2-10
-    print("emu:", address, "stage:2-11")
-    a.shoushuazuobiao(757, 344)  # 2-11
-    print("emu:", address, "stage:2-12")
-    a.shoushuazuobiao(745, 229, 1)  # 2-12
-    print("emu:", address, "stage:3-1")
+    a.qianghua()
+    a.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右，固定后面的点击位置
+    time.sleep(1)
+    a.shoushuazuobiao(526, 372)  # 2-9 装备危险
+    a.shoushuazuobiao(647, 375)  # 2-10
+    a.shoushuazuobiao(756, 346)  # 2-11
+    a.qianghua()
+    a.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右，固定后面的点击位置
+    time.sleep(1)
+    a.shoushuazuobiao(741, 228, 1)  # 2-12
     a.shoushuazuobiao(138, 188, 1)  # 3-1
-
+    # 结束刷图
+    # 开始探索
+    a.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+    # a.tansuo(mode=2) 还有问题，暂时关闭
+    a.shouqurenwu()
     a.change_acc()  # 退出当前账号，切换下一个
     t = time.time()
     print('>>>>>>>账号：', account, '已刷完, 用时', t - t0, '秒<<<<<<<')
@@ -174,9 +160,11 @@ def connect():  # 连接adb与uiautomator
     for i in range(0, len(lines) - 1):
         lines[i], device_dic[lines[i]] = lines[i].split('\t')[0:]
     lines = lines[0:-1]
-    for i in range(len(lines)):
-        if device_dic[lines[i]] != 'device':
-            del lines[i]
+    newlines = []
+    for i in lines:
+        if device_dic[i] == 'device':
+            newlines += [i]
+    lines = newlines
     print(lines)
     emulatornum = len(lines)
     return lines, emulatornum
@@ -184,13 +172,18 @@ def connect():  # 连接adb与uiautomator
 
 def read():  # 读取账号
     account_dic = {}
-    with open('zhanghao_init.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao_init.txt内,不是zhanghao.txt!!!!!
-        for i, line in enumerate(f):
-            account, password = line.split('\t')[0:2]
-            account_dic[account] = password.strip()
+    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)')
+    with open('zhanghao_init.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao_init.txt内
+        for line in f:
+            result = pattern.findall(line)
+            if len(result) != 0:
+                account, password = result[0]
+            else:
+                continue
+            account_dic[account] = password
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
-    return (account_list, account_dic, accountnum)
+    return account_list, account_dic, accountnum
 
 
 # 主程序

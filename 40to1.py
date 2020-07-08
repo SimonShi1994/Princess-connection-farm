@@ -7,6 +7,7 @@ from Automator import *
 # import matplotlib.pylab as plt
 import os
 import threading
+import re
 
 
 def runmain(address, account, password, kickflag=0):
@@ -26,11 +27,14 @@ def runmain(address, account, password, kickflag=0):
     # a.mianfeishilian()  # 免费十连
     a.dianzan(sortflag=1)  # 公会点赞
     # a.hanghui()  # 行会捐赠
-    a.dixiacheng()  # 地下城
+    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
     # a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
-    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数
-    # # a.shuajingyan(10) # 刷1-1经验（自带体力购买）,10为主图
+    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数，转为使用下面三个函数
+    # a.shuatu11()  # 刷11图
+    # a.shuatu10()  # 刷10图
+    # a.shuatu8()  #刷8图
+    # # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
     a.shouqu()  # 收取所有礼物
 
     if kickflag == 1:
@@ -91,13 +95,16 @@ def read(filename):  # 读取账号
     account_dic = {}
     fun_dic = {}
     fun_list = []
+    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s-]*(.*)')
     with open(filename, 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
-        for i, line in enumerate(f):
-            line = line.rstrip("\n")
-            account, password = line.split('\t')[0:2]
-            fun = line.split('\t')[2:]
-            account_dic[account] = password.strip()
-            fun_dic[account] = str(fun).strip()
+        for line in f:
+            result = pattern.findall(line)
+            if len(result) != 0:
+                account, password, fun = result[0]
+            else:
+                continue
+            account_dic[account] = password
+            fun_dic[account] = fun
             fun_list.append(fun_dic[account])
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
@@ -105,14 +112,31 @@ def read(filename):  # 读取账号
 
 
 def readauth(filename):  # 读取记有大号和会长账号的txt
+    pattern3 = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s-]*([0-9]+)')
+    pattern2 = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)')
     with open(filename, 'r') as f:  # 注意！请把大号和会长账号密码写在zhanghao.txt内
         line = f.readline()
-        account_boss, password_boss, UID = line.split('\t')
+        result = pattern3.findall(line)
+        if len(result) != 0:
+            account_boss, password_boss, UID = result[0]
+        else:
+            print("大号账号格式有误，请检查")
+            exit(-1)
         line = f.readline()
-        account_1, password_1 = line.split('\t')[0:2]
+        result = pattern2.findall(line)
+        if len(result) != 0:
+            account_1, password_1 = result[0]
+        else:
+            print("会长1账号格式有误，请检查")
+            exit(-1)
         line = f.readline()
-        account_2, password_2 = line.split('\t')[0:2]
-    return (account_boss, password_boss, UID, account_1, password_1, account_2, password_2)
+        result = pattern2.findall(line)
+        if len(result) != 0:
+            account_2, password_2 = result[0]
+        else:
+            print("会长2账号格式有误，请检查")
+            exit(-1)
+    return account_boss, password_boss, UID, account_1, password_1, account_2, password_2
 
 
 def shuatu_auth(a, account):  # 刷图总控制
@@ -125,7 +149,7 @@ def shuatu_auth(a, account):  # 刷图总控制
     if fun_dic[account] == '[]':
         eval(shuatu_dic['10'])
     else:
-        eval(shuatu_dic[fun_dic[account][2:4]])
+        eval(shuatu_dic[fun_dic[account][0:2]])
 
 
 # 主程序
@@ -165,7 +189,7 @@ if __name__ == '__main__':
         t.join()
 
     # 读取大号和会长账号
-    account_boss, password_boss, UID, account_1, password_1, account_2, password_2 = readauth()
+    account_boss, password_boss, UID, account_1, password_1, account_2, password_2 = readauth('40_huizhang.txt')
     # 执行会长1的日常任务+踢出大号
     t = threading.Thread(target=runmain,
                          args=(lines[0], account_1, password_1, 1))
