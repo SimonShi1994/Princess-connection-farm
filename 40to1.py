@@ -41,6 +41,67 @@ def runmain(address, account, password, kickflag=0):
         a.tichuhanghui()
     a.change_acc()  # 退出当前账号，切换下一个
 
+def runmain2(address, account, password, kickflag=0):
+    # 主功能体函数
+    # 请在本函数中自定义需要的功能
+
+    a = Automator(address)
+    a.start()
+    print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
+    a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
+    a.init_home()  # 初始化，确保进入首页
+    a.sw_init()  # 初始化刷图
+
+    a.gonghuizhijia()  # 家园一键领取
+    # a.goumaimana(1)  # 购买mana 10次
+    a.mianfeiniudan()  # 免费扭蛋
+    # a.mianfeishilian()  # 免费十连
+    # a.dianzan(sortflag=1)  # 公会点赞
+    # a.hanghui()  # 行会捐赠
+    # a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
+    # a.goumaitili(3)  # 购买3次体力
+    a.shouqurenwu()  # 收取任务
+    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数，转为使用下面三个函数
+    # a.shuatu11()  # 刷11图
+    # a.shuatu10()  # 刷10图
+    # a.shuatu8()  #刷8图
+    # # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
+    a.shouqu()  # 收取所有礼物
+
+    if kickflag == 1:
+        a.tichuhanghui()
+    a.change_acc()  # 退出当前账号，切换下一个
+
+def runmain_hz(address, account, password, kickflag=0):
+    # 主功能体函数
+    # 请在本函数中自定义需要的功能
+
+    a = Automator(address)
+    a.start()
+    print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
+    a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
+    a.init_home()  # 初始化，确保进入首页
+    a.sw_init()  # 初始化刷图
+
+    a.gonghuizhijia()  # 家园一键领取
+    # a.goumaimana(1)  # 购买mana 10次
+    a.mianfeiniudan()  # 免费扭蛋
+    # a.mianfeishilian()  # 免费十连
+    a.dianzan(sortflag=1)  # 公会点赞
+    # a.hanghui()  # 行会捐赠
+    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
+    # a.goumaitili(3)  # 购买3次体力
+    a.shouqurenwu()  # 收取任务
+    # shuatu_auth(a, account)  # 刷图控制中心，在下一次更新前建议暂停使用本函数，转为使用下面三个函数
+    # a.shuatu11()  # 刷11图
+    # a.shuatu10()  # 刷10图
+    # a.shuatu8()  #刷8图
+    # # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
+    a.shouqu()  # 收取所有礼物
+
+    if kickflag == 1:
+        a.tichuhanghui()
+    a.change_acc()  # 退出当前账号，切换下一个
 
 def invitemain(address, account, password, inviteUID):
     # 邀请入会函数，请不要更改本函数中的功能
