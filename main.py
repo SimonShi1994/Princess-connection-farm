@@ -7,24 +7,26 @@ from Automator import *
 # import matplotlib.pylab as plt
 import os
 import threading
+import log_handler
 import re
-
 
 def runmain(address, account, password):
     # 主功能体函数
     # 请在本函数中自定义需要的功能
 
     a = Automator(address)
+    log = log_handler.LOG()#初始化日志
     a.start()
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
+    log.Account_Login(account)
     a.init_home()  # 初始化，确保进入首页
     a.sw_init()  # 初始化刷图
 
     a.gonghuizhijia()  # 家园一键领取
-    a.goumaimana(1)  # 购买mana 10次
+    #a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
-    # a.mianfeishilian()  # 免费十连
+    a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
     a.dixiacheng()  # 地下城
@@ -37,7 +39,7 @@ def runmain(address, account, password):
     a.shouqurenwu()  # 二次收取任务
 
     a.change_acc()  # 退出当前账号，切换下一个
-
+    log.Account_Logout(account)
 
 def connect():  # 连接adb与uiautomator
     try:

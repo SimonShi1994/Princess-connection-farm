@@ -251,3 +251,7 @@ python main.py
 2020/7/6
 
 * 更新农场号自动加入指定行会功能（zujianhanghui.py）
+
+2020/7/7
+
+- 增加日志功能：帐号的登陆登出信息将会被记录在AccountRecord.txt，方便大家定位哪个号卡了
