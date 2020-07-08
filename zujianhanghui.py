@@ -6,6 +6,7 @@ from cv import *
 from Automator import *
 import os
 import threading
+import re
 
 # 初始号加入指定行会函数
 '''
@@ -64,13 +65,16 @@ def read(filename):  # 读取账号
     account_dic = {}
     fun_dic = {}
     fun_list = []
-    with open(filename, 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
-        for i, line in enumerate(f):
-            line = line.rstrip("\n")
-            account, password = line.split('\t')[0:2]
-            fun = line.split('\t')[2:]
-            account_dic[account] = password.strip()
-            fun_dic[account] = str(fun).strip()
+    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s-]*(.*)')
+    with open(filename, 'r') as f:
+        for line in f:
+            result = pattern.findall(line)
+            if len(result) != 0:
+                account, password, fun = result[0]
+            else:
+                continue
+            account_dic[account] = password
+            fun_dic[account] = fun
             fun_list.append(fun_dic[account])
     account_list = list(account_dic.keys())
     accountnum = len(account_list)

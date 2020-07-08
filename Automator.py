@@ -145,7 +145,7 @@ class Automator:
 
     def tichuhanghui(self):  # 踢出行会
         self.d.click(693, 430)  # 点击行会
-        self.lockimg('img/zhiyuansheding.jpg', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
+        self.lockimg('img/zhiyuansheding.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
         self.d.click(241, 350)  # 点击成员
         self.lockimg('img/chengyuanliebiao.bmp', ifclick=[(720, 97)], ifdelay=1)  # 点击排序按钮
         self.lockimg('img/ok.bmp', ifclick=[(289, 303), (587, 372)], ifdelay=1)  # 按战力降序 这里可以加一步调降序
@@ -157,7 +157,7 @@ class Automator:
 
     def yaoqinghanghui(self, inviteUID):  # 邀请行会
         self.d.click(693, 430)  # 点击行会
-        self.lockimg('img/zhiyuansheding.jpg', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
+        self.lockimg('img/zhiyuansheding.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
         self.d.click(241, 350)  # 点击成员
         self.lockimg('img/chengyuanliebiao.bmp', ifclick=[(717, 33)], ifdelay=1)  # 点击搜索成员
         self.lockimg('img/sousuochengyuan.bmp', ifclick=[(845, 90)], ifdelay=1)  # 点击搜索设定
@@ -180,8 +180,9 @@ class Automator:
         self.lockimg('img/ok.bmp', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
         time.sleep(1)
         self.lockimg('img/ok.jpg')  # 锁定ok
-        self.guochang('img/ok.jpg')
-        self.lockimg('img/zhiyuansheding.jpg', ifclick=[(85, 350)], alldelay=0.5)  # 点击支援设定
+        screen_shot_ = self.d.screenshot(format="opencv")
+        self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
+        self.lockimg('img/zhiyuansheding.bmp', ifclick=[(85, 350)], alldelay=0.5)  # 点击支援设定
         self.lockimg('img/zhiyuanjiemian.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定支援界面
         self.d.click(109, 234)  # 点击支援
         time.sleep(1)
@@ -480,11 +481,12 @@ class Automator:
     def hanghui(self):  # 自动行会捐赠
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
         time.sleep(1)
-        self.d.click(693, 436)
+        #self.d.click(693, 436)
+        self.lockimg('img/hanghui.bmp',elseclick=[(693,436)],elsedelay=1)#锁定进入行会
         time.sleep(1)
         while True:  # 6-17修改：减少opencv使用量提高稳定性
             screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/zhiyuansheding.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 for _ in range(3):
                     time.sleep(2)
@@ -507,7 +509,7 @@ class Automator:
                     self.d.click(1, 1)
                     time.sleep(1)
                     screen_shot = self.d.screenshot(format="opencv")
-                    if UIMatcher.img_where(screen_shot, 'img/zhiyuansheding.jpg'):
+                    if UIMatcher.img_where(screen_shot, 'img/zhiyuansheding.bmp'):
                         break
                 break
             time.sleep(2)
@@ -654,7 +656,7 @@ class Automator:
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
-        time.sleep(2)
+        time.sleep(5)
         for _ in range(1):
             # 左移到10图
             self.d.click(27, 272)
@@ -663,6 +665,8 @@ class Automator:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
+        self.d.drag(600, 270, 200, 270, 0.1)
+        time.sleep(2)
         self.shuatuzuobiao(821, 299, self.times)  # 10-17
         self.shuatuzuobiao(703, 328, self.times)  # 10-16
         self.shuatuzuobiao(608, 391, self.times)  # 10-15
