@@ -725,8 +725,8 @@ class Automator:
         # self.shuatuzuobiao(290, 285, self.times)  # 11-3
         # self.shuatuzuobiao(244, 412, self.times)  # 11-2
         # self.shuatuzuobiao(161, 326, self.times)  # 11-1
-        self.shuatuzuobiao(182, 362, self.50)  # 11-12
-        self.shuatuzuobiao(400, 432, self.40)  # 11-7
+        self.shuatuzuobiao(182, 362, 50)  # 11-12
+        self.shuatuzuobiao(400, 432, 40)  # 11-7
         self.shuatuzuobiao(400, 432, self.times)  # 11-7
         self.shuatuzuobiao(400, 432, self.times)  # 11-7
         self.shuatuzuobiao(182, 362, self.times)  # 11-12
