@@ -1475,8 +1475,8 @@ class Automator:
         # time.sleep(1)
         self.lockimg('img/jianjie.bmp',ifclick=[(370,270)],ifdelay=3)# 进入简介
         # self.d.click(860,81)# 点击设定
-        self.lockimg('img/biangengjuese.jpg',ifclick=[(900,140)],ifdelay=3)# 点击改名
-        self.lockimg('img/qingshuruwanjiaming.jpg',ifclick=[(480,270)],ifdelay=1)# 点击改名
+        self.lockimg('img/biangengjuese.bmp',ifclick=[(900,140)],ifdelay=3)# 点击改名
+        self.lockimg('img/qingshuruwanjiaming.bmp',ifclick=[(480,270)],ifdelay=1)# 点击改名
         self.d.clear_text() # 清空
         self.d.send_keys(name) # 输入
         time.sleep(1)

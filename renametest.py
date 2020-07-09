@@ -16,8 +16,8 @@ import re
 4. 运行本程序
 '''
 
-clubname1='kaltist123'
-clubname2='kaltist234'
+clubname1='kaltist'
+clubname2='kaltist2'
 
 
 def runmain(address, account, password, clubname, accname):
@@ -30,7 +30,7 @@ def runmain(address, account, password, clubname, accname):
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
     a.init_home()  # 初始化，确保进入首页
     a.rename(accname)   #账号重命名
-    a.joinhanghui(clubname)  #加入行会
+    # a.joinhanghui(clubname)  #加入行会
 
     a.change_acc()  # 退出当前账号，切换下一个
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # 连接adb与uiautomator
     lines, emulatornum = connect()
     # 读取账号
-    account_list, account_dic, accountnum, _, _ = read('40_1.txt')
+    account_list, account_dic, accountnum, _, _ = read('40_3.txt')
 
     # 多线程执行
     count = 0  # 完成账号数
