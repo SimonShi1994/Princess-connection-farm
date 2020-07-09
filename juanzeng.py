@@ -10,39 +10,29 @@ import threading
 import log_handler
 import re
 
+# 仅适用于zhanghao.txt里面的帐号，可以判断是农场号，还是要捐装备的号
+# 根据zhanghao.txt里边的帐号是否有标注图号（也就是第三个参数）来确定是不是捐装备的号
+# 如果是农场号就没有动作，如果是要捐装备的号就登录游戏捐装备
+
 def runmain(address, account, password):
-    # 主功能体函数
-    # 请在本函数中自定义需要的功能
+    # 主功能体函数，可以在本函数中自定义需要的功能
+    # 但是在这个py文件里不需要自定义，因为这是专门用来做捐赠工作的
 
     a = Automator(address)
     log = log_handler.LOG()#初始化日志
     a.start()
     print('>>>>>>>即将执行的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
     
-
-    # a.gonghuizhijia()  # 家园一键领取
-    # a.goumaimana(1)  # 购买mana 10次
-    # a.mianfeiniudan()  # 免费扭蛋
-    # a.mianfeishilian()  # 免费十连
-    # a.shouqu()  # 收取所有礼物
-    # a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
-    # a.dixiacheng()  # 地下城
-    # a.goumaitili(3)  # 购买3次体力
-    # a.shouqurenwu()  # 收取任务
-    ok = shuatu_auth(a, account)  # 刷图控制中心
-    if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
+    zhuangbeihao = shuatu_auth(a, account)  # 刷图控制中心，此处仅仅只用来判断是不是装备号，如果是装备号也不会刷图
+    if zhuangbeihao:  # 仅注明了刷图图号的账号执行行会捐赠
         a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
         log.Account_Login(account)
         a.init_home()  # 初始化，确保进入首页
         a.sw_init()  # 初始化刷图
         a.hanghui()  # 行会捐赠
         a.change_acc()  # 退出当前账号，切换下一个
-    else:  # 刷图没有被激活的可以去刷经验
-        # a.goumaitili(times=3)  # 购买times次体力
-        # a.shuajingyan(map=4)  # 刷1-1经验,map为主图
+    else:   #不是送装备的号什么也不干，也不用登陆
         pass
-    # a.shouqurenwu()  # 二次收取任务
-
 
     log.Account_Logout(account)
 
@@ -101,17 +91,14 @@ def shuatu_auth(a, account):  # 刷图总控制
     }
     _, _, _, fun_list, fun_dic = read()
     if len(fun_dic[account]) < 2:
-        # print("账号{}不刷图".format(account))
-        print("账号{}不捐赠\n".format(account))
+        print("账号{}不用捐赠\n".format(account))
         return False
     tu_hao = fun_dic[account][0:2]
     if tu_hao in shuatu_dic:
-        # print("账号{}将刷{}图".format(account, tu_hao))
         print("账号{}将要捐赠\n".format(account))
-        # eval(shuatu_dic[tu_hao])
         return True
     else:
-        print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为两位数字，该账号将不刷图".format(account))
+        print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为两位数字，该账号将不捐赠".format(account))
         return False
 
 
