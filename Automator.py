@@ -1466,3 +1466,22 @@ class Automator:
             return -1
         else:
             return int(ret['words_result'][1]['words'].split('/')[0])
+
+    def rename(self,name):  # 改名
+        print('>>>>>>>即将加入公会名为：', name, '<<<<<<<')
+        self.d.click(870,510)# 点击主菜单
+        time.sleep(2)
+        self.lockimg('img/jianjie.bmp',elseclick=[(1,1)],alldelay=3)# 主菜单界面
+        # time.sleep(1)
+        self.lockimg('img/jianjie.bmp',ifclick=[(370,270)],ifdelay=3)# 进入简介
+        # self.d.click(860,81)# 点击设定
+        self.lockimg('img/biangengjuese.jpg',ifclick=[(900,140)],ifdelay=3)# 点击改名
+        self.lockimg('img/qingshuruwanjiaming.jpg',ifclick=[(480,270)],ifdelay=1)# 点击改名
+        self.d.clear_text() # 清空
+        self.d.send_keys(name) # 输入
+        time.sleep(1)
+        self.d.click(1,1)
+        time.sleep(1)
+        self.d.click(590,370) # 确认修改
+        time.sleep(2)
+        self.lockimg('img/liwu.bmp',elseclick=[(89,513)],elsedelay=1)# 回首页
