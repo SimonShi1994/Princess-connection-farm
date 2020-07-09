@@ -131,8 +131,10 @@ python main.py
 3. **本项目下goumaimana.py为购买70次mana**，执行方法参照main.py
 
 4. **本项目下juanzeng.py为行会捐赠装备**；
+   
+   该程序会读取zhanghao.txt中**标有图号**的账号，进行捐赠。没有标图号的认为是mana号不进行捐赠；
 
-   建议每天上午跑一次main.py，8小时后请求新的装备后再跑juanzeng.py
+   建议每天上午跑一次main.py，8小时后请求新的装备后再跑juanzeng.py；
 
 5. **本项目下dixiacheng.py为自动刷完第三个地下城（断崖的遗迹）及自动探索**；
 
