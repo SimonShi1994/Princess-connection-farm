@@ -95,7 +95,7 @@ if __name__ == '__main__':
     # 完整循环 join()方法确保完成后再进行下一次循环
     for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
         for j in range(emulatornum):
-            accname1 = '行会1成员' + str(i * emulatornum + j + 1)
+            accname1 = '罗德岛行动干员' + str(i * emulatornum + j + 2)
             t = threading.Thread(target=runmain, args=(
                 lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]], clubname1, accname1))
             thread_list.append(t)
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     # 剩余账号
     i = 0
     while count != accountnum:
-        accname1 =  '行会1成员' + str(count + 1)
+        accname1 =  '罗德岛后勤干员' + str(count + 2)
         t = threading.Thread(target=runmain,
                              args=(lines[i], account_list[count], account_dic[account_list[count]], clubname1, accname1))
         thread_list.append(t)
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     # 完整循环 join()方法确保完成后再进行下一次循环
     for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
         for j in range(emulatornum):
-            accname2 = '行会2成员' + str(i * emulatornum + j + 1)
+            accname2 = '行会2成员' + str(i * emulatornum + j + 2)
             t = threading.Thread(target=runmain, args=(
                 lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]], clubname2, accname2))
             thread_list.append(t)
@@ -141,7 +141,7 @@ if __name__ == '__main__':
     # 剩余账号
     i = 0
     while count != accountnum:
-        accname2 =  '行会1成员' + str(count + 1)
+        accname2 =  '行会1成员' + str(count + 2)
         t = threading.Thread(target=runmain,
                              args=(lines[i], account_list[count], account_dic[account_list[count]], clubname2, accname2))
         thread_list.append(t)
