@@ -88,7 +88,7 @@ class UIMatcher:
             x1, y1 = 0, 0
 
         # 缓存未命中时从源文件读取
-        if template_path not in cls.template_cache[template_path]:
+        if template_path not in cls.template_cache:
             template = cv2.imread(template_path)
             cls.template_cache[template_path] = template
         else:
