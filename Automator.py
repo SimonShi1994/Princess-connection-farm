@@ -1165,8 +1165,7 @@ class Automator:
                 break
             self.d.click(1, 138)
             time.sleep(1)
-        self.d.click(x, y)
-        time.sleep(1.5)
+        self.lockimg('img/tiaozhan.jpg', elseclick=[(x, y)], elsedelay=2)
         self.d.click(840, 454)
         time.sleep(0.7)
 
