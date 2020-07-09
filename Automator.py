@@ -36,6 +36,7 @@ class Automator:
                 self.app = self.d.session("com.bilibili.priconne")
                 self.appRunning = False
                 continue
+        self.dWidth, self.dHeight = self.d.window_size()
 
     def login(self, ac, pwd):
         while True:
@@ -1237,7 +1238,7 @@ class Automator:
             active_path = UIMatcher.imgs_where(screen_shot_, ['img/liwu.bmp', 'img/jiaruhanghui.jpg', 'img/xiayibu.jpg',
                                                               'img/niudan_jiasu.jpg', 'img/wuyuyin.jpg',
                                                               'img/tiaoguo.jpg', 'img/zhuye.jpg',
-                                                              'img/caidan_yuan.jpg'])
+                                                              'img/caidan_yuan.jpg', 'img/qianwanghuodong.bmp'])
             if 'img/liwu.bmp' in active_path:
                 break
             elif 'img/jiaruhanghui.jpg' in active_path:
@@ -1268,6 +1269,10 @@ class Automator:
                 time.sleep(0.7)
                 self.d.click(593, 372)
                 time.sleep(2)
+            elif 'img/qianwanghuodong.bmp' in active_path:
+                for _ in range(3):
+                    self.d.click(390, 369)
+                    time.sleep(1)
             else:
                 self.d.click(1, 100)
                 time.sleep(2)
@@ -1275,7 +1280,7 @@ class Automator:
         # 返回冒险
         self.d.click(480, 505)
         time.sleep(2)
-        self.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=0.5)
+        self.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513), (390, 369)], elsedelay=0.5)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/zhuxianguanqia.jpg'):
