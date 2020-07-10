@@ -66,7 +66,7 @@ def runmain2(address, account, password, kickflag=0):
     # a.dianzan(sortflag=1)  # 公会点赞
     a.tansuo()  # 探索
     # a.hanghui()  # 行会捐赠
-    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1   
+    a.dixiacheng(1)  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1   
     a.tansuo()  # 探索
     a.shouqurenwu()  # 收取任务
     a.goumaitili(5)  # 购买3次体力 
