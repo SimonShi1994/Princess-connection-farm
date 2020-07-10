@@ -28,9 +28,10 @@ def runmain(address, account, password, fun, kickflag=0):
     a.dianzan(sortflag=1)  # 公会点赞
     a.tansuo()  # 探索
     # a.hanghui()  # 行会捐赠
-    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
-    a.goumaitili(7)  # 购买3次体力
+    a.dixiacheng(1)  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
+    a.tansuo()  # 探索
     a.shouqurenwu()  # 收取任务
+    a.goumaitili(5)  # 购买3次体力    
     a.gonghuizhijia()  # 家园一键领取
     ok = shuatu_auth(a, account, fun)  # 刷图控制中心
     if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
@@ -65,9 +66,10 @@ def runmain2(address, account, password, kickflag=0):
     # a.dianzan(sortflag=1)  # 公会点赞
     a.tansuo()  # 探索
     # a.hanghui()  # 行会捐赠
-    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
-    a.goumaitili(7)  # 购买3次体力    
+    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1   
+    a.tansuo()  # 探索
     a.shouqurenwu()  # 收取任务
+    a.goumaitili(5)  # 购买3次体力 
     a.gonghuizhijia()  # 家园一键领取
     ok = shuatu_auth(a, account, fun)  # 刷图控制中心
     # if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
@@ -296,7 +298,7 @@ if __name__ == '__main__':
     # 完整循环 join()方法确保完成后再进行下一次循环
     for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
         for j in range(emulatornum):
-            t = threading.Thread(target=runmain, args=(
+            t = threading.Thread(target=runmain2, args=(
                 lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]],
                 fun_dic[account_list[i * emulatornum + j]]))
             thread_list.append(t)
@@ -309,7 +311,7 @@ if __name__ == '__main__':
     # 剩余账号
     i = 0
     while count != accountnum:
-        t = threading.Thread(target=runmain,
+        t = threading.Thread(target=runmain2,
                              args=(lines[i], account_list[count], account_dic[account_list[count]],
                                    fun_dic[account_list[count]]))
         thread_list.append(t)
