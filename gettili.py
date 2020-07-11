@@ -31,6 +31,7 @@ def runmain(address, account, password):
     #a.dixiachengDuanya()  # 地下城，请把队伍列表里1队设置为打boss队，2队设置为aoe队
     #a.shouqurenwu()  # 收取任务
     #a.shouqu()  # 收取所有礼物
+    print(a.baidu_ocr(0,0,200,200,2.0))
 
     print('当前体力值为：',a.get_tili())
     #a.change_acc()  # 退出当前账号，切换下一个
