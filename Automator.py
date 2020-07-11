@@ -239,11 +239,15 @@ class Automator:
                 self.d.click(202,319)  # 第一匹马
                 time.sleep(2)
                 self.d.click(845,495)  # 竞赛开始
-                time.sleep(10)
+                time.sleep(5)
+                self.d.click(916,36)  # 跳过
+                time.sleep(1)
             if UIMatcher.img_where(screen_shot_,'img/liwu.bmp'):
                 time.sleep(1)
                 break
             self.d.click(1,1)
+            time.sleep(0.5)
+            self.d.click(916,36)  # 跳过
             time.sleep(0.5)
         self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.5)  # 首页锁定
         time.sleep(0.5)
@@ -883,9 +887,10 @@ class Automator:
 
         if skip:  #直接放弃战斗
             self.lockimg('img/caidan.jpg')
-            screen_shot_ = self.d.screenshot(format="opencv")
-            self.guochang(screen_shot_, ['img/caidan.jpg'], suiji=0)
-            self.lockimg('img/fangqi.jpg')
+            time.sleep(1)
+            self.d.click(902,33)
+            time.sleep(1)
+            self.lockimg('img/fangqi.jpg',elseclick=[(902,33)])
             time.sleep(1)
             self.d.click(625,376)
             time.sleep(2)
