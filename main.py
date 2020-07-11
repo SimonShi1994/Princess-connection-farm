@@ -29,7 +29,7 @@ def runmain(address, account, password):
     a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
-    a.dixiacheng()  # 地下城
+    a.dixiacheng(firsttime=False,skip=False)  # 地下城 如果是首次使用需要跳过剧情，可以修改firsttime=True；需要跳过战斗则skip=True
     a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
     ok = shuatu_auth(a, account)  # 刷图控制中心
@@ -46,11 +46,18 @@ def runmain(address, account, password):
 
 def connect():  # 连接adb与uiautomator
     try:
-        os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
+        # os.system 函数正常情况下返回是进程退出码，0为正常退出码，其余为异常
+        # 雷电模拟器
+        if os.system('cd adb & adb connect 127.0.0.1:5554') != 0:
+            print("连接模拟器失败")
+            exit(1)
         # os.system('cd adb & adb connect 127.0.0.1:7555') #mumu模拟器
-        os.system('python -m uiautomator2 init')
-    except:
-        print('连接失败')
+        if os.system('python -m uiautomator2 init') != 0:
+            print("初始化 uiautomator2 失败")
+            exit(1)
+    except Exception as e:
+        print('连接失败, 原因: {}'.format(e))
+        exit(1)
 
     result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()

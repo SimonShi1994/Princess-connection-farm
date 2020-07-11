@@ -11,6 +11,9 @@ def cv_imread(file_path):  # 用于中文目录的imread函数
 
 
 class UIMatcher:
+    # template 缓存
+    template_cache = dict()
+
 
     @staticmethod
     def RotateClockWise90(img):
@@ -64,8 +67,8 @@ class UIMatcher:
         # plt.show()
         return zhongxings, max_vals
 
-    @staticmethod
-    def img_where(screen, template_path, threshold=0.84, at=None):
+    @classmethod
+    def img_where(cls, screen, template_path, threshold=0.84, at=None):
         """
         在screen里寻找template，若找到则返回坐标，若没找到则返回False
         注：可以使用if img_where():  来判断图片是否存在
@@ -84,7 +87,12 @@ class UIMatcher:
         else:
             x1, y1 = 0, 0
 
-        template = cv2.imread(template_path)
+        # 缓存未命中时从源文件读取
+        if template_path not in cls.template_cache:
+            template = cv2.imread(template_path)
+            cls.template_cache[template_path] = template
+        else:
+            template = cls.template_cache[template_path]
         th, tw = template.shape[:2]  # rows->h, cols->w
         res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)

@@ -131,8 +131,10 @@ python main.py
 3. **本项目下goumaimana.py为购买70次mana**，执行方法参照main.py
 
 4. **本项目下juanzeng.py为行会捐赠装备**；
+   
+   该程序会读取zhanghao.txt中**标有图号**的账号，进行捐赠。没有标图号的认为是mana号不进行捐赠；
 
-   建议每天上午跑一次main.py，8小时后请求新的装备后再跑juanzeng.py
+   建议每天上午跑一次main.py，8小时后请求新的装备后再跑juanzeng.py；
 
 5. **本项目下dixiacheng.py为自动刷完第三个地下城（断崖的遗迹）及自动探索**；
 
@@ -156,13 +158,11 @@ python main.py
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-10. 感谢CyiceK(https://github.com/1076472672) 对本项目的倾力帮助。
+10. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 对本项目的倾力帮助。
 
 11. **来个 star 吧(*/ω＼*)，有问题请提交issue**
 
 12. 您的一点支持会是我们完善本项目的强大动力！(*/ω＼*)
-
-   ![image](https://s1.ax1x.com/2020/06/22/NYtMHs.md.jpg)
 
 ## 更新计划
 
@@ -262,3 +262,7 @@ python main.py
 2020/7/8 By:Dr_Bluemond
 
 - 优化刷图控制
+
+2020/7/10
+
+* 修复行会多次捐赠bug，增加跳过地下城战斗（参数skip=True）
