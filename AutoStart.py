@@ -3,7 +3,6 @@ import os
 import sys, getopt
 import time
 
-
 # 控制台路径
 console_path = ""
 # console_path = "D:\leidian\LDPlayer\\"
@@ -84,13 +83,13 @@ if __name__ == "__main__":
 		for i in range(default_num):
 			index_list.append(("--index", str(i)))
 
-	print(index_list)
 	for index in index_list:
-		launch_command = "{}{} {} {} {}".format(
-				console_path, console_executor, command,
-				 ' '.join(index), 
-				 ' '.join(param_list)
-			)
+		launch_command = "{} {} {} {}".format(
+			console_executor, command,
+			' '.join(index), 
+			' '.join(param_list)
+		)
+		os.chdir(console_path)
 		print (launch_command)
 
 		start(launch_command)
