@@ -26,12 +26,11 @@ def runmain(address, account, password, fun, kickflag=0):
     a.mianfeiniudan()  # 免费扭蛋
     # a.mianfeishilian()  # 免费十连
     a.dianzan(sortflag=1)  # 公会点赞
-    a.tansuo()  # 探索
     # a.hanghui()  # 行会捐赠
-    a.dixiacheng(1)  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
-    a.tansuo()  # 探索
+    a.dixiacheng()  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1
+    # a.tansuo()  # 探索
     a.shouqurenwu()  # 收取任务
-    a.goumaitili(5)  # 购买3次体力    
+    a.goumaitili(6)  # 购买3次体力    
     a.gonghuizhijia()  # 家园一键领取
     ok = shuatu_auth(a, account, fun)  # 刷图控制中心
     if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
@@ -40,44 +39,6 @@ def runmain(address, account, password, fun, kickflag=0):
         # a.goumaitili(times=3)  # 购买times次体力
         # a.shuajingyan(map=3)  # 刷1-1经验,map为主图
         pass
-    # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
-    a.shouqu()  # 收取所有礼物
-    # a.shouqurenwu()  # 收取任务
-
-    if kickflag == 1:
-        a.tichuhanghui()
-    a.change_acc()  # 退出当前账号，切换下一个
-
-def runmain2(address, account, password, kickflag=0):
-    # 主功能体函数
-    # 请在本函数中自定义需要的功能
-
-    a = Automator(address)
-    a.start()
-    print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
-    a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
-    a.init_home()  # 初始化，确保进入首页
-    a.sw_init()  # 初始化刷图
-
-    # a.gonghuizhijia()  # 家园一键领取
-    # a.goumaimana(1)  # 购买mana 10次
-    a.mianfeiniudan()  # 免费扭蛋
-    # a.mianfeishilian()  # 免费十连
-    # a.dianzan(sortflag=1)  # 公会点赞
-    a.tansuo()  # 探索
-    # a.hanghui()  # 行会捐赠
-    a.dixiacheng(1)  # 地下城 如果是首次使用需要跳过剧情，可以在括号中填入参数1   
-    a.tansuo()  # 探索
-    a.shouqurenwu()  # 收取任务
-    a.goumaitili(5)  # 购买3次体力 
-    a.gonghuizhijia()  # 家园一键领取
-    ok = shuatu_auth(a, account, fun)  # 刷图控制中心
-    # if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
-        # a.hanghui()  # 行会捐赠
-    # else:  # 刷图没有被激活的可以去刷经验
-        # a.goumaitili(times=3)  # 购买times次体力
-        # a.shuajingyan(map=3)  # 刷1-1经验,map为主图
-        # pass
     # a.shuajingyan(11) # 刷1-1经验（自带体力购买）,11为当前所在主线图
     a.shouqu()  # 收取所有礼物
     # a.shouqurenwu()  # 收取任务
@@ -298,7 +259,7 @@ if __name__ == '__main__':
     # 完整循环 join()方法确保完成后再进行下一次循环
     for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
         for j in range(emulatornum):
-            t = threading.Thread(target=runmain2, args=(
+            t = threading.Thread(target=runmain, args=(
                 lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]],
                 fun_dic[account_list[i * emulatornum + j]]))
             thread_list.append(t)
@@ -311,7 +272,7 @@ if __name__ == '__main__':
     # 剩余账号
     i = 0
     while count != accountnum:
-        t = threading.Thread(target=runmain2,
+        t = threading.Thread(target=runmain,
                              args=(lines[i], account_list[count], account_dic[account_list[count]],
                                    fun_dic[account_list[count]]))
         thread_list.append(t)
