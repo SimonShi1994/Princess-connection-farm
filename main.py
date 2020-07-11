@@ -29,7 +29,7 @@ def runmain(address, account, password):
     a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
     a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
-    a.dixiacheng()  # 地下城
+    a.dixiacheng(firsttime=False,skip=False)  # 地下城 如果是首次使用需要跳过剧情，可以修改firsttime=True；需要跳过战斗则skip=True
     a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
     ok = shuatu_auth(a, account)  # 刷图控制中心

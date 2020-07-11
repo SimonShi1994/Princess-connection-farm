@@ -158,13 +158,11 @@ python main.py
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-10. 感谢CyiceK(https://github.com/1076472672) 对本项目的倾力帮助。
+10. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 对本项目的倾力帮助。
 
 11. **来个 star 吧(*/ω＼*)，有问题请提交issue**
 
 12. 您的一点支持会是我们完善本项目的强大动力！(*/ω＼*)
-
-   ![image](https://s1.ax1x.com/2020/06/22/NYtMHs.md.jpg)
 
 ## 更新计划
 
@@ -257,10 +255,24 @@ python main.py
 
 * 更新农场号自动加入指定行会功能（zujianhanghui.py）
 
-2020/7/7
+2020/7/7 By:Yuki_Asuuna
 
-- 增加日志功能：帐号的登陆登出信息将会被记录在AccountRecord.txt，方便大家定位哪个号卡了
+- 增加日志功能：帐号的登陆登出信息将会被记录在AccountRecord.txt，方便大家定位哪个号卡了（在多线程下可能有一点问题，正在修复）
 
 2020/7/8 By:Dr_Bluemond
 
 - 优化刷图控制
+
+2020/7/10
+
+* 修复行会多次捐赠bug，增加跳过地下城战斗（参数skip=True）
+
+2020/7/11 By:Yuki_Asuuna
+
+- 区域OCR函数(x1,y1,x2,y2,size)增加参数size（默认size=1.0，参数可省略）。
+
+  表示先对选定区域(x1,y1)->(x2,y2)进行放大/缩小，再进行识别。
+
+  避免因图片过大or过小而导致识别错误。
+
+  若size=2.0表示将截取区域放大2倍，size=0.5则表示将截取区域缩小一半。
