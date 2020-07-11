@@ -229,10 +229,29 @@ class Automator:
             self.auth(auth_name=auth_name, auth_id=auth_id)
 
     def init_home(self):
+        # self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.5)  # 首页锁定
+        # time.sleep(0.5)
+        # self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.2)  # 首页锁定
+        # time.sleep(0.5)
+        while True:
+            screen_shot_ = self.d.screenshot(format='opencv')
+            if UIMatcher.img_where(screen_shot_,'img/jingsaikaishi.bmp'):
+                self.d.click(202,319)  # 第一匹马
+                time.sleep(2)
+                self.d.click(845,495)  # 竞赛开始
+                time.sleep(5)
+                self.d.click(916,36)  # 跳过
+                time.sleep(1)
+            if UIMatcher.img_where(screen_shot_,'img/liwu.bmp'):
+                time.sleep(1)
+                break
+            self.d.click(1,1)
+            time.sleep(0.5)
+            self.d.click(916,36)  # 跳过
+            time.sleep(0.5)
         self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.5)  # 首页锁定
         time.sleep(0.5)
-        self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.2)  # 首页锁定
-        time.sleep(0.5)
+
         # 这里防一波第二天可可萝跳脸教程
         screen_shot_ = self.d.screenshot(format='opencv')
         num_of_white, _, _ = UIMatcher.find_gaoliang(screen_shot_)
@@ -868,9 +887,10 @@ class Automator:
 
         if skip:  #直接放弃战斗
             self.lockimg('img/caidan.jpg')
-            screen_shot_ = self.d.screenshot(format="opencv")
-            self.guochang(screen_shot_, ['img/caidan.jpg'], suiji=0)
-            self.lockimg('img/fangqi.jpg')
+            time.sleep(1)
+            self.d.click(902,33)
+            time.sleep(1)
+            self.lockimg('img/fangqi.jpg',elseclick=[(902,33)])
             time.sleep(1)
             self.d.click(625,376)
             time.sleep(2)
