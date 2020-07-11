@@ -691,12 +691,13 @@ class Automator:
         # self.shuatuzuobiao(703, 328, self.times)  # 10-16
         # self.shuatuzuobiao(608, 391, self.times)  # 10-15
         # self.shuatuzuobiao(485, 373, self.times)  # 10-14
+        self.shuatuzuobiao(485, 373, 10)  # 10-14
         # self.shuatuzuobiao(372, 281, self.times)  # 10-13
+        self.shuatuzuobiao(372, 281, 5)  # 10-13
         # self.shuatuzuobiao(320, 421, self.times)  # 10-12
         # self.shuatuzuobiao(172, 378, self.times)  # 10-11
         # self.shuatuzuobiao(251, 235, self.times)  # 10-10
         # self.shuatuzuobiao(111, 274, self.times)  # 10-9
-        self.shuatuzuobiao(251, 235, 20)  # 10-10
         self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(2)
         # self.shuatuzuobiao(690, 362, self.times)  # 10-8
@@ -707,10 +708,9 @@ class Automator:
         # self.shuatuzuobiao(430, 239, self.times)  # 10-3
         # self.shuatuzuobiao(287, 206, self.times)  # 10-2
         # self.shuatuzuobiao(146, 197, self.times)  # 10-1
-        
-        self.shuatuzuobiao(594, 429, 20)  # 10-7
-        self.shuatuzuobiao(430, 239, 20)  # 10-3
-        self.shuatuzuobiao(287, 206, 20)  # 10-2
+        self.shuatuzuobiao(594, 429, 5)  # 10-7
+        self.shuatuzuobiao(430, 239, 5)  # 10-3
+        self.shuatuzuobiao(287, 206, 10)  # 10-2
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def shuatu11(self):
@@ -733,14 +733,19 @@ class Automator:
         # self.shuatuzuobiao(468, 429, self.times)  # 11-15
         # self.shuatuzuobiao(398, 312, self.times)  # 11-14
         # self.shuatuzuobiao(302, 428, self.times)  # 11-13
+        self.shuatuzuobiao(302, 428, 10)  # 11-13
         # self.shuatuzuobiao(182, 362, self.times)  # 11-12
+        self.shuatuzuobiao(182, 362, 20)  # 11-12
         # self.shuatuzuobiao(253, 237, self.times)  # 11-11
+        self.shuatuzuobiao(253, 237, 10)  # 11-11
         # self.shuatuzuobiao(107, 247, self.times)  # 11-10
-        self.shuatuzuobiao(182, 362, 45)  # 11-12
+        self.shuatuzuobiao(107, 247, 10)  # 11-10
         self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(2)
         # self.shuatuzuobiao(648, 316, self.times)  # 11-9
+        self.shuatuzuobiao(648, 316, 10)  # 11-9
         # self.shuatuzuobiao(594, 420, self.times)  # 11-8
+        self.shuatuzuobiao(594, 420, 15)  # 11-8
         # self.shuatuzuobiao(400, 432, self.times)  # 11-7
         # self.shuatuzuobiao(497, 337, self.times)  # 11-6
         # self.shuatuzuobiao(558, 240, self.times)  # 11-5
@@ -748,7 +753,7 @@ class Automator:
         # self.shuatuzuobiao(290, 285, self.times)  # 11-3
         # self.shuatuzuobiao(244, 412, self.times)  # 11-2
         # self.shuatuzuobiao(161, 326, self.times)  # 11-1
-        self.shuatuzuobiao(400, 432, 35)  # 11-7
+        self.shuatuzuobiao(400, 432, 25)  # 11-7
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def dixiacheng(self,firsttime=False,skip=False):  # 地下城

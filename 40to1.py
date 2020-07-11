@@ -30,7 +30,7 @@ def runmain(address, account, password, fun, kickflag=0):
     a.dixiacheng(firsttime=False,skip=False)  # 地下城 如果是首次使用需要跳过剧情，可以修改firsttime=True；需要跳过战斗则skip=True
     # a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
-    a.goumaitili(6)  # 购买3次体力    
+    a.goumaitili(5)  # 购买3次体力
     a.gonghuizhijia()  # 家园一键领取
     ok = shuatu_auth(a, account, fun)  # 刷图控制中心
     if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
