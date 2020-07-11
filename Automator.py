@@ -1440,7 +1440,9 @@ class Automator:
     # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
     # 使用Baidu OCR接口
     # 离线接口还没写
-    def baidu_ocr(self, x1, y1, x2, y2):
+    def baidu_ocr(self, x1, y1, x2, y2,size=1.0):
+        #size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
+        #默认原图大小（1.0）
         from aip import AipOcr
         print('初始化百度OCR识别')
         with open('baiduocr.txt', 'r') as faip:
@@ -1460,6 +1462,9 @@ class Automator:
         part = screen_shot_[y1:y2, x1:x2]
         from numpy import rot90
         part = rot90(part)  # 图片旋转90度
+        part=cv2.resize(part,None,fx=size,fy=size,interpolation=cv2.INTER_LINEAR)#利用resize调整图片大小
+        #cv2.imshow('part',part)
+        #cv2.waitKey(0)
         partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
         try:
             print('识别成功！')
@@ -1482,7 +1487,7 @@ class Automator:
                 break
         # cv2.imwrite('all.png',screen_shot_)
         # part = screen_shot_[526:649, 494:524]
-        ret = self.baidu_ocr(494, 526, 524, 649)  # 获取体力区域的ocr结果
+        ret = self.baidu_ocr(494, 526, 524, 649,1)  # 获取体力区域的ocr结果
         if ret == -1:
             print('体力识别失败！')
             return -1
