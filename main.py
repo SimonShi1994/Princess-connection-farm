@@ -9,13 +9,13 @@ import os
 import threading
 import log_handler
 import re
+log = log_handler.LOG()  # 初始化日志 new
 
 def runmain(address, account, password):
     # 主功能体函数
     # 请在本函数中自定义需要的功能
 
     a = Automator(address)
-    log = log_handler.LOG()#初始化日志
     a.start()
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
