@@ -13,11 +13,12 @@ import re
 1. 创建两个行会，设置成任何人都可以加入
 2. 在本程序中把clubname1和clubname2分别改成两个行会的名字
 3. 在40_1.txt中输入要加入行会1的账号，40_2.txt中输入要加入行会2的账号
-4. 运行本程序
+4. “行会1成员””行会2成员“改成自己想设置的名称前缀 默认是40_1 40_2的第一个账号开始编号为1，不会改会长名字
+5. 运行本程序
 '''
 
-clubname1='kaltist123'
-clubname2='kaltist234'
+clubname1='clubname1'
+clubname2='clubname2'
 
 
 def runmain(address, account, password, clubname, accname):
@@ -95,7 +96,7 @@ if __name__ == '__main__':
     # 完整循环 join()方法确保完成后再进行下一次循环
     for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
         for j in range(emulatornum):
-            accname1 = '罗德岛行动干员' + str(i * emulatornum + j + 2)
+            accname1 = '行会1成员' + str(i * emulatornum + j + 1)
             t = threading.Thread(target=runmain, args=(
                 lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]], clubname1, accname1))
             thread_list.append(t)
@@ -108,7 +109,7 @@ if __name__ == '__main__':
     # 剩余账号
     i = 0
     while count != accountnum:
-        accname1 =  '罗德岛后勤干员' + str(count + 2)
+        accname1 =  '行会1成员' + str(count + 1)
         t = threading.Thread(target=runmain,
                              args=(lines[i], account_list[count], account_dic[account_list[count]], clubname1, accname1))
         thread_list.append(t)
@@ -128,7 +129,7 @@ if __name__ == '__main__':
     # 完整循环 join()方法确保完成后再进行下一次循环
     for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
         for j in range(emulatornum):
-            accname2 = '行会2成员' + str(i * emulatornum + j + 2)
+            accname2 = '行会2成员' + str(i * emulatornum + j + 1)
             t = threading.Thread(target=runmain, args=(
                 lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]], clubname2, accname2))
             thread_list.append(t)
@@ -141,7 +142,7 @@ if __name__ == '__main__':
     # 剩余账号
     i = 0
     while count != accountnum:
-        accname2 =  '行会1成员' + str(count + 2)
+        accname2 =  '行会2成员' + str(count + 1)
         t = threading.Thread(target=runmain,
                              args=(lines[i], account_list[count], account_dic[account_list[count]], clubname2, accname2))
         thread_list.append(t)
