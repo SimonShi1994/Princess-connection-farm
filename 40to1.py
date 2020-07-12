@@ -14,7 +14,7 @@ def runmain(address, account, password, fun, kickflag=0):
     # 主功能体函数
     # 请在本函数中自定义需要的功能
 
-    a = Automator(address)
+    a = Automator(address, account)
     a.start()
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
@@ -47,7 +47,7 @@ def runmain(address, account, password, fun, kickflag=0):
 
 def invitemain(address, account, password, inviteUID):
     # 邀请入会函数，请不要更改本函数中的功能
-    a = Automator(address)
+    a = Automator(address, account)
     a.start()
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
@@ -58,7 +58,7 @@ def invitemain(address, account, password, inviteUID):
 
 def acceptmain(address, account, password):
     # 接受入会邀请函数，请不要更改本函数中的功能
-    a = Automator(address)
+    a = Automator(address, account)
     a.start()
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
