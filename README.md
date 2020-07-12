@@ -63,11 +63,11 @@ pip install gevent
 
 **重要：模拟器分辨率要求540*960**
 
-**重要：**需要百度OCR文字识别 的 apikey和Secret Key分别tab间隔填入baiduocr.txt 中
+**重要:**需要百度OCR文字识别 的 apikey和Secret Key分别tab间隔填入baiduocr.txt 中
 
-[如何申请百度文字识别apikey和Secret Key]: https://blog.csdn.net/biao197/article/details/102907492
+如何申请百度文字识别apikey和Secret Key:
 
-
+(https://blog.csdn.net/biao197/article/details/102907492 )
 
 
 ## 使用方式
@@ -282,5 +282,5 @@ python main.py
 - 封装异步类，启动异步跳过剧情 异步判断处理 connect/nowloading/返回标题 三种异常情况
 - 尝试性使用协程来初始化
 - 优化 改动ocr函数，log_handler.py ，cv.py，lock函数
-- 完全重写地下城，去除冗余代码**（需要百度OCR文字识别的API）**
+- 完全重写地下城，去除冗余代码**(需要百度OCR文字识别的API)**
 - 只要在界面上出现剧情都会进行跳过，出现异常即重启app
