@@ -7,7 +7,7 @@ import re
 
 
 def runmain(address, account, password):
-    a = Automator(address)
+    a = Automator(address, account)
     a.start()
 
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')

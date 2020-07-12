@@ -24,7 +24,7 @@ def runmain(address, account, password, clubname):
     # 主功能体函数
     # 请在本函数中自定义需要的功能
 
-    a = Automator(address)
+    a = Automator(address, account)
     a.start()
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内

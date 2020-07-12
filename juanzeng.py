@@ -18,7 +18,7 @@ def runmain(address, account, password):
     # 主功能体函数，可以在本函数中自定义需要的功能
     # 但是在这个py文件里不需要自定义，因为这是专门用来做捐赠工作的
 
-    a = Automator(address)
+    a = Automator(address, account)
     log = log_handler.LOG()#初始化日志
     a.start()
     print('>>>>>>>即将执行的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
