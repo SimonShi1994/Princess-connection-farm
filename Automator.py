@@ -851,19 +851,27 @@ class Automator:
             print('检测出异常{}'.format(result))
         # 下面这段因为调试而注释了，实际使用时要加上
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp') and dixiacheng_times == 1:
-                self.d.click(233, 311)
-                time.sleep(1)
-            elif UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp') and dixiacheng_times == 0:
-                self.dxc_switch = 1
-                LOG().Account_undergroundcity(self.account)
-            if self.dxc_switch == 0:
-                self.lockimg('img/ok.bmp', ifclick=[(592, 369)], elseclick=[(592, 369)])
-                # 锁定OK
-            else:
-                print('>>>今天无次数\r\n')
-                # LOG().Account_undergroundcity(self.account)
+            try:
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp') and dixiacheng_times == 1:
+                    self.d.click(233, 311)
+                    time.sleep(1)
+                elif UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp') and dixiacheng_times == 0:
+                    self.dxc_switch = 1
+                    LOG().Account_undergroundcity(self.account)
+                if self.dxc_switch == 0:
+                    screen_shot_ = self.d.screenshot(format="opencv")
+                    if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
+                        self.d.click(592, 369)
+                    # self.lockimg('img/ok.bmp', ifclick=[(592, 369)], elseclick=[(592, 369)])
+                    # 锁定OK
+                else:
+                    print('>>>今天无次数\r\n')
+                    # LOG().Account_undergroundcity(self.account)
+                    break
+            except Exception as error:
+                print('检测出异常{}'.format(error))
+                print('OCR无法识别！\r\n')
                 break
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
