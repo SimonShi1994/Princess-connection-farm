@@ -53,7 +53,7 @@
 pip install opencv-python==3.* -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pip install matplotlib -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pip install uiautomator2 -i https://mirrors.aliyun.com/pypi/simple/
-pip install baidu_api
+pip install baidu_aip
 pip install gevent
 ```
 
