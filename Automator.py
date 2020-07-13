@@ -138,6 +138,12 @@ class Automator:
             elsedelay:上述点击后延迟的时间
         @return:无
         """
+        # 2020-07-12 Add: 增加了ifclick,elseclick参数对Tuple的兼容性
+        if type(ifclick) is tuple:
+            ifclick = [ifclick]
+        if type(elseclick) is tuple:
+            elseclick = [elseclick]
+
         while True:  #
             screen_shot = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot, img):
