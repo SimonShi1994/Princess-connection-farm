@@ -1,4 +1,4 @@
-# Princess connection 公主连结农场脚本v0.3
+# Princess connection 公主连结农场脚本v0.5
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -33,17 +33,19 @@
 6. 地下城自动刷支援，默认第一个人，请确保支援角色不大于农场号等级+30；
 7. 购买3次体力；
 8. 收取所有任务报酬；
-9. 刷全部8/10/11图 3次（请确保你的农场号已经全部3星通关）*次数在Automator.py中全局定义*；
+9. 扫荡全部8/10/11图 3次 次数在Automator.py中全局定义；
 10. 家园自动收取；
 11. 公会给副会长（默认排序第二位）自动点赞；
 12. 自动免费扭蛋；
 13. 购买10次mana；
-14. *自动刷经验关(1-1，内含自动购买体力)；
+14. *自动刷经验关(1-1)；
 15. *自动刷完第三个地下城（断崖的遗迹）及自动探索（主程序中没有包含，为额外脚本）；
 16. *购买70次mana（主程序中没有包含，为额外脚本）；
 17. *初始化mana农场号，从0到3-1；
 
 ## 环境
+
+需要 Python版本>3.6（安装时记得把带有**PATH**字母选项的勾上）
 
 需要安装下列python包:
 
@@ -51,25 +53,35 @@
 pip install opencv-python==3.* -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pip install matplotlib -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pip install uiautomator2 -i https://mirrors.aliyun.com/pypi/simple/
+pip install baidu_aip
+pip install gevent
 ```
 
-若使用模拟器，则需要将模拟器设置为桥接模式，同时需要打开usb调试。具体参考这个项目(https://github.com/Jiahonzheng/JGM-Automator)
+若使用模拟器，则需要将模拟器设置为桥接模式，同时需要打开开发者usb调试。具体参考这个项目(https://github.com/Jiahonzheng/JGM-Automator)
 
 建议使用雷电模拟器，本项目中均以雷电模拟器为示例。
 
 **重要：模拟器分辨率要求540*960**
 
+**重要:**需要百度OCR文字识别 的 apikey和Secret Key分别tab间隔填入baiduocr.txt 中
+
+如何申请百度文字识别apikey和Secret Key:
+
+(https://blog.csdn.net/biao197/article/details/102907492 )
+
 
 ## 使用方式
 
-1. 在main.py中定制自己需要的功能，不需要的用#号注释，或直接跳过本步骤
+1. 在main.py主功能体函数中定制自己需要的功能，不需要的用#号注释，或直接跳过本步骤
 2. 启动雷电模拟器，安装b服版公主连结，设置分辨率为540*960   **注意不是960 * 540**
 3. 启动雷电多开器，用复制模拟器功能 根据电脑性能酌情多开
 4. 然后在终端中输入
 
 ```
 cd main.py文件所在的目录（自己复制）
-例如：cd C:\Users\Administrator\Documents\Princess-connection-farm
+例如：
+cd C:
+cd .\Users\Administrator\Documents\Princess-connection-farm
 ```
 
 5. 再输入
@@ -80,22 +92,6 @@ python main.py
 
 **※**:为额外注释脚本，不会在main中运行。
 
-**第二次使用只需**
-
-1. 启动雷电多开器，多开复数个模拟器；
-2. 然后在终端中输入
-
-```
-cd main.py文件所在的目录（自己复制）
-例如：cd C:\Users\Administrator\Documents\Princess-connection-farm
-```
-
-3. 再输入
-
-```
-python main.py
-```
-
 ## 额外说明
 
 1. **本项目下zhanghao.txt为待刷账号与密码**;
@@ -105,7 +101,9 @@ python main.py
 
    第一行的zhanghao mima请也改成自己的账号密码。
 
-   下面为实例，标注图号的将进行刷图，不标注图号的不刷图
+   下面为实例，标注图号的将进行刷图，不标注图号的不刷图，同时不进行捐赠
+   
+   可手动取消注释使得不刷装备的号去刷1-1经验，和进行其他DIY
    
    ```
    zhanghao1    mima1   11
@@ -124,8 +122,8 @@ python main.py
 
    ~~~
    大号账号	大号密码	大号UID
-   行会1会长账号	密码
-   行会2会长账号	 密码
+   行会1会长账号 密码 图号(可选)
+   行会2会长账号 密码 图号(可选)
    ~~~
 
 3. **本项目下goumaimana.py为购买70次mana**，执行方法参照main.py
@@ -150,10 +148,6 @@ python main.py
 
    若需要多开，请保证自己的电脑能够高效率运行，或者请手动调高延时，否则会出现点不上的情况。有问题可以在群里反馈。
 
-7. 一些剧情由于识别率问题需要手动跳过，例如公会之家的剧情。如果不想手动跳过，请在主程序尝试自行添加识别，或直接注释相关函数；
-
-8. **刷图购买体力和刷经验是相冲的！！！**
-
 9. 请不要用于商业用途。代码交流和bug反馈请加群加qq群 1130884619
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
@@ -170,6 +164,12 @@ python main.py
 - [ ] 更换jpg图片为bmp
 - [ ] 代码优化整理
 - [ ] 24H挂机定时执行任务
+
+## 免责声明
+
+当你**下载或使用**本项目，将默许
+
+本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
 
@@ -257,7 +257,7 @@ python main.py
 
 2020/7/7 By:Yuki_Asuuna
 
-- 增加日志功能：帐号的登陆登出信息将会被记录在AccountRecord.txt，方便大家定位哪个号卡了（在多线程下可能有一点问题，正在修复）
+- 增加日志功能：帐号的登陆登出信息将会被记录在AccountRecord.txt，方便大家定位哪个号卡了
 
 2020/7/8 By:Dr_Bluemond
 
@@ -278,3 +278,11 @@ python main.py
   若size=2.0表示将截取区域放大2倍，size=0.5则表示将截取区域缩小一半。
 
 - 增加项目更新的脚本（updater.py），自动下载最新版本的项目代码到本地文件夹，满足快速更新的需求（详情请参考AboutUpdater.md），仅供小白使用，开发组的大佬们请无视。
+
+2020/7/12 By:CyiceK
+
+- 封装异步类，启动异步跳过剧情 异步判断处理 connect/nowloading/返回标题 三种异常情况
+- 尝试性使用协程来初始化
+- 优化 改动ocr函数，log_handler.py ，cv.py，lock函数
+- 完全重写地下城，去除冗余代码**(需要百度OCR文字识别的API)**
+- 只要在界面上出现剧情都会进行跳过，出现异常即重启app
