@@ -117,7 +117,8 @@ class Automator:
         else:
             return False
 
-    def lockimg(self, img, ifclick=[], ifbefore=1, ifdelay=1, elseclick=[], elsedelay=0.5, alldelay=0.5, retry=0):
+    def lockimg(self, img, ifclick=[], ifbefore=1, ifdelay=1, elseclick=[], elsedelay=0.5, alldelay=0.5, retry=0,
+                at=None):
         """
         @args:
             img:要匹配的图片目录
@@ -139,7 +140,7 @@ class Automator:
         attempt = 0
         while True:
             screen_shot = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot, img):
+            if UIMatcher.img_where(screen_shot, img, at=at):
                 if ifclick != []:
                     for clicks in ifclick:
                         time.sleep(ifbefore)
@@ -157,7 +158,7 @@ class Automator:
         return True
 
     def lock_no_img(self, img, ifclick=[], ifbefore=1, ifdelay=1, elseclick=[], elsedelay=0.5, alldelay=0.5,
-                    retry=0):  # 锁定指定图像
+                    retry=0, at=None):  # 锁定指定图像
         """
         @args:
             img:要匹配的图片目录
@@ -177,7 +178,7 @@ class Automator:
         attempt = 0
         while True:
             screen_shot = self.d.screenshot(format="opencv")
-            if not UIMatcher.img_where(screen_shot, img):
+            if not UIMatcher.img_where(screen_shot, img, at=at):
                 if ifclick != []:
                     for clicks in ifclick:
                         time.sleep(ifbefore)
@@ -280,13 +281,13 @@ class Automator:
     def init_home(self):
         while True:
             screen = self.d.screenshot(format='opencv')
-            if UIMatcher.img_where(screen, 'img/liwu.bmp'):
+            if UIMatcher.img_where(screen, 'img/liwu.bmp', at=(891, 413, 930, 452)):
                 break
-            if UIMatcher.img_where(screen, 'img/niudan_jiasu.jpg'):
+            if UIMatcher.img_where(screen, 'img/niudan_jiasu.jpg', at=(700, 0, 960, 100)):
                 self.d.click(893, 39)  # 跳过
                 time.sleep(0.5)
                 continue
-            if UIMatcher.img_where(screen, 'img/jingsaikaishi.bmp'):
+            if UIMatcher.img_where(screen, 'img/jingsaikaishi.bmp', at=(755, 471, 922, 512)):
                 self.d.click(786, 308)  # 选角色
                 time.sleep(0.2)
                 self.d.click(842, 491)  # 开始
@@ -380,7 +381,7 @@ class Automator:
             time.sleep(1)  # 首页锁定，保证回到首页
 
     def dianzan(self, sortflag=0):  # 行会点赞
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         # 进入行会
         self.d.click(688, 432)
         time.sleep(3)
@@ -396,7 +397,7 @@ class Automator:
                                 retry=5):  # 按战力降序 这里可以加一步调降序
                 # 如果没有加入公会则返回
                 print("这个账号看起来并没有加入公会")
-                self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1)  # 回首页
+                self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
                 return
             self.d.click(818, 198)  # 点赞 战力降序第一个人
             time.sleep(2)
@@ -406,7 +407,7 @@ class Automator:
         self.d.click(479, 381)
         screen_shot_ = self.d.screenshot(format="opencv")
         self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1)  # 回首页
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     def shouqu(self):  # 收取全部礼物
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1)  # 回首页
