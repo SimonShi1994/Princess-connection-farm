@@ -1094,7 +1094,7 @@ class Automator:
                     break
 
             if skip:  # 直接放弃战斗
-                self.lockimg('img/caidan.jpg', ifclick=[(902, 33)], ifbefore=0, ifdelay=1)
+                self.lockimg('img/fangqi.jpg', elseclick=[(902, 33)], elsedelay=0.5)
                 self.lockimg('img/fangqi.jpg', ifclick=[(625, 376)], ifbefore=1, ifdelay=0)
                 self.lockimg('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=1, ifdelay=0)
             else:
