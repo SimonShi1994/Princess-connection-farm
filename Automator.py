@@ -1051,6 +1051,7 @@ class Automator:
                           ifdelay=0, retry=3)
         if not ok:
             print("未能成功进入云海的山脉，跳过刷地下城")
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)])
             return
 
         while True:
