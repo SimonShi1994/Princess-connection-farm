@@ -315,11 +315,9 @@ class Automator:
 
     def gonghuizhijia(self):  # 家园领取
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
-        self.d.click(622, 509)
-        self.lockimg('img/jyquanbushouqu.jpg', ifbefore=1, ifclick=[(899, 429)], elseclick=[(899, 429)], elsedelay=3)
-        screen_shot_ = self.d.screenshot(format="opencv")
-        self.guochang(screen_shot_, ['img/guanbi.jpg'], suiji=0)
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+        self.lockimg('img/jyquanbushouqu.jpg', elseclick=[(622, 509)], elsedelay=1)
+        self.lockimg('img/guanbi.jpg', elseclick=[(899, 429)], elsedelay=0.5, retry=3)
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=0.5)  # 回首页
 
     def mianfeiniudan(self):
         # 免费扭蛋
@@ -835,7 +833,7 @@ class Automator:
                 print('异步线程终止并检测出异常{}'.format(e))
                 break
 
-    def dixiacheng(self, skip):
+    def dixiacheng_to_fix(self, skip):
         """
         地下城函数已于2020/7/11日重写
         By:Cyice
@@ -1024,7 +1022,7 @@ class Automator:
             screen_shot = self.d.screenshot(format="opencv")
             self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
 
-    def dixiacheng_dev(self, skip):
+    def dixiacheng(self, skip):
         """
         地下城函数于2020/7/14日修改
         By:Dr-Bluemond

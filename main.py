@@ -109,7 +109,7 @@ def runmain(address, account, password):
     # a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
     a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
-    a.dixiacheng(skip=True)  # 地下城 skip是否开启战斗跳过
+    a.dixiacheng(skip=True)  # By:Dr-Bluemond, 地下城 skip是否开启战斗跳过
     # a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
     ok = shuatu_auth(a, account)  # 刷图控制中心
