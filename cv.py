@@ -83,7 +83,7 @@ class UIMatcher:
         if at is not None:
             try:
                 x1, y1, x2, y2 = at
-                screen = screen[y1:y2 + 1, x1:x2 + 1]
+                screen = screen[y1:y2, x1:x2]
             except:
                 print("检测区域填写错误")
                 exit(-1)
@@ -104,6 +104,10 @@ class UIMatcher:
             y = y1 + max_loc[1] + th // 2
             if debug:
                 print("{}--{}--({},{})".format(template_path, round(max_val, 3), x, y))
+                if at is None:
+                    print("{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0], y1 + max_loc[1],
+                                                       x1 + max_loc[0] + tw,
+                                                       y1 + max_loc[1] + th))
             return x, y
         else:
             if debug:

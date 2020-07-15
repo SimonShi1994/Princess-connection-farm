@@ -286,3 +286,12 @@ python main.py
 - 优化 改动ocr函数，log_handler.py ，cv.py，lock函数
 - 完全重写地下城，去除冗余代码**(需要百度OCR文字识别的API)**
 - 只要在界面上出现剧情都会进行跳过，出现异常即重启app
+
+2020/7/14 By:Dr_Bluemond
+
+- 另写一版地下城函数，可选择更换为dixiacheng_dev，不使用ocr，不处理获得塔币的可可萝教程
+- 优化赛马
+- lockimg增加retry参数，elseclick超过retry次则返回False
+- 增加lock_no_img函数，在有图片时一直点击elseclick，图片消失时点击ifclick
+- 增加区域定位辅助，现在如果搜图没有加上at则会在运行发现时提供at的坐标，直接复制即可使用
+- 优化初始化程序，大幅增加其效率
