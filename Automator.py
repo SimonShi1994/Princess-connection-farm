@@ -394,7 +394,8 @@ class Automator:
                                 retry=5):  # 按战力降序 这里可以加一步调降序
                 # 如果没有加入公会则返回
                 print("这个账号看起来并没有加入公会")
-                self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+                self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1,
+                             at=(891, 413, 930, 452))  # 回首页
                 return
             self.d.click(818, 198)  # 点赞 战力降序第一个人
             time.sleep(2)
@@ -408,15 +409,9 @@ class Automator:
 
     def shouqu(self):  # 收取全部礼物
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
-        screen_shot_ = self.d.screenshot(format="opencv")
-        self.guochang(screen_shot_, ['img/liwu.bmp'], suiji=0)
-        while True:  # 锁定收取履历（礼品盒）
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/shouqulvli.jpg'):
-                self.d.click(809, 471)  # 点击全部收取
-                time.sleep(1)
-                self.d.click(589, 472)  # 2020-5-29 19:41 bug fixed
-                break
+        self.lockimg('img/shouqulvli.jpg', elseclick=[(910, 434)], at=(98, 458, 199, 496))
+        self.lockimg('img/shouquliwu.bmp', elseclick=[(712, 477)], elsedelay=0.5, ifclick=[(588, 479)], ifbefore=0.5,
+                     retry=3, at=(435, 30, 527, 58))
         self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.3, at=(891, 413, 930, 452))  # 回首页
 
     def shouqurenwu(self):  # 收取任务报酬
@@ -811,7 +806,8 @@ class Automator:
                         LOG().Account_bad_connecting(self.account)
                         self.d.session("com.bilibili.priconne")
                         await asyncio.sleep(8)
-                        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+                        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1,
+                                     at=(891, 413, 930, 452))  # 回首页
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if UIMatcher.img_where(screen_shot_, 'img/loading.bmp', threshold=0.8, debug=False):
                     # 不知道为什么，at 无法在这里使用
@@ -822,7 +818,8 @@ class Automator:
                         LOG().Account_bad_connecting(self.account)
                         self.d.session("com.bilibili.priconne")
                         await asyncio.sleep(8)
-                        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+                        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1,
+                                     at=(891, 413, 930, 452))  # 回首页
                 if UIMatcher.img_where(screen_shot_, 'img/fanhuibiaoti.bmp', debug=False):
                     self.guochang(screen_shot_, ['img/fanhuibiaoti.bmp'], suiji=0)
                     await asyncio.sleep(8)
