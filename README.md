@@ -50,11 +50,11 @@
 需要安装下列python包:
 
 ```
-pip install opencv-python==3.* -i https://pypi.tuna.tsinghua.edu.cn/simple/
-pip install matplotlib -i https://pypi.tuna.tsinghua.edu.cn/simple/
-pip install uiautomator2 -i https://mirrors.aliyun.com/pypi/simple/
-pip install baidu_aip
-pip install gevent
+pip3 install opencv-python==3.* -i https://pypi.tuna.tsinghua.edu.cn/simple/
+pip3 install matplotlib -i https://pypi.tuna.tsinghua.edu.cn/simple/
+pip3 install uiautomator2 -i https://mirrors.aliyun.com/pypi/simple/
+pip3 install baidu_aip
+pip3 install gevent -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 若使用模拟器，则需要将模拟器设置为桥接模式，同时需要打开开发者usb调试。具体参考这个项目(https://github.com/Jiahonzheng/JGM-Automator)
