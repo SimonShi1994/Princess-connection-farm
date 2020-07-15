@@ -1,7 +1,5 @@
 from Automator import *
 from MoveRecord import moveset
-
-
 def OneFun(ms: moveset, fun, *args, **kwargs):
     ms.startw(None, start=True)
     ms.exitw(fun, *args, kwargs=kwargs)
@@ -151,22 +149,22 @@ class PCRMoves:
         ms.nextw(Part1, self.a)  # 接受邀请
         ms.T_nextflag("JRHH")
         ms.nextw(Part2, self.a)  # 点确定
-        ms.T_elseflag()  # 如果已经接受过邀请
+        ms.T_else()  # 如果已经接受过邀请
         ms.nextset(self.ms_menu_hanghui(False))  # 点击行会
-        ms.T_endflag()
+        ms.T_end()
         ms.nextw(Part3, self.a)  # 点击支援设定
         ms.T_ifnotflag("ZY1")  # 支援第一人
         ms.nextw(Part4A, self.a)
         ms.T_nextflag("ZY1")
         ms.nextw(Part5, self.a)  # 点确认
-        ms.T_endflag()
+        ms.T_end()
         ms.T_ifnotflag("ZY2")  # 支援第二人
         ms.nextw(Part4B, self.a)
         ms.T_nextflag("ZY2")
         ms.nextw(Part5, self.a)
-        ms.T_endflag()
+        ms.T_end()
         ms.nextset(self.ms_menu_home())  # 回主页
-        ms.T_clearflags(True)
+        ms.T_clearflags()
         return ms
 
     def ms_joinhanghui(self, clubname):
@@ -195,8 +193,8 @@ class PCRMoves:
         ms.T_nextflag("FIN")
         ms.nextw(Part2, self.a)
         ms.nextset(self.ms_menu_home())  # 回主页
-        ms.T_endflag()
-        ms.T_clearflags(True)
+        ms.T_end()
+        ms.T_clearflags()
         return ms
 
     def ms_login_auth(self, ac, pwd):
@@ -294,7 +292,7 @@ class PCRMoves:
         ms.nextw(Part2A, self.a)  # 购买一次一连
         ms.nextwv("var['now']+=1")
         ms.nextw(PartOK, self.a)
-        A = ms.T_endflag()
+        A = ms.T_end()
         ms.T_ifflag("now", times, "<")
         if mode == 0:
             ms.nextw(Part2A, self.a)  # 抽取1连
@@ -303,7 +301,7 @@ class PCRMoves:
         ms.nextwv("var['now']+=1")  # 计数器+1
         ms.nextw(PartOK, self.a)  # 点确定
         ms.endw(None, next_id=A)
-        ms.T_endflag()
+        ms.T_end()
         ms.exitset(self.ms_menu_home())
         return ms
 
@@ -388,11 +386,11 @@ class PCRMoves:
         ms.T_ifnotflag("FINL")
         ms.nextset(msl)
         ms.T_nextflag("FINL")
-        ms.T_endflag()
+        ms.T_end()
         ms.T_ifnotflag("FINR")
         ms.nextset(msr)
         ms.T_nextflag("FINR")
-        ms.T_endflag()
+        ms.T_end()
         ms.exitset(self.ms_menu_home())
         return ms
 
@@ -463,11 +461,11 @@ class PCRMoves:
         ms.T_ifnotflag("FINL")
         ms.nextset(msl)
         ms.T_nextflag("FINL")
-        ms.T_endflag()
+        ms.T_end()
         ms.T_ifnotflag("FINR")
         ms.nextset(msr)
         ms.T_nextflag("FINR")
-        ms.T_endflag()
+        ms.T_end()
         ms.exitset(self.ms_menu_home())
         return ms
 
@@ -533,11 +531,11 @@ class PCRMoves:
         ms.T_ifnotflag("FINL")
         ms.nextset(msl)
         ms.T_nextflag("FINL")
-        ms.T_endflag()
+        ms.T_end()
         ms.T_ifnotflag("FINR")
         ms.nextset(msr)
         ms.T_nextflag("FINR")
-        ms.T_endflag()
+        ms.T_end()
         ms.exitset(self.ms_menu_home())
         return ms
 
