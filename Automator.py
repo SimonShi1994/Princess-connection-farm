@@ -1901,3 +1901,19 @@ class Automator:
             return -1
         else:
             return int(ret['words_result'][1]['words'].split('/')[0])
+
+    def rename(self,name):  # 重命名
+        self.d.click(871, 513)  # 主菜单
+        self.lockimg('img/bangzhu.bmp', ifclick=[(370, 270)])# 锁定帮助 点击简介
+        self.lockimg('img/bianji.bmp', ifclick=[(900, 140)])# 锁定 点击铅笔修改按钮
+        self.lockimg('img/biangeng.bmp', ifclick=[(480, 270)])# 锁定 玩家名 点击游戏渲染编辑框
+        time.sleep(1)
+        self.d.click(290, 425)  # 点击编辑框
+        self.d.clear_text()
+        self.d.send_keys(name)
+        self.d.click(880, 425)  # 点击确定
+        time.sleep(0.5)
+        self.d.click(590, 370)  # 变更按钮
+        time.sleep(1)
+        self.lockimg('img/bangzhu.bmp', elseclick=[(32, 32)])# 锁定帮助
+        print('账号：', name, '已修改名字')
