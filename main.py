@@ -100,8 +100,8 @@ def runmain(address, account, password):
     # 初始化刷图
     a.init_home()  # 初始化，确保进入首页
 
-    _async(a, account, 'a.juqingtiaoguo()', sync=False)  # 异步剧情跳过
-    _async(a, account, 'a.bad_connecting()', sync=False)  # 异步异常处理
+    # _async(a, account, 'a.juqingtiaoguo()', sync=False)  # 异步剧情跳过
+    # _async(a, account, 'a.bad_connecting()', sync=False)  # 异步异常处理
 
     a.gonghuizhijia()  # 家园一键领取
     a.goumaimana(1)  # 购买mana 10次
