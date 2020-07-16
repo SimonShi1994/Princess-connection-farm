@@ -132,6 +132,7 @@ def runmain(params):
         gevent.spawn(LOG().Account_Logout, account)
     ])
     # 退出当前账号，切换下一个
+    queue.put(address)
 
 
 def connect():  # 连接adb与uiautomator
