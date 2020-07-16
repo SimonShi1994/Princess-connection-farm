@@ -117,7 +117,7 @@ class Automator:
         else:
             return False
 
-    def lockimg(self, img, ifclick=[], ifbefore=1, ifdelay=1, elseclick=[], elsedelay=0.5, alldelay=0.5, retry=0,
+    def lockimg(self, img, ifclick=[], ifbefore=0.5, ifdelay=1, elseclick=[], elsedelay=0.5, alldelay=0.5, retry=0,
                 at=None):
         """
         @args:
@@ -157,7 +157,7 @@ class Automator:
                 return False
         return True
 
-    def lock_no_img(self, img, ifclick=[], ifbefore=1, ifdelay=1, elseclick=[], elsedelay=0.5, alldelay=0.5,
+    def lock_no_img(self, img, ifclick=[], ifbefore=0.5, ifdelay=1, elseclick=[], elsedelay=0.5, alldelay=0.5,
                     retry=0, at=None):  # 锁定指定图像
         """
         @args:
@@ -1026,16 +1026,18 @@ class Automator:
         :return:
         """
         # 首页 -> 地下城选章/（新号）地下城章内
-        self.lockimg('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5)  # 进入地下城
-        self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5)
+        self.lockimg('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
+        self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
+                         at=(837, 92, 915, 140))
 
         # 撤退 如果 已经进入
         while True:
             screen = self.d.screenshot(format='opencv')
             if UIMatcher.img_where(screen, 'img/yunhai.bmp'):
                 break
-            if UIMatcher.img_where(screen, 'img/chetui.jpg'):
-                self.lockimg('img/ok.bmp', elseclick=[(810, 433)], elsedelay=1, ifclick=[(592, 370)], ifbefore=0.5)
+            if UIMatcher.img_where(screen, 'img/chetui.jpg', at=(738, 420, 872, 442)):
+                self.lockimg('img/ok.bmp', elseclick=[(810, 433)], elsedelay=1, ifclick=[(592, 370)], ifbefore=0.5,
+                             at=(495, 353, 687, 388))
                 continue
             self.d.click(1, 100)
             time.sleep(0.3)
@@ -1049,8 +1051,8 @@ class Automator:
 
         while True:
             # 锁定挑战和第一层
-            self.lockimg('img/tiaozhan.bmp', elseclick=[(667, 360)], ifclick=[(833, 456)])
-            time.sleep(3)
+            self.lockimg('img/tiaozhan.bmp', elseclick=[(667, 360)], ifclick=[(833, 456)], at=(759, 428, 921, 483))
+            time.sleep(2)
             self.d.click(480, 88)
             time.sleep(0.5)
             poses = [(106, 172), (216, 172), (323, 172), (425, 172)]
@@ -1070,39 +1072,40 @@ class Automator:
                 print("无法出击!")
                 break
             while True:
-                time.sleep(2)
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg'):
-                    time.sleep(1.5)
+                if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg', at=(758, 427, 917, 479)):
+                    time.sleep(1)
                     self.d.click(833, 470)  # 战斗开始
-                    self.lockimg('img/ok.bmp', ifclick=[(588, 479)], ifbefore=0.5, ifdelay=0.5, retry=5)
+                    self.lockimg('img/ok.bmp', ifclick=[(588, 479)], ifdelay=0.5, retry=5)
                     break
+                time.sleep(1)
 
+            time.sleep(4)  # 这里填写你预估的进入战斗加载所花费的时间
             if skip:  # 直接放弃战斗
                 ok = self.lockimg('img/fangqi.jpg', elseclick=[(902, 33)], elsedelay=0.5, ifclick=[(625, 376)],
-                                  ifbefore=0, ifdelay=0, retry=20)
+                                  ifbefore=0, ifdelay=0, retry=7, at=(567, 351, 686, 392))
                 if ok:
-                    ok2 = self.lockimg('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=0.5, ifdelay=0, retry=3)
+                    ok2 = self.lockimg('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=0.5, ifdelay=0, retry=3,
+                                       at=(486, 344, 693, 396))
                     if not ok2:
                         skip = False
                 else:
                     skip = False
-
             else:
-                self.lockimg('img/kuaijin_2.bmp', elseclick=[(913, 494)], ifbefore=0, ifdelay=1)
+                self.lockimg('img/kuaijin_2.bmp', elseclick=[(913, 494)], ifbefore=0, ifdelay=0.5, retry=10)
                 screen = self.d.screenshot(format='opencv')
                 if UIMatcher.img_where(screen, 'img/auto.jpg'):
                     time.sleep(0.2)
                     self.d.click(914, 425)
 
             if skip is False:
-                self.lockimg('img/shanghaibaogao.jpg', ifclick=[(820, 472)], ifbefore=1, ifdelay=3)
-                self.lock_no_img('img/shanghaibaogao.jpg', elseclick=[(820, 472)], elsedelay=3)
+                self.lockimg('img/shanghaibaogao.jpg', elseclick=[(1, 100)], ifclick=[(820, 492)], ifdelay=3)
+                self.lock_no_img('img/shanghaibaogao.jpg', elseclick=[(820, 492)], elsedelay=3)
 
             self.d.click(1, 1)  # 取消显示结算动画
-            self.lockimg('img/chetui.jpg', elseclick=[(1, 1)])
-            self.lockimg('img/ok.bmp', elseclick=[(809, 433)], elsedelay=1)
-            self.lock_no_img('img/ok.bmp', elseclick=[(592, 373)], elsedelay=0.5)
+            self.lockimg('img/chetui.jpg', elseclick=[(1, 1)], at=(738, 420, 872, 442))
+            self.lockimg('img/ok.bmp', elseclick=[(809, 433)], elsedelay=1, at=(495, 353, 687, 388))
+            self.lock_no_img('img/ok.bmp', elseclick=[(592, 373)], elsedelay=0.5, at=(495, 353, 687, 388))
             break
 
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
