@@ -29,6 +29,77 @@ class moveerr(Exception):
         self.desc = desc
 
 
+class movevar:
+    """
+    变量区操作类，可以通过moveset.wvar(var)获得。
+    对var对象，尤其__self__进行操作，从而在函数中轻松操作变量区域
+    :param autosave: 是否开启自动保存。
+    :param var: 所操作的var对象。
+    """
+
+    def __init__(self, var: Dict):
+
+        self.var = var
+        self.autosave = True
+
+    def save(self):
+        """
+        保存当前变量区域
+        方式：通过__self__，调用moveset.savestate
+        :return:
+        """
+        s = self.var["__self__"]
+        s.savestate()
+
+    def setflag(self, flagkey, flagvalue=1, save=None):
+        """
+        立flag
+        类似T_nextflag，立即生效。
+        将flagkey的值赋值为flagvalue
+        立为flag的变量可以通过cflag一键删除
+        :param flagkey: flag名称
+        :param flagvalue: flag值
+        :param save: 是否对该操作进行save。默认None，则根据movevar的autosave设置决定。
+        """
+        if save is None:
+            save = self.autosave
+        self.var.setdefault("__flag__", {})
+        self.var["__flag__"][flagkey] = flagvalue
+        if save:
+            self.save()
+
+    def clearflags(self, save=None):
+        """
+        清除flag
+        类似T_clearflags，立即生效
+        将所有通过flag或者T_nextflag立下的flag全部删除。
+        :param save: 是否对该操作进行save。默认None，则根据movevar的autosave设置决定。
+        """
+        if save is None:
+            save = self.autosave
+        if "__flag__" in self.var:
+            del self.var["__flag__"]
+        if save:
+            self.save()
+
+    def flag(self, flagkey, flagvalue=1, mode="==") -> bool:
+        """
+        类似T_ifflag，对flag进行判断。如果flagkey不存在，一定输出false，否则按照mode与flagvalue比较。
+       :param flagkey: flag名称
+       :param flagvalue: flag比较值
+       :param mode: 比较模式(==,<=,>=,!=,<,>...)
+       :return: 判断的值
+        """
+        cmd = "'__flag__' in self.var and '%s' in self.var['__flag__'] and self.var['__flag__']['%s']%s%s" % (
+            str(flagkey), str(flagkey), mode, str(flagvalue))
+        return eval(cmd)
+
+    def notflag(self, flagkey, flagvalue=1, mode="==") -> bool:
+        cmd = "'__flag__' not in self.var or '%s' not in self.var['__flag__'] or not self.var['__flag__']['%s']%s%s" % (
+            str(flagkey), str(flagkey), mode, str(flagvalue))
+        return eval(cmd)
+
+
 class moveset:
     """
     行动列表类，存放一系列行动列表
@@ -39,6 +110,7 @@ class moveset:
         __return__ moveset执行完毕后的返回值
         __current__ 当前执行（还没有执行完）的步骤
         __start__ moveset的入口ID
+        __flag__ 存放flag（临时变量）的Dict
         __onstart__ 可选参数，moveset执行时不管current首先跳转的ID
         __parent__ 上层moveset，该变量建议不修改，且会在save和load时主动跳过
         __self__ 自己moveset实例，请勿使用
@@ -548,6 +620,10 @@ class moveset:
         return f
 
     @staticmethod
+    def wvar(var: Dict):
+        return movevar(var)
+
+    @staticmethod
     def addstack(var: Dict, stack_id: IDType):
         var.setdefault("__stack__", [])
         var["__stack__"] += [stack_id]
@@ -636,29 +712,21 @@ class moveset:
         """
 
         def f(var):
-            var[flagkey] = flagvalue
-
-        self.tmp.setdefault("flags", set())
-        self.tmp["flags"].add(flagkey)
+            var.setdefault("__flag__", {})
+            var["__flag__"][flagkey] = flagvalue
         return self.nextwv(f)
 
-    def T_clearflags(self, exit=False):
+    def T_clearflags(self):
         """
         模板：清除所有flag
         :return: 该步骤的ID
         """
-        flags = self.tmp["flags"]
-        del self.tmp["flags"]
 
         def f(var):
-            for i in flags:
-                if i in var:
-                    del var[i]
+            if "__flag__" in var:
+                del var["__flag__"]
 
-        if exit:
-            return self.exitwv(f)
-        else:
-            return self.nextwv(f)
+        return self.nextwv(f)
 
     def _T_if(self, cmd) -> IDType:
         self_id = self.tmp["autoid"] + 1
@@ -671,6 +739,7 @@ class moveset:
     def T_ifflag(self, flagkey, flagvalue=1, mode="==") -> IDType:
         """
         模板：只有当flag满足条件时才执行后续语句块内容
+        注：flag为临时变量，存储在__flag__中，对一般变量，见T_if
         last->IFFLAG{
             END-><IF>
                 True-> ** start **
@@ -683,16 +752,33 @@ class moveset:
         :param mode: 比较模式(==,<=,>=,!=,<,>...)
         :return: start的ID
         """
-        cmd = "'%s' in var and var['%s']%s%s" % (str(flagkey), str(flagkey), mode, str(flagvalue))
+        cmd = "'__flag__' in var and '%s' in var['__flag__'] and var['__flag__']['%s']%s%s" % (
+            str(flagkey), str(flagkey), mode, str(flagvalue))
+        return self._T_if(cmd)
+
+    def T_if(self, key, value=1, mode="=="):
+        """
+        模板：只有当key满足条件时才执行后续语句块内容
+        :param key: key名称
+        :param value: key比较值
+        :param mode: 比较模式(==,<=,>=,!=,<,>...)
+        :return: start的ID
+        """
+        cmd = "'%s' in var and var['%s']%s%s" % (str(key), str(key), mode, str(value))
         return self._T_if(cmd)
 
     def T_ifnotflag(self, flagkey, flagvalue=1, mode="=="):
-        cmd = "'%s' not in var or not var['%s']%s%s" % (str(flagkey), str(flagkey), mode, str(flagvalue))
+        cmd = "'__flag__' not in var or '%s' not in var['__flag__'] or not var['__flag__']['%s']%s%s" % (
+            str(flagkey), str(flagkey), mode, str(flagvalue))
         return self._T_if(cmd)
 
-    def T_elseflag(self) -> IDType:
+    def T_ifnot(self, key, value=1, mode="=="):
+        cmd = "'%s' not in var or not var['%s']%s%s" % (str(key), str(key), mode, str(value))
+        return self._T_if(cmd)
+
+    def T_else(self) -> IDType:
         """
-        模板：与T_ifflag成对使用
+        模板：与T_if或T_ifflag成对使用
         last->IFFLAG{
             END-><IF>
                 True-> ...
@@ -700,7 +786,7 @@ class moveset:
             -> ...
         }
 
-        其中** start ** 为该模板最后一步，所以使用T_ifflag后，需要使用next,end或exit继续。
+        其中** start ** 为该模板最后一步，所以使用T_if或T_ifflag后，需要使用next,end或exit继续。
         :return: ；start的ID
         """
         # 取出之前的IF包
@@ -721,16 +807,16 @@ class moveset:
         # start
         return self.startw(None, start_id=else_id)
 
-    def T_endflag(self):
+    def T_end(self):
         """
-        模板：与T_ifflag成对使用
+        模板：与T_if或T_ifflag成对使用
         last->IFFLAG{
             END-><IF>
                 True-> ...
                 False-> ...
             -> ** start **
         }
-        其中** start ** 为该模板最后一步，所以使用T_ifflag后，需要使用next,end或exit继续。
+        其中** start ** 为该模板最后一步，所以使用T_if或T_ifflag后，需要使用next,end或exit继续。
         :return: start的ID
         """
         # 取出之前的IF包

@@ -1,4 +1,6 @@
 # PCR中断运行框架
+-- 警告：该框架目前还在测试阶段，暂不能投入使用 --
+
 基于MoveRecord：https://github.com/TheAutumnOfRice/MoveRecord
 
 对原Automator的成员函数进行简单封装为一个“行动`move`”。
@@ -12,20 +14,20 @@
 但是，详细回复逻辑需要手动构建，当前暂时没有完成全部的恢复逻辑。
 
 ## 包含文件
--[x] Moverecord.py --- 中断恢复框架
--[x] PCRMoves.py --- 依赖Automator.py，将其中的成员函数封装为`move`以支持中断回复，可以增加回调逻辑。
--[x] AutomatorS.py --- 依赖Automator.py，保持了原API不变，但其中所有脚本支持中断回复。
+- [x] Moverecord.py --- 中断恢复框架
+- [x] PCRMoves.py --- 依赖Automator.py，将其中的成员函数封装为`move`以支持中断回复，可以增加回调逻辑。
+- [x] AutomatorS.py --- 依赖Automator.py，保持了原API不变，但其中所有脚本支持中断回复。
 
 ## 目前实现的回复逻辑
--[x] Automator.tichuhanghui
--[x] Automator.yaoqinghanghui
--[x] Automator.jieshouhanghui
--[x] Automator.joinhanghui
--[x] Automator.goumaitili
--[x] Automator.goumaimana
--[x] Automator.shuatu8
--[x] Automator.shautu10
--[x] Automator.shuatu11
+- [x] Automator.tichuhanghui
+- [x] Automator.yaoqinghanghui
+- [x] Automator.jieshouhanghui
+- [x] Automator.joinhanghui
+- [x] Automator.goumaitili
+- [x] Automator.goumaimana
+- [x] Automator.shuatu8
+- [x] Automator.shautu10
+- [x] Automator.shuatu11
 
 其余的`move`目前暂不支持回复逻辑。
 
@@ -91,7 +93,18 @@ self.ms.nextset函数在整题行动集合ms中增加了一个新的行动集合
 
 定义完成后，使用AutomatorS.run方法执行脚本即可。
 
-### 高级方法（有回复逻辑）
+###　高级方法（有回复逻辑） 【新版】
+`适合必须从头开始执行的脚本`
+
+2020-7-16更新了MoveRecord框架，现在可以使用movevar直接对工作区进行保存操作，具体见Example13.
+
+之前使用了T_forcestart模板的恢复逻辑都太过繁琐，之后会慢慢修改。
+
+暂时没有在PCR中使用该方法，之后的更新中增加例子后继续更新readme。
+
+### 高级方法（有回复逻辑）【旧版】
+`适合不要求从头开始执行的脚本`
+
 参考`PCRMoves.py`中对`goumaimana`函数的封装
 
 该方法实现了对原goumainana的重构，将原先的整个函数拆分为四个部分：
@@ -111,14 +124,14 @@ ms.addvar("now",0)
 ```
 该命令初始化了一个now变量，初值设置为0
 
-此后，在脚本中可以使用T_ifflag和T_endflag命令来增加一段条件逻辑，然后利用ms.nextwv函数对变量区`var`中的计数器`now`自加。如：
+此后，在脚本中可以使用T_ifflag和T_end命令来增加一段条件逻辑，然后利用ms.nextwv函数对变量区`var`中的计数器`now`自加。如：
 
 ```python
 ms.T_ifflag("now",0)
 ms.nextw(Part2A,self.a)  # 购买一次一连
 ms.nextwv("var['now']+=1")
 ms.nextw(PartOK,self.a)
-A=ms.T_endflag()
+A=ms.T_end()
 ```
 
 该段的逻辑为：如果now计数器为0（暂未买过体力），则执行购买一连，此后计数器now自增，再点击OK按钮。
@@ -160,5 +173,6 @@ ms.T_forcestart(ENT)  # 强制回到主页
 10. 复杂断点恢复例
 11. ifflag,elseflag,endflag逻辑段使用
 12. 强制重新运行与子moveset的关系
+13. movevar对于工作区的简单操作
 
-其中，与高级逻辑关系比较紧密的例子为Example6 Example10 Example11，可供参考。
+其中，与高级逻辑关系比较紧密的例子为Example6 Example10 Example11，Example 13，可供参考。
