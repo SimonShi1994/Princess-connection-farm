@@ -111,6 +111,10 @@ def runmain(address, account, password):
     a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
     a.dixiacheng(skip=True)  # By:Dr-Bluemond, 地下城 skip是否开启战斗跳过
     # a.goumaitili(3)  # 购买3次体力
+    # a.buyExp() # 买药
+    # a.doActivityHard() # 刷活动hard
+    # a.do1to3Hard() # 刷hard 4-1图, 需已开Hard 4-1
+    # a.do11to3Hard() # 刷hard 11-3图，需已开Hard 11图
     a.shouqurenwu()  # 收取任务
     ok = shuatu_auth(a, account)  # 刷图控制中心
     if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
