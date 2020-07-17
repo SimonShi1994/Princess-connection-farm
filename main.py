@@ -4,6 +4,7 @@ import time
 from utils import *
 from cv import *
 from Automator import *
+from multiprocessing import Pool, cpu_count, Manager
 # import matplotlib.pylab as plt
 import os
 import threading
@@ -80,16 +81,20 @@ def _async(a, account, fun, sync=False):
     pass
 
 
-def runmain(address, account, password):
+def runmain(params):
     # 主功能体函数
     # 请在本函数中自定义需要的功能
+    account = params[0]
+    password = params[1]
+    queue = params[2]
+    address = queue.get()
 
     a = Automator(address, account)
     a.start()
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
     gevent.joinall([
         # 这里是协程初始化的一个实例
-        gevent.spawn(Multithreading, a, _, _, _, _),
+        # gevent.spawn(Multithreading, a, _, _, _, _),
         gevent.spawn(a.login_auth, account, password),
         gevent.spawn(LOG().Account_Login, account),
         gevent.spawn(a.sw_init())
@@ -127,6 +132,7 @@ def runmain(address, account, password):
         gevent.spawn(LOG().Account_Logout, account)
     ])
     # 退出当前账号，切换下一个
+    queue.put(address)
 
 
 def connect():  # 连接adb与uiautomator
@@ -159,8 +165,7 @@ def connect():  # 连接adb与uiautomator
         if device_dic[lines[i]] != 'device':
             del lines[i]
     print(lines)
-    emulatornum = len(lines)
-    return lines, emulatornum
+    return lines
 
 
 def read():  # 读取账号
@@ -208,37 +213,25 @@ def shuatu_auth(a, account):  # 刷图总控制
 if __name__ == '__main__':
 
     # 连接adb与uiautomator
-    lines, emulatornum = connect()
+    devices = connect()
     # 读取账号
     account_list, account_dic, accountnum, _, _ = read()
 
-    # 多线程执行
-    count = 0  # 完成账号数
-    thread_list = []
-    # 完整循环 join()方法确保完成后再进行下一次循环
-    for i in range(int(accountnum / emulatornum)):  # 完整循环 join()方法确保完成后再进行下一次循环
-        for j in range(emulatornum):
-            t = threading.Thread(target=runmain, args=(
-                lines[j], account_list[i * emulatornum + j], account_dic[account_list[i * emulatornum + j]]))
-            thread_list.append(t)
-            count += 1
-        for t in thread_list:
-            t.start()
-        for t in thread_list:
-            t.join()
-        thread_list = []
-    # 剩余账号
-    i = 0
-    while count != accountnum:
-        t = threading.Thread(target=runmain,
-                             args=(lines[i], account_list[count], account_dic[account_list[count]]))
-        thread_list.append(t)
-        i += 1
-        count += 1
-    for t in thread_list:
-        t.start()
-    for t in thread_list:
-        t.join()
+    # 这个队列用来保存设备, 初始化的时候先把所有的模拟器设备放入队列
+    queue = Manager().Queue()
+
+    # 进程池参数列表
+    params = list()
+    for account, password in account_dic.items():
+        params.append((account, password, queue))
+
+    # 初始化队列, 先把所有的模拟器设备放入队列
+    for device in devices:
+        queue.put(device)
+
+    # 进程池大小为模拟器数量, 保证同一时间最多有模拟器数量个进程在运行
+    with Pool(len(devices)) as mp:
+        mp.map(runmain, params)
 
     # 退出adb
     os.system('cd adb & adb kill-server')
