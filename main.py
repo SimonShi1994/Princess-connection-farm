@@ -9,28 +9,108 @@ import os
 import threading
 import log_handler
 import re
+import random
+import asyncio
+import gevent
+
+LOG().log_init()  # 初始化日志 new
+
+
+# 多线程异步
+class Multithreading(threading.Thread):
+    """
+    a 为连接Automator
+    ac 为账号
+    fun 为Automator中功能函数
+    th_id 为线程id
+    th_name 为线程名
+    BY:CyiceK
+    """
+
+    def __init__(self, a, ac, fun, th_id, th_name):
+        threading.Thread.__init__(self)
+        self.th_id = th_id
+        self.th_name = th_name
+        self.a = a
+        self.fun = fun
+        self.account = ac
+        pass
+
+    def run(self):
+        run_func(self.th_name, self.a, self.fun)
+
+    pass
+
+
+exitFlag = 0
+
+
+def run_func(th_name, a, fun):
+    if exitFlag:
+        th_name.exit()
+        pass
+    else:
+        do(th_name, a, fun)
+        pass
+    pass
+
+
+# 自定义，在此定义你要运行的参数
+# 2020.7.11 已封装
+def do(th_name, a, fun):
+    # print(fun)
+    tmp = 'asyncio.run(%s)' % fun
+    eval(tmp)
+    # 异步
+    pass
+
+
+def _async(a, account, fun, sync=False):
+    th = Multithreading(a, account, fun, account, "pack_Thread-" + str(account))
+    # id, name
+    th.start()
+    if sync:
+        # 线程同步异步开关，True/False
+        th.join()
+        # 线程等待，执行完才能进入下一个线程
+        pass
+    else:
+        # 异步，推荐
+        pass
+    pass
+
 
 def runmain(address, account, password):
     # 主功能体函数
     # 请在本函数中自定义需要的功能
 
-    a = Automator(address)
-    log = log_handler.LOG()#初始化日志
+    a = Automator(address, account)
     a.start()
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
-    a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
-    log.Account_Login(account)
+    gevent.joinall([
+        # 这里是协程初始化的一个实例
+        gevent.spawn(Multithreading, a, _, _, _, _),
+        gevent.spawn(a.login_auth, account, password),
+        gevent.spawn(LOG().Account_Login, account),
+        gevent.spawn(a.sw_init())
+    ])
+    # 异步初始化
+    # 注意！请把账号密码写在zhanghao.txt内
+    # 日志记录
+    # 初始化刷图
     a.init_home()  # 初始化，确保进入首页
-    a.sw_init()  # 初始化刷图
+
+    # _async(a, account, 'a.juqingtiaoguo()', sync=False)  # 异步剧情跳过
+    # _async(a, account, 'a.bad_connecting()', sync=False)  # 异步异常处理
 
     a.gonghuizhijia()  # 家园一键领取
-    #a.goumaimana(1)  # 购买mana 10次
+    a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
-    a.mianfeishilian()  # 免费十连
+    # a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
-    a.dianzan()  # 公会点赞，sortflag=1表示按战力排序
-    a.dixiacheng(firsttime=False,skip=False)  # 地下城 如果是首次使用需要跳过剧情，可以修改firsttime=True；需要跳过战斗则skip=True
-    a.goumaitili(3)  # 购买3次体力
+    a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
+    a.dixiacheng(skip=True)  # By:Dr-Bluemond, 地下城 skip是否开启战斗跳过
+    # a.goumaitili(3)  # 购买3次体力
     a.shouqurenwu()  # 收取任务
     ok = shuatu_auth(a, account)  # 刷图控制中心
     if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
@@ -41,8 +121,13 @@ def runmain(address, account, password):
         pass
     a.shouqurenwu()  # 二次收取任务
 
-    a.change_acc()  # 退出当前账号，切换下一个
-    log.Account_Logout(account)
+    gevent.joinall([
+        # 这里是协程的一个实例
+        gevent.spawn(a.change_acc()),
+        gevent.spawn(LOG().Account_Logout, account)
+    ])
+    # 退出当前账号，切换下一个
+
 
 def connect():  # 连接adb与uiautomator
     try:

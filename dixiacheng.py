@@ -14,7 +14,7 @@ def runmain(address, account, password):
     # 主功能体函数
     # 请在本函数中自定义需要的功能
 
-    a = Automator(address)
+    a = Automator(address, account)
     a.start()
 
     # #opencv识别可视化 无法在多线程中使用

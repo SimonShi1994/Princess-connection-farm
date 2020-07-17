@@ -1,8 +1,8 @@
-import cv2, numpy as np
-from utils import *
 # import matplotlib.pylab as plt
 import os
-import uiautomator2 as u2
+
+import cv2
+import numpy as np
 
 
 def cv_imread(file_path):  # 用于中文目录的imread函数
@@ -14,7 +14,6 @@ class UIMatcher:
     # template 缓存
     template_cache = dict()
 
-
     @staticmethod
     def RotateClockWise90(img):
         trans_img = cv2.transpose(img)
@@ -25,10 +24,10 @@ class UIMatcher:
     def findpic(screen, template_paths=['img/tiaoguo.jpg']):
         # 返回相对坐标
         # 已使用img_where代替
-        '''
+        """
         检测各种按钮(头像?)
         @return: 中心坐标lists, 对应的可信度list
-        '''
+        """
         zhongxings = []
         max_vals = []
         # 增加判断screen方向
@@ -68,10 +67,14 @@ class UIMatcher:
         return zhongxings, max_vals
 
     @classmethod
-    def img_where(cls, screen, template_path, threshold=0.84, at=None):
+    def img_where(cls, screen, template_path, threshold=0.84, at=None, debug=True):
         """
         在screen里寻找template，若找到则返回坐标，若没找到则返回False
         注：可以使用if img_where():  来判断图片是否存在
+        :param debug:
+        :param threshold:
+        :param screen:
+        :param template_path:
         :param at: 缩小查找范围
         :return:
         """
@@ -80,7 +83,7 @@ class UIMatcher:
         if at is not None:
             try:
                 x1, y1, x2, y2 = at
-                screen = screen[y1:y2 + 1, x1:x2 + 1]
+                screen = screen[y1:y2, x1:x2]
             except:
                 print("检测区域填写错误")
                 exit(-1)
@@ -96,13 +99,19 @@ class UIMatcher:
         th, tw = template.shape[:2]  # rows->h, cols->w
         res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-        if max_val > threshold:
+        if max_val >= threshold:
             x = x1 + max_loc[0] + tw // 2
             y = y1 + max_loc[1] + th // 2
-            print("{}--{}--({},{})".format(template_path, round(max_val, 3), x, y))
+            if debug:
+                print("{}--{}--({},{})".format(template_path, round(max_val, 3), x, y))
+                if at is None:
+                    print("{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0], y1 + max_loc[1],
+                                                       x1 + max_loc[0] + tw,
+                                                       y1 + max_loc[1] + th))
             return x, y
         else:
-            print("{}--{}".format(template_path, round(max_val, 3)))
+            if debug:
+                print("{}--{}".format(template_path, round(max_val, 3)))
             return False
 
     @staticmethod
@@ -123,10 +132,10 @@ class UIMatcher:
 
     @staticmethod
     def find_gaoliang(screen):
-        '''
+        """
         检测高亮位置(忽略了上板边,防止成就栏弹出遮挡)
         @return: 高亮中心相对坐标[x,y]
-        '''
+        """
         if screen.shape[0] > screen.shape[1]:
             screen = UIMatcher.RotateClockWise90(screen)
         gray = cv2.cvtColor(screen, cv2.COLOR_RGB2GRAY)
