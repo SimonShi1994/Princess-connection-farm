@@ -7,7 +7,7 @@ from cv import *
 import tkinter
 import threading
 from tkinter import ttk
-from log_handler import *
+import log_handler
 
 
 # import matplotlib.pylab as plt
@@ -26,6 +26,7 @@ class Automator:
         self.switch = 0
         self.dxc_switch = 0
         self.times = 3  # 总刷图次数
+        self.log=log_handler.pcr_log(account)#初始化日志
 
     def start(self):
         """
