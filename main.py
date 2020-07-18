@@ -109,17 +109,20 @@ def runmain(params):
     # _async(a, account, 'a.bad_connecting()', sync=False)  # 异步异常处理
 
     a.gonghuizhijia()  # 家园一键领取
-    a.goumaimana(1)  # 购买mana 10次
+    # a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
     # a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
     a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
     a.dixiacheng(skip=True)  # By:Dr-Bluemond, 地下城 skip是否开启战斗跳过
     # a.goumaitili(3)  # 购买3次体力
+    # a.buyExp() # 买药
+    # a.doActivityHard() # 刷活动hard
     a.shouqurenwu()  # 收取任务
     ok = shuatu_auth(a, account)  # 刷图控制中心
     if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
-        a.hanghui()  # 行会捐赠
+        # a.hanghui()  # 行会捐赠
+        print('>>>我就不捐赠,气死你<<<\r\n')
     else:  # 刷图没有被激活的可以去刷经验
         # a.goumaitili(times=3)  # 购买times次体力
         # a.shuajingyan(map=3)  # 刷1-1经验,map为主图
@@ -169,6 +172,8 @@ def connect():  # 连接adb与uiautomator
 
 
 def read():  # 读取账号
+    # 2020-07-18: 使用json存储配置后，建议弃用该函数
+    # 账号的初始读取和修改可以单独写一个程序操作
     account_dic = {}
     fun_dic = {}
     fun_list = []
@@ -188,19 +193,59 @@ def read():  # 读取账号
     return account_list, account_dic, accountnum, fun_list, fun_dic
 
 
+def readjson():  # 读取账号
+    # 2020-07-18 增加读取json账号
+    # 等待一段时间再上限，建议将配置逻辑合并到AutomatorRecord中，调用getuser函数获取配置
+    # 等刷图等逻辑合并到配置文件中后，可以弃用read()函数，runmain传参只需传入配置文件路径
+    # 然后在Automator内部调用getuser获取account,password等一系列配置
+    return list_all_users()
+
 def shuatu_auth(a, account):  # 刷图总控制
     shuatu_dic = {
-        '08': 'a.shuatu8()',
-        '10': 'a.shuatu10()',
-        '11': 'a.shuatu11()'
+        'h00': 'a.ziduan00()',     # h00为不刷任何hard图
+        'h01': 'a.do1_11Hard()',   # 刷hard 1-11图,会购买3次体力,不想刷的图去注释掉即可,请注意!
+        'h02': 'a.doActivityHard() ',   # 刷活动hard,须提前通关!
+        'h04': 'a.do1to3Hard()',    # 刷hard 1-4图, 需已开Hard 1-4图
+        'h11': 'a.do11to3Hard()',    # 刷hard 3-11图，需已开Hard 11图
+        'n07': 'a.shuatu7()',   # 刷7图
+        'n08': 'a.shuatu8()',   # 刷8图
+        'n10': 'a.shuatu10()',  # 刷10图
+        'n11': 'a.shuatu11()'   # 刷11图
     }
     _, _, _, fun_list, fun_dic = read()
-    if len(fun_dic[account]) < 2:
+    if len(fun_dic[account]) < 3:
         print("账号{}不刷图".format(account))
         return False
-    tu_hao = fun_dic[account][0:2]
-    if tu_hao in shuatu_dic:
+    if len(fun_dic[account]) == 3:  # 刷图号为3位时
+        tu_hao = fun_dic[account][0:3]
+        tu_hao in shuatu_dic
         print("账号{}将刷{}图".format(account, tu_hao))
+        eval(shuatu_dic[tu_hao])
+        return True
+    if len(fun_dic[account]) == 6:  # 刷图号为6位时
+        tu_hao = fun_dic[account][0:3]
+        # a.hard = 1    # hard图开关,注释后就开启h本
+        tu_hao in shuatu_dic
+        print("账号{}将刷Hard图".format(account, tu_hao))
+        eval(shuatu_dic[tu_hao])
+        tu_hao = fun_dic[account][4:6]
+        tu_hao in shuatu_dic
+        print("账号{}将刷{}图".format(account, tu_hao))
+        eval(shuatu_dic[tu_hao])
+        return True
+    if len(fun_dic[account]) == 9:  # 刷图号为9位时
+        tu_hao = fun_dic[account][0:3]
+        # a.hard = 1    # hard图开关,注释后就开启h本
+        tu_hao in shuatu_dic
+        print("账号{}将刷{}图".format(account, tu_hao))
+        eval(shuatu_dic[tu_hao])
+        tu_hao = fun_dic[account][4:6]
+        tu_hao in shuatu_dic
+        print("账号{}将刷{}图".format(account, tu_hao))
+        eval(shuatu_dic[tu_hao])
+        tu_hao = fun_dic[account][7:9]
+        tu_hao in shuatu_dic
+        print("账号{}将刷活动h图".format(account, tu_hao))
         eval(shuatu_dic[tu_hao])
         return True
     else:
