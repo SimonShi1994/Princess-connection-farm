@@ -173,6 +173,8 @@ def connect():  # 连接adb与uiautomator
 
 
 def read():  # 读取账号
+    # 2020-07-18: 使用json存储配置后，建议弃用该函数
+    # 账号的初始读取和修改可以单独写一个程序操作
     account_dic = {}
     fun_dic = {}
     fun_list = []
@@ -191,6 +193,13 @@ def read():  # 读取账号
     accountnum = len(account_list)
     return account_list, account_dic, accountnum, fun_list, fun_dic
 
+
+def readjson():  # 读取账号
+    # 2020-07-18 增加读取json账号
+    # 等待一段时间再上限，建议将配置逻辑合并到AutomatorRecord中，调用getuser函数获取配置
+    # 等刷图等逻辑合并到配置文件中后，可以弃用read()函数，runmain传参只需传入配置文件路径
+    # 然后在Automator内部调用getuser获取account,password等一系列配置
+    return list_all_users()
 
 def shuatu_auth(a, account):  # 刷图总控制
     shuatu_dic = {
