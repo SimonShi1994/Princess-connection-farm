@@ -8,3 +8,5 @@ AccountRecord.log
 accounts.txt
 accounts_init.txt
 diy.py
+/users/
+/rec/
