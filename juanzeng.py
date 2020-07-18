@@ -10,6 +10,7 @@ import threading
 import log_handler
 import re
 
+
 # 仅适用于zhanghao.txt里面的帐号，可以判断是农场号，还是要捐装备的号
 # 根据zhanghao.txt里边的帐号是否有标注图号（也就是第三个参数）来确定是不是捐装备的号
 # 如果是农场号就没有动作，如果是要捐装备的号就登录游戏捐装备
@@ -19,22 +20,18 @@ def runmain(address, account, password):
     # 但是在这个py文件里不需要自定义，因为这是专门用来做捐赠工作的
 
     a = Automator(address, account)
-    log = log_handler.LOG()#初始化日志
+    log = log_handler.LOG()  # 初始化日志
     a.start()
-    print('>>>>>>>即将执行的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
-    
-    zhuangbeihao = shuatu_auth(a, account)  # 刷图控制中心，此处仅仅只用来判断是不是装备号，如果是装备号也不会刷图
-    if zhuangbeihao:  # 仅注明了刷图图号的账号执行行会捐赠
-        a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
-        log.Account_Login(account)
-        a.init_home()  # 初始化，确保进入首页
-        a.sw_init()  # 初始化刷图
-        a.hanghui()  # 行会捐赠
-        a.change_acc()  # 退出当前账号，切换下一个
-    else:   #不是送装备的号什么也不干，也不用登陆
-        pass
+    print('>>>>>>>即将执行捐赠的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
 
+    a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
+    log.Account_Login(account)
+    a.init_home()  # 初始化，确保进入首页
+    a.sw_init()  # 初始化刷图
+    a.hanghui()  # 行会捐赠
+    a.change_acc()  # 退出当前账号，切换下一个
     log.Account_Logout(account)
+
 
 def connect():  # 连接adb与uiautomator
     try:
@@ -75,6 +72,8 @@ def read():  # 读取账号
                 account, password, fun = result[0]
             else:
                 continue
+            if not shuatu_auth(account, fun):
+                continue
             account_dic[account] = password
             fun_dic[account] = fun
             fun_list.append(fun_dic[account])
@@ -83,24 +82,21 @@ def read():  # 读取账号
     return account_list, account_dic, accountnum, fun_list, fun_dic
 
 
-def shuatu_auth(a, account):  # 刷图总控制
+def shuatu_auth(account, fun):  # 刷图总控制
     shuatu_dic = {
         '08': 'a.shuatu8()',
         '10': 'a.shuatu10()',
         '11': 'a.shuatu11()'
     }
-    _, _, _, fun_list, fun_dic = read()
-    if len(fun_dic[account]) < 2:
-        print("账号{}不用捐赠\n".format(account))
+    if len(fun) < 2:
         return False
-    tu_hao = fun_dic[account][0:2]
+    tu_hao = fun[0:2]
     if tu_hao in shuatu_dic:
-        print("账号{}将要捐赠\n".format(account))
+        print("账号{}将要捐赠".format(account))
         return True
     else:
         print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为两位数字，该账号将不捐赠".format(account))
         return False
-
 
 
 # 主程序
