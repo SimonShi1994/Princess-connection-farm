@@ -5,3 +5,8 @@ img/test.bmp
 venv
 AccountRecord.txt
 AccountRecord.log
+accounts.txt
+accounts_init.txt
+diy.py
+/users/
+/rec/
