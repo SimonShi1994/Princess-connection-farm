@@ -109,11 +109,11 @@ def runmain(params):
     # _async(a, account, 'a.bad_connecting()', sync=False)  # 异步异常处理
 
     a.gonghuizhijia()  # 家园一键领取
-    a.goumaimana(1)  # 购买mana 10次
+    #a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
     # a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
-    a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
+    #a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
     a.dixiacheng(skip=True)  # By:Dr-Bluemond, 地下城 skip是否开启战斗跳过
     # a.goumaitili(3)  # 购买3次体力
     # a.buyExp() # 买药
@@ -123,10 +123,11 @@ def runmain(params):
     a.shouqurenwu()  # 收取任务
     ok = shuatu_auth(a, account)  # 刷图控制中心
     if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
-        a.hanghui()  # 行会捐赠
+        # a.hanghui()  # 行会捐赠
+        print("不捐赠")
     else:  # 刷图没有被激活的可以去刷经验
         # a.goumaitili(times=3)  # 购买times次体力
-        # a.shuajingyan(map=3)  # 刷1-1经验,map为主图
+        a.shuajingyan(map=3)  # 刷1-1经验,map为主图
         pass
     a.shouqurenwu()  # 二次收取任务
 
@@ -203,19 +204,34 @@ def readjson():  # 读取账号
 
 def shuatu_auth(a, account):  # 刷图总控制
     shuatu_dic = {
-        '08': 'a.shuatu8()',
-        '10': 'a.shuatu10()',
-        '11': 'a.shuatu11()'
+        'h00': 'a.ziduan00()',     # h00为不刷任何hard图
+        'h01': 'a.do1_11Hard()',   # 刷hard 1-11图,会购买3次体力,不想刷的图去注释掉即可,请注意!
+        'n07': 'a.shuatu7()',   # 刷7图
+        'n08': 'a.shuatu8()',   # 刷8图
+        'n10': 'a.shuatu10()',  # 刷10图
+        'n11': 'a.shuatu11()'   # 刷11图
     }
     _, _, _, fun_list, fun_dic = read()
-    if len(fun_dic[account]) < 2:
+    if len(fun_dic[account]) < 3:
         print("账号{}不刷图".format(account))
         return False
-    tu_hao = fun_dic[account][0:2]
-    if tu_hao in shuatu_dic:
-        print("账号{}将刷{}图".format(account, tu_hao))
-        eval(shuatu_dic[tu_hao])
-        return True
+    if len(fun_dic[account]) == 3:  # 刷图号为3位时
+        tu_hao = fun_dic[account][0:3]
+        if tu_hao in shuatu_dic:
+            print("账号{}将刷{}图".format(account, tu_hao))
+            eval(shuatu_dic[tu_hao])
+            return True
+    if len(fun_dic[account]) == 6:  # 刷图号为6位时
+        tu_hao = fun_dic[account][0:3]
+        if tu_hao in shuatu_dic:
+            # a.hard = 1  # hard图开关,等于1时开启
+            print("账号{}将刷Hard图".format(account, tu_hao))
+            eval(shuatu_dic[tu_hao])
+        tu_hao = fun_dic[account][3:6]
+        if tu_hao in shuatu_dic:
+            print("账号{}将刷{}图".format(account, tu_hao))
+            eval(shuatu_dic[tu_hao])
+            return True
     else:
         print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为两位数字，该账号将不刷图".format(account))
         return False
