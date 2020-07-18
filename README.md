@@ -114,11 +114,29 @@ python main.py
    可手动取消注释使得不刷装备的号去刷1-1经验，和进行其他DIY
    
    ```
-   zhanghao1    mima1   11
-   zhanghao5    mima5   11
+   zhanghao1    mima1   h01n11
+   zhanghao5    mima2   h01n08
+   zhanghao5    mima5   n07
    zhanghao6    mima6
    zhanghao7    mima7
    ```
+   装备号的刷图建议:
+   
+   h01:刷hard剧情1-11图
+   
+   n11:刷主线11图
+   
+   h02:刷活动hard图
+   
+   n07:刷主线7图
+   
+   n08:刷主线8图
+   
+   h:开头为hadr图
+   
+   n:开头为普通图
+   
+   后面跟的数字请根据刷图中心支持的数字填写,最高支持6位,可扩至9位.
    
 2. **本项目下40to1.py为39对1行会管理**，执行方法参照main.py；
 

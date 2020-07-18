@@ -798,12 +798,12 @@ class Automator:
     # 左移动
     def goLeft(self):
         self.d.click(35, 275)
-        time.sleep(2)
+        time.sleep(3)
 
     # 右移动
     def goRight(self) -> object:
-            self.d.click(925, 275)
-            time.sleep(3)
+        self.d.click(925, 275)
+        time.sleep(3)
 
     # 刷1-3 hard图
     def do1to3Hard(self):
@@ -824,7 +824,7 @@ class Automator:
         self.continueDo9(695, 318) # 1-3
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
-    def hard_shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数
+    def hard_shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数,防止占用shuatuzuobiao用的
         if self.switch == 0:
             tmp_cout = 0
             self.d.click(x, y)
@@ -900,9 +900,9 @@ class Automator:
                 break
         # 点击进入主线关卡
         self.d.click(562, 253)
-        time.sleep(5)
+        time.sleep(3)
         self.d.click(828, 85)
-        time.sleep(4)
+        time.sleep(2)
         for _ in range(11):  # 设置大于当前进图数,让脚本能回归到1-1即可.
             # n图左移到1-1图
             time.sleep(2)
@@ -921,7 +921,7 @@ class Automator:
 
     # 刷1-11 Hard图,分账号刷hard
     def do1_11Hard(self):
-        if self.hard == 1:
+        if self.hard == 1:  # 这个适合给多个main使用
             # self.goumaitili(3)  # 购买3次体力
             self.goHardMap()  # 进入Hard本
             self.hard_shuatuzuobiao(250, 340, self.times)  # 1-1妈
@@ -1092,9 +1092,9 @@ class Automator:
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
-        time.sleep(4)
-        self.d.click(701, 83)
         time.sleep(3)
+        self.d.click(701, 83)
+        time.sleep(2)
         self.duanyazuobiao()
         if self.tag < 22:  # 暂时先按各11次来判定
             for _ in range(1):

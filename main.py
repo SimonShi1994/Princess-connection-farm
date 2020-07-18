@@ -109,25 +109,25 @@ def runmain(params):
     # _async(a, account, 'a.bad_connecting()', sync=False)  # 异步异常处理
 
     a.gonghuizhijia()  # 家园一键领取
-    #a.goumaimana(1)  # 购买mana 10次
+    a.goumaimana(1)  # 购买mana 10次
     a.mianfeiniudan()  # 免费扭蛋
     # a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
-    #a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
+    a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
     a.dixiacheng(skip=True)  # By:Dr-Bluemond, 地下城 skip是否开启战斗跳过
     # a.goumaitili(3)  # 购买3次体力
     # a.buyExp() # 买药
     # a.doActivityHard() # 刷活动hard
-    # a.do1to3Hard() # 刷hard 4-1图, 需已开Hard 4-1
-    # a.do11to3Hard() # 刷hard 11-3图，需已开Hard 11图
+    # a.do1to3Hard() # 刷hard 4-1图, 需已开Hard 4-1 推荐使用刷图中心的
+    # a.do11to3Hard() # 刷hard 11-3图，需已开Hard 11图 推荐使用刷图中心的
     a.shouqurenwu()  # 收取任务
     ok = shuatu_auth(a, account)  # 刷图控制中心
     if ok:  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
-        # a.hanghui()  # 行会捐赠
+        a.hanghui()  # 行会捐赠
         print("不捐赠")
     else:  # 刷图没有被激活的可以去刷经验
         # a.goumaitili(times=3)  # 购买times次体力
-        a.shuajingyan(map=3)  # 刷1-1经验,map为主图
+        # a.shuajingyan(map=3)  # 刷1-1经验,map为主图
         pass
     a.shouqurenwu()  # 二次收取任务
 
@@ -224,7 +224,7 @@ def shuatu_auth(a, account):  # 刷图总控制
     if len(fun_dic[account]) == 6:  # 刷图号为6位时
         tu_hao = fun_dic[account][0:3]
         if tu_hao in shuatu_dic:
-            # a.hard = 1  # hard图开关,等于1时开启
+            a.hard = 1  # hard图开关,等于1时开启,这适合给已经刷过hard的号使用.
             print("账号{}将刷Hard图".format(account, tu_hao))
             eval(shuatu_dic[tu_hao])
         tu_hao = fun_dic[account][3:6]
