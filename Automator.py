@@ -8,7 +8,7 @@ import tkinter
 import threading
 from tkinter import ttk
 from log_handler import *
-
+from usercentre import *
 
 # import matplotlib.pylab as plt
 
@@ -26,7 +26,8 @@ class Automator:
         self.switch = 0
         self.dxc_switch = 0
         self.times = 3  # 总刷图次数
-        self.is_dixiacheng_end = 0 # 地下城是否结束，0未结束，1结束
+        self.is_dixiacheng_end = 0  # 地下城是否结束，0未结束，1结束
+        self.AR = AutomatorRecorder(account)
 
     def start(self):
         """
