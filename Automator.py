@@ -46,16 +46,8 @@ class Automator:
                 self.appRunning = False
                 continue
         self.dWidth, self.dHeight = self.d.window_size()
-
-    def login(self, ac, pwd):
-        while True:
-            if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").exists():
-                self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").click()
-            if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
-                self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
-                break
-            else:
-                self.d.click(self.dWidth * 0.965, self.dHeight * 0.029)
+    
+    def do_login(self, ac, pwd): # 执行登陆逻辑
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
         self.d.clear_text()
         self.d.send_keys(str(ac))
@@ -68,6 +60,24 @@ class Automator:
             return 1  # 说明要进行认证
         else:
             return 0  # 正常
+
+    def login(self, ac, pwd):
+        try:
+            while True:
+                # todo
+                # 登陆失败报错：-32002 Client error: <> data: Selector [resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
+                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").click()
+                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
+                    break
+                else:
+                    self.d.click(self.dWidth * 0.965, self.dHeight * 0.029)
+            return self.do_login(ac, pwd)
+        except Exception as e:
+            print(e)
+            # 异常重试登陆逻辑
+            return self.do_login(ac, pwd)
 
     def auth(self, auth_name, auth_id):
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
