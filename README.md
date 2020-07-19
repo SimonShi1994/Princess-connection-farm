@@ -325,3 +325,11 @@ python main.py
 2020/7/19 By:Yuki_Asuuna
 
 - 用logging库重写了日志类（log_handler.py），所有日志重定向到标准输出和文件（日志文件位于log文件夹下），每个账号都对应一个日志文件a.log，调用方法为a.log.write_log(level,message)，两个参数都为str类型，其中level表示该条日志信息的类型（['debug','info','warning','error','critical']之一），message表示内容。
+
+2020/7/19 By:Ailumar
+
+- 新增主线困难1-11村角色碎片刷取.
+- 新增主线7村的装备刷取.
+- 修改了8,10,11的装备刷取逻辑.
+- 优化了主线刷装备容易刷错图的问题并进行了简单的防卡死,防模拟器卡顿处理.
+- 扩充了main.py中<刷图控制中心>处理范围,可支持hard本刷角色碎片和主线刷装备一起处理,注意体力!!
