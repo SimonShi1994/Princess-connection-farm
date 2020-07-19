@@ -13,6 +13,7 @@ from usercentre import *
 
 # import matplotlib.pylab as plt
 
+#2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
 
 class Automator:
     def __init__(self, address, account, auto_task=False, auto_policy=True,
@@ -1015,7 +1016,8 @@ class Automator:
                     _time = time_end - time_start
                     _time = _time + _time
                     if _time > 15:
-                        LOG().Account_bad_connecting(self.account)
+                        #LOG().Account_bad_connecting(self.account)
+                        #2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
                         self.d.session("com.bilibili.priconne")
                         await asyncio.sleep(8)
                         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1,
@@ -1027,7 +1029,7 @@ class Automator:
                     _time = time_end - time_start
                     _time = _time + _time
                     if _time > 15:
-                        LOG().Account_bad_connecting(self.account)
+                        #LOG().Account_bad_connecting(self.account)
                         self.d.session("com.bilibili.priconne")
                         await asyncio.sleep(8)
                         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1,
@@ -1101,7 +1103,7 @@ class Automator:
                     time.sleep(1)
                 elif UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp') and dixiacheng_times == 0:
                     self.dxc_switch = 1
-                    LOG().Account_undergroundcity(self.account)
+                    #LOG().Account_undergroundcity(self.account)
                 if self.dxc_switch == 0:
                     screen_shot_ = self.d.screenshot(format="opencv")
                     if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
@@ -1211,7 +1213,7 @@ class Automator:
                     time.sleep(1)
                     screen_shot = self.d.screenshot(format="opencv")
                     self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
-                    LOG().Account_undergroundcity(self.account)
+                    #LOG().Account_undergroundcity(self.account)
                     break
                 self.d.click(1, 1)  #
                 time.sleep(1)

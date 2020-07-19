@@ -303,3 +303,7 @@ python main.py
 - 增加lock_no_img函数，在有图片时一直点击elseclick，图片消失时点击ifclick
 - 增加区域定位辅助，现在如果搜图没有加上at则会在运行发现时提供at的坐标，直接复制即可使用
 - 优化初始化程序，大幅增加其效率
+
+2020/7/19 By:Yuki_Asuuna
+
+- 用logging库重写了日志类（log_handler.py），所有日志重定向到标准输出和文件（日志文件位于log文件夹下），每个账号都对应一个日志文件a.log，调用方法为a.log.write_log(level,message)，两个参数都为str类型，其中level表示该条日志信息的类型（['debug','info','warning','error','critical']之一），message表示内容。

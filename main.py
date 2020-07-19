@@ -13,8 +13,8 @@ import re
 import random
 import asyncio
 import gevent
+acclog=log_handler.pcr_acc_log()
 
-LOG().log_init()  # 初始化日志 new
 
 
 # 多线程异步
@@ -91,12 +91,14 @@ def runmain(params):
 
     a = Automator(address, account)
     a.start()
-    print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
+    #print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
+    a.log.write_log(level='info',message='>>>>>>>即将登陆的账号为：%s 密码：%s <<<<<<<\n'%(account,password))
     gevent.joinall([
         # 这里是协程初始化的一个实例
         # gevent.spawn(Multithreading, a, _, _, _, _),
         gevent.spawn(a.login_auth, account, password),
-        gevent.spawn(LOG().Account_Login, account),
+        #gevent.spawn(LOG().Account_Login, account),
+        gevent.spawn(acclog.Account_Login,account),
         gevent.spawn(a.sw_init())
     ])
     # 异步初始化
@@ -133,7 +135,8 @@ def runmain(params):
     gevent.joinall([
         # 这里是协程的一个实例
         gevent.spawn(a.change_acc()),
-        gevent.spawn(LOG().Account_Logout, account)
+        #gevent.spawn(LOG().Account_Logout,account)
+        gevent.spawn(acclog.Account_Logout, account)
     ])
     # 退出当前账号，切换下一个
     queue.put(address)
