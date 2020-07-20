@@ -86,7 +86,8 @@ def shuatu_auth(account, fun):  # 刷图总控制
     shuatu_dic = {
         '08': 'a.shuatu8()',
         '10': 'a.shuatu10()',
-        '11': 'a.shuatu11()'
+        '11': 'a.shuatu11()',
+        '12': 'a.shuatu12()'
     }
     if len(fun) < 2:
         return False
