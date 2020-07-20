@@ -1,6 +1,6 @@
-from PCRMoves import PCRMoves
-from Automator import *
-from MoveRecord import moveset
+from core.Automator import *
+from core.MoveRecord import moveset
+from core.PCRMoves import PCRMoves
 
 
 class AutomatorS:
@@ -16,15 +16,6 @@ class AutomatorS:
         # self.ms.seterr("runerr")
         self.ms.startw(None, start=True)
         self.p = PCRMoves(a)
-
-    def start(self):
-        return self.ms.nextset(self.p.ms_start())
-
-    def login(self, ac, pwd):
-        return self.ms.nextset(self.p.ms_login(ac, pwd))
-
-    def auth(self, auth_name, auth_id):
-        return self.ms.nextset(self.p.ms_auth(auth_name, auth_id))
 
     def tichuhanghui(self):
         return self.ms.nextset(self.p.ms_tichuhanghui())

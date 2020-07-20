@@ -21,13 +21,15 @@ class UIMatcher:
         return new_img
 
     @staticmethod
-    def findpic(screen, template_paths=['img/tiaoguo.jpg']):
+    def findpic(screen, template_paths=None):
         # 返回相对坐标
         # 已使用img_where代替
         """
         检测各种按钮(头像?)
         @return: 中心坐标lists, 对应的可信度list
         """
+        if template_paths is None:
+            template_paths = ['img/tiaoguo.jpg']
         zhongxings = []
         max_vals = []
         # 增加判断screen方向
@@ -106,8 +108,8 @@ class UIMatcher:
                 print("{}--{}--({},{})".format(template_path, round(max_val, 3), x, y))
                 if at is None:
                     print("{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0], y1 + max_loc[1],
-                                                       x1 + max_loc[0] + tw,
-                                                       y1 + max_loc[1] + th))
+                                                           x1 + max_loc[0] + tw,
+                                                           y1 + max_loc[1] + th))
             return x, y
         else:
             if debug:

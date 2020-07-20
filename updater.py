@@ -1,10 +1,10 @@
-import requests
-import threading
-import re
 import os
+import shutil
 import time
 import zipfile
-import shutil
+
+import requests
+
 
 class Pcr_Downloader:
     file_name = 'Princess-connection-farm.zip'
@@ -69,7 +69,7 @@ class Pcr_Downloader:
 
         if os.path.exists('Princess-connection-farm'):
             print('删除当前目录下的文件夹Princess-connection-farm\n')
-            shutil.rmtree('Princess-connection-farm')#用shutil模块删除文件夹
+            shutil.rmtree('Princess-connection-farm')  # 用shutil模块删除文件夹
 
         print('解压中...\n')
         if zipfile.is_zipfile(self.file_name):
@@ -95,14 +95,14 @@ class Pcr_Downloader:
             self.abortion()
 
         print('正在迁移先前用户配置信息...')
-        dst=os.path.join(os.getcwd(),'Princess-connection-farm')
+        dst = os.path.join(os.getcwd(), 'Princess-connection-farm')
         for fn in os.listdir():  # 遍历当前文件夹
-            #print(file,type(file))
-            #fn为目录下所有文件的文件名
+            # print(file,type(file))
+            # fn为目录下所有文件的文件名
             if fn in opt:  # 如果是用户文件
                 try:
-                    print('迁移文件[%s]-->[Princess-connection-farm]'%(fn))
-                    shutil.copy(fn,dst)
+                    print('迁移文件[%s]-->[Princess-connection-farm]' % (fn))
+                    shutil.copy(fn, dst)
                 except:
                     print('在迁移当前文件的过程中发生了意外的错误，程序终止！')
                     self.abortion()
@@ -117,6 +117,7 @@ class Pcr_Downloader:
             print('删除成功！')
         except:
             print('[未知错误]删除原压缩包失败！')
+
 
 if __name__ == '__main__':
     a = Pcr_Downloader()

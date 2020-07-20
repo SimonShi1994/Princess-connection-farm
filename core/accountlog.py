@@ -1,17 +1,16 @@
 # coding=utf-8
-import uiautomator2 as u2
-import time
-from utils import *
-from cv import *
-from Automator import *
 # import matplotlib.pylab as plt
 import os
 import threading
-import log_handler
 
-log=log_handler.LOG()#初始化日志文件
+from core import log_handler
+from core.Automator import *
 
-#测试程序
+# TODO 改LOG
+log = log_handler.LOG()  # 初始化日志文件
+
+
+# 测试程序
 
 def runmain(address, account, password):
     # 主功能体函数
@@ -30,13 +29,12 @@ def runmain(address, account, password):
     log.Account_Login(account)
     a.init_home()  # 初始化，确保进入首页
 
+    # a.tansuo()  # 探索
+    # a.dixiachengDuanya()  # 地下城，请把队伍列表里1队设置为打boss队，2队设置为aoe队
+    # a.shouqurenwu()  # 收取任务
+    # a.shouqu()  # 收取所有礼物
 
-    #a.tansuo()  # 探索
-    #a.dixiachengDuanya()  # 地下城，请把队伍列表里1队设置为打boss队，2队设置为aoe队
-    #a.shouqurenwu()  # 收取任务
-    #a.shouqu()  # 收取所有礼物
-
-    #print(a.baidu_ocr(394,502,442,666))
+    # print(a.baidu_ocr(394,502,442,666))
     a.change_acc()  # 退出当前账号，切换下一个
     log.Account_Logout(account)
 
@@ -63,7 +61,7 @@ def connect():  # 连接adb与uiautomator
 
 def read():  # 读取账号
     account_dic = {}
-    with open('zhanghao2.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao2.txt内,不是zhanghao.txt!!!!!
+    with open('../zhanghao2.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao2.txt内,不是zhanghao.txt!!!!!
         for i, line in enumerate(f):
             account, password = line.split('\t')[0:2]
             account_dic[account] = password.strip()
@@ -79,8 +77,6 @@ if __name__ == '__main__':
     lines, emulatornum = connect()
     # 读取账号
     account_list, account_dic, accountnum = read()
-
-
 
     # 多线程执行
     count = 0  # 完成账号数

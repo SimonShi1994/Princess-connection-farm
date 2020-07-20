@@ -1,5 +1,11 @@
-from Automator import *
-from MoveRecord import moveset
+import time
+
+from core.Automator import *
+from core.MoveRecord import moveset
+from core.cv import UIMatcher
+from core.utils import random_name, CreatIDnum
+
+
 def OneFun(ms: moveset, fun, *args, **kwargs):
     ms.startw(None, start=True)
     ms.exitw(fun, *args, kwargs=kwargs)
@@ -8,31 +14,6 @@ def OneFun(ms: moveset, fun, *args, **kwargs):
 class PCRMoves:
     def __init__(self, a: Automator):
         self.a = a
-
-    def ms_start(self):
-        ms = moveset("start")
-        OneFun(ms, self.a.start)
-        return ms
-
-    def ms_login(self, ac, pwd):
-        ms = moveset("login")
-        OneFun(ms, self.a.login, ac=ac, pwd=pwd)
-        return ms
-
-    def ms_auth(self, auth_name, auth_id):
-        ms = moveset("auth")
-        OneFun(ms, self.a.auth, auth_name=auth_name, auth_id=auth_id)
-        return ms
-
-    def ms_guochang(self, screen_shot, template_paths, suiji=1):
-        ms = moveset("guochang")
-        OneFun(ms, self.a.guochang, screen_shot=screen_shot, template_paths=template_paths, suiji=suiji)
-        return ms
-
-    def ms_lockimg(self, img, ifclick=[], ifdelay=1, elseclick=[], elsedelay=0.5, alldelay=0.5):
-        ms = moveset("lockimg")
-        OneFun(ms, self.a.lockimg, img, ifclick, ifdelay, elseclick, elsedelay, alldelay)
-        return ms
 
     def ms_menu_home(self):
         # 回到主页
@@ -61,47 +42,12 @@ class PCRMoves:
 
     def ms_tichuhanghui(self):
         ms = moveset("tichuhanghui")
-
-        def Part1(self: Automator):
-            self.d.click(241, 350)  # 点击成员
-            self.lockimg('img/chengyuanliebiao.bmp', ifclick=[(720, 97)], ifdelay=1)  # 点击排序按钮
-            self.lockimg('img/ok.bmp', ifclick=[(289, 303), (587, 372)], ifdelay=1)  # 按战力降序 这里可以加一步调降序
-            self.lockimg('img/chengyuanliebiao.bmp', ifclick=[(737, 200)], ifdelay=1)  # 点第一个人
-            self.lockimg('img/jiaojie.bmp', ifclick=[(651, 174)], ifdelay=1)  # 踢出行会
-            self.lockimg('img/ok.bmp', ifclick=[(590, 369)], ifdelay=1)  # 确认踢出
-
-        def Part2(self: Automator):
-            self.lockimg('img/chengyuanliebiao.bmp', elseclick=[(1, 1)], alldelay=1)  # 锁定成员列表
-
-        I0 = ms.startset(self.ms_menu_hanghui(False), start=True)  # 进入行会
-        I1 = ms.nextw(Part1, self.a)  # 完成踢人
-        I2 = ms.nextw(Part2, self.a)  # 准备回到首页
-        I3 = ms.exitset(self.ms_menu_home())  # 回到首页
-        ms.T_mapstart({I1: I0, [I2, I3]: "__exit__"})  # 确保能狗踢人，踢掉之后如果中断则跳过踢人步骤
+        OneFun(ms, self.a.tichuhanghui)
         return ms
 
     def ms_yaoqinghanghui(self, inviteUID):
         ms = moveset("yaoqinghanghui")
 
-        def Part1(self: Automator):
-            self.d.click(241, 350)  # 点击成员
-            self.lockimg('img/chengyuanliebiao.bmp', ifclick=[(717, 33)], ifdelay=1)  # 点击搜索成员
-            self.lockimg('img/sousuochengyuan.bmp', ifclick=[(845, 90)], ifdelay=1)  # 点击搜索设定
-            self.lockimg('img/ok.bmp', ifclick=[(487, 236)], ifdelay=1)  # 点击输入框
-            self.d.send_keys(inviteUID)
-            time.sleep(1)
-            self.d.click(1, 1)
-            self.lockimg('img/ok.bmp', ifclick=[(585, 366)], ifdelay=1)  # 点击ok
-            self.lockimg('img/sousuochengyuan.bmp', ifclick=[(844, 181)], ifdelay=1)  # 点击邀请
-
-        def Part2(self: Automator):
-            self.lockimg('img/ok.bmp', ifclick=[(588, 439)], ifdelay=1)  # 点击ok
-
-        I0 = ms.startset(self.ms_menu_hanghui(False), start=True)  # 进入行会
-        I1 = ms.nextw(Part1, self.a)  # 完成邀请
-        I2 = ms.nextw(Part2, self.a)  # 准备回到首页
-        I3 = ms.exitset(self.ms_menu_home())  # 回到首页
-        ms.T_mapstart({I1: I0, [I2, I3]: "__exit__"})  # 确保能够完成邀请，之后如果中断则跳过步骤
         return ms
 
     def ms_jieshouhanghui(self):

@@ -1,13 +1,10 @@
 # coding=utf-8
-import uiautomator2 as u2
-import time
-from utils import *
-from cv import *
-from Automator import *
 # import matplotlib.pylab as plt
 import os
-import threading
 import re
+import threading
+
+from core.Automator import *
 
 
 def runmain(address, account, password, fun, kickflag=0):
