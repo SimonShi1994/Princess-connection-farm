@@ -1,12 +1,12 @@
 # import matplotlib.pylab as plt
 import os
+import re
 import threading
 
-from Automator import *
-import re
+from core.Automator import *
 
 
-def runmain(address, account, password): # 账号密码放在zhanghao_rename.txt
+def runmain(address, account, password):  # 账号密码放在zhanghao_rename.txt
     a = Automator(address, account)
     a.start()
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')
@@ -14,7 +14,6 @@ def runmain(address, account, password): # 账号密码放在zhanghao_rename.txt
     a.init_home()
     a.rename(account)
     a.change_acc()
-
 
 
 def connect():  # 连接adb与uiautomator

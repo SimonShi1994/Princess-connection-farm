@@ -37,10 +37,10 @@ class movevar:
     :param var: 所操作的var对象。
     """
 
-    def __init__(self, var: Dict):
+    def __init__(self, var: Dict, autosave=True):
 
         self.var = var
-        self.autosave = True
+        self.autosave = autosave
 
     def save(self):
         """
@@ -714,6 +714,7 @@ class moveset:
         def f(var):
             var.setdefault("__flag__", {})
             var["__flag__"][flagkey] = flagvalue
+
         return self.nextwv(f)
 
     def T_clearflags(self):

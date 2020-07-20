@@ -97,7 +97,7 @@ class AutomatorRecorder:
         self.account = account
 
     @staticmethod
-    def _load(jsonaddr) -> dict:
+    def _load(jsonaddr) -> Optional[dict]:
         """
         读取json文件。输出字典类型
         :param jsonaddr: json地址
