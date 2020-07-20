@@ -82,11 +82,13 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.continueDo9(695, 318)  # 1-3
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
-        # 刷1-11 Hard图,分账号刷hard
+    def ziduan00(self):
+        print('>>>识别到00参数该字段不刷图,要刷图请更改zhanghao.txt！结束刷图任务！<<<\r\n')
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
+    # 刷1-11 Hard图,分账号刷hard
     def do1_11Hard(self):
         if self.hard == 1:  # 这个适合给多个main使用
-            # self.goumaitili(3)  # 购买3次体力
             self.goHardMap()  # 进入Hard本
             self.hard_shuatuzuobiao(250, 340, self.times)  # 1-1妈
             # self.hard_shuatuzuobiao(465, 270, self.times)  # 1-2铃铛
@@ -132,6 +134,10 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.hard_shuatuzuobiao(480, 250, self.times)  # 11-2病娇
             self.hard_shuatuzuobiao(765, 330, self.times)  # 11-3姐姐
             self.goRight()
+            # self.hard_shuatuzuobiao(215, 255, self.times)  # 11-1牛
+            # self.hard_shuatuzuobiao(480, 355, self.times)  # 11-2栞
+            # self.hard_shuatuzuobiao(765, 240, self.times)  # 11-3哈哈剑
+            self.goRight()
 
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         else:
@@ -141,9 +147,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
     def shuatu7(self):
         # 进入冒险
-        time.sleep(2)
-        self.d.click(480, 505)
-        time.sleep(2)
+        self.click(480, 505, pre_delay=2, post_delay=2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
@@ -160,6 +164,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                     self.d.click(701, 83)
+                    break
             self.switch = 0
             self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
             time.sleep(2)
@@ -186,29 +191,25 @@ class ShuatuMixin(ShuatuBaseMixin):
 
     def shuatu8(self):
         # 进入冒险
-        time.sleep(2)
-        self.d.click(480, 505)
-        time.sleep(2)
+        self.click(480, 505, pre_delay=2, post_delay=2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
-        self.d.click(562, 253)
-        time.sleep(4)
-        self.d.click(701, 83)
-        time.sleep(2)
+        self.click(562, 253, )
+        self.click(701, 83, pre_delay=4, post_delay=2)
         self.duanyazuobiao()
         if self.tag < 22:  # 暂时先按各11次来判定
             for _ in range(1):
-                # 以7图为基向右移1次
-                time.sleep(3)
-                self.d.click(925, 275)
+                # 以7图为基向右移动3图
+                self.click(925, 275, post_delay=3)
             while True:
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
-                    self.d.click(701, 83)
+                    self.click(701, 83, pre_delay=0, post_delay=2)
+                    break
             self.switch = 0
             self.d.drag(600, 270, 200, 270, 0.1)
             time.sleep(2)
@@ -233,32 +234,27 @@ class ShuatuMixin(ShuatuBaseMixin):
             print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
+    # 10图
     def shuatu10(self):
         # 进入冒险
-        time.sleep(2)
-        self.d.click(480, 505)
-        time.sleep(2)
+        self.click(480, 505, pre_delay=2, post_delay=2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
-        self.d.click(562, 253)
-        time.sleep(4)
-        self.d.click(701, 83)
-        time.sleep(2)
+        self.click(562, 253,)
+        self.click(701, 83, pre_delay=4, post_delay=2)
         self.duanyazuobiao()
         if self.tag < 22:  # 暂时先按各11次来判定
             for _ in range(3):
                 # 以7图为基向右移动3图
-                time.sleep(3)
-                self.d.click(925, 275)
+                self.click(925, 275, post_delay=3)
             while True:
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
-                    self.d.click(701, 83)
-                    time.sleep(2)
+                    self.click(701, 83, pre_delay=0, post_delay=2)
                     break
             self.switch = 0
             self.d.drag(600, 270, 200, 270, 0.1)
@@ -287,40 +283,31 @@ class ShuatuMixin(ShuatuBaseMixin):
             print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
+    # 11图
     def shuatu11(self):
         # 进入冒险
-        time.sleep(2)
-        self.d.click(480, 505)
-        time.sleep(2)
+        self.click(480, 505, pre_delay=2, post_delay=2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
-        self.d.click(562, 253)
-        time.sleep(4)
-        self.d.click(701, 83)
-        time.sleep(2)
+        self.click(562, 253, )
+        self.click(701, 83, pre_delay=4, post_delay=2)
         self.duanyazuobiao()
         if self.tag < 22:  # 暂时先按各11次来判定
             for _ in range(4):
                 # 以7图为基向右移动4图
-                time.sleep(3)
-                self.d.click(925, 275)
+                self.click(925, 275, post_delay=3)
             while True:
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
-                    self.d.click(701, 83)
-                    time.sleep(2)
+                    self.click(701, 83, pre_delay=0, post_delay=2)
                     break
-            while True:
-                screen_shot_ = self.d.screenshot(format="opencv")
-                if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
-                    break
-                if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
-                    self.d.click(701, 83)
             self.switch = 0
+            self.d.drag(600, 270, 200, 270, 0.1)    # 拖拽到最右
+            time.sleep(2)
             self.shuatuzuobiao(663, 408, self.times)  # 11-17
             self.shuatuzuobiao(542, 338, self.times)  # 11-16
             self.shuatuzuobiao(468, 429, self.times)  # 11-15
@@ -339,7 +326,56 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.shuatuzuobiao(424, 242, self.times)  # 11-4
             self.shuatuzuobiao(290, 285, self.times)  # 11-3
             self.shuatuzuobiao(244, 412, self.times)  # 11-2
-            self.shuatuzuobiao(161, 326, self.times)  # 11-1
+            self.shuatuzuobiao(161, 325, self.times)  # 11-1
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        else:
+            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+
+    # 12图
+    def shuatu12(self):
+        # 进入冒险
+        self.click(480, 505, pre_delay=2, post_delay=2)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
+                break
+        self.click(562, 253, )
+        self.click(701, 83, pre_delay=4, post_delay=2)
+        self.duanyazuobiao()
+        if self.tag < 22:  # 暂时先按各11次来判定
+            for _ in range(5):
+                # 以7图为基向右移动5图
+                self.click(925, 275, post_delay=3)
+            while True:
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+                    break
+                if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
+                    self.click(701, 83, pre_delay=0, post_delay=2)
+                    break
+            self.switch = 0
+            self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+            time.sleep(2)
+            self.shuatuzuobiao(760, 255, self.times)  # 12-17
+            self.shuatuzuobiao(610, 245, self.times)  # 12-16
+            self.shuatuzuobiao(450, 270, self.times)  # 12-15
+            self.shuatuzuobiao(565, 415, self.times)  # 12-14
+            self.shuatuzuobiao(400, 425, self.times)  # 12-13
+            self.shuatuzuobiao(280, 365, self.times)  # 12-12
+            self.shuatuzuobiao(265, 245, self.times)  # 12-11
+            self.shuatuzuobiao(130, 265, self.times)  # 12-10
+            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+            time.sleep(2)
+            self.shuatuzuobiao(675, 380, self.times)  # 12-9
+            self.shuatuzuobiao(550, 440, self.times)  # 12-8
+            self.shuatuzuobiao(445, 365, self.times)  # 12-7
+            self.shuatuzuobiao(575, 245, self.times)  # 12-6
+            self.shuatuzuobiao(435, 250, self.times)  # 12-5
+            self.shuatuzuobiao(310, 285, self.times)  # 12-4
+            self.shuatuzuobiao(265, 395, self.times)  # 12-3
+            self.shuatuzuobiao(155, 315, self.times)  # 12-2
+            self.shuatuzuobiao(185, 210, self.times)  # 12-1
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         else:
             print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
