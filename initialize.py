@@ -1,18 +1,21 @@
-from Automator import Automator
-from multiprocessing import Pool, cpu_count, Manager
-import gevent
-import log_handler
 import os
 import re
+from multiprocessing import Pool, Manager
+
+import gevent
+
+from core import log_handler
+from core.Automator import Automator
 
 # 账号日志
-acclog=log_handler.pcr_acc_log()
+acclog = log_handler.pcr_acc_log()
 # 雷电模拟器
 ld_emulator = '127.0.0.1:5554'
 # Mumu模拟器
 mumu_emulator = '127.0.0.1:7555'
 # 选定模拟器
 selected_emulator = ld_emulator
+
 
 def runmain(params):
     account = params[0]
@@ -23,11 +26,11 @@ def runmain(params):
 
     a = Automator(address, account)
     a.start()
-    a.log.write_log(level='info',message='>>>>>>>即将登陆的账号为：%s 密码：%s <<<<<<<\n'%(account,password))
+    a.log.write_log(level='info', message='>>>>>>>即将登陆的账号为：%s 密码：%s <<<<<<<\n' % (account, password))
     gevent.joinall([
         # 这里是协程初始化的一个实例
         gevent.spawn(a.login_auth, account, password),
-        gevent.spawn(acclog.Account_Login,account),
+        gevent.spawn(acclog.Account_Login, account),
         gevent.spawn(a.sw_init())
     ])
     # 异步初始化
@@ -43,10 +46,11 @@ def runmain(params):
     # 退出当前账号，切换下一个
     queue.put(address)
 
+
 def connect():  # 连接adb与uiautomator
     try:
         # os.system 函数正常情况下返回是进程退出码，0为正常退出码，其余为异常
-        if os.system('cd adb & adb connect ' +  selected_emulator) != 0:
+        if os.system('cd adb & adb connect ' + selected_emulator) != 0:
             print("连接模拟器失败")
             exit(1)
         if os.system('python -m uiautomator2 init') != 0:
@@ -72,7 +76,8 @@ def connect():  # 连接adb与uiautomator
             del lines[i]
     print(lines)
     return lines
-  
+
+
 def shuatu_auth(account, fun):  # 刷图总控制
     shuatu_dic = {
         '08': 'a.shuatu8()',
@@ -88,6 +93,7 @@ def shuatu_auth(account, fun):  # 刷图总控制
     else:
         print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为两位数字，该账号将不捐赠".format(account))
         return False
+
 
 def read_account(filename):  # 读取账号
     account_dic = {}
@@ -109,6 +115,7 @@ def read_account(filename):  # 读取账号
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
     return account_list, account_dic, accountnum, fun_list, fun_dic
+
 
 def execute(account_filename, tasks):
     """

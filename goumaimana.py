@@ -1,13 +1,10 @@
 # coding=utf-8
-import uiautomator2 as u2
-import time
-from utils import *
-from cv import *
-from Automator import *
 # import matplotlib.pylab as plt
 import os
-import threading
 import re
+import threading
+
+from core.Automator import *
 
 
 def runmain(address, account, password):
@@ -26,7 +23,7 @@ def runmain(address, account, password):
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao2.txt内
     a.init_home()  # 初始化，确保进入首页
 
-    a.goumaimana()
+    a.goumaimana(1)
 
     a.change_acc()  # 退出当前账号，切换下一个
 

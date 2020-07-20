@@ -1,20 +1,17 @@
 # coding=utf-8
-import uiautomator2 as u2
-import time
-from utils import *
-from cv import *
-from Automator import *
-from multiprocessing import Pool, cpu_count, Manager
 # import matplotlib.pylab as plt
 import os
-import threading
-import log_handler
 import re
-import random
-import asyncio
-import gevent
-acclog=log_handler.pcr_acc_log()
+import threading
+from multiprocessing import Pool, Manager
 
+import gevent
+
+from core import log_handler
+from core.Automator import *
+from core.usercentre import list_all_users
+
+acclog = log_handler.pcr_acc_log()
 
 
 # 多线程异步
@@ -91,14 +88,14 @@ def runmain(params):
 
     a = Automator(address, account)
     a.start()
-    #print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
-    a.log.write_log(level='info',message='>>>>>>>即将登陆的账号为：%s 密码：%s <<<<<<<\n'%(account,password))
+    # print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<', '\r\n')
+    a.log.write_log(level='info', message='>>>>>>>即将登陆的账号为：%s 密码：%s <<<<<<<\n' % (account, password))
     gevent.joinall([
         # 这里是协程初始化的一个实例
         # gevent.spawn(Multithreading, a, _, _, _, _),
         gevent.spawn(a.login_auth, account, password),
-        #gevent.spawn(LOG().Account_Login, account),
-        gevent.spawn(acclog.Account_Login,account),
+        # gevent.spawn(LOG().Account_Login, account),
+        gevent.spawn(acclog.Account_Login, account),
         gevent.spawn(a.sw_init())
     ])
     # 异步初始化
@@ -135,7 +132,7 @@ def runmain(params):
     gevent.joinall([
         # 这里是协程的一个实例
         gevent.spawn(a.change_acc()),
-        #gevent.spawn(LOG().Account_Logout,account)
+        # gevent.spawn(LOG().Account_Logout,account)
         gevent.spawn(acclog.Account_Logout, account)
     ])
     # 退出当前账号，切换下一个
@@ -204,14 +201,15 @@ def readjson():  # 读取账号
     # 然后在Automator内部调用getuser获取account,password等一系列配置
     return list_all_users()
 
+
 def shuatu_auth(a, account):  # 刷图总控制
     shuatu_dic = {
-        'h00': 'a.ziduan00()',     # h00为不刷任何hard图
-        'h01': 'a.do1_11Hard()',   # 刷hard 1-11图,默认购买3次体力,不想刷的图去注释掉即可
-        'n07': 'a.shuatu7()',   # 刷7图
-        'n08': 'a.shuatu8()',   # 刷8图
+        'h00': 'a.ziduan00()',  # h00为不刷任何hard图
+        'h01': 'a.do1_11Hard()',  # 刷hard 1-11图,默认购买3次体力,不想刷的图去注释掉即可
+        'n07': 'a.shuatu7()',  # 刷7图
+        'n08': 'a.shuatu8()',  # 刷8图
         'n10': 'a.shuatu10()',  # 刷10图
-        'n11': 'a.shuatu11()'   # 刷11图
+        'n11': 'a.shuatu11()'  # 刷11图
     }
     _, _, _, fun_list, fun_dic = read()
     if len(fun_dic[account]) < 3:
@@ -237,7 +235,6 @@ def shuatu_auth(a, account):  # 刷图总控制
     else:
         print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为两位数字，该账号将不刷图".format(account))
         return False
-
 
 
 # 主程序

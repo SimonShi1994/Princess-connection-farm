@@ -1,12 +1,9 @@
 # coding=utf-8
-import uiautomator2 as u2
-import time
-from utils import *
-from cv import *
-from Automator import *
 import os
-import threading
 import re
+import threading
+
+from core.Automator import *
 
 # 初始号加入指定行会函数
 '''
@@ -16,8 +13,8 @@ import re
 4. 运行本程序
 '''
 
-clubname1='行会1的名字，请自行修改'
-clubname2='行会2的名字，请自行修改'
+clubname1 = '行会1的名字，请自行修改'
+clubname2 = '行会2的名字，请自行修改'
 
 
 def runmain(address, account, password, clubname):
@@ -30,9 +27,10 @@ def runmain(address, account, password, clubname):
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao.txt内
     a.init_home()  # 初始化，确保进入首页
 
-    a.joinhanghui(clubname)  #加入行会
+    a.joinhanghui(clubname)  # 加入行会
 
     a.change_acc()  # 退出当前账号，切换下一个
+
 
 def connect():  # 连接adb与uiautomator
     try:

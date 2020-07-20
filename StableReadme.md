@@ -37,7 +37,7 @@ main.py的稳定版本（支持中断回复）
 
 在稳定脚本中加载AutomatorS库：
 ```python
-from AutomatorS import AutomatorS
+from core.AutomatorS import AutomatorS
 ```
 在Automator类构造后，以此为参数传入AutomatorS类
 ```python
