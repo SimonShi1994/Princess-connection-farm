@@ -11,17 +11,20 @@ from tkinter import ttk
 import log_handler
 from usercentre import *
 
+from AutomatorMixins._Base import BaseMixin
+from AutomatorMixins._Hanghui import HanghuiMixin
 # import matplotlib.pylab as plt
 
 #2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
 
-class Automator:
+class Automator(HanghuiMixin):
     def __init__(self, address, account, auto_task=False, auto_policy=True,
                  auto_goods=False, speedup=True):
         """
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
         """
         self.d = u2.connect(address)
+        BaseMixin.__init__(self, device=self.d)
         self.dWidth, self.dHeight = self.d.window_size()
         self.appRunning = False
         self.account = account
@@ -117,7 +120,7 @@ class Automator:
             else:
                 print('未找到所需的按钮,无动作')
 
-    def click(self, screen, img, threshold=0.84, at=None):
+    def click_img(self, screen, img, threshold=0.84, at=None):
         """
         try to click the img
         :param screen:
@@ -541,50 +544,6 @@ class Automator:
         time.sleep(1.5)
         self.d.click(590, 476)
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
-
-    def hanghui(self):  # 自动行会捐赠
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
-        time.sleep(1)
-        # self.d.click(693, 436)
-        self.lockimg('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=1)  # 锁定进入行会
-        time.sleep(1)
-        while True:  # 6-17修改：减少opencv使用量提高稳定性
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/zhiyuansheding.bmp'):
-                time.sleep(3)  # 加载行会聊天界面会有延迟
-                for _ in range(3):
-                    time.sleep(2)
-                    screen_shot = self.d.screenshot(format="opencv")
-                    if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):
-                        self.d.click(367, 39)  # 点击定位捐赠按钮
-                        time.sleep(2)
-                        screen_shot = self.d.screenshot(format="opencv")
-                        self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
-                        time.sleep(1)
-                        self.d.click(644, 385)  # 点击max
-                        time.sleep(3)
-                        screen_shot = self.d.screenshot(format="opencv")
-                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
-                        time.sleep(2)
-                        self.d.click(560, 369)
-                        time.sleep(1)
-                while True:
-                    self.d.click(1, 1)
-                    time.sleep(1)
-                    screen_shot = self.d.screenshot(format="opencv")
-                    if UIMatcher.img_where(screen_shot, 'img/zhiyuansheding.bmp'):
-                        break
-                break
-            time.sleep(2)
-            # 处理多开捐赠失败的情况
-            screen_shot = self.d.screenshot(format="opencv")
-            self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
-            self.d.click(1, 1)  # 处理被点赞的情况
-            time.sleep(1)
-
-        self.d.click(100, 505)  # 回到首页
-        time.sleep(1)
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     def shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数
         if self.switch == 0:
@@ -1639,9 +1598,9 @@ class Automator:
             time.sleep(0.7)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
-            if self.click(screen_shot_, 'img/kuaijin.jpg', at=(891, 478, 936, 517)):
+            if self.click_img(screen_shot_, 'img/kuaijin.jpg', at=(891, 478, 936, 517)):
                 time.sleep(1)
-            if self.click(screen_shot_, 'img/auto.jpg', at=(891, 410, 936, 438)):
+            if self.click_img(screen_shot_, 'img/auto.jpg', at=(891, 410, 936, 438)):
                 time.sleep(1)
             if UIMatcher.img_where(screen_shot_, 'img/wanjiadengji.jpg', at=(233, 168, 340, 194)):
                 break
@@ -1700,17 +1659,17 @@ class Automator:
                 continue
             elif UIMatcher.img_where(screen_shot_, 'img/jiaruhanghui.jpg'):
                 break
-            elif self.click(screen_shot_, 'img/xiayibu.jpg'):
+            elif self.click_img(screen_shot_, 'img/xiayibu.jpg'):
                 time.sleep(2)
-            elif self.click(screen_shot_, 'img/niudan_jiasu.jpg', at=(700, 0, 960, 100)):
+            elif self.click_img(screen_shot_, 'img/niudan_jiasu.jpg', at=(700, 0, 960, 100)):
                 pass
-            elif self.click(screen_shot_, 'img/wuyuyin.jpg', at=(450, 355, 512, 374)):
+            elif self.click_img(screen_shot_, 'img/wuyuyin.jpg', at=(450, 355, 512, 374)):
                 time.sleep(3)
-            elif self.click(screen_shot_, 'img/tiaoguo.jpg'):
+            elif self.click_img(screen_shot_, 'img/tiaoguo.jpg'):
                 time.sleep(3)
-            elif self.click(screen_shot_, 'img/zhuye.jpg', at=(46, 496, 123, 537)):
+            elif self.click_img(screen_shot_, 'img/zhuye.jpg', at=(46, 496, 123, 537)):
                 pass
-            elif self.click(screen_shot_, 'img/caidan_yuan.jpg', at=(898, 23, 939, 62)):
+            elif self.click_img(screen_shot_, 'img/caidan_yuan.jpg', at=(898, 23, 939, 62)):
                 time.sleep(0.7)
                 self.d.click(804, 45)
                 time.sleep(0.7)
