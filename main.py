@@ -206,28 +206,47 @@ def shuatu_auth(a, account):  # 刷图总控制
     shuatu_dic = {
         'h00': 'a.ziduan00()',  # h00为不刷任何hard图
         'h01': 'a.do1_11Hard()',  # 刷hard 1-11图,默认购买3次体力,不想刷的图去注释掉即可
+        'tsk': 'a.tansuo()',  # 探索开,注意mana号没开探索可能会卡死
         'n07': 'a.shuatu7()',  # 刷7图
         'n08': 'a.shuatu8()',  # 刷8图
         'n10': 'a.shuatu10()',  # 刷10图
-        'n11': 'a.shuatu11()'  # 刷11图
+        'n11': 'a.shuatu11()',  # 刷11图
+        'n12': 'a.shuatu12()',  # 刷12图
     }
     _, _, _, fun_list, fun_dic = read()
     if len(fun_dic[account]) < 3:
         print("账号{}不刷图".format(account))
         return False
-    if len(fun_dic[account]) == 3:  # 刷图号为3位时
+    if len(fun_dic[account]) == 3:  # 刷图号字符为3位时
         tu_hao = fun_dic[account][0:3]
         if tu_hao in shuatu_dic:
             print("账号{}将刷{}图".format(account, tu_hao))
             eval(shuatu_dic[tu_hao])
             return True
-    if len(fun_dic[account]) == 6:  # 刷图号为6位时
+    if len(fun_dic[account]) == 6:  # 刷图号字符为6位时
         tu_hao = fun_dic[account][0:3]
         if tu_hao in shuatu_dic:
+            a.goumaitili(3)  # 刷图前购买3次体力
             a.hard = 1  # hard图开关,等于1时开启,这适合给已经刷过hard的号使用.
-            print("账号{}将刷Hard图".format(account, tu_hao))
+            print("账号{}将刷{}图".format(account, tu_hao))
             eval(shuatu_dic[tu_hao])
         tu_hao = fun_dic[account][3:6]
+        if tu_hao in shuatu_dic:
+            print("账号{}将刷{}图".format(account, tu_hao))
+            eval(shuatu_dic[tu_hao])
+            return True
+    if len(fun_dic[account]) == 9:  # 刷图号字符为9位时
+        tu_hao = fun_dic[account][0:3]
+        if tu_hao in shuatu_dic:
+            a.goumaitili(3)  # 刷图前购买3次体力
+            a.hard = 1  # hard图开关,等于1时开启,这适合给已经刷过hard的号使用.
+            print("账号{}将刷{}图".format(account, tu_hao))
+            eval(shuatu_dic[tu_hao])
+        tu_hao = fun_dic[account][3:6]
+        if tu_hao in shuatu_dic:
+            print("账号{}将刷{}图".format(account, tu_hao))
+            eval(shuatu_dic[tu_hao])
+        tu_hao = fun_dic[account][6:9]
         if tu_hao in shuatu_dic:
             print("账号{}将刷{}图".format(account, tu_hao))
             eval(shuatu_dic[tu_hao])
