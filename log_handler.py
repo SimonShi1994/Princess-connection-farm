@@ -46,6 +46,9 @@ class pcr_log:#帐号内部日志（从属于每一个帐号）
 class pcr_acc_log:#帐号日志（全局）
     dst_folder = os.path.join(os.getcwd(), 'log')  # 设置日志文件存储位置 位置为log文件夹下
     def __init__(self):
+        os.makedirs(self.dst_folder, exist_ok=True)
+        with open(os.path.join(self.dst_folder, 'Account.log'),'w+'):
+            pass
         self.acc_log = logging.getLogger('AccountLogger')  # 设置帐号日志
         self.acc_log.setLevel('INFO')  # 设置日志级别
         self.acc_hdl = logging.FileHandler(os.path.join(self.dst_folder, 'Account.log'))  # 输出到文件
