@@ -7,7 +7,7 @@ from initialize import execute
 account_filename = "zhanghao.txt"
 
 
-def tasks(automator: Automator):
+def tasks(automator: Automator, opcode):
     # 主功能体函数，可以在本函数中自定义需要的功能
     automator.init_home()  # 初始化，确保进入首页
     automator.hanghui()  # 行会捐赠
