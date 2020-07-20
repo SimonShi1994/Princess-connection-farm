@@ -114,11 +114,29 @@ python main.py
    可手动取消注释使得不刷装备的号去刷1-1经验，和进行其他DIY
    
    ```
-   zhanghao1    mima1   11
-   zhanghao5    mima5   11
+   zhanghao1    mima1   h01n11
+   zhanghao5    mima2   h01n08
+   zhanghao5    mima5   n07
    zhanghao6    mima6
    zhanghao7    mima7
    ```
+   装备号的刷图建议:
+   
+   h01:刷hard剧情1-11图
+   
+   n11:刷主线11图
+   
+   h02:刷活动hard图
+   
+   n07:刷主线7图
+   
+   n08:刷主线8图
+   
+   h:开头为hadr图
+   
+   n:开头为普通图
+   
+   后面跟的数字请根据刷图中心支持的数字填写,最高支持6位,可扩至9位.
    
 2. **本项目下40to1.py为39对1行会管理**，执行方法参照main.py；
 
@@ -307,3 +325,12 @@ python main.py
 2020/7/19 By:Yuki_Asuuna
 
 - 用logging库重写了日志类（log_handler.py），所有日志重定向到标准输出和文件（日志文件位于log文件夹下），每个账号都对应一个日志文件a.log，调用方法为a.log.write_log(level,message)，两个参数都为str类型，其中level表示该条日志信息的类型（['debug','info','warning','error','critical']之一），message表示内容。
+
+2020/7/19 By:Ailumar
+
+- hard图和主线图要求皆为3星通关或者被注释掉不刷
+- 扩充了main.py中<刷图控制中心>处理范围,可支持hard本刷角色碎片和主线刷装备一起处理,注意体力,注意账号填写方式!!
+- 新增主线困难1-11村角色碎片扫荡.
+- 新增主线7村的装备扫荡.
+- 修改了8,10,11的装备扫荡逻辑.
+- 优化了主线刷装备容易刷错图的问题并进行了简单的防卡死,防模拟器卡顿处理.

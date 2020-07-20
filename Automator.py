@@ -26,6 +26,7 @@ class Automator:
         self.appRunning = False
         self.account = account
         self.switch = 0
+        self.hard = 0   # 困难本出初始值
         self.dxc_switch = 0
         self.times = 3  # 总刷图次数
         self.log=log_handler.pcr_log(account)#初始化日志
@@ -650,6 +651,7 @@ class Automator:
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
 
+    # 刷经验1-1
     def shuajingyan(self, map):
         """
         刷图刷1-1
@@ -809,7 +811,12 @@ class Automator:
     # 左移动
     def goLeft(self):
         self.d.click(35, 275)
-        time.sleep(2)
+        time.sleep(3)
+
+    # 右移动
+    def goRight(self) -> object:
+        self.d.click(925, 275)
+        time.sleep(3)
 
     # 刷1-3 hard图
     def do1to3Hard(self):
@@ -829,7 +836,156 @@ class Automator:
         self.continueDo9(465, 266) # 1-2
         self.continueDo9(695, 318) # 1-3
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
-    
+
+    def hard_shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数,防止占用shuatuzuobiao用的
+        if self.switch == 0:
+            tmp_cout = 0
+            self.d.click(x, y)
+            time.sleep(0.5)
+        else:
+            print('>>>无扫荡券或者无体力！', '结束 全部 刷图任务！<<<\r\n')
+            return
+        if self.switch == 0:
+            while True:  # 锁定加号
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if UIMatcher.img_where(screen_shot_, 'img/jiahao.bmp'):
+                    # screen_shot = a.d.screenshot(format="opencv")
+                    for i in range(times - 1):  # 基础1次
+                        # 扫荡券不必使用opencv来识别，降低效率
+                        self.d.click(876, 334)
+                    time.sleep(0.3)
+                    self.d.click(758, 330)  # 使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
+                    time.sleep(0.3)
+                    screen_shot = self.d.screenshot(format="opencv")
+                    if UIMatcher.img_where(screen_shot, 'img/ok.bmp'):
+                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
+                    else:
+                        time.sleep(0.5)
+                        self.d.click(588, 370)
+                    # screen_shot = a.d.screenshot(format="opencv")
+                    # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
+                    screen_shot_ = self.d.screenshot(format="opencv")
+                    if UIMatcher.img_where(screen_shot_, 'img/tilibuzu.jpg'):
+                        print('>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
+                        self.switch = 1
+                        self.d.click(677, 458)  # 取消
+                        break
+                    screen_shot = self.d.screenshot(format="opencv")
+                    if UIMatcher.img_where(screen_shot, 'img/tiaoguo.jpg'):
+                        self.guochang(screen_shot, ['img/tiaoguo.jpg'], suiji=0)
+                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
+                    else:
+                        time.sleep(1)
+                        self.d.click(475, 481)  # 手动点击跳过
+                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
+                    break
+                else:
+                    if tmp_cout < 3:
+                        # 计时3次就失败
+                        self.d.click(x, y)
+                        time.sleep(0.5)
+                        tmp_cout = tmp_cout + 1
+                    else:
+                        print('>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
+                        self.switch = 1
+                        self.d.click(677, 458)  # 取消
+                        break
+        else:
+            print('>>>无扫荡券或者无体力！结束刷图任务！<<<\r\n')
+        while True:
+            self.d.click(1, 1)
+            time.sleep(0.3)
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+                break
+            if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
+                break
+
+    # 进入hard图
+    def goHardMap(self):
+        # 进入冒险
+        time.sleep(2)
+        self.d.click(480, 505)
+        time.sleep(2)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
+                break
+        # 点击进入主线关卡
+        self.d.click(562, 253)
+        time.sleep(3)
+        self.d.click(828, 85)
+        time.sleep(2)
+        for _ in range(11):  # 设置大于当前进图数,让脚本能回归到1-1即可.
+            # n图左移到1-1图
+            time.sleep(2)
+            self.d.click(27, 272)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
+                self.d.click(828, 85)
+            else:
+                UIMatcher.img_where(screen_shot_, 'img/hard.jpg')
+                break
+
+    def ziduan00(self):
+        print('>>>识别到00参数该字段不刷图,要刷图请更改zhanghao.txt！结束刷图任务！<<<\r\n')
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+
+    # 刷1-11 Hard图,分账号刷hard
+    def do1_11Hard(self):
+        if self.hard == 1:  # 这个适合给多个main使用
+            # self.goumaitili(3)  # 购买3次体力
+            self.goHardMap()  # 进入Hard本
+            self.hard_shuatuzuobiao(250, 340, self.times)  # 1-1妈
+            # self.hard_shuatuzuobiao(465, 270, self.times)  # 1-2铃铛
+            # self.hard_shuatuzuobiao(695, 325, self.times)  # 1-3香菜弓
+            self.goRight()
+            # self.hard_shuatuzuobiao(286, 270, self.times)  # 2-1剑圣怜
+            self.hard_shuatuzuobiao(474, 370, self.times)  # 2-2优衣
+            self.hard_shuatuzuobiao(730, 340, self.times)  # 2-3充电宝
+            self.goRight()
+            self.hard_shuatuzuobiao(255, 260, self.times)  # 3-1佩可
+            self.hard_shuatuzuobiao(470, 365, self.times)  # 3-2羊驼
+            self.hard_shuatuzuobiao(715, 280, self.times)  # 3-3兔子
+            self.goRight()
+            self.hard_shuatuzuobiao(250, 275, self.times)  # 4-1妈
+            # self.hard_shuatuzuobiao(485, 240, self.times)  # 4-2大眼
+            # self.hard_shuatuzuobiao(765, 260, self.times)  # 4-3扇子
+            self.goRight()
+            # self.hard_shuatuzuobiao(245, 325, self.times)  # 5-1铃铛
+            # self.hard_shuatuzuobiao(450, 245, self.times)  # 5-2美东
+            self.hard_shuatuzuobiao(700, 270, self.times)  # 5-3tp弓栞
+            self.goRight()
+            self.hard_shuatuzuobiao(265, 305, self.times)  # 6-1优衣
+            # self.hard_shuatuzuobiao(500, 310, self.times)  # 6-2牛
+            self.hard_shuatuzuobiao(715, 260, self.times)  # 6-3姐姐
+            self.goRight()
+            self.hard_shuatuzuobiao(275, 245, self.times)  # 7-1佩可
+            # self.hard_shuatuzuobiao(475, 345, self.times)  # 7-2病娇
+            # self.hard_shuatuzuobiao(745, 290, self.times)  # 7-3忍
+            self.goRight()
+            # self.hard_shuatuzuobiao(215, 390, self.times)  # 8-1剑圣怜
+            # self.hard_shuatuzuobiao(480, 355, self.times)  # 8-2镜子
+            # self.hard_shuatuzuobiao(715, 295, self.times)  # 8-3哈哈剑
+            self.goRight()
+            # self.hard_shuatuzuobiao(220, 270, self.times)  # 9-1香菜弓
+            self.hard_shuatuzuobiao(480, 355, self.times)  # 9-2兔子
+            self.hard_shuatuzuobiao(765, 295, self.times)  # 9-3充电宝
+            self.goRight()
+            # self.hard_shuatuzuobiao(220, 365, self.times)  # 10-1大眼
+            # self.hard_shuatuzuobiao(480, 250, self.times)  # 10-2美东
+            self.hard_shuatuzuobiao(765, 330, self.times)  # 10-3扇子
+            self.goRight()
+            self.hard_shuatuzuobiao(215, 360, self.times)  # 11-1羊驼
+            self.hard_shuatuzuobiao(480, 250, self.times)  # 11-2病娇
+            self.hard_shuatuzuobiao(765, 330, self.times)  # 11-3姐姐
+            self.goRight()
+
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        else:
+            print('>>>Hard本刷图模式关闭,请去刷图中心开启！<<<\r\n')
+
     # 继续执行函数
     def continueDo9(self, x, y):
         self.switch = 0
@@ -864,6 +1020,81 @@ class Automator:
         self.continueDo9(142, 267) # 1-1
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
+    # 识别7村断崖
+    def duanyazuobiao(self):
+        self.tag = 0
+        time.sleep(2)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/duanyazuobiao.jpg'):
+                print('>>>成功识别标记,开始刷图.<<<\r\n')
+                break
+            if self.tag > 11:   # 超过11次点击则不刷图
+                print('>>>点击超过11次,已错过标记点！刷图任务异常,开启高延迟！<<<\r\n')
+                print('>>>提示:请增加duanyazuobiao的延迟时间<<<\r\n')
+                if UIMatcher.img_where(screen_shot_, 'img/duanyazuobiao.jpg'):
+                    break
+                if self.tag > 22:  # 超过11次点击则不刷图
+                    print('>>>已错过标记点,高延迟模式失败,放弃刷图.<<<\r\n')
+                    print('>>>提示:请增加duanyazuobiao的延迟时间<<<\r\n')
+                    break
+                else:
+                    for _ in range(1):
+                        self.d.click(925, 275)
+                        self.tag += 1
+                        time.sleep(4)  # 这是高延迟识别时间,模拟器卡顿请加时.
+            else:
+                for _ in range(1):
+                    self.d.click(27, 272)
+                    self.tag += 1
+                    time.sleep(2)  # 这是延迟识别时间,模拟器卡顿请加时.
+
+    # 刷7图
+    def shuatu7(self):
+        # 进入冒险
+        time.sleep(2)
+        self.d.click(480, 505)
+        time.sleep(2)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
+                break
+        self.d.click(562, 253)
+        time.sleep(3)
+        self.d.click(701, 83)
+        time.sleep(2)
+        self.duanyazuobiao()
+        if self.tag < 22:  # 暂时先按各11次来判定
+            while True:
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+                    break
+                if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
+                    self.d.click(701, 83)
+            self.switch = 0
+            self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+            time.sleep(2)
+            self.shuatuzuobiao(760, 240, self.times)  # 7-14
+            self.shuatuzuobiao(630, 257, self.times)  # 7-13
+            self.shuatuzuobiao(755, 350, self.times)  # 7-12
+            self.shuatuzuobiao(664, 410, self.times)  # 7-11
+            self.shuatuzuobiao(544, 400, self.times)  # 7-10
+            self.shuatuzuobiao(505, 300, self.times)  # 7-9
+            self.shuatuzuobiao(410, 240, self.times)  # 7-8
+            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+            time.sleep(2)
+            self.shuatuzuobiao(625, 230, self.times)  # 7-7
+            self.shuatuzuobiao(680, 365, self.times)  # 7-6
+            self.shuatuzuobiao(585, 425, self.times)  # 7-5
+            self.shuatuzuobiao(500, 330, self.times)  # 7-4
+            self.shuatuzuobiao(450, 240, self.times)  # 7-3
+            self.shuatuzuobiao(353, 285, self.times)  # 7-2
+            self.shuatuzuobiao(275, 200, self.times)  # 7-1
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        else:
+            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+
     def shuatu8(self):
         # 进入冒险
         time.sleep(2)
@@ -874,31 +1105,44 @@ class Automator:
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
+        time.sleep(4)
+        self.d.click(701, 83)
         time.sleep(2)
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
-                break
-            if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
-                self.d.click(701, 83)
-        self.switch = 0
-        self.shuatuzuobiao(584, 260, self.times)  # 8-14
-        self.shuatuzuobiao(715, 319, self.times)  # 8-13
-        self.shuatuzuobiao(605, 398, self.times)  # 8-12
-        self.shuatuzuobiao(478, 374, self.times)  # 8-11
-        self.shuatuzuobiao(357, 405, self.times)  # 8-10
-        self.shuatuzuobiao(263, 324, self.times)  # 8-9
-        self.shuatuzuobiao(130, 352, self.times)  # 8-8
-        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-        time.sleep(2)
-        self.shuatuzuobiao(580, 401, self.times)  # 8-7
-        self.shuatuzuobiao(546, 263, self.times)  # 8-6
-        self.shuatuzuobiao(457, 334, self.times)  # 8-5
-        self.shuatuzuobiao(388, 240, self.times)  # 8-4
-        self.shuatuzuobiao(336, 314, self.times)  # 8-3
-        self.shuatuzuobiao(230, 371, self.times)  # 8-2
-        self.shuatuzuobiao(193, 255, self.times)  # 8-1
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.duanyazuobiao()
+        if self.tag < 22:  # 暂时先按各11次来判定
+            for _ in range(1):
+                # 以7图为基向右移1次
+                time.sleep(3)
+                self.d.click(925, 275)
+            while True:
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+                    break
+                if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
+                    self.d.click(701, 83)
+            self.switch = 0
+            self.d.drag(600, 270, 200, 270, 0.1)
+            time.sleep(2)
+            self.shuatuzuobiao(584, 260, self.times)  # 8-14
+            self.shuatuzuobiao(715, 319, self.times)  # 8-13
+            self.shuatuzuobiao(605, 398, self.times)  # 8-12
+            self.shuatuzuobiao(478, 374, self.times)  # 8-11
+            self.shuatuzuobiao(357, 405, self.times)  # 8-10
+            self.shuatuzuobiao(263, 324, self.times)  # 8-9
+            self.shuatuzuobiao(130, 352, self.times)  # 8-8
+            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+            time.sleep(2)
+            self.shuatuzuobiao(580, 401, self.times)  # 8-7
+            self.shuatuzuobiao(546, 263, self.times)  # 8-6
+            self.shuatuzuobiao(457, 334, self.times)  # 8-5
+            self.shuatuzuobiao(388, 240, self.times)  # 8-4
+            self.shuatuzuobiao(336, 314, self.times)  # 8-3
+            self.shuatuzuobiao(230, 371, self.times)  # 8-2
+            self.shuatuzuobiao(193, 255, self.times)  # 8-1
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        else:
+            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     def shuatu10(self):
         # 进入冒险
@@ -910,40 +1154,49 @@ class Automator:
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
-        time.sleep(5)
-        for _ in range(1):
-            # 左移到10图
-            time.sleep(3)
-            self.d.click(27, 272)
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
-                break
-            if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
-                self.d.click(701, 83)
-        self.switch = 0
-        self.d.drag(600, 270, 200, 270, 0.1)
+        time.sleep(4)
+        self.d.click(701, 83)
         time.sleep(2)
-        self.shuatuzuobiao(821, 299, self.times)  # 10-17
-        self.shuatuzuobiao(703, 328, self.times)  # 10-16
-        self.shuatuzuobiao(608, 391, self.times)  # 10-15
-        self.shuatuzuobiao(485, 373, self.times)  # 10-14
-        self.shuatuzuobiao(372, 281, self.times)  # 10-13
-        self.shuatuzuobiao(320, 421, self.times)  # 10-12
-        self.shuatuzuobiao(172, 378, self.times)  # 10-11
-        self.shuatuzuobiao(251, 235, self.times)  # 10-10
-        self.shuatuzuobiao(111, 274, self.times)  # 10-9
-        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-        time.sleep(2)
-        self.shuatuzuobiao(690, 362, self.times)  # 10-8
-        self.shuatuzuobiao(594, 429, self.times)  # 10-7
-        self.shuatuzuobiao(411, 408, self.times)  # 10-6
-        self.shuatuzuobiao(518, 332, self.times)  # 10-5
-        self.shuatuzuobiao(603, 238, self.times)  # 10-4
-        self.shuatuzuobiao(430, 239, self.times)  # 10-3
-        self.shuatuzuobiao(287, 206, self.times)  # 10-2
-        self.shuatuzuobiao(146, 197, self.times)  # 10-1
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.duanyazuobiao()
+        if self.tag < 22:  # 暂时先按各11次来判定
+            for _ in range(3):
+                # 以7图为基向右移动3图
+                time.sleep(3)
+                self.d.click(925, 275)
+            while True:
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+                    break
+                if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
+                    self.d.click(701, 83)
+                    time.sleep(2)
+                    break
+            self.switch = 0
+            self.d.drag(600, 270, 200, 270, 0.1)
+            time.sleep(2)
+            self.shuatuzuobiao(821, 299, self.times)  # 10-17
+            self.shuatuzuobiao(703, 328, self.times)  # 10-16
+            self.shuatuzuobiao(608, 391, self.times)  # 10-15
+            self.shuatuzuobiao(485, 373, self.times)  # 10-14
+            self.shuatuzuobiao(372, 281, self.times)  # 10-13
+            self.shuatuzuobiao(320, 421, self.times)  # 10-12
+            self.shuatuzuobiao(172, 378, self.times)  # 10-11
+            self.shuatuzuobiao(251, 235, self.times)  # 10-10
+            self.shuatuzuobiao(111, 274, self.times)  # 10-9
+            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+            time.sleep(2)
+            self.shuatuzuobiao(690, 362, self.times)  # 10-8
+            self.shuatuzuobiao(594, 429, self.times)  # 10-7
+            self.shuatuzuobiao(411, 408, self.times)  # 10-6
+            self.shuatuzuobiao(518, 332, self.times)  # 10-5
+            self.shuatuzuobiao(603, 238, self.times)  # 10-4
+            self.shuatuzuobiao(430, 239, self.times)  # 10-3
+            self.shuatuzuobiao(287, 206, self.times)  # 10-2
+            self.shuatuzuobiao(146, 197, self.times)  # 10-1
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        else:
+            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     def shuatu11(self):
         # 进入冒险
@@ -955,34 +1208,53 @@ class Automator:
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
+        time.sleep(4)
+        self.d.click(701, 83)
         time.sleep(2)
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
-                break
-            if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
-                self.d.click(701, 83)
-        self.switch = 0
-        self.shuatuzuobiao(663, 408, self.times)  # 11-17
-        self.shuatuzuobiao(542, 338, self.times)  # 11-16
-        self.shuatuzuobiao(468, 429, self.times)  # 11-15
-        self.shuatuzuobiao(398, 312, self.times)  # 11-14
-        self.shuatuzuobiao(302, 428, self.times)  # 11-13
-        self.shuatuzuobiao(182, 362, self.times)  # 11-12
-        self.shuatuzuobiao(253, 237, self.times)  # 11-11
-        self.shuatuzuobiao(107, 247, self.times)  # 11-10
-        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-        time.sleep(2)
-        self.shuatuzuobiao(648, 316, self.times)  # 11-9
-        self.shuatuzuobiao(594, 420, self.times)  # 11-8
-        self.shuatuzuobiao(400, 432, self.times)  # 11-7
-        self.shuatuzuobiao(497, 337, self.times)  # 11-6
-        self.shuatuzuobiao(558, 240, self.times)  # 11-5
-        self.shuatuzuobiao(424, 242, self.times)  # 11-4
-        self.shuatuzuobiao(290, 285, self.times)  # 11-3
-        self.shuatuzuobiao(244, 412, self.times)  # 11-2
-        self.shuatuzuobiao(161, 326, self.times)  # 11-1
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.duanyazuobiao()
+        if self.tag < 22:  # 暂时先按各11次来判定
+            for _ in range(4):
+                # 以7图为基向右移动4图
+                time.sleep(3)
+                self.d.click(925, 275)
+            while True:
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+                    break
+                if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
+                    self.d.click(701, 83)
+                    time.sleep(2)
+                    break
+            while True:
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+                    break
+                if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
+                    self.d.click(701, 83)
+            self.switch = 0
+            self.shuatuzuobiao(663, 408, self.times)  # 11-17
+            self.shuatuzuobiao(542, 338, self.times)  # 11-16
+            self.shuatuzuobiao(468, 429, self.times)  # 11-15
+            self.shuatuzuobiao(398, 312, self.times)  # 11-14
+            self.shuatuzuobiao(302, 428, self.times)  # 11-13
+            self.shuatuzuobiao(182, 362, self.times)  # 11-12
+            self.shuatuzuobiao(253, 237, self.times)  # 11-11
+            self.shuatuzuobiao(107, 247, self.times)  # 11-10
+            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+            time.sleep(2)
+            self.shuatuzuobiao(648, 316, self.times)  # 11-9
+            self.shuatuzuobiao(594, 420, self.times)  # 11-8
+            self.shuatuzuobiao(400, 432, self.times)  # 11-7
+            self.shuatuzuobiao(497, 337, self.times)  # 11-6
+            self.shuatuzuobiao(558, 240, self.times)  # 11-5
+            self.shuatuzuobiao(424, 242, self.times)  # 11-4
+            self.shuatuzuobiao(290, 285, self.times)  # 11-3
+            self.shuatuzuobiao(244, 412, self.times)  # 11-2
+            self.shuatuzuobiao(161, 326, self.times)  # 11-1
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        else:
+            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     async def juqingtiaoguo(self):
         # 异步跳过教程 By：CyiceK
