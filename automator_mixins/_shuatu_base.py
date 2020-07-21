@@ -105,18 +105,14 @@ class ShuatuBaseMixin(BaseMixin):
                 break
 
         # 左移动
-
     def goLeft(self):
-        self.d.click(35, 275)
-        time.sleep(3)
+        self.click(35, 275, post_delay=3)
 
         # 右移动
-
     def goRight(self):
-        self.d.click(925, 275)
-        time.sleep(3)
-        # 进入hard图
+        self.click(925, 275, post_delay=3)
 
+        # 进入hard图
     def goHardMap(self):
         # 进入冒险
         time.sleep(2)
@@ -127,18 +123,15 @@ class ShuatuBaseMixin(BaseMixin):
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         # 点击进入主线关卡
-        self.d.click(562, 253)
-        time.sleep(3)
-        self.d.click(828, 85)
-        time.sleep(2)
+        self.click(562, 253)
+        self.click(828, 85, pre_delay=3, post_delay=2)
         for _ in range(11):  # 设置大于当前进图数,让脚本能回归到1-1即可.
             # n图左移到1-1图
-            time.sleep(2)
-            self.d.click(27, 272)
+            self.click(27, 272, pre_delay=2)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
-                self.d.click(828, 85)
+                self.click(828, 85)
             else:
                 UIMatcher.img_where(screen_shot_, 'img/hard.jpg')
                 break
@@ -149,7 +142,7 @@ class ShuatuBaseMixin(BaseMixin):
             self.d.click(x, y)
             time.sleep(0.5)
         else:
-            print('>>>无扫荡券或者无体力！', '结束 全部 刷图任务！<<<\r\n')
+            print('>>>无扫荡券,无体力,无次数！', '结束 全部 刷图任务！<<<\r\n')
             return
         if self.switch == 0:
             while True:  # 锁定加号
@@ -172,7 +165,7 @@ class ShuatuBaseMixin(BaseMixin):
                     # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
                     screen_shot_ = self.d.screenshot(format="opencv")
                     if UIMatcher.img_where(screen_shot_, 'img/tilibuzu.jpg'):
-                        print('>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
+                        print('>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<\r\n')
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
@@ -192,12 +185,12 @@ class ShuatuBaseMixin(BaseMixin):
                         time.sleep(0.5)
                         tmp_cout = tmp_cout + 1
                     else:
-                        print('>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
+                        print('>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<\r\n')
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
         else:
-            print('>>>无扫荡券或者无体力！结束刷图任务！<<<\r\n')
+            print('>>>无扫荡券,无体力,无次数！结束刷图任务！<<<\r\n')
         while True:
             self.d.click(1, 1)
             time.sleep(0.3)
@@ -207,9 +200,6 @@ class ShuatuBaseMixin(BaseMixin):
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
 
-    def ziduan00(self):
-        print('>>>识别到00参数该字段不刷图,要刷图请更改zhanghao.txt！结束刷图任务！<<<\r\n')
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     # 继续执行函数
     def continueDo9(self, x, y):
@@ -245,8 +235,7 @@ class ShuatuBaseMixin(BaseMixin):
         self.continueDo9(142, 267)  # 1-1
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
-        # 识别7村断崖
-
+    # 识别7村断崖
     def duanyazuobiao(self):
         self.tag = 0
         time.sleep(2)
@@ -266,12 +255,12 @@ class ShuatuBaseMixin(BaseMixin):
                     break
                 else:
                     for _ in range(1):
-                        self.d.click(925, 275)
+                        self.click(925, 275)
                         self.tag += 1
                         time.sleep(4)  # 这是高延迟识别时间,模拟器卡顿请加时.
             else:
                 for _ in range(1):
-                    self.d.click(27, 272)
+                    self.click(27, 272)
                     self.tag += 1
                     time.sleep(2)  # 这是延迟识别时间,模拟器卡顿请加时.
 

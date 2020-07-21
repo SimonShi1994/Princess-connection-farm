@@ -15,6 +15,17 @@ ld_emulator = '127.0.0.1:5554'
 mumu_emulator = '127.0.0.1:7555'
 # 选定模拟器
 selected_emulator = ld_emulator
+# 刷图选项
+operation_dic = {
+    'h00': 'a.ziduan00()',  # h00为不刷任何hard图
+    'h01': 'a.do1_11Hard()',  # 刷hard 1-11图,默认购买3次体力,不想刷的图去注释掉即可
+    'tsk': 'a.tansuo()',  # 探索开,注意mana号没开探索可能会卡死
+    'n07': 'a.shuatu7()',  # 刷7图
+    'n08': 'a.shuatu8()',  # 刷8图
+    'n10': 'a.shuatu10()',  # 刷10图
+    'n11': 'a.shuatu11()',  # 刷11图
+    'n12': 'a.shuatu12()',  # 刷12图
+}
 
 
 def runmain(params):
@@ -22,6 +33,7 @@ def runmain(params):
     password = params[1]
     queue = params[2]
     tasks = params[3]
+    opcode = params[4]
     address = queue.get()
 
     a = Automator(address, account)
@@ -36,7 +48,7 @@ def runmain(params):
     # 异步初始化
     # 日志记录
     # 初始化刷图
-    tasks(a)
+    tasks(a, opcode)
 
     gevent.joinall([
         # 这里是协程的一个实例
@@ -78,43 +90,58 @@ def connect():  # 连接adb与uiautomator
     return lines
 
 
-def shuatu_auth(account, fun):  # 刷图总控制
-    shuatu_dic = {
-        '08': 'a.shuatu8()',
-        '10': 'a.shuatu10()',
-        '11': 'a.shuatu11()'
-    }
-    if len(fun) < 2:
-        return False
-    tu_hao = fun[0:2]
-    if tu_hao in shuatu_dic:
-        print("账号{}将要捐赠".format(account))
+def is_shuatu(opcode):
+    return True if len(opcode) >= 3 else False
+
+
+def is_valid_operation_code(acc_name, opcode):  # 刷图总控制
+    if len(opcode) == 0:
+        print("账号{}不刷图".format(acc_name))
         return True
-    else:
-        print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为两位数字，该账号将不捐赠".format(account))
+    if len(opcode) % 3 != 0:
+        print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符，该账号将不登录".format(acc_name))
         return False
+    for i in range(0, len(opcode), 3):
+        if opcode[i:i + 3] in operation_dic:
+            print("账号{}将刷{}图".format(acc_name, opcode[i:i + 3]))
+        else:
+            print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符，该账号将不登录".format(acc_name))
+            return False
+    return True
+
+
+def readjson():  # 读取账号
+    # 2020-07-18 增加读取json账号
+    # 等待一段时间再上限，建议将配置逻辑合并到AutomatorRecord中，调用getuser函数获取配置
+    # 等刷图等逻辑合并到配置文件中后，可以弃用read()函数，runmain传参只需传入配置文件路径
+    # 然后在Automator内部调用getuser获取account,password等一系列配置
+    return list_all_users()
 
 
 def read_account(filename):  # 读取账号
-    account_dic = {}
-    fun_dic = {}
-    fun_list = []
+    acc_dic = {}  # acc_name:acc_pwd
+    opcode_dic = {}  # acc_name:operation_code
     pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s-]*(.*)')
     with open(filename, 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
         for line in f:
             result = pattern.findall(line)
-            if len(result) != 0:
-                account, password, fun = result[0]
-            else:
+            if len(result) == 0:
                 continue
-            if not shuatu_auth(account, fun):
+            acc_name, acc_pwd, opcode = result[0]
+
+            # 检查刷图号
+            if not is_valid_operation_code(acc_name, opcode):
                 continue
-            account_dic[account] = password
-            fun_dic[account] = fun
-            fun_list.append(fun_dic[account])
-    account_list = list(account_dic.keys())
-    accountnum = len(account_list)
-    return account_list, account_dic, accountnum, fun_list, fun_dic
+
+            acc_dic[acc_name] = acc_pwd
+            opcode_dic[acc_name] = opcode
+    return acc_dic, opcode_dic
+
+
+# 不安全，建议删除
+def execute_opcode(a: Automator, opcode):
+    for i in range(0, len(opcode), 3):
+        eval(operation_dic[opcode[i:i + 3]])
 
 
 def execute(account_filename, tasks):
@@ -124,7 +151,7 @@ def execute(account_filename, tasks):
     # 连接adb与uiautomator
     devices = connect()
     # 读取账号
-    account_list, account_dic, accountnum, _, _ = read_account(account_filename)
+    account_dic, opcode_dic = read_account(account_filename)
 
     # 这个队列用来保存设备, 初始化的时候先把所有的模拟器设备放入队列
     queue = Manager().Queue()
@@ -132,7 +159,8 @@ def execute(account_filename, tasks):
     # 进程池参数列表
     params = list()
     for account, password in account_dic.items():
-        params.append((account, password, queue, tasks))
+        opcode = opcode_dic[account]
+        params.append((account, password, queue, tasks, opcode))
 
     # 初始化队列, 先把所有的模拟器设备放入队列
     for device in devices:
