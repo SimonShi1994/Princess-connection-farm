@@ -13,7 +13,6 @@ class ShuatuBaseMixin(BaseMixin):
     def __init__(self):
         super().__init__()
         self.switch = 0
-        self.hard = 0  # 困难本出初始值
         self.times = 3  # 总刷图次数
 
     def sw_init(self):

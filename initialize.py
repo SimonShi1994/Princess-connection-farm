@@ -7,6 +7,9 @@ import gevent
 from core import log_handler
 from core.Automator import Automator
 
+# 临时解决方案，可以改进
+from automator_mixins._shuatu import operation_dic
+
 # 账号日志
 acclog = log_handler.pcr_acc_log()
 # 雷电模拟器
@@ -15,17 +18,6 @@ ld_emulator = '127.0.0.1:5554'
 mumu_emulator = '127.0.0.1:7555'
 # 选定模拟器
 selected_emulator = ld_emulator
-# 刷图选项
-operation_dic = {
-    'h00': 'a.ziduan00()',  # h00为不刷任何hard图
-    'h01': 'a.do1_11Hard()',  # 刷hard 1-11图,默认购买3次体力,不想刷的图去注释掉即可
-    'tsk': 'a.tansuo()',  # 探索开,注意mana号没开探索可能会卡死
-    'n07': 'a.shuatu7()',  # 刷7图
-    'n08': 'a.shuatu8()',  # 刷8图
-    'n10': 'a.shuatu10()',  # 刷10图
-    'n11': 'a.shuatu11()',  # 刷11图
-    'n12': 'a.shuatu12()',  # 刷12图
-}
 
 
 def runmain(params):
@@ -89,8 +81,7 @@ def connect():  # 连接adb与uiautomator
     print(lines)
     return lines
 
-
-def is_shuatu(opcode):
+def can_shuatu(opcode):
     return True if len(opcode) >= 3 else False
 
 
@@ -98,14 +89,14 @@ def is_valid_operation_code(acc_name, opcode):  # 刷图总控制
     if len(opcode) == 0:
         print("账号{}不刷图".format(acc_name))
         return True
-    if len(opcode) % 3 != 0:
-        print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符，该账号将不登录".format(acc_name))
+    if len(opcode) %3 != 0:
+        print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
         return False
     for i in range(0, len(opcode), 3):
         if opcode[i:i + 3] in operation_dic:
             print("账号{}将刷{}图".format(acc_name, opcode[i:i + 3]))
         else:
-            print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符，该账号将不登录".format(acc_name))
+            print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
             return False
     return True
 
@@ -132,17 +123,9 @@ def read_account(filename):  # 读取账号
             # 检查刷图号
             if not is_valid_operation_code(acc_name, opcode):
                 continue
-
             acc_dic[acc_name] = acc_pwd
             opcode_dic[acc_name] = opcode
     return acc_dic, opcode_dic
-
-
-# 不安全，建议删除
-def execute_opcode(a: Automator, opcode):
-    for i in range(0, len(opcode), 3):
-        eval(operation_dic[opcode[i:i + 3]])
-
 
 def execute(account_filename, tasks):
     """

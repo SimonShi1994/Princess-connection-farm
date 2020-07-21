@@ -3,12 +3,35 @@ import time
 from core.cv import UIMatcher
 from ._shuatu_base import ShuatuBaseMixin
 
+# 已支持刷图选项
+operation_dic = {
+    'h00': 'self.ziduan00()',  # h00为不刷任何hard图
+    'h01': 'self.do1_11Hard()',  # 刷hard 1-11图,默认购买3次体力,不想刷的图去注释掉即可
+    'tsk': 'self.tansuo()',  # 探索开,注意mana号没开探索可能会卡死
+    'n07': 'self.shuatu7()',  # 刷7图
+    'n08': 'self.shuatu8()',  # 刷8图
+    'n10': 'self.shuatu10()',  # 刷10图
+    'n11': 'self.shuatu11()',  # 刷11图
+    'n12': 'self.shuatu12()',  # 刷12图
+}
 
 class ShuatuMixin(ShuatuBaseMixin):
     """
     刷图插片
     包含登录相关操作的脚本
     """
+
+    # 不安全，建议删除
+    def shuatu(self, opcode):
+        for i in range(0, len(opcode), 3):
+            if opcode[i] != 'h':
+                eval(operation_dic[opcode[i:i+3]])
+
+    # 不安全，建议删除
+    def shuatu_hard(self, opcode):
+        for i in range(0, len(opcode), 3):
+            if opcode[i] == 'h':
+                eval(operation_dic[opcode[i:i+3]])
 
     # 刷经验1-1
     def shuajingyan(self, map):
@@ -88,63 +111,59 @@ class ShuatuMixin(ShuatuBaseMixin):
 
     # 刷1-11 Hard图,分账号刷hard
     def do1_11Hard(self):
-        if self.hard == 1:  # 这个适合给多个main使用
-            self.goHardMap()  # 进入Hard本
-            self.hard_shuatuzuobiao(250, 340, self.times)  # 1-1妈
-            # self.hard_shuatuzuobiao(465, 270, self.times)  # 1-2铃铛
-            # self.hard_shuatuzuobiao(695, 325, self.times)  # 1-3香菜弓
-            self.goRight()
-            # self.hard_shuatuzuobiao(286, 270, self.times)  # 2-1剑圣怜
-            self.hard_shuatuzuobiao(474, 370, self.times)  # 2-2优衣
-            self.hard_shuatuzuobiao(730, 340, self.times)  # 2-3充电宝
-            self.goRight()
-            self.hard_shuatuzuobiao(255, 260, self.times)  # 3-1佩可
-            self.hard_shuatuzuobiao(470, 365, self.times)  # 3-2羊驼
-            self.hard_shuatuzuobiao(715, 280, self.times)  # 3-3兔子
-            self.goRight()
-            self.hard_shuatuzuobiao(250, 275, self.times)  # 4-1妈
-            # self.hard_shuatuzuobiao(485, 240, self.times)  # 4-2大眼
-            # self.hard_shuatuzuobiao(765, 260, self.times)  # 4-3扇子
-            self.goRight()
-            # self.hard_shuatuzuobiao(245, 325, self.times)  # 5-1铃铛
-            # self.hard_shuatuzuobiao(450, 245, self.times)  # 5-2美东
-            self.hard_shuatuzuobiao(700, 270, self.times)  # 5-3tp弓栞
-            self.goRight()
-            self.hard_shuatuzuobiao(265, 305, self.times)  # 6-1优衣
-            # self.hard_shuatuzuobiao(500, 310, self.times)  # 6-2牛
-            self.hard_shuatuzuobiao(715, 260, self.times)  # 6-3姐姐
-            self.goRight()
-            self.hard_shuatuzuobiao(275, 245, self.times)  # 7-1佩可
-            # self.hard_shuatuzuobiao(475, 345, self.times)  # 7-2病娇
-            # self.hard_shuatuzuobiao(745, 290, self.times)  # 7-3忍
-            self.goRight()
-            # self.hard_shuatuzuobiao(215, 390, self.times)  # 8-1剑圣怜
-            # self.hard_shuatuzuobiao(480, 355, self.times)  # 8-2镜子
-            # self.hard_shuatuzuobiao(715, 295, self.times)  # 8-3哈哈剑
-            self.goRight()
-            # self.hard_shuatuzuobiao(220, 270, self.times)  # 9-1香菜弓
-            self.hard_shuatuzuobiao(480, 355, self.times)  # 9-2兔子
-            self.hard_shuatuzuobiao(765, 295, self.times)  # 9-3充电宝
-            self.goRight()
-            # self.hard_shuatuzuobiao(220, 365, self.times)  # 10-1大眼
-            # self.hard_shuatuzuobiao(480, 250, self.times)  # 10-2美东
-            self.hard_shuatuzuobiao(765, 330, self.times)  # 10-3扇子
-            self.goRight()
-            self.hard_shuatuzuobiao(215, 360, self.times)  # 11-1羊驼
-            self.hard_shuatuzuobiao(480, 250, self.times)  # 11-2病娇
-            self.hard_shuatuzuobiao(765, 330, self.times)  # 11-3姐姐
-            self.goRight()
-            # self.hard_shuatuzuobiao(215, 255, self.times)  # 11-1牛
-            # self.hard_shuatuzuobiao(480, 355, self.times)  # 11-2栞
-            # self.hard_shuatuzuobiao(765, 240, self.times)  # 11-3哈哈剑
-            self.goRight()
+        self.goHardMap()  # 进入Hard本
+        self.hard_shuatuzuobiao(250, 340, self.times)  # 1-1妈
+        # self.hard_shuatuzuobiao(465, 270, self.times)  # 1-2铃铛
+        # self.hard_shuatuzuobiao(695, 325, self.times)  # 1-3香菜弓
+        self.goRight()
+        # self.hard_shuatuzuobiao(286, 270, self.times)  # 2-1剑圣怜
+        self.hard_shuatuzuobiao(474, 370, self.times)  # 2-2优衣
+        self.hard_shuatuzuobiao(730, 340, self.times)  # 2-3充电宝
+        self.goRight()
+        self.hard_shuatuzuobiao(255, 260, self.times)  # 3-1佩可
+        self.hard_shuatuzuobiao(470, 365, self.times)  # 3-2羊驼
+        self.hard_shuatuzuobiao(715, 280, self.times)  # 3-3兔子
+        self.goRight()
+        self.hard_shuatuzuobiao(250, 275, self.times)  # 4-1妈
+        # self.hard_shuatuzuobiao(485, 240, self.times)  # 4-2大眼
+        # self.hard_shuatuzuobiao(765, 260, self.times)  # 4-3扇子
+        self.goRight()
+        # self.hard_shuatuzuobiao(245, 325, self.times)  # 5-1铃铛
+        # self.hard_shuatuzuobiao(450, 245, self.times)  # 5-2美东
+        self.hard_shuatuzuobiao(700, 270, self.times)  # 5-3tp弓栞
+        self.goRight()
+        self.hard_shuatuzuobiao(265, 305, self.times)  # 6-1优衣
+        # self.hard_shuatuzuobiao(500, 310, self.times)  # 6-2牛
+        self.hard_shuatuzuobiao(715, 260, self.times)  # 6-3姐姐
+        self.goRight()
+        self.hard_shuatuzuobiao(275, 245, self.times)  # 7-1佩可
+        # self.hard_shuatuzuobiao(475, 345, self.times)  # 7-2病娇
+        # self.hard_shuatuzuobiao(745, 290, self.times)  # 7-3忍
+        self.goRight()
+        # self.hard_shuatuzuobiao(215, 390, self.times)  # 8-1剑圣怜
+        # self.hard_shuatuzuobiao(480, 355, self.times)  # 8-2镜子
+        # self.hard_shuatuzuobiao(715, 295, self.times)  # 8-3哈哈剑
+        self.goRight()
+        # self.hard_shuatuzuobiao(220, 270, self.times)  # 9-1香菜弓
+        self.hard_shuatuzuobiao(480, 355, self.times)  # 9-2兔子
+        self.hard_shuatuzuobiao(765, 295, self.times)  # 9-3充电宝
+        self.goRight()
+        # self.hard_shuatuzuobiao(220, 365, self.times)  # 10-1大眼
+        # self.hard_shuatuzuobiao(480, 250, self.times)  # 10-2美东
+        self.hard_shuatuzuobiao(765, 330, self.times)  # 10-3扇子
+        self.goRight()
+        self.hard_shuatuzuobiao(215, 360, self.times)  # 11-1羊驼
+        self.hard_shuatuzuobiao(480, 250, self.times)  # 11-2病娇
+        self.hard_shuatuzuobiao(765, 330, self.times)  # 11-3姐姐
+        self.goRight()
+        # self.hard_shuatuzuobiao(215, 255, self.times)  # 11-1牛
+        # self.hard_shuatuzuobiao(480, 355, self.times)  # 11-2栞
+        # self.hard_shuatuzuobiao(765, 240, self.times)  # 11-3哈哈剑
+        self.goRight()
 
-            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
-        else:
-            print('>>>Hard本刷图模式关闭,请去刷图中心开启！<<<\r\n')
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
-        # 刷7图
-
+    # 刷7图
     def shuatu7(self):
         # 进入冒险
         self.click(480, 505, pre_delay=2, post_delay=2)
