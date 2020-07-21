@@ -127,7 +127,7 @@ def read_account(filename):  # 读取账号
             opcode_dic[acc_name] = opcode
     return acc_dic, opcode_dic
 
-def execute(account_filename, tasks):
+def execute(account_filename, tasks, acc_filter=None):
     """
     执行脚本
     """
@@ -135,6 +135,9 @@ def execute(account_filename, tasks):
     devices = connect()
     # 读取账号
     account_dic, opcode_dic = read_account(account_filename)
+    # 过滤账号
+    if acc_filter != None:
+        account_dic = acc_filter(account_dic, opcode_dic)
 
     # 这个队列用来保存设备, 初始化的时候先把所有的模拟器设备放入队列
     queue = Manager().Queue()
