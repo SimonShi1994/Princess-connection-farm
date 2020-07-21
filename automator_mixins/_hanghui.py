@@ -23,7 +23,7 @@ class HanghuiMixin(BaseMixin):
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
-                for _ in range(5):
+                for _ in range(2):
                     time.sleep(2)
                     screen_shot = self.d.screenshot(format="opencv")
                     if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):

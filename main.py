@@ -6,6 +6,7 @@ from initialize import execute, execute_opcode, is_shuatu
 # 如果是农场号就没有动作，如果是要捐装备的号就登录游戏捐装备
 account_filename = "zhanghao.txt"
 
+
 def tasks(a: Automator, opcode):
     # 主功能体函数，可以在本函数中自定义需要的功能
     a.init_home()  # 初始化，确保进入首页
@@ -18,8 +19,8 @@ def tasks(a: Automator, opcode):
     a.mianfeiniudan()  # 免费扭蛋
     # a.mianfeishilian()  # 免费十连
     a.shouqu()  # 收取所有礼物
-    # a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
-    # a.dixiacheng(skip=True)  # By:Dr-Bluemond, 地下城 skip是否开启战斗跳过
+    a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
+    a.dixiacheng(skip=True)  # By:Dr-Bluemond, 地下城 skip是否开启战斗跳过
     a.goumaitili(3)  # 购买3次体力
     # a.buyExp() # 买药
     # a.doActivityHard() # 刷活动hard
