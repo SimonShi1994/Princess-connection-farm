@@ -704,15 +704,15 @@ class Automator:
                 break
         self.d.click(562, 253)
         time.sleep(5)
-        for _ in range(1):
-            # 左移到10图
+        for _ in range(2):
+            # 左移到10图,如果你买的是10图的号的话，请把上面的2改成1
             time.sleep(3)
             self.d.click(27, 272)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                 break
-        self.d.drag(600, 270, 200, 270, 0.1)
+        self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
         time.sleep(2)
         self.shuatuzuobiao(821, 299, self.times)  # 10-17
         self.shuatuzuobiao(703, 328, self.times)  # 10-16
@@ -745,11 +745,17 @@ class Automator:
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
-        time.sleep(2)
+        time.sleep(5)
+        for _ in range(1):
+            # 左移到11图
+            time.sleep(3)
+            self.d.click(27, 272)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                 break
+        self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+        time.sleep(2)
         self.shuatuzuobiao(663, 408, self.times)  # 11-17
         self.shuatuzuobiao(542, 338, self.times)  # 11-16
         self.shuatuzuobiao(468, 429, self.times)  # 11-15
@@ -769,6 +775,42 @@ class Automator:
         self.shuatuzuobiao(290, 285, self.times)  # 11-3
         self.shuatuzuobiao(244, 412, self.times)  # 11-2
         self.shuatuzuobiao(161, 326, self.times)  # 11-1
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+
+    def shuatu12(self):
+        # 进入冒险
+        time.sleep(2)
+        self.d.click(480, 505)
+        time.sleep(2)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
+                break
+        self.d.click(562, 253)
+        time.sleep(2)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+                break
+        self.shuatuzuobiao(760, 255, self.times)  # 12-17
+        self.shuatuzuobiao(610, 245, self.times)  # 12-16
+        self.shuatuzuobiao(450, 270, self.times)  # 12-15
+        self.shuatuzuobiao(565, 415, self.times)  # 12-14
+        self.shuatuzuobiao(400, 425, self.times)  # 12-13
+        self.shuatuzuobiao(280, 365, self.times)  # 12-12
+        self.shuatuzuobiao(265, 245, self.times)  # 12-11
+        self.shuatuzuobiao(130, 265, self.times)  # 12-10
+        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+        time.sleep(2)
+        self.shuatuzuobiao(675, 380, self.times)  # 12-9
+        self.shuatuzuobiao(550, 440, self.times)  # 12-8
+        self.shuatuzuobiao(445, 365, self.times)  # 12-7
+        self.shuatuzuobiao(575, 245, self.times)  # 12-6
+        self.shuatuzuobiao(435, 250, self.times)  # 12-5
+        self.shuatuzuobiao(310, 285, self.times)  # 12-4
+        self.shuatuzuobiao(265, 395, self.times)  # 12-3
+        self.shuatuzuobiao(155, 315, self.times)  # 12-2
+        self.shuatuzuobiao(185, 210, self.times)  # 12-1
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     async def juqingtiaoguo(self):
