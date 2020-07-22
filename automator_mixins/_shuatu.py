@@ -1,6 +1,7 @@
 import time
 
 from core.cv import UIMatcher
+from core.log_handler import pcr_log
 from ._shuatu_base import ShuatuBaseMixin
 
 # 已支持刷图选项
@@ -15,6 +16,7 @@ operation_dic = {
     'n12': 'self.shuatu12()',  # 刷12图
 }
 
+
 class ShuatuMixin(ShuatuBaseMixin):
     """
     刷图插片
@@ -25,13 +27,13 @@ class ShuatuMixin(ShuatuBaseMixin):
     def shuatu(self, opcode):
         for i in range(0, len(opcode), 3):
             if opcode[i] != 'h':
-                eval(operation_dic[opcode[i:i+3]])
+                eval(operation_dic[opcode[i:i + 3]])
 
     # 不安全，建议删除
     def shuatu_hard(self, opcode):
         for i in range(0, len(opcode), 3):
             if opcode[i] == 'h':
-                eval(operation_dic[opcode[i:i+3]])
+                eval(operation_dic[opcode[i:i + 3]])
 
     # 刷经验1-1
     def shuajingyan(self, map):
@@ -106,7 +108,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     def ziduan00(self):
-        print('>>>识别到00参数该字段不刷图,要刷图请更改zhanghao.txt！结束刷图任务！<<<\r\n')
+        pcr_log(self.account).write_log(level='warning', message='>>>识别到00参数该字段不刷图,要刷图请更改zhanghao.txt！结束刷图任务！<<<\r\n')
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     # 刷1-11 Hard图,分账号刷hard
@@ -205,7 +207,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.shuatuzuobiao(275, 200, self.times)  # 7-1
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         else:
-            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            pcr_log(self.account).write_log(level='error', message='>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     def shuatu8(self):
@@ -250,7 +252,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.shuatuzuobiao(193, 255, self.times)  # 8-1
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         else:
-            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            pcr_log(self.account).write_log(level='error', message='>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     # 10图
@@ -261,7 +263,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
-        self.click(562, 253,)
+        self.click(562, 253, )
         self.click(701, 83, pre_delay=4, post_delay=2)
         self.duanyazuobiao()
         if self.tag < 22:  # 暂时先按各11次来判定
@@ -299,7 +301,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.shuatuzuobiao(146, 197, self.times)  # 10-1
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         else:
-            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            pcr_log(self.account).write_log(level='error', message='>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     # 11图
@@ -325,7 +327,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     self.click(701, 83, pre_delay=0, post_delay=2)
                     break
             self.switch = 0
-            self.d.drag(600, 270, 200, 270, 0.1)    # 拖拽到最右
+            self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
             time.sleep(2)
             self.shuatuzuobiao(663, 408, self.times)  # 11-17
             self.shuatuzuobiao(542, 338, self.times)  # 11-16
@@ -348,7 +350,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.shuatuzuobiao(161, 325, self.times)  # 11-1
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         else:
-            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            pcr_log(self.account).write_log(level='error', message='>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     # 12图
@@ -397,7 +399,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.shuatuzuobiao(185, 210, self.times)  # 12-1
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         else:
-            print('>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
+            pcr_log(self.account).write_log(level='error', message='>>>高延迟模式刷图失败,放弃刷图<<<\r\n')
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     def shoushuazuobiao(self, x, y, jiaocheng=0, lockpic='img/normal.jpg', screencut=None):

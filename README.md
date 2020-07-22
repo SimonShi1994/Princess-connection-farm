@@ -8,8 +8,8 @@
 
 ## 特点
 
-- [x] 多线程多开 **new**
-- [x] 39对1农场 **new**
+- [x] 支持多开
+- [x] 39对1农场 
 - [x] 家园领取
 - [x] 行会点赞
 - [x] 自动捐赠
@@ -18,7 +18,7 @@
 - [x] 收取礼物
 - [x] 免费扭蛋
 - [x] 自动刷经验
-- [x] 自动刷7/8/10/11/12图 可自定义每关扫荡次数
+- [x] 自动刷8/10/11图 可自定义每关扫荡次数
 - [x] 自动购买体力
 - [x] 自动探索(额外脚本)
 - [x] 初始化mana号(额外脚本)
@@ -29,8 +29,8 @@
 
 功能详解
 
-1. 模拟器多开管理 ← new!!
-2. 39对1农场管理 ← new!!
+1. 模拟器多开管理 
+2. 39对1农场管理 
 3. 账号批量登录/退出；
 4. 收取所有礼物；
 5. 检测行会捐赠请求并捐赠；
@@ -53,12 +53,12 @@
 
 ## 环境
 
-需要 Python版本>3.6（安装时记得把带有**PATH**字母选项的勾上）
+需要 Python版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）
 
-安装依赖:
+需要执行指令安装依赖:
 
 ```
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 若使用模拟器，则需要将模拟器设置为桥接模式，同时需要打开开发者usb调试。具体参考这个项目(https://github.com/Jiahonzheng/JGM-Automator)
@@ -67,11 +67,11 @@ pip3 install -r requirements.txt
 
 **重要：模拟器分辨率要求540*960**
 
-**重要:**需要百度OCR文字识别 的 apikey和Secret Key分别tab间隔填入baiduocr.txt 中
+**重要**：目前关于API部分已经临时移入 pcr_config.py 中
 
-如何申请百度文字识别apikey和Secret Key:
+如何申请百度文字识别apikey和Secret Key:(https://blog.csdn.net/biao197/article/details/102907492 )
 
-(https://blog.csdn.net/biao197/article/details/102907492 )
+Server酱食用方法：（http://sc.ftqq.com/3.version）
 
 
 ## 使用方式
@@ -311,6 +311,14 @@ python main.py
 - 增加区域定位辅助，现在如果搜图没有加上at则会在运行发现时提供at的坐标，直接复制即可使用
 - 优化初始化程序，大幅增加其效率
 
+2020/7/17 By:CyiceK
+
+- 优化OCR地下城的判断
+- 异步 多进程协调降低性能占用
+- OCR地下城与非OCR的自动切换
+- 新增 家园新家具提示关闭的判断，全局异步跳过可可萝剧情的异步(包括地下城吃塔币后出发的但未测试)
+- 其他方面小调整
+
 2020/7/19 By:Yuki_Asuuna
 
 - 用logging库重写了日志类（log_handler.py），所有日志重定向到标准输出和文件（日志文件位于log文件夹下），每个账号都对应一个日志文件a.log，调用方法为a.log.write_log(level,message)，两个参数都为str类型，其中level表示该条日志信息的类型（['debug','info','warning','error','critical']之一），message表示内容。
@@ -329,3 +337,11 @@ python main.py
 - 再扩充了main.py中<刷图控制中心>处理范围,可支持hard本刷角色碎片和主线刷装备和探索一起处理,探索新加的,可能不太完善先用用看.
 - 新增主线12村的装备扫荡.
 - 新增主线困本12村扫荡.
+
+2020/7/22 By:CyiceK
+
+- 改善异步的占用，应该吧（
+- 修改日志功能，增添Server酱（微信推送）
+- 删除baidu_ocr.txt，临时组建pcr_config.py
+- 修复传入百度OCR的截图玄学问题
+- 其他小方面调整，逃）

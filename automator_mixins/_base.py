@@ -114,21 +114,22 @@ class BaseMixin:
         template_paths = template_paths
         active_path = UIMatcher.imgs_where(screen_shot, template_paths)
         if active_path:
-            print(active_path)
+            # print(active_path)
             if 'img/caidan_tiaoguo.jpg' in active_path:
                 x, y = active_path['img/caidan_tiaoguo.jpg']
                 self.d.click(x, y)
             else:
                 for name, (x, y) in active_path.items():
-                    print(name)
+                    # print(name)
                     self.d.click(x, y)
             time.sleep(0.5)
         else:
             if suiji:
-                print('未找到所需的按钮,将点击左上角')
+                # print('未找到所需的按钮,将点击左上角')
                 self.d.click(0.1 * self.dWidth, 0.1 * self.dHeight)
             else:
-                print('未找到所需的按钮,无动作')
+                # print('未找到所需的按钮,无动作')
+                pass
 
     def lockimg(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=0,
                 at=None):

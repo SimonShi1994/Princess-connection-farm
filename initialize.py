@@ -6,11 +6,14 @@ import gevent
 
 from core import log_handler
 from core.Automator import Automator
+from automator_mixins._async import AsyncMixin
 
 # 临时解决方案，可以改进
 from automator_mixins._shuatu import operation_dic
 
 # 账号日志
+from core.log_handler import pcr_log
+
 acclog = log_handler.pcr_acc_log()
 # 雷电模拟器
 ld_emulator = '127.0.0.1:5554'
@@ -27,41 +30,49 @@ def runmain(params):
     tasks = params[3]
     opcode = params[4]
     address = queue.get()
+    try:
+        a = Automator(address, account)
+        a.start()
+        a.log.write_log(level='info', message='>>>>>>>即将登陆的账号为：%s 密码：%s <<<<<<<' % (account, password))
+        gevent.joinall([
+            # 这里是协程初始化的一个实例
+            gevent.spawn(a.login_auth, account, password),
+            gevent.spawn(acclog.Account_Login, account),
+            gevent.spawn(a.sw_init())
+            ])
+        # 日志记录
+        # 还是日志
+        # 初始化刷图
+        # 开始异步
+        AsyncMixin().start_th()
 
-    a = Automator(address, account)
-    a.start()
-    a.log.write_log(level='info', message='>>>>>>>即将登陆的账号为：%s 密码：%s <<<<<<<\n' % (account, password))
-    gevent.joinall([
-        # 这里是协程初始化的一个实例
-        gevent.spawn(a.login_auth, account, password),
-        gevent.spawn(acclog.Account_Login, account),
-        gevent.spawn(a.sw_init())
-    ])
-    # 异步初始化
-    # 日志记录
-    # 初始化刷图
-    tasks(a, opcode)
+        tasks(a, account, opcode)
 
-    gevent.joinall([
-        # 这里是协程的一个实例
-        gevent.spawn(a.change_acc()),
-        gevent.spawn(acclog.Account_Logout, account)
-    ])
-    # 退出当前账号，切换下一个
-    queue.put(address)
+        gevent.joinall([
+            # 这里是协程的一个实例
+            gevent.spawn(a.change_acc()),
+            gevent.spawn(acclog.Account_Logout, account)
+        ])
+        # 停止异步
+        AsyncMixin().stop_th()
+    except Exception as e:
+        pcr_log(account).write_log(level='error', message='initialize-检测出异常{}'.format(e))
+    finally:
+        # 退出当前账号，切换下一个
+        queue.put(address)
 
 
 def connect():  # 连接adb与uiautomator
     try:
         # os.system 函数正常情况下返回是进程退出码，0为正常退出码，其余为异常
         if os.system('cd adb & adb connect ' + selected_emulator) != 0:
-            print("连接模拟器失败")
+            pcr_log('admin').write_log(level='error', message="连接模拟器失败")
             exit(1)
         if os.system('python -m uiautomator2 init') != 0:
-            print("初始化 uiautomator2 失败")
+            pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
             exit(1)
     except Exception as e:
-        print('连接失败, 原因: {}'.format(e))
+        pcr_log('admin').write_log(level='error', message='连接失败, 原因: {}'.format(e))
         exit(1)
 
     result = os.popen('cd adb & adb devices')  # 返回adb devices列表
@@ -81,22 +92,23 @@ def connect():  # 连接adb与uiautomator
     print(lines)
     return lines
 
+
 def can_shuatu(opcode):
     return True if len(opcode) >= 3 else False
 
 
 def is_valid_operation_code(acc_name, opcode):  # 刷图总控制
     if len(opcode) == 0:
-        print("账号{}不刷图".format(acc_name))
+        pcr_log(acc_name).write_log(level='info', message="账号{}不刷图".format(acc_name))
         return True
-    if len(opcode) %3 != 0:
-        print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
+    if len(opcode) % 3 != 0:
+        pcr_log(acc_name).write_log(level='error', message="账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
         return False
     for i in range(0, len(opcode), 3):
         if opcode[i:i + 3] in operation_dic:
-            print("账号{}将刷{}图".format(acc_name, opcode[i:i + 3]))
+            pcr_log(acc_name).write_log(level='info', message="账号{}将刷{}图".format(acc_name, opcode[i:i + 3]))
         else:
-            print("账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
+            pcr_log(acc_name).write_log(level='error', message="账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
             return False
     return True
 
@@ -127,7 +139,8 @@ def read_account(filename):  # 读取账号
             opcode_dic[acc_name] = opcode
     return acc_dic, opcode_dic
 
-def execute(account_filename, tasks, acc_filter=None):
+
+def execute(account_filename, tasks):
     """
     执行脚本
     """
@@ -135,9 +148,6 @@ def execute(account_filename, tasks, acc_filter=None):
     devices = connect()
     # 读取账号
     account_dic, opcode_dic = read_account(account_filename)
-    # 过滤账号
-    if acc_filter != None:
-        account_dic = acc_filter(account_dic, opcode_dic)
 
     # 这个队列用来保存设备, 初始化的时候先把所有的模拟器设备放入队列
     queue = Manager().Queue()
@@ -158,3 +168,5 @@ def execute(account_filename, tasks, acc_filter=None):
 
     # 退出adb
     os.system('cd adb & adb kill-server')
+    pcr_log('admin').write_log(level='info', message='任务全部完成')
+    pcr_log('admin').server_bot('', message='任务全部完成')

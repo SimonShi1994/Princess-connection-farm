@@ -1,6 +1,7 @@
 import time
 
 from core.cv import UIMatcher
+from core.log_handler import pcr_log
 from ._base import BaseMixin
 
 
@@ -24,7 +25,7 @@ class ShuatuBaseMixin(BaseMixin):
             self.d.click(x, y)
             time.sleep(0.5)
         else:
-            print('>>>无扫荡券或者无体力！', '结束 全部 刷图任务！<<<\r\n')
+            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力，结束 全部 刷图任务！<<<\r\n')
             return
         if self.switch == 0:
             while True:  # 锁定加号
@@ -47,7 +48,7 @@ class ShuatuBaseMixin(BaseMixin):
                     # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
                     screen_shot_ = self.d.screenshot(format="opencv")
                     if UIMatcher.img_where(screen_shot_, 'img/tilibuzu.jpg'):
-                        print('>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
+                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
@@ -67,12 +68,12 @@ class ShuatuBaseMixin(BaseMixin):
                         time.sleep(0.5)
                         tmp_cout = tmp_cout + 1
                     else:
-                        print('>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
+                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
         else:
-            print('>>>无扫荡券或者无体力！结束刷图任务！<<<\r\n')
+            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束刷图任务！<<<\r\n')
         while True:
             self.d.click(1, 1)
             time.sleep(0.3)
@@ -104,14 +105,17 @@ class ShuatuBaseMixin(BaseMixin):
                 break
 
         # 左移动
+
     def goLeft(self):
         self.click(35, 275, post_delay=3)
 
         # 右移动
+
     def goRight(self):
         self.click(925, 275, post_delay=3)
 
         # 进入hard图
+
     def goHardMap(self):
         # 进入冒险
         time.sleep(2)
@@ -141,7 +145,7 @@ class ShuatuBaseMixin(BaseMixin):
             self.d.click(x, y)
             time.sleep(0.5)
         else:
-            print('>>>无扫荡券,无体力,无次数！', '结束 全部 刷图任务！<<<\r\n')
+            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束 全部 刷图任务！<<<\r\n')
             return
         if self.switch == 0:
             while True:  # 锁定加号
@@ -164,7 +168,7 @@ class ShuatuBaseMixin(BaseMixin):
                     # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
                     screen_shot_ = self.d.screenshot(format="opencv")
                     if UIMatcher.img_where(screen_shot_, 'img/tilibuzu.jpg'):
-                        print('>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<\r\n')
+                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<\r\n')
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
@@ -184,12 +188,12 @@ class ShuatuBaseMixin(BaseMixin):
                         time.sleep(0.5)
                         tmp_cout = tmp_cout + 1
                     else:
-                        print('>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<\r\n')
+                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<\r\n')
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
         else:
-            print('>>>无扫荡券,无体力,无次数！结束刷图任务！<<<\r\n')
+            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束刷图任务！<<<\r\n')
         while True:
             self.d.click(1, 1)
             time.sleep(0.3)
@@ -198,7 +202,6 @@ class ShuatuBaseMixin(BaseMixin):
                 break
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
-
 
     # 继续执行函数
     def continueDo9(self, x, y):
@@ -241,16 +244,16 @@ class ShuatuBaseMixin(BaseMixin):
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/duanyazuobiao.jpg'):
-                print('>>>成功识别标记,开始刷图.<<<\r\n')
+                pcr_log(self.account).write_log(level='info', message='>>>成功识别标记,开始刷图.<<<\r\n')
                 break
             if self.tag > 11:  # 超过11次点击则不刷图
-                print('>>>点击超过11次,已错过标记点！刷图任务异常,开启高延迟！<<<\r\n')
-                print('>>>提示:请增加duanyazuobiao的延迟时间<<<\r\n')
+                pcr_log(self.account).write_log(level='warning', message='>>>点击超过11次,已错过标记点！刷图任务异常,开启高延迟！<<<\r\n'
+                                                                         '提示:请增加duanyazuobiao的延迟时间<<<\r\n')
                 if UIMatcher.img_where(screen_shot_, 'img/duanyazuobiao.jpg'):
                     break
                 if self.tag > 22:  # 超过11次点击则不刷图
-                    print('>>>已错过标记点,高延迟模式失败,放弃刷图.<<<\r\n')
-                    print('>>>提示:请增加duanyazuobiao的延迟时间<<<\r\n')
+                    pcr_log(self.account).write_log(level='warning', message='>>>已错过标记点,高延迟模式失败,放弃刷图.<<<\r\n'
+                                                                             '>>>提示:请增加duanyazuobiao的延迟时间<<<\r\n')
                     break
                 else:
                     for _ in range(1):
