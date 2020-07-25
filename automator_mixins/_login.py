@@ -1,6 +1,7 @@
 import time
 
 from core.cv import UIMatcher
+from core.log_handler import pcr_log
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
 
@@ -46,8 +47,8 @@ class LoginMixin(BaseMixin):
     def login(self, ac, pwd):
         try:
             while True:
-                # todo
-                # 登陆失败报错：-32002 Client error: <> data: Selector [resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
+                # todo 登陆失败报错：-32002 Client error: <> data: Selector [
+                #  resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").exists():
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").click()
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
@@ -90,6 +91,4 @@ class LoginMixin(BaseMixin):
                 break
         self.d.click(591, 369)  # ok
         time.sleep(1)
-        print('-----------------------------')
-        print('完成该任务')
-        print('-----------------------------\r\n')
+        pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)

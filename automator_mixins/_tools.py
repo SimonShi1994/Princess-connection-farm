@@ -1,9 +1,14 @@
 import time
 
 import cv2
+from PIL import Image
 
 from core.cv import UIMatcher
+from core.log_handler import pcr_log
 from ._base import BaseMixin
+
+# 临时，等待config的创建
+from pcr_config import baidu_secretKey, baidu_apiKey
 
 
 class ToolsMixin(BaseMixin):
@@ -35,35 +40,40 @@ class ToolsMixin(BaseMixin):
         # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
         # 默认原图大小（1.0）
         from aip import AipOcr
-        print('初始化百度OCR识别')
-        with open('baiduocr.txt', 'r') as faip:
-            fconfig = faip.read()
-        apiKey, secretKey = fconfig.split('\t')
-        if len(apiKey) == 0 or len(secretKey) == 0:
-            print('读取SecretKey或apiKey失败！')
+        # print('初始化百度OCR识别')
+        # with open('baiduocr.txt', 'r') as faip:
+        #     fconfig = faip.read()
+        # apiKey, secretKey = fconfig.split('\t')
+        if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
+            pcr_log(self.account).write_log(level='error', message='读取SecretKey或apiKey失败！')
             return -1
         config = {
             'appId': 'PCR',
-            'apiKey': apiKey,
-            'secretKey': secretKey
+            'apiKey': baidu_apiKey,
+            'secretKey': baidu_secretKey
         }
         client = AipOcr(**config)
 
         screen_shot_ = self.d.screenshot(format="opencv")
-        from numpy import rot90
-        screen_shot_ = rot90(screen_shot_)  # 旋转90°
+        if screen_shot_.shape[0] > screen_shot_.shape[1]:
+            screen_shot_ = UIMatcher.RotateClockWise90(screen_shot_)
+            # screen_shot_ = rot90(screen_shot_)  # 旋转90°
+            pass
+        # cv2.imwrite('test.bmp', screen_shot_)
         part = screen_shot_[y1:y2, x1:x2]  # 对角线点坐标
         # cv2.imwrite('test.bmp', part)
         part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+        # cv2.imwrite('test2.bmp', part)
         # cv2.imshow('part',part)
         # cv2.waitKey(0)
         partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
         try:
-            print('识别成功！')
+            # print('识别成功！')
             result = client.basicGeneral(partbin)
+            # result = requests.post(request_url, data=params, headers=headers)
             return result
         except:
-            print('百度云识别失败！请检查apikey和secretkey是否有误！')
+            pcr_log(self.account).write_log(level='error', message='百度云识别失败！请检查apikey和secretkey是否有误！')
             return -1
 
     def get_tili(self):
@@ -100,4 +110,4 @@ class ToolsMixin(BaseMixin):
         self.d.click(590, 370)  # 变更按钮
         time.sleep(1)
         self.lockimg('img/bangzhu.bmp', elseclick=[(32, 32)])  # 锁定帮助
-        print('账号：', name, '已修改名字')
+        pcr_log(self.account).write_log(level='info', message='账号：%s已修改名字' % name)

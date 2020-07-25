@@ -4,6 +4,11 @@ import os
 import cv2
 import numpy as np
 
+from core.log_handler import pcr_log
+
+# 临时，等待config的创建
+from pcr_config import debug
+
 
 def cv_imread(file_path):  # 用于中文目录的imread函数
     cv_img = cv2.imdecode(np.fromfile(file_path, dtype=np.uint8), -1)
@@ -69,11 +74,10 @@ class UIMatcher:
         return zhongxings, max_vals
 
     @classmethod
-    def img_where(cls, screen, template_path, threshold=0.84, at=None, debug=True):
+    def img_where(cls, screen, template_path, threshold=0.84, at=None):
         """
         在screen里寻找template，若找到则返回坐标，若没找到则返回False
         注：可以使用if img_where():  来判断图片是否存在
-        :param debug:
         :param threshold:
         :param screen:
         :param template_path:
@@ -87,7 +91,7 @@ class UIMatcher:
                 x1, y1, x2, y2 = at
                 screen = screen[y1:y2, x1:x2]
             except:
-                print("检测区域填写错误")
+                pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
                 exit(-1)
         else:
             x1, y1 = 0, 0
@@ -106,14 +110,27 @@ class UIMatcher:
             y = y1 + max_loc[1] + th // 2
             if debug:
                 print("{}--{}--({},{})".format(template_path, round(max_val, 3), x, y))
+                pcr_log('admin').write_log(level='debug',
+                                           message="{}--{}--({},{})".format(template_path, round(max_val, 3)
+                                                                            , x, y))
+                pass
                 if at is None:
-                    print("{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0], y1 + max_loc[1],
+                    pass
+                    print("{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0],
+                                                           y1 + max_loc[1],
                                                            x1 + max_loc[0] + tw,
                                                            y1 + max_loc[1] + th))
+                    pcr_log('admin').write_log(level='debug',
+                                               message="{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0],
+                                                                                        y1 + max_loc[1],
+                                                                                        x1 + max_loc[0] + tw,
+                                                                                        y1 + max_loc[1] + th))
             return x, y
         else:
             if debug:
                 print("{}--{}".format(template_path, round(max_val, 3)))
+                pcr_log('admin').write_log(level='debug',
+                                           message="{}--{}".format(template_path, round(max_val, 3)))
             return False
 
     @staticmethod
@@ -151,7 +168,7 @@ class UIMatcher:
         # plt.cla()
         # plt.imshow(screen)
         # plt.pause(0.01)
-        print('亮点个数:', len(np.argwhere(binary == 255)), '暗点个数:', len(np.argwhere(binary == 0)))
+        # print('亮点个数:', len(np.argwhere(binary == 255)), '暗点个数:', len(np.argwhere(binary == 0)))
         return num_of_white, index_1[1] / screen.shape[1], (index_1[0] + 63) / screen.shape[0]
 
 #
