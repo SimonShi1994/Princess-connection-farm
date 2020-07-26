@@ -12,6 +12,10 @@ from pcr_config import s_sckey, log_lev
 acc_cout = 0
 star_time = 0
 end_time = 0
+tmp_message = []
+if len(tmp_message) >= 3:
+    # 清空tmp_message消息
+    tmp_message = []
 
 
 class pcr_log():  # 帐号内部日志（从属于每一个帐号）
@@ -46,8 +50,13 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         if lev == 'debug':
             self.norm_log.debug(message)
         elif lev == 'info':
-            self.norm_log.info(message)
-            self.server_bot(lev, message)
+            if message not in tmp_message:
+                # 过滤重复信息
+                # print('1', tmp_message)
+                tmp_message.append(message)
+                # print('2', tmp_message)
+                self.norm_log.info(message)
+                self.server_bot(lev, message)
         elif lev == 'warning':
             self.norm_log.warning(message)
             self.server_bot(lev, message)
@@ -62,6 +71,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         server酱连接 2020/7/21 by:CyiceK
         s_level 为日志级别
         """
+
         lev_0 = ['info', 'warning', 'error', '']
         lev_1 = ['warning', 'error', '']
         lev_2 = ['error', '']
@@ -72,10 +82,10 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             '2': lev_2,
             '3': lev_3
         }
-        tmp_message = ''
-        if message != tmp_message and len(s_sckey) != 0:
+
+        if message not in tmp_message and len(s_sckey) != 0:
             # 过滤掉重复信息
-            tmp_message = message
+            tmp_message.append(message)
             if s_level in lev_dic[log_lev]:
                 message = "农场脚本运行信息：%s" % message
                 url = "https://sc.ftqq.com/%s.send?text='Princess-connection——公主连结农场脚本'&desp=%s" % (s_sckey, message)

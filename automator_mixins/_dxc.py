@@ -55,7 +55,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         pcr_log(self.account).write_log(level='info', message='%s 不知是否打过地下城，开始执行地下城流程' % self.account)
                         break
                     elif dixiacheng_floor == 1 and skip is True:
-                        pcr_log(self.account).write_log(level='info', message='%s 由于跳过战斗的开启，不知是否打过地下城，开始执行地下城流程' % self.account)
+                        pcr_log(self.account).write_log(level='info',
+                                                        message='%s 由于跳过战斗的开启，不知是否打过地下城，开始执行地下城流程' % self.account)
                         break
                 break
             except Exception as result:
@@ -169,7 +170,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
                         break
             else:
-                self.lockimg('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=3)
+                self.lockimg('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=8)
             while skip is False:  # 结束战斗返回
                 time.sleep(0.5)
                 screen_shot_ = self.d.screenshot(format="opencv")
@@ -186,7 +187,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 elif UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     # 撤退
                     self.click(808, 435, pre_delay=3)
-                    self.click(588, 371,pre_delay=1)
+                    self.click(588, 371, pre_delay=1)
                     break
 
             self.click(1, 1, pre_delay=1)  # 取消显示结算动画
@@ -220,6 +221,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
             screen_shot = self.d.screenshot(format="opencv")
             self.guochang(screen_shot, ['img/chetui.jpg'], suiji=0)
+            time.sleep(2)
             screen_shot = self.d.screenshot(format="opencv")
             self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
 

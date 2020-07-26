@@ -29,8 +29,8 @@ def runmain(params):
     queue = params[2]
     tasks = params[3]
     opcode = params[4]
-    address = queue.get()
     try:
+        address = queue.get()
         a = Automator(address, account)
         a.start()
         a.log.write_log(level='info', message='>>>>>>>即将登陆的账号为：%s 密码：%s <<<<<<<' % (account, password))
@@ -39,7 +39,7 @@ def runmain(params):
             gevent.spawn(a.login_auth, account, password),
             gevent.spawn(acclog.Account_Login, account),
             gevent.spawn(a.sw_init())
-            ])
+        ])
         # 日志记录
         # 还是日志
         # 初始化刷图
@@ -108,7 +108,8 @@ def is_valid_operation_code(acc_name, opcode):  # 刷图总控制
         if opcode[i:i + 3] in operation_dic:
             pcr_log(acc_name).write_log(level='info', message="账号{}将刷{}图".format(acc_name, opcode[i:i + 3]))
         else:
-            pcr_log(acc_name).write_log(level='error', message="账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
+            pcr_log(acc_name).write_log(level='error',
+                                        message="账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
             return False
     return True
 
@@ -140,7 +141,7 @@ def read_account(filename):  # 读取账号
     return acc_dic, opcode_dic
 
 
-def execute(account_filename, tasks,  acc_filter=None):
+def execute(account_filename, tasks, acc_filter=None):
     """
     执行脚本
     """
@@ -149,9 +150,9 @@ def execute(account_filename, tasks,  acc_filter=None):
     # 读取账号
     account_dic, opcode_dic = read_account(account_filename)
     # 过滤账号
-    if acc_filter != None:
+    if acc_filter is not None:
         account_dic = acc_filter(account_dic, opcode_dic)
-        
+
     # 这个队列用来保存设备, 初始化的时候先把所有的模拟器设备放入队列
     queue = Manager().Queue()
 
