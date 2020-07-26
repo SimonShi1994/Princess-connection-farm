@@ -116,6 +116,6 @@ if __name__ == '__main__':
             else:
                 print("需要指定Account")
         elif order == "edit":
-            exec(open("CreateUser.py", "r", encoding="utf-8e").read())
+            exec(open("CreateUser.py", "r", encoding="utf-8").read())
         else:
             print("未知的命令")
