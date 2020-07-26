@@ -1,11 +1,16 @@
 # coding=utf-8
 # import matplotlib.pylab as plt
 import os
-import re
 import threading
 
+from core import log_handler
 from core.Automator import *
 
+# TODO 改LOG
+log = log_handler.LOG()  # 初始化日志文件
+
+
+# 测试程序
 
 def runmain(address, account, password):
     # 主功能体函数
@@ -14,61 +19,55 @@ def runmain(address, account, password):
     a = Automator(address, account)
     a.start()
 
-    # #opencv识别可视化 无法在多线程中使用
+    # #opencv识别可视化无法在多线程中使用
     # plt.ion()
     # fig, ax = plt.subplots(1)
     # plt.show()
 
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')
     a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao2.txt内
+    log.Account_Login(account)
     a.init_home()  # 初始化，确保进入首页
 
-    a.goumaimana(1)
+    # a.tansuo()  # 探索
+    # a.dixiachengDuanya()  # 地下城，请把队伍列表里1队设置为打boss队，2队设置为aoe队
+    # a.shouqurenwu()  # 收取任务
+    # a.shouqu()  # 收取所有礼物
 
+    # print(a.baidu_ocr(394,502,442,666))
     a.change_acc()  # 退出当前账号，切换下一个
+    log.Account_Logout(account)
 
 
 def connect():  # 连接adb与uiautomator
     try:
         os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
-        # os.system('cd adb & adb connect 127.0.0.1:7555') #mumu模拟器
+        # os.system('adb connect 127.0.0.1:7555') #mumu模拟器
         os.system('python -m uiautomator2 init')
     except:
         print('连接失败')
 
     result = os.popen('cd adb & adb devices')  # 返回adb devices列表
     res = result.read()
-    lines = res.splitlines()[0:]
-    while lines[0] != 'List of devices attached ':
-        del lines[0]
-    del lines[0]  # 删除表头
+    lines = res.splitlines()[1:]
 
-    device_dic = {}  # 存储设备状态
-    for i in range(0, len(lines) - 1):
-        lines[i], device_dic[lines[i]] = lines[i].split('\t')[0:]
+    for i in range(0, len(lines)):
+        lines[i] = lines[i].split('\t')[0]
     lines = lines[0:-1]
-    for i in range(len(lines)):
-        if device_dic[lines[i]] != 'device':
-            del lines[i]
     print(lines)
     emulatornum = len(lines)
-    return lines, emulatornum
+    return (lines, emulatornum)
 
 
 def read():  # 读取账号
     account_dic = {}
-    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)')
-    with open('zhanghao.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
-        for line in f:
-            result = pattern.findall(line)
-            if len(result) != 0:
-                account, password = result[0]
-            else:
-                continue
-            account_dic[account] = password
+    with open('../zhanghao2.txt', 'r') as f:  # 注意！请把账号密码写在zhanghao2.txt内,不是zhanghao.txt!!!!!
+        for i, line in enumerate(f):
+            account, password = line.split('\t')[0:2]
+            account_dic[account] = password.strip()
     account_list = list(account_dic.keys())
     accountnum = len(account_list)
-    return account_list, account_dic, accountnum
+    return (account_list, account_dic, accountnum)
 
 
 # 主程序

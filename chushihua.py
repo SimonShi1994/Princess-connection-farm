@@ -1,9 +1,12 @@
 # import matplotlib.pylab as plt
 import os
-import threading
-
-from Automator import *
 import re
+import threading
+import time
+
+from core.Automator import *
+from core.cv import UIMatcher
+from core.utils import random_name, CreatIDnum
 
 
 def runmain(address, account, password):
@@ -57,7 +60,7 @@ def runmain(address, account, password):
             'img/niudan_jiasu.jpg': (700, 0, 960, 100)
         }
         for template in template_paths:
-            if a.click(screen, template, at=template_paths[template]):
+            if a.click_img(screen, template, at=template_paths[template]):
                 break
 
         if count < 2 and (UIMatcher.img_where(screen, 'img/caidan.jpg', at=(861, 15, 940, 37))):  # 有两场战斗是可以跳过的
@@ -143,6 +146,7 @@ def runmain(address, account, password):
     a.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
     # a.tansuo(mode=2) 还有问题，暂时关闭
     a.shouqurenwu()
+    # a.rename(account) # 重命名昵称为账号ID
     a.change_acc()  # 退出当前账号，切换下一个
     t = time.time()
     print('>>>>>>>账号：', account, '已刷完, 用时', t - t0, '秒<<<<<<<')
