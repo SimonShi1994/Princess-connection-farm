@@ -10,5 +10,6 @@ accounts.txt
 accounts_init.txt
 diy.py
 /users/
+/tasks/
 /rec/
 log

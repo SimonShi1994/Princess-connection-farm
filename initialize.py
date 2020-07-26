@@ -1,18 +1,17 @@
 import os
-import re
 from multiprocessing import Pool, Manager
 
 import gevent
 
+from automator_mixins._async import AsyncMixin
 from core import log_handler
 from core.Automator import Automator
-from automator_mixins._async import AsyncMixin
-
-# 临时解决方案，可以改进
-from automator_mixins._shuatu import operation_dic
-
+from core.constant import USER_DEFAULT_DICT as UDD
 # 账号日志
 from core.log_handler import pcr_log
+from core.usercentre import list_all_users
+
+# 临时解决方案，可以改进
 
 acclog = log_handler.pcr_acc_log()
 # 雷电模拟器
@@ -24,30 +23,36 @@ selected_emulator = ld_emulator
 
 
 def runmain(params):
-    account = params[0]
-    password = params[1]
-    queue = params[2]
-    tasks = params[3]
-    opcode = params[4]
+    acc = params[0]
+    queue = params[1]
+    continue_ = params[2]
+    max_retry = params[3]
     address = queue.get()
     try:
-        a = Automator(address, account)
+        a = Automator(address)
+        a.init_account(acc)
         a.start()
-        a.log.write_log(level='info', message='>>>>>>>即将登陆的账号为：%s 密码：%s <<<<<<<' % (account, password))
+        user = a.AR.getuser()
+        account = user["account"]
+        password = user["password"]
+        a.log.write_log("info", f"即将登陆： 用户名 {account} 密码 {password}")
+        run_status = a.AR.get("run_status", UDD["run_status"])  # 获取运行状态记录文件
+        if run_status["finished"]:
+            a.log.write_log("info", "该用户已经完成了任务，跳过。")
+            return
+
         gevent.joinall([
             # 这里是协程初始化的一个实例
             gevent.spawn(a.login_auth, account, password),
             gevent.spawn(acclog.Account_Login, account),
             gevent.spawn(a.sw_init())
-            ])
+        ])
         # 日志记录
         # 还是日志
         # 初始化刷图
         # 开始异步
         AsyncMixin().start_th()
-
-        tasks(a, account, opcode)
-
+        a.RunTasks(continue_, max_retry)  # 执行主要逻辑
         gevent.joinall([
             # 这里是协程的一个实例
             gevent.spawn(a.change_acc()),
@@ -56,7 +61,8 @@ def runmain(params):
         # 停止异步
         AsyncMixin().stop_th()
     except Exception as e:
-        pcr_log(account).write_log(level='error', message='initialize-检测出异常{}'.format(e))
+        pcr_log(acc).write_log(level='error', message='initialize-检测出异常{}'.format(e))
+        AsyncMixin().stop_th()
     finally:
         # 退出当前账号，切换下一个
         queue.put(address)
@@ -93,26 +99,6 @@ def connect():  # 连接adb与uiautomator
     return lines
 
 
-def can_shuatu(opcode):
-    return True if len(opcode) >= 3 else False
-
-
-def is_valid_operation_code(acc_name, opcode):  # 刷图总控制
-    if len(opcode) == 0:
-        pcr_log(acc_name).write_log(level='info', message="账号{}不刷图".format(acc_name))
-        return True
-    if len(opcode) % 3 != 0:
-        pcr_log(acc_name).write_log(level='error', message="账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
-        return False
-    for i in range(0, len(opcode), 3):
-        if opcode[i:i + 3] in operation_dic:
-            pcr_log(acc_name).write_log(level='info', message="账号{}将刷{}图".format(acc_name, opcode[i:i + 3]))
-        else:
-            pcr_log(acc_name).write_log(level='error', message="账号{}的图号填写有误，请检查zhanghao.txt里的图号，图号应为三位字符".format(acc_name))
-            return False
-    return True
-
-
 def readjson():  # 读取账号
     # 2020-07-18 增加读取json账号
     # 等待一段时间再上限，建议将配置逻辑合并到AutomatorRecord中，调用getuser函数获取配置
@@ -121,45 +107,24 @@ def readjson():  # 读取账号
     return list_all_users()
 
 
-def read_account(filename):  # 读取账号
-    acc_dic = {}  # acc_name:acc_pwd
-    opcode_dic = {}  # acc_name:operation_code
-    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s-]*(.*)')
-    with open(filename, 'r') as f:  # 注意！请把账号密码写在zhanghao.txt内
-        for line in f:
-            result = pattern.findall(line)
-            if len(result) == 0:
-                continue
-            acc_name, acc_pwd, opcode = result[0]
-
-            # 检查刷图号
-            if not is_valid_operation_code(acc_name, opcode):
-                continue
-            acc_dic[acc_name] = acc_pwd
-            opcode_dic[acc_name] = opcode
-    return acc_dic, opcode_dic
-
-
-def execute(account_filename, tasks,  acc_filter=None):
+def execute(continue_=False, max_retry=3):
     """
     执行脚本
+    :param continue_: 是否继续执行上次没执行完的脚本
+    :param max_retry: 最大报错重试次数
     """
     # 连接adb与uiautomator
     devices = connect()
     # 读取账号
-    account_dic, opcode_dic = read_account(account_filename)
-    # 过滤账号
-    if acc_filter != None:
-        account_dic = acc_filter(account_dic, opcode_dic)
-        
+    accounts = readjson()
+
     # 这个队列用来保存设备, 初始化的时候先把所有的模拟器设备放入队列
     queue = Manager().Queue()
 
     # 进程池参数列表
     params = list()
-    for account, password in account_dic.items():
-        opcode = opcode_dic[account]
-        params.append((account, password, queue, tasks, opcode))
+    for acc in accounts:
+        params.append((acc, queue, continue_, max_retry))
 
     # 初始化队列, 先把所有的模拟器设备放入队列
     for device in devices:

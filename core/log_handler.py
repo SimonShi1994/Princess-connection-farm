@@ -1,9 +1,9 @@
 import logging
 import os
 import time
+from sys import stdout
 
 import requests
-from sys import stdout
 
 # 临时，等待config的创建
 from pcr_config import s_sckey, log_lev
