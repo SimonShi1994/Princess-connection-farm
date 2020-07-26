@@ -1,11 +1,10 @@
 import asyncio
-import os
 import threading
 import time
 
-import cv2
 import psutil
 
+from core.MoveRecord import moveerr
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from ._base import BaseMixin
@@ -117,11 +116,9 @@ class AsyncMixin(BaseMixin):
                     _time = time_end - time_start
                     _time = _time + _time
                     if _time > 15:
-                        # LOG().Account_bad_connecting(self.account)
-                        self.d.session("com.bilibili.priconne")
-                        time.sleep(8)
                         _time = 0
-                        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+                        # LOG().Account_bad_connecting(self.account)
+                        raise moveerr("reboot", "connecting时间过长")
                 if UIMatcher.img_where(screenshot, 'img/loading.bmp', threshold=0.8):
                     # 卡加载
                     # 不知道为什么，at 无法在这里使用
@@ -131,24 +128,28 @@ class AsyncMixin(BaseMixin):
                     _time = _time + _time
                     if _time > 15:
                         # LOG().Account_bad_connecting(self.account)
-                        self.d.session("com.bilibili.priconne")
-                        time.sleep(8)
                         _time = 0
-                        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+                        raise moveerr("reboot", "loading时间过长")
+
                 if UIMatcher.img_where(screenshot, 'img/fanhuibiaoti.bmp', at=(377, 346, 581, 395)):
                     # 返回标题
-                    self.guochang(screenshot, ['img/fanhuibiaoti.bmp'], suiji=0)
-                    time.sleep(8)
-                    self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+                    raise moveerr("reboot", "网络错误，返回标题。")
+
                 if UIMatcher.img_where(screenshot, 'img/shujucuowu.bmp', at=(407, 132, 559, 297)):
                     # 数据错误
-                    time.sleep(1)
-                    self.d.click(479, 369)
-                    time.sleep(8)
-                    self.d.click(1, 1)
+                    raise moveerr("reboot", "数据错误，返回标题。")
+
+            except moveerr as e:
+                pcr_log(self.account).write_log(level="error", message=f"异步线程检测出PCR异常：{e.desc}")
+                raise e
             except Exception as e:
-                pcr_log(self.account).write_log(level='error', message='异步线程终止并检测出异常{}'.format(e))
-                th_sw = 1
+                if type(e) is moveerr:
+                    # 向主线程传递错误
+                    raise e
+                else:
+                    pcr_log(self.account).write_log(level='error', message='异步线程终止并检测出异常{}'.format(e))
+                    th_sw = 1
+
                 # sys.exit()
                 # break
 
@@ -175,6 +176,39 @@ class AsyncMixin(BaseMixin):
     def stop_th(self):
         global th_sw
         th_sw = 1
+
+    def start_async(self):
+        account = self.account
+        self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
+        self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
+        self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
+
+    def fix_reboot(self):
+        # 重启逻辑：重启应用，重启异步线程
+        self.stop_th()
+        self.d.session("com.bilibili.priconne")
+        time.sleep(8)
+        self.start_th()
+        self.start_async()
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+
+    def fix_fanhuibiaoti(self):
+        # 返回标题逻辑
+        # 放弃不用，没有重启来的稳
+        self.stop_th()
+        self.guochang(screenshot, ['img/fanhuibiaoti.bmp'], suiji=0)
+        time.sleep(8)
+        self.start_th()
+        self.start_async()
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+
+    def fix_shujucuowu(self):
+        # 数据错误逻辑
+        # 放弃不用，没有重启来的稳
+        time.sleep(1)
+        self.d.click(479, 369)
+        time.sleep(8)
+        self.d.click(1, 1)
 
 
 class Multithreading(threading.Thread, AsyncMixin):

@@ -91,4 +91,4 @@ class LoginMixin(BaseMixin):
                 break
         self.d.click(591, 369)  # ok
         time.sleep(1)
-        # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
+        pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
