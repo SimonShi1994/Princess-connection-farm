@@ -104,20 +104,19 @@ class ShuatuBaseMixin(BaseMixin):
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
 
-        # 左移动
+    # 左移动
 
     def goLeft(self):
         self.click(35, 275, post_delay=3)
 
-        # 右移动
+    # 右移动
 
     def goRight(self):
         self.click(925, 275, post_delay=3)
 
-        # 进入hard图
-
     def goHardMap(self):
         # 进入冒险
+        from core.constant import MAX_MAP
         time.sleep(2)
         self.d.click(480, 505)
         time.sleep(2)
@@ -127,10 +126,10 @@ class ShuatuBaseMixin(BaseMixin):
                 break
         # 点击进入主线关卡
         self.click(562, 253)
-        self.click(828, 85, pre_delay=3, post_delay=2)
-        for _ in range(11):  # 设置大于当前进图数,让脚本能回归到1-1即可.
-            # n图左移到1-1图
-            self.click(27, 272, pre_delay=2)
+        self.click(828, 85, pre_delay=5, post_delay=2)
+        for _ in range(MAX_MAP):  # 设置大于当前进图数,让脚本能回归到1-1即可.
+            # H图左移到1-1图
+            self.click(27, 272, pre_delay=3)
         while True:
             screen_shot_ = self.d.screenshot(format="opencv")
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
@@ -208,63 +207,28 @@ class ShuatuBaseMixin(BaseMixin):
         self.switch = 0
         self.shuatuzuobiao(x, y, self.times)  # 3-3
 
-    # 刷活动hard图
-    def doActivityHard(self):
-        # 进入冒险
-        time.sleep(2)
-        self.d.click(480, 505)
-        time.sleep(2)
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
-                break
-        # 点击进入活动
-        self.d.click(415, 430)
-        time.sleep(3)
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            self.d.click(480, 380)
-            time.sleep(0.5)
-            self.d.click(480, 380)
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
-                self.d.click(880, 80)
-            if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
-                break
-        self.shuatuzuobiao(689, 263, self.times)  # 1-5
-        self.continueDo9(570, 354)  # 1-4
-        self.continueDo9(440, 255)  # 1-3
-        self.continueDo9(300, 339)  # 1-2
-        self.continueDo9(142, 267)  # 1-1
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
-
     # 识别7村断崖
     def duanyazuobiao(self):
-        self.tag = 0
+        """
+        识别断崖的坐标
+        """
+        from core.constant import MAX_MAP
+        tag = 0
         time.sleep(2)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/duanyazuobiao.jpg'):
-                pcr_log(self.account).write_log(level='info', message='>>>成功识别标记,开始刷图.<<<\r\n')
+            if tag > MAX_MAP:  # 超过MAX_MAP次点击则不刷图
+                for _ in range(6):
+                    self.click(925, 275)
+                    time.sleep(1.5)  # 这是高延迟识别时间,模拟器卡顿请加时
                 break
-            if self.tag > 11:  # 超过11次点击则不刷图
-                pcr_log(self.account).write_log(level='warning', message='>>>点击超过11次,已错过标记点！刷图任务异常,开启高延迟！<<<\r\n'
-                                                                         '提示:请增加duanyazuobiao的延迟时间<<<\r\n')
-                if UIMatcher.img_where(screen_shot_, 'img/duanyazuobiao.jpg'):
-                    break
-                if self.tag > 22:  # 超过11次点击则不刷图
-                    pcr_log(self.account).write_log(level='warning', message='>>>已错过标记点,高延迟模式失败,放弃刷图.<<<\r\n'
-                                                                             '>>>提示:请增加duanyazuobiao的延迟时间<<<\r\n')
-                    break
-                else:
-                    for _ in range(1):
-                        self.click(925, 275)
-                        self.tag += 1
-                        time.sleep(4)  # 这是高延迟识别时间,模拟器卡顿请加时.
             else:
-                for _ in range(1):
-                    self.click(27, 272)
-                    self.tag += 1
-                    time.sleep(2)  # 这是延迟识别时间,模拟器卡顿请加时.
+                screen_shot_ = self.d.screenshot(format="opencv")
+                if UIMatcher.img_where(screen_shot_, 'img/duanyazuobiao.jpg'):
+                    pcr_log(self.account).write_log(level='info', message='>>>成功识别标记,开始刷图.<<<\r\n')
+                    break
+                self.click(27, 272)
+                tag += 1
+                time.sleep(1.5)
 
     def shoushuazuobiao(self, x, y, jiaocheng=0, lockpic='img/normal.jpg', screencut=None):
         """
@@ -423,3 +387,31 @@ class ShuatuBaseMixin(BaseMixin):
         self.lockimg('img/normal.jpg', elseclick=[(704, 84)], elsedelay=0.5, alldelay=1, at=(660, 72, 743, 94))
         self.d.click(923, 272)
         time.sleep(3)
+
+    def enter_normal(self, to_map: int = 7):
+        """
+        进入normal图，并且走到to_map图。
+        :param to_map: 转到的地图位置
+        :return: 是否成功进入。如果为False，则表示过于卡，停止刷图
+
+        """
+        self.click(480, 505, pre_delay=2, post_delay=2)
+        while True:
+            screen_shot_ = self.d.screenshot(format="opencv")
+            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
+                break
+        self.click(562, 253)
+        # 此处很容易卡
+        self.lockimg("img/normal.jpg", ifclick=(701, 83), elseclick=(701, 83), alldelay=2, ifbefore=3)
+        self.duanyazuobiao()
+        for _ in range(to_map - 7):
+            # 以7图为基向右移动5图
+            self.goRight()
+
+    def Drag_Right(self):
+        self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+        time.sleep(2)
+
+    def Drag_Left(self):
+        self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+        time.sleep(2)

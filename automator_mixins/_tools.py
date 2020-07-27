@@ -1,14 +1,12 @@
 import time
 
 import cv2
-from PIL import Image
 
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from ._base import BaseMixin
-
 # 临时，等待config的创建
 from pcr_config import baidu_secretKey, baidu_apiKey
+from ._base import BaseMixin
 
 
 class ToolsMixin(BaseMixin):

@@ -47,7 +47,7 @@ HANGHUI_BTN = {
     "chengyuan": p(241, 350),  # 点击成员
 
 }
-
+MAX_MAP = 12
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -221,6 +221,17 @@ NORMAL_COORD = {
             1: p(185, 210, name="12-1"),
         },
     },
+
+}
+
+USER_DEFAULT_DICT = {
+    # 给self.AR.get用的初值dict
+    "run_status": {
+        # 运行状态
+        "finished": False,  # 是否运行完毕
+        "current": "...",  # 当前执行的任务
+        "error": None  # 报错情况
+    }
 
 }
 # 显然后面还没写

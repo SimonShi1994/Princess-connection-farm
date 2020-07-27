@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 
 from core.log_handler import pcr_log
-
 # 临时，等待config的创建
 from pcr_config import debug
 

@@ -4,6 +4,8 @@ from typing import Optional
 import uiautomator2 as u2
 
 from core import log_handler
+from core.MoveRecord import moveset
+from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.usercentre import AutomatorRecorder
 
@@ -25,17 +27,26 @@ class BaseMixin:
         self.dHeight = 0
         self.log: Optional[log_handler.pcr_log] = None
         self.AR: Optional[AutomatorRecorder] = None
+        self.ms: Optional[moveset] = None
 
-    def init(self, address, account):
+    def init_device(self, address):
         """
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
         """
         self.appRunning = False
+        if address != "debug":
+            self.d = u2.connect(address)
+            self.dWidth, self.dHeight = self.d.window_size()
+
+    def init_account(self, account):
         self.account = account
-        self.d = u2.connect(address)
-        self.dWidth, self.dHeight = self.d.window_size()
         self.log = log_handler.pcr_log(account)  # 初始化日志
         self.AR = AutomatorRecorder(account)
+
+    def init(self, address, account):
+        # 兼容
+        self.init_device(address)
+        self.init_account(account)
 
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0.):
         """
@@ -290,3 +301,30 @@ class BaseMixin:
                 break
             self.d.click(704, 84)
             time.sleep(0.5)
+
+    def task_start(self):
+        # 标记这个用户开始重新刷图了
+        d = self.AR.get("run_status", UDD["run_status"])
+        d["finished"] = False
+        d["current"] = "..."
+        self.AR.set("run_status", d)
+
+    def task_finished(self):
+        # 标记这个用户已经刷完了图
+        d = self.AR.get("run_status", UDD["run_status"])
+        d["finished"] = True
+        self.AR.set("run_status", d)
+
+    def task_current(self, title):
+        # 标记这个用户当前正在进行的项目
+        d = self.AR.get("run_status", UDD["run_status"])
+        d["current"] = title
+        self.AR.set("run_status", d)
+
+    def task_error(self, error):
+        # 标记某一项错误，并停止刷图
+        d = self.AR.get("run_status", UDD["run_status"])
+        d["finished"] = True
+        d["current"] = "..."
+        d["error"] = error
+        self.AR.set("run_status", d)
