@@ -58,7 +58,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
 
         self.log.write_log("info", f"任务列表：")
         # 解析任务列表
-        for task in tasks:
+        for task in tasks["tasks"]:
             typ = task["type"]
             cur = VALID_TASK.T[typ]
             kwargs = {}

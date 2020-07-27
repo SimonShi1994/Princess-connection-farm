@@ -57,11 +57,14 @@ def runmain(params):
         # 停止异步
         AsyncMixin().stop_th()
     except Exception as e:
-        pcr_log(acc).write_log(level='error', message='initialize-检测出异常{}'.format(e))
-        AsyncMixin().stop_th()
-    finally:
-        # 退出当前账号，切换下一个
-        queue.put(address)
+        pcr_log(acc).write_log(level='error', message=f'initialize-检测出异常: <{type(e)}> {e}')
+        try:
+            a.fix_reboot(False)
+        except:
+            pass
+
+    # 退出当前账号，切换下一个
+    queue.put(address)
 
 
 def connect():  # 连接adb与uiautomator
