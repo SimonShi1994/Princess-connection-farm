@@ -78,6 +78,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         # 下面这段因为调试而注释了，实际使用时要加上
         while True:
             try:
+                if dixiacheng_times == -1:
+                    pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
+                    pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
+                    self.dixiacheng(skip)
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp',
                                        at=(148, 295, 345, 399)) and dixiacheng_times == 1:
@@ -97,8 +101,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     # LOG().Account_undergroundcity(self.account)
                     break
             except Exception as error:
-                pcr_log(self.account).write_log(level='waring', message='3-检测出异常{}'.format(error))
-                pcr_log(self.account).write_log(level='waring', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
+                pcr_log(self.account).write_log(level='warning', message='3-检测出异常{}'.format(error))
+                pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
                 self.dixiacheng(skip)
                 break
             try:
@@ -107,8 +111,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     # print('>>>', dixiacheng_times)
                     break
             except:
-                pcr_log(self.account).write_log(level='waring', message='地下城次数为非法值！')
-                pcr_log(self.account).write_log(level='waring', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
+                pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
+                pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
                 self.dixiacheng(skip)
                 break
 
@@ -174,7 +178,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             while skip is False:  # 结束战斗返回
                 time.sleep(0.5)
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg', at=(813, 27, 886, 50)):
+                if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):
+                    # 先撤回 at=(813, 27, 886, 50)
                     time.sleep(3)
                     self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
                     if UIMatcher.img_where(screen_shot_, 'img/duiwu.jpg', at=(899, 80, 924, 109)):
