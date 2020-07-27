@@ -141,7 +141,7 @@ def execute(continue_=False, max_retry=3):
             # 完好的账号
             tasks += [tas]
             accounts += [acc]
-            print("导入任务： 账号 ", acc, " 任务 ", tas, " 进度 ", run_status["current"])
+            print("导入任务： 账号 ", acc, " 任务 ", user_dict["taskfile"], " 进度 ", run_status["current"])
 
         # 这个队列用来保存设备, 初始化的时候先把所有的模拟器设备放入队列
         queue = Manager().Queue()
