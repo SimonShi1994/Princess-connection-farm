@@ -193,7 +193,8 @@ def edit_account(account, password=None, taskfile=None):
     if password is not None:
         d["password"] = password
     if taskfile is not None:
-        d["taskfilke"] = taskfile
+        d["taskfile"] = taskfile
+    A.setuser(d)
 
 
 def show_task(TaskName):
@@ -237,8 +238,6 @@ if __name__ == "__main__":
         elif order == "user":
             if len(cmds) == 2 and cmds[1] == "-l":
                 list_all_users()
-            elif len(cmds) == 2 and cmds[1][0] != "-":
-                show_account(cmds[1])
             elif len(cmds) == 5 and cmds[1] == "-c":
                 create_account(cmds[2], cmds[3], cmds[4])
             elif len(cmds) == 4 and cmds[1] == "-c" and cmds[2] == "-file":
@@ -255,13 +254,18 @@ if __name__ == "__main__":
                 p = 2
                 while p < len(cmds):
                     if cmds[p] == "-p" and p + 1 < len(cmds):
-                        edit_account(cmds[p], password=cmds[p + 1])
+                        edit_account(cmds[1], password=cmds[p + 1])
+                        p += 2
                     elif cmds[p] == "-t" and p + 1 < len(cmds) and cmds[p + 1] not in ["-p", "-t"]:
-                        edit_account(cmds[p], taskfile=cmds[p + 1])
+                        edit_account(cmds[1], taskfile=cmds[p + 1])
+                        p += 2
                     elif cmds[p] == "-t" and (p + 1 >= len(cmds) or cmds[p + 1] in ["-p", "-t"]):
-                        edit_account(cmds[p], taskfile="")
+                        edit_account(cmds[1], taskfile="")
+                        p += 1
                     else:
                         print("Wrong Order!")
+            elif len(cmds) == 2 and cmds[1][0] != "-":
+                show_account(cmds[1])
             else:
                 print("Wrong Order!")
         elif order == "task":
