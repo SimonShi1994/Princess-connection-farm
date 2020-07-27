@@ -149,7 +149,7 @@ def create_account(account, password, taskfile):
 
 
 def create_account_from_file(file):
-    with open(file, "r") as f:
+    with open(file, "r", encoding="utf-8") as f:
         for line in f:
             cur = line.strip()
             if cur == "":
@@ -174,7 +174,7 @@ def del_account(account):
 
 
 def del_account_from_file(file):
-    with open(file, "r") as f:
+    with open(file, "r", encoding="utf-8") as f:
         for line in f:
             cur = line.strip()
             if cur == "":

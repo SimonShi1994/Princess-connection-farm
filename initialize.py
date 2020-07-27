@@ -9,7 +9,7 @@ from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 # 账号日志
 from core.log_handler import pcr_log
-from core.usercentre import list_all_users
+from core.usercentre import list_all_users, AutomatorRecorder
 
 # 临时解决方案，可以改进
 
@@ -25,8 +25,9 @@ selected_emulator = ld_emulator
 def runmain(params):
     acc = params[0]
     queue = params[1]
-    continue_ = params[2]
-    max_retry = params[3]
+    tas = param[2]
+    continue_ = params[3]
+    max_retry = params[4]
     address = queue.get()
     try:
         a = Automator(address)
@@ -35,12 +36,7 @@ def runmain(params):
         user = a.AR.getuser()
         account = user["account"]
         password = user["password"]
-        a.log.write_log("info", f"即将登陆： 用户名 {account} 密码 {password}")
-        run_status = a.AR.get("run_status", UDD["run_status"])  # 获取运行状态记录文件
-        if run_status["finished"]:
-            a.log.write_log("info", "该用户已经完成了任务，跳过。")
-            return
-
+        a.log.write_log("info", f"即将登陆： 用户名 {account}")  # 显然不需要输出密码啊喂！
         gevent.joinall([
             # 这里是协程初始化的一个实例
             gevent.spawn(a.login_auth, account, password),
@@ -52,7 +48,7 @@ def runmain(params):
         # 初始化刷图
         # 开始异步
         AsyncMixin().start_th()
-        a.RunTasks(continue_, max_retry)  # 执行主要逻辑
+        a.RunTasks(tas, continue_, max_retry)  # 执行主要逻辑
         gevent.joinall([
             # 这里是协程的一个实例
             gevent.spawn(a.change_acc()),
@@ -86,6 +82,7 @@ def connect():  # 连接adb与uiautomator
     lines = res.splitlines()[0:]
     while lines[0] != 'List of devices attached ':
         del lines[0]
+
     del lines[0]  # 删除表头
 
     device_dic = {}  # 存储设备状态
@@ -104,7 +101,7 @@ def readjson():  # 读取账号
     # 等待一段时间再上限，建议将配置逻辑合并到AutomatorRecord中，调用getuser函数获取配置
     # 等刷图等逻辑合并到配置文件中后，可以弃用read()函数，runmain传参只需传入配置文件路径
     # 然后在Automator内部调用getuser获取account,password等一系列配置
-    return list_all_users()
+    return list_all_users(0)
 
 
 def execute(continue_=False, max_retry=3):
@@ -116,15 +113,42 @@ def execute(continue_=False, max_retry=3):
     # 连接adb与uiautomator
     devices = connect()
     # 读取账号
-    accounts = readjson()
+    all_accounts = readjson()
+    # 读取任务，把有任务的账号加入队列
+    accounts = []
+    tasks = []
+    for acc in all_accounts:
+        AR = AutomatorRecorder(acc)
+        user_dict = AR.getuser()
+        if user_dict["taskfile"] == "":
+            # 无任务，跳过
+            continue
+        run_status = AR.get("run_status", UDD["run_status"])
+        if run_status["error"] is not None:
+            # 报错
+            print("账号 ", acc, " 含有未解决的错误：", run_status["error"])
+            continue
+        elif run_status["finished"]:
+            # 已经完成的
+            print("账号 ", acc, " 已经完成！跳过。")
+            continue
+        try:
+            tas = AR.gettask(user_dict["taskfile"])
+        except Exception as e:
+            print("账号 ", acc, " 所读取的任务文件 ", user_dict["task_file"], "有异常：", e, "跳过。")
+            continue
+        # 完好的账号
+        tasks += [tas]
+        accounts += [acc]
+        print("导入任务： 账号 ", acc, " 任务 ", tas, " 进度 ", run_status["current"])
 
     # 这个队列用来保存设备, 初始化的时候先把所有的模拟器设备放入队列
     queue = Manager().Queue()
 
     # 进程池参数列表
     params = list()
-    for acc in accounts:
-        params.append((acc, queue, continue_, max_retry))
+    for acc, tas in zip(accounts, tasks):
+        params.append((acc, tas, queue, continue_, max_retry))
 
     # 初始化队列, 先把所有的模拟器设备放入队列
     for device in devices:

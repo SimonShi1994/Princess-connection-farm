@@ -10,6 +10,7 @@ from automator_mixins._shuatu import ShuatuMixin
 from automator_mixins._tools import ToolsMixin
 from core.MoveRecord import moveset
 from core.log_handler import pcr_log
+from core.usercentre import check_task_dict
 from core.valid_task import VALID_TASK
 
 
@@ -25,18 +26,20 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         DXCMixin.__init__(self)
         self.init_device(address)
 
-    def RunTasks(self, continue_=True, max_retry=3):
+    def RunTasks(self, tasks: dict, continue_=True, max_retry=3):
         """
         运行任务集
         By TheAutumnOfRice 2020-07-26
+        2020-7-27 Fix: 把tasks参数放在外面读，防止多进程同时读某一个文件造成的问题
+        :param tasks: 合法的任务字典
         :param continue_: 是否继续上次未完成的任务
         :param max_retry:  最大试错次数，超过max_retry却还不停报错则只能下次再见！
         """
         user = self.AR.getuser()  # 获取配置文件
         account = user["account"]
-        taskfile = user["taskfile"]
-        tasks = self.AR.gettask(taskfile)["tasks"]  # 读取taskfile对应的task
-
+        if check_task_dict(tasks):
+            self.log.write_log("error", f"用户{account}的task不合法，退出任务")
+            return
         self.ms = moveset(account, "rec")  # 创建行为列表用于断点恢复
         self.ms.startw(None, start=True)  # 使用自动序列创建的起手式
 
