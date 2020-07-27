@@ -1,3 +1,5 @@
+from os import getcwd
+
 from core.usercentre import *
 
 DOC_STR = {
@@ -22,15 +24,20 @@ DOC_STR = {
         帮助: user
         user -l 列举全部用户列表
         user Account 显示某用户的所有信息
-        user -c Account Password Task 创建一个新用户。
+        user -c Account Password [Task] 创建一个新用户。
             Account: 用户名    Password: 密码   Task: 任务列表，需要从task中创建
+            如果Task留空，则表示该账号不进行脚本任务
+            对已经存在的用户将覆盖原本的信息
         user -c -file Filename 从指定文件Filename创建用户
-            该文件每一行要求分隔符（空格或Tab）隔开的三个元素 Account Password Task
+            该文件每一行要求分隔符（空格或Tab）隔开的两到三个元素 Account Password [Task]
+            若Task为空，则表示该账号不进行脚本任务
+            对已经存在的用户将覆盖原本的信息。
         user -d Account 删除指定Account的账户
         user -d -file Filename 从指定文件Filename删除用户
             该文件每一行为一个Account，表示要删除的用户
         user -d -all 删除全部用户
-        user Account [-p Password] [-t Task] 更改某一账户的密码或任务
+        user Account [-p Password] [-t [Task]] 更改某一账户的密码或任务
+            若需要删除某一个账户的任务，则写-t后不写Task
         """,
     "task?":
         """
@@ -153,8 +160,10 @@ def create_account_from_file(file):
                 spl = cur.split("\t")
             else:
                 continue
-            if len(spl) < 3:
+            if len(spl) < 2:
                 continue
+            if len(spl) == 2:
+                spl += [""]
             create_account(spl[0], spl[1], spl[2])
 
 
@@ -212,6 +221,7 @@ def del_all_task():
 
 if __name__ == "__main__":
     print(DOC_STR["title"])
+    print("当前工作路径：", getcwd())
     while True:
         cmd = input("> ")
         cmds = cmd.split(" ")
@@ -233,18 +243,23 @@ if __name__ == "__main__":
                 create_account(cmds[2], cmds[3], cmds[4])
             elif len(cmds) == 4 and cmds[1] == "-c" and cmds[2] == "-file":
                 create_account_from_file(cmds[3])
-            elif len(cmds) == 3 and cmds[1] == "-d":
-                del_account(cmds[2])
+            elif len(cmds) == 4 and cmds[1] == "-c":
+                create_account(cmds[2], cmds[3], "")
             elif len(cmds) == 4 and cmds[1] == '-d' and cmds[2] == "-file":
                 del_account_from_file(cmds[3])
             elif len(cmds) == 3 and cmds[1] == '-d' and cmds[2] == '-all':
                 del_all_account()
-            elif len(cmds) in [4, 6] and cmds[1][0] != '-':
-                for p, q in zip(cmds[2::2], cmds[3::2]):
-                    if p == "-p":
-                        edit_account(cmds[1], password=q)
-                    elif p == "-t":
-                        edit_account(cmds[1], taskfile=q)
+            elif len(cmds) == 3 and cmds[1] == "-d":
+                del_account(cmds[2])
+            elif len(cmds) in [3, 4, 5, 6] and cmds[1][0] != '-':
+                p = 2
+                while p < len(cmds):
+                    if cmds[p] == "-p" and p + 1 < len(cmds):
+                        edit_account(cmds[p], password=cmds[p + 1])
+                    elif cmds[p] == "-t" and p + 1 < len(cmds) and cmds[p + 1] not in ["-p", "-t"]:
+                        edit_account(cmds[p], taskfile=cmds[p + 1])
+                    elif cmds[p] == "-t" and (p + 1 >= len(cmds) or cmds[p + 1] in ["-p", "-t"]):
+                        edit_account(cmds[p], taskfile="")
                     else:
                         print("Wrong Order!")
             else:

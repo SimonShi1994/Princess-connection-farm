@@ -12,7 +12,7 @@ from core.valid_task import VALID_TASK
 {
     "account":"..."  # 用户名
     "password":"..." # 密码
-    "taskfile":"..." #任务配置文件名
+    "taskfile":"..." #任务配置文件名 如果为""则不进行任务。
 }
 
 任务配置文件存储说明：

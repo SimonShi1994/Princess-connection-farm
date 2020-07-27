@@ -9,6 +9,9 @@ from initialize import execute
 
 
 def RunFirstTime():
+    users = list_all_users(0)
+    for acc in users:
+        Restart(acc)
     execute(False, 3)
 
 
@@ -21,7 +24,7 @@ def CheckState():
     for acc in users:
         AR = AutomatorRecorder(acc)
         uj = AR.getuser()
-        print("USER: ", acc, " TASK: ", uj["taskfile"], "STATUS ", end="")
+        print("USER: ", acc, " TASK: ", "NONE" if uj["taskfile"] == "" else uj["taskfile"], "STATUS ", end="")
         rs = AR.get("run_status", UDD["run_status"])
         if rs["error"] is None:
             if rs["finished"]:
