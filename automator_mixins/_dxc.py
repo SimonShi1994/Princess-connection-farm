@@ -170,7 +170,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
                         break
             else:
-                self.lockimg('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=3)
+                self.lockimg('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=8)
             while skip is False:  # 结束战斗返回
                 time.sleep(0.5)
                 screen_shot_ = self.d.screenshot(format="opencv")
@@ -221,6 +221,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
             screen_shot = self.d.screenshot(format="opencv")
             self.guochang(screen_shot, ['img/chetui.jpg'], suiji=0)
+            time.sleep(2)
             screen_shot = self.d.screenshot(format="opencv")
             self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
 
