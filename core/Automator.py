@@ -37,9 +37,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         """
         user = self.AR.getuser()  # 获取配置文件
         account = user["account"]
-        if check_task_dict(tasks):
-            self.log.write_log("error", f"用户{account}的task不合法，退出任务")
-            return
+        check_task_dict(tasks, True)
         self.ms = moveset(account, "rec")  # 创建行为列表用于断点恢复
         self.ms.startw(None, start=True)  # 使用自动序列创建的起手式
 
