@@ -92,11 +92,12 @@ def connect():  # 连接adb与uiautomator
     for i in range(0, len(lines) - 1):
         lines[i], device_dic[lines[i]] = lines[i].split('\t')[0:]
     lines = lines[0:-1]
+    out = []
     for i in range(len(lines)):
-        if device_dic[lines[i]] != 'device':
-            del lines[i]
-    print(lines)
-    return lines
+        if device_dic[lines[i]] == 'device':
+            out += [lines[i]]
+    print(out)
+    return out
 
 
 def readjson():  # 读取账号
