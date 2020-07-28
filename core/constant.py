@@ -40,12 +40,122 @@ def p(*args, name=None, img=None, at=None):
 
 
 MAIN_BTN = {
+    "zhuye": p(131, 533, name="我的主页"),
     "hanghui": p(693, 430, name="行会"),  # 行会按钮
+    "liwu": p(908, 432, img="img/home/liwu.bmp", at=(891, 417, 927, 448)),  # 礼物
 
 }
 HANGHUI_BTN = {
     "chengyuan": p(241, 350),  # 点击成员
 
+}
+FIGHT_BTN = {
+    "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(895, 404, 925, 441)),
+    "auto_off": p(914, 421, img="img/fight/auto_off.bmp", at=(895, 407, 929, 441)),
+    "speed_1": p(910, 490, img="img/fight/speed_1.bmp", at=(894, 476, 932, 511)),
+    "speed_0": p(910, 490, img="img/fight/speed_0.bmp", at=(895, 478, 928, 510)),
+    "speed_2": p(911, 495, img="img/fight/speed_2.bmp", at=(893, 477, 931, 511)),
+    "empty": {
+        # 五个角色空位，从左到右分别为5，4，3，2，1
+        # 格子为95*95,两个格子之间距离110
+        5: p(92, 427, img="img/fight/empty.bmp", at=(48, 377, 48 + 95, 377 + 95)),
+        4: p(92 + 110, 405, img="img/fight/empty.bmp", at=(48 + 110, 377, 48 + 95 + 110, 377 + 95)),
+        3: p(92 + 110 * 2, 405, img="img/fight/empty.bmp", at=(48 + 110 * 2, 377, 48 + 95 + 110 * 2, 377 + 95)),
+        2: p(92 + 110 * 3, 405, img="img/fight/empty.bmp", at=(48 + 110 * 3, 377, 48 + 95 + 110 * 3, 377 + 95)),
+        1: p(92 + 110 * 4, 405, img="img/fight/empty.bmp", at=(48 + 110 * 4, 377, 48 + 95 + 110 * 4, 377 + 95)),
+    },
+    "sort_down": p(742, 89, img="img/fight/sort_down.bmp", at=(720, 79, 765, 99)),
+    "sort_level": p(596, 88, img="img/fight/sort_level.bmp", at=(576, 78, 617, 99)),
+    "sort_up": p(741, 88, img="img/fight/sort_up.bmp", at=(722, 77, 760, 99)),
+    "sort_power": p(597, 89, img="img/fight/sort_power.bmp", at=(575, 79, 618, 99)),
+    "cat_dengji": p(69, 142, name="等级"),  # cat：分类界面
+    "cat_zhanli": p(290, 141, name="战力"),
+    "cat_rank": p(511, 142, name="RANK"),
+    "cat_star": p(731, 139, name="星数"),
+    "cat_ok": p(587, 478, img="img/ui/btn_ok_1.bmp", at=(487, 454, 691, 502)),  # 分类界面：OK
+    "my_team": p(867, 88),  # 我的队伍
+    "team_h": {
+        # 编组1，编组2，。。。，编组5
+        1: p(123, 87),
+        2: p(268, 90),
+        3: p(401, 87),
+        4: p(550, 87),
+        5: p(695, 87),
+    },
+    "team_v": {
+        # 队伍1，队伍2，队伍3
+        1: p(797, 173),
+        2: p(788, 291),
+        3: p(788, 412),
+    },
+    "first_five": {
+        # 前五个角色
+        1: p(111, 166),
+        2: p(210, 166),
+        3: p(319, 165),
+        4: p(425, 167),
+        5: p(531, 170),
+    },
+    "team_close": p(476, 477, img="img/ui/btn_close_1.bmp", at=(374, 455, 580, 503)),  # 选队界面的关闭按钮
+    "shbg": p(img="img/fight/shbg.bmp", at=(709, 23, 898, 52)),  # 伤害报告
+    "menu": p(img="img/fight/menu.bmp", at=(871, 18, 928, 32)),
+    "qwjsyl": p(576, 495, img="img/fight/qwjsyl.bmp", at=(392, 457, 948, 528)),  # 前往角色一览
+    "win": p(img="img/fight/win.bmp", at=(400, 6, 551, 127)),  # 过关的帽子
+    "zhandoukaishi": p(837, 453, at=(755, 426, 918, 477)),
+}
+MAX_DXC = 3  # 一共出了多少个地下城关
+DXC_BTN = {
+    "chetui": p(806, 431, img="img/dxc/chetui.bmp", at=(779, 421, 833, 440)),
+    "sytzcs": p(723, 438, img="img/dxc/sytzcs.bmp", at=(667, 428, 784, 447)),
+    "1/1": p(img="img/dxc/dxc_1_1.bmp", at=(887, 429, 913, 446)),
+    "0/1": p(img="img/dxc/dxc_0_1.bmp", at=(883, 429, 910, 445)),
+    "qwdxc": p(810, 489),  # 失败：前往地下城
+    "tiaozhan": p(835, 455, img="img/ui/tiaozhan.bmp", at=(760, 432, 917, 477)),
+    "shop": p(at=(889, 9, 938, 66)),
+    "map": p(at=(7, 66, 954, 391)),
+    "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
+    "shouqubaochou_ok": p(478, 476),
+    "qianwangdixiacheng": p(805, 495),
+    "quyuxuanzequeren_ok": p(585, 371),
+    "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
+    "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
+
+}
+DXC_NUM = {
+    # 没有OCR用此来检测层数
+    3: {
+        1: p(img="img/dxc/dxc3/1.bmp", at=(201, 422, 220, 440)),
+        2: p(img="img/dxc/dxc3/2.bmp", at=(190, 424, 219, 439)),
+        3: p(img="img/dxc/dxc3/3.bmp", at=(196, 425, 220, 439)),
+        4: p(img="img/dxc/dxc3/4.bmp", at=(195, 426, 220, 439)),
+        5: p(img="img/dxc/dxc3/5.bmp", at=(189, 425, 218, 441)),
+        6: p(img="img/dxc/dxc3/6.bmp", at=(189, 423, 220, 441)),
+        7: p(img="img/dxc/dxc3/7.bmp", at=(190, 426, 220, 439)),
+        8: p(img="img/dxc/dxc3/8.bmp", at=(193, 423, 218, 441)),
+        9: p(img="img/dxc/dxc3/9.bmp", at=(193, 424, 220, 440)),
+        10: p(img="img/dxc/dxc3/10.bmp", at=(189, 424, 218, 441)),
+    }
+}
+DXC_ENTRANCE = {
+    # 大按钮：云海、密林、断崖的坐标
+    1: p(252, 255, name="云海的山脉"),
+    2: p(485, 250, name="密林的大树"),
+    3: p(711, 247, name="断崖的遗迹"),
+}
+DXC_COORD = {
+    # 每个地下城里面每一个关卡的位置
+    3: {
+        1: p(645, 310),
+        2: p(373, 208),
+        3: p(623, 206),
+        4: p(415, 206),
+        5: p(184, 218),
+        6: p(483, 216),
+        7: p(731, 229),
+        8: p(456, 214),
+        9: p(234, 230),
+        10: p(629, 195),
+    }
 }
 MAX_MAP = 12
 HARD_COORD = {

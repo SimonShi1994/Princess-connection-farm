@@ -420,3 +420,57 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         # 完成战斗后
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+
+    def shuatuDD(self, dxc_id: int, mode: int, retry: int = 1, var: dict = None):  # 刷地下城
+        """
+        统一刷地下城函数，全Auto通关地下城
+        使用前请将打小图或Boss的队伍放在第一页队伍1，
+        将要打Boss的队伍放再第一页队伍2
+        :param dxc_id: 地下城的ID
+        :param mode: 模式
+            mode 0：不打Boss，用队伍1只打小关
+            mode 1：打Boss，用队伍1打小关和Boss
+            mode 2：打Boss，用队伍1打小关，用队伍2打Boss
+        :param retry: 重试次数
+            设置为1时，只会打一次Boss，打不死就不打了
+            设置为n时，会尝试打n次boss，打不死就不打了（适合苟队）
+        :param var:
+            断点恢复使用
+        :return:
+        """
+        from core.constant import DXC_BTN, MAIN_BTN, DXC_COORD, DXC_ENTRANCE
+        if dxc_id not in DXC_COORD:
+            self.log.write_log("error", "坐标库中没有{dxc_id}号地下城的信息！")
+            return
+        self.click(480, 505, post_delay=1)
+        self.lockimg('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
+        self.click(900, 138, post_delay=3)
+        screen_shot_ = self.d.screenshot(format="opencv")
+        if self.is_exists(DXC_BTN["sytzcs"], screen=screen_shot_):
+            # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。
+            # 额 0/1 和 1/1 中可能性更高的那个
+            p0 = self.img_prob(DXC_BTN["0/1"], screen=screen_shot_)
+            p1 = self.img_prob(DXC_BTN["1/1"], screen=screen_shot_)
+            if p0 > p1:
+                self.log.write_log("info", "地下城次数已经用完，放弃。")
+                self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
+                return
+            else:
+                # 没刷完，进入地下城
+                self.click(DXC_ENTRANCE[dxc_id], pre_delay=1, post_delay=3)
+                self.click(*DXC_BTN["quyuxuanzequeren_ok"], post_delay=8)
+        # 已经进入地下城
+        self.lockimg(DXC_BTN["chetui"])  # 锁定撤退
+        self.dxczuobiao(645, 310, 1, 1, 3, 1, 5)
+        self.dxczuobiao(373, 208, 1, 1, 0, 0, 5)
+        self.dxczuobiao(623, 206, 1, 1, 0, 0, 5)
+        self.dxczuobiao(415, 206, 1, 1, 0, 0, 5)
+        self.dxczuobiao(184, 218, 1, 1, 0, 0, 5)
+        self.dxczuobiao(483, 216, 1, 1, 0, 0, 5)
+        self.dxczuobiao(731, 229, 1, 1, 0, 0, 5)
+        self.dxczuobiao(456, 214, 1, 1, 0, 0, 5)
+        state = self.dxczuobiao(629, 195, 1, 2, 3, 2, 5)
+        while state == 2:
+            state = self.dxczuobiao(629, 195, 1, 2, 0, 0, 5)
+        # TODO 增加撤退逻辑
+        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
