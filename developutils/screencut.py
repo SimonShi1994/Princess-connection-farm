@@ -126,6 +126,7 @@ class ImgBox:
         IMG = cv2.flip(trans_img, 0)
         self.width = IMG.shape[1]
         self.height = IMG.shape[0]
+        self.IMG = IMG
         return self
 
 
@@ -149,8 +150,9 @@ class AutomatorDebuger(Automator):
         self.d.screenshot(file)
         # AutoRotate
         img = ImgBox(filepath=file)
-        if not img.width < img.height:
+        if img.width < img.height:
             img.RotateClockWise90()
+            print("自动旋转")
             img.save(file)
         if show:
             self.Show(file)
