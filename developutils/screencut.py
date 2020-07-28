@@ -12,8 +12,6 @@ import cv2
 import matplotlib
 from matplotlib import pyplot as plt
 
-accs = ['18015879305']  # Account List For Test
-
 
 def WindowMode(frame=None):
     if frame is None:
