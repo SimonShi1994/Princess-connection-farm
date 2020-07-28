@@ -109,7 +109,7 @@ def list_all_users(verbose=1) -> List[str]:
             try:
                 # 检查是否能打开文件，以及是否含有必要的参数
                 target_name = "%s\\%s" % (user_addr, i)
-                f = open(target_name, "r")
+                f = open(target_name, "r", encoding="utf-8")
                 d = json.load(f)
                 check_user_dict(d, True)
                 f.close()
@@ -141,7 +141,7 @@ def list_all_tasks(verbose=1) -> List[str]:
             try:
                 # 检查是否能打开文件，以及是否含有必要的参数
                 target_name = "%s\\%s" % (task_addr, i)
-                f = open(target_name, "r")
+                f = open(target_name, "r", encoding="utf-8")
                 d = json.load(f)
                 check_task_dict(d, True)
                 f.close()
@@ -169,7 +169,7 @@ def init_user(account: str, password: str) -> bool:
         print("配置", account, "已经存在。")
         return False
     try:
-        f = open(target_name, "w")
+        f = open(target_name, "w", encoding="utf-8")
         d = dict(account=account, password=password)
         json.dump(d, f, indent=1)
         f.close()
@@ -201,7 +201,7 @@ class AutomatorRecorder:
         :return: 一个字典，json的内容
         """
         try:
-            f = open(jsonaddr, "r")
+            f = open(jsonaddr, "r", encoding="utf-8")
             d = json.load(f)
             f.close()
             return d
@@ -221,7 +221,7 @@ class AutomatorRecorder:
         if not os.path.isdir(dir):
             os.makedirs(dir)
         try:
-            f = open(jsonaddr, "w")
+            f = open(jsonaddr, "w", encoding="utf-8")
             json.dump(obj, f, indent=1)
             f.close()
             return True

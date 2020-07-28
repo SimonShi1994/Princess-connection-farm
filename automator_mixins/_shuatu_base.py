@@ -22,8 +22,7 @@ class ShuatuBaseMixin(BaseMixin):
     def shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数
         if self.switch == 0:
             tmp_cout = 0
-            self.d.click(x, y)
-            time.sleep(0.5)
+            self.click(x, y, pre_delay=2, post_delay=2)
         else:
             pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力，结束 全部 刷图任务！<<<\r\n')
             return
@@ -35,9 +34,7 @@ class ShuatuBaseMixin(BaseMixin):
                     for i in range(times - 1):  # 基础1次
                         # 扫荡券不必使用opencv来识别，降低效率
                         self.d.click(876, 334)
-                    time.sleep(0.3)
-                    self.d.click(758, 330)  # 使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
-                    time.sleep(0.3)
+                    self.click(758, 330, pre_delay=1, post_delay=1)  # 使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
                     screen_shot = self.d.screenshot(format="opencv")
                     if UIMatcher.img_where(screen_shot, 'img/ok.bmp'):
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)

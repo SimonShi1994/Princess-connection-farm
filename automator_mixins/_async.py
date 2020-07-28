@@ -183,14 +183,15 @@ class AsyncMixin(BaseMixin):
         self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
 
-    def fix_reboot(self):
+    def fix_reboot(self, back_home=True):
         # 重启逻辑：重启应用，重启异步线程
         self.stop_th()
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
         self.start_th()
         self.start_async()
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+        if back_home:
+            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def fix_fanhuibiaoti(self):
         # 返回标题逻辑
