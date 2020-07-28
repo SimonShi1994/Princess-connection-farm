@@ -48,6 +48,7 @@ def runmain(params):
         # 初始化刷图
         # 开始异步
         AsyncMixin().start_th()
+        a.start_async()
         a.RunTasks(tas, continue_, max_retry)  # 执行主要逻辑
         gevent.joinall([
             # 这里是协程的一个实例
