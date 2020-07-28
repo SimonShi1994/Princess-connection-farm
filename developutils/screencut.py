@@ -1,17 +1,16 @@
-try:
-    from core.Automator import Automator
-except:
-    import sys
-
-    sys.path.append('../')
-    from core.Automator import Automator
 import os
-from tkinter import *
+import sys
+from tkinter import StringVar, Entry, Tk, Button, mainloop
 
 import cv2
 import matplotlib
 from matplotlib import pyplot as plt
 
+try:
+    from core.Automator import Automator
+except:
+    sys.path.append("../")
+    from core.Automator import Automator
 
 def WindowMode(frame=None):
     if frame is None:
