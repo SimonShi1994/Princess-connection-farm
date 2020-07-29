@@ -10,8 +10,8 @@ from core.constant import USER_DEFAULT_DICT as UDD
 # 账号日志
 from core.log_handler import pcr_log
 from core.usercentre import list_all_users, AutomatorRecorder
-
 # 临时解决方案，可以改进
+from pcr_config import trace_exception_for_debug
 
 acclog = log_handler.pcr_acc_log()
 # 雷电模拟器
@@ -37,6 +37,9 @@ def runmain(params):
         account = user["account"]
         password = user["password"]
         a.log.write_log("info", f"即将登陆： 用户名 {account}")  # 显然不需要输出密码啊喂！
+
+        AsyncMixin().start_th()  # 提前开启异步：截的图可以给login函数使用
+        a.start_async()
         gevent.joinall([
             # 这里是协程初始化的一个实例
             gevent.spawn(a.login_auth, account, password),
@@ -47,8 +50,6 @@ def runmain(params):
         # 还是日志
         # 初始化刷图
         # 开始异步
-        AsyncMixin().start_th()
-        a.start_async()
         a.RunTasks(tas, continue_, max_retry)  # 执行主要逻辑
         gevent.joinall([
             # 这里是协程的一个实例
@@ -58,12 +59,15 @@ def runmain(params):
         # 停止异步
         AsyncMixin().stop_th()
     except Exception as e:
+        if trace_exception_for_debug:
+            raise e
         pcr_log(acc).write_log(level='error', message=f'initialize-检测出异常: <{type(e)}> {e}')
         try:
             a.fix_reboot(False)
         except:
             pass
-
+    finally:
+        AsyncMixin().stop_th()
     # 退出当前账号，切换下一个
     queue.put(address)
 
@@ -161,8 +165,11 @@ def execute(continue_=False, max_retry=3):
         queue.put(device)
 
     # 进程池大小为模拟器数量, 保证同一时间最多有模拟器数量个进程在运行
-    with Pool(len(devices)) as mp:
-        mp.map(runmain, params)
+    if trace_exception_for_debug:
+        runmain(params[0])
+    else:
+        with Pool(len(devices)) as mp:
+            mp.map(runmain, params)
 
     # 退出adb
     os.system('cd adb & adb kill-server')

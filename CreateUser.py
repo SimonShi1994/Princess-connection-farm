@@ -58,83 +58,58 @@ def TaskEditor(taskname):
     print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
     obj = AutomatorRecorder.gettask(taskname)
     while True:
-        cmd = input("> ")
-        cmds = cmd.split(" ")
-        order = cmds[0]
-        if order == "help":
-            print("add Type 根据提示增加一个缩写为Type的指令")
-            print("list -h 显示行会指令")
-            print("list -d 显示地下城指令")
-            print("list -j 显示竞技场指令")
-            print("list -r 显示日常指令")
-            print("list -t 显示工具指令")
-            print("list -s 显示刷图指令")
-            print("show 显示现在的任务情况")
-        elif order == "exit":
-            return
-        elif order == "save":
-            AutomatorRecorder.settask(taskname, obj)
-        elif order == "load":
-            obj = AutomatorRecorder.gettask(taskname)
-        elif order == "clear":
-            obj = {"tasks": []}
-        elif order == "list":
-            if len(cmds) > 1:
-                tag = cmds[1].lstrip("-")
+        try:
+            cmd = input("> ")
+            cmds = cmd.split(" ")
+            order = cmds[0]
+            if order == "help":
+                print("add Type 根据提示增加一个缩写为Type的指令")
+                print("list -h 显示行会指令")
+                print("list -d 显示地下城指令")
+                print("list -j 显示竞技场指令")
+                print("list -r 显示日常指令")
+                print("list -t 显示工具指令")
+                print("list -s 显示刷图指令")
+                print("show 显示现在的任务情况")
+            elif order == "exit":
+                return
+            elif order == "save":
+                AutomatorRecorder.settask(taskname, obj)
+            elif order == "load":
+                obj = AutomatorRecorder.gettask(taskname)
+            elif order == "clear":
+                obj = {"tasks": []}
+            elif order == "list":
+                if len(cmds) > 1:
+                    tag = cmds[1].lstrip("-")
+                else:
+                    tag = ""
+                for i in T:
+                    if i.startswith(tag):
+                        print(i, "  ：  ", T[i]["title"])
+                        print(T[i]["desc"])
+            elif order == "show":
+                for i in obj["tasks"]:
+                    print(T[i["type"]]["title"])
+            elif order == "add":
+                if len(cmds) == 1:
+                    continue
+                typ = cmds[1]
+                if typ not in T:
+                    print("不存在的命令！")
+                    continue
+                cur = {"type": typ}
+                print("添加新命令：", T[typ]["title"])
+                for i in T[typ]["params"]:
+                    print(">> ", i.title, " <<")
+                    print(i.desc)
+                    cur[i.key] = i.inputbox.create()
+                obj['tasks'] += [cur]
+
             else:
-                tag = ""
-            for i in T:
-                if i.startswith(tag):
-                    print(i, "  ：  ", T[i]["title"])
-                    print(T[i]["desc"])
-        elif order == "show":
-            for i in obj["tasks"]:
-                print(T[i["type"]]["title"])
-        elif order == "add":
-            if len(cmds) == 1:
-                continue
-            typ = cmds[1]
-            if typ not in T:
-                print("不存在的命令！")
-                continue
-            cur = {"type": typ}
-            print("添加新命令：", T[typ]["title"])
-            for i in T[typ]["params"]:
-                print(">> ", i.title, " <<")
-                print(i.desc)
-                if i.typ is int:
-                    cur[i.key] = int(input("请输入该参数(整数)> "))
-                elif i.typ is str:
-                    cur[i.key] = input("请输入该参数（字符串）> ")
-                elif i.typ is bool:
-                    while True:
-                        tmp = input("请输入该参数 True or False > ")
-                        if tmp == "True":
-                            cur[i.key] = True
-                            break
-                        elif tmp == "False":
-                            cur[i.key] = False
-                            break
-                        else:
-                            print("输入错误。")
-
-                elif i.typ is list:
-                    if typ in ["s2", "s3"]:
-                        # 刷图部分
-                        lst = []
-                        while True:
-                            subcmd = input("请输入三个空格隔开的整数，输入-1退出> ")
-                            if subcmd == "-1":
-                                break
-                            subcmd = subcmd.split(" ")
-                            lst += [(int(subcmd[0]), int(subcmd[1]), int(subcmd[2]))]
-                        cur[i.key] = lst
-                    else:
-                        print("不认识的参数。")
-            obj['tasks'] += [cur]
-
-        else:
-            print("不认识的命令。")
+                print("不认识的命令。")
+        except Exception as e:
+            print("输入错误！", e)
 
 
 def show_account(account):
@@ -224,64 +199,67 @@ if __name__ == "__main__":
     print(DOC_STR["title"])
     print("当前工作路径：", getcwd())
     while True:
-        cmd = input("> ")
-        cmds = cmd.split(" ")
-        order = cmds[0]
-        if order == "exit":
-            break
-        elif order == "help":
-            print(DOC_STR["help?"])
-        elif order == "user?" or cmd == "user":
-            print(DOC_STR["user?"])
-        elif order == "task?" or cmd == "task":
-            print(DOC_STR["task?"])
-        elif order == "user":
-            if len(cmds) == 2 and cmds[1] == "-l":
-                list_all_users()
-            elif len(cmds) == 5 and cmds[1] == "-c":
-                create_account(cmds[2], cmds[3], cmds[4])
-            elif len(cmds) == 4 and cmds[1] == "-c" and cmds[2] == "-file":
-                create_account_from_file(cmds[3])
-            elif len(cmds) == 4 and cmds[1] == "-c":
-                create_account(cmds[2], cmds[3], "")
-            elif len(cmds) == 4 and cmds[1] == '-d' and cmds[2] == "-file":
-                del_account_from_file(cmds[3])
-            elif len(cmds) == 3 and cmds[1] == '-d' and cmds[2] == '-all':
-                del_all_account()
-            elif len(cmds) == 3 and cmds[1] == "-d":
-                del_account(cmds[2])
-            elif len(cmds) in [3, 4, 5, 6] and cmds[1][0] != '-':
-                p = 2
-                while p < len(cmds):
-                    if cmds[p] == "-p" and p + 1 < len(cmds):
-                        edit_account(cmds[1], password=cmds[p + 1])
-                        p += 2
-                    elif cmds[p] == "-t" and p + 1 < len(cmds) and cmds[p + 1] not in ["-p", "-t"]:
-                        edit_account(cmds[1], taskfile=cmds[p + 1])
-                        p += 2
-                    elif cmds[p] == "-t" and (p + 1 >= len(cmds) or cmds[p + 1] in ["-p", "-t"]):
-                        edit_account(cmds[1], taskfile="")
-                        p += 1
-                    else:
-                        print("Wrong Order!")
-            elif len(cmds) == 2 and cmds[1][0] != "-":
-                show_account(cmds[1])
+        try:
+            cmd = input("> ")
+            cmds = cmd.split(" ")
+            order = cmds[0]
+            if order == "exit":
+                break
+            elif order == "help":
+                print(DOC_STR["help?"])
+            elif order == "user?" or cmd == "user":
+                print(DOC_STR["user?"])
+            elif order == "task?" or cmd == "task":
+                print(DOC_STR["task?"])
+            elif order == "user":
+                if len(cmds) == 2 and cmds[1] == "-l":
+                    list_all_users()
+                elif len(cmds) == 5 and cmds[1] == "-c":
+                    create_account(cmds[2], cmds[3], cmds[4])
+                elif len(cmds) == 4 and cmds[1] == "-c" and cmds[2] == "-file":
+                    create_account_from_file(cmds[3])
+                elif len(cmds) == 4 and cmds[1] == "-c":
+                    create_account(cmds[2], cmds[3], "")
+                elif len(cmds) == 4 and cmds[1] == '-d' and cmds[2] == "-file":
+                    del_account_from_file(cmds[3])
+                elif len(cmds) == 3 and cmds[1] == '-d' and cmds[2] == '-all':
+                    del_all_account()
+                elif len(cmds) == 3 and cmds[1] == "-d":
+                    del_account(cmds[2])
+                elif len(cmds) in [3, 4, 5, 6] and cmds[1][0] != '-':
+                    p = 2
+                    while p < len(cmds):
+                        if cmds[p] == "-p" and p + 1 < len(cmds):
+                            edit_account(cmds[1], password=cmds[p + 1])
+                            p += 2
+                        elif cmds[p] == "-t" and p + 1 < len(cmds) and cmds[p + 1] not in ["-p", "-t"]:
+                            edit_account(cmds[1], taskfile=cmds[p + 1])
+                            p += 2
+                        elif cmds[p] == "-t" and (p + 1 >= len(cmds) or cmds[p + 1] in ["-p", "-t"]):
+                            edit_account(cmds[1], taskfile="")
+                            p += 1
+                        else:
+                            print("Wrong Order!")
+                elif len(cmds) == 2 and cmds[1][0] != "-":
+                    show_account(cmds[1])
+                else:
+                    print("Wrong Order!")
+            elif order == "task":
+                if len(cmds) == 2 and cmds[1] == "-l":
+                    list_all_tasks()
+                elif len(cmds) == 2 and cmds[1][0] != "-":
+                    show_task(cmds[1])
+                elif len(cmds) == 3 and cmds[1] == "-c":
+                    create_task(cmds[2])
+                elif len(cmds) == 3 and cmds[1] == "-e":
+                    TaskEditor(cmds[2])
+                elif len(cmds) == 3 and cmds[1] == "-d":
+                    del_task(cmds[2])
+                elif len(cmds) == 3 and cmds[1] == "-d" and cmds[2] == "-all":
+                    del_all_task()
+                else:
+                    print("Wrong Order!")
             else:
                 print("Wrong Order!")
-        elif order == "task":
-            if len(cmds) == 2 and cmds[1] == "-l":
-                list_all_tasks()
-            elif len(cmds) == 2 and cmds[1][0] != "-":
-                show_task(cmds[1])
-            elif len(cmds) == 3 and cmds[1] == "-c":
-                create_task(cmds[2])
-            elif len(cmds) == 3 and cmds[1] == "-e":
-                TaskEditor(cmds[2])
-            elif len(cmds) == 3 and cmds[1] == "-d":
-                del_task(cmds[2])
-            elif len(cmds) == 3 and cmds[1] == "-d" and cmds[2] == "-all":
-                del_all_task()
-            else:
-                print("Wrong Order!")
-        else:
-            print("Wrong Order!")
+        except:
+            print("输入错误！")

@@ -73,6 +73,44 @@ class UIMatcher:
         return zhongxings, max_vals
 
     @classmethod
+    def img_prob(cls, screen, template_path, at=None) -> float:
+        """
+        在screen里寻找template，若找到多个，则返回第一个的匹配度。
+        :param screen:  截图图片
+        :param template_path: 文件路径
+        :param at:  缩小查找范围
+        :return: 匹配度
+        """
+        if screen.shape[0] > screen.shape[1]:
+            screen = UIMatcher.RotateClockWise90(screen)
+        if at is not None:
+            try:
+                x1, y1, x2, y2 = at
+                screen = screen[y1:y2, x1:x2]
+            except:
+                pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+                exit(-1)
+        if screen.mean() < 1:  # 纯黑色与任何图相关度为1
+            return 0
+        if template_path not in cls.template_cache:
+            template = cv2.imread(template_path)
+            cls.template_cache[template_path] = template
+        else:
+            template = cls.template_cache[template_path]
+        prob = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED).max()
+        return prob
+
+    @staticmethod
+    def img_cut(screen, at):
+        try:
+            x1, y1, x2, y2 = at
+            screen = screen[y1:y2, x1:x2]
+        except:
+            pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+            exit(-1)
+        return screen
+
+    @classmethod
     def img_where(cls, screen, template_path, threshold=0.84, at=None):
         """
         在screen里寻找template，若找到则返回坐标，若没找到则返回False
@@ -94,7 +132,8 @@ class UIMatcher:
                 exit(-1)
         else:
             x1, y1 = 0, 0
-
+        if screen.mean() < 1:
+            return False
         # 缓存未命中时从源文件读取
         if template_path not in cls.template_cache:
             template = cv2.imread(template_path)

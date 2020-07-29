@@ -154,6 +154,13 @@ class AutomatorDebuger(Automator):
         if show:
             self.Show(file)
 
+    def Prob(self, screen, file="test.bmp", at=None):
+        img = ImgBox(filepath=screen)
+        print("Probability: ", self.img_prob(file, at, img.IMG))
+
+    def Equal(self, file1, file2, at=None):
+        print("Equality:", self.img_equal(file1, file2, at))
+
     def Show(self, file="test.bmp", at=None):
         img = ImgBox(filepath=file)
         self._obj = dict(txt=None, pnt=None, move=False, rec=None)
@@ -172,7 +179,7 @@ class AutomatorDebuger(Automator):
                 y2, y1 = plt.ylim()
                 x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
                 addr = e.get()
-                print(f"Save img at=({x1},{y1},{x2},{y2}) To {addr}")
+                print(f"p(img=\"img/{addr}\",at=({x1},{y1},{x2},{y2})),")
 
                 img.cut(x1, y1, x2, y2).save(addr)
                 try:
@@ -310,6 +317,9 @@ if __name__ == "__main__":
             print("connect [address]:  连接到address的device，默认emulator-5554")
             print("shot [file]: （需要connect）截图并保存到文件file并显示，默认test.bmp")
             print("show [file]: 打开文件file并显示，默认test.bmp")
+            print("prob screen [template]: 检验template在screen中的最大匹配度(0~1)，默认template为test.bmp")
+            print("equal file1 file2: 检查两个图片的相似度")
+            print("----")
             print("在图片显示界面：")
             print("单击左键： 显示当前点击位置的坐标")
             print("右键拖动： 框选小区域")
@@ -336,6 +346,18 @@ if __name__ == "__main__":
                 a.Show(cmds[1])
             elif len(cmds) == 1:
                 a.Show()
+            else:
+                print("Wrong Order!")
+        elif order == "prob":
+            if len(cmds) == 3:
+                a.Prob(cmds[1], cmds[2])
+            elif len(cmds) == 2:
+                a.Prob(cmds[1])
+            else:
+                print("Wrong Order!")
+        elif order == "equal":
+            if len(cmds) == 3:
+                a.Equal(cmds[1], cmds[2])
             else:
                 print("Wrong Order!")
         else:

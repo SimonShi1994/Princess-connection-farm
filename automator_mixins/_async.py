@@ -7,6 +7,7 @@ import psutil
 from core.MoveRecord import moveerr
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
+from pcr_config import bad_connecting_time, async_screenshot_freq
 from ._base import BaseMixin
 
 screenshot = None
@@ -62,6 +63,9 @@ class AsyncMixin(BaseMixin):
         global screenshot
         while th_sw == 0:
             cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
+            if screenshot is None:
+                time.sleep(0.8)
+                continue
             if cpu_occupy >= 80:
                 # print('ka')
                 time.sleep(0.8)
@@ -70,22 +74,22 @@ class AsyncMixin(BaseMixin):
                 # time.sleep(10)
                 # 过快可能会卡
                 if UIMatcher.img_where(screenshot, 'img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
-                    self.d.click(917, 39)  # 菜单
+                    self.click(917, 39)  # 菜单
                     time.sleep(1)
-                    self.d.click(807, 44)  # 跳过
+                    self.click(807, 44)  # 跳过
                     time.sleep(1)
-                    self.d.click(589, 367)  # 跳过ok
+                    self.click(589, 367)  # 跳过ok
                     time.sleep(5)
                 if UIMatcher.img_where(screenshot, 'img/kekeluo.bmp', at=(181, 388, 384, 451)):
                     # 防妈骑脸
-                    self.d.click(1, 1)
+                    self.click(1, 1)
                     time.sleep(3)
-                    self.d.click(1, 1)
+                    self.click(1, 1)
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_1.bmp', at=(0, 390, 147, 537)):
                     self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_2.bmp', at=(580, 320, 649, 468)):
                     time.sleep(4)
-                    self.d.click(610, 431)
+                    self.click(610, 431)
                     self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
             except Exception as e:
@@ -101,12 +105,15 @@ class AsyncMixin(BaseMixin):
         global th_sw
         global screenshot
         while th_sw == 0:
+            if screenshot is None:
+                time.sleep(0.8)
+                continue
             cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
             if cpu_occupy >= 80:
                 # print('ka')
                 time.sleep(0.8)
             try:
-                time.sleep(15)
+                time.sleep(bad_connecting_time)
                 # 过快可能会卡
                 time_start = time.time()
                 if UIMatcher.img_where(screenshot, 'img/connecting.bmp', at=(748, 20, 931, 53)):
@@ -115,7 +122,7 @@ class AsyncMixin(BaseMixin):
                     time_end = time.time()
                     _time = time_end - time_start
                     _time = _time + _time
-                    if _time > 15:
+                    if _time > bad_connecting_time:
                         _time = 0
                         # LOG().Account_bad_connecting(self.account)
                         raise moveerr("reboot", "connecting时间过长")
@@ -126,7 +133,7 @@ class AsyncMixin(BaseMixin):
                     time_end = time.time()
                     _time = time_end - time_start
                     _time = _time + _time
-                    if _time > 15:
+                    if _time > bad_connecting_time:
                         # LOG().Account_bad_connecting(self.account)
                         _time = 0
                         raise moveerr("reboot", "loading时间过长")
@@ -163,9 +170,16 @@ class AsyncMixin(BaseMixin):
             cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
             if cpu_occupy >= 80:
                 # print('ka')
-                time.sleep(0.8)
-            time.sleep(0.8)
-            screenshot = self.d.screenshot(format="opencv")
+                time.sleep(async_screenshot_freq)
+            time.sleep(async_screenshot_freq)
+            # 如果之前已经截过图了，就不截图了
+            if time.time() - self.last_screen_time > async_screenshot_freq:
+                screenshot = self.getscreen()
+            else:
+                if self.last_screen is not None:
+                    screenshot = self.last_screen
+                else:
+                    screenshot = self.getscreen()
             # print('截图中')
             # cv2.imwrite('test.bmp', screenshot)
 
@@ -207,9 +221,9 @@ class AsyncMixin(BaseMixin):
         # 数据错误逻辑
         # 放弃不用，没有重启来的稳
         time.sleep(1)
-        self.d.click(479, 369)
+        self.click(479, 369)
         time.sleep(8)
-        self.d.click(1, 1)
+        self.click(1, 1)
 
 
 class Multithreading(threading.Thread, AsyncMixin):
