@@ -103,7 +103,7 @@ class DXCBaseMixin(FightBaseMixin):
         self.click(480, 505, post_delay=1)
         self.lockimg('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
         self.click(900, 138, post_delay=3)
-        screen_shot_ = self.d.screenshot(format="opencv")
+        screen_shot_ = self.getscreen()
         if self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
             # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。
             # 额 0/1 和 1/1 中可能性更高的那个
@@ -155,14 +155,14 @@ class DXCBaseMixin(FightBaseMixin):
             return
         else:
             while True:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     break
                 self.d.click(1, 1)
                 time.sleep(1)
             time.sleep(1)
             while True:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     break
                 self.d.click(1, 1)
@@ -176,7 +176,7 @@ class DXCBaseMixin(FightBaseMixin):
             time.sleep(2)
 
             while True:  # 锁定战斗开始
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg'):
                     break
 
@@ -189,7 +189,7 @@ class DXCBaseMixin(FightBaseMixin):
                     self.d.click(789, 290)  # 2队
                 time.sleep(0.5)
                 while True:  # 锁定战斗开始
-                    screen_shot_ = self.d.screenshot(format="opencv")
+                    screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg'):
                         break
                     time.sleep(0.5)
@@ -198,7 +198,7 @@ class DXCBaseMixin(FightBaseMixin):
             time.sleep(2)
 
             # while True:  # 战斗中快进
-            #     screen_shot_ = self.d.screenshot(format="opencv")
+            #     screen_shot_ = self.getscreen()
             #     if UIMatcher.img_where(screen_shot_, 'img/caidan.jpg'):
             #         if auto == 1:
             #             time.sleep(0.5)
@@ -206,10 +206,10 @@ class DXCBaseMixin(FightBaseMixin):
             #             time.sleep(1)
             #         break
             while True:  # 结束战斗返回
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):
                     while True:
-                        screen_shot = self.d.screenshot(format="opencv")
+                        screen_shot = self.getscreen()
                         if UIMatcher.img_where(screen_shot, 'img/xiayibu.jpg'):
                             self.d.click(830, 503)
                             break

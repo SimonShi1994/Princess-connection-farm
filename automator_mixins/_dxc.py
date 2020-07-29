@@ -28,7 +28,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         # 全局变量贯通两个场景的地下层次数识别
         while True:
             self.click(480, 505, pre_delay=0.5, post_delay=1)
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg', at=(837, 92, 915, 140)):
                 self.click(900, 138, post_delay=5)
                 self.click(1, 1)
@@ -37,7 +37,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while tmp_cout <= 2:
             try:
                 time.sleep(8)
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     dixiacheng_floor = self.baidu_ocr(200, 410, 263, 458)
                     # print(dixiacheng_floor)
@@ -86,7 +86,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
                     pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
                     self.dixiacheng(skip)
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp',
                                        at=(148, 295, 345, 399)) and dixiacheng_times == 1:
                     self.click(233, 311, post_delay=1)
@@ -95,7 +95,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.dxc_switch = 1
                     # LOG().Account_undergroundcity(self.account)
                 if self.dxc_switch == 0:
-                    screen_shot_ = self.d.screenshot(format="opencv")
+                    screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                         self.click(592, 369)
                     # self.lockimg('img/ok.bmp', ifclick=[(592, 369)], elseclick=[(592, 369)])
@@ -110,7 +110,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.dixiacheng(skip)
                 break
             try:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg') and dixiacheng_times <= 1:
                     # print('>>>', dixiacheng_times)
                     break
@@ -123,28 +123,28 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while self.dxc_switch == 0:
             while True:
                 time.sleep(0.5)
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     self.lockimg('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360)])
                     # 锁定挑战和第一层
                     break
             while True:
                 time.sleep(0.5)
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/zhiyuan.jpg', at=(448, 78, 512, 102)):
                     time.sleep(1)
                     # self.d.click(100, 173)  # 第一个人
-                    screen_shot = self.d.screenshot(format="opencv")
+                    screen_shot = self.getscreen()
                     self.guochang(screen_shot, ['img/zhiyuan.jpg'], suiji=0)
                     break
 
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dengjixianzhi.jpg'):
                 self.click(213, 208, post_delay=1)  # 如果等级不足，就支援的第二个人
             else:
                 self.click(100, 173, post_delay=1)  # 支援的第一个人
                 self.click(213, 208)  # 以防万一
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/notzhandoukaishi.bmp', threshold=0.98):
                 # 逻辑顺序改变
                 # 当无法选支援一二位时，将会退出地下城
@@ -156,7 +156,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.d.click(833, 470)  # 战斗开始
             while True:
                 # time.sleep(0.5)
-                # screen_shot_ = self.d.screenshot(format="opencv")
+                # screen_shot_ = self.getscreen()
                 self.lockimg('img/ok.bmp', ifclick=[(588, 480)], elseclick=[(833, 470)], ifbefore=2, ifdelay=1)
                 # if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg'):
                 #    time.sleep(1.5)
@@ -170,7 +170,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lockimg('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=2, ifdelay=1)
                 time.sleep(0.5)
                 # 这里防一波打得太快导致来不及放弃
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):
                     time.sleep(3)
                     self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
@@ -181,7 +181,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lockimg('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=8)
             while skip is False:  # 结束战斗返回
                 time.sleep(0.5)
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):
                     # 先撤回 at=(813, 27, 886, 50)
                     time.sleep(3)
@@ -202,7 +202,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click(1, 1, pre_delay=1)  # 取消显示结算动画
             while True:  # 撤退地下城
                 time.sleep(0.5)
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     self.lockimg('img/ok.bmp', ifclick=[(588, 371)], elseclick=[(808, 435)])
                     # for i in range(3):
@@ -212,7 +212,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     # self.d.click(588, 371)
                     # self.guochang(screen_shot_, ['img/chetui.jpg'], suiji=0)
                     # time.sleep(1)
-                    # screen_shot = self.d.screenshot(format="opencv")
+                    # screen_shot = self.getscreen()
                     # self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     # LOG().Account_undergroundcity(self.account)
                     break
@@ -221,17 +221,17 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 break
             break
         while True:  # 首页锁定
-            screen_shot = self.d.screenshot(format="opencv")
+            screen_shot = self.getscreen()
             if UIMatcher.img_where(screen_shot, 'img/liwu.bmp', at=(891, 413, 930, 452)):
                 break
             self.click(131, 533, post_delay=1)  # 保证回到首页
             # 防卡死
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
-            screen_shot = self.d.screenshot(format="opencv")
+            screen_shot = self.getscreen()
             self.guochang(screen_shot, ['img/chetui.jpg'], suiji=0)
             time.sleep(2)
-            screen_shot = self.d.screenshot(format="opencv")
+            screen_shot = self.getscreen()
             self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
 
     def dixiacheng(self, skip):
@@ -289,7 +289,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 pcr_log(self.account).write_log(level='info', message="%s无法出击!" % self.account)
                 break
             while True:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg', at=(758, 427, 917, 479)):
                     time.sleep(1)
                     self.d.click(833, 470)  # 战斗开始
@@ -331,7 +331,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         self.d.click(480, 505)
         time.sleep(1)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
             self.d.click(480, 505)
@@ -339,20 +339,20 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         self.d.click(900, 138)
         time.sleep(3)
 
-        screen_shot_ = self.d.screenshot(format="opencv")
+        screen_shot_ = self.getscreen()
         if UIMatcher.img_where(screen_shot_, 'img/dixiacheng_used.jpg'):  # 避免某些农场号刚买回来已经进了地下城
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
         else:
             # 下面这段因为调试而注释了，实际使用时要加上
             while True:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp'):
                     self.d.click(250, 250)  # 云海
                     time.sleep(1)
                     while True:
-                        screen_shot_ = self.d.screenshot(format="opencv")
+                        screen_shot_ = self.getscreen()
                         if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                             break
                     self.d.click(592, 369)  # 点击ok
@@ -374,27 +374,27 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         self.d.click(480, 505)
         time.sleep(1)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
             self.d.click(480, 505)
             time.sleep(1)
         self.d.click(900, 138)
         time.sleep(3)
-        screen_shot_ = self.d.screenshot(format="opencv")
+        screen_shot_ = self.getscreen()
         if UIMatcher.img_where(screen_shot_, 'img/dixiacheng_used.jpg'):  # 避免某些农场号刚买回来已经进了地下城
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
         else:
             # 下面这段因为调试而注释了，实际使用时要加上
             while True:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp'):
                     self.d.click(712, 267)  # 断崖
                     time.sleep(1)
                     while True:
-                        screen_shot_ = self.d.screenshot(format="opencv")
+                        screen_shot_ = self.getscreen()
                         if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                             break
                     self.d.click(592, 369)  # 点击ok
@@ -414,7 +414,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
             # 点击撤退
             if self.is_dixiacheng_end == 1:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/10.jpg'):  # 地下城10层失败重试1次，使低练度号能2刀通关boss
                     self.is_dixiacheng_end = 0
                     self.dixiachengzuobiao(654, 321, 0)  # 10层

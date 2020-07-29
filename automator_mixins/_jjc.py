@@ -15,13 +15,13 @@ class JJCMixin(ToolsMixin):
         self.d.click(480, 505)
         time.sleep(2)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(x, y)
         time.sleep(2)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             self.d.click(36, 77)
             if UIMatcher.img_where(screen_shot_, 'img/list.jpg'):
                 break
@@ -38,7 +38,7 @@ class JJCMixin(ToolsMixin):
         self.d.click(822, 456)
 
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/xiayibu.jpg'):
                 self.d.click(803, 496)
                 break
@@ -65,7 +65,7 @@ class JJCMixin(ToolsMixin):
         self.d.click(822, 456)
 
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/xiayibu.jpg'):
                 self.d.click(803, 506)
                 break

@@ -20,29 +20,29 @@ class HanghuiMixin(ToolsMixin):
         self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=1)  # 锁定进入行会
         time.sleep(1)
         while True:  # 6-17修改：减少opencv使用量提高稳定性
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 for _ in range(2):
                     time.sleep(2)
-                    screen_shot = self.d.screenshot(format="opencv")
+                    screen_shot = self.getscreen()
                     if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):
                         self.click(367, 39, post_delay=2)  # 点击定位捐赠按钮
-                        screen_shot = self.d.screenshot(format="opencv")
+                        screen_shot = self.getscreen()
                         self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
                         self.click(644, 385, pre_delay=1, post_delay=3)  # 点击max
-                        screen_shot = self.d.screenshot(format="opencv")
+                        screen_shot = self.getscreen()
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                         self.click(560, 369, pre_delay=2, post_delay=1)
                 while True:
                     self.click(1, 1, post_delay=1)
-                    screen_shot = self.d.screenshot(format="opencv")
+                    screen_shot = self.getscreen()
                     if UIMatcher.img_where(screen_shot, 'img/zhiyuansheding.bmp'):
                         break
                 break
             time.sleep(2)
             # 处理多开捐赠失败的情况
-            screen_shot = self.d.screenshot(format="opencv")
+            screen_shot = self.getscreen()
             self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
             self.click(1, 1, post_delay=1)  # 处理被点赞的情况
 
@@ -86,7 +86,7 @@ class HanghuiMixin(ToolsMixin):
         self.lockimg('img/ok.bmp', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
         time.sleep(1)
         self.lockimg('img/ok.jpg')  # 锁定ok
-        screen_shot_ = self.d.screenshot(format="opencv")
+        screen_shot_ = self.getscreen()
         self.guochang(screen_shot_, ['img/ok.jpg'], suiji=0)
         self.lockimg('img/zhiyuansheding.bmp', ifclick=[(85, 350)], alldelay=0.5)  # 点击支援设定
         self.lockimg('img/zhiyuanjiemian.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定支援界面
@@ -133,7 +133,7 @@ class HanghuiMixin(ToolsMixin):
         time.sleep(3)
         for i in range(2):
             time.sleep(3)
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             self.guochang(screen_shot_, ['img/zhandou_ok.jpg'], suiji=0)
         self.d.click(239, 351)
         time.sleep(3)
@@ -152,6 +152,6 @@ class HanghuiMixin(ToolsMixin):
             self.d.click(829, 316)  # 点赞 职务降序（默认） 第二个人，副会长
             time.sleep(2)
         self.d.click(479, 381)
-        screen_shot_ = self.d.screenshot(format="opencv")
+        screen_shot_ = self.getscreen()
         self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页

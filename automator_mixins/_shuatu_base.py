@@ -28,14 +28,14 @@ class ShuatuBaseMixin(ToolsMixin):
             return
         if self.switch == 0:
             while True:  # 锁定加号
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/jiahao.bmp'):
                     # screen_shot = a.d.screenshot(format="opencv")
                     for i in range(times - 1):  # 基础1次
                         # 扫荡券不必使用opencv来识别，降低效率
                         self.d.click(876, 334)
                     self.click(758, 330, pre_delay=1, post_delay=1)  # 使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
-                    screen_shot = self.d.screenshot(format="opencv")
+                    screen_shot = self.getscreen()
                     if UIMatcher.img_where(screen_shot, 'img/ok.bmp'):
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     else:
@@ -43,13 +43,13 @@ class ShuatuBaseMixin(ToolsMixin):
                         self.d.click(588, 370)
                     # screen_shot = a.d.screenshot(format="opencv")
                     # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
-                    screen_shot_ = self.d.screenshot(format="opencv")
+                    screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/tilibuzu.jpg'):
                         pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
-                    screen_shot = self.d.screenshot(format="opencv")
+                    screen_shot = self.getscreen()
                     if UIMatcher.img_where(screen_shot, 'img/tiaoguo.jpg'):
                         self.guochang(screen_shot, ['img/tiaoguo.jpg'], suiji=0)
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
@@ -74,7 +74,7 @@ class ShuatuBaseMixin(ToolsMixin):
         while True:
             self.d.click(1, 1)
             time.sleep(0.3)
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                 break
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
@@ -88,14 +88,14 @@ class ShuatuBaseMixin(ToolsMixin):
         self.d.click(480, 505)
         time.sleep(2)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         # 点击进入主线关卡
         self.d.click(562, 253)
         time.sleep(2)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 self.d.click(880, 80)
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
@@ -118,7 +118,7 @@ class ShuatuBaseMixin(ToolsMixin):
         self.d.click(480, 505)
         time.sleep(2)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         # 点击进入主线关卡
@@ -128,7 +128,7 @@ class ShuatuBaseMixin(ToolsMixin):
             # H图左移到1-1图
             self.click(27, 272, pre_delay=3)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 self.click(828, 85)
             else:
@@ -145,7 +145,7 @@ class ShuatuBaseMixin(ToolsMixin):
             return
         if self.switch == 0:
             while True:  # 锁定加号
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/jiahao.bmp'):
                     # screen_shot = a.d.screenshot(format="opencv")
                     for i in range(times - 1):  # 基础1次
@@ -154,7 +154,7 @@ class ShuatuBaseMixin(ToolsMixin):
                     time.sleep(0.3)
                     self.d.click(758, 330)  # 使用扫荡券的位置 也可以用OpenCV但是效率不够而且不能自由设定次数
                     time.sleep(0.3)
-                    screen_shot = self.d.screenshot(format="opencv")
+                    screen_shot = self.getscreen()
                     if UIMatcher.img_where(screen_shot, 'img/ok.bmp'):
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     else:
@@ -162,13 +162,13 @@ class ShuatuBaseMixin(ToolsMixin):
                         self.d.click(588, 370)
                     # screen_shot = a.d.screenshot(format="opencv")
                     # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
-                    screen_shot_ = self.d.screenshot(format="opencv")
+                    screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/tilibuzu.jpg'):
                         pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<\r\n')
                         self.switch = 1
                         self.d.click(677, 458)  # 取消
                         break
-                    screen_shot = self.d.screenshot(format="opencv")
+                    screen_shot = self.getscreen()
                     if UIMatcher.img_where(screen_shot, 'img/tiaoguo.jpg'):
                         self.guochang(screen_shot, ['img/tiaoguo.jpg'], suiji=0)
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
@@ -193,7 +193,7 @@ class ShuatuBaseMixin(ToolsMixin):
         while True:
             self.d.click(1, 1)
             time.sleep(0.3)
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                 break
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
@@ -219,7 +219,7 @@ class ShuatuBaseMixin(ToolsMixin):
                     time.sleep(1.5)  # 这是高延迟识别时间,模拟器卡顿请加时
                 break
             else:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/duanyazuobiao.jpg'):
                     pcr_log(self.account).write_log(level='info', message='>>>成功识别标记,开始刷图.<<<\r\n')
                     break
@@ -237,7 +237,7 @@ class ShuatuBaseMixin(ToolsMixin):
         :return:
         """
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, lockpic, at=screencut):
                 break
             self.d.click(1, 138)
@@ -247,13 +247,13 @@ class ShuatuBaseMixin(ToolsMixin):
         time.sleep(0.7)
 
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.imgs_where(screen_shot_, ['img/kuaijin.jpg', 'img/kuaijin_1.jpg']) != {}:
                 break
             self.d.click(840, 454)  # 点到进入战斗画面
             time.sleep(0.7)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if self.click_img(screen_shot_, 'img/kuaijin.jpg', at=(891, 478, 936, 517)):
                 time.sleep(1)
             if self.click_img(screen_shot_, 'img/auto.jpg', at=(891, 410, 936, 438)):
@@ -270,7 +270,7 @@ class ShuatuBaseMixin(ToolsMixin):
                 time.sleep(0.2)
             while True:
                 time.sleep(2)
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, lockpic, at=screencut):
                     break
                 elif UIMatcher.img_where(screen_shot_, 'img/xiayibu.jpg'):
@@ -280,7 +280,7 @@ class ShuatuBaseMixin(ToolsMixin):
             while True:  # 两次确认回到挑战界面
                 self.d.click(1, 100)
                 time.sleep(0.5)
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, lockpic, at=screencut):
                     break
 
@@ -394,7 +394,7 @@ class ShuatuBaseMixin(ToolsMixin):
         """
         self.click(480, 505, pre_delay=2, post_delay=2)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.click(562, 253)

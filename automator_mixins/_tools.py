@@ -62,7 +62,7 @@ class ToolsMixin(BaseMixin):
         }
         client = AipOcr(**config)
 
-        screen_shot_ = self.d.screenshot(format="opencv")
+        screen_shot_ = self.getscreen()
         if screen_shot_.shape[0] > screen_shot_.shape[1]:
             screen_shot_ = UIMatcher.RotateClockWise90(screen_shot_)
             # screen_shot_ = rot90(screen_shot_)  # 旋转90°
@@ -92,7 +92,7 @@ class ToolsMixin(BaseMixin):
 
         self.d.click(871, 513)  # 主菜单
         while True:  # 锁定帮助
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/bangzhu.jpg'):
                 break
         # cv2.imwrite('all.png',screen_shot_)

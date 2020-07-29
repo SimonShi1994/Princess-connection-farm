@@ -1,7 +1,6 @@
 import time
 
 from core.cv import UIMatcher
-from core.log_handler import pcr_log
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
 
@@ -81,12 +80,12 @@ class LoginMixin(BaseMixin):
     def change_acc(self):  # 切换账号
         self.d.click(871, 513)  # 主菜单
         while True:  # 锁定帮助
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/bangzhu.bmp'):
                 break
         self.d.click(165, 411)  # 退出账号
         while True:  # 锁定帮助
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                 break
         self.d.click(591, 369)  # ok

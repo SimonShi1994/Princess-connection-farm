@@ -165,7 +165,7 @@ class AsyncMixin(BaseMixin):
                 # print('ka')
                 time.sleep(0.8)
             time.sleep(0.8)
-            screenshot = self.d.screenshot(format="opencv")
+            screenshot = self.getscreen()
             # print('截图中')
             # cv2.imwrite('test.bmp', screenshot)
 

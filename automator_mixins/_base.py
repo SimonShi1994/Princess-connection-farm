@@ -125,7 +125,7 @@ class BaseMixin:
                 if "screen" in kwargs:
                     screen = kwargs["screen"]
                 else:
-                    screen = self.d.screenshot(format="opencv")
+                    screen = self.getscreen()
                 if "threshold" in kwargs:
                     threshold = kwargs["threshold"]
                 else:
@@ -141,7 +141,7 @@ class BaseMixin:
             if "screen" in kwargs:
                 screen = kwargs["screen"]
             else:
-                screen = self.d.screenshot(format="opencv")
+                screen = self.getscreen()
             if "threshold" in kwargs:
                 threshold = kwargs["threshold"]
             else:
@@ -160,7 +160,7 @@ class BaseMixin:
         :return: 是否存在
         """
         if screen is None:
-            screen = self.d.screenshot(format="opencv")
+            screen = self.getscreen()
         if isinstance(img, PCRelement):
             if at is None:
                 at = img.at
@@ -179,7 +179,7 @@ class BaseMixin:
         :return: 是否存在
         """
         if screen is None:
-            screen = self.d.screenshot(format="opencv")
+            screen = self.getscreen()
         if isinstance(img, PCRelement):
             if at is None:
                 at = img.at
@@ -294,7 +294,7 @@ class BaseMixin:
         inf_attempt = True if retry == 0 else False
         attempt = 0
         while inf_attempt or attempt < retry:
-            screen_shot = self.d.screenshot(format="opencv")
+            screen_shot = self.getscreen()
             if UIMatcher.img_where(screen_shot, img, at=at):
                 # 成功匹配图片
                 for clicks in ifclick:
@@ -365,7 +365,7 @@ class BaseMixin:
             img = img.img
         attempt = 0
         while True:
-            screen_shot = self.d.screenshot(format="opencv")
+            screen_shot = self.getscreen()
             if UIMatcher.img_where(screen_shot, img, at=at):
                 if ifclick != []:
                     for clicks in ifclick:
@@ -414,7 +414,7 @@ class BaseMixin:
             img = img.img
         attempt = 0
         while True:
-            screen_shot = self.d.screenshot(format="opencv")
+            screen_shot = self.getscreen()
             if not UIMatcher.img_where(screen_shot, img, at=at):
                 if ifclick != []:
                     for clicks in ifclick:
@@ -448,7 +448,7 @@ class BaseMixin:
         """
         count = 0  # 出现主页的次数
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 try:
@@ -496,7 +496,7 @@ class BaseMixin:
             time.sleep(2)
             self.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513), (390, 369)], elsedelay=0.5)
             while True:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/zhuxianguanqia.jpg', at=(511, 286, 614, 314)):
                     self.d.click(562, 253)
                     time.sleep(0.5)
@@ -504,7 +504,7 @@ class BaseMixin:
                     break
             time.sleep(3)
             while True:
-                screen_shot_ = self.d.screenshot(format="opencv")
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                     break
                 self.d.click(704, 84)

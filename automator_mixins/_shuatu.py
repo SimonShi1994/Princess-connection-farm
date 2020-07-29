@@ -37,13 +37,13 @@ class ShuatuMixin(ShuatuBaseMixin):
         time.sleep(2)
 
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         self.d.click(562, 253)
         time.sleep(2)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                 break
         for i in range(map):
@@ -133,14 +133,14 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.d.click(480, 505)
         time.sleep(2)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         # 点击进入活动
         self.d.click(415, 430)
         time.sleep(3)
         while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
+            screen_shot_ = self.getscreen()
             self.d.click(480, 380)
             time.sleep(0.5)
             self.d.click(480, 380)
