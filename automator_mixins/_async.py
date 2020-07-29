@@ -7,6 +7,7 @@ import psutil
 from core.MoveRecord import moveerr
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
+from pcr_config import bad_connecting_time, async_screenshot_freq
 from ._base import BaseMixin
 
 screenshot = None
@@ -106,7 +107,7 @@ class AsyncMixin(BaseMixin):
                 # print('ka')
                 time.sleep(0.8)
             try:
-                time.sleep(15)
+                time.sleep(bad_connecting_time)
                 # 过快可能会卡
                 time_start = time.time()
                 if UIMatcher.img_where(screenshot, 'img/connecting.bmp', at=(748, 20, 931, 53)):
@@ -115,7 +116,7 @@ class AsyncMixin(BaseMixin):
                     time_end = time.time()
                     _time = time_end - time_start
                     _time = _time + _time
-                    if _time > 15:
+                    if _time > bad_connecting_time:
                         _time = 0
                         # LOG().Account_bad_connecting(self.account)
                         raise moveerr("reboot", "connecting时间过长")
@@ -126,7 +127,7 @@ class AsyncMixin(BaseMixin):
                     time_end = time.time()
                     _time = time_end - time_start
                     _time = _time + _time
-                    if _time > 15:
+                    if _time > bad_connecting_time:
                         # LOG().Account_bad_connecting(self.account)
                         _time = 0
                         raise moveerr("reboot", "loading时间过长")
@@ -163,9 +164,13 @@ class AsyncMixin(BaseMixin):
             cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
             if cpu_occupy >= 80:
                 # print('ka')
-                time.sleep(0.8)
-            time.sleep(0.8)
-            screenshot = self.getscreen()
+                time.sleep(async_screenshot_freq)
+            time.sleep(async_screenshot_freq)
+            # 如果之前已经截过图了，就不截图了
+            if time.time() - self.last_screen_time > async_screenshot_freq:
+                screenshot = self.getscreen()
+            else:
+                screenshot = self.last_screen
             # print('截图中')
             # cv2.imwrite('test.bmp', screenshot)
 

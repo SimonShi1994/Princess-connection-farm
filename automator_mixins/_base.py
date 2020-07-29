@@ -33,6 +33,7 @@ class BaseMixin:
         self.ms: Optional[moveset] = None
         self.debug_screen = None  # 如果debug_screen为None，则正常截图；否则，getscreen函数使用debug_screen作为读取的screen
         self.last_screen = None  # 每次调用getscreen会把图片暂存至last_screen
+        self.last_screen_time = 0
 
     def init_device(self, address):
         """
@@ -253,6 +254,7 @@ class BaseMixin:
         """
         if self.debug_screen is None:
             self.last_screen = self.d.screenshot(filename, format="opencv")
+            self.last_screen_time = time.time()
             return self.last_screen
         else:
             if isinstance(self.debug_screen, str):
