@@ -70,7 +70,7 @@ class LoginMixin(BaseMixin):
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
                     break
                 else:
-                    self.click(942, 15)
+                    self.click(945, 13)
             return self.do_login(ac, pwd)
         except Exception as e:
             print(e)

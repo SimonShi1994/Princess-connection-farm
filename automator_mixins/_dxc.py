@@ -520,8 +520,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 raise Exception("在执行地下城时发生了未知的错误，场景识别失败！")
             elif state == 1:
                 # 打赢了
-                cur_layer += 1
                 self.log.write_log("info", f"战胜了地下城{dxc_id}-{cur_layer}!")
+                cur_layer += 1
             elif state == 2:
                 # 打输了，看看有没有机会再打一次
                 self.log.write_log("info", f"战败于地下城{dxc_id}-{cur_layer}!")
