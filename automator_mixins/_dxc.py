@@ -249,7 +249,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         # 撤退 如果 已经进入
         while True:
-            screen = self.d.screenshot(format='opencv')
+            screen = self.getscreen()
             if UIMatcher.img_where(screen, 'img/yunhai.bmp'):
                 break
             if UIMatcher.img_where(screen, 'img/chetui.jpg', at=(738, 420, 872, 442)):
@@ -281,7 +281,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             for pos in poses:
                 self.d.click(*pos)
                 time.sleep(0.2)
-            screen = self.d.screenshot(format='opencv')
+            screen = self.getscreen()
             if UIMatcher.img_where(screen, 'img/notzhandoukaishi.bmp', threshold=0.98):
                 # 当无法出击时将会退出地下城
                 time.sleep(0.5)
@@ -310,7 +310,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     skip = False
             else:
                 self.lockimg('img/kuaijin_2.bmp', elseclick=[(913, 494)], ifbefore=0, ifdelay=0.5, retry=10)
-                screen = self.d.screenshot(format='opencv')
+                screen = self.getscreen()
                 if UIMatcher.img_where(screen, 'img/auto.jpg'):
                     time.sleep(0.2)
                     self.d.click(914, 425)

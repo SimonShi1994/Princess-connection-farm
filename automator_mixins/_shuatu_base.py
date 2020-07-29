@@ -294,12 +294,12 @@ class ShuatuBaseMixin(ToolsMixin):
         for i in range(5):
             print("Now: ", i)
             while True:
-                screen_shot_ = self.d.screenshot(format='opencv')
+                screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/keyihuode.jpg'):
                     # 存在可以获得，则一直获得到没有可以获得，或者没有三星
                     self.d.click(374, 435)
                     time.sleep(1)
-                    screen_shot_ = self.d.screenshot(format='opencv')
+                    screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/tuijianguanqia.jpg', at=(258, 87, 354, 107)):
                         # 已经强化到最大等级，开始获取装备
                         if not UIMatcher.img_where(screen_shot_, 'img/sanxingtongguan.jpg'):
@@ -319,7 +319,7 @@ class ShuatuBaseMixin(ToolsMixin):
                             time.sleep(0.7)
                             self.d.click(589, 371)
                             while True:
-                                screen_shot_ = self.d.screenshot(format='opencv')
+                                screen_shot_ = self.getscreen()
                                 active_paths = UIMatcher.imgs_where(screen_shot_,
                                                                     ['img/tuijianguanqia.jpg', 'img/zidongqianghua.jpg',
                                                                      'img/tiaoguo.jpg'])
@@ -356,7 +356,7 @@ class ShuatuBaseMixin(ToolsMixin):
                     if UIMatcher.img_where(screen_shot_, 'img/ranktisheng.jpg', at=(206, 325, 292, 346)):
                         self.d.click(250, 338)
                         time.sleep(2)
-                        screen_shot_ = self.d.screenshot(format='opencv')
+                        screen_shot_ = self.getscreen()
                         active_list = UIMatcher.imgs_where(screen_shot_, ['img/queren.jpg', 'img/ok.bmp'])
                         if 'img/queren.jpg' in active_list:
                             x, y = active_list['img/queren.jpg']
