@@ -25,6 +25,13 @@ class UIMatcher:
         return new_img
 
     @staticmethod
+    def AutoRotateClockWise90(img):
+        if img.shape[0] > img.shape[1]:
+            return UIMatcher.RotateClockWise90(img)
+        else:
+            return img
+
+    @staticmethod
     def findpic(screen, template_paths=None):
         # 返回相对坐标
         # 已使用img_where代替

@@ -1,3 +1,6 @@
+import asyncio
+import os
+import threading
 import time
 from typing import Optional
 
@@ -11,7 +14,11 @@ from core.constant import PCRelement
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.usercentre import AutomatorRecorder
-from pcr_config import debug
+from pcr_config import debug, fast_screencut
+
+if fast_screencut:
+    import adbutils
+    import websocket
 
 
 class BaseMixin:
@@ -25,7 +32,7 @@ class BaseMixin:
     def __init__(self):
 
         self.appRunning = False
-        self.account = ""
+        self.account = "debug"
         self.d: Optional[u2.Device] = None
         self.dWidth = 0
         self.dHeight = 0
@@ -36,6 +43,13 @@ class BaseMixin:
         self.last_screen = None  # 每次调用getscreen会把图片暂存至last_screen
         self.last_screen_time = 0
 
+        # fastscreencap
+        if fast_screencut:
+            self.fast_screencut_switch = 0
+            self.lport: Optional[int] = None
+            self.ws: Optional[websocket.WebSocket] = None
+            os.makedirs("screenshots", exist_ok=True)
+
     def init_device(self, address):
         """
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
@@ -44,6 +58,10 @@ class BaseMixin:
         if address != "debug":
             self.d = u2.connect(address)
             self.dWidth, self.dHeight = self.d.window_size()
+            if fast_screencut:
+                d = adbutils.adb.device(address)
+                self.lport = d.forward_port(7912)
+                self.ws = websocket.WebSocket()
 
     def init_account(self, account):
         self.account = account
@@ -249,6 +267,71 @@ class BaseMixin:
                 return True
         return False
 
+    def run_func(self, th_name, a, fun, async_sexitflag=False):
+        if async_sexitflag:
+            th_name.exit()
+            pass
+        else:
+            try:
+                self.do(a, fun)
+                pass
+            except:
+                pass
+        pass
+
+    def do(self, a, fun):
+        # 自定义，在此定义你要运行的参数
+        getattr(asyncio, 'run')(fun)
+        # getattr获取asyncio中run对象，然后进行调用
+        # 凄凄惨惨的替代eval这类危险的函数
+        pass
+
+    def c_async(self, a, account, fun, sync=False):
+        _async_infodic = {'a': a, 'account': account, 'fun': fun,
+                          '"pack_Thread-" + str(account)': "pack_Thread-" + str(account)}
+        th = Multithreading(kwargs=_async_infodic)
+        # print(threading.currentThread().ident)
+        # id, name
+        th.start()
+        if sync:
+            # 线程同步异步开关，True/False
+            th.join()
+            # 线程等待，执行完才能进入下一个线程
+            pass
+        else:
+            # 异步，推荐
+            pass
+        pass
+
+    def start_async_fastscreen(self):
+        account = self.account
+        self.c_async(self, account, self.async_fast_screen(), sync=False)
+
+    async def async_fast_screen(self):
+        while True:
+            try:
+                if self.fast_screencut_switch == 1:
+                    self.ws.connect("ws://localhost:{}/minicap".format(self.lport))
+                    self.fast_screencut_switch = 2
+                elif self.fast_screencut_switch == 2:
+                    while self.fast_screencut_switch in [2, 4]:
+                        data = self.ws.recv()
+                elif self.fast_screencut_switch == 3:
+                    time.sleep(0.2)
+                    while True:
+                        data = self.ws.recv()
+                        if not isinstance(data, (bytes, bytearray)):
+                            continue
+                        with open("screenshots/%s.jpg" % self.account, "wb") as f:
+                            f.write(data)
+                            self.fast_screencut_switch = 4
+                            break
+                elif self.fast_screencut_switch <= 0:
+                    break
+            except Exception as e:
+                self.log.write_log("error", f"fast_screencut出错 {e}")
+                self.fast_screencut_switch = -1
+
     def getscreen(self, filename=None):
         """
         包装了self.d.screenshot
@@ -256,9 +339,25 @@ class BaseMixin:
         :return: 截图的opencv格式
         """
         if self.debug_screen is None:
-            self.last_screen = self.d.screenshot(filename, format="opencv")
+            if fast_screencut:
+                if self.fast_screencut_switch <= 0:
+                    self.fast_screencut_switch = 1
+                    self.start_async_fastscreen()
+                while self.fast_screencut_switch not in [-1, 2]:
+                    pass
+                if self.fast_screencut_switch == 2:
+                    self.fast_screencut_switch = 3
+                    while self.fast_screencut_switch not in [-1, 4]:
+                        pass
+                if self.fast_screencut_switch == -1:
+                    self.last_screen = self.d.screenshot(filename, format="opencv")
+                else:
+                    self.last_screen = cv2.imread("screenshots/%s.jpg" % self.account)
+                    self.fast_screencut_switch = 2
+            else:
+                self.last_screen = self.d.screenshot(filename, format="opencv")
             self.last_screen_time = time.time()
-            return self.last_screen
+            return UIMatcher.AutoRotateClockWise90(self.last_screen)
         else:
             if isinstance(self.debug_screen, str):
                 return cv2.imread(self.debug_screen)
@@ -338,8 +437,8 @@ class BaseMixin:
                 # print('未找到所需的按钮,无动作')
                 pass
 
-    def lockimg(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=0,
-                at=None):
+    def lockimg(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=30,
+                at=None, is_raise=True):
         """
         @args:
             img:要匹配的图片目录
@@ -352,6 +451,7 @@ class BaseMixin:
             elseclick:在找不到图片时要点击的坐标，列表，列表元素为坐标如(1,1)
             elsedelay:上述点击后延迟的时间
             retry:elseclick最多点击次数，0为无限次
+            is_raise: 失败时，是否弹出错误
         @return:是否在retry次内点击成功
         """
         # 2020-07-12 Add: 增加了ifclick,elseclick参数对Tuple的兼容性
@@ -385,11 +485,13 @@ class BaseMixin:
             time.sleep(alldelay)
             attempt += 1
             if retry != 0 and attempt >= retry:
+                if is_raise:
+                    raise Exception("Lockimg 超时！")
                 return False
         return True
 
     def lock_no_img(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5,
-                    retry=0, at=None):  # 锁定指定图像
+                    retry=30, at=None, is_raise=True):  # 锁定指定图像
         """
         @args:
             img:要匹配的图片目录
@@ -401,6 +503,7 @@ class BaseMixin:
             ifdelay:上述点击后延迟的时间
             elseclick:在找到图片时要点击的坐标，列表，列表元素为坐标如(1,1)
             retry:elseclick最多点击次数，0为无限次
+            is_raise: 失败时，是否弹出错误
         @return:是否在retry次内点击成功
         """
         # 2020-07-13 Added By Dr-Blueomnd
@@ -434,6 +537,8 @@ class BaseMixin:
             time.sleep(alldelay)
             attempt += 1
             if retry != 0 and attempt >= retry:
+                if is_raise:
+                    raise Exception("Lock_no_img 超时！")
                 return False
         return True
 
@@ -541,3 +646,44 @@ class BaseMixin:
         d["current"] = "..."
         d["error"] = error
         self.AR.set("run_status", d)
+
+
+class Multithreading(threading.Thread, BaseMixin):
+    """
+    a 为连接Automator
+    ac 为账号
+    fun 为Automator中功能函数
+    th_id 为线程id
+    th_name 为线程名
+    BY:CyiceK
+    """
+
+    # 多线程异步
+    # 2020.7.11 已封装
+    # 2020.7.15 改装为进程池
+    # 2020.7.16 我又改了回去
+
+    def __init__(self, kwargs):
+        threading.Thread.__init__(self)
+        self.th_sw = 0
+        self.exitFlag = 0
+        # print(kwargs)
+        # kwargs = kwargs['kwargs']
+        self.th_id = kwargs['account']
+        self.th_name = kwargs['"pack_Thread-" + str(account)']
+        self.a = kwargs['a']
+        self.fun = kwargs['fun']
+        self.account = kwargs['account']
+        self._stop_event = threading.Event()
+        pass
+
+    def run(self):
+        self.run_func(self.th_name, self.a, self.fun)
+
+    def stop(self):
+        self._stop_event.set()
+
+    def stopped(self):
+        return self._stop_event.is_set()
+
+    pass

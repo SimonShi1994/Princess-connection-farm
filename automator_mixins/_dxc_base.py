@@ -16,6 +16,24 @@ class DXCBaseMixin(FightBaseMixin):
         self.dxc_switch = 0
         self.is_dixiacheng_end = 0  # 地下城是否结束，0未结束，1结束
 
+    def dxc_kkr(self):
+        """
+        处理跳脸
+        :return:
+        """
+        self.wait_for_stable()
+        if self.is_exists(DXC_ELEMENT["dxc_kkr"]):
+            self.chulijiaocheng(turnback=None)
+            if self.is_exists(DXC_ELEMENT["dxc_in_shop"]):
+                self.click(*DXC_ELEMENT["dxc_in_shop"])
+            else:
+                # 应急处理：从主页返回
+                self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
+                self.click(480, 505, post_delay=1)
+                self.lockimg('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
+                self.click(900, 138, post_delay=3)
+                self.lockimg(DXC_ELEMENT["chetui"])  # 锁定撤退
+
     def dxczuobiao(self, x, y, auto, speed, bianzu=0, duiwu=0, min_live=5):
         """
         新的地下城刷图函数
@@ -67,17 +85,7 @@ class DXCBaseMixin(FightBaseMixin):
             self.wait_for_stable()
             self.click(*DXC_ELEMENT["shouqubaochou_ok"], post_delay=2)
             # 处理跳脸：回到地下城界面
-            if self.is_exists(DXC_ELEMENT["dxc_kkr"]):
-                self.chulijiaocheng(turnback=None)
-                if self.is_exists(DXC_ELEMENT["dxc_in_shop"]):
-                    self.click(*DXC_ELEMENT["dxc_in_shop"])
-                else:
-                    # 应急处理：从主页返回
-                    self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
-                    self.click(480, 505, post_delay=1)
-                    self.lockimg('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
-                    self.click(900, 138, post_delay=3)
-                    self.lockimg(DXC_ELEMENT["chetui"])  # 锁定撤退
+            self.dxc_kkr()
 
             return 1
         elif mode == 2:
@@ -116,6 +124,7 @@ class DXCBaseMixin(FightBaseMixin):
                 # 没刷完，进入地下城
                 self.click(DXC_ENTRANCE[dxc_id], pre_delay=1, post_delay=3)
                 self.click(*DXC_ELEMENT["quyuxuanzequeren_ok"], post_delay=8)
+        self.dxc_kkr()
         self.lockimg(DXC_ELEMENT["chetui"])  # 锁定撤退
         return True
 
