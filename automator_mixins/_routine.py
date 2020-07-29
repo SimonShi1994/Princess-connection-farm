@@ -28,24 +28,24 @@ class RoutineMixin(ShuatuBaseMixin):
             self.d.click(1, 1)
             time.sleep(0.3)
 
-        self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.2, at=(891, 413, 930, 452))  # 首页锁定
+        self.lock_home()
         time.sleep(0.5)
         # 这里防一波第二天可可萝跳脸教程
         screen_shot_ = self.d.screenshot(format="opencv")
         num_of_white, _, _ = UIMatcher.find_gaoliang(screen_shot_)
         if num_of_white < 50000:
             self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
-            self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2, at=(891, 413, 930, 452))
+            self.lock_home()
             return
         if UIMatcher.img_where(screen_shot_, 'img/kekeluo.bmp'):
             self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
-            self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2, at=(891, 413, 930, 452))
+            self.lock_home()
 
     def gonghuizhijia(self):  # 家园领取
         self.lock_home()
         self.lockimg('img/jyquanbushouqu.jpg', elseclick=[(622, 509)], elsedelay=1)
         self.lockimg('img/guanbi.jpg', elseclick=[(899, 429)], elsedelay=0.5, retry=3)
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
 
     def mianfeiniudan(self):
         # 免费扭蛋
@@ -107,11 +107,11 @@ class RoutineMixin(ShuatuBaseMixin):
             time.sleep(1)  # 首页锁定，保证回到首页
 
     def shouqu(self):  # 收取全部礼物
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
         self.lockimg('img/shouqulvli.jpg', elseclick=[(910, 434)], at=(98, 458, 199, 496))
         self.lockimg('img/shouquliwu.bmp', elseclick=[(712, 477)], elsedelay=0.5, ifclick=[(588, 479)], ifbefore=0.5,
                      retry=3, at=(435, 30, 527, 58))
-        self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.3, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
 
     def shouqurenwu(self):  # 收取任务报酬
         while True:

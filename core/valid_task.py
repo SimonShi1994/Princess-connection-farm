@@ -131,11 +131,16 @@ class ValidTask:
         return self
 
 
-def ShuatuToTuple(d: dict) -> tuple:
+def ShuatuToTuple(lst: list) -> list:
     l = []
-    for A in sorted(d):
-        for B in sorted(d[A]):
-            l = l + [(A, B, d[A][B])]
+    for i in lst:
+        try:
+            ss = i.strip().split("-")
+            l += [(int(ss[0]), int(ss[1]), int(ss[2]))]
+
+        except:
+            pass
+    l.sort()
     return l
 
 
@@ -144,10 +149,9 @@ class ShuatuBaseBox(InputBoxBase):
         self.tu_dict = {}
 
     def transform(self):
-        d = {}
+        d = []
         for (A, B), T in self.tu_dict.items():
-            d.setdefault(A, {})
-            d[A][B] = T
+            d += [f"{A}-{B}-{T}"]
         return d
 
     def Help(self):
@@ -169,7 +173,7 @@ class ShuatuBaseBox(InputBoxBase):
     def del_(self, A, B, T):
         pass
 
-    def create(self) -> dict:
+    def create(self) -> list:
         self.tu_dict = {}
         print("输入图号 (help 查看帮助)")
         while True:
@@ -362,7 +366,7 @@ VALID_TASK = ValidTask() \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s2", "shuatuNN", "刷N图", "使用扫荡券刷指定普通副本",
-         [TaskParam("tu_dict", dict, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
+         [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",
-         [TaskParam("tu_dict", dict, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox())]) \
+         [TaskParam("tu_dict", list, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox())]) \
     .add("s4", "doActivityHard", "刷活动图", "使用扫荡券刷活动副本（慎用，因为每次活动坐标都不同）")

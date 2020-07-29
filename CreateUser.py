@@ -108,8 +108,8 @@ def TaskEditor(taskname):
 
             else:
                 print("不认识的命令。")
-        except:
-            print("输入错误！")
+        except Exception as e:
+            print("输入错误！", e)
 
 
 def show_account(account):
