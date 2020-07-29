@@ -10,3 +10,6 @@ log_lev = '1'
 
 async_screenshot_freq = 5
 bad_connecting_time = 30
+
+# 仅为调试使用
+trace_exception_for_debug = False  # 开启后，所有的try向上传递错误信息，并且只用第一个device跑第一个任务（单进程）

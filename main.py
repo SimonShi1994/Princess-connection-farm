@@ -3,9 +3,8 @@ import os
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.usercentre import AutomatorRecorder, list_all_users
 from initialize import execute
-
-
 # 主程序
+from pcr_config import trace_exception_for_debug
 
 
 def RunFirstTime():
@@ -123,5 +122,7 @@ if __name__ == '__main__':
                 exec(open("CreateUser.py", "r", encoding="utf-8").read())
             else:
                 print("未知的命令")
-        except:
-            print("输入错误！")
+        except Exception as e:
+            print("出现错误:", e)
+            if trace_exception_for_debug:
+                raise e

@@ -360,9 +360,9 @@ class BaseMixin:
             elseclick = []
         if ifclick is None:
             ifclick = []
-        if type(ifclick) is tuple:
+        if type(ifclick) is not list:
             ifclick = [ifclick]
-        if type(elseclick) is tuple:
+        if type(elseclick) is not list:
             elseclick = [elseclick]
         if isinstance(img, PCRelement):
             if at is None:

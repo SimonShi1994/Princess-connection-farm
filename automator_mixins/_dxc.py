@@ -484,6 +484,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         if dxc_id not in DXC_COORD:
             self.log.write_log("error", "坐标库中没有{dxc_id}号地下城的信息！")
             return
+        self.lock_home()
         if not self.enter_dxc(dxc_id):
             # 进入地下城失败，次数不足
             self.lock_home()

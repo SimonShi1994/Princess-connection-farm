@@ -10,8 +10,8 @@ from core.constant import USER_DEFAULT_DICT as UDD
 # 账号日志
 from core.log_handler import pcr_log
 from core.usercentre import list_all_users, AutomatorRecorder
-
 # 临时解决方案，可以改进
+from pcr_config import trace_exception_for_debug
 
 acclog = log_handler.pcr_acc_log()
 # 雷电模拟器
@@ -59,6 +59,8 @@ def runmain(params):
         # 停止异步
         AsyncMixin().stop_th()
     except Exception as e:
+        if trace_exception_for_debug:
+            raise e
         pcr_log(acc).write_log(level='error', message=f'initialize-检测出异常: <{type(e)}> {e}')
         try:
             a.fix_reboot(False)
@@ -163,8 +165,11 @@ def execute(continue_=False, max_retry=3):
         queue.put(device)
 
     # 进程池大小为模拟器数量, 保证同一时间最多有模拟器数量个进程在运行
-    with Pool(len(devices)) as mp:
-        mp.map(runmain, params)
+    if trace_exception_for_debug:
+        runmain(params[0])
+    else:
+        with Pool(len(devices)) as mp:
+            mp.map(runmain, params)
 
     # 退出adb
     os.system('cd adb & adb kill-server')

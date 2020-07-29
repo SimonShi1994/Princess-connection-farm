@@ -13,8 +13,9 @@ from core.log_handler import pcr_log
 from core.usercentre import check_task_dict
 from core.valid_task import VALID_TASK
 
-
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
+from pcr_config import trace_exception_for_debug
+
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
     def __init__(self, address):
@@ -96,6 +97,8 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             except Exception as e:
                 continue_ = True
                 pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry + 1}/{max_retry}')
+                if trace_exception_for_debug:
+                    raise e
                 last_exception = e
                 self.fix_reboot()
         else:
