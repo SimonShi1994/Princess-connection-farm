@@ -324,16 +324,16 @@ class BaseMixin:
             # print(active_path)
             if 'img/caidan_tiaoguo.jpg' in active_path:
                 x, y = active_path['img/caidan_tiaoguo.jpg']
-                self.d.click(x, y)
+                self.click(x, y)
             else:
                 for name, (x, y) in active_path.items():
                     # print(name)
-                    self.d.click(x, y)
+                    self.click(x, y)
             time.sleep(0.5)
         else:
             if suiji:
                 # print('未找到所需的按钮,将点击左上角')
-                self.d.click(0.1 * self.dWidth, 0.1 * self.dHeight)
+                self.click(0.1 * self.dWidth, 0.1 * self.dHeight)
             else:
                 # print('未找到所需的按钮,无动作')
                 pass
@@ -375,12 +375,12 @@ class BaseMixin:
                 if ifclick != []:
                     for clicks in ifclick:
                         time.sleep(ifbefore)
-                        self.d.click(clicks[0], clicks[1])
+                        self.click(clicks[0], clicks[1])
                         time.sleep(ifdelay)
                 break
             if elseclick != []:
                 for clicks in elseclick:
-                    self.d.click(clicks[0], clicks[1])
+                    self.click(clicks[0], clicks[1])
                     time.sleep(elsedelay)
             time.sleep(alldelay)
             attempt += 1
@@ -424,12 +424,12 @@ class BaseMixin:
                 if ifclick != []:
                     for clicks in ifclick:
                         time.sleep(ifbefore)
-                        self.d.click(clicks[0], clicks[1])
+                        self.click(clicks[0], clicks[1])
                         time.sleep(ifdelay)
                 break
             if elseclick != []:
                 for clicks in elseclick:
-                    self.d.click(clicks[0], clicks[1])
+                    self.click(clicks[0], clicks[1])
                     time.sleep(elsedelay)
             time.sleep(alldelay)
             attempt += 1
@@ -457,7 +457,7 @@ class BaseMixin:
             num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 try:
-                    self.d.click(x * self.dWidth, y * self.dHeight + 20)
+                    self.click(x * self.dWidth, y * self.dHeight + 20)
                 except:
                     pass
                 time.sleep(1)
@@ -483,27 +483,27 @@ class BaseMixin:
                 pass
             elif self.click_img(screen_shot_, 'img/caidan_yuan.jpg', at=(898, 23, 939, 62)):
                 time.sleep(0.7)
-                self.d.click(804, 45)
+                self.click(804, 45)
                 time.sleep(0.7)
-                self.d.click(593, 372)
+                self.click(593, 372)
                 time.sleep(2)
             elif UIMatcher.img_where(screen_shot_, 'img/qianwanghuodong.bmp'):
                 for _ in range(3):
-                    self.d.click(390, 369)
+                    self.click(390, 369)
                     time.sleep(1)
             else:
-                self.d.click(1, 100)
+                self.click(1, 100)
             count = 0
             time.sleep(1)
         if turnback == "shuatu":
             # 返回冒险
-            self.d.click(480, 505)
+            self.click(480, 505)
             time.sleep(2)
             self.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513), (390, 369)], elsedelay=0.5)
             while True:
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/zhuxianguanqia.jpg', at=(511, 286, 614, 314)):
-                    self.d.click(562, 253)
+                    self.click(562, 253)
                     time.sleep(0.5)
                 else:
                     break
@@ -512,7 +512,7 @@ class BaseMixin:
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                     break
-                self.d.click(704, 84)
+                self.click(704, 84)
                 time.sleep(0.5)
 
     def task_start(self):

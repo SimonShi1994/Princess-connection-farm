@@ -26,19 +26,19 @@ class ToolsMixin(BaseMixin):
         self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
 
     def setting(self):
-        self.d.click(875, 517)
+        self.click(875, 517)
         time.sleep(2)
-        self.d.click(149, 269)
+        self.click(149, 269)
         time.sleep(2)
-        self.d.click(769, 87)
+        self.click(769, 87)
         time.sleep(1)
-        self.d.click(735, 238)
+        self.click(735, 238)
         time.sleep(0.5)
-        self.d.click(735, 375)
+        self.click(735, 375)
         time.sleep(0.5)
-        self.d.click(479, 479)
+        self.click(479, 479)
         time.sleep(1)
-        self.d.click(95, 516)
+        self.click(95, 516)
 
         # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
         # 使用Baidu OCR接口
@@ -90,7 +90,7 @@ class ToolsMixin(BaseMixin):
         # 格式：apiKey secretKey（中间以一个\t作为分隔符）
         # 返回值：一个int类型整数；如果读取失败返回-1
 
-        self.d.click(871, 513)  # 主菜单
+        self.click(871, 513)  # 主菜单
         while True:  # 锁定帮助
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/bangzhu.jpg'):
@@ -105,17 +105,17 @@ class ToolsMixin(BaseMixin):
             return int(ret['words_result'][1]['words'].split('/')[0])
 
     def rename(self, name):  # 重命名
-        self.d.click(871, 513)  # 主菜单
+        self.click(871, 513)  # 主菜单
         self.lockimg('img/bangzhu.bmp', ifclick=[(370, 270)])  # 锁定帮助 点击简介
         self.lockimg('img/bianji.bmp', ifclick=[(900, 140)])  # 锁定 点击铅笔修改按钮
         self.lockimg('img/biangeng.bmp', ifclick=[(480, 270)])  # 锁定 玩家名 点击游戏渲染编辑框
         time.sleep(1)
-        self.d.click(290, 425)  # 点击编辑框
+        self.click(290, 425)  # 点击编辑框
         self.d.clear_text()
         self.d.send_keys(name)
-        self.d.click(880, 425)  # 点击确定
+        self.click(880, 425)  # 点击确定
         time.sleep(0.5)
-        self.d.click(590, 370)  # 变更按钮
+        self.click(590, 370)  # 变更按钮
         time.sleep(1)
         self.lockimg('img/bangzhu.bmp', elseclick=[(32, 32)])  # 锁定帮助
         pcr_log(self.account).write_log(level='info', message='账号：%s已修改名字' % name)

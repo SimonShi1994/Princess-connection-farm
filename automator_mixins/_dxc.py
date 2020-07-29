@@ -133,7 +133,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/zhiyuan.jpg', at=(448, 78, 512, 102)):
                     time.sleep(1)
-                    # self.d.click(100, 173)  # 第一个人
+                    # self.click(100, 173)  # 第一个人
                     screen_shot = self.getscreen()
                     self.guochang(screen_shot, ['img/zhiyuan.jpg'], suiji=0)
                     break
@@ -153,14 +153,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             else:
                 self.click(98, 88, post_delay=1)  # 全部
                 self.click(100, 173, post_delay=1)  # 第一个人
-                self.d.click(833, 470)  # 战斗开始
+                self.click(833, 470)  # 战斗开始
             while True:
                 # time.sleep(0.5)
                 # screen_shot_ = self.getscreen()
                 self.lockimg('img/ok.bmp', ifclick=[(588, 480)], elseclick=[(833, 470)], ifbefore=2, ifdelay=1)
                 # if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg'):
                 #    time.sleep(1.5)
-                #    self.d.click(833, 470)  # 战斗开始
+                #    self.click(833, 470)  # 战斗开始
                 #    break
                 break
 
@@ -207,9 +207,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lockimg('img/ok.bmp', ifclick=[(588, 371)], elseclick=[(808, 435)])
                     # for i in range(3):
                     # 保险措施
-                    # self.d.click(808, 435)
+                    # self.click(808, 435)
                     # time.sleep(1)
-                    # self.d.click(588, 371)
+                    # self.click(588, 371)
                     # self.guochang(screen_shot_, ['img/chetui.jpg'], suiji=0)
                     # time.sleep(1)
                     # screen_shot = self.getscreen()
@@ -256,7 +256,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lockimg('img/ok.bmp', elseclick=[(810, 433)], elsedelay=1, ifclick=[(592, 370)], ifbefore=0.5,
                              at=(495, 353, 687, 388))
                 continue
-            self.d.click(1, 100)
+            self.click(1, 100)
             time.sleep(0.3)
 
         ok = self.lockimg('img/ok.bmp', elseclick=[(298, 213)], elsedelay=0.5, ifclick=[(596, 371)], ifbefore=1,
@@ -270,29 +270,29 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             # 锁定挑战和第一层
             self.lockimg('img/tiaozhan.bmp', elseclick=[(667, 360)], ifclick=[(833, 456)], at=(759, 428, 921, 483))
             time.sleep(2)
-            self.d.click(480, 88)
+            self.click(480, 88)
             time.sleep(0.5)
             poses = [(106, 172), (216, 172), (323, 172), (425, 172)]
             for pos in poses:
-                self.d.click(*pos)
+                self.click(*pos)
                 time.sleep(0.2)
-            self.d.click(98, 92)
+            self.click(98, 92)
             time.sleep(0.5)
             for pos in poses:
-                self.d.click(*pos)
+                self.click(*pos)
                 time.sleep(0.2)
             screen = self.getscreen()
             if UIMatcher.img_where(screen, 'img/notzhandoukaishi.bmp', threshold=0.98):
                 # 当无法出击时将会退出地下城
                 time.sleep(0.5)
-                self.d.click(1, 100)
+                self.click(1, 100)
                 pcr_log(self.account).write_log(level='info', message="%s无法出击!" % self.account)
                 break
             while True:
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg', at=(758, 427, 917, 479)):
                     time.sleep(1)
-                    self.d.click(833, 470)  # 战斗开始
+                    self.click(833, 470)  # 战斗开始
                     self.lockimg('img/ok.bmp', ifclick=[(588, 479)], ifdelay=0.5, retry=5)
                     break
                 time.sleep(1)
@@ -313,13 +313,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 screen = self.getscreen()
                 if UIMatcher.img_where(screen, 'img/auto.jpg'):
                     time.sleep(0.2)
-                    self.d.click(914, 425)
+                    self.click(914, 425)
 
             if skip is False:
                 self.lockimg('img/shanghaibaogao.jpg', elseclick=[(1, 100)], ifclick=[(820, 492)], ifdelay=3)
                 self.lock_no_img('img/shanghaibaogao.jpg', elseclick=[(820, 492)], elsedelay=3)
 
-            self.d.click(1, 1)  # 取消显示结算动画
+            self.click(1, 1)  # 取消显示结算动画
             self.lockimg('img/chetui.jpg', elseclick=[(1, 1)], at=(738, 420, 872, 442))
             self.lockimg('img/ok.bmp', elseclick=[(809, 433)], elsedelay=1, at=(495, 353, 687, 388))
             self.lock_no_img('img/ok.bmp', elseclick=[(592, 373)], elsedelay=0.5, at=(495, 353, 687, 388))
@@ -328,15 +328,15 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
 
     def dixiachengYunhai(self):  # 地下城 云海 （第一个）
-        self.d.click(480, 505)
+        self.click(480, 505)
         time.sleep(1)
         while True:
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
-            self.d.click(480, 505)
+            self.click(480, 505)
             time.sleep(1)
-        self.d.click(900, 138)
+        self.click(900, 138)
         time.sleep(3)
 
         screen_shot_ = self.getscreen()
@@ -349,13 +349,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp'):
-                    self.d.click(250, 250)  # 云海
+                    self.click(250, 250)  # 云海
                     time.sleep(1)
                     while True:
                         screen_shot_ = self.getscreen()
                         if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                             break
-                    self.d.click(592, 369)  # 点击ok
+                    self.click(592, 369)  # 点击ok
                     time.sleep(1)
                     break
             # 刷地下城
@@ -371,15 +371,15 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def dixiachengDuanya(self):  # 地下城 断崖（第三个）
-        self.d.click(480, 505)
+        self.click(480, 505)
         time.sleep(1)
         while True:
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
-            self.d.click(480, 505)
+            self.click(480, 505)
             time.sleep(1)
-        self.d.click(900, 138)
+        self.click(900, 138)
         time.sleep(3)
         screen_shot_ = self.getscreen()
         if UIMatcher.img_where(screen_shot_, 'img/dixiacheng_used.jpg'):  # 避免某些农场号刚买回来已经进了地下城
@@ -391,13 +391,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp'):
-                    self.d.click(712, 267)  # 断崖
+                    self.click(712, 267)  # 断崖
                     time.sleep(1)
                     while True:
                         screen_shot_ = self.getscreen()
                         if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                             break
-                    self.d.click(592, 369)  # 点击ok
+                    self.click(592, 369)  # 点击ok
                     time.sleep(1)
                     break
             # 刷地下城
@@ -418,9 +418,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if UIMatcher.img_where(screen_shot_, 'img/10.jpg'):  # 地下城10层失败重试1次，使低练度号能2刀通关boss
                     self.is_dixiacheng_end = 0
                     self.dixiachengzuobiao(654, 321, 0)  # 10层
-                self.d.click(780, 430)
+                self.click(780, 430)
                 time.sleep(1)
-                self.d.click(576, 364)
+                self.click(576, 364)
 
         # 完成战斗后
         self.lock_home()

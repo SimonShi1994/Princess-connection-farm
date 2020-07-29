@@ -37,6 +37,9 @@ def runmain(params):
         account = user["account"]
         password = user["password"]
         a.log.write_log("info", f"即将登陆： 用户名 {account}")  # 显然不需要输出密码啊喂！
+
+        AsyncMixin().start_th()  # 提前开启异步：截的图可以给login函数使用
+        a.start_async()
         gevent.joinall([
             # 这里是协程初始化的一个实例
             gevent.spawn(a.login_auth, account, password),
@@ -47,8 +50,6 @@ def runmain(params):
         # 还是日志
         # 初始化刷图
         # 开始异步
-        AsyncMixin().start_th()
-        a.start_async()
         a.RunTasks(tas, continue_, max_retry)  # 执行主要逻辑
         gevent.joinall([
             # 这里是协程的一个实例
@@ -63,7 +64,8 @@ def runmain(params):
             a.fix_reboot(False)
         except:
             pass
-
+    finally:
+        AsyncMixin().stop_th()
     # 退出当前账号，切换下一个
     queue.put(address)
 

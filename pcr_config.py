@@ -8,5 +8,5 @@ baidu_secretKey = ''
 s_sckey = ''
 log_lev = '1'
 
-async_screenshot_freq = 0.8
-bad_connecting_time = 15
+async_screenshot_freq = 5
+bad_connecting_time = 30

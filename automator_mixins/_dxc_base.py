@@ -158,21 +158,21 @@ class DXCBaseMixin(FightBaseMixin):
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     break
-                self.d.click(1, 1)
+                self.click(1, 1)
                 time.sleep(1)
             time.sleep(1)
             while True:
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
                     break
-                self.d.click(1, 1)
+                self.click(1, 1)
                 time.sleep(1)
-            self.d.click(1, 1)
+            self.click(1, 1)
             time.sleep(3)
 
-            self.d.click(x, y)  # 层数
+            self.click(x, y)  # 层数
             time.sleep(2)
-            self.d.click(833, 456)  # 挑战
+            self.click(833, 456)  # 挑战
             time.sleep(2)
 
             while True:  # 锁定战斗开始
@@ -181,12 +181,12 @@ class DXCBaseMixin(FightBaseMixin):
                     break
 
             if team != 0:  # 换队
-                self.d.click(866, 91)  # 我的队伍
+                self.click(866, 91)  # 我的队伍
                 time.sleep(2)
                 if team == 1:
-                    self.d.click(792, 172)  # 1队
+                    self.click(792, 172)  # 1队
                 elif team == 2:
-                    self.d.click(789, 290)  # 2队
+                    self.click(789, 290)  # 2队
                 time.sleep(0.5)
                 while True:  # 锁定战斗开始
                     screen_shot_ = self.getscreen()
@@ -194,7 +194,7 @@ class DXCBaseMixin(FightBaseMixin):
                         break
                     time.sleep(0.5)
 
-            self.d.click(837, 447)  # 战斗开始
+            self.click(837, 447)  # 战斗开始
             time.sleep(2)
 
             # while True:  # 战斗中快进
@@ -211,14 +211,14 @@ class DXCBaseMixin(FightBaseMixin):
                     while True:
                         screen_shot = self.getscreen()
                         if UIMatcher.img_where(screen_shot, 'img/xiayibu.jpg'):
-                            self.d.click(830, 503)
+                            self.click(830, 503)
                             break
                         if UIMatcher.img_where(screen_shot, 'img/gotodixiacheng.jpg'):
                             self.is_dixiacheng_end = 1
-                            self.d.click(830, 503)
+                            self.click(830, 503)
                             break
-                    self.d.click(830, 503)  # 点下一步 避免guochang可能失败
+                    self.click(830, 503)  # 点下一步 避免guochang可能失败
                     break
             time.sleep(3)
-            self.d.click(1, 1)  # 取消显示结算动画
+            self.click(1, 1)  # 取消显示结算动画
             time.sleep(1)

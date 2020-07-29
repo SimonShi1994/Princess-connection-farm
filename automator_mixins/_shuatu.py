@@ -33,14 +33,14 @@ class ShuatuMixin(ShuatuBaseMixin):
         """
         # 进入冒险
         time.sleep(2)
-        self.d.click(480, 505)
+        self.click(480, 505)
         time.sleep(2)
 
         while True:
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
-        self.d.click(562, 253)
+        self.click(562, 253)
         time.sleep(2)
         while True:
             screen_shot_ = self.getscreen()
@@ -48,7 +48,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 break
         for i in range(map):
             time.sleep(3)
-            self.d.click(27, 272)
+            self.click(27, 272)
         self.shuatuzuobiao(106, 279, 160)  # 1-1 刷7次体力为佳
 
         self.lock_home()
@@ -130,22 +130,22 @@ class ShuatuMixin(ShuatuBaseMixin):
     def doActivityHard(self):
         # 进入冒险
         time.sleep(2)
-        self.d.click(480, 505)
+        self.click(480, 505)
         time.sleep(2)
         while True:
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
         # 点击进入活动
-        self.d.click(415, 430)
+        self.click(415, 430)
         time.sleep(3)
         while True:
             screen_shot_ = self.getscreen()
-            self.d.click(480, 380)
+            self.click(480, 380)
             time.sleep(0.5)
-            self.d.click(480, 380)
+            self.click(480, 380)
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
-                self.d.click(880, 80)
+                self.click(880, 80)
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
         self.shuatuzuobiao(689, 263, self.times)  # 1-5

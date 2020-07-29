@@ -74,22 +74,22 @@ class AsyncMixin(BaseMixin):
                 # time.sleep(10)
                 # 过快可能会卡
                 if UIMatcher.img_where(screenshot, 'img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
-                    self.d.click(917, 39)  # 菜单
+                    self.click(917, 39)  # 菜单
                     time.sleep(1)
-                    self.d.click(807, 44)  # 跳过
+                    self.click(807, 44)  # 跳过
                     time.sleep(1)
-                    self.d.click(589, 367)  # 跳过ok
+                    self.click(589, 367)  # 跳过ok
                     time.sleep(5)
                 if UIMatcher.img_where(screenshot, 'img/kekeluo.bmp', at=(181, 388, 384, 451)):
                     # 防妈骑脸
-                    self.d.click(1, 1)
+                    self.click(1, 1)
                     time.sleep(3)
-                    self.d.click(1, 1)
+                    self.click(1, 1)
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_1.bmp', at=(0, 390, 147, 537)):
                     self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_2.bmp', at=(580, 320, 649, 468)):
                     time.sleep(4)
-                    self.d.click(610, 431)
+                    self.click(610, 431)
                     self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
             except Exception as e:
@@ -221,9 +221,9 @@ class AsyncMixin(BaseMixin):
         # 数据错误逻辑
         # 放弃不用，没有重启来的稳
         time.sleep(1)
-        self.d.click(479, 369)
+        self.click(479, 369)
         time.sleep(8)
-        self.d.click(1, 1)
+        self.click(1, 1)
 
 
 class Multithreading(threading.Thread, AsyncMixin):

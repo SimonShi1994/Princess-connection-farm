@@ -16,16 +16,16 @@ class RoutineMixin(ShuatuBaseMixin):
             if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp', at=(891, 413, 930, 452)):
                 break
             if UIMatcher.img_where(screen_shot_, 'img/niudan_jiasu.jpg', at=(700, 0, 960, 100)):
-                self.d.click(893, 39)  # 跳过
+                self.click(893, 39)  # 跳过
                 time.sleep(0.5)
                 continue
             if UIMatcher.img_where(screen_shot_, 'img/jingsaikaishi.bmp', at=(755, 471, 922, 512)):
-                self.d.click(786, 308)  # 选角色
+                self.click(786, 308)  # 选角色
                 time.sleep(0.2)
-                self.d.click(842, 491)  # 开始
+                self.click(842, 491)  # 开始
                 time.sleep(0.5)
                 continue
-            self.d.click(1, 1)
+            self.click(1, 1)
             time.sleep(0.3)
 
         self.lock_home()
@@ -60,7 +60,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 break
             else:
                 time.sleep(1)
-                self.d.click(473, 436)  # 手动点击
+                self.click(473, 436)  # 手动点击
                 time.sleep(2)
                 break
 
@@ -69,17 +69,17 @@ class RoutineMixin(ShuatuBaseMixin):
             if UIMatcher.img_where(screen_shot_, 'img/niudanputong.jpg'):
                 self.guochang(screen_shot_, ['img/niudanputong.jpg'], suiji=0)
                 time.sleep(1)
-                self.d.click(722, 351)  # 点进扭蛋
+                self.click(722, 351)  # 点进扭蛋
                 time.sleep(1)
-                self.d.click(584, 384)
+                self.click(584, 384)
                 break
             else:
                 time.sleep(1)
-                self.d.click(876, 75)  # 手动点击
+                self.click(876, 75)  # 手动点击
                 time.sleep(1)
-                self.d.click(722, 351)  # 点进扭蛋
+                self.click(722, 351)  # 点进扭蛋
                 time.sleep(1)
-                self.d.click(584, 384)
+                self.click(584, 384)
                 break
         self.lock_home()
 
@@ -91,19 +91,19 @@ class RoutineMixin(ShuatuBaseMixin):
         time.sleep(1)
         screen_shot_ = self.getscreen()
         if UIMatcher.img_where(screen_shot_, 'img/mianfeishilian.jpg'):  # 仅当有免费十连时抽取免费十连
-            self.d.click(872, 355)  # 点击十连
+            self.click(872, 355)  # 点击十连
             time.sleep(1)
-            self.d.click(592, 369)  # 确认
+            self.click(592, 369)  # 确认
 
         while True:
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp', at=(891, 413, 930, 452)):
                 break
-            self.d.click(900, 40)
+            self.click(900, 40)
             time.sleep(0.5)
-            self.d.click(100, 505)
+            self.click(100, 505)
             time.sleep(0.5)
-            self.d.click(100, 505)
+            self.click(100, 505)
             time.sleep(1)  # 首页锁定，保证回到首页
 
     def shouqu(self):  # 收取全部礼物
@@ -119,43 +119,43 @@ class RoutineMixin(ShuatuBaseMixin):
             if UIMatcher.img_where(screen_shot_, 'img/renwu.jpg'):
                 self.guochang(screen_shot_, ['img/renwu.jpg'], suiji=0)
                 break
-            self.d.click(1, 1)
+            self.click(1, 1)
             time.sleep(1)
         time.sleep(3.5)
-        self.d.click(846, 437)  # 全部收取
+        self.click(846, 437)  # 全部收取
         time.sleep(1)
-        self.d.click(100, 505)
+        self.click(100, 505)
         time.sleep(0.5)
-        self.d.click(100, 505)
+        self.click(100, 505)
         time.sleep(1.5)
         self.lock_home()
 
     def goumaitili(self, times):  # 购买体力，注意此函数参数默认在首页执行，其他地方执行要调整参数
         for i in range(times):
             self.lock_home()
-            self.d.click(320, 31)
+            self.click(320, 31)
             time.sleep(1)
             screen_shot = self.getscreen()
             self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
             time.sleep(1)
             screen_shot = self.getscreen()
             self.guochang(screen_shot, ['img/zhandou_ok.jpg'], suiji=1)
-            self.d.click(100, 505)  # 点击一下首页比较保险
+            self.click(100, 505)  # 点击一下首页比较保险
 
     def goumaimana(self, times, mode=1):
         # mode 1: 购买times次10连
         # mode 0：购买times次1连
         if mode == 0:
             time.sleep(2)
-            self.d.click(189, 62)
+            self.click(189, 62)
             for i in range(times):
                 while True:  # 锁定取消2
                     screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/quxiao2.jpg'):
                         break
-                    self.d.click(189, 62)
+                    self.click(189, 62)
                     time.sleep(2)
-                self.d.click(596, 471)  # 第一次购买的位置
+                self.click(596, 471)  # 第一次购买的位置
                 while True:  # 锁定ok
                     screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
@@ -163,14 +163,14 @@ class RoutineMixin(ShuatuBaseMixin):
                         break
         else:
             time.sleep(2)
-            self.d.click(189, 62)
+            self.click(189, 62)
             while True:  # 锁定取消2
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/quxiao2.jpg'):
                     break
-                self.d.click(189, 62)
+                self.click(189, 62)
                 time.sleep(2)
-            self.d.click(596, 471)  # 第一次购买的位置
+            self.click(596, 471)  # 第一次购买的位置
             while True:  # 锁定ok
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
@@ -182,7 +182,7 @@ class RoutineMixin(ShuatuBaseMixin):
                     if UIMatcher.img_where(screen_shot_, 'img/quxiao2.jpg'):
                         break
                 time.sleep(3)
-                self.d.click(816, 478)  # 购买10次
+                self.click(816, 478)  # 购买10次
                 while True:  # 锁定ok
                     screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
@@ -193,20 +193,20 @@ class RoutineMixin(ShuatuBaseMixin):
 
     def goumaijingyan(self):
         self.lock_home()
-        self.d.click(617, 435)
+        self.click(617, 435)
         time.sleep(2)
         self.lockimg('img/tongchang.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=1)
-        self.d.click(387, 151)
+        self.click(387, 151)
         time.sleep(0.3)
-        self.d.click(557, 151)
+        self.click(557, 151)
         time.sleep(0.3)
-        self.d.click(729, 151)
+        self.click(729, 151)
         time.sleep(0.3)
-        self.d.click(900, 151)
+        self.click(900, 151)
         time.sleep(0.3)
-        self.d.click(785, 438)
+        self.click(785, 438)
         time.sleep(1.5)
-        self.d.click(590, 476)
+        self.click(590, 476)
         self.lock_home()
 
         # 买药
@@ -214,9 +214,9 @@ class RoutineMixin(ShuatuBaseMixin):
     def buyExp(self):
         # 进入商店
         count = 0
-        self.d.click(616, 434)
+        self.click(616, 434)
         while True:
-            self.d.click(82, 84)
+            self.click(82, 84)
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/exp.jpg'):
                 break
@@ -225,13 +225,13 @@ class RoutineMixin(ShuatuBaseMixin):
             if count > 4:
                 break
         if count <= 4:
-            self.d.click(386, 148)
-            self.d.click(556, 148)
-            self.d.click(729, 148)
-            self.d.click(897, 148)
-            self.d.click(795, 437)
+            self.click(386, 148)
+            self.click(556, 148)
+            self.click(729, 148)
+            self.click(897, 148)
+            self.click(795, 437)
             time.sleep(1)
-            self.d.click(596, 478)
+            self.click(596, 478)
             time.sleep(1)
         self.lock_home()
 
@@ -243,24 +243,24 @@ class RoutineMixin(ShuatuBaseMixin):
         mode 3: 第一次手动过最上面的，再刷一次最上面的
         """
         is_used = 0
-        self.d.click(480, 505)
+        self.click(480, 505)
         time.sleep(1)
         while True:  # 锁定地下城
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
                 break
-            self.d.click(480, 505)
+            self.click(480, 505)
             time.sleep(1)
-        self.d.click(734, 142)  # 探索
+        self.click(734, 142)  # 探索
         time.sleep(3.5)
         while True:  # 锁定凯留头（划掉）返回按钮
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/fanhui.bmp', at=(16, 12, 54, 48)):
                 break
-            self.d.click(1, 1)
+            self.click(1, 1)
             time.sleep(0.5)
         # 经验
-        self.d.click(592, 255)  # 经验
+        self.click(592, 255)  # 经验
         time.sleep(3)
         screen_shot_ = self.getscreen()
         if UIMatcher.img_where(screen_shot_, 'img/tansuo_used.jpg'):
@@ -269,15 +269,15 @@ class RoutineMixin(ShuatuBaseMixin):
             if mode >= 2:
                 self.shoushuazuobiao(704, 152, lockpic='img/fanhui.bmp', screencut=(16, 12, 54, 48))
             if mode == 0 or mode == 3:
-                self.d.click(704, 152)  # 5级
+                self.click(704, 152)  # 5级
             else:
-                self.d.click(707, 265)  # 倒数第二
+                self.click(707, 265)  # 倒数第二
             time.sleep(1)
             while True:
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/tansuo_used2.jpg'):
                     is_used = 1
-                    self.d.click(668, 452)  # 取消
+                    self.click(668, 452)  # 取消
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/tiaozhan.jpg'):
                     break
@@ -285,39 +285,39 @@ class RoutineMixin(ShuatuBaseMixin):
             if is_used == 0:
                 self.d.drag(876, 329, 876, 329, 0.5)  # +号
                 time.sleep(0.5)
-                self.d.click(752, 327)  # 扫荡
+                self.click(752, 327)  # 扫荡
                 time.sleep(0.5)
                 while True:
                     screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
-                        self.d.click(590, 363)  # ok
+                        self.click(590, 363)  # ok
                         time.sleep(0.5)
                         break
             if is_used == 1:
-                self.d.click(36, 32)  # back
+                self.click(36, 32)  # back
                 time.sleep(1)
             is_used = 0
             while True:
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/home.jpg'):
                     break
-                self.d.click(1, 1)
+                self.click(1, 1)
                 time.sleep(1)
             # mana
-            self.d.click(802, 267)  # mana
+            self.click(802, 267)  # mana
             time.sleep(3)
             if mode >= 2:
                 self.shoushuazuobiao(704, 152, lockpic='img/fanhui.bmp', screencut=(16, 12, 54, 48))
             if mode == 0 or mode == 3:
-                self.d.click(704, 152)  # 5级
+                self.click(704, 152)  # 5级
             else:
-                self.d.click(707, 265)  # 倒数第二
+                self.click(707, 265)  # 倒数第二
             time.sleep(1.5)
             while True:
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/tansuo_used2.jpg'):
                     is_used = 1
-                    self.d.click(668, 452)  # 取消
+                    self.click(668, 452)  # 取消
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/tiaozhan.jpg'):
                     break
@@ -325,23 +325,23 @@ class RoutineMixin(ShuatuBaseMixin):
             if is_used == 0:
                 self.d.drag(876, 329, 876, 329, 0.5)  # +号
                 time.sleep(0.5)
-                self.d.click(752, 327)  # 扫荡
+                self.click(752, 327)  # 扫荡
                 time.sleep(0.5)
                 while True:
                     screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
-                        self.d.click(590, 363)  # ok
+                        self.click(590, 363)  # ok
                         time.sleep(0.5)
                         break
             if is_used == 1:
-                self.d.click(36, 32)  # back
+                self.click(36, 32)  # back
                 time.sleep(1)
             is_used = 0
             while True:
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/home.jpg'):
                     break
-                self.d.click(1, 1)
+                self.click(1, 1)
                 time.sleep(1)
         # 完成战斗后
         self.lock_home()
