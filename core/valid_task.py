@@ -1,11 +1,66 @@
-from typing import List, Type, Any, Optional
+import abc
+from typing import List, Type, Any, Optional, Union
+
+from core.constant import NORMAL_COORD, HARD_COORD
+
+
+class InputBoxBase(metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def create(self) -> Union[int, float, list, dict, str]:
+        pass
+
+
+class IntInputer(InputBoxBase):
+    def create(self) -> int:
+        while True:
+            a = input("请输入一个整数 ")
+            if a.isnumeric():
+                return int(a)
+            else:
+                print("输入错误，请重新输入")
+
+
+class FloatInputer(InputBoxBase):
+    def create(self) -> float:
+        while True:
+            a = input("请输入一个实数 ")
+            try:
+                return float(a)
+            except:
+                print("输入错误，请重新输入")
+
+
+class StrInputer(InputBoxBase):
+    def create(self) -> str:
+        a = input("请输入一个字符串 ")
+        return a
+
+
+class BoolInputer(InputBoxBase):
+    def create(self) -> bool:
+        while True:
+            a = input("请输入True或False ")
+            if a == "True":
+                return True
+            elif a == "False":
+                return False
+            else:
+                print("输入错误，请重新输入")
+
+
+STANDARD_INPUTBOX = {
+    int: IntInputer(),
+    float: FloatInputer(),
+    str: StrInputer(),
+    bool: BoolInputer()
+}
 
 
 # 合法Task参数
 class TaskParam:
     def __init__(self, key: str, typ: Optional[Type] = None, title: Optional[str] = None,
                  desc: Optional[str] = None,
-                 default: Optional[Any] = None):
+                 default: Optional[Any] = None, inputbox=None):
         """
         构建一个合法Task的参数
         :param key:
@@ -21,6 +76,9 @@ class TaskParam:
         :param default:
             参数的默认值，默认为None，则表示强制输入该参数。
             如果设置了默认值，则该参数将以default进行初始化。
+        :param inputbox:
+            如果typ非int,float,bool，则需要专门制定inputbox。
+            用来输入该类型
         """
         self.key = key
         self.typ = typ
@@ -33,6 +91,13 @@ class TaskParam:
         else:
             self.desc = desc
         self.default = default
+        if inputbox is None:
+            if typ in STANDARD_INPUTBOX:
+                self.inputbox = STANDARD_INPUTBOX[typ]
+            else:
+                raise Exception(f"参数{key}必须为类型{typ}指定输入方法！")
+        else:
+            self.inputbox = inputbox
 
 
 class ValidTask:
@@ -66,6 +131,178 @@ class ValidTask:
         return self
 
 
+def ShuatuToTuple(d: dict) -> tuple:
+    l = []
+    for A in sorted(d):
+        for B in sorted(d[A]):
+            l = l + [(A, B, d[A][B])]
+    return l
+
+
+class ShuatuBaseBox(InputBoxBase):
+    def __init__(self):
+        self.tu_dict = {}
+
+    def transform(self):
+        d = {}
+        for (A, B), T in self.tu_dict.items():
+            d.setdefault(A, {})
+            d[A][B] = T
+        return d
+
+    def Help(self):
+        print("帮助（命令用空格隔开）：")
+        print("add (A) (B) (Times): 增加刷图：A-B Times次")
+        print("add (A) all (Times): 增加刷图：A-全部 Times次")
+        print("del (A) (B) (Times): 减少刷图：A-B Times次")
+        print("file (FileAddress): 从文件导入")
+        print("   该文件由多行组成，每行三个整数A,B,T，表示刷A-B T次")
+        print("clear: 清空记录")
+        print("show: 显示当前记录")
+        print("end: 保存并退出编辑")
+
+    @abc.abstractmethod
+    def add(self, A, B, T):
+        pass
+
+    @abc.abstractmethod
+    def del_(self, A, B, T):
+        pass
+
+    def create(self) -> dict:
+        self.tu_dict = {}
+        print("输入图号 (help 查看帮助)")
+        while True:
+            try:
+                cmd = input("> ")
+                cmds = cmd.split(" ")
+                order = cmds[0]
+                if order == "clear":
+                    self.tu_dict = {}
+                elif order == "add":
+                    self.add(cmds[1], cmds[2], cmds[3])
+                elif order == "del":
+                    self.del_(cmds[1], cmds[2], cmds[3])
+                elif order == "show":
+                    for A, B, T in ShuatuToTuple(self.transform()):
+                        print(f"{A}-{B} {T} 次")
+                elif order == "end":
+                    return self.transform()
+                elif order == "help":
+                    self.Help()
+                elif order == "file":
+                    with open(cmds[1], "r", encoding="utf-8") as f:
+                        for line in f:
+                            l = line.strip().split(" ")
+                            self.add(l[0], l[1], l[2])
+                else:
+                    print("未知的命令")
+            except:
+                print("命令输入错误，请重新输入")
+
+
+class ShuatuNNBox(ShuatuBaseBox):
+
+    def add(self, A, B, T):
+        A = int(A)
+        if A not in NORMAL_COORD:
+            print(f"图号 {A} 未录入")
+            return
+        T = int(T)
+        if B == "all":
+            for cat in ['left', 'right']:
+                for bb in NORMAL_COORD[A][cat].keys():
+                    self.tu_dict.setdefault((A, bb), 0)
+                    self.tu_dict[(A, bb)] += T
+        else:
+            B = int(B)
+            if B not in NORMAL_COORD[A]["left"] and B not in NORMAL_COORD[A]["right"]:
+                print(f"图号 {A} - {B} 未录入")
+                return
+            self.tu_dict.setdefault((A, B), 0)
+            self.tu_dict[(A, B)] += T
+
+    def del_(self, A, B, T):
+        A = int(A)
+        if A not in NORMAL_COORD:
+            print(f"图号 {A} 未录入")
+            return
+        B = int(B)
+        T = int(T)
+        if (A, B) in self.tu_dict:
+            self.tu_dict[(A, B)] -= T
+            if self.tu_dict[(A, B)] <= 0:
+                del self.tu_dict[(A, B)]
+
+
+class ShuatuHHBox(ShuatuBaseBox):
+    def Help(self):
+        print("输入图号")
+        print("帮助（命令用空格隔开）：")
+        print("add (A) (B) (Times): 增加刷图：A-B Times次")
+        print("del (A) (B) (Times): 减少刷图：A-B Times次")
+        print("file (FileAddress): 从文件导入")
+        print("   该文件由多行组成，每行三个整数A,B,T，表示刷A-B T次")
+        print("clear: 清空记录")
+        print("show: 显示当前记录")
+        print("end: 保存并退出编辑")
+
+    def add(self, A, B, T):
+        A = int(A)
+        if A not in HARD_COORD:
+            print(f"图号 {A} 未录入")
+            return
+        B = int(B)
+        if B not in HARD_COORD[A]:
+            print(f"图号H{A} - {B} 未录入")
+            return
+        T = int(T)
+        self.tu_dict.setdefault((A, B), 0)
+        self.tu_dict[(A, B)] += T
+
+    def del_(self, A, B, T):
+        A = int(A)
+        if A not in NORMAL_COORD:
+            print(f"图号 {A} 未录入")
+            return
+        B = int(B)
+        T = int(T)
+        if (A, B) in self.tu_dict:
+            self.tu_dict[(A, B)] -= T
+            if self.tu_dict[(A, B)] <= 0:
+                del self.tu_dict[(A, B)]
+
+
+class TeamInputer(InputBoxBase):
+    def __init__(self):
+        self.l = []
+
+    def create(self) -> list:
+        print("请输入队号")
+        print("输入 A-B 表示使用编组A队伍B，其中A为1~5整数，B为1~3整数")
+        print("输入 zhanli 表示按照战力排名取前五位组队")
+        print("输入 end 结束编辑")
+        count = 1
+        self.l = []
+        while True:
+            try:
+                s = input(f"队伍 {count}:")
+                if s == "zhanli":
+                    self.l += ["zhanli"]
+                    count += 1
+                    continue
+                if s == "end":
+                    return self.l
+                ss = s.split("-")
+                assert len(ss) == 2
+                assert 1 <= int(ss[0]) <= 5
+                assert 1 <= int(ss[1]) <= 3
+                count += 1
+                self.l += [s]
+            except:
+                print("输入有误，请重新输入")
+
+
 VALID_TASK = ValidTask() \
     .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备") \
     .add("h2", "tichuhanghui", "踢出行会", "将战力排名第一人踢出行会") \
@@ -82,6 +319,25 @@ VALID_TASK = ValidTask() \
          [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。")]) \
     .add("d3", "dixiachengYunhai", "打云海关", "打通云海关【细节待补充】") \
     .add("d4", "dixiachengDuanya", "打断崖关", "打通断崖关【细节待补充】") \
+    .add("d5", "shuatuDD", "通关地下城", "通用的打通地下城函数",
+         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:3"),
+          TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
+                                       "mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss\n"
+                                       "mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss"),
+          TaskParam("stop_criteria", int, "终止条件", "设置为0时，只要战斗中出现人员伤亡，直接结束\n"
+                                                  "设置为1时，一直战斗到当前队伍无人幸存，才结束\n"
+                                                  "注：如果在小关遇到停止条件，则直接结束\n"
+                                                  "打Boss时，如果选用mode 2，则当一个队触发停止条件后会更换下一个队伍\n"
+                                                  "直到队伍列表全部被遍历完毕才结束。", 0),
+          TaskParam("after_stop", int, "停止之后做什么", "设置为0时，直接回到主页\n"
+                                                  "设置为1时，撤退并回到主页\n"
+                                                  "注：如果mode==1（不打Boss），则打完小关之后是否撤退仍然受到该参数的影响", 0),
+          TaskParam("teams", list, "编队列表", "编队列表，参战地下城所使用的编队\n"
+                                           "按照列表顺序分别表示编队1号，2号，3号……\n"
+                                           "每一个元素为一个字符串\n"
+                                           "若为空字符串，则表示不进行队伍更改，沿用上次队伍\n"
+                                           "若为\"zhanli\"，则按照战力排序，选择前五战力为当前队伍\n"
+                                           "若为\“a-b\",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b", inputbox=TeamInputer())]) \
     .add("j1", "doJJC", "竞技场", "竞技场白给脚本") \
     .add("j2", "doPJJC", "公主竞技场", "公主竞技场白给脚本") \
     .add('r1', "gonghuizhijia", "家园领取", "收取公会之家的奖励") \
@@ -106,17 +362,7 @@ VALID_TASK = ValidTask() \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s2", "shuatuNN", "刷N图", "使用扫荡券刷指定普通副本",
-         [TaskParam("tu_list", list, "刷图列表",
-                    "一个包含了若干个List的List\n"
-                    "每一个List的格式如下：\n"
-                    "[大图号,小图号,刷图次数]\n"
-                    "例如[12,3,3]表示刷12-3图3次\n"
-                    "该List不必在意顺序，因为该函数内自动会调整顺序。")]) \
+         [TaskParam("tu_dict", dict, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",
-         [TaskParam("tu_list", list, "刷图列表",
-                    "一个包含了若干个List的List\n"
-                    "每一个List的格式如下：\n"
-                    "[大图号,小图号,刷图次数]\n"
-                    "例如[12,3,3]表示刷H12-3图3次\n"
-                    "该List不必在意顺序，因为该函数内自动会调整顺序。")]) \
+         [TaskParam("tu_dict", dict, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox())]) \
     .add("s4", "doActivityHard", "刷活动图", "使用扫荡券刷活动副本（慎用，因为每次活动坐标都不同）")

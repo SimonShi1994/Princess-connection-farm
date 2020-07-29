@@ -3,10 +3,10 @@ import time
 import numpy as np
 
 from core.constant import FIGHT_BTN
-from ._base import BaseMixin
+from ._tools import ToolsMixin
 
 
-class FightBaseMixin(BaseMixin):
+class FightBaseMixin(ToolsMixin):
     """
     战斗基础插片
     包括与战斗相关的基本操作

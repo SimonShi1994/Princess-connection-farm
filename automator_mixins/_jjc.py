@@ -1,10 +1,10 @@
 import time
 
+from automator_mixins._tools import ToolsMixin
 from core.cv import UIMatcher
-from ._base import BaseMixin
 
 
-class JJCMixin(BaseMixin):
+class JJCMixin(ToolsMixin):
     """
     竞技场插片
     包含日常行动相关的脚本
@@ -43,7 +43,7 @@ class JJCMixin(BaseMixin):
                 self.d.click(803, 496)
                 break
         time.sleep(1)
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
 
         # 做pjjc任务
 
@@ -70,4 +70,4 @@ class JJCMixin(BaseMixin):
                 self.d.click(803, 506)
                 break
         time.sleep(1)
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()

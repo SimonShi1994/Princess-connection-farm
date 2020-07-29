@@ -32,6 +32,7 @@ class BaseMixin:
         self.AR: Optional[AutomatorRecorder] = None
         self.ms: Optional[moveset] = None
         self.debug_screen = None  # 如果debug_screen为None，则正常截图；否则，getscreen函数使用debug_screen作为读取的screen
+        self.last_screen = None  # 每次调用getscreen会把图片暂存至last_screen
 
     def init_device(self, address):
         """
@@ -83,8 +84,8 @@ class BaseMixin:
                     注：若kwargs中带有at参数，则优先使用此at
 
             如：
-            from core.constant import DXC_BTN
-            self.click(DXC_BTN["chetui"])
+            from core.constant import DXC_ELEMENT
+            self.click(DXC_ELEMENT["chetui"])
 
         3.  若args仅为一个字符串，则执行click_img操作
             如:self.click("img/chetui2.bmp")
@@ -232,7 +233,7 @@ class BaseMixin:
         :param max_retry: 最大重试次数
         :param at: 缩小范围
         :param screen: 设置为None时，参照图截图获得，否则参照图
-        :return: True：动画结束 False：动画未结束
+        :return: True：动画改变 False：动画未改变
         """
         sc = self.getscreen() if screen is None else screen
         for retry in range(max_retry):
@@ -251,7 +252,8 @@ class BaseMixin:
         :return: 截图的opencv格式
         """
         if self.debug_screen is None:
-            return self.d.screenshot(filename, format="opencv")
+            self.last_screen = self.d.screenshot(filename, format="opencv")
+            return self.last_screen
         else:
             if isinstance(self.debug_screen, str):
                 return cv2.imread(self.debug_screen)

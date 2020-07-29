@@ -42,14 +42,14 @@ class RoutineMixin(ShuatuBaseMixin):
             self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2, at=(891, 413, 930, 452))
 
     def gonghuizhijia(self):  # 家园领取
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
         self.lockimg('img/jyquanbushouqu.jpg', elseclick=[(622, 509)], elsedelay=1)
         self.lockimg('img/guanbi.jpg', elseclick=[(899, 429)], elsedelay=0.5, retry=3)
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
     def mianfeiniudan(self):
         # 免费扭蛋
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
         self.lockimg('img/liwu.bmp', ifclick=[(750, 510)], ifdelay=1, at=(891, 413, 930, 452))  # 点进扭蛋界面
         while True:
             # 跳过抽奖提示
@@ -81,11 +81,11 @@ class RoutineMixin(ShuatuBaseMixin):
                 time.sleep(1)
                 self.d.click(584, 384)
                 break
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
 
     def mianfeishilian(self):
         # 免费十连
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
         self.lockimg('img/liwu.bmp', ifclick=[(750, 510)], ifdelay=1, at=(891, 413, 930, 452))  # 点进扭蛋界面
 
         time.sleep(1)
@@ -128,11 +128,11 @@ class RoutineMixin(ShuatuBaseMixin):
         time.sleep(0.5)
         self.d.click(100, 505)
         time.sleep(1.5)
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
 
     def goumaitili(self, times):  # 购买体力，注意此函数参数默认在首页执行，其他地方执行要调整参数
         for i in range(times):
-            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+            self.lock_home()
             self.d.click(320, 31)
             time.sleep(1)
             screen_shot = self.d.screenshot(format="opencv")
@@ -192,7 +192,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
     def goumaijingyan(self):
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
         self.d.click(617, 435)
         time.sleep(2)
         self.lockimg('img/tongchang.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=1)
@@ -207,7 +207,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.d.click(785, 438)
         time.sleep(1.5)
         self.d.click(590, 476)
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
 
         # 买药
 
@@ -233,7 +233,7 @@ class RoutineMixin(ShuatuBaseMixin):
             time.sleep(1)
             self.d.click(596, 478)
             time.sleep(1)
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
 
     def tansuo(self, mode=0):  # 探索函数
         """
@@ -344,4 +344,4 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.d.click(1, 1)
                 time.sleep(1)
         # 完成战斗后
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()

@@ -1,11 +1,11 @@
 import time
 
+from automator_mixins._tools import ToolsMixin
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from ._base import BaseMixin
 
 
-class ShuatuBaseMixin(BaseMixin):
+class ShuatuBaseMixin(ToolsMixin):
     """
     刷图基础插片
     包含刷图基本操作和基本变量存储
@@ -377,7 +377,7 @@ class ShuatuBaseMixin(BaseMixin):
             self.d.click(933, 267)  # 下一位
             time.sleep(2)
 
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
         self.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=3)
         self.d.click(562, 253)
         time.sleep(3)

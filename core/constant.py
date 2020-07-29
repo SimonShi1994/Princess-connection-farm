@@ -104,8 +104,11 @@ FIGHT_BTN = {
     "zhandoukaishi": p(837, 453, at=(755, 426, 918, 477)),
 }
 MAX_DXC = 3  # 一共出了多少个地下城关
-DXC_BTN = {
+
+DXC_ELEMENT = {
     "chetui": p(806, 431, img="img/dxc/chetui.bmp", at=(779, 421, 833, 440)),
+    "chetui_window": p(at=(243, 139, 709, 400)),
+    "chetui_ok": p(591, 365),
     "sytzcs": p(723, 438, img="img/dxc/sytzcs.bmp", at=(667, 428, 784, 447)),
     "1/1": p(img="img/dxc/dxc_1_1.bmp", at=(887, 429, 913, 446)),
     "0/1": p(img="img/dxc/dxc_0_1.bmp", at=(883, 429, 910, 445)),
@@ -119,7 +122,6 @@ DXC_BTN = {
     "quyuxuanzequeren_ok": p(585, 371),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
-
 }
 DXC_NUM = {
     # 没有OCR用此来检测层数

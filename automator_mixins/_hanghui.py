@@ -1,10 +1,10 @@
 import time
 
 from core.cv import UIMatcher
-from ._base import BaseMixin
+from ._tools import ToolsMixin
 
 
-class HanghuiMixin(BaseMixin):
+class HanghuiMixin(ToolsMixin):
     """
     行会插片。
     包含行会相关的脚本。
@@ -127,7 +127,7 @@ class HanghuiMixin(BaseMixin):
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
     def dianzan(self, sortflag=0):  # 行会点赞
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
         # 进入行会
         self.d.click(688, 432)
         time.sleep(3)

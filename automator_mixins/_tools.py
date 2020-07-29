@@ -2,6 +2,7 @@ import time
 
 import cv2
 
+from core.constant import MAIN_BTN
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 # 临时，等待config的创建
@@ -13,7 +14,16 @@ class ToolsMixin(BaseMixin):
     """
     工具类插片
     包含一些辅助功能和辅助类脚本
+    还有很多常用函数，比如回首页
     """
+
+    def lock_home(self):
+        """
+        锁定首页
+        要求场景：存在“我的主页”按钮
+        逻辑：不断点击我的主页，直到右下角出现“礼物”
+        """
+        self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
 
     def setting(self):
         self.d.click(875, 517)

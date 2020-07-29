@@ -12,6 +12,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
     包含地下城脚本
     """
 
+    def __init__(self):
+        super().__init__()
+        self.DXC_NUM = None
+
     def dixiacheng_ocr(self, skip):
         """
         地下城函数已于2020/7/11日重写
@@ -419,58 +423,151 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.d.click(576, 364)
 
         # 完成战斗后
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
 
-    def shuatuDD(self, dxc_id: int, mode: int, retry: int = 1, var: dict = None):  # 刷地下城
+    def shuatuDD(self, dxc_id: int, mode: int, stop_criteria: int = 0, after_stop: int = 0, teams=None):  # 刷地下城
         """
+        2020-07-29 Add By TheAutumnOfRice
+
         统一刷地下城函数，全Auto通关地下城
+        其中小怪使用2倍速过关，Boss使用3倍速过关
         使用前请将打小图或Boss的队伍放在第一页队伍1，
         将要打Boss的队伍放再第一页队伍2
+
         :param dxc_id: 地下城的ID
         :param mode: 模式
             mode 0：不打Boss，用队伍1只打小关
-            mode 1：打Boss，用队伍1打小关和Boss
-            mode 2：打Boss，用队伍1打小关，用队伍2打Boss
-        :param retry: 重试次数
-            设置为1时，只会打一次Boss，打不死就不打了
-            设置为n时，会尝试打n次boss，打不死就不打了（适合苟队）
-        :param var:
-            断点恢复使用
-        :return:
+            mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss
+            mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss
+        :param stop_criteria: 终止条件
+            设置为0时，只要战斗中出现人员伤亡，直接结束
+            设置为1时，一直战斗到当前队伍无人幸存，才结束
+                注：如果在小关遇到停止条件，则直接结束
+                打Boss时，如果选用mode 2，则当一个队触发停止条件后会更换下一个队伍
+                直到队伍列表全部被遍历完毕才结束。
+        :param after_stop: 停止之后做什么
+            设置为0时，直接回到主页
+            设置为1时，撤退并回到主页
+                注：如果mode==1（不打Boss），则打完小关之后是否撤退仍然受到该参数的影响
+        :param teams:
+            编队列表，参战地下城所使用的编队
+            按照列表顺序分别表示编队1号，2号，3号……
+            每一个元素为一个字符串
+            若为空字符串，则表示不进行队伍更改，沿用上次队伍
+            若为"zhanli"，则按照战力排序，选择前五战力为当前队伍
+            若为“a-b",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b。
         """
-        from core.constant import DXC_BTN, MAIN_BTN, DXC_COORD, DXC_ENTRANCE
+        from core.constant import DXC_COORD
+        def parse_team_str(teamstr: str):
+            if teamstr == "":
+                return 0, 0
+            elif teamstr == "zhanli":
+                return -1, -1
+            strs = teamstr.split("-")
+            assert len(strs) == 2, f"错误的编队信息：{teamstr}"
+            return strs[0], strs[1]
+
+        def stop_fun():
+            if after_stop == 0:
+                self.log.write_log("info", "触发停止条件，回到主页。")
+                self.lock_home()
+            else:
+                self.log.write_log("info", "触发停止条件，撤退。")
+                self.dxc_chetui()
+                self.lock_home()
+
+        if teams is None:
+            teams = [""]
+        assert len(teams) > 0, "至少设置一个队伍！"
+        if mode == 2:
+            assert len(teams) > 1, "模式2下，至少设置两个队伍！"
         if dxc_id not in DXC_COORD:
             self.log.write_log("error", "坐标库中没有{dxc_id}号地下城的信息！")
             return
-        self.click(480, 505, post_delay=1)
-        self.lockimg('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
-        self.click(900, 138, post_delay=3)
-        screen_shot_ = self.d.screenshot(format="opencv")
-        if self.is_exists(DXC_BTN["sytzcs"], screen=screen_shot_):
-            # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。
-            # 额 0/1 和 1/1 中可能性更高的那个
-            p0 = self.img_prob(DXC_BTN["0/1"], screen=screen_shot_)
-            p1 = self.img_prob(DXC_BTN["1/1"], screen=screen_shot_)
-            if p0 > p1:
-                self.log.write_log("info", "地下城次数已经用完，放弃。")
-                self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
-                return
-            else:
-                # 没刷完，进入地下城
-                self.click(DXC_ENTRANCE[dxc_id], pre_delay=1, post_delay=3)
-                self.click(*DXC_BTN["quyuxuanzequeren_ok"], post_delay=8)
+        if not self.enter_dxc(dxc_id):
+            # 进入地下城失败，次数不足
+            self.lock_home()
+            return
         # 已经进入地下城
-        self.lockimg(DXC_BTN["chetui"])  # 锁定撤退
-        self.dxczuobiao(645, 310, 1, 1, 3, 1, 5)
-        self.dxczuobiao(373, 208, 1, 1, 0, 0, 5)
-        self.dxczuobiao(623, 206, 1, 1, 0, 0, 5)
-        self.dxczuobiao(415, 206, 1, 1, 0, 0, 5)
-        self.dxczuobiao(184, 218, 1, 1, 0, 0, 5)
-        self.dxczuobiao(483, 216, 1, 1, 0, 0, 5)
-        self.dxczuobiao(731, 229, 1, 1, 0, 0, 5)
-        self.dxczuobiao(456, 214, 1, 1, 0, 0, 5)
-        state = self.dxczuobiao(629, 195, 1, 2, 3, 2, 5)
-        while state == 2:
-            state = self.dxczuobiao(629, 195, 1, 2, 0, 0, 5)
-        # TODO 增加撤退逻辑
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        cur_layer = self.check_dxc_level(dxc_id)  # 获取层数
+        if cur_layer == -1:
+            # 人力OCR失败，一个一个尝试点击
+            cur_layer = 1
+        max_layer = max(self.DXC_NUM[dxc_id])
+        set_bianzu, set_duiwu = parse_team_str(teams[0])
+        if stop_criteria == 0:
+            min_live = 5
+        else:
+            min_live = 1
+        while cur_layer <= max_layer - 1:
+            # 刷小怪
+            cur_x, cur_y = DXC_COORD[dxc_id][cur_layer]
+            state = self.dxczuobiao(cur_x, cur_y, 1, 1, set_bianzu, set_duiwu, min_live)
+            set_bianzu = 0
+            set_duiwu = 0
+            if state == 0:
+                # 伤亡惨重
+                self.log.write_log("info", "在地下城伤亡惨重！")
+                stop_fun()
+                return
+            elif state == -2:
+                # 没有点中图，试试下一个
+                cur_layer += 1
+                continue
+            elif state == -1:
+                # 发生未知错误
+                raise Exception("在执行地下城时发生了未知的错误，场景识别失败！")
+            elif state == 1:
+                # 打赢了
+                cur_layer += 1
+                self.log.write_log("info", f"战胜了地下城{dxc_id}-{cur_layer}!")
+            elif state == 2:
+                # 打输了，看看有没有机会再打一次
+                self.log.write_log("info", f"战败于地下城{dxc_id}-{cur_layer}!")
+        if mode == 0:
+            self.log.write_log("info", "不打Boss。")
+            stop_fun()
+            return
+
+        cur_team = 0
+        if mode == 2:
+            cur_team = 1
+            set_bianzu, set_duiwu = parse_team_str(teams[cur_team])
+        all_team = len(teams)
+        cur_x, cur_y = DXC_COORD[dxc_id][max_layer]
+        while True:
+            # 用剩余的队伍一个接一个打Boss
+            state = self.dxczuobiao(cur_x, cur_y, 1, 2, set_bianzu, set_duiwu, min_live)
+            set_bianzu = 0
+            set_duiwu = 0
+            if state == 0:
+                # 伤亡惨重
+                self.log.write_log("info", "在地下城打Boss伤亡惨重！")
+                cur_team += 1
+                if cur_team < all_team:
+                    set_bianzu, set_duiwu = parse_team_str(teams[cur_team])
+                    self.log.write_log("info", f"更换队伍：{teams[cur_team]}")
+                    continue
+                else:
+                    self.log.write_log("info", "你的队伍都死光啦！")
+                    stop_fun()
+                    return
+            elif state == -2:
+                # 没有点中图，试试下一个
+                self.log.write_log("error", "没有找到Boss坐标，中止任务")
+                stop_fun()
+                return
+            elif state == -1:
+                # 发生未知错误
+                raise Exception("在执行地下城时发生了未知的错误，场景识别失败！")
+            elif state == 1:
+                # 打赢了
+                cur_layer += 1
+                self.log.write_log("info", f"战胜了地下城{dxc_id}-BOSS!")
+                break
+            elif state == 2:
+                # 打输了，看看有没有机会再打一次
+                self.log.write_log("info", f"战败于地下城{dxc_id}-BOSS!")
+                continue
+        # 打赢了
+        self.lock_home()

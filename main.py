@@ -83,42 +83,45 @@ if __name__ == '__main__':
     print("By TheAutumnOfRice")
     print("----------------------------------------")
     while True:
-        cmd = input("> ")
-        cmds = cmd.split(" ")
-        order = cmds[0]
-        if order == "exit":
-            break
-        elif order == "help":
-            print("脚本控制帮助")
-            print("first 所有脚本全部重跑")
-            print("continue 所有脚本从上次断点开始继续跑")
-            print("state 显示所有用户的状态")
-            print("clear ACCOUNT 清除Account的错误状态让它继续跑")
-            print("restart ACCOUNT 清除Account的运行记录，让它重新开始")
-            print("finish ACCOUNT 标记Account已经刷完，不再继续刷")
-            print("edit 进入用户配置编辑模式")
-        elif order == "first":
-            RunFirstTime()
-        elif order == "continue":
-            RunContinue()
-        elif order == "state":
-            CheckState()
-        elif order == "clear":
-            if len(cmds) > 1:
-                ClearError(cmds[1])
+        try:
+            cmd = input("> ")
+            cmds = cmd.split(" ")
+            order = cmds[0]
+            if order == "exit":
+                break
+            elif order == "help":
+                print("脚本控制帮助")
+                print("first 所有脚本全部重跑")
+                print("continue 所有脚本从上次断点开始继续跑")
+                print("state 显示所有用户的状态")
+                print("clear ACCOUNT 清除Account的错误状态让它继续跑")
+                print("restart ACCOUNT 清除Account的运行记录，让它重新开始")
+                print("finish ACCOUNT 标记Account已经刷完，不再继续刷")
+                print("edit 进入用户配置编辑模式")
+            elif order == "first":
+                RunFirstTime()
+            elif order == "continue":
+                RunContinue()
+            elif order == "state":
+                CheckState()
+            elif order == "clear":
+                if len(cmds) > 1:
+                    ClearError(cmds[1])
+                else:
+                    print("需要指定Account")
+            elif order == "restart":
+                if len(cmds) > 1:
+                    Restart(cmds[1])
+                else:
+                    print("需要指定Account")
+            elif order == "finish":
+                if len(cmds) > 1:
+                    SetFinished(cmds[1])
+                else:
+                    print("需要指定Account")
+            elif order == "edit":
+                exec(open("CreateUser.py", "r", encoding="utf-8").read())
             else:
-                print("需要指定Account")
-        elif order == "restart":
-            if len(cmds) > 1:
-                Restart(cmds[1])
-            else:
-                print("需要指定Account")
-        elif order == "finish":
-            if len(cmds) > 1:
-                SetFinished(cmds[1])
-            else:
-                print("需要指定Account")
-        elif order == "edit":
-            exec(open("CreateUser.py", "r", encoding="utf-8").read())
-        else:
-            print("未知的命令")
+                print("未知的命令")
+        except:
+            print("输入错误！")
