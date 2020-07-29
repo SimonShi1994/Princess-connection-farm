@@ -52,7 +52,6 @@ class LoginMixin(BaseMixin):
                 if try_count % 10 == 0:
                     # 看一下会不会一直点右上角？
                     if self.last_screen is not None:
-                        print("找到截屏，检测礼物:", self.img_prob(MAIN_BTN["liwu"], screen=self.last_screen))
                         if self.is_exists(MAIN_BTN["liwu"], screen=self.last_screen):
                             # 已经登陆了老哥！
                             # 重 新 来 过
