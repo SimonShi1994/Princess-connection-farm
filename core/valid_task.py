@@ -9,6 +9,13 @@ class InputBoxBase(metaclass=abc.ABCMeta):
     def create(self) -> Union[int, float, list, dict, str]:
         pass
 
+    @abc.abstractmethod
+    def check(self, obj) -> str:
+        """
+        传入obj，如果没有问题输出""，否则输出错误信息
+        """
+        pass
+
 
 class IntInputer(InputBoxBase):
     def create(self) -> int:
@@ -18,6 +25,11 @@ class IntInputer(InputBoxBase):
                 return int(a)
             else:
                 print("输入错误，请重新输入")
+
+    def check(self, obj):
+        if not isinstance(obj, int):
+            return f"应是int类型，而不是{type(obj)}"
+        return ""
 
 
 class FloatInputer(InputBoxBase):
@@ -29,11 +41,21 @@ class FloatInputer(InputBoxBase):
             except:
                 print("输入错误，请重新输入")
 
+    def check(self, obj):
+        if not isinstance(obj, (float, int)):
+            return f"应是float类型，而不是{type(obj)}"
+        return ""
+
 
 class StrInputer(InputBoxBase):
     def create(self) -> str:
         a = input("请输入一个字符串 ")
         return a
+
+    def check(self, obj):
+        if not isinstance(obj, str):
+            return f"应是str类型，而不是{type(str)}"
+        return ""
 
 
 class BoolInputer(InputBoxBase):
@@ -46,6 +68,11 @@ class BoolInputer(InputBoxBase):
                 return False
             else:
                 print("输入错误，请重新输入")
+
+    def check(self, obj):
+        if not isinstance(obj, bool):
+            return f"应是str类型，而不是{type(str)}"
+        return ""
 
 
 STANDARD_INPUTBOX = {
@@ -60,7 +87,7 @@ STANDARD_INPUTBOX = {
 class TaskParam:
     def __init__(self, key: str, typ: Optional[Type] = None, title: Optional[str] = None,
                  desc: Optional[str] = None,
-                 default: Optional[Any] = None, inputbox=None):
+                 default: Optional[Any] = None, inputbox=None, inputcheck=None):
         """
         构建一个合法Task的参数
         :param key:
@@ -99,6 +126,14 @@ class TaskParam:
         else:
             self.inputbox = inputbox
 
+    def check(self, obj, is_raise=True):
+        s = self.inputbox.check(obj)
+        if s != "":
+            if is_raise:
+                raise Exception(f"参数{self.key}填写错误：{s}")
+            else:
+                return False
+        return True
 
 class ValidTask:
     def __init__(self):
@@ -164,6 +199,25 @@ class ShuatuBaseBox(InputBoxBase):
         print("clear: 清空记录")
         print("show: 显示当前记录")
         print("end: 保存并退出编辑")
+
+    def check(self, obj) -> str:
+        if not isinstance(obj, list):
+            return f"应是list类型，而不是{type(obj)}"
+        for i in obj:
+            if not isinstance(i, str):
+                return f"list的每一项都应是str类型，但检测到{type(i)}"
+            if '-' not in i:
+                return f"list的每一项都应是A-B-T的格式，但{i}中不含'-'。"
+            ii = i.split('-')
+            if len(ii) != 3:
+                return f"必须用-分割三个整数，但检测到{i}不符合要求"
+            try:
+                A = int(ii[0])
+                B = int(ii[1])
+                T = int(ii[2])
+            except:
+                return f"必须用-分割三个整数，但检测到{i}不符合要求"
+        return ""
 
     @abc.abstractmethod
     def add(self, A, B, T):
@@ -305,6 +359,30 @@ class TeamInputer(InputBoxBase):
                 self.l += [s]
             except:
                 print("输入有误，请重新输入")
+
+    def check(self, obj) -> str:
+        if not isinstance(obj, list):
+            return f"应是list类型，而不是{type(obj)}"
+        for i in obj:
+            if not isinstance(i, str):
+                return f"list的每一项都应是str类型，但检测到{type(i)}"
+            if i == "" or i == "zhanli":
+                continue
+            if '-' not in i:
+                return f"list的每一项都应是A-B的格式，或者为zhanli，但{i}不满足要求。"
+            ii = i.split('-')
+            if len(ii) != 2:
+                return f"必须用-分割两个整数，但检测到{i}不符合要求"
+            try:
+                A = int(ii[0])
+                B = int(ii[1])
+            except:
+                return f"必须用-分割两个整数，但检测到{i}不符合要求"
+            if A < 1 or A > 5:
+                return f"队号A-B中编组A必须为1~5的整数，但{i}不满足要求"
+            if B < 1 or B > 3:
+                return f"队号A-B中队伍B必须为1~3的整数，但{i}不满足要求"
+        return ""
 
 
 VALID_TASK = ValidTask() \
