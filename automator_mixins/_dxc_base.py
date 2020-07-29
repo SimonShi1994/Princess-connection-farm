@@ -137,7 +137,6 @@ class DXCBaseMixin(FightBaseMixin):
 
         best = max(probs, key=lambda x: probs[x])
         values = sorted(probs.values(), reverse=True)
-        print(values)
         # 必须有差距，否则失败
         if values[0] - values[1] < 0.05 or values[0] < 0.8:
             return -1
