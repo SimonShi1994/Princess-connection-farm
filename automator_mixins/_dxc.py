@@ -1,5 +1,6 @@
 import time
 
+from core.constant import DXC_NUM
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from ._dxc_base import DXCBaseMixin
@@ -14,7 +15,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
     def __init__(self):
         super().__init__()
-        self.DXC_NUM = None
 
     def dixiacheng_ocr(self, skip):
         """
@@ -465,7 +465,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 return -1, -1
             strs = teamstr.split("-")
             assert len(strs) == 2, f"错误的编队信息：{teamstr}"
-            return strs[0], strs[1]
+            return int(strs[0]), int(strs[1])
 
         def stop_fun():
             if after_stop == 0:
@@ -493,7 +493,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         if cur_layer == -1:
             # 人力OCR失败，一个一个尝试点击
             cur_layer = 1
-        max_layer = max(self.DXC_NUM[dxc_id])
+        max_layer = max(DXC_NUM[dxc_id])
         set_bianzu, set_duiwu = parse_team_str(teams[0])
         if stop_criteria == 0:
             min_live = 5
@@ -501,6 +501,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             min_live = 1
         while cur_layer <= max_layer - 1:
             # 刷小怪
+            print("Debug: ", self.check_dxc_level(dxc_id))
             cur_x, cur_y = DXC_COORD[dxc_id][cur_layer]
             state = self.dxczuobiao(cur_x, cur_y, 1, 1, set_bianzu, set_duiwu, min_live)
             set_bianzu = 0

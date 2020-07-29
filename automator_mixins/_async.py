@@ -63,6 +63,9 @@ class AsyncMixin(BaseMixin):
         global screenshot
         while th_sw == 0:
             cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
+            if screenshot is None:
+                time.sleep(0.8)
+                continue
             if cpu_occupy >= 80:
                 # print('ka')
                 time.sleep(0.8)
@@ -102,6 +105,9 @@ class AsyncMixin(BaseMixin):
         global th_sw
         global screenshot
         while th_sw == 0:
+            if screenshot is None:
+                time.sleep(0.8)
+                continue
             cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
             if cpu_occupy >= 80:
                 # print('ka')
@@ -170,7 +176,10 @@ class AsyncMixin(BaseMixin):
             if time.time() - self.last_screen_time > async_screenshot_freq:
                 screenshot = self.getscreen()
             else:
-                screenshot = self.last_screen
+                if self.last_screen is not None:
+                    screenshot = self.last_screen
+                else:
+                    screenshot = self.getscreen()
             # print('截图中')
             # cv2.imwrite('test.bmp', screenshot)
 

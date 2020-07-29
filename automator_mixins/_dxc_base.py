@@ -35,11 +35,11 @@ class DXCBaseMixin(FightBaseMixin):
         """
         self.wait_for_stable(at=DXC_ELEMENT["map"].at)  # 等待小人走完
         sc = self.getscreen()
-        self.click(x, y, pre_delay=0.5, post_delay=0.5)  # 点人
+        self.click(x, y)  # 点人
         if not self.wait_for_change(at=DXC_ELEMENT["shop"].at, screen=sc):  # 商店被遮住了
             return -2
         sc = self.getscreen()
-        self.click(*DXC_ELEMENT["tiaozhan"], pre_delay=0.5, post_delay=0.5)
+        self.click(*DXC_ELEMENT["tiaozhan"])
         self.wait_for_change(at=DXC_ELEMENT["tiaozhan"].at, screen=sc)  # 挑战没了
 
         # 换队
@@ -52,7 +52,7 @@ class DXCBaseMixin(FightBaseMixin):
         live_count = self.get_fight_current_member_count()
         if live_count < min_live:
             return 0
-        self.click(*FIGHT_BTN["zhandoukaishi"], pre_delay=0.5, post_delay=3)
+        self.click(*FIGHT_BTN["zhandoukaishi"], post_delay=3)
         self.set_fight_auto(auto, screen=self.last_screen)
         self.set_fight_speed(speed, max_level=2, screen=self.last_screen)
         mode = 0
@@ -63,7 +63,7 @@ class DXCBaseMixin(FightBaseMixin):
             return -1
         elif mode == 1:
             # 点击下一步
-            self.click(*DXC_ELEMENT["xiayibu"], pre_delay=0.5, post_delay=4)
+            self.click(*DXC_ELEMENT["xiayibu"])
             self.wait_for_stable()
             self.click(*DXC_ELEMENT["shouqubaochou_ok"], post_delay=2)
             # 处理跳脸：回到地下城界面
@@ -139,7 +139,7 @@ class DXCBaseMixin(FightBaseMixin):
         values = sorted(probs.values(), reverse=True)
         print(values)
         # 必须有差距，否则失败
-        if values[0] - values[1] < 0.1 or values[0] < 0.8:
+        if values[0] - values[1] < 0.05 or values[0] < 0.8:
             return -1
         else:
             return best

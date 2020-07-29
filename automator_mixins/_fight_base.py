@@ -65,8 +65,12 @@ class FightBaseMixin(ToolsMixin):
             else:
                 sc = screen
                 screen = None
-            if self.get_fight_state(sc, max_retry=1) != 0:
+            state = self.get_fight_state(sc, max_retry=1)
+            if state == -1:
                 continue
+            elif state in [1, 2]:
+                return -1
+
             p0 = self.img_prob(FIGHT_BTN["speed_0"], screen=sc)
             p1 = self.img_prob(FIGHT_BTN["speed_1"], screen=sc)
             p2 = self.img_prob(FIGHT_BTN["speed_2"], screen=sc)
@@ -138,8 +142,10 @@ class FightBaseMixin(ToolsMixin):
                 sc = screen
                 screen = None
             state = self.get_fight_state(sc, max_retry=1)
-            if state != 0:
+            if state == -1:
                 continue
+            elif state in [1, 2]:
+                return -1
             p0 = self.img_prob(FIGHT_BTN["auto_off"], screen=sc)
             p1 = self.img_prob(FIGHT_BTN["auto_on"], screen=sc)
             probs = np.array([p0, p1])

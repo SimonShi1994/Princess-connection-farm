@@ -11,6 +11,7 @@ from core.constant import PCRelement
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.usercentre import AutomatorRecorder
+from pcr_config import debug
 
 
 class BaseMixin:
@@ -220,7 +221,8 @@ class BaseMixin:
             time.sleep(delay)
             sc2 = self.getscreen()
             value = self.img_equal(sc, sc2, at, similarity)
-            print("Stable : ", value, " >? ", threshold)
+            if debug:
+                print("Stable : ", value, " >? ", threshold)
             if value > threshold:
                 return True
             sc = sc2
@@ -241,7 +243,8 @@ class BaseMixin:
             time.sleep(delay)
             sc2 = self.getscreen()
             value = self.img_equal(sc, sc2, at, similarity)
-            print("Stable : ", value, " <? ", threshold)
+            if debug:
+                print("Stable : ", value, " <? ", threshold)
             if value < threshold:
                 return True
         return False
