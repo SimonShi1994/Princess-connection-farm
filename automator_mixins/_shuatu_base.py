@@ -392,12 +392,8 @@ class ShuatuBaseMixin(ToolsMixin):
         :return: 是否成功进入。如果为False，则表示过于卡，停止刷图
 
         """
-        self.click(480, 505, pre_delay=2, post_delay=2)
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
-                break
-        self.click(562, 253)
+        #进入冒险选项卡
+        self.lockimg("img/dixiacheng.jpg",ifclick=(562, 253),elseclick=(480,505),alldelay=2,ifbefore=2)
         # 此处很容易卡
         self.lockimg("img/normal.jpg", ifclick=(701, 83), elseclick=(701, 83), alldelay=2, ifbefore=3)
         self.duanyazuobiao()
