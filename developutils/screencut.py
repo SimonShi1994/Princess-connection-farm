@@ -10,9 +10,8 @@ try:
     from core.Automator import Automator
 except:
     # sys.path.append("..")
-    # 真正的蠢办法，但非常有效(提供两种蠢方法），别问，问就是python的bug（目前在python3.6.7环境中上面命令无法使用）
-    # sys.path.extend([".."] + [os.path.join(root, name) for root, dirs, _ in os.walk("../") for name in dirs])
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    # 真正的蠢办法，但非常有效，别问，问就是python的bug（目前在python3.6.7环境中上面命令无法使用）
+    sys.path.extend([".."] + [os.path.join(root, name) for root, dirs, _ in os.walk("../") for name in dirs])
     from core.Automator import Automator
 
 def WindowMode(frame=None):
@@ -206,7 +205,7 @@ class AutomatorDebuger(Automator):
         def OnClick(event):
             txt = self._obj["txt"]
             pnt = self._obj["pnt"]
-            if event.button == 3 and not event.dblclick:
+            if event.button == 1 and not event.dblclick:
                 # 单击，显示坐标,self.click
                 try:
                     txt.remove()
@@ -238,10 +237,10 @@ class AutomatorDebuger(Automator):
                 plt.xlim([0, img.width])
                 plt.ylim([img.height, 0])
                 plt.gca().figure.canvas.draw()
-            elif event.button == 3 and event.dblclick:
+            elif event.button == 2:
                 # 中键，以当前的截图范围保存新的图片
                 SaveFile()
-            elif event.button == 1:
+            elif event.button == 3:
                 # 右键，框选
                 self._obj["x1"] = event.xdata
                 self._obj["y1"] = event.ydata
