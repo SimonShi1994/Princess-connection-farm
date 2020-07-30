@@ -1,5 +1,3 @@
-import asyncio
-import threading
 import time
 
 import psutil
@@ -19,42 +17,6 @@ class AsyncMixin(BaseMixin):
     异步插片
     包含异步函数
     """
-
-    def run_func(self, th_name, a, fun, async_sexitflag=False):
-        if async_sexitflag:
-            th_name.exit()
-            pass
-        else:
-            try:
-                AsyncMixin().do(a, fun)
-                pass
-            except:
-                pass
-        pass
-
-    def do(self, a, fun):
-        # 自定义，在此定义你要运行的参数
-        getattr(asyncio, 'run')(fun)
-        # getattr获取asyncio中run对象，然后进行调用
-        # 凄凄惨惨的替代eval这类危险的函数
-        pass
-
-    def c_async(self, a, account, fun, sync=False):
-        _async_infodic = {'a': a, 'account': account, 'fun': fun,
-                          '"pack_Thread-" + str(account)': "pack_Thread-" + str(account)}
-        th = Multithreading(kwargs=_async_infodic)
-        # print(threading.currentThread().ident)
-        # id, name
-        th.start()
-        if sync:
-            # 线程同步异步开关，True/False
-            th.join()
-            # 线程等待，执行完才能进入下一个线程
-            pass
-        else:
-            # 异步，推荐
-            pass
-        pass
 
     async def juqingtiaoguo(self):
         # 异步跳过教程 By：CyiceK
@@ -190,6 +152,7 @@ class AsyncMixin(BaseMixin):
     def stop_th(self):
         global th_sw
         th_sw = 1
+        self.fast_screencut_switch = 0
 
     def start_async(self):
         account = self.account
@@ -225,43 +188,3 @@ class AsyncMixin(BaseMixin):
         time.sleep(8)
         self.click(1, 1)
 
-
-class Multithreading(threading.Thread, AsyncMixin):
-    """
-    a 为连接Automator
-    ac 为账号
-    fun 为Automator中功能函数
-    th_id 为线程id
-    th_name 为线程名
-    BY:CyiceK
-    """
-
-    # 多线程异步
-    # 2020.7.11 已封装
-    # 2020.7.15 改装为进程池
-    # 2020.7.16 我又改了回去
-
-    def __init__(self, kwargs):
-        threading.Thread.__init__(self)
-        self.th_sw = 0
-        self.exitFlag = 0
-        # print(kwargs)
-        # kwargs = kwargs['kwargs']
-        self.th_id = kwargs['account']
-        self.th_name = kwargs['"pack_Thread-" + str(account)']
-        self.a = kwargs['a']
-        self.fun = kwargs['fun']
-        self.account = kwargs['account']
-        self._stop_event = threading.Event()
-        pass
-
-    def run(self):
-        AsyncMixin().run_func(self.th_name, self.a, self.fun)
-
-    def stop(self):
-        self._stop_event.set()
-
-    def stopped(self):
-        return self._stop_event.is_set()
-
-    pass

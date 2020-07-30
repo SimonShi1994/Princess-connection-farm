@@ -70,21 +70,21 @@ def check_task_dict(d: dict, is_raise=False) -> bool:
         for i in d["tasks"]:
             assert type(i) is dict, f"tasks中的每一个task必须为字典类型，但是{i}是{type(i)}。"
             assert "type" in i, f"tasks中的每一个task都必须有type键存放任务代号，但是{i}没有"
-            assert i["type"] in VALID_TASK.T, f"任务代号{i['task']}不存在！"
+            assert i["type"] in VALID_TASK.T, f"任务代号{i['type']}不存在！"
             params = VALID_TASK.T[i["type"]]["params"]
+
             for j in params:
                 if j.default is not None:
                     assert j.key in i, f"任务 {i['type']} 必须含有参数 {j.key}！"
+
             v_k = [i.key for i in params]
-            v_t = [i.typ for i in params]
+            v_p = [i for i in params]
             for k in i:
                 if k == "type":
                     continue
                 assert k in v_k, f"任务 {i['type']} 含有未知的参数 {k}！"
                 ind = v_k.index(k)
-                if v_t[ind] is not None:
-                    assert type(i[k]) is v_t[ind], f"任务 {i['type']} 的参数 {k} 必须是 {v_t[ind]} 而不应是 {type(i[k])}"
-
+                v_p[ind].check(i[k])
         return True
     except Exception as e:
         if is_raise:
