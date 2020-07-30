@@ -42,7 +42,26 @@ def p(*args, name=None, img=None, at=None):
 MAIN_BTN = {
     "zhuye": p(131, 533, name="我的主页"),
     "hanghui": p(693, 430, name="行会"),  # 行会按钮
+    "juese": p(213, 507),
+    "juqing": p(342, 510),
+    "maoxian": p(480, 515),
+    "gonghuizhijia": p(617, 512),
+    "niudan": p(753, 514),
+    "zhucaidan": p(877, 515),
+
     "liwu": p(908, 432, img="img/home/liwu.bmp", at=(891, 417, 927, 448)),  # 礼物
+
+    "tongzhi_bottom": p(at=(4, 255, 949, 531)),  # 通知：下半部分
+    "niudan_jiasu": p(img='img/home/niudan_jiasu.jpg', at=(700, 0, 960, 100)),
+    "jingsaikaishi": p(img='img/home/jingsaikaishi.bmp', at=(755, 471, 922, 512)),
+
+}
+JIAYUAN_BTN = {
+    "quanbushouqu": p(900, 424, img="img/quanbushouqu.bmp", at=(872, 395, 926, 454)),
+
+}
+NIUDAN_BTN = {
+    "PT_RESET_OK": p(479, 365),
 
 }
 HANGHUI_BTN = {

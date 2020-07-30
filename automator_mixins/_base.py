@@ -14,7 +14,7 @@ from core.constant import PCRelement
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.usercentre import AutomatorRecorder
-from pcr_config import debug, fast_screencut
+from pcr_config import debug, fast_screencut, lockimg_timeout
 
 if fast_screencut:
     import adbutils
@@ -45,6 +45,13 @@ class BaseMixin:
 
         # fastscreencap
         if fast_screencut:
+            # Switch:
+            # -1 出错
+            # 0 关闭
+            # 1 启动中
+            # 2 待续
+            # 3 截图中
+            # 4 截图完毕
             self.fast_screencut_switch = 0
             self.lport: Optional[int] = None
             self.ws: Optional[websocket.WebSocket] = None
@@ -73,6 +80,14 @@ class BaseMixin:
         self.init_device(address)
         self.init_account(account)
 
+    @staticmethod
+    def _get_at(at):
+        # at参数的转换
+        if isinstance(at, PCRelement):
+            return at.at
+        else:
+            return at
+
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0.):
         """
         try to click the img
@@ -81,6 +96,7 @@ class BaseMixin:
         :param img:
         :return: success
         """
+        at = self._get_at(at)
         position = UIMatcher.img_where(screen, img, threshold, at)
         if position:
             self.click(*position, pre_delay, post_delay)
@@ -137,7 +153,7 @@ class BaseMixin:
                 return True
             else:
                 if "at" in kwargs:
-                    at = kwargs["at"]
+                    at = self._get_at(kwargs["at"])
                 elif pe.at is not None:
                     at = pe.at
                 else:
@@ -155,7 +171,7 @@ class BaseMixin:
             # 点击一个图片
             img = args[0]
             if "at" in kwargs:
-                at = kwargs["at"]
+                at = self._get_at(kwargs["at"])
             else:
                 at = None
             if "screen" in kwargs:
@@ -167,6 +183,15 @@ class BaseMixin:
             else:
                 threshold = 0.84
             return self.click_img(screen, img, threshold, at, 0, post_delay)
+
+    @staticmethod
+    def _get_img_at(img, at):
+        at = BaseMixin._get_at(at)
+        if isinstance(img, PCRelement):
+            if at is None:
+                at = img.at
+            img = img.img
+        return img, at
 
     def is_exists(self, img, threshold=0.84, at=None, screen=None):
         """
@@ -181,10 +206,7 @@ class BaseMixin:
         """
         if screen is None:
             screen = self.getscreen()
-        if isinstance(img, PCRelement):
-            if at is None:
-                at = img.at
-            img = img.img
+        img, at = self._get_img_at(img, at)
         return UIMatcher.img_where(screen, img, threshold, at) != False
 
     def img_prob(self, img, at=None, screen=None):
@@ -200,10 +222,7 @@ class BaseMixin:
         """
         if screen is None:
             screen = self.getscreen()
-        if isinstance(img, PCRelement):
-            if at is None:
-                at = img.at
-            img = img.img
+        img, at = self._get_img_at(img, at)
         return UIMatcher.img_prob(screen, img, at)
 
     def img_equal(self, img1, img2, at=None, similarity=0.01) -> float:
@@ -216,6 +235,7 @@ class BaseMixin:
             img1 = cv2.imread(img1)
         if isinstance(img2, str):
             img2 = cv2.imread(img2)
+        at = self._get_at(at)
         if at is not None:
             img1 = UIMatcher.img_cut(img1, at)
             img2 = UIMatcher.img_cut(img2, at)
@@ -224,7 +244,7 @@ class BaseMixin:
 
         return np.sum(np.abs(img1 - img2) < similarity) / img1.size
 
-    def wait_for_stable(self, delay=0.5, threshold=0.2, similarity=0.001, max_retry=5, at=None, screen=None):
+    def wait_for_stable(self, delay=0.5, threshold=0.2, similarity=0.001, max_retry=0, at=None, screen=None):
         """
         等待动画结束,画面稳定。此时相邻两帧的相似度大于threshold
         :param similarity: 近似程度0~1
@@ -235,7 +255,10 @@ class BaseMixin:
         :return: True：动画结束 False：动画未结束
         """
         sc = self.getscreen() if screen is None else screen
-        for retry in range(max_retry):
+        retry = 0
+        at = self._get_at(at)
+        while retry < max_retry or max_retry == 0:
+            retry += 1
             time.sleep(delay)
             sc2 = self.getscreen()
             value = self.img_equal(sc, sc2, at, similarity)
@@ -246,7 +269,7 @@ class BaseMixin:
             sc = sc2
         return False
 
-    def wait_for_change(self, delay=0.5, threshold=0.10, similarity=0.01, max_retry=5, at=None, screen=None):
+    def wait_for_change(self, delay=0.5, threshold=0.10, similarity=0.01, max_retry=0, at=None, screen=None):
         """
         等待画面跳转变化，此时尾帧与头帧的相似度小于threshold
         :param similarity: 近似程度0~1
@@ -257,7 +280,10 @@ class BaseMixin:
         :return: True：动画改变 False：动画未改变
         """
         sc = self.getscreen() if screen is None else screen
-        for retry in range(max_retry):
+        retry = 0
+        at = self._get_at(at)
+        while retry < max_retry or max_retry == 0:
+            retry += 1
             time.sleep(delay)
             sc2 = self.getscreen()
             value = self.img_equal(sc, sc2, at, similarity)
@@ -437,14 +463,14 @@ class BaseMixin:
                 # print('未找到所需的按钮,无动作')
                 pass
 
-    def lockimg(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=30,
-                at=None, is_raise=True):
+    def _lockimg(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=0,
+                 at=None, is_raise=True, lock_no=False):
         """
         @args:
             img:要匹配的图片目录
-                2020-07-28：TheAutumnOfRice Add: img支持兼容PCRelement格式
-                传入PCRelement后,自动填充img和at。
-                如果PCRelement含有at属性而外部设置了at，以lockimg的参数为准
+            2020-07-28：TheAutumnOfRice Add: img支持兼容PCRelement格式
+            传入PCRelement后,自动填充img和at。
+            如果PCRelement含有at属性而外部设置了at，以lockimg的参数为准
             ifbefore:识别成功后延迟点击时间
             ifclick:在识别到图片时要点击的坐标，列表，列表元素为坐标如(1,1)
             ifdelay:上述点击后延迟的时间
@@ -452,10 +478,15 @@ class BaseMixin:
             elsedelay:上述点击后延迟的时间
             retry:elseclick最多点击次数，0为无限次
             is_raise: 失败时，是否弹出错误
+            lock_no: False: lockimg True: lock_no_img
+        @pcr_config:
+            lockimg_timeout: 设置为0时，不做超时处理；否则，如果超过该时间，报错
         @return:是否在retry次内点击成功
         """
+
         # 2020-07-12 Add: 增加了ifclick,elseclick参数对Tuple的兼容性
         # 2020-07-14 Add: added retry
+        # 2020-07-30 Add: 整合了lockimg 和 lock_no_img，增加timeout
         if elseclick is None:
             elseclick = []
         if ifclick is None:
@@ -464,14 +495,12 @@ class BaseMixin:
             ifclick = [ifclick]
         if type(elseclick) is not list:
             elseclick = [elseclick]
-        if isinstance(img, PCRelement):
-            if at is None:
-                at = img.at
-            img = img.img
+        img, at = self._get_img_at(img, at)
         attempt = 0
+        lasttime = time.time()
         while True:
             screen_shot = self.getscreen()
-            if UIMatcher.img_where(screen_shot, img, at=at):
+            if UIMatcher.img_where(screen_shot, img, at=at) is not lock_no:
                 if ifclick != []:
                     for clicks in ifclick:
                         time.sleep(ifbefore)
@@ -485,62 +514,34 @@ class BaseMixin:
             time.sleep(alldelay)
             attempt += 1
             if retry != 0 and attempt >= retry:
+                if is_raise:
+                    raise Exception("Lockimg 超过最大点击次数！")
+                return False
+            if lockimg_timeout != 0 and time.time() - lasttime > lockimg_timeout:
                 if is_raise:
                     raise Exception("Lockimg 超时！")
                 return False
         return True
 
-    def lock_no_img(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5,
-                    retry=30, at=None, is_raise=True):  # 锁定指定图像
+    def lockimg(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=0,
+                at=None, is_raise=True):
         """
-        @args:
-            img:要匹配的图片目录
-            2020-07-28：TheAutumnOfRice Add: img支持兼容PCRelement格式
-                传入PCRelement后,自动填充img和at。
-                如果PCRelement含有at属性而外部设置了at，以lock_no_img的参数为准
-            ifbefore:识别成功后延迟点击时间
-            ifclick:在识别不到图片时要点击的坐标，列表，列表元素为坐标如(1,1)
-            ifdelay:上述点击后延迟的时间
-            elseclick:在找到图片时要点击的坐标，列表，列表元素为坐标如(1,1)
-            retry:elseclick最多点击次数，0为无限次
-            is_raise: 失败时，是否弹出错误
-        @return:是否在retry次内点击成功
+        锁定图片，直到该图出现。
+        图片出现后，点击ifclick；未出现，点击elseclick
         """
-        # 2020-07-13 Added By Dr-Blueomnd
+        return self._lockimg(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
+                             elsedelay=elsedelay,
+                             alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False)
 
-        if elseclick is None:
-            elseclick = []
-        if ifclick is None:
-            ifclick = []
-        if type(ifclick) is tuple:
-            ifclick = [ifclick]
-        if type(elseclick) is tuple:
-            elseclick = [elseclick]
-        if isinstance(img, PCRelement):
-            if at is None:
-                at = img.at
-            img = img.img
-        attempt = 0
-        while True:
-            screen_shot = self.getscreen()
-            if not UIMatcher.img_where(screen_shot, img, at=at):
-                if ifclick != []:
-                    for clicks in ifclick:
-                        time.sleep(ifbefore)
-                        self.click(clicks[0], clicks[1])
-                        time.sleep(ifdelay)
-                break
-            if elseclick != []:
-                for clicks in elseclick:
-                    self.click(clicks[0], clicks[1])
-                    time.sleep(elsedelay)
-            time.sleep(alldelay)
-            attempt += 1
-            if retry != 0 and attempt >= retry:
-                if is_raise:
-                    raise Exception("Lock_no_img 超时！")
-                return False
-        return True
+    def lock_no_img(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5,
+                    retry=0, at=None, is_raise=True):  # 锁定指定图像
+        """
+        锁定图片，直到该图消失
+        图片消失后，点击ifclick；未消失，点击elseclick
+        """
+        return self._lockimg(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
+                             elsedelay=elsedelay,
+                             alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True)
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
         """

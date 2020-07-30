@@ -11,7 +11,7 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.log_handler import pcr_log
 from core.usercentre import list_all_users, AutomatorRecorder
 # 临时解决方案，可以改进
-from pcr_config import trace_exception_for_debug
+from pcr_config import trace_exception_for_debug, end_shutdown
 
 acclog = log_handler.pcr_acc_log()
 # 雷电模拟器
@@ -175,5 +175,7 @@ def execute(continue_=False, max_retry=3):
     os.system('cd adb & adb kill-server')
     pcr_log('admin').write_log(level='info', message='任务全部完成')
     pcr_log('admin').server_bot('', message='任务全部完成')
+    if end_shutdown:
+        os.system("shutdown -s -f -t 120")
     # except Exception as e:
     #    pcr_log("admin").write_log(level="error", message=f"execute发生了错误：{e}")

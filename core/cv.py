@@ -6,7 +6,7 @@ import numpy as np
 
 from core.log_handler import pcr_log
 # 临时，等待config的创建
-from pcr_config import debug
+from pcr_config import debug, use_template_cache
 
 
 def cv_imread(file_path):  # 用于中文目录的imread函数
@@ -93,25 +93,32 @@ class UIMatcher:
         if at is not None:
             try:
                 x1, y1, x2, y2 = at
-                screen = screen[y1:y2, x1:x2]
+                screen = screen[y1:y2 + 1, x1:x2 + 1]
             except:
                 pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
                 exit(-1)
         if screen.mean() < 1:  # 纯黑色与任何图相关度为1
             return 0
-        if template_path not in cls.template_cache:
+        template = cls._get_template(template_path)
+        prob = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED).max()
+        return prob
+
+    @classmethod
+    def _get_template(cls, template_path):
+        if isinstance(template_path, np.ndarray):
+            return template_path
+        if not use_template_cache or template_path not in cls.template_cache:
             template = cv2.imread(template_path)
             cls.template_cache[template_path] = template
         else:
             template = cls.template_cache[template_path]
-        prob = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED).max()
-        return prob
+        return template
 
     @staticmethod
     def img_cut(screen, at):
         try:
             x1, y1, x2, y2 = at
-            screen = screen[y1:y2, x1:x2]
+            screen = screen[y1:y2 + 1, x1:x2 + 1]
         except:
             pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
             exit(-1)
@@ -128,25 +135,29 @@ class UIMatcher:
         :param at: 缩小查找范围
         :return:
         """
+        if isinstance(screen, str):
+            screen = cv2.imread(screen)
         if screen.shape[0] > screen.shape[1]:
             screen = UIMatcher.RotateClockWise90(screen)
         if at is not None:
             try:
                 x1, y1, x2, y2 = at
-                screen = screen[y1:y2, x1:x2]
+                screen = screen[y1:y2 + 1, x1:x2 + 1]
             except:
                 pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
                 exit(-1)
         else:
             x1, y1 = 0, 0
-        if screen.mean() < 1:
+        randpic = np.round(np.random.random(screen.shape) * 255).astype(np.uint8)
+        # 如果和随机图片相关度很高，那么放弃
+        prob = cv2.matchTemplate(screen, randpic, cv2.TM_CCOEFF_NORMED).max()
+        if prob > threshold:
+            if debug:
+                pcr_log('admin').write_log(level='debug', message=f"随机图片与截选区域相似度达到{prob}")
             return False
         # 缓存未命中时从源文件读取
-        if template_path not in cls.template_cache:
-            template = cv2.imread(template_path)
-            cls.template_cache[template_path] = template
-        else:
-            template = cls.template_cache[template_path]
+        template = cls._get_template(template_path)
+
         th, tw = template.shape[:2]  # rows->h, cols->w
         res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)

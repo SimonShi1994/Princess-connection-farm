@@ -55,7 +55,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         # 刷11-3 hard图
 
-    def shuatuNN(self, tu_dict: dict):
+    def shuatuNN(self, tu_dict: list):
         """
         刷指定N图
              {大图号：
@@ -94,7 +94,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 continue
         self.lock_home()
 
-    def shuatuHH(self, tu_dict: dict):
+    def shuatuHH(self, tu_dict: list):
         """
         刷指定H图
         :param tu_dict: 刷图列表
