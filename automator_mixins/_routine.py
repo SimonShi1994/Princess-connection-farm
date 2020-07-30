@@ -1,5 +1,6 @@
 import time
 
+from core.constant import MAIN_BTN, JIAYUAN_BTN
 from core.cv import UIMatcher
 from ._shuatu_base import ShuatuBaseMixin
 
@@ -11,22 +12,19 @@ class RoutineMixin(ShuatuBaseMixin):
     """
 
     def init_home(self):
+        # 2020-07-31 TheAutumnOfRice: 检查完毕
         while True:
             screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp', at=(891, 413, 930, 452)):
+            if self.is_exists(MAIN_BTN["liwu"], screen=screen_shot_):
                 break
-            if UIMatcher.img_where(screen_shot_, 'img/niudan_jiasu.jpg', at=(700, 0, 960, 100)):
-                self.click(893, 39)  # 跳过
-                time.sleep(0.5)
+            if self.is_exists(MAIN_BTN["niudan_jiasu"], screen=screen_shot_):
+                self.click(893, 39, post_delay=0.5)  # 跳过
                 continue
-            if UIMatcher.img_where(screen_shot_, 'img/jingsaikaishi.bmp', at=(755, 471, 922, 512)):
-                self.click(786, 308)  # 选角色
-                time.sleep(0.2)
+            if self.is_exists(MAIN_BTN["jingsaikaishi"], screen=screen_shot_):
+                self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
-                time.sleep(0.5)
                 continue
-            self.click(1, 1)
-            time.sleep(0.3)
+            self.click(1, 1, post_delay=0.5)
 
         self.lock_home()
         time.sleep(0.5)
@@ -42,15 +40,16 @@ class RoutineMixin(ShuatuBaseMixin):
             self.lock_home()
 
     def gonghuizhijia(self):  # 家园领取
+        # 2020-07-31 TheAutumnOfRice: 检查完毕
         self.lock_home()
-        self.lockimg('img/jyquanbushouqu.jpg', elseclick=[(622, 509)], elsedelay=1)
-        self.lockimg('img/guanbi.jpg', elseclick=[(899, 429)], elsedelay=0.5, retry=3)
+        self.lockimg(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], elsedelay=1)
+        self.lockimg('img/guanbi.jpg', elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5, retry=3, is_raise=False)
         self.lock_home()
 
     def mianfeiniudan(self):
         # 免费扭蛋
         self.lock_home()
-        self.lockimg('img/liwu.bmp', ifclick=[(750, 510)], ifdelay=1, at=(891, 413, 930, 452))  # 点进扭蛋界面
+        self.lockimg(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
         while True:
             # 跳过抽奖提示
             time.sleep(4)
