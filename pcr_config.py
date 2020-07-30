@@ -8,10 +8,15 @@ baidu_secretKey = ''
 s_sckey = ''
 log_lev = '1'
 
-async_screenshot_freq = 5
-bad_connecting_time = 30
+async_screenshot_freq = 0.8
+bad_connecting_time = 15
 
 fast_screencut = True  # mincap 快速截图
 
+end_shutdown = False  # 非常“危险”的Windows功能
+
+lockimg_timeout = 90  # 90秒如果还在lockimg，则跳出重启
+
 # 仅为调试使用
 trace_exception_for_debug = False  # 开启后，所有的try向上传递错误信息，并且只用第一个device跑第一个任务（单进程）
+use_template_cache = True  # 在开发工具使用时可以将其关闭

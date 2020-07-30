@@ -133,8 +133,11 @@ class AutomatorDebuger(Automator):
         self._obj = {}
 
     @staticmethod
-    def Init():
-        os.system('cd .. & cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
+    def Init(cd=True):
+        if cd:
+            os.system('cd .. & cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
+        else:
+            os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
         os.system('python -m uiautomator2 init')
 
     def Connect(self, address="emulator-5554"):
