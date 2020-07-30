@@ -393,9 +393,15 @@ class ShuatuBaseMixin(ToolsMixin):
 
         """
         #进入冒险选项卡
-        self.lockimg("img/dixiacheng.jpg",ifclick=(562, 253),elseclick=(480,505),alldelay=2,ifbefore=2)
-        # 此处很容易卡
-        self.lockimg("img/normal.jpg", ifclick=(701, 83), elseclick=(701, 83), alldelay=2, ifbefore=3)
+        self.click(480,505)
+        time.sleep(2)
+        # 进入地图（此处写500，90是为了防止误触到关卡）
+        self.lockimg("img/dixiacheng.jpg",ifclick=(500，90),elseclick=(480,505),alldelay=2,ifbefore=2)
+        #判断是否进入地图
+        self.lockimg("img/ditu.jpg",ifclick=(701, 83),elseclick=(500，90),alldelay=2,ifbefore=2)
+        # 进入normal图（此处很容易卡）
+        self.lockimg("img/normal.jpg", elseclick=(701, 83), alldelay=2, ifbefore=3)
+
         self.duanyazuobiao()
         for _ in range(to_map - 7):
             # 以7图为基向右移动5图
