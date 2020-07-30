@@ -10,8 +10,9 @@ try:
     from core.Automator import Automator
 except:
     # sys.path.append("..")
-    # 真正的蠢办法，但非常有效，别问，问就是python的bug（目前在python3.6.7环境中上面命令无法使用）
-    sys.path.extend([".."] + [os.path.join(root, name) for root, dirs, _ in os.walk("../") for name in dirs])
+    # 真正的蠢办法(提供两种蠢方法），但非常有效，别问，问就是python的bug（目前在某些python3环境中上面命令无法使用）
+    # sys.path.extend([".."] + [os.path.join(root, name) for root, dirs, _ in os.walk("../") for name in dirs])
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
     from core.Automator import Automator
 
 def WindowMode(frame=None):
