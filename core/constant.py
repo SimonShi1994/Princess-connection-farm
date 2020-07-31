@@ -305,7 +305,7 @@ MAOXIAN_BTN = {
     "hard_on": p(825, 83, img="img/maoxian/hard_on.bmp", at=(780, 70, 871, 92)),
     "hard_off": p(824, 83, img="img/maoxian/hard_off.bmp", at=(781, 70, 867, 92)),
     "hard_0_3": p(img="img/maoxian/hard_0_3.bmp", at=(887, 402, 919, 422)),  # 剩余挑战次数0/3
-
+    "ditu": p(img="img/maoxian/ditu.bmp", at=(906, 64, 930, 106)),
 }
 NORMAL_ID = {
     1: p(img='img/normal/1.bmp'),
