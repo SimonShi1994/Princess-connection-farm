@@ -32,28 +32,16 @@ class ShuatuMixin(ShuatuBaseMixin):
         map为主图
         """
         # 进入冒险
-        time.sleep(2)
-        self.click(480, 505)
-        time.sleep(2)
+        self.shuatuNN(["1-1-160"])
 
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
-                break
-        self.click(562, 253)
-        time.sleep(2)
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
-                break
-        for i in range(map):
-            time.sleep(3)
-            self.click(27, 272)
-        self.shuatuzuobiao(106, 279, 160)  # 1-1 刷7次体力为佳
-
-        self.lock_home()
-
-        # 刷11-3 hard图
+    # 刷经验3-1
+    def shuajingyan3(self, map):
+        """
+        刷图刷3-1
+        map为主图
+        """
+        # 进入冒险
+        self.shuatuNN(["3-1-125"])
 
     def shuatuNN(self, tu_dict: list):
         """

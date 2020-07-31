@@ -9,6 +9,7 @@ AccountRecord.log
 accounts.txt
 accounts_init.txt
 diy.py
+/screenshots/
 /users/
 /rec/
 log
