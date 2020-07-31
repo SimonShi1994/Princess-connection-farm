@@ -88,9 +88,10 @@ class ShuatuBaseMixin(ToolsMixin):
         # 进入主线
         self.lock_home()
         self.click(*MAIN_BTN["maoxian"])
-        self.lockimg(MAIN_BTN["dxc"])
-        self.click(*MAIN_BTN["zhuxian"], post_delay=1)
-        self.wait_for_loading()
+        # 进入地图（此处写500，90是为了防止误触到关卡）
+        self.lockimg(MAIN_BTN["dxc"],ifclick=MAIN_BTN["zhuxian"],elseclick=MAIN_BTN["maoxian"],ifbefore=2)
+        #判断是否进入地图
+        self.lockimg(MAOXIAN_BTN["ditu"],ifclick=MAOXIAN_BTN["normal_on"],elseclick=MAIN_BTN["zhuxian"],ifbefore=2)
 
     def enter_hard(self, max_retry=3):
         self.enter_zhuxian()

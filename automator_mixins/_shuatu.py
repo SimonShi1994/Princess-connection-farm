@@ -32,21 +32,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         map为主图
         """
         # 进入冒险
-        #进入冒险选项卡
-        self.click(480,505)
-        time.sleep(2)
-        # 进入地图（此处写500，90是为了防止误触到关卡）
-        self.lockimg("img/dixiacheng.jpg",ifclick=(500, 90),elseclick=(480,505),alldelay=2,ifbefore=0.5)
-        #判断是否进入地图
-        self.lockimg("img/ditu.jpg",ifclick=(701, 83),elseclick=(500, 90),alldelay=2,ifbefore=0.5)
-        # 进入normal图（此处很容易卡）
-        self.lockimg("img/normal.jpg", elseclick=(701, 83), alldelay=2, ifbefore=3)
-        # 进入1图
-        for i in range(map):
-            time.sleep(3)
-            self.click(27, 272)
-        self.shuatuzuobiao(106, 279, 160)  # 1-1 刷7次体力为佳
-        self.lock_home()
+        self.shuatuNN(["1-1-160"])
 
     # 刷经验3-1
     def shuajingyan3(self, map):
@@ -55,22 +41,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         map为主图
         """
         # 进入冒险
-        #进入冒险选项卡
-        self.click(480,505)
-        time.sleep(2)
-        # 进入地图（此处写500，90是为了防止误触到关卡）
-        self.lockimg("img/dixiacheng.jpg",ifclick=(500, 90),elseclick=(480,505),alldelay=2,ifbefore=0.5)
-        #判断是否进入地图
-        self.lockimg("img/ditu.jpg",ifclick=(701, 83),elseclick=(500, 90),alldelay=2,ifbefore=0.5)
-        # 进入normal图（此处很容易卡）
-        self.lockimg("img/normal.jpg", elseclick=(701, 83), alldelay=2, ifbefore=3)
-        # 进入3图
-        for i in range(map-3):
-            time.sleep(3)
-            self.click(27, 272)
-        self.shuatuzuobiao(138, 188, 125)  # 3-1
-        self.lock_home()
-
+        self.shuatuNN(["3-1-125"])
 
     def shuatuNN(self, tu_dict: list):
         """

@@ -443,6 +443,8 @@ VALID_TASK = ValidTask() \
          [TaskParam("name", str, "新名字", "你的新名字")]) \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
+    .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",
+         [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s2", "shuatuNN", "刷N图", "使用扫荡券刷指定普通副本",
          [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",
