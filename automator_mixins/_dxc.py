@@ -62,6 +62,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         pcr_log(self.account).write_log(level='info',
                                                         message='%s 由于跳过战斗的开启，不知是否打过地下城，开始执行地下城流程' % self.account)
                         break
+                else:
+                    dixiacheng_floor_times = -1
                 break
             except Exception as result:
                 pcr_log(self.account).write_log(level='warning', message='1-检测出异常{},重试'.format(result))
@@ -70,6 +72,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         tmp_cout = 0
         while tmp_cout <= 2:
             try:
+                self.d.click(1, 1)
                 time.sleep(2)
                 dixiacheng_times = self.baidu_ocr(868, 419, 928, 459)
                 dixiacheng_times = int(dixiacheng_times['words_result'][0]['words'].split('/')[0])
@@ -82,7 +85,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         # 下面这段因为调试而注释了，实际使用时要加上
         while True:
             try:
-                if dixiacheng_times == -1:
+                # print(dixiacheng_times, ' ', dixiacheng_floor_times)
+                if dixiacheng_times == -1 and dixiacheng_floor_times == -1:
                     pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
                     pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
                     self.dixiacheng(skip)
@@ -104,6 +108,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     pcr_log(self.account).write_log(level='info', message='>>>今天无次数\r\n')
                     # LOG().Account_undergroundcity(self.account)
                     break
+                self.d.click(1, 1)
+                # 这里防止卡可可萝
             except Exception as error:
                 pcr_log(self.account).write_log(level='warning', message='3-检测出异常{}'.format(error))
                 pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
@@ -168,7 +174,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lockimg('img/caidan.jpg', ifclick=[(902, 33)], ifbefore=2, ifdelay=1)
                 self.lockimg('img/fangqi.jpg', ifclick=[(625, 376)], ifbefore=2, ifdelay=3)
                 self.lockimg('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=2, ifdelay=1)
-                time.sleep(0.5)
+                time.sleep(3)
                 # 这里防一波打得太快导致来不及放弃
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):
@@ -179,6 +185,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         break
             else:
                 self.lockimg('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=8)
+                screen = self.d.screenshot(format='opencv')
+                if UIMatcher.img_where(screen, 'img/auto.jpg'):
+                    time.sleep(0.2)
+                    self.d.click(914, 425)
             while skip is False:  # 结束战斗返回
                 time.sleep(0.5)
                 screen_shot_ = self.getscreen()
