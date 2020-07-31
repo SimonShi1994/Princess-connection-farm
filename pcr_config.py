@@ -8,10 +8,12 @@ baidu_secretKey = ''
 s_sckey = ''
 log_lev = '1'
 
-async_screenshot_freq = 0.8
-bad_connecting_time = 15
+async_screenshot_freq = 5
+bad_connecting_time = 30
 
 fast_screencut = True  # mincap 快速截图
+fast_screencut_delay = 1.5  # 由于截图太快造成脚本崩溃，可以使用这个加上全局的截图delay，模拟卡顿。
+fast_screencut_timeout = 10  # 等待服传输数据超时
 
 end_shutdown = False  # 非常“危险”的Windows功能
 

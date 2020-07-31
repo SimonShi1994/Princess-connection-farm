@@ -28,12 +28,14 @@ class JJCMixin(ToolsMixin):
 
     # 做jjc任务
     def doJJC(self):
+        # TODO 这个也很卡，基本没法成功，需要改
+
         # 进入jjc
         self.enterJJC(579, 411)
 
         # 选择第一位进入对战
         self.click(604, 162)
-        time.sleep(1)
+        time.sleep(4)
         # 点击战斗开始
         self.click(822, 456)
 

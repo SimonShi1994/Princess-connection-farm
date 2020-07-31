@@ -44,26 +44,61 @@ MAIN_BTN = {
     "hanghui": p(693, 430, name="行会"),  # 行会按钮
     "juese": p(213, 507),
     "juqing": p(342, 510),
-    "maoxian": p(480, 515, img="img/ui/maoxian.bmp", at=(421, 447, 535, 535)),
+    "maoxian": p(480, 515, img="img/home/maoxian.bmp", at=(421, 447, 535, 535)),
+    "dxc": p(874, 122, img="img/home/dxc.bmp", at=(848, 101, 898, 145)),
+    "zhuxian": p(564, 194),  # 主线关卡
     "gonghuizhijia": p(617, 512),
     "niudan": p(753, 514),
     "zhucaidan": p(877, 515),
 
     "liwu": p(908, 432, img="img/home/liwu.bmp", at=(891, 417, 927, 448)),  # 礼物
+    "renwu": p(837, 432),
+    "tili_plus": p(320, 31),
+    "tili_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "tili_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
+
+    "mana_plus": p(189, 62),
+    "mana_title": p(img="img/home/mana_title.bmp", at=(86, 55, 307, 107)),
+    "mana_blank": p(img="img/home/mana_blank.bmp", at=(740, 460, 895, 497)),
+    "mana_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "mana_one": p(582, 471),
+    "mana_ten": p(802, 475),
 
     "tongzhi_bottom": p(at=(4, 255, 949, 531)),  # 通知：下半部分
-    "niudan_jiasu": p(img='img/home/niudan_jiasu.jpg', at=(700, 0, 960, 100)),
+    "tiaoguo": p(img='img/ui/jiasu.jpg', at=(700, 0, 960, 100)),
     "jingsaikaishi": p(img='img/home/jingsaikaishi.bmp', at=(755, 471, 922, 512)),
 
     "loading_left": p(at=(36, 87, 224, 386)),
 
 }
-JIAYUAN_BTN = {
-    "quanbushouqu": p(900, 424, img="img/quanbushouqu.bmp", at=(872, 395, 926, 454)),
+LIWU_BTN = {
+    "shouqulvli": p(img="img/home/shouqulvli.bmp", at=(98, 461, 202, 489)),
+    "quanbushouqu": p(812, 470, img="img/home/quanbushouqu_on.bmp", at=(715, 458, 900, 494)),
+    "quxiao": p(597, 478),
+    "ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
+    "ok2": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
+    "chiyoushangxian": p(img="img/home/chiyoushangxian.bmp", at=(433, 134, 529, 159)),
+    "chiyoushangxian_ok": p(481, 371),
 
 }
+RENWU_BTN = {
+    "quanbushouqu": p(844, 439),
+    "renwutip": p(img="img/home/renwutip.bmp", at=(466, 363, 803, 389)),
+    "guanbi": p(img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),
+}
+JIAYUAN_BTN = {
+    "quanbushouqu": p(900, 424, img="img/jiayuan/quanbushouqu.bmp", at=(872, 395, 926, 454)),
+    "guanbi": p(477, 479, img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),
+}
+
 NIUDAN_BTN = {
-    "PT_RESET_OK": p(479, 365),
+    "PT_reset_ok": p(479, 365),
+    "putong": p(862, 71),
+    "putong_mianfei": p(717, 354, img="img/niudan/putong_mianfei.bmp", at=(680, 358, 754, 383)),
+    "putong_quxiao": p(367, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
+    "putong_ok": p(591, 360, img="img/ui/ok_btn_1.bmp", at=(493, 347, 688, 387)),
+    "niudanjieguo_ok": p(481, 443, img="img/ui/ok_btn_2.bmp", at=(383, 423, 597, 462)),
+    "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(647, 329, 784, 378)),
 
 }
 HANGHUI_BTN = {
@@ -123,6 +158,11 @@ FIGHT_BTN = {
     "qwjsyl": p(576, 495, img="img/fight/qwjsyl.bmp", at=(392, 457, 948, 528)),  # 前往角色一览
     "win": p(img="img/fight/win.bmp", at=(400, 6, 551, 127)),  # 过关的帽子
     "zhandoukaishi": p(837, 453, at=(755, 426, 918, 477)),
+
+    "upperright_stars":  # “挑战”页面右上角的星星位置
+        {
+            1: p(at=(752, 23, 771, 48)),
+        }
 }
 MAX_DXC = 3  # 一共出了多少个地下城关
 
@@ -181,6 +221,20 @@ DXC_COORD = {
     }
 }
 MAX_MAP = 12
+HARD_ID = {
+    1: p(img='img/hard/1.bmp'),
+    2: p(img='img/hard/2.bmp'),
+    3: p(img='img/hard/3.bmp'),
+    4: p(img='img/hard/4.bmp'),
+    5: p(img='img/hard/5.bmp'),
+    6: p(img='img/hard/6.bmp'),
+    7: p(img='img/hard/7.bmp'),
+    8: p(img='img/hard/8.bmp'),
+    9: p(img='img/hard/9.bmp'),
+    10: p(img='img/hard/10.bmp'),
+    11: p(img='img/hard/11.bmp'),
+    12: p(img='img/hard/12.bmp'),
+}
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -246,6 +300,12 @@ HARD_COORD = {
 
 MAOXIAN_BTN = {
     "title_box": p(at=(356, 61, 595, 104)),
+    "normal_on": p(699, 82, img="img/maoxian/normal_on.bmp", at=(656, 72, 748, 91)),
+    "normal_off": p(701, 82, img="img/maoxian/normal_off.bmp", at=(656, 72, 749, 92)),
+    "hard_on": p(825, 83, img="img/maoxian/hard_on.bmp", at=(780, 70, 871, 92)),
+    "hard_off": p(824, 83, img="img/maoxian/hard_off.bmp", at=(781, 70, 867, 92)),
+    "hard_0_3": p(img="img/maoxian/hard_0_3.bmp", at=(887, 402, 919, 422)),  # 剩余挑战次数0/3
+
 }
 NORMAL_ID = {
     1: p(img='img/normal/1.bmp'),

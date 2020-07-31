@@ -1,6 +1,7 @@
 import time
 
-from core.constant import MAIN_BTN, JIAYUAN_BTN
+from core.MoveRecord import movevar
+from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN
 from core.cv import UIMatcher
 from ._shuatu_base import ShuatuBaseMixin
 
@@ -17,7 +18,7 @@ class RoutineMixin(ShuatuBaseMixin):
             screen_shot_ = self.getscreen()
             if self.is_exists(MAIN_BTN["liwu"], screen=screen_shot_):
                 break
-            if self.is_exists(MAIN_BTN["niudan_jiasu"], screen=screen_shot_):
+            if self.is_exists(MAIN_BTN["tiaoguo"], screen=screen_shot_):
                 self.click(893, 39, post_delay=0.5)  # 跳过
                 continue
             if self.is_exists(MAIN_BTN["jingsaikaishi"], screen=screen_shot_):
@@ -43,11 +44,12 @@ class RoutineMixin(ShuatuBaseMixin):
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         self.lock_home()
         self.lockimg(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], elsedelay=1)
-        self.lockimg('img/guanbi.jpg', elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5, retry=3, is_raise=False)
+        self.lockimg(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5, retry=3)
         self.lock_home()
 
     def mianfeiniudan(self):
         # 免费扭蛋
+        # 2020-07-31 TheAutumnOfRice: 检查完毕
         self.lock_home()
         self.lockimg(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
         while True:
@@ -62,24 +64,15 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.click(473, 436)  # 手动点击
                 time.sleep(2)
                 break
-
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/niudanputong.jpg'):
-                self.guochang(screen_shot_, ['img/niudanputong.jpg'], suiji=0)
-                time.sleep(1)
-                self.click(722, 351)  # 点进扭蛋
-                time.sleep(1)
-                self.click(584, 384)
-                break
-            else:
-                time.sleep(1)
-                self.click(876, 75)  # 手动点击
-                time.sleep(1)
-                self.click(722, 351)  # 点进扭蛋
-                time.sleep(1)
-                self.click(584, 384)
-                break
+        state = self.lockimg({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
+                             elseclick=NIUDAN_BTN["putong"])
+        if state == 1:
+            self.lockimg(NIUDAN_BTN["putong_quxiao"], elseclick=NIUDAN_BTN["putong_mianfei"])
+            self.lock_no_img(NIUDAN_BTN["putong_quxiao"], elseclick=NIUDAN_BTN["putong_ok"])
+            self.lock_no_img(NIUDAN_BTN["niudanjieguo_ok"], elseclick=NIUDAN_BTN["niudanjieguo_ok"])
+            # TODO 第一次扭蛋设置
+        else:
+            self.log.write_log("info", "可能已经领取过免费扭蛋了")
         self.lock_home()
 
     def mianfeishilian(self):
@@ -106,89 +99,87 @@ class RoutineMixin(ShuatuBaseMixin):
             time.sleep(1)  # 首页锁定，保证回到首页
 
     def shouqu(self):  # 收取全部礼物
+        # 2020-07-31 TheAutumnOfRice: 检查完毕
         self.lock_home()
-        self.lockimg('img/shouqulvli.jpg', elseclick=[(910, 434)], at=(98, 458, 199, 496))
-        self.lockimg('img/shouquliwu.bmp', elseclick=[(712, 477)], elsedelay=0.5, ifclick=[(588, 479)], ifbefore=0.5,
-                     retry=3, at=(435, 30, 527, 58))
-        self.lock_home()
+        self.lockimg(LIWU_BTN["shouqulvli"], elseclick=MAIN_BTN["liwu"])
+        state = self.lockimg(LIWU_BTN["ok"], elseclick=LIWU_BTN["quanbushouqu"], retry=3, elsedelay=2)
+        if state:
+            s = self.lockimg({LIWU_BTN["ok2"]: 1, LIWU_BTN["chiyoushangxian"]: 2},
+                             elseclick=LIWU_BTN["ok"], elsedelay=2)
+            if s == 1:
+                self.lock_no_img(LIWU_BTN["ok2"], elseclick=LIWU_BTN["ok2"], elsedelay=2)
+                self.lock_home()
+            else:
+                self.log.write_log("warning", "收取体力达到上限！")
+                self.lock_home()
+                return
+        else:
+            self.lock_home()
 
     def shouqurenwu(self):  # 收取任务报酬
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/renwu.jpg'):
-                self.guochang(screen_shot_, ['img/renwu.jpg'], suiji=0)
-                break
-            self.click(1, 1)
-            time.sleep(1)
-        time.sleep(3.5)
-        self.click(846, 437)  # 全部收取
-        time.sleep(1)
-        self.click(100, 505)
-        time.sleep(0.5)
-        self.click(100, 505)
-        time.sleep(1.5)
+        # 2020-07-31 TheAutumnOfRice: 检查完毕
+        self.lock_home()
+        self.lockimg(RENWU_BTN["renwutip"], elseclick=MAIN_BTN["renwu"])
+        self.lockimg(RENWU_BTN["guanbi"], elseclick=RENWU_BTN["quanbushouqu"], elsedelay=1, retry=3)
         self.lock_home()
 
-    def goumaitili(self, times):  # 购买体力，注意此函数参数默认在首页执行，其他地方执行要调整参数
-        for i in range(times):
-            self.lock_home()
-            self.click(320, 31)
-            time.sleep(1)
-            screen_shot = self.getscreen()
-            self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
-            time.sleep(1)
-            screen_shot = self.getscreen()
-            self.guochang(screen_shot, ['img/zhandou_ok.jpg'], suiji=1)
-            self.click(100, 505)  # 点击一下首页比较保险
+    def goumaitili(self, times, var={}):  # 购买体力
+        # 稳定性保证
+        # 2020-07-31 TheAutumnOfRice: 检查完毕
+        mv = movevar(var)
+        if "cur" in var:
+            self.log.write_log("info", f"断点恢复：已经购买了{var['cur']}次体力，即将购买剩余{times - var['cur']}次。")
+        else:
+            var.setdefault("cur", 0)
+        self.lock_home()
+        while var["cur"] < times:
+            state = self.lockimg(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_plus"], elsedelay=2, retry=3)
+            if not state:
+                self.log.write_log("warning", "体力达到上限，中断体力购买")
+                break
+            self.lock_no_img(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_ok"], elsedelay=2)
+            state = self.lockimg(MAIN_BTN["tili_ok2"], retry=3)
+            # TODO 宝石不够时的判断
+            var["cur"] += 1
+            mv.save()
+            self.lock_no_img(MAIN_BTN["tili_ok2"], elseclick=MAIN_BTN["tili_ok2"], elsedelay=1)
+        del var["cur"]
+        mv.save()
 
-    def goumaimana(self, times, mode=1):
+    def goumaimana(self, times, mode=1, var={}):
         # mode 1: 购买times次10连
         # mode 0：购买times次1连
-        if mode == 0:
-            time.sleep(2)
-            self.click(189, 62)
-            for i in range(times):
-                while True:  # 锁定取消2
-                    screen_shot_ = self.getscreen()
-                    if UIMatcher.img_where(screen_shot_, 'img/quxiao2.jpg'):
-                        break
-                    self.click(189, 62)
-                    time.sleep(2)
-                self.click(596, 471)  # 第一次购买的位置
-                while True:  # 锁定ok
-                    screen_shot_ = self.getscreen()
-                    if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
-                        self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
-                        break
-        else:
-            time.sleep(2)
-            self.click(189, 62)
-            while True:  # 锁定取消2
-                screen_shot_ = self.getscreen()
-                if UIMatcher.img_where(screen_shot_, 'img/quxiao2.jpg'):
-                    break
-                self.click(189, 62)
-                time.sleep(2)
-            self.click(596, 471)  # 第一次购买的位置
-            while True:  # 锁定ok
-                screen_shot_ = self.getscreen()
-                if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
-                    self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
-                    break
-            for i in range(times):  # 购买剩下的times次
-                while True:  # 锁定取消2
-                    screen_shot_ = self.getscreen()
-                    if UIMatcher.img_where(screen_shot_, 'img/quxiao2.jpg'):
-                        break
-                time.sleep(3)
-                self.click(816, 478)  # 购买10次
-                while True:  # 锁定ok
-                    screen_shot_ = self.getscreen()
-                    if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
-                        self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
-                        break
 
-        self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
+        self.lockimg(MAIN_BTN["mana_title"], elseclick=MAIN_BTN["mana_plus"])
+
+        def BuyOne():
+            self.lockimg(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_one"])
+            self.lock_no_img(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_ok"])
+            time.sleep(2)
+
+        def BuyTen():
+            self.lockimg(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_ten"])
+            self.lock_no_img(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_ok"])
+            time.sleep(16)
+
+        if self.is_exists(MAIN_BTN["mana_blank"]):
+            BuyOne()
+        mv = movevar(var)
+        if "cur" in var:
+            self.log.write_log("info", f"断点恢复：已经购买了{var['cur']}次玛娜，即将购买剩余{times - var['cur']}次。")
+        else:
+            var.setdefault("cur", 1)
+        while var["cur"] < times:
+            if mode == 1:
+                BuyTen()
+            else:
+                BuyOne()
+            var["cur"] += 1
+            mv.save()
+        del var["cur"]
+        mv.save()
+        self.lock_home()
 
     def goumaijingyan(self):
         self.lock_home()
@@ -212,6 +203,7 @@ class RoutineMixin(ShuatuBaseMixin):
 
     def buyExp(self):
         # 进入商店
+        self.lock_home()
         count = 0
         self.click(616, 434)
         while True:
