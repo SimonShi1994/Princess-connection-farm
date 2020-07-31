@@ -23,7 +23,7 @@ class ToolsMixin(BaseMixin):
         要求场景：存在“我的主页”按钮
         逻辑：不断点击我的主页，直到右下角出现“礼物”
         """
-        self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
+        self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=2)  # 回首页
 
     def setting(self):
         self.click(875, 517)

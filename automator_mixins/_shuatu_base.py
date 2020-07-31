@@ -1,7 +1,7 @@
 import time
 
 from automator_mixins._tools import ToolsMixin
-from core.constant import MAOXIAN_BTN, NORMAL_ID, MAIN_BTN
+from core.constant import MAOXIAN_BTN, NORMAL_ID, MAIN_BTN, HARD_ID
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 
@@ -19,6 +19,9 @@ class ShuatuBaseMixin(ToolsMixin):
 
     def sw_init(self):
         self.switch = 0
+
+    def saodangzuobiao(self, x, y, times, auto_tili=False):
+        pass
 
     def shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数
         if self.switch == 0:
@@ -81,29 +84,30 @@ class ShuatuBaseMixin(ToolsMixin):
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
 
-        # 进入hard图
+    def enter_zhuxian(self):
+        # 进入主线
+        self.lock_home()
+        self.click(*MAIN_BTN["maoxian"])
+        self.lockimg(MAIN_BTN["dxc"])
+        self.click(*MAIN_BTN["zhuxian"], post_delay=1)
+        self.wait_for_loading()
 
-    def enterHardMap(self):
-        # 进入冒险
-        time.sleep(2)
-        self.click(480, 505)
-        time.sleep(2)
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
-                break
-        # 点击进入主线关卡
-        self.click(562, 253)
-        time.sleep(2)
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
-                self.click(880, 80)
-            if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
-                break
+    def enter_hard(self, max_retry=3):
+        self.enter_zhuxian()
+        for retry in range(max_retry):
+            time.sleep(1)
+            state = self.check_maoxian_screen()
+            if state == -1:
+                raise Exception("进入冒险失败！")
+            elif state == 0:
+                self.enter_zhuxian()
+            elif state == 1:
+                self.click(*MAOXIAN_BTN["hard_on"])
+            elif state == 2:
+                return
+        raise Exception("进入困难图超过最大尝试次数！")
 
     # 左移动
-
     def goLeft(self):
         self.click(35, 275, post_delay=3)
 
@@ -112,29 +116,26 @@ class ShuatuBaseMixin(ToolsMixin):
     def goRight(self):
         self.click(925, 275, post_delay=3)
 
-    def goHardMap(self):
-        # 进入冒险
-        from core.constant import MAX_MAP
-        time.sleep(2)
-        self.click(480, 505)
-        time.sleep(2)
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
-                break
-        # 点击进入主线关卡
-        self.click(562, 253)
-        self.click(828, 85, pre_delay=5, post_delay=2)
-        for _ in range(MAX_MAP):  # 设置大于当前进图数,让脚本能回归到1-1即可.
-            # H图左移到1-1图
-            self.click(27, 272, pre_delay=3)
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
-                self.click(828, 85)
-            else:
-                UIMatcher.img_where(screen_shot_, 'img/hard.jpg')
-                break
+    def check_maoxian_screen(self):
+        """
+        获得冒险界面屏幕状态
+        :return:
+        -1: 未知状态
+        0： 找到了“冒险”，但不清楚是Normal还是Hard
+        1:  Normal图
+        2： Hard图
+        """
+        sc = self.getscreen()
+        pn1 = self.img_prob(MAOXIAN_BTN["normal_on"], screen=sc)
+        ph1 = self.img_prob(MAOXIAN_BTN["hard_on"], screen=sc)
+        if pn1 > 0.9:
+            return 1
+        elif ph1 > 0.9:
+            return 2
+        elif self.is_exists(MAIN_BTN["maoxian"], screen=sc):
+            return 0
+        else:
+            return -1
 
     def hard_shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数,防止占用shuatuzuobiao用的
         if self.switch == 0:
@@ -236,17 +237,25 @@ class ShuatuBaseMixin(ToolsMixin):
         -1：识别失败
         1~ ：图号
         """
-        sc = self.getscreen() if screen is None else screen
-        sc_cut = UIMatcher.img_cut(sc, MAOXIAN_BTN["title_box"].at)
-        pdict = {}
-        for i, j in NORMAL_ID.items():
-            pdict[i] = self.img_prob(j.img, screen=sc_cut)
-        tu = max(pdict, key=lambda x: pdict[x])
-        l = sorted(pdict.values(), reverse=True)
-        if l[0] < 0.8 or l[0] - l[1] < 0.05:
+        id = self.check_dict_id(MAOXIAN_BTN["title_box"], NORMAL_ID, screen)
+        if id is None:
             return -1
         else:
-            return tu
+            return id
+
+    def check_hard_id(self, screen=None):
+        """
+        识别hard图的图号
+        :param: screen:设置为None时，第一次重新截图
+        :return:
+        -1：识别失败
+        1~ ：图号
+        """
+        id = self.check_dict_id(MAOXIAN_BTN["title_box"], HARD_ID, screen)
+        if id is None:
+            return -1
+        else:
+            return id
 
     def shoushuazuobiao(self, x, y, jiaocheng=0, lockpic='img/normal.jpg', screencut=None):
         """
@@ -406,22 +415,24 @@ class ShuatuBaseMixin(ToolsMixin):
         self.click(923, 272)
         time.sleep(3)
 
-    def enter_normal(self):
+    def enter_normal(self, max_retry=3):
         """
-        进入normal图，并且走到to_map图。
-        :param to_map: 转到的地图位置
-        :return: 是否成功进入。如果为False，则表示过于卡，停止刷图
+        进入normal图
+        """
+        self.enter_zhuxian()
+        for retry in range(max_retry):
+            time.sleep(1)
+            state = self.check_maoxian_screen()
+            if state == -1:
+                raise Exception("进入冒险失败！")
+            elif state == 0:
+                self.enter_zhuxian()
+            elif state == 2:
+                self.click(*MAOXIAN_BTN["normal_on"])
+            elif state == 1:
+                return
 
-        """
-        self.click(480, 505, pre_delay=2, post_delay=2)
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
-                break
-        self.click(562, 253, post_delay=1)
-        self.wait_for_loading()
-        # 此处很容易卡
-        self.lockimg("img/normal.jpg", ifclick=(701, 83), elseclick=(701, 83), alldelay=2, ifbefore=3)
+        raise Exception("进入普通图超过最大尝试次数！")
 
     def select_normal_id(self, id):
         """
@@ -439,6 +450,31 @@ class ShuatuBaseMixin(ToolsMixin):
                     continue
                 else:
                     raise Exception("Normal 图号识别失败！")
+            if cur_id == id:
+                return
+            elif cur_id < id:
+                for i in range(id - cur_id):
+                    self.goRight()
+            elif cur_id > id:
+                for i in range(cur_id - id):
+                    self.goLeft()
+
+    def select_hard_id(self, id):
+        """
+        走到hard的几图
+        要求场景：已经在hard内
+        :param id: 图号
+        """
+        while True:
+            sc = self.getscreen()
+            cur_id = self.check_hard_id(sc)
+            if cur_id == -1:
+                self.wait_for_loading(sc)
+                if self.is_exists(MAIN_BTN["maoxian"]):
+                    # 重试一次
+                    continue
+                else:
+                    raise Exception("Hard 图号识别失败！")
             if cur_id == id:
                 return
             elif cur_id < id:

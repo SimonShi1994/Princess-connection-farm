@@ -14,7 +14,7 @@ from core.constant import PCRelement, MAIN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.usercentre import AutomatorRecorder
-from pcr_config import debug, fast_screencut, lockimg_timeout
+from pcr_config import debug, fast_screencut, lockimg_timeout, fast_screencut_delay, fast_screencut_timeout
 
 if fast_screencut:
     import adbutils
@@ -225,6 +225,22 @@ class BaseMixin:
         img, at = self._get_img_at(img, at)
         return UIMatcher.img_prob(screen, img, at)
 
+    def img_where_all(self, img, threshold=0.9, at=None, screen=None):
+        """
+        返回一个图片所有的位置
+        :param img:
+            一个字符串，表示图片的地址；或者为PCRelement类型。
+            当img为PCRelement时，如果at参数为None，则会使用img.at。
+        :param threshold: 阈值
+        :param at: 搜素范围
+        :param screen: 若设置为None，则重新截图；否则使用screen为截图
+        :return: list[(x,y,at)]
+        """
+        if screen is None:
+            screen = self.getscreen()
+        img, at = self._get_img_at(img, at)
+        return UIMatcher.img_all_where(screen, img, threshold, at)
+
     def img_equal(self, img1, img2, at=None, similarity=0.01) -> float:
         """
         输出两张图片对应像素相似程度
@@ -311,6 +327,31 @@ class BaseMixin:
                 raise Exception("Loading 超时！")
             sc = self.getscreen()
 
+    def check_dict_id(self, at, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05):
+        """
+        识别固定区域内不同图的编号
+        :param at: 固定区域
+        :param id_dict: 字典，{key:PCRElement}，表示{编号:图片}
+        :param screen: 设置为None时，第一次重新截图
+        :param max_threshold: 最大阈值，获得图片最大概率必须超过max_threshold
+        :param diff_threshold: 相差阈值，第一大的概率和第二大的概率差必须超过diff_threshold
+        :return:
+            None: 识别失败
+            Else: 识别的key
+        """
+        at = self._get_at(at)
+        sc = self.getscreen() if screen is None else screen
+        sc_cut = UIMatcher.img_cut(sc, at)
+        pdict = {}
+        for i, j in id_dict.items():
+            pdict[i] = self.img_prob(j.img, screen=sc_cut)
+        tu = max(pdict, key=lambda x: pdict[x])
+        l = sorted(pdict.values(), reverse=True)
+        if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
+            return None
+        else:
+            return tu
+
     def run_func(self, th_name, a, fun, async_sexitflag=False):
         if async_sexitflag:
             th_name.exit()
@@ -361,11 +402,13 @@ class BaseMixin:
                     while self.fast_screencut_switch in [2, 4]:
                         data = self.ws.recv()
                 elif self.fast_screencut_switch == 3:
-                    time.sleep(0.2)
+                    time.sleep(0.1)
                     while True:
                         data = self.ws.recv()
                         if not isinstance(data, (bytes, bytearray)):
                             continue
+                        if fast_screencut_delay > 0:
+                            time.sleep(fast_screencut_delay)  # 防止过快不兼容
                         with open("screenshots/%s.jpg" % self.account, "wb") as f:
                             f.write(data)
                             self.fast_screencut_switch = 4
@@ -375,6 +418,7 @@ class BaseMixin:
             except Exception as e:
                 self.log.write_log("error", f"fast_screencut出错 {e}")
                 self.fast_screencut_switch = -1
+        self.ws.abort()
 
     def getscreen(self, filename=None):
         """
@@ -387,16 +431,25 @@ class BaseMixin:
                 if self.fast_screencut_switch <= 0:
                     self.fast_screencut_switch = 1
                     self.start_async_fastscreen()
-                while self.fast_screencut_switch not in [-1, 2]:
-                    pass
+                last_time = time.time()
+                while self.fast_screencut_switch not in [-1, 2, 3, 4]:
+                    if time.time() - last_time > fast_screencut_timeout:
+                        self.fast_screencut_switch = -1
+                        break
                 if self.fast_screencut_switch == 2:
                     self.fast_screencut_switch = 3
+                    last_time = time.time()
                     while self.fast_screencut_switch not in [-1, 4]:
-                        pass
+                        if time.time() - last_time > fast_screencut_timeout:
+                            self.fast_screencut_switch = -1
+                            break
                 if self.fast_screencut_switch == -1:
                     self.last_screen = self.d.screenshot(filename, format="opencv")
                 else:
+
                     self.last_screen = cv2.imread("screenshots/%s.jpg" % self.account)
+                    if filename is not None:
+                        cv2.imwrite(filename, self.last_screen)
                     self.fast_screencut_switch = 2
             else:
                 self.last_screen = self.d.screenshot(filename, format="opencv")
@@ -481,11 +534,16 @@ class BaseMixin:
                 # print('未找到所需的按钮,无动作')
                 pass
 
-    def _lockimg(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=0,
-                 at=None, is_raise=True, lock_no=False):
+    def _lockimg(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=0,
+                 at=None, is_raise=False, lock_no=False):
         """
         @args:
             img:要匹配的图片目录
+            2020-07-31: TheAutumnOfRice Add: img可以传入dict类型
+                {PCRElement:return_value}
+                或者：
+                {(img,at):return_value}
+                此时，at参数不起作用。
             2020-07-28：TheAutumnOfRice Add: img支持兼容PCRelement格式
             传入PCRelement后,自动填充img和at。
             如果PCRelement含有at属性而外部设置了at，以lockimg的参数为准
@@ -513,18 +571,24 @@ class BaseMixin:
             ifclick = [ifclick]
         if type(elseclick) is not list:
             elseclick = [elseclick]
-        img, at = self._get_img_at(img, at)
+        if not isinstance(img, dict):
+            img = {(img, at): True}
         attempt = 0
         lasttime = time.time()
         while True:
             screen_shot = self.getscreen()
-            if UIMatcher.img_where(screen_shot, img, at=at) is not lock_no:
-                if ifclick != []:
-                    for clicks in ifclick:
-                        time.sleep(ifbefore)
-                        self.click(clicks[0], clicks[1])
-                        time.sleep(ifdelay)
-                break
+            for i, j in img.items():
+                if not isinstance(i, PCRelement):
+                    _img, _at = self._get_img_at(i[0], i[1])
+                else:
+                    _img, _at = self._get_img_at(i, None)
+                if self.is_exists(_img, at=_at, screen=screen_shot) is not lock_no:
+                    if ifclick != []:
+                        for clicks in ifclick:
+                            time.sleep(ifbefore)
+                            self.click(clicks[0], clicks[1])
+                            time.sleep(ifdelay)
+                    return j
             if elseclick != []:
                 for clicks in elseclick:
                     self.click(clicks[0], clicks[1])
@@ -532,16 +596,13 @@ class BaseMixin:
             time.sleep(alldelay)
             attempt += 1
             if retry != 0 and attempt >= retry:
-                if is_raise:
-                    raise Exception("Lockimg 超过最大点击次数！")
                 return False
             if lockimg_timeout != 0 and time.time() - lasttime > lockimg_timeout:
                 if is_raise:
                     raise Exception("Lockimg 超时！")
                 return False
-        return True
 
-    def lockimg(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=0,
+    def lockimg(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2, alldelay=0.5, retry=0,
                 at=None, is_raise=True):
         """
         锁定图片，直到该图出现。
@@ -551,7 +612,7 @@ class BaseMixin:
                              elsedelay=elsedelay,
                              alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False)
 
-    def lock_no_img(self, img, ifclick=None, ifbefore=0.5, ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5,
+    def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2, alldelay=0.5,
                     retry=0, at=None, is_raise=True):  # 锁定指定图像
         """
         锁定图片，直到该图消失

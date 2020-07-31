@@ -58,11 +58,8 @@ class ShuatuMixin(ShuatuBaseMixin):
     def shuatuNN(self, tu_dict: list):
         """
         刷指定N图
-             {大图号：
-                {小图号：刷图次数,
-                ...
-                }
-            }
+        tu_dict: 其实应该叫tu_list，来不及改了
+        ["A-B-Times",...,]
         :return:
         """
         # 进入冒险
@@ -97,25 +94,22 @@ class ShuatuMixin(ShuatuBaseMixin):
         """
         刷指定H图
         :param tu_dict: 刷图列表
-            {大图号：
-                {小图号：刷图次数,
-                ...
-                }
-            }
+        tu_dict: 其实应该叫tu_list，来不及改了
+        ["A-B-Times",...,]
         :return:
         """
-        self.goHardMap()  # 进入Hard本
-        self.switch = 0
         L = ShuatuToTuple(tu_dict)
-        cur_map = 1
+        self.enter_hard()
+        self.switch = 0
+        cur_map = self.check_hard_id(self.last_screen)
         for cur in L:
             A, B, Times = cur
             if A not in HARD_COORD:
                 pcr_log(self.account).write_log("error", f"坐标库中没有图号H{A}-{B}的信息！跳过此图。")
                 continue
-            while cur_map < A:
-                cur_map += 1
-                self.goRight()
+            while cur_map != A:
+                self.select_hard_id(A)
+                cur_map = A
             now_dict = HARD_COORD[A]
             if B in now_dict:
                 xy = now_dict[B]
