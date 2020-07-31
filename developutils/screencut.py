@@ -8,8 +8,10 @@ from matplotlib import pyplot as plt
 
 try:
     from core.Automator import Automator
+    cd = False
 except:
-    sys.path.append("../")
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))  # 保证导入
+    cd = True
     from core.Automator import Automator
 
 def WindowMode(frame=None):
@@ -133,7 +135,7 @@ class AutomatorDebuger(Automator):
         self._obj = {}
 
     @staticmethod
-    def Init(cd=True):
+    def Init():
         if cd:
             os.system('cd .. & cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
         else:
@@ -182,8 +184,10 @@ class AutomatorDebuger(Automator):
                 y2, y1 = plt.ylim()
                 x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
                 addr = e.get()
-                print(f"p(img=\"img/{addr}\",at=({x1},{y1},{x2},{y2})),")
-
+                if cd:
+                    print(f"p(img=\"img/{addr}\",at=({x1},{y1},{x2},{y2})),")
+                else:
+                    print(f"p(img=\"{addr}\",at=({x1},{y1},{x2},{y2})),")
                 img.cut(x1, y1, x2, y2).save(addr)
                 try:
                     img.cut(x1, y1, x2, y2).save(addr)
@@ -309,59 +313,68 @@ if __name__ == "__main__":
     print("坐标小工具 By TheAutumnOfRice")
     print("help 查看帮助  exit 退出")
     while True:
-        cmd = input("> ")
-        cmds = cmd.split(" ")
-        order = cmds[0]
-        if order == "exit":
-            break
-        elif order == "help":
-            print("坐标小工具帮助")
-            print("init:  初始化与adb和u2的连接")
-            print("connect [address]:  连接到address的device，默认emulator-5554")
-            print("shot [file]: （需要connect）截图并保存到文件file并显示，默认test.bmp")
-            print("show [file]: 打开文件file并显示，默认test.bmp")
-            print("prob screen [template]: 检验template在screen中的最大匹配度(0~1)，默认template为test.bmp")
-            print("equal file1 file2: 检查两个图片的相似度")
-            print("----")
-            print("在图片显示界面：")
-            print("单击左键： 显示当前点击位置的坐标")
-            print("右键拖动： 框选小区域")
-            print("单击中键： 把当前框选的小区域保存为新的图片")
-            print("双击左键： 框选复位")
-        elif order == "init":
-            a.Init()
-        elif order == "connect":
-            if len(cmds) == 2:
-                a.Connect(cmds[1])
-            elif len(cmds) == 1:
-                a.Connect()
+        try:
+            cmd = input("> ")
+            cmds = cmd.split(" ")
+            order = cmds[0]
+            if order == "exit":
+                break
+            elif order == "help":
+                print("坐标小工具帮助")
+                print("init:  初始化与adb和u2的连接")
+                print("connect [address]:  连接到address的device，默认emulator-5554")
+                print("shot [file]: （需要connect）截图并保存到文件file并显示，默认test.bmp")
+                print("show [file]: 打开文件file并显示，默认test.bmp")
+                print("prob screen [template]: 检验template在screen中的最大匹配度(0~1)，默认template为test.bmp")
+                print("equal file1 file2: 检查两个图片的相似度")
+                print("where screen template threshold：以threshold为阈值，求template在screen中的未知（中点和x1,y1,x2,y2）")
+                print("----")
+                print("在图片显示界面：")
+                print("单击左键： 显示当前点击位置的坐标")
+                print("右键拖动： 框选小区域")
+                print("单击中键： 把当前框选的小区域保存为新的图片")
+                print("双击左键： 框选复位")
+            elif order == "init":
+                a.Init()
+            elif order == "connect":
+                if len(cmds) == 2:
+                    a.Connect(cmds[1])
+                elif len(cmds) == 1:
+                    a.Connect()
+                else:
+                    print("Wrong Order!")
+            elif order == "shot":
+                if len(cmds) == 2:
+                    a.Shot(cmds[1])
+                elif len(cmds) == 1:
+                    a.Shot()
+                else:
+                    print("Wrong Order!")
+            elif order == "show":
+                if len(cmds) == 2:
+                    a.Show(cmds[1])
+                elif len(cmds) == 1:
+                    a.Show()
+                else:
+                    print("Wrong Order!")
+            elif order == "prob":
+                if len(cmds) == 3:
+                    a.Prob(cmds[1], cmds[2])
+                elif len(cmds) == 2:
+                    a.Prob(cmds[1])
+                else:
+                    print("Wrong Order!")
+            elif order == "equal":
+                if len(cmds) == 3:
+                    a.Equal(cmds[1], cmds[2])
+                else:
+                    print("Wrong Order!")
+            elif order == "where":
+                if len(cmds) == 4:
+                    a.img_where_all(screen=ImgBox(filepath=cmds[1]).IMG, img=cmds[2], threshold=float(cmds[3]))
+                else:
+                    print("Wrong Order!")
             else:
                 print("Wrong Order!")
-        elif order == "shot":
-            if len(cmds) == 2:
-                a.Shot(cmds[1])
-            elif len(cmds) == 1:
-                a.Shot()
-            else:
-                print("Wrong Order!")
-        elif order == "show":
-            if len(cmds) == 2:
-                a.Show(cmds[1])
-            elif len(cmds) == 1:
-                a.Show()
-            else:
-                print("Wrong Order!")
-        elif order == "prob":
-            if len(cmds) == 3:
-                a.Prob(cmds[1], cmds[2])
-            elif len(cmds) == 2:
-                a.Prob(cmds[1])
-            else:
-                print("Wrong Order!")
-        elif order == "equal":
-            if len(cmds) == 3:
-                a.Equal(cmds[1], cmds[2])
-            else:
-                print("Wrong Order!")
-        else:
-            print("Wrong Order!")
+        except Exception as e:
+            print("出现错误：", e)
