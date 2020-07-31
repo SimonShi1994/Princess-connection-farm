@@ -238,6 +238,7 @@ class ShuatuBaseMixin(ToolsMixin):
         -1：识别失败
         1~ ：图号
         """
+        self.Drag_Left()  # 保证截图区域一致
         id = self.check_dict_id(MAOXIAN_BTN["title_box"], NORMAL_ID, screen)
         if id is None:
             return -1
