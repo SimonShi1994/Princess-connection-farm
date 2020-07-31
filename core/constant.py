@@ -44,7 +44,7 @@ MAIN_BTN = {
     "hanghui": p(693, 430, name="行会"),  # 行会按钮
     "juese": p(213, 507),
     "juqing": p(342, 510),
-    "maoxian": p(480, 515),
+    "maoxian": p(480, 515, img="img/ui/maoxian.bmp", at=(421, 447, 535, 535)),
     "gonghuizhijia": p(617, 512),
     "niudan": p(753, 514),
     "zhucaidan": p(877, 515),
@@ -54,6 +54,8 @@ MAIN_BTN = {
     "tongzhi_bottom": p(at=(4, 255, 949, 531)),  # 通知：下半部分
     "niudan_jiasu": p(img='img/home/niudan_jiasu.jpg', at=(700, 0, 960, 100)),
     "jingsaikaishi": p(img='img/home/jingsaikaishi.bmp', at=(755, 471, 922, 512)),
+
+    "loading_left": p(at=(36, 87, 224, 386)),
 
 }
 JIAYUAN_BTN = {
@@ -240,6 +242,24 @@ HARD_COORD = {
         2: p(480, 355),
         3: p(765, 240),
     },
+}
+
+MAOXIAN_BTN = {
+    "title_box": p(at=(356, 61, 595, 104)),
+}
+NORMAL_ID = {
+    1: p(img='img/normal/1.bmp'),
+    2: p(img='img/normal/2.bmp'),
+    3: p(img='img/normal/3.bmp'),
+    4: p(img='img/normal/4.bmp'),
+    5: p(img='img/normal/5.bmp'),
+    6: p(img='img/normal/6.bmp'),
+    7: p(img='img/normal/7.bmp'),
+    8: p(img='img/normal/8.bmp'),
+    9: p(img='img/normal/9.bmp'),
+    10: p(img='img/normal/10.bmp'),
+    11: p(img='img/normal/11.bmp'),
+    12: p(img='img/normal/12.bmp'),
 }
 
 NORMAL_COORD = {

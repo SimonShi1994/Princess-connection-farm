@@ -68,18 +68,17 @@ class ShuatuMixin(ShuatuBaseMixin):
         # 进入冒险
         L = ShuatuToTuple(tu_dict)
         # 按照 A-B的顺序排序：A为主要依据，B为次要依据。
-        self.enter_normal(7)
-        cur_map = 7
+        self.enter_normal()
         self.switch = 0
+        cur_map = self.check_normal_id()
         for cur in L:
             A, B, Times = cur
             if A not in NORMAL_COORD:
                 pcr_log(self.account).write_log("error", f"坐标库中没有图号{A}-{B}的信息！跳过此图。")
                 continue
-            while cur_map < A:
-                cur_map += 1
-                self.goRight()
-
+            while cur_map != A:
+                self.select_normal_id(A)
+                cur_map = A
             now_dict = NORMAL_COORD[A]
             if B in now_dict["left"]:
                 self.Drag_Left()
