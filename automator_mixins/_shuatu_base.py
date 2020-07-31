@@ -133,7 +133,7 @@ class ShuatuBaseMixin(ToolsMixin):
             return 1
         elif ph1 > 0.9:
             return 2
-        elif self.is_exists(MAIN_BTN["maoxian"], screen=sc):
+        elif self.is_exists(MAOXIAN_BTN["ditu"], screen=sc):
             return 0
         else:
             return -1
@@ -446,7 +446,9 @@ class ShuatuBaseMixin(ToolsMixin):
             cur_id = self.check_normal_id(sc)
             if cur_id == -1:
                 self.wait_for_loading(sc)
-                if self.is_exists(MAIN_BTN["maoxian"]):
+                if self.is_exists(MAOXIAN_BTN["ditu"]):
+                    if self.check_maoxian_screen() == 2:
+                        self.click(*MAOXIAN_BTN["normal_on"], post_delay=1)
                     # 重试一次
                     continue
                 else:
@@ -471,8 +473,10 @@ class ShuatuBaseMixin(ToolsMixin):
             cur_id = self.check_hard_id(sc)
             if cur_id == -1:
                 self.wait_for_loading(sc)
-                if self.is_exists(MAIN_BTN["maoxian"]):
+                if self.is_exists(MAOXIAN_BTN["ditu"]):
                     # 重试一次
+                    if self.check_maoxian_screen() == 1:
+                        self.click(*MAOXIAN_BTN["hard_on"], post_delay=1)
                     continue
                 else:
                     raise Exception("Hard 图号识别失败！")
