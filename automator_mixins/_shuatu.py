@@ -1,5 +1,6 @@
 import time
 
+from core.MoveRecord import movevar
 from core.constant import HARD_COORD, NORMAL_COORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -43,7 +44,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         # 进入冒险
         self.shuatuNN(["3-1-125"])
 
-    def shuatuNN(self, tu_dict: list):
+    def shuatuNN(self, tu_dict: list, var={}):
         """
         刷指定N图
         tu_dict: 其实应该叫tu_list，来不及改了
@@ -56,8 +57,18 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.enter_normal()
         self.switch = 0
         cur_map = self.check_normal_id()
-        for cur in L:
-            A, B, Times = cur
+        mv = movevar(var)
+        if "curNN" in var:
+            cur = var["curNN"]
+            A, B, Times = L[cur]
+            self.log.write_log("info", f"断点恢复：上次刷到了{A}-{B},继续执行。")
+        else:
+            cur = 0
+            var["curNN"] = 0
+        for cur in range(cur, len(L)):
+            var["curNN"] = cur
+            mv.save()
+            A, B, Times = L[cur]
             if A not in NORMAL_COORD:
                 pcr_log(self.account).write_log("error", f"坐标库中没有图号{A}-{B}的信息！跳过此图。")
                 continue
@@ -76,9 +87,11 @@ class ShuatuMixin(ShuatuBaseMixin):
             else:
                 pcr_log(self.account).write_log("error", f"坐标库中没有图号{A}-{B}的信息！跳过此图。")
                 continue
+        del var["curNN"]
+        mv.save()
         self.lock_home()
 
-    def shuatuHH(self, tu_dict: list):
+    def shuatuHH(self, tu_dict: list, var={}):
         """
         刷指定H图
         :param tu_dict: 刷图列表
@@ -90,8 +103,18 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.enter_hard()
         self.switch = 0
         cur_map = self.check_hard_id(self.last_screen)
-        for cur in L:
-            A, B, Times = cur
+        mv = movevar(var)
+        if "curHH" in var:
+            cur = var["curHH"]
+            A, B, Times = L[cur]
+            self.log.write_log("info", f"断点恢复：上次刷到了H{A}-{B},继续执行。")
+        else:
+            cur = 0
+            var["curHH"] = 0
+        for cur in range(cur, len(L)):
+            var["curHH"] = cur
+            mv.save()
+            A, B, Times = L[cur]
             if A not in HARD_COORD:
                 pcr_log(self.account).write_log("error", f"坐标库中没有图号H{A}-{B}的信息！跳过此图。")
                 continue
@@ -105,6 +128,8 @@ class ShuatuMixin(ShuatuBaseMixin):
             else:
                 pcr_log(self.account).write_log("error", f"坐标库中没有图号H{A}-{B}的信息！跳过此图。")
                 continue
+        del var["curHH"]
+        mv.save()
         self.lock_home()
 
     # 刷活动hard图
