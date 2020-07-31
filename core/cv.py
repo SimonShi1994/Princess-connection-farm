@@ -125,6 +125,34 @@ class UIMatcher:
         return screen
 
     @classmethod
+    def img_all_where(cls, screen, template_path, threshold=0.84, at=None):
+        """
+        找全部匹配图
+        """
+        if isinstance(screen, str):
+            screen = cv2.imread(screen)
+        screen = cls.AutoRotateClockWise90(screen)
+        template = cls._get_template(template_path)
+        th, tw = template.shape[:2]  # rows->h, cols->w
+        if at is not None:
+            x1, y1, x2, y2 = at
+        else:
+            x1, y1, x2, y2 = 0, 0, 959, 539
+        screen = cls.img_cut(screen, (x1, y1, x2, y2))
+        res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
+        l = []
+        for i in range(res.shape[0]):
+            for j in range(res.shape[1]):
+                if res[i, j] >= threshold:
+                    _x = x1 + j + tw // 2
+                    _y = y1 + i + th // 2
+                    _at = (x1 + j, y1 + i, x1 + j + tw - 1, y1 + i + th - 1)
+                    l += [_x, _y, _at]
+                    if debug:
+                        print("Find: ", (_x, _y), "at", _at, "CCOEFF=", res[i, j])
+        return l
+
+    @classmethod
     def img_where(cls, screen, template_path, threshold=0.84, at=None):
         """
         在screen里寻找template，若找到则返回坐标，若没找到则返回False
@@ -148,13 +176,6 @@ class UIMatcher:
                 exit(-1)
         else:
             x1, y1 = 0, 0
-        randpic = np.round(np.random.random(screen.shape) * 255).astype(np.uint8)
-        # 如果和随机图片相关度很高，那么放弃
-        prob = cv2.matchTemplate(screen, randpic, cv2.TM_CCOEFF_NORMED).max()
-        if prob > threshold:
-            if debug:
-                pcr_log('admin').write_log(level='debug', message=f"随机图片与截选区域相似度达到{prob}")
-            return False
         # 缓存未命中时从源文件读取
         template = cls._get_template(template_path)
 

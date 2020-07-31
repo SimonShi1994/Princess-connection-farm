@@ -48,8 +48,9 @@ class movevar:
         方式：通过__self__，调用moveset.savestate
         :return:
         """
-        s = self.var["__self__"]
-        s.savestate()
+        if "__self__" in self.var:
+            s = self.var["__self__"]
+            s.savestate()
 
     def setflag(self, flagkey, flagvalue=1, save=None):
         """

@@ -502,7 +502,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             min_live = 1
         while cur_layer <= max_layer - 1:
             # 刷小怪
-            print("Debug: ", self.check_dxc_level(dxc_id))
             cur_x, cur_y = DXC_COORD[dxc_id][cur_layer]
             state = self.dxczuobiao(cur_x, cur_y, 1, 1, set_bianzu, set_duiwu, min_live)
             set_bianzu = 0

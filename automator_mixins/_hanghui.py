@@ -127,10 +127,11 @@ class HanghuiMixin(ToolsMixin):
         self.lockimg('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
     def dianzan(self, sortflag=0):  # 行会点赞
+        # TODO 卡顿不确定性大，需要重写
         self.lock_home()
         # 进入行会
         self.click(688, 432)
-        time.sleep(3)
+        time.sleep(6)
         for i in range(2):
             time.sleep(3)
             screen_shot_ = self.getscreen()

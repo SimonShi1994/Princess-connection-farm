@@ -147,7 +147,7 @@ class AutomatorDebuger(Automator):
         self.init_account(account)
 
     def Shot(self, file="test.bmp", show=True):
-        self.d.screenshot(file)
+        self.getscreen(file)
         # AutoRotate
         img = ImgBox(filepath=file)
         if img.width < img.height:
