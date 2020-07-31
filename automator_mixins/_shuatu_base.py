@@ -1,6 +1,7 @@
 import time
 
 from automator_mixins._tools import ToolsMixin
+from core.constant import MAOXIAN_BTN, NORMAL_ID, MAIN_BTN
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 
@@ -227,6 +228,26 @@ class ShuatuBaseMixin(ToolsMixin):
                 tag += 1
                 time.sleep(1.5)
 
+    def check_normal_id(self, screen=None):
+        """
+        识别normal图的图号
+        :param: screen:设置为None时，第一次重新截图
+        :return:
+        -1：识别失败
+        1~ ：图号
+        """
+        sc = self.getscreen() if screen is None else screen
+        sc_cut = UIMatcher.img_cut(sc, MAOXIAN_BTN["title_box"].at)
+        pdict = {}
+        for i, j in NORMAL_ID.items():
+            pdict[i] = self.img_prob(j.img, screen=sc_cut)
+        tu = max(pdict, key=lambda x: pdict[x])
+        l = sorted(pdict.values(), reverse=True)
+        if l[0] < 0.8 or l[0] - l[1] < 0.05:
+            return -1
+        else:
+            return tu
+
     def shoushuazuobiao(self, x, y, jiaocheng=0, lockpic='img/normal.jpg', screencut=None):
         """
         不使用挑战券挑战，xy为该图坐标
@@ -385,13 +406,14 @@ class ShuatuBaseMixin(ToolsMixin):
         self.click(923, 272)
         time.sleep(3)
 
-    def enter_normal(self, to_map: int = 7):
+    def enter_normal(self):
         """
         进入normal图，并且走到to_map图。
         :param to_map: 转到的地图位置
         :return: 是否成功进入。如果为False，则表示过于卡，停止刷图
 
         """
+
         #进入冒险选项卡
         self.click(480,505)
         time.sleep(2)
@@ -402,10 +424,33 @@ class ShuatuBaseMixin(ToolsMixin):
         # 进入normal图（此处很容易卡）
         self.lockimg("img/normal.jpg", elseclick=(701, 83), alldelay=2, ifbefore=3)
 
-        self.duanyazuobiao()
-        for _ in range(to_map - 7):
-            # 以7图为基向右移动5图
-            self.goRight()
+        
+
+    def select_normal_id(self, id):
+        """
+        走到normal的几图
+        要求场景：已经在normal内
+        :param id: 图号
+        """
+        while True:
+            sc = self.getscreen()
+            cur_id = self.check_normal_id(sc)
+            if cur_id == -1:
+                self.wait_for_loading(sc)
+                if self.is_exists(MAIN_BTN["maoxian"]):
+                    # 重试一次
+                    continue
+                else:
+                    raise Exception("Normal 图号识别失败！")
+            if cur_id == id:
+                return
+            elif cur_id < id:
+                for i in range(id - cur_id):
+                    self.goRight()
+            elif cur_id > id:
+                for i in range(cur_id - id):
+                    self.goLeft()
+
 
     def Drag_Right(self):
         self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右

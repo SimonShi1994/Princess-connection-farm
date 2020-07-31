@@ -10,7 +10,7 @@ import uiautomator2 as u2
 
 from core import log_handler
 from core.MoveRecord import moveset
-from core.constant import PCRelement
+from core.constant import PCRelement, MAIN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.usercentre import AutomatorRecorder
@@ -292,6 +292,24 @@ class BaseMixin:
             if value < threshold:
                 return True
         return False
+
+    def wait_for_loading(self, screen=None, delay=0.5, timeout=30):
+        """
+        等待黑屏loading结束
+        :param screen: 设置为None时，截图，否则使用screen
+        :param delay: 检测间隔
+        :param timeout: 超过timeout，报错
+        """
+        sc = self.getscreen() if screen is None else screen
+        last_time = time.time()
+        while True:
+            time.sleep(delay)
+            sc_cut = UIMatcher.img_cut(sc, MAIN_BTN["loading_left"].at)
+            if not (sc_cut == 1).all():
+                break
+            if time.time() - last_time > timeout:
+                raise Exception("Loading 超时！")
+            sc = self.getscreen()
 
     def run_func(self, th_name, a, fun, async_sexitflag=False):
         if async_sexitflag:
