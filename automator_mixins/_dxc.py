@@ -440,9 +440,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         2020-07-29 Add By TheAutumnOfRice
 
         统一刷地下城函数，全Auto通关地下城
-        其中小怪使用2倍速过关，Boss使用3倍速过关
-        使用前请将打小图或Boss的队伍放在第一页队伍1，
-        将要打Boss的队伍放再第一页队伍2
+        三倍速通关！
 
         :param dxc_id: 地下城的ID
         :param mode: 模式
@@ -467,6 +465,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             若为"zhanli"，则按照战力排序，选择前五战力为当前队伍
             若为“a-b",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b。
         """
+        # 2020-08-01 Fix By TheAutumnOfRice 对快速截屏的兼容性
         from core.constant import DXC_COORD
         def parse_team_str(teamstr: str):
             if teamstr == "":
@@ -513,7 +512,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while cur_layer <= max_layer - 1:
             # 刷小怪
             cur_x, cur_y = DXC_COORD[dxc_id][cur_layer]
-            state = self.dxczuobiao(cur_x, cur_y, 1, 1, set_bianzu, set_duiwu, min_live)
+            state = self.dxczuobiao(cur_x, cur_y, 1, 2, set_bianzu, set_duiwu, min_live)
             set_bianzu = 0
             set_duiwu = 0
             if state == 0:
