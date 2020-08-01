@@ -48,11 +48,11 @@ class AsyncMixin(BaseMixin):
                     time.sleep(3)
                     self.click(1, 1)
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_1.bmp', at=(0, 390, 147, 537)):
-                    self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+                    self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_2.bmp', at=(580, 320, 649, 468)):
                     time.sleep(4)
                     self.click(610, 431)
-                    self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+                    self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
             except Exception as e:
                 pcr_log(self.account).write_log(level='error', message='异步线程终止并检测出异常{}'.format(e))
@@ -196,7 +196,7 @@ class AsyncMixin(BaseMixin):
         self.start_th()
         self.start_async()
         if back_home:
-            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+            self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def fix_fanhuibiaoti(self):
         # 返回标题逻辑
@@ -206,7 +206,7 @@ class AsyncMixin(BaseMixin):
         time.sleep(8)
         self.start_th()
         self.start_async()
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+        self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def fix_shujucuowu(self):
         # 数据错误逻辑
@@ -215,4 +215,3 @@ class AsyncMixin(BaseMixin):
         self.click(479, 369)
         time.sleep(8)
         self.click(1, 1)
-

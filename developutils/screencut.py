@@ -8,11 +8,13 @@ from matplotlib import pyplot as plt
 
 try:
     from core.Automator import Automator
+
     cd = False
 except:
     sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))  # 保证导入
     cd = True
     from core.Automator import Automator
+
 
 def WindowMode(frame=None):
     if frame is None:
