@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from '@/components/Index'
-import Config from '@/components/Config'
-import Task from '@/components/Task'
+import Task from '@/pages/Task'
+import Dashboard from '@/pages/Dashboard'
+import AccountConfig from '@/pages/AccountConfig'
+import ClanConfig from '@/pages/ClanConfig'
 
 Vue.use(Router)
 
@@ -11,8 +12,12 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Index',
-      component: Index
+      redirect: '/task'
+    },
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
+      component: Dashboard
     },
     {
       path: '/task',
@@ -20,9 +25,14 @@ export default new Router({
       component: Task
     },
     {
-      path: '/config',
-      name: 'Config',
-      component: Config
+      path: '/account_config',
+      name: 'AccountConfig',
+      component: AccountConfig
+    },
+    {
+      path: '/clan_config',
+      name: 'ClanConfig',
+      component: ClanConfig
     }
   ]
 })
