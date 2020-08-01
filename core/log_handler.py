@@ -81,8 +81,11 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             # 过滤掉重复信息
             tmp_message = message
             message = ''.join(message).replace('\n', '')
-            self.acc_message[self.acc_name].append(message)
+            if s_level in lev_dic[log_lev]:
+                self.acc_message[self.acc_name].append(message)
+                self.acc_message[self.acc_name].append('\n')
             # print(self.acc_message[self.acc_name])
+            # print(len(self.acc_message[self.acc_name]))
             if s_level in lev_dic[log_lev] and len(self.acc_message[self.acc_name]) >= log_cache:
                 message = ''.join(self.acc_message[self.acc_name]).replace(',', '\n').replace("'", '')
                 # print(message)
