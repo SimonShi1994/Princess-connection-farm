@@ -15,6 +15,7 @@ class FightBaseMixin(ToolsMixin):
     def get_fight_state(self, screen=None, max_retry=3) -> int:
         """
         获取战斗状态
+        注：不适用竞技场的战斗！
         :param: screen 第一次检测用的截图
         :param max_retry: 最大重试次数
         :return:
@@ -202,9 +203,7 @@ class FightBaseMixin(ToolsMixin):
         """
         assert bianzu in [1, 2, 3, 4, 5]
         assert duiwu in [1, 2, 3]
-        sc = self.getscreen()
-        self.click(*FIGHT_BTN["my_team"], pre_delay=0.5, post_delay=0.5)
-        self.wait_for_change(at=FIGHT_BTN["zhandoukaishi"].at, screen=sc)
+        self.click_btn(FIGHT_BTN["my_team"], wait_for_disappear=FIGHT_BTN["zhandoukaishi"])
         self.click(*FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
         self.click(*FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
 

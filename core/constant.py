@@ -180,7 +180,7 @@ FIGHT_BTN = {
     "menu": p(img="img/fight/menu.bmp", at=(871, 18, 928, 32)),
     "qwjsyl": p(576, 495, img="img/fight/qwjsyl.bmp", at=(392, 457, 948, 528)),  # 前往角色一览
     "win": p(img="img/fight/win.bmp", at=(400, 6, 551, 127)),  # 过关的帽子
-    "zhandoukaishi": p(837, 453, at=(755, 426, 918, 477)),
+    "zhandoukaishi": p(834, 453, img="img/fight/zhandoukaishi.bmp", at=(761, 431, 911, 472)),
 
     "upperright_stars":  # “挑战”页面右上角的星星位置
         {
@@ -191,21 +191,21 @@ MAX_DXC = 3  # 一共出了多少个地下城关
 
 DXC_ELEMENT = {
     "chetui": p(806, 431, img="img/dxc/chetui.bmp", at=(779, 421, 833, 440)),
-    "chetui_window": p(at=(243, 139, 709, 400)),
-    "chetui_ok": p(591, 365),
+    "chetui_ok": p(591, 365, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "sytzcs": p(723, 438, img="img/dxc/sytzcs.bmp", at=(667, 428, 784, 447)),
     "1/1": p(img="img/dxc/dxc_1_1.bmp", at=(887, 429, 913, 446)),
     "0/1": p(img="img/dxc/dxc_0_1.bmp", at=(883, 429, 910, 445)),
     "qwdxc": p(810, 489),  # 失败：前往地下城
-    "tiaozhan": p(835, 455, img="img/ui/tiaozhan.bmp", at=(760, 432, 917, 477)),
+    "tiaozhan": p(839, 455, img="img/ui/tiaozhan.bmp", at=(760, 432, 917, 477)),
     "shop": p(at=(889, 9, 938, 66)),
     "map": p(at=(7, 66, 954, 391)),
     "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
-    "shouqubaochou_ok": p(478, 476),
+    "shouqubaochou_ok": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
     "qianwangdixiacheng": p(805, 495),
     "quyuxuanzequeren_ok": p(585, 371),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
+    "dxc_shop_btn": p(918, 30, img="img/dxc/shop.bmp", at=(905, 21, 924, 41)),
 }
 DXC_NUM = {
     # 没有OCR用此来检测层数
