@@ -2,7 +2,7 @@ import asyncio
 import os
 import threading
 import time
-from typing import Optional
+from typing import Optional, Union
 
 import cv2
 import numpy as np
@@ -316,15 +316,16 @@ class BaseMixin:
         :param delay: 检测间隔
         :param timeout: 超过timeout，报错
         """
+        time.sleep(delay)
         sc = self.getscreen() if screen is None else screen
         last_time = time.time()
         while True:
-            time.sleep(delay)
             sc_cut = UIMatcher.img_cut(sc, MAIN_BTN["loading_left"].at)
             if not (sc_cut == 1).all():
                 break
             if time.time() - last_time > timeout:
                 raise Exception("Loading 超时！")
+            time.sleep(delay)
             sc = self.getscreen()
 
     def check_dict_id(self, at, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05):
@@ -534,8 +535,9 @@ class BaseMixin:
                 # print('未找到所需的按钮,无动作')
                 pass
 
-    def _lockimg(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=0.5, alldelay=0.5, retry=0,
-                 at=None, is_raise=False, lock_no=False):
+    def _lockimg(self, img: Union[PCRelement, str, dict], ifclick=None, ifbefore=0., ifdelay=1, elseclick=None,
+                 elsedelay=0.5, alldelay=0.5, retry=0,
+                 at=None, is_raise=False, lock_no=False, timeout=None):
         """
         @args:
             img:要匹配的图片目录
@@ -555,6 +557,7 @@ class BaseMixin:
             retry:elseclick最多点击次数，0为无限次
             is_raise: 失败时，是否弹出错误
             lock_no: False: lockimg True: lock_no_img
+            timeout: 设置为None时，使用pcr_config中的lockimg_timeout，否则用自己的。
         @pcr_config:
             lockimg_timeout: 设置为0时，不做超时处理；否则，如果超过该时间，报错
         @return:是否在retry次内点击成功
@@ -563,6 +566,9 @@ class BaseMixin:
         # 2020-07-12 Add: 增加了ifclick,elseclick参数对Tuple的兼容性
         # 2020-07-14 Add: added retry
         # 2020-07-30 Add: 整合了lockimg 和 lock_no_img，增加timeout
+        # 2020-08-01 Add: 取消了elseclick两个click之间的间隔，elsedelay表
+        #                 示elseclick操作之后的等待时间，该时间内会一直检测。
+        # 2020-08-01 Add: 增加了局部timeout参数
         if elseclick is None:
             elseclick = []
         if ifclick is None:
@@ -575,6 +581,9 @@ class BaseMixin:
             img = {(img, at): True}
         attempt = 0
         lasttime = time.time()
+        ec_time = 0  # else click time: 上次点elseclick的时间
+        if timeout is None:
+            timeout = lockimg_timeout
         while True:
             screen_shot = self.getscreen()
             for i, j in img.items():
@@ -589,38 +598,78 @@ class BaseMixin:
                             self.click(clicks[0], clicks[1])
                             time.sleep(ifdelay)
                     return j
-            if elseclick != []:
-                for clicks in elseclick:
-                    self.click(clicks[0], clicks[1])
-                    time.sleep(elsedelay)
+            if ec_time == 0:
+                # 第一次：必点
+                # 此后每次等待elsedelay
+                ec_time = time.time() - elsedelay
+            if time.time() - ec_time >= elsedelay:
+                if elseclick != []:
+                    for clicks in elseclick:
+                        self.click(clicks[0], clicks[1])
+                    attempt += 1
+                    ec_time = time.time()
             time.sleep(alldelay)
-            attempt += 1
-            if retry != 0 and attempt >= retry:
+            if retry != 0 and attempt > retry:
                 return False
-            if lockimg_timeout != 0 and time.time() - lasttime > lockimg_timeout:
+            if timeout != 0 and time.time() - lasttime > timeout:
                 if is_raise:
                     raise Exception("Lockimg 超时！")
                 return False
 
-    def lockimg(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2, alldelay=0.5, retry=0,
-                at=None, is_raise=True):
+    def lockimg(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
+                at=None, is_raise=True, timeout=None):
         """
         锁定图片，直到该图出现。
         图片出现后，点击ifclick；未出现，点击elseclick
         """
         return self._lockimg(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                              elsedelay=elsedelay,
-                             alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False)
+                             alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout)
 
-    def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2, alldelay=0.5,
-                    retry=0, at=None, is_raise=True):  # 锁定指定图像
+    def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5,
+                    retry=0, at=None, is_raise=True, timeout=None):  # 锁定指定图像
         """
         锁定图片，直到该图消失
         图片消失后，点击ifclick；未消失，点击elseclick
         """
         return self._lockimg(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                              elsedelay=elsedelay,
-                             alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True)
+                             alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout)
+
+    def click_btn(self, btn: PCRelement, elsedelay=8., timeout=30,
+                  wait_for_appear: Optional[Union[str, PCRelement]] = None,
+                  wait_for_disappear: Optional[Union[str, PCRelement]] = "self"):
+        """
+        稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
+        :param btn: PCRelement类型，要点击的按钮
+        :param elsedelay: 尝试点击按钮后等待响应的间隔
+        :param timeout: lockimg和lock_no_img所用的超时参数
+        :param wait_for_appear:
+            设置为None（默认）时不等待按钮出现
+            设置为"self"时等待按钮自己出现
+            设置为PCRelement的时候，检测该元素是否出现，出现则按下btn
+        :param wait_for_disappear:
+            设置为None时不等待按钮消失
+            设置为"self"（默认）时等待按钮自己消失
+            设置为PCRelement的时候，检测该元素是否消失
+            若指定元素没有消失，则美国elsedelay的时长点击一次按钮
+        """
+        if isinstance(wait_for_disappear, str):
+            assert wait_for_disappear == "self"
+        if isinstance(wait_for_appear, str):
+            assert wait_for_appear == "self"
+        if wait_for_appear is not None:
+            if wait_for_appear == "self":
+                self.lockimg(btn, timeout=timeout)
+            else:
+                self.lockimg(wait_for_appear, timeout=timeout)
+        if wait_for_disappear is None:
+            self.click(*btn)
+        else:
+            if wait_for_disappear == "self":
+                self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+            else:
+                self.lock_no_img(wait_for_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
         """

@@ -2,6 +2,7 @@ import time
 
 from core.constant import MAIN_BTN
 from core.cv import UIMatcher
+# from core.log_handler import pcr_log
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
 
@@ -106,3 +107,5 @@ class LoginMixin(BaseMixin):
         self.click(591, 369)  # ok
         time.sleep(1)
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
+        # pcr_log(self.account).server_bot("warning", "%s账号完成任务" % self.account)
+

@@ -51,15 +51,13 @@ class DXCBaseMixin(FightBaseMixin):
             1：战胜
             2：战败
         """
-        self.wait_for_stable(at=DXC_ELEMENT["map"].at)  # 等待小人走完
-        sc = self.getscreen()
-        self.click(x, y)  # 点人
-        if not self.wait_for_change(at=DXC_ELEMENT["shop"].at, screen=sc):  # 商店被遮住了
+        self.wait_for_stable(at=DXC_ELEMENT["map"], delay=1.5)  # 等待小人走完
+        # 点人
+        state = self.lock_no_img(DXC_ELEMENT["dxc_shop_btn"], elseclick=(x, y), elsedelay=10, retry=2)
+        if not state:
             return -2
-        sc = self.getscreen()
-        self.click(*DXC_ELEMENT["tiaozhan"])
-        self.wait_for_change(at=DXC_ELEMENT["tiaozhan"].at, screen=sc)  # 挑战没了
-
+        # 点击挑战
+        self.click_btn(DXC_ELEMENT["tiaozhan"])
         # 换队
         if bianzu == -1 and duiwu == -1:
             self.set_fight_team_order()
@@ -70,23 +68,22 @@ class DXCBaseMixin(FightBaseMixin):
         live_count = self.get_fight_current_member_count()
         if live_count < min_live:
             return 0
-        self.click(*FIGHT_BTN["zhandoukaishi"], post_delay=3)
+        self.click_btn(FIGHT_BTN["zhandoukaishi"])
+        self.wait_for_loading(delay=1)
         self.set_fight_auto(auto, screen=self.last_screen)
         self.set_fight_speed(speed, max_level=2, screen=self.last_screen)
         mode = 0
         while mode == 0:
             # 等待战斗结束
-            mode = self.get_fight_state()
+            mode = self.get_fight_state(max_retry=10)
         if mode == -1:
             return -1
         elif mode == 1:
             # 点击下一步
-            self.click(*DXC_ELEMENT["xiayibu"])
-            self.wait_for_stable()
-            self.click(*DXC_ELEMENT["shouqubaochou_ok"], post_delay=2)
+            self.click_btn(DXC_ELEMENT["xiayibu"])
+            self.click_btn(DXC_ELEMENT["shouqubaochou_ok"], wait_for_appear="self")
             # 处理跳脸：回到地下城界面
             self.dxc_kkr()
-
             return 1
         elif mode == 2:
             # 前往地下城
@@ -99,8 +96,8 @@ class DXCBaseMixin(FightBaseMixin):
         场景要求：处于地下城内小人界面，右下角有撤退
         """
         self.click(*DXC_ELEMENT["chetui"])
-        self.wait_for_stable(screen=self.last_screen, at=DXC_ELEMENT["chetui_window"].at)
-        self.click(*DXC_ELEMENT["chetui_ok"], post_delay=2)
+        self.lockimg(DXC_ELEMENT["chetui_ok"], elseclick=DXC_ELEMENT["chetui"], elsedelay=8, timeout=30)
+        self.click_btn(DXC_ELEMENT["chetui_ok"])
 
     def enter_dxc(self, dxc_id):
         """

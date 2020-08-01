@@ -96,7 +96,8 @@ class AsyncMixin(BaseMixin):
                     _time = time_end - time_start
                     _time = _time + _time
                     if _time > bad_connecting_time:
-                        # LOG().Account_bad_connecting(self.account)
+                        pcr_log(self.account).write_log(level='error',
+                                                        message='%s卡connecting/loading了，qwq' % self.account)
                         _time = 0
                         raise moveerr("reboot", "loading时间过长")
 
@@ -145,6 +146,32 @@ class AsyncMixin(BaseMixin):
             # print('截图中')
             # cv2.imwrite('test.bmp', screenshot)
 
+    async def same_img(self):
+        """
+        判断是否一直在同一界面
+        :return:
+        """
+        time.sleep(1)
+        # print('c', UIMatcher.img_similar(screenshot))
+        _cout = 0
+        while th_sw == 0:
+            time.sleep(5)
+            # print('c', UIMatcher.img_similar(screenshot))
+            # print(UIMatcher.img_similar(screenshot))
+            _same = UIMatcher.img_similar(screenshot, at=(834, 497, 906, 530))
+            # at在右下角的主菜单
+            if _same >= 0.9:
+                # print('相似', _same)
+                _cout = _cout + 1
+                if _cout >= 3000:
+                    pcr_log(self.account).write_log(level='error', message='%s卡同一界面过长（10min），即将重启qwq' % self.account)
+                    self.fix_reboot()
+                    # print('重启')
+                    _cout = 0
+            else:
+                # print('不相似', _same)
+                pass
+
     def start_th(self):
         global th_sw
         th_sw = 0
@@ -159,6 +186,7 @@ class AsyncMixin(BaseMixin):
         self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
         self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
+        self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
 
     def fix_reboot(self, back_home=True):
         # 重启逻辑：重启应用，重启异步线程

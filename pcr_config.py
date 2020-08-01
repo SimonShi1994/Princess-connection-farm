@@ -7,6 +7,7 @@ baidu_apiKey = ''
 baidu_secretKey = ''
 s_sckey = ''
 log_lev = '1'
+log_cache = 3   # 日志缓冲消息条数
 
 async_screenshot_freq = 5
 bad_connecting_time = 30
