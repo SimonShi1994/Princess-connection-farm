@@ -4,6 +4,7 @@ import os
 import shutil
 import main
 import re
+from core.log_handler import pcr_log
 
 # 大号的账号，密码
 account_name = ''
@@ -109,6 +110,15 @@ def resume_accounts():
     shutil.copytree(users_bak_path,users_path)
     shutil.rmtree(users_bak_path)
 
+'''
+日志输出工具函数
+以admin身份输出日志到文件与控制台
+'''
+def log_by_admin(message,level='info'):
+    pcr_log('admin').write_log(level=level, message)
+    pcr_log('admin').server_bot('', message)
+    
+
 
 
 if __name__ == "__main__":
@@ -116,35 +126,49 @@ if __name__ == "__main__":
     create_daily_task()
     create_switch_guild_task()
         
-
     # 先备份原用户数据
+    log_by_admin('备份用户数据')
     bak_accounts()
+    
     # 导入公会1数据
     cu.del_all_account()
+    log_by_admin('导入公会1数据')
     cu.create_account_from_file(guild1_info)
     # 开始公会1
+    log_by_admin('开始运行公会1')
     main.RunFirstTime()
 
     # 踢出公会
     cu.del_all_account()
+    log_by_admin('导入公会1会长数据')
     cu.create_account(account_guild1_name,account_guild1_pwd,task_remove_guild)
+    log_by_admin('开始踢出公会1')
     main.RunFirstTime()
 
     # 切换大号，去公会二
     cu.del_all_account()
+    log_by_admin('导入大号数据')
     cu.create_account(account_name,account_pwd,task_goto_guild2)
+    log_by_admin('开始加入公会2')
     main.RunFirstTime()
 
     # 导入公会2数据
     cu.del_all_account()
+    log_by_admin('导入公会2数据')
     cu.create_account_from_file(guild2_info)
     # 开始公会2
+    log_by_admin('开始运行公会2')
     main.RunFirstTime()
 
     # 切换大号，去公会一
     cu.del_all_account()
+    log_by_admin('导入大号数据')
     cu.create_account(account_name,account_pwd,task_goto_guild1)
+    log_by_admin('开始加入公会1')
     main.RunFirstTime()
-    
+
     # 还原用户数据
+    log_by_admin('开始还原用户数据')
     resume_accounts()
+
+    log_by_admin('全部完成！')
