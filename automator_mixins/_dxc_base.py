@@ -109,10 +109,9 @@ class DXCBaseMixin(FightBaseMixin):
         # 锁定主页
         self.lock_home()
         # 进入冒险
-        self.click(*MAIN_BTN["maoxian"])
-        # 进入地下城
         self.lock_img(MAIN_BTN["dxc"], elseclick=MAIN_BTN["maoxian"], elsedelay=0.5)
-        self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5)
+        # 进入地下城
+        self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5, until_appear=MAIN_BTN["shop"])
         screen_shot_ = self.getscreen()
         if self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
             # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。
@@ -124,10 +123,10 @@ class DXCBaseMixin(FightBaseMixin):
                 return False
             else:
                 # 没刷完，进入地下城
-                self.click(DXC_ENTRANCE[dxc_id], pre_delay=1, post_delay=3)
-                self.click(*DXC_ELEMENT["quyuxuanzequeren_ok"], post_delay=8)
+                self.click_btn(DXC_ENTRANCE[dxc_id], elsedelay=1, until_appear=DXC_ELEMENT["quyuxuanzequeren_ok"])
+                self.click_btn(*DXC_ELEMENT["quyuxuanzequeren_ok"], until_appear=DXC_ELEMENT["chetui"])
         self.dxc_kkr()
-        self.lock_img(DXC_ELEMENT["chetui"])  # 锁定撤退
+        self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5)  # 锁定撤退
         return True
 
     def check_dxc_level(self, dxc_id):
