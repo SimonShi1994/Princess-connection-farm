@@ -23,7 +23,7 @@ class ToolsMixin(BaseMixin):
         要求场景：存在“我的主页”按钮
         逻辑：不断点击我的主页，直到右下角出现“礼物”
         """
-        self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=2)  # 回首页
+        self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=2)  # 回首页
 
     def setting(self):
         self.click(875, 517)
@@ -106,9 +106,9 @@ class ToolsMixin(BaseMixin):
 
     def rename(self, name):  # 重命名
         self.click(871, 513)  # 主菜单
-        self.lockimg('img/bangzhu.bmp', ifclick=[(370, 270)])  # 锁定帮助 点击简介
-        self.lockimg('img/bianji.bmp', ifclick=[(900, 140)])  # 锁定 点击铅笔修改按钮
-        self.lockimg('img/biangeng.bmp', ifclick=[(480, 270)])  # 锁定 玩家名 点击游戏渲染编辑框
+        self.lock_img('img/bangzhu.bmp', ifclick=[(370, 270)])  # 锁定帮助 点击简介
+        self.lock_img('img/bianji.bmp', ifclick=[(900, 140)])  # 锁定 点击铅笔修改按钮
+        self.lock_img('img/biangeng.bmp', ifclick=[(480, 270)])  # 锁定 玩家名 点击游戏渲染编辑框
         time.sleep(1)
         self.click(290, 425)  # 点击编辑框
         self.d.clear_text()
@@ -117,5 +117,5 @@ class ToolsMixin(BaseMixin):
         time.sleep(0.5)
         self.click(590, 370)  # 变更按钮
         time.sleep(1)
-        self.lockimg('img/bangzhu.bmp', elseclick=[(32, 32)])  # 锁定帮助
+        self.lock_img('img/bangzhu.bmp', elseclick=[(32, 32)])  # 锁定帮助
         pcr_log(self.account).write_log(level='info', message='账号：%s已修改名字' % name)

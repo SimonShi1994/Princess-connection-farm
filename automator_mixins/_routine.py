@@ -33,25 +33,25 @@ class RoutineMixin(ShuatuBaseMixin):
         screen_shot_ = self.getscreen()
         num_of_white, _, _ = UIMatcher.find_gaoliang(screen_shot_)
         if num_of_white < 50000:
-            self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
+            self.lock_img('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
             self.lock_home()
             return
         if UIMatcher.img_where(screen_shot_, 'img/kekeluo.bmp'):
-            self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
+            self.lock_img('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
             self.lock_home()
 
     def gonghuizhijia(self):  # 家园领取
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         self.lock_home()
-        self.lockimg(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], elsedelay=1)
-        self.lockimg(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5, retry=3)
+        self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], elsedelay=1)
+        self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5, retry=3)
         self.lock_home()
 
     def mianfeiniudan(self):
         # 免费扭蛋
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         self.lock_home()
-        self.lockimg(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
+        self.lock_img(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
         while True:
             # 跳过抽奖提示
             time.sleep(4)
@@ -64,10 +64,10 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.click(473, 436)  # 手动点击
                 time.sleep(2)
                 break
-        state = self.lockimg({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
-                             elseclick=NIUDAN_BTN["putong"])
+        state = self.lock_img({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
+                              elseclick=NIUDAN_BTN["putong"])
         if state == 1:
-            self.lockimg(NIUDAN_BTN["putong_quxiao"], elseclick=NIUDAN_BTN["putong_mianfei"])
+            self.lock_img(NIUDAN_BTN["putong_quxiao"], elseclick=NIUDAN_BTN["putong_mianfei"])
             self.lock_no_img(NIUDAN_BTN["putong_quxiao"], elseclick=NIUDAN_BTN["putong_ok"])
             self.lock_no_img(NIUDAN_BTN["niudanjieguo_ok"], elseclick=NIUDAN_BTN["niudanjieguo_ok"])
             # TODO 第一次扭蛋设置
@@ -78,7 +78,7 @@ class RoutineMixin(ShuatuBaseMixin):
     def mianfeishilian(self):
         # 免费十连
         self.lock_home()
-        self.lockimg('img/liwu.bmp', ifclick=[(750, 510)], ifdelay=1, at=(891, 413, 930, 452))  # 点进扭蛋界面
+        self.lock_img('img/liwu.bmp', ifclick=[(750, 510)], ifdelay=1, at=(891, 413, 930, 452))  # 点进扭蛋界面
 
         time.sleep(1)
         screen_shot_ = self.getscreen()
@@ -101,11 +101,11 @@ class RoutineMixin(ShuatuBaseMixin):
     def shouqu(self):  # 收取全部礼物
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         self.lock_home()
-        self.lockimg(LIWU_BTN["shouqulvli"], elseclick=MAIN_BTN["liwu"])
-        state = self.lockimg(LIWU_BTN["ok"], elseclick=LIWU_BTN["quanbushouqu"], retry=3, elsedelay=2)
+        self.lock_img(LIWU_BTN["shouqulvli"], elseclick=MAIN_BTN["liwu"])
+        state = self.lock_img(LIWU_BTN["ok"], elseclick=LIWU_BTN["quanbushouqu"], retry=3, elsedelay=2)
         if state:
-            s = self.lockimg({LIWU_BTN["ok2"]: 1, LIWU_BTN["chiyoushangxian"]: 2},
-                             elseclick=LIWU_BTN["ok"], elsedelay=2)
+            s = self.lock_img({LIWU_BTN["ok2"]: 1, LIWU_BTN["chiyoushangxian"]: 2},
+                              elseclick=LIWU_BTN["ok"], elsedelay=2)
             if s == 1:
                 self.lock_no_img(LIWU_BTN["ok2"], elseclick=LIWU_BTN["ok2"], elsedelay=2)
                 self.lock_home()
@@ -119,8 +119,8 @@ class RoutineMixin(ShuatuBaseMixin):
     def shouqurenwu(self):  # 收取任务报酬
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         self.lock_home()
-        self.lockimg(RENWU_BTN["renwutip"], elseclick=MAIN_BTN["renwu"])
-        self.lockimg(RENWU_BTN["guanbi"], elseclick=RENWU_BTN["quanbushouqu"], elsedelay=1, retry=3)
+        self.lock_img(RENWU_BTN["renwutip"], elseclick=MAIN_BTN["renwu"])
+        self.lock_img(RENWU_BTN["guanbi"], elseclick=RENWU_BTN["quanbushouqu"], elsedelay=1, retry=3)
         self.lock_home()
 
     def goumaitili(self, times, var={}):  # 购买体力
@@ -133,12 +133,12 @@ class RoutineMixin(ShuatuBaseMixin):
             var.setdefault("cur", 0)
         self.lock_home()
         while var["cur"] < times:
-            state = self.lockimg(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_plus"], elsedelay=2, retry=3)
+            state = self.lock_img(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_plus"], elsedelay=2, retry=3)
             if not state:
                 self.log.write_log("warning", "体力达到上限，中断体力购买")
                 break
             self.lock_no_img(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_ok"], elsedelay=2)
-            state = self.lockimg(MAIN_BTN["tili_ok2"], retry=3)
+            state = self.lock_img(MAIN_BTN["tili_ok2"], retry=3)
             # TODO 宝石不够时的判断
             var["cur"] += 1
             mv.save()
@@ -151,15 +151,15 @@ class RoutineMixin(ShuatuBaseMixin):
         # mode 0：购买times次1连
 
         self.lock_home()
-        self.lockimg(MAIN_BTN["mana_title"], elseclick=MAIN_BTN["mana_plus"])
+        self.lock_img(MAIN_BTN["mana_title"], elseclick=MAIN_BTN["mana_plus"])
 
         def BuyOne():
-            self.lockimg(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_one"])
+            self.lock_img(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_one"])
             self.lock_no_img(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_ok"])
             time.sleep(2)
 
         def BuyTen():
-            self.lockimg(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_ten"])
+            self.lock_img(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_ten"])
             self.lock_no_img(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_ok"])
             time.sleep(16)
 
@@ -185,7 +185,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_home()
         self.click(617, 435)
         time.sleep(2)
-        self.lockimg('img/tongchang.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=1)
+        self.lock_img('img/tongchang.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=1)
         self.click(387, 151)
         time.sleep(0.3)
         self.click(557, 151)
@@ -255,7 +255,7 @@ class RoutineMixin(ShuatuBaseMixin):
         time.sleep(3)
         screen_shot_ = self.getscreen()
         if UIMatcher.img_where(screen_shot_, 'img/tansuo_used.jpg'):
-            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+            self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
         else:
             if mode >= 2:
                 self.shoushuazuobiao(704, 152, lockpic='img/fanhui.bmp', screencut=(16, 12, 54, 48))

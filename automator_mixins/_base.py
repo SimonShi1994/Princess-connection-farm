@@ -466,7 +466,8 @@ class BaseMixin:
                  ifclick=None, ifbefore=0.5, ifdelay=1,
                  elseclick=None, elsedelay=0.5, retry=0):
         """
-        前身：_lockimg
+        前身：_lock_img
+
         匹配图片并点击指定坐标
 
             Parameters:
@@ -535,9 +536,9 @@ class BaseMixin:
                 # print('未找到所需的按钮,无动作')
                 pass
 
-    def _lockimg(self, img: Union[PCRelement, str, dict], ifclick=None, ifbefore=0., ifdelay=1, elseclick=None,
-                 elsedelay=0.5, alldelay=0.5, retry=0,
-                 at=None, is_raise=False, lock_no=False, timeout=None):
+    def _lock_img(self, img: Union[PCRelement, str, dict], ifclick=None, ifbefore=0., ifdelay=1, elseclick=None,
+                  elsedelay=0.5, alldelay=0.5, retry=0,
+                  at=None, is_raise=False, lock_no=False, timeout=None):
         """
         @args:
             img:要匹配的图片目录
@@ -556,7 +557,7 @@ class BaseMixin:
             elsedelay:上述点击后延迟的时间
             retry:elseclick最多点击次数，0为无限次
             is_raise: 失败时，是否弹出错误
-            lock_no: False: lockimg True: lock_no_img
+            lock_no: False: lock_img True: lock_no_img
             timeout: 设置为None时，使用pcr_config中的lockimg_timeout，否则用自己的。
         @pcr_config:
             lockimg_timeout: 设置为0时，不做超时处理；否则，如果超过该时间，报错
@@ -613,18 +614,18 @@ class BaseMixin:
                 return False
             if timeout != 0 and time.time() - lasttime > timeout:
                 if is_raise:
-                    raise Exception("Lockimg 超时！")
+                    raise Exception("lock_img 超时！")
                 return False
 
-    def lockimg(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
-                at=None, is_raise=True, timeout=None):
+    def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
+                 at=None, is_raise=True, timeout=None):
         """
         锁定图片，直到该图出现。
         图片出现后，点击ifclick；未出现，点击elseclick
         """
-        return self._lockimg(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
-                             elsedelay=elsedelay,
-                             alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout)
+        return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
+                              elsedelay=elsedelay,
+                              alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout)
 
     def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5,
                     retry=0, at=None, is_raise=True, timeout=None):  # 锁定指定图像
@@ -632,9 +633,9 @@ class BaseMixin:
         锁定图片，直到该图消失
         图片消失后，点击ifclick；未消失，点击elseclick
         """
-        return self._lockimg(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
-                             elsedelay=elsedelay,
-                             alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout)
+        return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
+                              elsedelay=elsedelay,
+                              alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout)
 
     def click_btn(self, btn: PCRelement, elsedelay=5., timeout=20, wait_me=True,
                   until_appear: Optional[Union[str, PCRelement]] = None,
@@ -657,19 +658,21 @@ class BaseMixin:
         if isinstance(until_disappear, str):
             assert until_disappear == "self"
         if wait_me is True:
-            self.lockimg(btn, timeout=timeout)
+            self.lock_img(btn, timeout=timeout)
         if until_disappear is None and until_appear is None:
             self.click(*btn)
         else:
             if until_disappear == "self":
                 self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
             elif until_appear is not None:
-                self.lockimg(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+                self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
             elif until_disappear is not None:
                 self.lock_no_img(until_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
         """
+        这个处理教程函数是给chushihua.py用的
+
         有引导点引导
         有下一步点下一步
         有主页点主页
@@ -730,7 +733,7 @@ class BaseMixin:
             # 返回冒险
             self.click(480, 505)
             time.sleep(2)
-            self.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513), (390, 369)], elsedelay=0.5)
+            self.lock_img('img/zhuxianguanqia.jpg', elseclick=[(480, 513), (390, 369)], elsedelay=0.5)
             while True:
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/zhuxianguanqia.jpg', at=(511, 286, 614, 314)):
