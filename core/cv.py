@@ -248,6 +248,40 @@ class UIMatcher:
         # print('亮点个数:', len(np.argwhere(binary == 255)), '暗点个数:', len(np.argwhere(binary == 0)))
         return num_of_white, index_1[1] / screen.shape[1], (index_1[0] + 63) / screen.shape[0]
 
+    @classmethod
+    def img_similar(cls, screen_short, threshold=0.84, at=None):
+        """
+        和上次截图匹配相似度
+        :param threshold:
+        :param screen_short:
+        :param at: 缩小查找范围
+        :return:
+        """
+        if screen_short.shape[0] > screen_short.shape[1]:
+            screen_short = UIMatcher.RotateClockWise90(screen_short)
+        if at is not None:
+            try:
+                x1, y1, x2, y2 = at
+                screen_short = screen_short[y1:y2, x1:x2]
+            except:
+                pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+                exit(-1)
+        else:
+            x1, y1 = 0, 0
+        if cls.screen_short_befor is None:
+            cls.screen_short_befor = screen_short
+            # print('填空')
+        th, tw = screen_short.shape[:2]  # rows->h, cols->w
+        res = cv2.matchTemplate(cls.screen_short_befor, screen_short, cv2.TM_CCOEFF_NORMED)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        # print(max_val)
+        if max_val >= threshold:
+            x = x1 + max_loc[0] + tw // 2
+            y = y1 + max_loc[1] + th // 2
+        cls.screen_short_befor = screen_short
+        # print(round(max_val, 3))
+        return round(max_val, 3)
+
 #
 # d = u2.connect()
 # screen = d.screenshot(format="opencv")

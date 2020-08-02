@@ -2,6 +2,7 @@ import time
 
 from core.constant import MAIN_BTN
 from core.cv import UIMatcher
+# from core.log_handler import pcr_log
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
 
@@ -56,7 +57,7 @@ class LoginMixin(BaseMixin):
                             # 已经登陆了老哥！
                             # 重 新 来 过
                             self.log.write_log("error", "可能出现了狂点右上角错误，换号")
-                            self.lockimg(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
+                            self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
                             self.change_acc()
                 if try_count > 1000:
                     # 点了1000次了，重启吧
@@ -106,3 +107,4 @@ class LoginMixin(BaseMixin):
         self.click(591, 369)  # ok
         time.sleep(1)
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
+        # pcr_log(self.account).server_bot("warning", "%s账号完成任务" % self.account)

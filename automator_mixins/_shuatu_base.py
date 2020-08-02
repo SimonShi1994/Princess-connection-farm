@@ -89,9 +89,9 @@ class ShuatuBaseMixin(ToolsMixin):
         self.lock_home()
         self.click(*MAIN_BTN["maoxian"])
         # 进入地图（此处写500，90是为了防止误触到关卡）
-        self.lockimg(MAIN_BTN["dxc"],ifclick=MAIN_BTN["zhuxian"],elseclick=MAIN_BTN["maoxian"],ifbefore=2)
-        #判断是否进入地图
-        self.lockimg(MAOXIAN_BTN["ditu"],ifclick=MAOXIAN_BTN["normal_on"],elseclick=MAIN_BTN["zhuxian"],ifbefore=2)
+        self.lock_img(MAIN_BTN["dxc"], ifclick=MAIN_BTN["zhuxian"], elseclick=MAIN_BTN["maoxian"], ifbefore=2)
+        # 判断是否进入地图
+        self.lock_img(MAOXIAN_BTN["ditu"], ifclick=MAOXIAN_BTN["normal_on"], elseclick=MAIN_BTN["zhuxian"], ifbefore=2)
 
     def enter_hard(self, max_retry=3):
         self.enter_zhuxian()
@@ -274,7 +274,7 @@ class ShuatuBaseMixin(ToolsMixin):
                 break
             self.click(1, 138)
             time.sleep(1)
-        self.lockimg('img/tiaozhan.jpg', elseclick=[(x, y)], elsedelay=2)
+        self.lock_img('img/tiaozhan.jpg', elseclick=[(x, y)], elsedelay=2)
         self.click(840, 454)
         time.sleep(0.7)
 
@@ -410,10 +410,10 @@ class ShuatuBaseMixin(ToolsMixin):
             time.sleep(2)
 
         self.lock_home()
-        self.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=3)
+        self.lock_img('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=3)
         self.click(562, 253)
         time.sleep(3)
-        self.lockimg('img/normal.jpg', elseclick=[(704, 84)], elsedelay=0.5, alldelay=1, at=(660, 72, 743, 94))
+        self.lock_img('img/normal.jpg', elseclick=[(704, 84)], elsedelay=0.5, alldelay=1, at=(660, 72, 743, 94))
         self.click(923, 272)
         time.sleep(3)
 

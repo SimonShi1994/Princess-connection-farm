@@ -10,7 +10,7 @@ from core.utils import random_name, CreatIDnum
 
 
 def runmain(address, account, password):
-    a = Automator(address, account)
+    a = Automator(address)
     a.start()
 
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')
@@ -100,15 +100,15 @@ def runmain(address, account, password):
     # ===========新手教程完成============
     # ===========开始前期准备============
 
-    a.lockimg('img/liwu.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=2)
+    a.lock_img('img/liwu.jpg', elseclick=[(1, 100)], elsedelay=0.5, alldelay=2)
     a.shouqu()  # 拿一点钻石用于买扫荡券，理论上至少能拿到300钻
     a.goumaimana(1)  # 买扫荡券
     a.goumaitili(3)
     a.goumaijingyan()
 
     a.setting()  # 设置无动画、低帧率
-    a.lockimg('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=0.5, alldelay=1)
-    a.lockimg('img/zhuxianguanqia.jpg', ifclick=[(562, 235)], ifdelay=3, alldelay=0)
+    a.lock_img('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=0.5, alldelay=1)
+    a.lock_img('img/zhuxianguanqia.jpg', ifclick=[(562, 235)], ifdelay=3, alldelay=0)
     # ===========前期准备结束============
     # =============开始刷图==============
     # 如果执行了新手教程，应该已经开成两倍速了，否则直接
@@ -143,7 +143,7 @@ def runmain(address, account, password):
     a.shoushuazuobiao(138, 188, 1)  # 3-1
     # 结束刷图
     # 开始探索
-    a.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+    a.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
     # a.tansuo(mode=2) 还有问题，暂时关闭
     a.shouqurenwu()
     # a.rename(account) # 重命名昵称为账号ID

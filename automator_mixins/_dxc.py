@@ -102,7 +102,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
                         self.click(592, 369)
-                    # self.lockimg('img/ok.bmp', ifclick=[(592, 369)], elseclick=[(592, 369)])
+                    # self.lock_img('img/ok.bmp', ifclick=[(592, 369)], elseclick=[(592, 369)])
                     # 锁定OK
                 else:
                     pcr_log(self.account).write_log(level='info', message='>>>今天无次数\r\n')
@@ -131,7 +131,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 time.sleep(0.5)
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
-                    self.lockimg('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360)])
+                    self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360)])
                     # 锁定挑战和第一层
                     break
             while True:
@@ -163,7 +163,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             while True:
                 # time.sleep(0.5)
                 # screen_shot_ = self.getscreen()
-                self.lockimg('img/ok.bmp', ifclick=[(588, 480)], elseclick=[(833, 470)], ifbefore=2, ifdelay=1)
+                self.lock_img('img/ok.bmp', ifclick=[(588, 480)], elseclick=[(833, 470)], ifbefore=2, ifdelay=1)
                 # if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg'):
                 #    time.sleep(1.5)
                 #    self.click(833, 470)  # 战斗开始
@@ -171,9 +171,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 break
 
             if skip:  # 直接放弃战斗
-                self.lockimg('img/caidan.jpg', ifclick=[(902, 33)], ifbefore=2, ifdelay=1)
-                self.lockimg('img/fangqi.jpg', ifclick=[(625, 376)], ifbefore=2, ifdelay=3)
-                self.lockimg('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=2, ifdelay=1)
+                self.lock_img('img/caidan.jpg', ifclick=[(902, 33)], ifbefore=2, ifdelay=1)
+                self.lock_img('img/fangqi.jpg', ifclick=[(625, 376)], ifbefore=2, ifdelay=3)
+                self.lock_img('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=2, ifdelay=1)
                 time.sleep(3)
                 # 这里防一波打得太快导致来不及放弃
                 screen_shot_ = self.getscreen()
@@ -184,7 +184,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
                         break
             else:
-                self.lockimg('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=8)
+                self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=8)
                 screen = self.d.screenshot(format='opencv')
                 if UIMatcher.img_where(screen, 'img/auto.jpg'):
                     time.sleep(0.2)
@@ -214,7 +214,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 time.sleep(0.5)
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
-                    self.lockimg('img/ok.bmp', ifclick=[(588, 371)], elseclick=[(808, 435)])
+                    self.lock_img('img/ok.bmp', ifclick=[(588, 371)], elseclick=[(808, 435)])
                     # for i in range(3):
                     # 保险措施
                     # self.click(808, 435)
@@ -253,32 +253,32 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         :return:
         """
         # 首页 -> 地下城选章/（新号）地下城章内
-        self.lockimg('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
+        self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
         self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
                          at=(837, 92, 915, 140))
 
         # 撤退 如果 已经进入
         while True:
             screen = self.getscreen()
-            if UIMatcher.img_where(screen, 'img/yunhai.bmp'):
+            if UIMatcher.img_where(screen, 'img/yunhai.bmp', at=(152, 95, 341, 305)):
                 break
             if UIMatcher.img_where(screen, 'img/chetui.jpg', at=(738, 420, 872, 442)):
-                self.lockimg('img/ok.bmp', elseclick=[(810, 433)], elsedelay=1, ifclick=[(592, 370)], ifbefore=0.5,
-                             at=(495, 353, 687, 388))
+                self.lock_img('img/ok.bmp', elseclick=[(810, 433)], elsedelay=1, ifclick=[(592, 370)], ifbefore=0.5,
+                              at=(495, 353, 687, 388))
                 continue
             self.click(1, 100)
             time.sleep(0.3)
 
-        ok = self.lockimg('img/ok.bmp', elseclick=[(298, 213)], elsedelay=0.5, ifclick=[(596, 371)], ifbefore=1,
-                          ifdelay=0, retry=3)
+        ok = self.lock_img('img/ok.bmp', elseclick=[(298, 213)], elsedelay=0.5, ifclick=[(596, 371)], ifbefore=1,
+                           ifdelay=0, retry=3, at=(495, 353, 687, 388))
         if not ok:
             pcr_log(self.account).write_log(level='error', message="%s未能成功进入云海的山脉，跳过刷地下城" % self.account)
-            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
+            self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
             return
 
         while True:
             # 锁定挑战和第一层
-            self.lockimg('img/tiaozhan.bmp', elseclick=[(667, 360)], ifclick=[(833, 456)], at=(759, 428, 921, 483))
+            self.lock_img('img/tiaozhan.bmp', elseclick=[(667, 360)], ifclick=[(833, 456)], at=(759, 428, 921, 483))
             time.sleep(2)
             self.click(480, 88)
             time.sleep(0.5)
@@ -303,39 +303,39 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg', at=(758, 427, 917, 479)):
                     time.sleep(1)
                     self.click(833, 470)  # 战斗开始
-                    self.lockimg('img/ok.bmp', ifclick=[(588, 479)], ifdelay=0.5, retry=5)
+                    self.lock_img('img/ok.bmp', ifclick=[(588, 479)], ifdelay=0.5, retry=5)
                     break
                 time.sleep(1)
 
             time.sleep(4)  # 这里填写你预估的进入战斗加载所花费的时间
             if skip:  # 直接放弃战斗
-                ok = self.lockimg('img/fangqi.jpg', elseclick=[(902, 33)], elsedelay=0.5, ifclick=[(625, 376)],
-                                  ifbefore=0, ifdelay=0, retry=7, at=(567, 351, 686, 392))
+                ok = self.lock_img('img/fangqi.jpg', elseclick=[(902, 33)], elsedelay=0.5, ifclick=[(625, 376)],
+                                   ifbefore=0, ifdelay=0, retry=7, at=(567, 351, 686, 392))
                 if ok:
-                    ok2 = self.lockimg('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=0.5, ifdelay=0, retry=3,
-                                       at=(486, 344, 693, 396))
+                    ok2 = self.lock_img('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=0.5, ifdelay=0, retry=3,
+                                        at=(486, 344, 693, 396))
                     if not ok2:
                         skip = False
                 else:
                     skip = False
             else:
-                self.lockimg('img/kuaijin_2.bmp', elseclick=[(913, 494)], ifbefore=0, ifdelay=0.5, retry=10)
+                self.lock_img('img/kuaijin_2.bmp', elseclick=[(913, 494)], ifbefore=0, ifdelay=0.5, retry=10)
                 screen = self.getscreen()
                 if UIMatcher.img_where(screen, 'img/auto.jpg'):
                     time.sleep(0.2)
                     self.click(914, 425)
 
             if skip is False:
-                self.lockimg('img/shanghaibaogao.jpg', elseclick=[(1, 100)], ifclick=[(820, 492)], ifdelay=3)
+                self.lock_img('img/shanghaibaogao.jpg', elseclick=[(1, 100)], ifclick=[(820, 492)], ifdelay=3)
                 self.lock_no_img('img/shanghaibaogao.jpg', elseclick=[(820, 492)], elsedelay=3)
 
             self.click(1, 1)  # 取消显示结算动画
-            self.lockimg('img/chetui.jpg', elseclick=[(1, 1)], at=(738, 420, 872, 442))
-            self.lockimg('img/ok.bmp', elseclick=[(809, 433)], elsedelay=1, at=(495, 353, 687, 388))
+            self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], at=(738, 420, 872, 442))
+            self.lock_img('img/ok.bmp', elseclick=[(809, 433)], elsedelay=1, at=(495, 353, 687, 388))
             self.lock_no_img('img/ok.bmp', elseclick=[(592, 373)], elsedelay=0.5, at=(495, 353, 687, 388))
             break
 
-        self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
+        self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
 
     def dixiachengYunhai(self):  # 地下城 云海 （第一个）
         self.click(480, 505)
@@ -351,7 +351,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         screen_shot_ = self.getscreen()
         if UIMatcher.img_where(screen_shot_, 'img/dixiacheng_used.jpg'):  # 避免某些农场号刚买回来已经进了地下城
-            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+            self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
         else:
             # 下面这段因为调试而注释了，实际使用时要加上
             while True:
@@ -378,7 +378,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.dixiachengzuobiao(447, 275, 0)  # 7层
 
             # 完成战斗后
-            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+            self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
     def dixiachengDuanya(self):  # 地下城 断崖（第三个）
         self.click(480, 505)
@@ -393,7 +393,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         time.sleep(3)
         screen_shot_ = self.getscreen()
         if UIMatcher.img_where(screen_shot_, 'img/dixiacheng_used.jpg'):  # 避免某些农场号刚买回来已经进了地下城
-            self.lockimg('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+            self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
         else:
             # 下面这段因为调试而注释了，实际使用时要加上
             while True:

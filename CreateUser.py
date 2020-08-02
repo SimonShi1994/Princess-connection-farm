@@ -1,4 +1,5 @@
 from os import getcwd
+import re
 
 from core.usercentre import *
 
@@ -124,22 +125,15 @@ def create_account(account, password, taskfile):
 
 
 def create_account_from_file(file):
+    pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s]*([^\\s]*)')
     with open(file, "r", encoding="utf-8") as f:
         for line in f:
-            cur = line.strip()
-            if cur == "":
-                continue
-            if " " in cur:
-                spl = cur.split(" ")
-            elif "\t" in cur:
-                spl = cur.split("\t")
+            result = pattern.findall(line)
+            if len(result) != 0:
+                account, password, task = result[0]
             else:
                 continue
-            if len(spl) < 2:
-                continue
-            if len(spl) == 2:
-                spl += [""]
-            create_account(spl[0], spl[1], spl[2])
+            create_account(account, password, task)
 
 
 def del_account(account):

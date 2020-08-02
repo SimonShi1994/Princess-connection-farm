@@ -135,6 +135,7 @@ class TaskParam:
                 return False
         return True
 
+
 class ValidTask:
     def __init__(self):
         self.T = {}  # 存放合法Task记录
