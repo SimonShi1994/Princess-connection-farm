@@ -1,7 +1,6 @@
 adbutils
 websocket_client
 numpy
-pip==20.1.1 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 gevent==20.6.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 psutil==5.7.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 baidu-aip==2.2.18.0

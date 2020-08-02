@@ -90,14 +90,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
                     pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
                     self.dixiacheng(skip)
+                    break
                 screen_shot_ = self.getscreen()
-                if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp',
-                                       at=(148, 295, 345, 399)) and dixiacheng_times == 1:
+                if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp') and dixiacheng_times == 1:
                     self.click(233, 311, post_delay=1)
-                elif UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp',
-                                         at=(148, 295, 345, 399)) and dixiacheng_times == 0:
+                elif UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp') and dixiacheng_times == 0:
                     self.dxc_switch = 1
-                    # LOG().Account_undergroundcity(self.account)
+                    pcr_log(self.account).write_log(level='info', message='%s开始打地下城' % self.account)
                 if self.dxc_switch == 0:
                     screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
@@ -105,14 +104,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     # self.lock_img('img/ok.bmp', ifclick=[(592, 369)], elseclick=[(592, 369)])
                     # 锁定OK
                 else:
-                    pcr_log(self.account).write_log(level='info', message='>>>今天无次数\r\n')
+                    pcr_log(self.account).write_log(level='info', message='>>>今天无次数')
                     # LOG().Account_undergroundcity(self.account)
                     break
                 self.d.click(1, 1)
                 # 这里防止卡可可萝
             except Exception as error:
                 pcr_log(self.account).write_log(level='warning', message='3-检测出异常{}'.format(error))
-                pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
+                pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！')
                 self.dixiacheng(skip)
                 break
             try:
@@ -260,7 +259,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         # 撤退 如果 已经进入
         while True:
             screen = self.getscreen()
-            if UIMatcher.img_where(screen, 'img/yunhai.bmp', at=(152, 95, 341, 305)):
+            if UIMatcher.img_where(screen, 'img/yunhai.bmp'):
                 break
             if UIMatcher.img_where(screen, 'img/chetui.jpg', at=(738, 420, 872, 442)):
                 self.lock_img('img/ok.bmp', elseclick=[(810, 433)], elsedelay=1, ifclick=[(592, 370)], ifbefore=0.5,

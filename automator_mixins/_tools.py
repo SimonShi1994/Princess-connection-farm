@@ -6,7 +6,7 @@ from core.constant import MAIN_BTN
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 # 临时，等待config的创建
-from pcr_config import baidu_secretKey, baidu_apiKey
+from pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times
 from ._base import BaseMixin
 
 
@@ -63,8 +63,16 @@ class ToolsMixin(BaseMixin):
         client = AipOcr(**config)
 
         screen_shot_ = self.getscreen()
+        # from numpy import rot90
+        # screen_shot_ = rot90(screen_shot_)  # 旋转90°
+        if baidu_ocr_img:
+            cv2.imwrite('baidu_ocr.bmp', screen_shot_)
         if screen_shot_.shape[0] > screen_shot_.shape[1]:
-            screen_shot_ = UIMatcher.RotateClockWise90(screen_shot_)
+            if anticlockwise_rotation_times >= 1:
+                for _ in range(anticlockwise_rotation_times):
+                    screen_shot_ = UIMatcher.AutoRotateClockWise90(screen_shot_)
+            screen_shot_ = UIMatcher.AutoRotateClockWise90(screen_shot_)
+            # cv2.imwrite('fuck_rot90_test.bmp', screen_shot_)
             # screen_shot_ = rot90(screen_shot_)  # 旋转90°
             pass
         # cv2.imwrite('test.bmp', screen_shot_)
