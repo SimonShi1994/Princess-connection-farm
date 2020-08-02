@@ -26,7 +26,7 @@ export default {
       navList: [
         {name: '/dashboard', navItem: '总览'},
         {name: '/task', navItem: '任务'},
-        {name: '/account_config', navItem: '用户'},
+        {name: '/account_config', navItem: '账号'},
         {name: '/clan_config', navItem: '行会'}
       ]
     }

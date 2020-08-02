@@ -1,7 +1,8 @@
-import os
-
+from flasgger import Swagger
 from flask import Flask, render_template
 from api.route.account import account_api
+from api.route.clan import clan_api
+from api.route.task import task_api
 from utils import STATIC_PATH, DIST_PATH
 from werkzeug.routing import BaseConverter
 
@@ -17,12 +18,18 @@ def create_app():
     app.url_map.converters['reg'] = RegexConverter
 
     @app.route('/', defaults={'path': ''})
-    @app.route('/<reg("((?!api).)+"):path>')  # 暂 api 以外的所有路由视为前端路由
+    @app.route('/<reg("((?!(api|apidoc)).)+"):path>')  # 暂 api|apidoc 以外的所有路由视为前端路由
     def index(path):
         return render_template("index.html")
 
     app.register_blueprint(account_api, url_prefix='/api')
+    app.register_blueprint(clan_api, url_prefix='/api')
+    app.register_blueprint(task_api, url_prefix='/api')
 
+    app.config['SWAGGER'] = {
+        'title': 'Princess Connection Farm',
+    }
+    Swagger(app)
     return app
 
 

@@ -1,15 +1,15 @@
 from flask import Blueprint, jsonify, request
 
-account_api = Blueprint('account', __name__)
+clan_api = Blueprint('clan', __name__)
 
 
-@account_api.route('/account', methods=['GET'])
-def list_account():
+@clan_api.route('/clan', methods=['GET'])
+def list_clan():
     """
-    获取账号列表
+    获取行会列表
     ---
     tags:
-      - 账号
+      - 行会
     description:
 
     responses:
@@ -21,13 +21,13 @@ def list_account():
     return jsonify({})
 
 
-@account_api.route('/account/<pk>', methods=['GET'])
-def retrieve_account(pk):
+@clan_api.route('/clan/<pk>', methods=['GET'])
+def retrieve_clan(pk):
     """
-    获取单条账号
+    获取单条行会
     ---
     tags:
-      - 账号
+      - 行会
     description:
 
     parameters:
@@ -45,13 +45,13 @@ def retrieve_account(pk):
     return jsonify({})
 
 
-@account_api.route('/account', methods=['POST'])
-def create_account():
+@clan_api.route('/clan', methods=['POST'])
+def create_clan():
     """
-    添加账号
+    添加行会
     ---
     tags:
-      - 账号
+      - 行会
     description:
 
     parameters:
@@ -59,17 +59,13 @@ def create_account():
         in: body
         required: true
         schema:
-          id:  账号添加
+          id:  行会添加
           required:
-            - username
-            - password
+            - clan_name
           properties:
-            username:
+            clan_name:
               type: string
-              description: 账户
-            password:
-              type: string
-              description: 密码
+              description: 行会名称
     responses:
       2xx:
         description: 成功
@@ -77,19 +73,18 @@ def create_account():
         description: 参数有误等
     """
 
-    username = request.form.get('username')
-    password = request.form.get('password')
+    clan_name = request.form.get('clan_name')
 
     return jsonify({})
 
 
-@account_api.route('/account/<pk>', methods=['PUT'])
-def update_account(pk):
+@clan_api.route('/clan/<pk>', methods=['PUT'])
+def update_clan(pk):
     """
-    更新账号
+    更新行会
     ---
     tags:
-      - 账号
+      - 行会
     description:
 
     parameters:
@@ -102,17 +97,13 @@ def update_account(pk):
         in: body
         required: true
         schema:
-          id:  账号更新
+          id:  行会更新
           required:
-            - username
-            - password
+            - clan_name
           properties:
-            username:
+            clan_name:
               type: string
-              description: 账户
-            password:
-              type: string
-              description: 密码
+              description: 行会名称
     responses:
       2xx:
         description: 成功
@@ -120,19 +111,18 @@ def update_account(pk):
         description: 参数有误等
     """
 
-    username = request.form.get('username')
-    password = request.form.get('password')
+    clan_name = request.form.get('clan_name')
 
     return jsonify({})
 
 
-@account_api.route('/account/<pk>', methods=['POST'])
-def delete_account(pk):
+@clan_api.route('/clan/<pk>', methods=['POST'])
+def delete_clan(pk):
     """
-    删除账号
+    删除行会
     ---
     tags:
-      - 账号
+      - 行会
     description:
 
     parameters:

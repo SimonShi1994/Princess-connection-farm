@@ -1,15 +1,15 @@
 from flask import Blueprint, jsonify, request
 
-account_api = Blueprint('account', __name__)
+task_api = Blueprint('task', __name__)
 
 
-@account_api.route('/account', methods=['GET'])
-def list_account():
+@task_api.route('/task', methods=['GET'])
+def list_task():
     """
-    获取账号列表
+    获取任务列表
     ---
     tags:
-      - 账号
+      - 任务
     description:
 
     responses:
@@ -21,13 +21,13 @@ def list_account():
     return jsonify({})
 
 
-@account_api.route('/account/<pk>', methods=['GET'])
-def retrieve_account(pk):
+@task_api.route('/task/<pk>', methods=['GET'])
+def retrieve_task(pk):
     """
-    获取单条账号
+    获取单条任务
     ---
     tags:
-      - 账号
+      - 任务
     description:
 
     parameters:
@@ -45,13 +45,13 @@ def retrieve_account(pk):
     return jsonify({})
 
 
-@account_api.route('/account', methods=['POST'])
-def create_account():
+@task_api.route('/task', methods=['POST'])
+def create_task():
     """
-    添加账号
+    添加任务
     ---
     tags:
-      - 账号
+      - 任务
     description:
 
     parameters:
@@ -59,17 +59,23 @@ def create_account():
         in: body
         required: true
         schema:
-          id:  账号添加
+          id:  任务添加
           required:
-            - username
-            - password
+            task_type
+            params
           properties:
-            username:
+            task_type:
               type: string
-              description: 账户
-            password:
+              description: 任务类型
+            params:
               type: string
-              description: 密码
+              description: 任务参数
+            title:
+              type: string
+              description: 任务标题
+            desc:
+              type: string
+              description: 任务描述
     responses:
       2xx:
         description: 成功
@@ -77,19 +83,21 @@ def create_account():
         description: 参数有误等
     """
 
-    username = request.form.get('username')
-    password = request.form.get('password')
+    task_type = request.form.get('task_type')
+    params = request.form.get('params')
+    title = request.form.get('title')
+    desc = request.form.get('desc')
 
     return jsonify({})
 
 
-@account_api.route('/account/<pk>', methods=['PUT'])
-def update_account(pk):
+@task_api.route('/task/<pk>', methods=['PUT'])
+def update_task(pk):
     """
-    更新账号
+    更新任务
     ---
     tags:
-      - 账号
+      - 任务
     description:
 
     parameters:
@@ -102,17 +110,23 @@ def update_account(pk):
         in: body
         required: true
         schema:
-          id:  账号更新
+          id:  任务添加
           required:
-            - username
-            - password
+            task_type
+            params
           properties:
-            username:
+            task_type:
               type: string
-              description: 账户
-            password:
+              description: 任务类型
+            params:
               type: string
-              description: 密码
+              description: 任务参数
+            title:
+              type: string
+              description: 任务标题
+            desc:
+              type: string
+              description: 任务描述
     responses:
       2xx:
         description: 成功
@@ -120,19 +134,21 @@ def update_account(pk):
         description: 参数有误等
     """
 
-    username = request.form.get('username')
-    password = request.form.get('password')
+    task_type = request.form.get('task_type')
+    params = request.form.get('params')
+    title = request.form.get('title')
+    desc = request.form.get('desc')
 
     return jsonify({})
 
 
-@account_api.route('/account/<pk>', methods=['POST'])
-def delete_account(pk):
+@task_api.route('/task/<pk>', methods=['POST'])
+def delete_task(pk):
     """
-    删除账号
+    删除任务
     ---
     tags:
-      - 账号
+      - 任务
     description:
 
     parameters:
