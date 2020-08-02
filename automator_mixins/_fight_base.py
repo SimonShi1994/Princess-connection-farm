@@ -203,7 +203,7 @@ class FightBaseMixin(ToolsMixin):
         """
         assert bianzu in [1, 2, 3, 4, 5]
         assert duiwu in [1, 2, 3]
-        self.click_btn(FIGHT_BTN["my_team"], wait_for_disappear=FIGHT_BTN["zhandoukaishi"])
+        self.click_btn(FIGHT_BTN["my_team"], until_disappear=FIGHT_BTN["zhandoukaishi"])
         self.click(*FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
         self.click(*FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
 

@@ -81,7 +81,7 @@ class DXCBaseMixin(FightBaseMixin):
         elif mode == 1:
             # 点击下一步
             self.click_btn(DXC_ELEMENT["xiayibu"])
-            self.click_btn(DXC_ELEMENT["shouqubaochou_ok"], wait_for_appear="self")
+            self.click_btn(DXC_ELEMENT["shouqubaochou_ok"], until_appear="self")
             # 处理跳脸：回到地下城界面
             self.dxc_kkr()
             return 1
@@ -104,10 +104,15 @@ class DXCBaseMixin(FightBaseMixin):
         进入地下城
         :param dxc_id: 地下城编号
         :return: 是否进入成功
+        
         """
-        self.click(480, 505, post_delay=1)
-        self.lockimg('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
-        self.click(900, 138, post_delay=3)
+        # 锁定主页
+        self.lock_home()
+        # 进入冒险
+        self.click(*MAIN_BTN["maoxian"])
+        # 进入地下城
+        self.lockimg(MAIN_BTN["dxc"], elseclick=MAIN_BTN["maoxian"], elsedelay=0.5)
+        self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5)
         screen_shot_ = self.getscreen()
         if self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
             # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。

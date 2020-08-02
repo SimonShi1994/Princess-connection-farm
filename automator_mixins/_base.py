@@ -466,7 +466,7 @@ class BaseMixin:
                  ifclick=None, ifbefore=0.5, ifdelay=1,
                  elseclick=None, elsedelay=0.5, retry=0):
         """
-        前身：lockimg
+        前身：_lockimg
         匹配图片并点击指定坐标
 
             Parameters:
@@ -636,40 +636,37 @@ class BaseMixin:
                              elsedelay=elsedelay,
                              alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout)
 
-    def click_btn(self, btn: PCRelement, elsedelay=8., timeout=30,
-                  wait_for_appear: Optional[Union[str, PCRelement]] = None,
-                  wait_for_disappear: Optional[Union[str, PCRelement]] = "self"):
+    def click_btn(self, btn: PCRelement, elsedelay=5., timeout=20, wait_me=True,
+                  until_appear: Optional[Union[str, PCRelement]] = None,
+                  until_disappear: Optional[Union[str, PCRelement]] = "self"):
         """
         稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
         :param btn: PCRelement类型，要点击的按钮
         :param elsedelay: 尝试点击按钮后等待响应的间隔
         :param timeout: lockimg和lock_no_img所用的超时参数
-        :param wait_for_appear:
+        :param wait_me: 是否等待本按钮出现，再进行点击
+        :param until_appear: 是否在点击后等待该元素出现，再返回
             设置为None（默认）时不等待按钮出现
-            设置为"self"时等待按钮自己出现
-            设置为PCRelement的时候，检测该元素是否出现，出现则按下btn
-        :param wait_for_disappear:
+            设置为PCRelement的时候，检测该元素是否出现，出现则返回
+        :param until_disappear: 是否在点击后等待该元素消失，再返回
             设置为None时不等待按钮消失
             设置为"self"（默认）时等待按钮自己消失
             设置为PCRelement的时候，检测该元素是否消失
-            若指定元素没有消失，则美国elsedelay的时长点击一次按钮
+            若指定元素没有消失，则每过elsedelay的时长点击一次按钮
         """
-        if isinstance(wait_for_disappear, str):
-            assert wait_for_disappear == "self"
-        if isinstance(wait_for_appear, str):
-            assert wait_for_appear == "self"
-        if wait_for_appear is not None:
-            if wait_for_appear == "self":
-                self.lockimg(btn, timeout=timeout)
-            else:
-                self.lockimg(wait_for_appear, timeout=timeout)
-        if wait_for_disappear is None:
+        if isinstance(until_disappear, str):
+            assert until_disappear == "self"
+        if wait_me is True:
+            self.lockimg(btn, timeout=timeout)
+        if until_disappear is None and until_appear is None:
             self.click(*btn)
         else:
-            if wait_for_disappear == "self":
+            if until_disappear == "self":
                 self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
-            else:
-                self.lock_no_img(wait_for_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+            elif until_appear is not None:
+                self.lockimg(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+            elif until_disappear is not None:
+                self.lock_no_img(until_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
         """
