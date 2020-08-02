@@ -81,7 +81,7 @@ class DXCBaseMixin(FightBaseMixin):
         elif mode == 1:
             # 点击下一步
             self.click_btn(DXC_ELEMENT["xiayibu"])
-            self.click_btn(DXC_ELEMENT["shouqubaochou_ok"], until_appear="self")
+            self.click_btn(DXC_ELEMENT["shouqubaochou_ok"], wait_self_before=True)
             # 处理跳脸：回到地下城界面
             self.dxc_kkr()
             return 1

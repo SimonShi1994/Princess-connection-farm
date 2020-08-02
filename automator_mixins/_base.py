@@ -637,7 +637,7 @@ class BaseMixin:
                               elsedelay=elsedelay,
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout)
 
-    def click_btn(self, btn: PCRelement, elsedelay=5., timeout=20, wait_me=True,
+    def click_btn(self, btn: PCRelement, elsedelay=5., timeout=20, wait_self_before=False,
                   until_appear: Optional[Union[str, PCRelement]] = None,
                   until_disappear: Optional[Union[str, PCRelement]] = "self"):
         """
@@ -645,7 +645,7 @@ class BaseMixin:
         :param btn: PCRelement类型，要点击的按钮
         :param elsedelay: 尝试点击按钮后等待响应的间隔
         :param timeout: lockimg和lock_no_img所用的超时参数
-        :param wait_me: 是否等待本按钮出现，再进行点击
+        :param wait_self_before: 是否等待本按钮出现，再进行点击
         :param until_appear: 是否在点击后等待该元素出现，再返回
             设置为None（默认）时不等待按钮出现
             设置为PCRelement的时候，检测该元素是否出现，出现则返回
@@ -657,7 +657,7 @@ class BaseMixin:
         """
         if isinstance(until_disappear, str):
             assert until_disappear == "self"
-        if wait_me is True:
+        if wait_self_before is True:
             self.lock_img(btn, timeout=timeout)
         if until_disappear is None and until_appear is None:
             self.click(*btn)
