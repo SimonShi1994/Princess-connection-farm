@@ -30,7 +30,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click(480, 505, pre_delay=0.5, post_delay=1)
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg', at=(837, 92, 915, 140)):
-                self.click(900, 138, post_delay=5)
+                self.lock_img('dixiacheng.jpg', ifclick=(900, 138), retry=10)
                 self.click(1, 1)
                 break
         tmp_cout = 0
