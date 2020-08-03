@@ -26,44 +26,44 @@ class ReceiveFromMinicap:
         self.ws.on_open = self.on_open
 
     # websocket通道开启后的回调函数
-    def on_open(ws):
+    def on_open(self):
         def run(*args):
             # 只要不设置关闭线程位，就一直循环
-            while rfm.receive_close == 0:
+            while self.receive_close == 0:
                 # 此处的sleep为接收图像的间隔
                 time.sleep(fast_screencut_delay)
-                rfm.receive_img()
+                self.receive_img()
             time.sleep(1)
             # 恢复receive_close
-            rfm.receive_close = 0
+            self.receive_close = 0
             # 关闭ws
-            rfm.ws.close()
+            self.ws.close()
             print("截图线程关闭...")
 
         thread.start_new_thread(run, ())
 
     # 接收信息回调函数，此处message为接收的信息
-    def on_message(ws, message):
+    def on_message(self, message):
         if message is not None:
-            if rfm.receive_flag is 1:
+            if self.receive_flag is 1:
                 # 如果不是bytes，那就是图像
                 if isinstance(message, (bytes, bytearray)):
                     lock.acquire()
-                    rfm.receive_data = message
+                    self.receive_data = message
                     lock.release()
                 else:
                     print(message)
 
                 lock.acquire()  # 操作前加锁
-                rfm.receive_flag = 0
+                self.receive_flag = 0
                 lock.release()
 
     # 错误回调函数
-    def on_error(ws, error):
+    def on_error(self, error):
         print(error)
 
     # 关闭ws的回调函数
-    def on_close(ws):
+    def on_close(self):
         print("### closed ###")
 
     # 开始接收1帧画面
@@ -87,21 +87,21 @@ class ReceiveFromMinicap:
             self.ws.run_forever()
 
 
-if __name__ == '__main__':
-    a = Automator("emulator-5554")
-    # 这个Automator只是需要他的端口而已
-    rfm = ReceiveFromMinicap(a.lport)
-
-    # 启动线程
-    socket_thread = rfm.ReceiveThread(rfm.ws)
-    socket_thread.start()
-
-    time.sleep(5)
-
-    for i in range(50):
-        with open("test/testMC.jpg", "wb") as f:
-            f.write(rfm.receive_data)
-        time.sleep(1)
-
-    rfm.receive_close = 1
-    socket_thread.join()
+# if __name__ == '__main__':
+#     a = Automator("emulator-5554")
+#     # 这个Automator只是需要他的端口而已
+#     rfm = ReceiveFromMinicap(a.lport)
+#
+#     # 启动线程
+#     socket_thread = rfm.ReceiveThread(rfm.ws)
+#     socket_thread.start()
+#
+#     time.sleep(5)
+#
+#     for i in range(50):
+#         with open("test/testMC.jpg", "wb") as f:
+#             f.write(rfm.receive_data)
+#         time.sleep(1)
+#
+#     rfm.receive_close = 1
+#     socket_thread.join()
