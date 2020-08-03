@@ -8,7 +8,7 @@ from pcr_config import fast_screencut_delay
 lock = threading.Lock()
 
 
-class ReceiveFromMinicat:
+class ReceiveFromMinicap:
     def __init__(self, lport):
         # 当前最后接收到的1帧数据
         self.receive_data = bytes()
@@ -89,7 +89,7 @@ class ReceiveFromMinicat:
 if __name__ == '__main__':
     a = Automator("emulator-5554")
     # 这个Automator只是需要他的端口而已
-    rfm = ReceiveFromMinicat(a.lport)
+    rfm = ReceiveFromMinicap(a.lport)
 
     # 启动线程
     socket_thread = rfm.ReceiveThread(rfm.ws)
