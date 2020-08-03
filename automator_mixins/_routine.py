@@ -26,8 +26,8 @@ class RoutineMixin(ShuatuBaseMixin):
                 time.sleep(0.5)
                 continue
             self.d.click(1, 1)
-            time.sleep(0.3)
-
+            self.d.click(330, 270)
+            # 跳过特别庆典
         self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.2, at=(891, 413, 930, 452))  # 首页锁定
         time.sleep(0.5)
         # 这里防一波第二天可可萝跳脸教程
