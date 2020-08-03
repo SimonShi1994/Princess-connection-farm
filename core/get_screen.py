@@ -25,6 +25,7 @@ class ReceiveFromMinicap:
                                          on_error=self.on_error)
         self.ws.on_open = self.on_open
 
+    # websocket通道开启后的回调函数
     def on_open(ws):
         def run(*args):
             # 只要不设置关闭线程位，就一直循环
