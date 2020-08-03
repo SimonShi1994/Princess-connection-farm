@@ -9,15 +9,17 @@ lock = threading.Lock()
 
 
 class ReceiveFromMinicat:
-    def __init__(self,lport):
+    def __init__(self, lport):
         # 当前最后接收到的1帧数据
         self.receive_data = bytes()
         # 接收标志位（每次接收1帧都会重置）
         self.receive_flag = 0
         # 关闭接收线程
         self.receive_close = 0
+        # 这里设置websocket
         websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(lport),
+                                         # 这三个回调函数见下面
                                          on_message=self.on_message,
                                          on_close=self.on_close,
                                          on_error=self.on_error)
@@ -25,21 +27,25 @@ class ReceiveFromMinicat:
 
     def on_open(ws):
         def run(*args):
+            # 只要不设置关闭线程位，就一直循环
             while rfm.receive_close == 0:
-                # 此处的sleep为刷新图的时间
+                # 此处的sleep为接收图像的间隔
                 time.sleep(fast_screencut_delay)
                 rfm.receive_img()
             time.sleep(1)
+            # 恢复receive_close
             rfm.receive_close = 0
+            # 关闭ws
             rfm.ws.close()
             print("截图线程关闭...")
 
         thread.start_new_thread(run, ())
 
+    # 接收信息回调函数，此处message为接收的信息
     def on_message(ws, message):
         if message is not None:
             if rfm.receive_flag is 1:
-
+                # 如果不是bytes，那就是图像
                 if isinstance(message, (bytes, bytearray)):
                     lock.acquire()
                     rfm.receive_data = message
@@ -48,23 +54,16 @@ class ReceiveFromMinicat:
                     print(message)
 
                 lock.acquire()  # 操作前加锁
-                rfm.receive_flag = 0;
-                rfm.receive_data
+                rfm.receive_flag = 0
                 lock.release()
 
+    # 错误回调函数
     def on_error(ws, error):
         print(error)
 
+    # 关闭ws的回调函数
     def on_close(ws):
         print("### closed ###")
-
-    class ReceiveThread(threading.Thread):
-        def __init__(self, ws):
-            super().__init__()
-            self.ws = ws
-
-        def run(self) -> None:
-            self.ws.run_forever()
 
     # 开始接收1帧画面
     def receive_img(self):
@@ -76,6 +75,15 @@ class ReceiveFromMinicat:
         while self.receive_flag is 0:
             time.sleep(0.1)
         return self.receive_data
+
+    # ws线程类
+    class ReceiveThread(threading.Thread):
+        def __init__(self, ws):
+            super().__init__()
+            self.ws = ws
+
+        def run(self) -> None:
+            self.ws.run_forever()
 
 
 if __name__ == '__main__':
