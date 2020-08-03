@@ -19,6 +19,8 @@ from pcr_config import debug, fast_screencut, lockimg_timeout, fast_screencut_de
 if fast_screencut:
     import adbutils
     import websocket
+    import matplotlib.pyplot as plt
+    from io import BytesIO
 
 
 class BaseMixin:
@@ -55,7 +57,7 @@ class BaseMixin:
             self.fast_screencut_switch = 0
             self.lport: Optional[int] = None
             self.ws: Optional[websocket.WebSocket] = None
-            os.makedirs("screenshots", exist_ok=True)
+            self.fast_screencut_cache = dict()
 
     def init_device(self, address):
         """
@@ -394,6 +396,7 @@ class BaseMixin:
         self.c_async(self, account, self.async_fast_screen(), sync=False)
 
     async def async_fast_screen(self):
+        self.fast_screencut_cache[self.account] = []
         while True:
             try:
                 if self.fast_screencut_switch == 1:
@@ -410,8 +413,12 @@ class BaseMixin:
                             continue
                         if fast_screencut_delay > 0:
                             time.sleep(fast_screencut_delay)  # 防止过快不兼容
-                        with open("screenshots/%s.jpg" % self.account, "wb") as f:
-                            f.write(data)
+                            data = plt.imread(BytesIO(data), "jpg")
+                            # bgr图
+                            data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
+                            # 转rgb
+                            self.fast_screencut_cache[self.account] = data
+                            # 改用内存缓存
                             self.fast_screencut_switch = 4
                             break
                 elif self.fast_screencut_switch <= 0:
@@ -447,8 +454,8 @@ class BaseMixin:
                 if self.fast_screencut_switch == -1:
                     self.last_screen = self.d.screenshot(filename, format="opencv")
                 else:
-
-                    self.last_screen = cv2.imread("screenshots/%s.jpg" % self.account)
+                    self.last_screen = self.fast_screencut_cache[self.account]
+                    # 改用内存缓存
                     if filename is not None:
                         cv2.imwrite(filename, self.last_screen)
                     self.fast_screencut_switch = 2
