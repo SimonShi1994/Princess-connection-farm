@@ -406,8 +406,9 @@ class BaseMixin:
         # 否则，getscreen函数使用debug_screen作为读取的screen
         if self.debug_screen is None:
             if fast_screencut:
+
                 # 创建缓存
-                self.fast_screencut_cache[self.account] = []
+                self.fast_screencut_cache['tmp'] = []
                 try:
                     lock.acquire()
                     mem_img = BytesIO(self.receive_minicap.receive_data)
@@ -419,8 +420,8 @@ class BaseMixin:
                 # 转rgb
                     data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
                     # 改用内存缓存
-                    self.fast_screencut_cache[self.account] = data
-                    self.last_screen = self.fast_screencut_cache[self.account]
+                    self.fast_screencut_cache['tmp'] = data
+                    self.last_screen = self.fast_screencut_cache['tmp']
                     # 如果传入了文件路径参数，则保存文件
                     if filename is not None:
                         cv2.imwrite(filename, self.last_screen)

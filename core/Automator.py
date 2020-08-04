@@ -1,4 +1,6 @@
 # coding=utf-8
+import time
+
 from automator_mixins._async import AsyncMixin
 from automator_mixins._base import BaseMixin
 from automator_mixins._dxc import DXCMixin
@@ -54,7 +56,15 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                     self.__getattribute__(funname)(**kwargs, var=var)
                 except TypeError:
                     self.__getattribute__(funname)(**kwargs)
-
+                try:
+                    from automator_mixins._async import block_sw
+                    if block_sw == 1:
+                        print("脚本暂停中~")
+                        while block_sw == 1:
+                            from automator_mixins._async import block_sw
+                            time.sleep(1)
+                except Exception as error:
+                    print('暂停-错误:', error)
             return fun
 
         self.log.write_log("info", f"任务列表：")

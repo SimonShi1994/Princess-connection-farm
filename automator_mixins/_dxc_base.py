@@ -13,7 +13,7 @@ class DXCBaseMixin(FightBaseMixin):
 
     def __init__(self):
         super().__init__()
-        self.dxc_switch = 0
+        self.dxc_switch = 0  # 0开，1锁
         self.is_dixiacheng_end = 0  # 地下城是否结束，0未结束，1结束
 
     def dxc_kkr(self):

@@ -2,6 +2,8 @@ import time
 
 import psutil
 
+
+import keyboard
 from core.MoveRecord import moveerr
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -10,6 +12,7 @@ from ._base import BaseMixin
 
 screenshot = None
 th_sw = 0
+block_sw = 0
 
 
 class AsyncMixin(BaseMixin):
@@ -172,6 +175,24 @@ class AsyncMixin(BaseMixin):
                 # print('不相似', _same)
                 pass
 
+    async def aor_purse(self):
+        """
+        脚本暂停函数
+        By:CyiceK
+        测试
+        :return:
+        """
+        global block_sw
+        while th_sw == 0:
+            keyboard.wait('shift+p')
+            block_sw = 1
+            print("下一步，脚本暂停,按shift+p恢复")
+            time.sleep(0.8)
+            keyboard.wait('shift+p')
+            block_sw = 0
+            print("恢复运行")
+            time.sleep(0.8)
+
     def start_th(self):
         global th_sw
         th_sw = 0
@@ -193,6 +214,7 @@ class AsyncMixin(BaseMixin):
         self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
         self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
+        self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
 
     def fix_reboot(self, back_home=True):
         # 重启逻辑：重启应用，重启异步线程
