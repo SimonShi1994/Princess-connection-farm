@@ -5,15 +5,8 @@ from tkinter import StringVar, Entry, Tk, Button, mainloop
 import cv2
 import matplotlib
 from matplotlib import pyplot as plt
+from core.Automator import Automator
 
-try:
-    from core.Automator import Automator
-
-    cd = False
-except:
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))  # 保证导入
-    cd = True
-    from core.Automator import Automator
 
 
 def WindowMode(frame=None):
@@ -138,10 +131,7 @@ class AutomatorDebuger(Automator):
 
     @staticmethod
     def Init():
-        if cd:
-            os.system('cd .. & cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
-        else:
-            os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
+        os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
         os.system('python -m uiautomator2 init')
 
     def Connect(self, address="emulator-5554"):
@@ -186,10 +176,7 @@ class AutomatorDebuger(Automator):
                 y2, y1 = plt.ylim()
                 x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
                 addr = e.get()
-                if cd:
-                    print(f"p(img=\"img/{addr}\",at=({x1},{y1},{x2},{y2})),")
-                else:
-                    print(f"p(img=\"{addr}\",at=({x1},{y1},{x2},{y2})),")
+                print(f"p(img=\"{addr}\",at=({x1},{y1},{x2},{y2})),")
                 img.cut(x1, y1, x2, y2).save(addr)
                 try:
                     img.cut(x1, y1, x2, y2).save(addr)
