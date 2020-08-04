@@ -12,5 +12,5 @@ keyboard==0.13.5 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 
 # web api server
-Flask==1.1.2 -i https://pypi.douban.com/simple
+flask==1.1.2 -i https://pypi.douban.com/simple
 flask-marshmallow==0.13.0 -i https://pypi.douban.com/simple

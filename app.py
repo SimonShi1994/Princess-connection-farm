@@ -18,7 +18,7 @@ def create_app():
     app.url_map.converters['reg'] = RegexConverter
 
     @app.route('/', defaults={'path': ''})
-    @app.route('/<reg("((?!(api|apidoc)).)+"):path>')  # 暂 api|apidoc 以外的所有路由视为前端路由
+    @app.route('/<reg("((?!(api|apidocs)).)+"):path>')  # 暂 api|apidoc 以外的所有路由视为前端路由
     def index(path):
         return render_template("index.html")
 
