@@ -111,7 +111,7 @@ class DXCBaseMixin(FightBaseMixin):
         # 进入冒险
         self.lock_img(MAIN_BTN["dxc"], elseclick=MAIN_BTN["maoxian"], elsedelay=0.5)
         # 进入地下城
-        self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5, until_appear=DXC_ELEMENT["shop"])
+        self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5, until_appear=DXC_ELEMENT["dxc_shop_btn"])
         self.wait_for_stable()
         screen_shot_ = self.getscreen()
         if self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
