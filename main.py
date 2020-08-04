@@ -58,7 +58,7 @@ def Restart(acc):
     rs["finished"] = False
     rs["current"] = "..."
     AR.set("run_status", rs)
-    target = "rec\\%s.rec" % acc
+    target = "rec/%s.rec" % acc
     if os.path.exists(target):
         os.remove(target)  # 删除行动记录文件
 
