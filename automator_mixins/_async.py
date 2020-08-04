@@ -200,7 +200,13 @@ class AsyncMixin(BaseMixin):
     def stop_th(self):
         global th_sw
         th_sw = 1
-        self.fast_screencut_switch = 0
+        self.receive_minicap.receive_close = 1
+        self.receive_thread.join()
+        time.sleep(1)
+        self.receive_thread = self.receive_minicap.\
+            ReceiveThread(self.receive_minicap.ws)
+        self.receive_thread.start()
+
 
     def start_async(self):
         account = self.account

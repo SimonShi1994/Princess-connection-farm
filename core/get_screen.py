@@ -2,7 +2,7 @@ import websocket
 import _thread as thread
 import time
 import threading
-from core.Automator import Automator
+# from core.Automator import Automator
 from pcr_config import fast_screencut_delay
 
 lock = threading.Lock()
@@ -33,7 +33,7 @@ class ReceiveFromMinicap:
                 # 此处的sleep为接收图像的间隔
                 time.sleep(fast_screencut_delay)
                 self.receive_img()
-            time.sleep(1)
+            time.sleep(0.1)
             # 恢复receive_close
             self.receive_close = 0
             # 关闭ws
@@ -51,6 +51,8 @@ class ReceiveFromMinicap:
                     lock.acquire()
                     self.receive_data = message
                     lock.release()
+                    with open("test/testMC.jpg", "wb") as f:
+                        f.write(self.receive_data)
                 else:
                     print(message)
 
@@ -85,7 +87,6 @@ class ReceiveFromMinicap:
 
         def run(self) -> None:
             self.ws.run_forever()
-
 
 # if __name__ == '__main__':
 #     a = Automator("emulator-5554")
