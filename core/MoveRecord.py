@@ -849,7 +849,7 @@ class moveset:
     def _savestate(self):
         if not os.path.isdir(self.addr):
             os.makedirs(self.addr)
-        path = "%s\\%s.rec" % (self.addr, self.name)
+        path = "%s/%s.rec" % (self.addr, self.name)
         if not self.use_json:
             mode = "wb"
         else:
@@ -862,7 +862,7 @@ class moveset:
         file.close()
 
     def _loadstate(self):
-        path = "%s\\%s.rec" % (self.addr, self.name)
+        path = "%s/%s.rec" % (self.addr, self.name)
         if not os.path.exists(path):
             return
         if not self.use_json:

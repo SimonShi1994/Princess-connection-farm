@@ -108,7 +108,7 @@ def list_all_users(verbose=1) -> List[str]:
         if not os.path.isdir(i) and i.endswith(".txt"):
             try:
                 # 检查是否能打开文件，以及是否含有必要的参数
-                target_name = "%s\\%s" % (user_addr, i)
+                target_name = "%s/%s" % (user_addr, i)
                 f = open(target_name, "r", encoding="utf-8")
                 d = json.load(f)
                 check_user_dict(d, True)
@@ -140,7 +140,7 @@ def list_all_tasks(verbose=1) -> List[str]:
         if not os.path.isdir(i) and i.endswith(".txt"):
             try:
                 # 检查是否能打开文件，以及是否含有必要的参数
-                target_name = "%s\\%s" % (task_addr, i)
+                target_name = "%s/%s" % (task_addr, i)
                 f = open(target_name, "r", encoding="utf-8")
                 d = json.load(f)
                 check_task_dict(d, True)
@@ -164,7 +164,7 @@ def init_user(account: str, password: str) -> bool:
     :param password: 密码
     :return: 是否成功创建
     """
-    target_name = "%s\\%s.txt" % (user_addr, account)
+    target_name = "%s/%s.txt" % (user_addr, account)
     if os.path.exists(target_name):
         print("配置", account, "已经存在。")
         return False
@@ -230,20 +230,20 @@ class AutomatorRecorder:
             return False
 
     def getuser(self) -> dict:
-        target_name = "%s\\%s.txt" % (user_addr, self.account)
+        target_name = "%s/%s.txt" % (user_addr, self.account)
         d = self._load(target_name)
         check_user_dict(d, True)
         return d
 
     @staticmethod
     def gettask(taskfile) -> dict:
-        target_name = "%s\\%s.txt" % (task_addr, taskfile)
+        target_name = "%s/%s.txt" % (task_addr, taskfile)
         d = AutomatorRecorder._load(target_name)
         check_task_dict(d, True)
         return d
 
     def setuser(self, userobj: dict):
-        target_name = "%s\\%s.txt" % (user_addr, self.account)
+        target_name = "%s/%s.txt" % (user_addr, self.account)
         if check_user_dict(userobj):
             AutomatorRecorder._save(target_name, userobj)
         else:
@@ -251,7 +251,7 @@ class AutomatorRecorder:
 
     @staticmethod
     def settask(taskfile, taskobj: dict):
-        target_name = "%s\\%s.txt" % (task_addr, taskfile)
+        target_name = "%s/%s.txt" % (task_addr, taskfile)
         if check_task_dict(taskobj):
             AutomatorRecorder._save(target_name, taskobj)
         else:
@@ -264,7 +264,7 @@ class AutomatorRecorder:
         :param default: 默认值，如果获取的记录不存在，则以default创建该记录
         :return: 该分区的dict
         """
-        target_name = "%s\\%s\\%s.txt" % (user_addr, key, self.account)
+        target_name = "%s/%s/%s.txt" % (user_addr, key, self.account)
         dir = os.path.dirname(target_name)
         if default is not None and (not os.path.isdir(dir) or not os.path.exists(target_name)):
             self._save(target_name, default)
@@ -287,7 +287,7 @@ class AutomatorRecorder:
         :param obj: 要保存的dict
         :return: 是否保存成功
         """
-        target_name = "%s\\%s\\%s.txt" % (user_addr, key, self.account)
+        target_name = "%s/%s/%s.txt" % (user_addr, key, self.account)
         return self._save(target_name, obj)
 
 
