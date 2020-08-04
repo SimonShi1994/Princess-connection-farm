@@ -406,18 +406,17 @@ class BaseMixin:
         # 否则，getscreen函数使用debug_screen作为读取的screen
         if self.debug_screen is None:
             if fast_screencut:
-
                 # 创建缓存
                 self.fast_screencut_cache['tmp'] = []
                 try:
                     lock.acquire()
-                    mem_img = BytesIO(self.receive_minicap.receive_data)
+                    mem_img = BytesIO(self.receive_minicap.receive_img())
                     lock.release()
-                    self.log.write_log("info",f"正在快速截图")
+                    self.log.write_log("info", f"正在快速截图")
                     # bgr图
                     data = plt.imread(mem_img, "jpg")
-                    self.log.write_log("info",f"快速截图完毕")
-                # 转rgb
+                    self.log.write_log("info", f"快速截图完毕")
+                    # 转rgb
                     data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
                     # 改用内存缓存
                     self.fast_screencut_cache['tmp'] = data
