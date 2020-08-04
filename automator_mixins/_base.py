@@ -396,7 +396,8 @@ class BaseMixin:
         self.c_async(self, account, self.async_fast_screen(), sync=False)
 
     async def async_fast_screen(self):
-        self.fast_screencut_cache[self.account] = []
+        self.fast_screencut_cache['tmp'] = []
+        # 有必要的时候再用
         while True:
             try:
                 if self.fast_screencut_switch == 1:
@@ -417,7 +418,7 @@ class BaseMixin:
                             # bgr图
                             data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
                             # 转rgb
-                            self.fast_screencut_cache[self.account] = data
+                            self.fast_screencut_cache['tmp'] = data
                             # 改用内存缓存
                             self.fast_screencut_switch = 4
                             break
@@ -454,7 +455,7 @@ class BaseMixin:
                 if self.fast_screencut_switch == -1:
                     self.last_screen = self.d.screenshot(filename, format="opencv")
                 else:
-                    self.last_screen = self.fast_screencut_cache[self.account]
+                    self.last_screen = self.fast_screencut_cache['tmp']
                     # 改用内存缓存
                     if filename is not None:
                         cv2.imwrite(filename, self.last_screen)
