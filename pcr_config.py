@@ -1,25 +1,31 @@
-# encoding:utf-8
-# baidu_apiKey，baidu_secretKey分别为百度ocr api，s_sckey与log_lev分别为Server酱和日志等级
-# 微信日志等级 仅有0/1/2/3，越小越详细，注意每天接口调用有上限！
-# 填入单引号内，这些只是临时，等待正式config上线
-debug = False
-baidu_apiKey = ''
-baidu_secretKey = ''
-s_sckey = ''
-log_lev = '1'
-log_cache = 3   # 日志缓冲消息条数
+# encoding=utf-8
+import configparser
 
-async_screenshot_freq = 5
-bad_connecting_time = 30
+cfg = configparser.ConfigParser()
+cfg.read('config.ini', encoding="utf-8")
 
-fast_screencut = True  # mincap 快速截图
-fast_screencut_delay = 1.5  # 由于截图太快造成脚本崩溃，可以使用这个加上全局的截图delay，模拟卡顿。
-fast_screencut_timeout = 10  # 等待服传输数据超时
+# cfg.sections() 全部头
+# cfg.get('debug', 'trace_exception_for_debug')
+# cfg.getint('log', 'log_cache')
+# cfg.getboolean('debug', 'debug')
+# 上面为读取的三种方法（str/int/bool)
 
-end_shutdown = False  # 非常“危险”的Windows功能
+debug = cfg.getboolean('debug', 'debug')
+trace_exception_for_debug = cfg.getboolean('debug', 'trace_exception_for_debug')
+use_template_cache = cfg.get('debug', 'use_template_cache')
+baidu_ocr_img = cfg.getboolean('debug', 'baidu_ocr_img')
 
-lockimg_timeout = 90  # 90秒如果还在lockimg，则跳出重启
+s_sckey = cfg.get('log', 's_sckey')
+log_lev = cfg.get('log', 'log_lev')
+log_cache = cfg.getint('log', 'log_cache')
 
-# 仅为调试使用
-trace_exception_for_debug = False  # 开启后，所有的try向上传递错误信息，并且只用第一个device跑第一个任务（单进程）
-use_template_cache = True  # 在开发工具使用时可以将其关闭
+baidu_apiKey = cfg.get('pcrfarm_setting', 'baidu_apiKey')
+baidu_secretKey = cfg.get('pcrfarm_setting', 'baidu_secretKey')
+anticlockwise_rotation_times = cfg.getint('pcrfarm_setting', 'anticlockwise_rotation_times')
+async_screenshot_freq = cfg.getint('pcrfarm_setting', 'async_screenshot_freq')
+bad_connecting_time = cfg.getint('pcrfarm_setting', 'bad_connecting_time')
+fast_screencut = cfg.getboolean('pcrfarm_setting', 'fast_screencut')
+fast_screencut_delay = cfg.getfloat('pcrfarm_setting', 'fast_screencut_delay')
+fast_screencut_timeout = cfg.getint('pcrfarm_setting', 'fast_screencut_timeout')
+end_shutdown = cfg.getboolean('pcrfarm_setting', 'end_shutdown')
+lockimg_timeout = cfg.getint('pcrfarm_setting', 'lockimg_timeout')

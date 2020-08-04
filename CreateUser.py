@@ -137,7 +137,7 @@ def create_account_from_file(file):
 
 
 def del_account(account):
-    target = "%s\\%s.txt" % (user_addr, account)
+    target = "%s/%s.txt" % (user_addr, account)
     if os.path.exists(target):
         os.remove(target)
 
@@ -179,7 +179,7 @@ def create_task(TaskName):
 
 
 def del_task(TaskName):
-    target = "%s\\%s.txt" % (task_addr, TaskName)
+    target = "%s/%s.txt" % (task_addr, TaskName)
     if os.path.exists(target):
         os.remove(target)
 
@@ -255,5 +255,5 @@ if __name__ == "__main__":
                     print("Wrong Order!")
             else:
                 print("Wrong Order!")
-        except:
-            print("输入错误！")
+        except Exception as e:
+            print("输入错误！", e)

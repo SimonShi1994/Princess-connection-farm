@@ -205,7 +205,9 @@ DXC_ELEMENT = {
     "qianwangdixiacheng": p(805, 495),
     "quyuxuanzequeren_ok": p(585, 371),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
+    # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
+    # 商店按钮，此商店按钮与jjc的不同，要大一点
     "dxc_shop_btn": p(918, 30, img="img/dxc/shop.bmp", at=(905, 21, 924, 41)),
 }
 DXC_NUM = {

@@ -1,8 +1,8 @@
 {
-  "name": "frontend",
+  "name": "webclient",
   "version": "1.0.0",
   "private": true,
-  "description": "A Vue.js project",
+  "description": "A web client for Princess-connection-farm",
   "author": "zsdostar <zsdzzydos@gmail.com>",
   "scripts": {
     "build": "node build/build.js",

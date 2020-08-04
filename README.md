@@ -373,3 +373,12 @@ python main.py
 2020/8/1 By:Moment
 
 - 增加适用于新版的40to1（guild_40to1.py)，使用方法见上方readme
+
+2020/8/2 By:CyiceK
+
+- 上线config，添加截图手动纠错方向（百度OCR的
+
+2020/8/4 By:CyiceK
+
+- 修改部分地下城OCR逻辑，使得ocr稳定了些
+- 脚本增加暂停函数（shift+p）暂停/恢复，后面追加自定义

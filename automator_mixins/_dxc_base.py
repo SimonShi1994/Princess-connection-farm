@@ -13,7 +13,7 @@ class DXCBaseMixin(FightBaseMixin):
 
     def __init__(self):
         super().__init__()
-        self.dxc_switch = 0
+        self.dxc_switch = 0  # 0开，1锁
         self.is_dixiacheng_end = 0  # 地下城是否结束，0未结束，1结束
 
     def dxc_kkr(self):
@@ -81,7 +81,7 @@ class DXCBaseMixin(FightBaseMixin):
         elif mode == 1:
             # 点击下一步
             self.click_btn(DXC_ELEMENT["xiayibu"])
-            self.click_btn(DXC_ELEMENT["shouqubaochou_ok"], wait_for_appear="self")
+            self.click_btn(DXC_ELEMENT["shouqubaochou_ok"], wait_self_before=True)
             # 处理跳脸：回到地下城界面
             self.dxc_kkr()
             return 1
@@ -104,10 +104,15 @@ class DXCBaseMixin(FightBaseMixin):
         进入地下城
         :param dxc_id: 地下城编号
         :return: 是否进入成功
+        
         """
-        self.click(480, 505, post_delay=1)
-        self.lock_img('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
-        self.click(900, 138, post_delay=3)
+        # 锁定主页
+        self.lock_home()
+        # 进入冒险
+        self.lock_img(MAIN_BTN["dxc"], elseclick=MAIN_BTN["maoxian"], elsedelay=0.5)
+        # 进入地下城
+        self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5, until_appear=DXC_ELEMENT["dxc_shop_btn"])
+        self.wait_for_stable()
         screen_shot_ = self.getscreen()
         if self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
             # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。
@@ -119,10 +124,10 @@ class DXCBaseMixin(FightBaseMixin):
                 return False
             else:
                 # 没刷完，进入地下城
-                self.click(DXC_ENTRANCE[dxc_id], pre_delay=1, post_delay=3)
-                self.click(*DXC_ELEMENT["quyuxuanzequeren_ok"], post_delay=8)
+                self.click_btn(DXC_ENTRANCE[dxc_id], elsedelay=1, until_appear=DXC_ELEMENT["quyuxuanzequeren_ok"])
+                self.click_btn(*DXC_ELEMENT["quyuxuanzequeren_ok"], until_appear=DXC_ELEMENT["chetui"])
         self.dxc_kkr()
-        self.lock_img(DXC_ELEMENT["chetui"])  # 锁定撤退
+        self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5)  # 锁定撤退
         return True
 
     def check_dxc_level(self, dxc_id):

@@ -18,7 +18,11 @@ from pcr_config import debug, fast_screencut, lockimg_timeout, fast_screencut_de
 
 if fast_screencut:
     import adbutils
-    import websocket
+    import matplotlib.pyplot as plt
+    from io import BytesIO
+    from core.get_screen import ReceiveFromMinicap
+
+lock = threading.Lock()
 
 
 class BaseMixin:
@@ -54,8 +58,9 @@ class BaseMixin:
             # 4 截图完毕
             self.fast_screencut_switch = 0
             self.lport: Optional[int] = None
-            self.ws: Optional[websocket.WebSocket] = None
-            os.makedirs("screenshots", exist_ok=True)
+            self.fast_screencut_cache = dict()
+            self.receive_minicap: Optional[ReceiveFromMinicap] = None
+            self.receive_thread: Optional[ReceiveFromMinicap.ReceiveThread] = None
 
     def init_device(self, address):
         """
@@ -68,7 +73,9 @@ class BaseMixin:
             if fast_screencut:
                 d = adbutils.adb.device(address)
                 self.lport = d.forward_port(7912)
-                self.ws = websocket.WebSocket()
+                self.receive_minicap = ReceiveFromMinicap(self.lport)
+                self.receive_thread = self.receive_minicap.ReceiveThread(self.receive_minicap.ws)
+                self.receive_thread.start()
 
     def init_account(self, account):
         self.account = account
@@ -389,69 +396,38 @@ class BaseMixin:
             pass
         pass
 
-    def start_async_fastscreen(self):
-        account = self.account
-        self.c_async(self, account, self.async_fast_screen(), sync=False)
-
-    async def async_fast_screen(self):
-        while True:
-            try:
-                if self.fast_screencut_switch == 1:
-                    self.ws.connect("ws://localhost:{}/minicap".format(self.lport))
-                    self.fast_screencut_switch = 2
-                elif self.fast_screencut_switch == 2:
-                    while self.fast_screencut_switch in [2, 4]:
-                        data = self.ws.recv()
-                elif self.fast_screencut_switch == 3:
-                    time.sleep(0.1)
-                    while True:
-                        data = self.ws.recv()
-                        if not isinstance(data, (bytes, bytearray)):
-                            continue
-                        if fast_screencut_delay > 0:
-                            time.sleep(fast_screencut_delay)  # 防止过快不兼容
-                        with open("screenshots/%s.jpg" % self.account, "wb") as f:
-                            f.write(data)
-                            self.fast_screencut_switch = 4
-                            break
-                elif self.fast_screencut_switch <= 0:
-                    break
-            except Exception as e:
-                self.log.write_log("error", f"fast_screencut出错 {e}")
-                self.fast_screencut_switch = -1
-        self.ws.abort()
-
     def getscreen(self, filename=None):
         """
         包装了self.d.screenshot
         如果self.debug_screen为None，则
         :return: 截图的opencv格式
         """
+        # 如果debug_screen为None，则正常截图；
+        # 否则，getscreen函数使用debug_screen作为读取的screen
         if self.debug_screen is None:
             if fast_screencut:
-                if self.fast_screencut_switch <= 0:
-                    self.fast_screencut_switch = 1
-                    self.start_async_fastscreen()
-                last_time = time.time()
-                while self.fast_screencut_switch not in [-1, 2, 3, 4]:
-                    if time.time() - last_time > fast_screencut_timeout:
-                        self.fast_screencut_switch = -1
-                        break
-                if self.fast_screencut_switch == 2:
-                    self.fast_screencut_switch = 3
-                    last_time = time.time()
-                    while self.fast_screencut_switch not in [-1, 4]:
-                        if time.time() - last_time > fast_screencut_timeout:
-                            self.fast_screencut_switch = -1
-                            break
-                if self.fast_screencut_switch == -1:
-                    self.last_screen = self.d.screenshot(filename, format="opencv")
-                else:
 
-                    self.last_screen = cv2.imread("screenshots/%s.jpg" % self.account)
+                # 创建缓存
+                self.fast_screencut_cache['tmp'] = []
+                try:
+                    lock.acquire()
+                    mem_img = BytesIO(self.receive_minicap.receive_data)
+                    lock.release()
+                    self.log.write_log("info",f"正在快速截图")
+                    # bgr图
+                    data = plt.imread(mem_img, "jpg")
+                    self.log.write_log("info",f"快速截图完毕")
+                # 转rgb
+                    data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
+                    # 改用内存缓存
+                    self.fast_screencut_cache['tmp'] = data
+                    self.last_screen = self.fast_screencut_cache['tmp']
+                    # 如果传入了文件路径参数，则保存文件
                     if filename is not None:
                         cv2.imwrite(filename, self.last_screen)
-                    self.fast_screencut_switch = 2
+                except Exception as e:
+                    self.log.write_log("error", f"快速截图出错 {e},采用低速截图")
+                    self.last_screen = self.d.screenshot(filename, format="opencv")
             else:
                 self.last_screen = self.d.screenshot(filename, format="opencv")
             self.last_screen_time = time.time()
@@ -466,7 +442,8 @@ class BaseMixin:
                  ifclick=None, ifbefore=0.5, ifdelay=1,
                  elseclick=None, elsedelay=0.5, retry=0):
         """
-        前身：lock_img
+        前身：_lock_img
+
         匹配图片并点击指定坐标
 
             Parameters:
@@ -636,40 +613,38 @@ class BaseMixin:
                               elsedelay=elsedelay,
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout)
 
-    def click_btn(self, btn: PCRelement, elsedelay=8., timeout=30,
-                  wait_for_appear: Optional[Union[str, PCRelement]] = None,
-                  wait_for_disappear: Optional[Union[str, PCRelement]] = "self"):
+    def click_btn(self, btn: PCRelement, elsedelay=5., timeout=20, wait_self_before=False,
+                  until_appear: Optional[Union[str, PCRelement]] = None,
+                  until_disappear: Optional[Union[str, PCRelement]] = "self"):
         """
         稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
         :param btn: PCRelement类型，要点击的按钮
         :param elsedelay: 尝试点击按钮后等待响应的间隔
         :param timeout: lockimg和lock_no_img所用的超时参数
-        :param wait_for_appear:
+        :param wait_self_before: 是否等待本按钮出现，再进行点击
+        :param until_appear: 是否在点击后等待该元素出现，再返回
             设置为None（默认）时不等待按钮出现
-            设置为"self"时等待按钮自己出现
-            设置为PCRelement的时候，检测该元素是否出现，出现则按下btn
-        :param wait_for_disappear:
+            设置为PCRelement的时候，检测该元素是否出现，出现则返回
+        :param until_disappear: 是否在点击后等待该元素消失，再返回
             设置为None时不等待按钮消失
             设置为"self"（默认）时等待按钮自己消失
             设置为PCRelement的时候，检测该元素是否消失
-            若指定元素没有消失，则美国elsedelay的时长点击一次按钮
+            若指定元素没有消失，则每过elsedelay的时长点击一次按钮
+        （until_disappear,until_appear不要同时使用）
         """
-        if isinstance(wait_for_disappear, str):
-            assert wait_for_disappear == "self"
-        if isinstance(wait_for_appear, str):
-            assert wait_for_appear == "self"
-        if wait_for_appear is not None:
-            if wait_for_appear == "self":
-                self.lock_img(btn, timeout=timeout)
-            else:
-                self.lock_img(wait_for_appear, timeout=timeout)
-        if wait_for_disappear is None:
+        if isinstance(until_disappear, str):
+            assert until_disappear == "self"
+        if wait_self_before is True:
+            self.lock_img(btn, timeout=timeout)
+        if until_disappear is None and until_appear is None:
             self.click(*btn)
         else:
-            if wait_for_disappear == "self":
+            if until_appear is not None:
+                self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+            elif until_disappear == "self":
                 self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
-            else:
-                self.lock_no_img(wait_for_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+            elif until_disappear is not None:
+                self.lock_no_img(until_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
         """
