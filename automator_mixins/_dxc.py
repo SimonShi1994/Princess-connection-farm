@@ -78,10 +78,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         # 下面这段因为调试而注释了，实际使用时要加上
         while True:
             try:
-                if dixiacheng_times == -1:
+                if dixiacheng_times == -1 and dixiacheng_floor_times == -1:
                     pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
                     pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
                     self.dixiacheng(skip)
+                    break
                 screen_shot_ = self.d.screenshot(format="opencv")
                 if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp',
                                        at=(148, 295, 345, 399)) and dixiacheng_times == 1:
