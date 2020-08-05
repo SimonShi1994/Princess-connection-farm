@@ -19,7 +19,7 @@
       <el-main style="padding: 0;background-color: #f6f8fa;">
 
       <el-row>
-        <el-col :span="14" :offset="5">
+        <el-col :span="16" :offset="4">
             <el-container>
               <el-main>
                 <router-view/>
