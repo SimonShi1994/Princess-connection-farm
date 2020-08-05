@@ -22,7 +22,7 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="()=>{}">取 消</el-button>
+          <el-button @click="()=>{dialogFormVisible = false;form = {username: '',password: ''}}">取 消</el-button>
           <el-button type="primary" @click="handleCreate(form.username, form.password)">确 定</el-button>
         </div>
       </el-dialog>
@@ -129,9 +129,15 @@ export default {
         this.dialogFormVisible = false
         this.refreshTableData()
       }).catch(err => {
-        if (err.response.status) {
+        if (err.response && err.response.status) {
           this.$notify({
             title: err.response.data.msg,
+            message: '',
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: err,
             message: '',
             type: 'error'
           })
@@ -156,9 +162,15 @@ export default {
         })
         this.refreshTableData()
       }).catch(err => {
-        if (err.response.status) {
+        if (err.response && err.response.status) {
           this.$notify({
             title: err.response.data.msg,
+            message: '',
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: err,
             message: '',
             type: 'error'
           })
@@ -174,9 +186,15 @@ export default {
         })
         this.refreshTableData()
       }).catch(err => {
-        if (err.response.status) {
+        if (err.response && err.response.status) {
           this.$notify({
             title: err.response.data.msg,
+            message: '',
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: err,
             message: '',
             type: 'error'
           })
