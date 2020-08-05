@@ -203,7 +203,7 @@ DXC_ELEMENT = {
     "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
     "shouqubaochou_ok": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
     "qianwangdixiacheng": p(805, 495),
-    "quyuxuanzequeren_ok": p(585, 371),
+    "quyuxuanzequeren_ok": p(585, 371, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),

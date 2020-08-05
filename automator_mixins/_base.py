@@ -597,8 +597,8 @@ class BaseMixin:
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout)
 
     def click_btn(self, btn: PCRelement, elsedelay=5., timeout=20, wait_self_before=False,
-                  until_appear: Optional[Union[str, PCRelement]] = None,
-                  until_disappear: Optional[Union[str, PCRelement]] = "self"):
+                  until_appear: Optional[Union[str, PCRelement, dict]] = None,
+                  until_disappear: Optional[Union[str, PCRelement, dict]] = "self"):
         """
         稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
         :param btn: PCRelement类型，要点击的按钮
@@ -615,19 +615,21 @@ class BaseMixin:
             若指定元素没有消失，则每过elsedelay的时长点击一次按钮
         （until_disappear,until_appear不要同时使用）
         """
+        r = 0
         if isinstance(until_disappear, str):
             assert until_disappear == "self"
         if wait_self_before is True:
-            self.lock_img(btn, timeout=timeout)
+            r = self.lock_img(btn, timeout=timeout)
         if until_disappear is None and until_appear is None:
             self.click(*btn)
         else:
             if until_appear is not None:
-                self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+                r = self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
             elif until_disappear == "self":
-                self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+                r = self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
             elif until_disappear is not None:
-                self.lock_no_img(until_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+                r = self.lock_no_img(until_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)
+        return r
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
         """
