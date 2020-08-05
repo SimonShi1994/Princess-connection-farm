@@ -37,24 +37,17 @@ class AsyncMixin(BaseMixin):
                 # time.sleep(10)
                 # 过快可能会卡
                 if UIMatcher.img_where(screenshot, 'img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
-                    self.click(917, 39)  # 菜单
-                    time.sleep(1)
-                    self.click(807, 44)  # 跳过
-                    time.sleep(1)
-                    self.click(589, 367)  # 跳过ok
-                    time.sleep(5)
+                    self.lock_img('img/caidan_yuan.jpg', ifclick=[(917, 39)], ifdelay=1, retry=15)  # 菜单
+                    self.lock_img('img/caidan_tiaoguo.jpg', ifclick=[(807, 44)], ifdelay=1, retry=15)  # 跳过
+                    self.lock_img('img/ok.bmp', ifclick=[(589, 367)], ifdelay=5, retry=15)  # 跳过ok
                 if UIMatcher.img_where(screenshot, 'img/kekeluo.bmp', at=(181, 388, 384, 451)):
                     # 防妈骑脸
-                    self.click(1, 1)
-                    time.sleep(3)
-                    self.click(1, 1)
+                    self.lock_no_img('img/kekeluo.bmp', elseclick=[(1, 1)], at=(181, 388, 384, 451))
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_1.bmp', at=(0, 390, 147, 537)):
-                    self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+                    self.lock_no_img('img/dxc_tb_1.bmp', ifclick=[(131, 533)], elsedelay=1)  # 回首页
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_2.bmp', at=(580, 320, 649, 468)):
-                    time.sleep(4)
-                    self.click(610, 431)
+                    self.lock_no_img('img/dxc_tb_2.bmp', ifclick=[(610, 431)], elsedelay=1)
                     self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
-
             except Exception as e:
                 pcr_log(self.account).write_log(level='error', message='异步线程终止并检测出异常{}'.format(e))
                 th_sw = 1
@@ -191,13 +184,12 @@ class AsyncMixin(BaseMixin):
         th_sw = 1
         self.receive_minicap.stop()
 
-
     def start_async(self):
         account = self.account
         self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
         self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
-        self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
+        # self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
         self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
 
     def fix_reboot(self, back_home=True):

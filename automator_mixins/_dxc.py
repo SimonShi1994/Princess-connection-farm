@@ -74,8 +74,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             except Exception as result:
                 pcr_log(self.account).write_log(level='warning', message='1-检测出异常{},重试'.format(result))
                 tmp_cout = tmp_cout + 1
-
-        while self.dxc_switch == 1:
+        tmp_cout = 0
+        while tmp_cout <= 2 and self.dxc_switch == 1:
             try:
                 self.click(1, 1, post_delay=2)
                 screen_shot_ = self.getscreen()
@@ -85,8 +85,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     dixiacheng_times = int(dixiacheng_times['words_result'][0]['words'].split('/')[0])
                     if dixiacheng_times <= 1:
                         break
+                    tmp_cout = tmp_cout + 1
             except Exception as result:
                 pcr_log(self.account).write_log(level='warning', message='2-检测出异常{},重试'.format(result))
+                tmp_cout = tmp_cout + 1
         # 下面这段因为调试而注释了，实际使用时要加上
         while self.dxc_switch == 1:
             try:

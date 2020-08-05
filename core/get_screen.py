@@ -39,6 +39,8 @@ class ReceiveFromMinicap:
         self.receive_thread: Optional[threading.Thread] = None
 
     def start(self):
+        # 开启debug
+        # websocket.enableTrace(True)
         if self.ws is None:
             raise Exception("请先建立与device的连接！")
 
@@ -72,7 +74,7 @@ class ReceiveFromMinicap:
     # 接收信息回调函数，此处message为接收的信息
     def on_message(self, message):
         if message is not None:
-            if self.receive_flag is 1:
+            if self.receive_flag == 1:
                 # 如果不是bytes，那就是图像
                 if isinstance(message, (bytes, bytearray)) and len(message) > 100:
                     self.receive_data.put(message)
@@ -126,7 +128,6 @@ class ReceiveFromMinicap:
         if debug:
             print("快速截图失败！")
             return None
-
 
 # if __name__ == '__main__':
 #     a = Automator("emulator-5554")
