@@ -3,7 +3,6 @@ from multiprocessing import Pool, Manager
 
 import gevent
 
-from automator_mixins._async import AsyncMixin
 from core import log_handler
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
@@ -39,7 +38,7 @@ def runmain(params):
         a.log.write_log("info", f"即将登陆： 用户名 {account}")  # 显然不需要输出密码啊喂！
         # a.log.server_bot("warning", f"即将登陆： 用户名 {account}")
 
-        AsyncMixin().start_th()  # 提前开启异步：截的图可以给login函数使用
+        a.start_th()  # 提前开启异步：截的图可以给login函数使用
         a.start_async()
         gevent.joinall([
             # 这里是协程初始化的一个实例
@@ -58,7 +57,7 @@ def runmain(params):
             gevent.spawn(acclog.Account_Logout, account)
         ])
         # 停止异步
-        AsyncMixin().stop_th()
+        a.stop_th()
     except Exception as e:
         if trace_exception_for_debug:
             raise e
@@ -68,7 +67,7 @@ def runmain(params):
         except:
             pass
     finally:
-        AsyncMixin().stop_th()
+        a.stop_th()
     # 退出当前账号，切换下一个
     queue.put(address)
 
