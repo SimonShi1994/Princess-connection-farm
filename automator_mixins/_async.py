@@ -189,7 +189,6 @@ class AsyncMixin(BaseMixin):
     def stop_th(self):
         global th_sw
         th_sw = 1
-        self.receive_minicap.stop()
 
 
     def start_async(self):

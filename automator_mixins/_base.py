@@ -68,6 +68,7 @@ class BaseMixin:
             self.dWidth, self.dHeight = self.d.window_size()
             if fast_screencut:
                 self.receive_minicap = ReceiveFromMinicap(address)
+                self.receive_minicap.start()
 
     def init_account(self, account):
         self.account = account
@@ -400,6 +401,8 @@ class BaseMixin:
             if fast_screencut:
                 try:
                     data = self.receive_minicap.receive_img()
+                    if data is None:
+                        raise Exception("读取数据超过最大尝试次数")
                     # 改用内存缓存
                     self.last_screen = data
                     # 如果传入了文件路径参数，则保存文件
