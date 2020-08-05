@@ -25,8 +25,6 @@ class ReceiveFromMinicap:
         self.receive_close = 0
         # 模拟器地址
         self.address = address
-        # 运行状态：0 未运行；1：运行中
-        self.status = 0
         # 设置端口
         d = adbutils.adb.device(address)
         self.lport = d.forward_port(7912)
@@ -37,6 +35,7 @@ class ReceiveFromMinicap:
                                          on_close=self.on_close,
                                          on_error=self.on_error)
         self.receive_thread: Optional[threading.Thread] = None
+        self.good_thread: Optional[threading.Thread] = None
 
     def start(self):
         # 开启debug
@@ -45,31 +44,16 @@ class ReceiveFromMinicap:
             raise Exception("请先建立与device的连接！")
 
         def run():
-            try:
-                self.status = 1
-                self.ws.run_forever()
-                self.status = 0
-            except Exception as e:
-                print("run minicap", type(e), e)
-                self.status = 0
+            while True:
+                try:
+                    self.ws.run_forever(ping_interval=30, ping_timeout=10)
+                except Exception as e:
+                    if debug:
+                        print("run minicap", type(e), e)
 
-        self.receive_thread = threading.Thread(target=run, name="minicap_thread", daemon=True)
-        self.receive_thread.start()
-
-    def stop(self):
-        if self.ws is None:
-            return
-        try:
-            self.ws.close()
-            if debug:
-                print("正在关闭截图线程")
-            last_time = time.time()
-            while self.status == 1:
-                if time.time() - last_time > 10:
-                    raise Exception("截图线程关闭失败！")
-        except Exception as e:
-            if debug:
-                print("stop minicap", type(e), e)
+        if self.receive_thread is None:
+            self.receive_thread = threading.Thread(target=run, name="minicap_thread", daemon=True)
+            self.receive_thread.start()
 
     # 接收信息回调函数，此处message为接收的信息
     def on_message(self, message):
@@ -97,11 +81,6 @@ class ReceiveFromMinicap:
         retry = 0
         max_retry = 3
         while retry <= max_retry:
-            if self.status == 0:
-                if debug:
-                    print("正在开启快速截图……")
-                self.start()
-                time.sleep(1)
             self.receive_flag = 1
             try:
                 data = self.receive_data.get(timeout=fast_screencut_timeout)
@@ -117,7 +96,6 @@ class ReceiveFromMinicap:
                 # 读取超时
                 if debug:
                     print("读取超时")
-                self.stop()
                 retry += 1
                 continue
             except Exception as e:

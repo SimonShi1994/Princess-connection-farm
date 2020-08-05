@@ -111,22 +111,25 @@ class DXCBaseMixin(FightBaseMixin):
         # 进入冒险
         self.lock_img(MAIN_BTN["dxc"], elseclick=MAIN_BTN["maoxian"], elsedelay=0.5)
         # 进入地下城
-        self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5, until_appear=DXC_ELEMENT["dxc_shop_btn"])
-        self.wait_for_stable()
-        screen_shot_ = self.getscreen()
-        if self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
-            # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。
-            # 额 0/1 和 1/1 中可能性更高的那个
-            p0 = self.img_prob(DXC_ELEMENT["0/1"], screen=screen_shot_)
-            p1 = self.img_prob(DXC_ELEMENT["1/1"], screen=screen_shot_)
-            if p0 > p1:
-                self.log.write_log("info", "地下城次数已经用完，放弃。")
-                return False
-            else:
-                # 没刷完，进入地下城
-                self.click_btn(DXC_ENTRANCE[dxc_id], elsedelay=1, until_appear=DXC_ELEMENT["quyuxuanzequeren_ok"])
-                self.click_btn(*DXC_ELEMENT["quyuxuanzequeren_ok"], until_appear=DXC_ELEMENT["chetui"])
-        self.dxc_kkr()
+        state = self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5,
+                               until_appear={DXC_ELEMENT["dxc_choose_shop"]: 1, DXC_ELEMENT["dxc_shop_btn"]: 2})
+        if state == 1:
+            self.wait_for_stable()
+            screen_shot_ = self.getscreen()
+            if self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
+                # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。
+                # 额 0/1 和 1/1 中可能性更高的那个
+                p0 = self.img_prob(DXC_ELEMENT["0/1"], screen=screen_shot_)
+                p1 = self.img_prob(DXC_ELEMENT["1/1"], screen=screen_shot_)
+                if p0 > p1:
+                    self.log.write_log("info", "地下城次数已经用完，放弃。")
+                    return False
+                else:
+                    # 没刷完，进入地下城
+                    self.click_btn(DXC_ENTRANCE[dxc_id], elsedelay=1, until_appear=DXC_ELEMENT["quyuxuanzequeren_ok"])
+                    self.click_btn(DXC_ELEMENT["quyuxuanzequeren_ok"],
+                                   until_appear={DXC_ELEMENT["chetui"]: 1, DXC_ELEMENT["dxc_kkr"]: 2})
+            self.dxc_kkr()
         self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5)  # 锁定撤退
         return True
 

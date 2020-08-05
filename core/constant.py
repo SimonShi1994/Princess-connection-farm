@@ -203,12 +203,14 @@ DXC_ELEMENT = {
     "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
     "shouqubaochou_ok": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
     "qianwangdixiacheng": p(805, 495),
-    "quyuxuanzequeren_ok": p(585, 371),
+    "quyuxuanzequeren_ok": p(585, 371, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
     # 商店按钮，此商店按钮与jjc的不同，要大一点
     "dxc_shop_btn": p(918, 30, img="img/dxc/shop.bmp", at=(905, 21, 924, 41)),
+    # 地下城选关界面商店
+    "dxc_choose_shop": p(917, 28, img="img/dxc/dxc_choose_shop.bmp", at=(906, 19, 928, 36)),
 }
 DXC_NUM = {
     # 没有OCR用此来检测层数
