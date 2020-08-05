@@ -1,5 +1,4 @@
 import asyncio
-import os
 import threading
 import time
 from typing import Optional, Union
@@ -14,12 +13,9 @@ from core.constant import PCRelement, MAIN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.usercentre import AutomatorRecorder
-from pcr_config import debug, fast_screencut, lockimg_timeout, fast_screencut_delay, fast_screencut_timeout
+from pcr_config import debug, fast_screencut, lockimg_timeout
 
 if fast_screencut:
-    import adbutils
-    import matplotlib.pyplot as plt
-    from io import BytesIO
     from core.get_screen import ReceiveFromMinicap
 
 lock = threading.Lock()
@@ -71,11 +67,7 @@ class BaseMixin:
             self.d = u2.connect(address)
             self.dWidth, self.dHeight = self.d.window_size()
             if fast_screencut:
-                d = adbutils.adb.device(address)
-                self.lport = d.forward_port(7912)
-                self.receive_minicap = ReceiveFromMinicap(self.lport)
-                self.receive_thread = self.receive_minicap.ReceiveThread(self.receive_minicap.ws)
-                self.receive_thread.start()
+                self.receive_minicap = ReceiveFromMinicap(address)
 
     def init_account(self, account):
         self.account = account
@@ -406,21 +398,10 @@ class BaseMixin:
         # 否则，getscreen函数使用debug_screen作为读取的screen
         if self.debug_screen is None:
             if fast_screencut:
-                # 创建缓存
-                self.fast_screencut_cache['tmp'] = []
                 try:
-                    lock.acquire()
-                    mem_img = BytesIO(self.receive_minicap.receive_img())
-                    lock.release()
-                    self.log.write_log("info", f"正在快速截图")
-                    # bgr图
-                    data = plt.imread(mem_img, "jpg")
-                    self.log.write_log("info", f"快速截图完毕")
-                    # 转rgb
-                    data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
+                    data = self.receive_minicap.receive_img()
                     # 改用内存缓存
-                    self.fast_screencut_cache['tmp'] = data
-                    self.last_screen = self.fast_screencut_cache['tmp']
+                    self.last_screen = data
                     # 如果传入了文件路径参数，则保存文件
                     if filename is not None:
                         cv2.imwrite(filename, self.last_screen)

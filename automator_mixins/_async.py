@@ -1,10 +1,8 @@
 import time
 
+import keyboard
 import psutil
 
-
-import keyboard
-from core.MoveRecord import moveerr
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from pcr_config import bad_connecting_time, async_screenshot_freq
@@ -90,7 +88,7 @@ class AsyncMixin(BaseMixin):
                     if _time > bad_connecting_time:
                         _time = 0
                         # LOG().Account_bad_connecting(self.account)
-                        raise moveerr("reboot", "connecting时间过长")
+                        raise Exception("connecting时间过长")
                 if UIMatcher.img_where(screenshot, 'img/loading.bmp', threshold=0.8):
                     # 卡加载
                     # 不知道为什么，at 无法在这里使用
@@ -102,24 +100,17 @@ class AsyncMixin(BaseMixin):
                         pcr_log(self.account).write_log(level='error',
                                                         message='%s卡connecting/loading了，qwq' % self.account)
                         _time = 0
-                        raise moveerr("reboot", "loading时间过长")
+                        raise Exception("loading时间过长")
 
                 if UIMatcher.img_where(screenshot, 'img/fanhuibiaoti.bmp', at=(377, 346, 581, 395)):
                     # 返回标题
-                    raise moveerr("reboot", "网络错误，返回标题。")
+                    raise Exception("reboot", "网络错误，重启。")
 
                 if UIMatcher.img_where(screenshot, 'img/shujucuowu.bmp', at=(407, 132, 559, 297)):
                     # 数据错误
-                    raise moveerr("reboot", "数据错误，返回标题。")
+                    raise Exception("数据错误，重启。")
 
-            except moveerr as e:
-                pcr_log(self.account).write_log(level="error", message=f"异步线程检测出PCR异常：{e.desc}")
-                raise e
             except Exception as e:
-                if type(e) is moveerr:
-                    # 向主线程传递错误
-                    raise e
-                else:
                     pcr_log(self.account).write_log(level='error', message='异步线程终止并检测出异常{}'.format(e))
                     th_sw = 1
 
@@ -167,10 +158,8 @@ class AsyncMixin(BaseMixin):
                 # print('相似', _same)
                 _cout = _cout + 1
                 if _cout >= 3000:
-                    pcr_log(self.account).write_log(level='error', message='%s卡同一界面过长（10min），即将重启qwq' % self.account)
-                    self.fix_reboot()
+                    raise Exception('%s卡同一界面过长（10min），即将重启qwq' % self.account)
                     # print('重启')
-                    _cout = 0
             else:
                 # print('不相似', _same)
                 pass
@@ -200,12 +189,7 @@ class AsyncMixin(BaseMixin):
     def stop_th(self):
         global th_sw
         th_sw = 1
-        self.receive_minicap.ws.close()
-        self.receive_thread.join()
-        time.sleep(1)
-        self.receive_thread = self.receive_minicap.\
-            ReceiveThread(self.receive_minicap.ws)
-        self.receive_thread.start()
+        self.receive_minicap.stop()
 
 
     def start_async(self):

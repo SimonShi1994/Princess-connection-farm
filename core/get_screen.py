@@ -1,37 +1,85 @@
-import websocket
-import threading
 import queue
+import threading
+import time
+from io import BytesIO
+from typing import Optional
+
+import adbutils
+import cv2
+import matplotlib.pyplot as plt
+import websocket
+
 # from core.Automator import Automator
+from pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
 
 lock = threading.Lock()
 
 
 class ReceiveFromMinicap:
-    def __init__(self, lport):
+    def __init__(self, address):
         # 当前最后接收到的1帧数据
         self.receive_data = queue.Queue()
         # 接收标志位（每次接收1帧都会重置）
         self.receive_flag = 0
         # 关闭接收线程
         self.receive_close = 0
+        # 模拟器地址
+        self.address = address
+        # 运行状态：0 未运行；1：运行中
+        self.status = 0
+        # 设置端口
+        d = adbutils.adb.device(address)
+        self.lport = d.forward_port(7912)
         # 这里设置websocket
-        # websocket.enableTrace(True)
-        self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(lport),
+        self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
                                          # 这三个回调函数见下面
                                          on_message=self.on_message,
                                          on_close=self.on_close,
                                          on_error=self.on_error)
+        self.receive_thread: Optional[threading.Thread] = None
+
+    def start(self):
+        if self.ws is None:
+            raise Exception("请先建立与device的连接！")
+
+        def run():
+            try:
+                self.status = 1
+                self.ws.run_forever()
+                self.status = 0
+            except Exception as e:
+                print("run minicap", type(e), e)
+                self.status = 0
+
+        self.receive_thread = threading.Thread(target=run, name="minicap_thread", daemon=True)
+        self.receive_thread.start()
+
+    def stop(self):
+        if self.ws is None:
+            return
+        try:
+            self.ws.close()
+            if debug:
+                print("正在关闭截图线程")
+            last_time = time.time()
+            while self.status == 1:
+                if time.time() - last_time > 10:
+                    raise Exception("截图线程关闭失败！")
+        except Exception as e:
+            if debug:
+                print("stop minicap", type(e), e)
 
     # 接收信息回调函数，此处message为接收的信息
     def on_message(self, message):
         if message is not None:
             if self.receive_flag is 1:
                 # 如果不是bytes，那就是图像
-                if isinstance(message, (bytes, bytearray)):
+                if isinstance(message, (bytes, bytearray)) and len(message) > 100:
                     self.receive_data.put(message)
                     self.receive_flag = 0
                 else:
-                    print(message)
+                    if debug:
+                        print(message)
 
     # 错误回调函数
     def on_error(self, error):
@@ -39,21 +87,46 @@ class ReceiveFromMinicap:
 
     # 关闭ws的回调函数
     def on_close(self):
-        print("### closed ###")
+        if debug:
+            print("### closed ###")
 
     # 开始接收1帧画面
     def receive_img(self):
-        self.receive_flag = 1
-        return self.receive_data.get()
+        retry = 0
+        max_retry = 3
+        while retry <= max_retry:
+            if self.status == 0:
+                if debug:
+                    print("正在开启快速截图……")
+                self.start()
+                time.sleep(1)
+            self.receive_flag = 1
+            try:
+                data = self.receive_data.get(timeout=fast_screencut_timeout)
+                if debug:
+                    print("data len:", len(data))
+                data = BytesIO(data)
+                data = plt.imread(data, "jpg")
+                # 转rgb
+                data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
+                time.sleep(fast_screencut_delay)
+                return data
+            except queue.Empty:
+                # 读取超时
+                if debug:
+                    print("读取超时")
+                self.stop()
+                retry += 1
+                continue
+            except Exception as e:
+                if debug:
+                    print("receive_img", type(e), e)
+                retry += 1
+                continue
+        if debug:
+            print("快速截图失败！")
+            return None
 
-    # ws线程类
-    class ReceiveThread(threading.Thread):
-        def __init__(self, ws):
-            super().__init__()
-            self.ws = ws
-
-        def run(self) -> None:
-            self.ws.run_forever()
 
 # if __name__ == '__main__':
 #     a = Automator("emulator-5554")

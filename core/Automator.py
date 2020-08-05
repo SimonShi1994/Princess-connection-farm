@@ -14,7 +14,6 @@ from core.MoveRecord import moveset
 from core.log_handler import pcr_log
 from core.usercentre import check_task_dict
 from core.valid_task import VALID_TASK
-
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
 from pcr_config import trace_exception_for_debug
 
@@ -116,6 +115,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             pcr_log(account).write_log(level="error", message="超出最大重试次数，跳过账号！")
             # 标记错误！
             self.task_error(str(last_exception))
+            self.fix_reboot(False)
 
 
 if __name__ == "__main__":
