@@ -1,9 +1,7 @@
 import websocket
-import _thread as thread
-import time
 import threading
+import queue
 # from core.Automator import Automator
-from pcr_config import fast_screencut_delay
 
 lock = threading.Lock()
 
@@ -11,36 +9,18 @@ lock = threading.Lock()
 class ReceiveFromMinicap:
     def __init__(self, lport):
         # 当前最后接收到的1帧数据
-        self.receive_data = bytes()
+        self.receive_data = queue.Queue()
         # 接收标志位（每次接收1帧都会重置）
         self.receive_flag = 0
         # 关闭接收线程
         self.receive_close = 0
         # 这里设置websocket
-        websocket.enableTrace(True)
+        # websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(lport),
                                          # 这三个回调函数见下面
                                          on_message=self.on_message,
                                          on_close=self.on_close,
                                          on_error=self.on_error)
-        self.ws.on_open = self.on_open
-
-    # websocket通道开启后的回调函数
-    def on_open(self):
-        def run(*args):
-            # 只要不设置关闭线程位，就一直循环
-            while self.receive_close == 0:
-                # 此处的sleep为接收图像的间隔
-                time.sleep(fast_screencut_delay)
-                self.receive_img()
-            time.sleep(0.1)
-            # 恢复receive_close
-            self.receive_close = 0
-            # 关闭ws
-            self.ws.close()
-            print("截图线程关闭...")
-
-        thread.start_new_thread(run, ())
 
     # 接收信息回调函数，此处message为接收的信息
     def on_message(self, message):
@@ -48,17 +28,10 @@ class ReceiveFromMinicap:
             if self.receive_flag is 1:
                 # 如果不是bytes，那就是图像
                 if isinstance(message, (bytes, bytearray)):
-                    lock.acquire()
-                    self.receive_data = message
-                    lock.release()
-                    with open("test/testMC.jpg", "wb") as f:
-                        f.write(self.receive_data)
+                    self.receive_data.put(message)
+                    self.receive_flag = 0
                 else:
                     print(message)
-
-                lock.acquire()  # 操作前加锁
-                self.receive_flag = 0
-                lock.release()
 
     # 错误回调函数
     def on_error(self, error):
@@ -70,14 +43,8 @@ class ReceiveFromMinicap:
 
     # 开始接收1帧画面
     def receive_img(self):
-        lock.acquire()  # 操作前加锁
-        self.receive_data = bytes()
         self.receive_flag = 1
-        lock.release()  # 完成操作解锁
-
-        while self.receive_flag is 0:
-            time.sleep(0.1)
-        return self.receive_data
+        return self.receive_data.get()
 
     # ws线程类
     class ReceiveThread(threading.Thread):
