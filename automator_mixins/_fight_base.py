@@ -109,7 +109,7 @@ class FightBaseMixin(ToolsMixin):
                 if speed != level:
                     while speed != level:
                         speed = (speed + 1) % (max_level + 1)
-                        self.click(*FIGHT_BTN["speed_0"])
+                        self.click(FIGHT_BTN["speed_0"])
                     # 检查设置情况
                     speed = self.get_fight_speed()
                     if speed == -1:
@@ -179,7 +179,7 @@ class FightBaseMixin(ToolsMixin):
                 return False
             else:
                 if cur != auto:
-                    self.click(*FIGHT_BTN["auto_off"])
+                    self.click(FIGHT_BTN["auto_off"])
                     # 检查设置情况
                     cur = self.get_fight_auto()
                     if cur == -1:
@@ -204,8 +204,8 @@ class FightBaseMixin(ToolsMixin):
         assert bianzu in [1, 2, 3, 4, 5]
         assert duiwu in [1, 2, 3]
         self.click_btn(FIGHT_BTN["my_team"], until_disappear=FIGHT_BTN["zhandoukaishi"])
-        self.click(*FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
-        self.click(*FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
+        self.click(FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
+        self.click(FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
 
     def get_fight_current_member_count(self):
         """
@@ -230,13 +230,13 @@ class FightBaseMixin(ToolsMixin):
         p1 = self.img_prob(FIGHT_BTN["sort_down"], screen=sc)
         if p0 > p1:
             # 升序改降序
-            self.click(*FIGHT_BTN["sort_up"], pre_delay=0.5, post_delay=1)
+            self.click(FIGHT_BTN["sort_up"], pre_delay=0.5, post_delay=1)
         if not self.is_exists(FIGHT_BTN["sort_power"], screen=sc):
-            self.click(*FIGHT_BTN["sort_power"], pre_delay=0.5, post_delay=1)
-            self.click(*FIGHT_BTN["cat_zhanli"], pre_delay=0.5, post_delay=1)
-            self.click(*FIGHT_BTN["cat_ok"], pre_delay=0.5, post_delay=1)
+            self.click(FIGHT_BTN["sort_power"], pre_delay=0.5, post_delay=1)
+            self.click(FIGHT_BTN["cat_zhanli"], pre_delay=0.5, post_delay=1)
+            self.click(FIGHT_BTN["cat_ok"], pre_delay=0.5, post_delay=1)
         # 换人
         for _ in range(5):
-            self.click(*FIGHT_BTN["empty"][1], post_delay=0.5)
+            self.click(FIGHT_BTN["empty"][1], post_delay=0.5)
         for i in range(5):
-            self.click(*FIGHT_BTN["first_five"][i + 1], post_delay=0.5)
+            self.click(FIGHT_BTN["first_five"][i + 1], post_delay=0.5)

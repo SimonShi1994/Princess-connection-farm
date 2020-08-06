@@ -55,7 +55,7 @@ class UIMatcher:
             template = cv2.imread(template_path)
             # template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)cv_imread
             h, w = template.shape[:2]  # rows->h, cols->w
-            res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
+            res = UIMatcher.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
             min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
             x = (max_loc[0] + w // 2) / screen.shape[1]
             y = (max_loc[1] + h // 2) / screen.shape[0]
@@ -79,8 +79,22 @@ class UIMatcher:
         # plt.show()
         return zhongxings, max_vals
 
+    @staticmethod
+    def matchTemplate(screen, template, method):
+        """
+        为了使用sq这个1-SQDIRR_NORMED，没办法再封装一层吧。
+        之后可以开发更多match映射方法。
+        """
+        if method == "sq":
+            ans = cv2.matchTemplate(screen, template, cv2.TM_SQDIFF_NORMED)
+            ans = 1 - ans
+            return ans
+        else:
+            ans = cv2.matchTemplate(screen, template, method)
+            return ans
+
     @classmethod
-    def img_prob(cls, screen, template_path, at=None) -> float:
+    def img_prob(cls, screen, template_path, at=None, method=cv2.TM_CCOEFF_NORMED) -> float:
         """
         在screen里寻找template，若找到多个，则返回第一个的匹配度。
         :param screen:  截图图片
@@ -100,7 +114,7 @@ class UIMatcher:
         if screen.mean() < 1:  # 纯黑色与任何图相关度为1
             return 0
         template = cls._get_template(template_path)
-        prob = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED).max()
+        prob = UIMatcher.matchTemplate(screen, template, method).max()
         return prob
 
     @classmethod
@@ -125,7 +139,7 @@ class UIMatcher:
         return screen
 
     @classmethod
-    def img_all_where(cls, screen, template_path, threshold=0.84, at=None):
+    def img_all_where(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
         """
         找全部匹配图
         """
@@ -139,7 +153,7 @@ class UIMatcher:
         else:
             x1, y1, x2, y2 = 0, 0, 959, 539
         screen = cls.img_cut(screen, (x1, y1, x2, y2))
-        res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
+        res = UIMatcher.matchTemplate(screen, template, method)
         l = []
         for i in range(res.shape[0]):
             for j in range(res.shape[1]):
@@ -153,7 +167,7 @@ class UIMatcher:
         return l
 
     @classmethod
-    def img_where(cls, screen, template_path, threshold=0.84, at=None):
+    def img_where(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
         """
         在screen里寻找template，若找到则返回坐标，若没找到则返回False
         注：可以使用if img_where():  来判断图片是否存在
@@ -180,7 +194,7 @@ class UIMatcher:
         template = cls._get_template(template_path)
 
         th, tw = template.shape[:2]  # rows->h, cols->w
-        res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
+        res = UIMatcher.matchTemplate(screen, template, method)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
         if max_val >= threshold:
             x = x1 + max_loc[0] + tw // 2
@@ -211,7 +225,7 @@ class UIMatcher:
             return False
 
     @staticmethod
-    def imgs_where(screen, template_paths, threshold=0.84):
+    def imgs_where(screen, template_paths, threshold=0.84, method=cv2.TM_CCOEFF_NORMED):
         """
         依次检测template_paths中模板是否存在，返回存在图片字典
         :param screen:
@@ -221,7 +235,7 @@ class UIMatcher:
         """
         return_dic = {}
         for template_path in template_paths:
-            pos = UIMatcher.img_where(screen, template_path, threshold)
+            pos = UIMatcher.img_where(screen, template_path, threshold, method)
             if pos:
                 return_dic[template_path] = pos
         return return_dic
@@ -249,7 +263,7 @@ class UIMatcher:
         return num_of_white, index_1[1] / screen.shape[1], (index_1[0] + 63) / screen.shape[0]
 
     @classmethod
-    def img_similar(cls, screen_short, threshold=0.84, at=None):
+    def img_similar(cls, screen_short, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
         """
         和上次截图匹配相似度
         :param threshold:
@@ -272,7 +286,7 @@ class UIMatcher:
             cls.screen_short_befor = screen_short
             # print('填空')
         th, tw = screen_short.shape[:2]  # rows->h, cols->w
-        res = cv2.matchTemplate(cls.screen_short_befor, screen_short, cv2.TM_CCOEFF_NORMED)
+        res = UIMatcher.matchTemplate(cls.screen_short_befor, screen_short, method)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
         # print(max_val)
         if max_val >= threshold:

@@ -101,15 +101,16 @@ class RoutineMixin(ShuatuBaseMixin):
             time.sleep(1)  # 首页锁定，保证回到首页
 
     def shouqu(self):  # 收取全部礼物
-        # 2020-07-31 TheAutumnOfRice: 检查完毕
+        # 2020-08-06 TheAutumnOfRice: 检查完毕
         self.lock_home()
-        self.lock_img(LIWU_BTN["shouqulvli"], elseclick=MAIN_BTN["liwu"])
-        state = self.lock_img(LIWU_BTN["ok"], elseclick=LIWU_BTN["quanbushouqu"], retry=3, elsedelay=2)
+        self.click_btn(MAIN_BTN["liwu"], until_appear=LIWU_BTN["shouqulvli"])
+        state = self.lock_img({LIWU_BTN["ok"]: True, LIWU_BTN["meiyouliwu"]: False},
+                              elseclick=LIWU_BTN["quanbushouqu"], retry=2, elsedelay=8)
         if state:
             s = self.lock_img({LIWU_BTN["ok2"]: 1, LIWU_BTN["chiyoushangxian"]: 2},
-                              elseclick=LIWU_BTN["ok"], elsedelay=2)
+                              elseclick=LIWU_BTN["ok"], elsedelay=8)
             if s == 1:
-                self.lock_no_img(LIWU_BTN["ok2"], elseclick=LIWU_BTN["ok2"], elsedelay=2)
+                self.click_btn(LIWU_BTN["ok2"])
                 self.lock_home()
             else:
                 self.log.write_log("warning", "收取体力达到上限！")
@@ -119,10 +120,14 @@ class RoutineMixin(ShuatuBaseMixin):
             self.lock_home()
 
     def shouqurenwu(self):  # 收取任务报酬
-        # 2020-07-31 TheAutumnOfRice: 检查完毕
+        # 2020-08-06 TheAutumnOfRice: 检查完毕
         self.lock_home()
-        self.lock_img(RENWU_BTN["renwutip"], elseclick=MAIN_BTN["renwu"])
-        self.lock_img(RENWU_BTN["guanbi"], elseclick=RENWU_BTN["quanbushouqu"], elsedelay=1, retry=3)
+        self.click_btn(MAIN_BTN["renwu"], until_appear=RENWU_BTN["renwutip"])
+        state = self.lock_img({RENWU_BTN["quanbushouqu"]: True, RENWU_BTN["quanbushouqu_off"]: False},
+                              alldelay=1, method="sq", threshold=0.90, is_raise=False, timeout=10)
+        if state:
+            # 全部收取亮着
+            self.click_btn(RENWU_BTN["quanbushouqu"], until_appear=RENWU_BTN["guanbi"])
         self.lock_home()
 
     def goumaitili(self, times, var={}):  # 购买体力
