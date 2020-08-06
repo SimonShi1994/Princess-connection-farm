@@ -20,22 +20,19 @@ class HanghuiMixin(ToolsMixin):
         # self.d.click(693, 436)
         self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], ifbefore=1, elsedelay=1)  # 锁定进入行会
         while True:  # 6-17修改：减少opencv使用量提高稳定性
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/zhiyuansheding.bmp'):
+            if self.is_exists('img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 for _ in range(5):
                     time.sleep(0.8)
-                    screen_shot = self.getscreen()
-                    if UIMatcher.img_where(screen_shot, 'img/juanzeng.jpg', threshold=0.90):
+                    if self.is_exists('img/juanzeng.jpg', threshold=0.90):
                         screen_shot = self.getscreen()
                         self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
-                        self.lock_no_img('img/max.jpg', elseclick=[(644, 385)], retry=8)  # 点击max
-                        screen_shot = self.getscreen()
-                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
-                        self.click(560, 369, pre_delay=2, post_delay=1)
-                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=5)
+                        # 点击max 后 ok
+                        self.lock_no_img('img/max.jpg', elseclick=[(644, 385), (552, 470)], retry=8)
+                        self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(536, 361)], retry=3)
+                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
                     else:
-                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=5)
+                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
                     # self.lock_img('img/juanzengqingqiu.jpg', ifclick=[(367, 39)], retry=2)
                     # screen_shot = self.getscreen()
                     # if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):
@@ -48,8 +45,7 @@ class HanghuiMixin(ToolsMixin):
                     #    self.click(560, 369, pre_delay=2, post_delay=1)
                 while True:
                     self.click(1, 1, post_delay=1)
-                    screen_shot = self.getscreen()
-                    if UIMatcher.img_where(screen_shot, 'img/zhiyuansheding.bmp'):
+                    if self.is_exists('img/zhiyuansheding.bmp'):
                         break
                 break
             time.sleep(2)
