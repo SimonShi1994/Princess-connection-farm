@@ -136,10 +136,12 @@ class AutomatorDebuger(Automator):
 
     def Connect(self, address=None):
         lst = adbutils.adb.device_list()
-        if address is None:
-            address = lst[0].serial
-
-        self.init_device(address)
+        if len(lst) == 0:
+            print("No Device!")
+        else:
+            if address is None:
+                address = lst[0].serial
+            self.init_device(address)
 
     def Account(self, account):
         self.init_account(account)

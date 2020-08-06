@@ -1,7 +1,7 @@
 from typing import Tuple, Optional
 
 
-class PCRelement():
+class PCRelement:
     """
     漂亮地显示一个PCR的元素
     除了正常的位置坐标，还携带图片和裁剪参数
@@ -17,13 +17,8 @@ class PCRelement():
         for keys in kwargs:
             self.__setattr__(keys, kwargs[keys])
 
-    def __getitem__(self, item):
-        if item == 0:
-            return self.x
-        elif item == 1:
-            return self.y
-        else:
-            raise ValueError("PCRElement只能[0]或[1]")
+    def __iter__(self):
+        return (self.x, self.y).__iter__()
 
     def __repr__(self):
         s1 = f"({self.x},{self.y})"
