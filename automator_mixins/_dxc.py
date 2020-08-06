@@ -182,13 +182,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=2, ifdelay=1)
                 time.sleep(3)
                 # 这里防一波打得太快导致来不及放弃
-                screen_shot_ = self.getscreen()
                 if self.is_exists('img/shanghaibaogao.jpg'):
-                    time.sleep(3)
-                    self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
-                    if self.is_exists(screen_shot_, 'img/duiwu.jpg'):
-                        self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
-                        break
+                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 489)], retry=5)
+                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 489)], retry=5)
+                    break
             else:
                 self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], ifbefore=0.2, ifdelay=1, retry=4)
                 self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=4)
