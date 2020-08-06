@@ -127,6 +127,8 @@ NIUDAN_BTN = {
 }
 HANGHUI_BTN = {
     "chengyuan": p(241, 350),  # 点击成员
+    "juanzengqingqiu": p(367, 39),
+    "juanzeng": p(644, 385),
 
 }
 FIGHT_BTN = {

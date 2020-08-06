@@ -94,17 +94,7 @@ class LoginMixin(BaseMixin):
             self.auth(auth_name=auth_name, auth_id=auth_id)
 
     def change_acc(self):  # 切换账号
-        self.click(871, 513)  # 主菜单
-        while True:  # 锁定帮助
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/bangzhu.bmp'):
-                break
-        self.click(165, 411)  # 退出账号
-        while True:  # 锁定帮助
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/ok.bmp'):
-                break
-        self.click(591, 369)  # ok
-        time.sleep(1)
+        self.lock_img('img/bangzhu.bmp', elseclick=[(871, 513)])  # 锁定帮助
+        self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)])
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
         # pcr_log(self.account).server_bot("warning", "%s账号完成任务" % self.account)

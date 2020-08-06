@@ -1,5 +1,6 @@
-from flasgger import Swagger
 from flask import Flask, render_template
+from flask_cors import CORS
+from flasgger import Swagger
 from api.route.account import account_api
 from api.route.clan import clan_api
 from api.route.task import task_api
@@ -16,6 +17,8 @@ class RegexConverter(BaseConverter):
 def create_app():
     app = Flask(__name__, static_folder=STATIC_PATH, template_folder=DIST_PATH)
     app.url_map.converters['reg'] = RegexConverter
+
+    CORS(app, supports_credentials=True)
 
     @app.route('/', defaults={'path': ''})
     @app.route('/<reg("((?!(api|apidocs)).)+"):path>')  # 暂 api|apidoc 以外的所有路由视为前端路由

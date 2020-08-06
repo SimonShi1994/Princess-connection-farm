@@ -70,12 +70,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         break
                 else:
                     dixiacheng_floor_times = -1
+                    break
                 break
             except Exception as result:
                 pcr_log(self.account).write_log(level='warning', message='1-检测出异常{},重试'.format(result))
                 tmp_cout = tmp_cout + 1
-
-        while self.dxc_switch == 1:
+        tmp_cout = 0
+        while tmp_cout <= 2 and self.dxc_switch == 1:
             try:
                 self.click(1, 1, post_delay=2)
                 screen_shot_ = self.getscreen()
@@ -85,8 +86,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     dixiacheng_times = int(dixiacheng_times['words_result'][0]['words'].split('/')[0])
                     if dixiacheng_times <= 1:
                         break
+                    tmp_cout = tmp_cout + 1
             except Exception as result:
                 pcr_log(self.account).write_log(level='warning', message='2-检测出异常{},重试'.format(result))
+                tmp_cout = tmp_cout + 1
         # 下面这段因为调试而注释了，实际使用时要加上
         while self.dxc_switch == 1:
             try:
@@ -192,27 +195,34 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
                         break
             else:
-                self.lock_img('img/auto.jpg', ifclick=[(914, 425)], ifbefore=0.2, ifdelay=1, retry=4)
-                self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=8)
+                self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], ifbefore=0.2, ifdelay=1, retry=4)
+                self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=4)
             while skip is False:  # 结束战斗返回
-                time.sleep(0.5)
                 screen_shot_ = self.getscreen()
                 if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):
-                    # 先撤回 at=(813, 27, 886, 50)
-                    time.sleep(3)
-                    self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
-                    if UIMatcher.img_where(screen_shot_, 'img/duiwu.jpg', at=(899, 80, 924, 109)):
-                        self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
-                        break
-                    else:
-                        pcr_log(self.account).write_log(level='info', message='>>>无法识别到图像，坐标点击\r\n')
-                        self.click(828, 502, pre_delay=3)
-                        break
-                elif UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
-                    # 撤退
-                    self.click(808, 435, pre_delay=3)
-                    self.click(588, 371, pre_delay=1)
+                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 489)], retry=5)
+                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 489)], retry=5)
                     break
+                # time.sleep(0.5)
+                # screen_shot_ = self.getscreen()
+                # if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):
+                #    # 先撤回 at=(813, 27, 886, 50)
+                #    time.sleep(3)
+                #    self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
+                #    if UIMatcher.img_where(screen_shot_, 'img/duiwu.jpg', at=(899, 80, 924, 109)):
+                #        self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
+                #        break
+                #    else:
+                #        pcr_log(self.account).write_log(level='info', message='>>>无法识别到图像，坐标点击\r\n')
+                #        self.click(828, 502, pre_delay=3)
+                #        break
+                # elif UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):
+                #    # 撤退
+                #    self.click(808, 435, pre_delay=3)
+                #    self.click(588, 371, pre_delay=1)
+                #    break
+                # else:
+                #    self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
 
             self.click(1, 1, pre_delay=1)  # 取消显示结算动画
             while True:  # 撤退地下城

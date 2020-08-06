@@ -12,7 +12,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/task'
+      redirect: '/account_config'
     },
     {
       path: '/dashboard',

@@ -28,7 +28,7 @@ class ShuatuBaseMixin(ToolsMixin):
             tmp_cout = 0
             self.click(x, y, pre_delay=2, post_delay=2)
         else:
-            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力，结束 全部 刷图任务！<<<\r\n')
+            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力，结束 全部 刷图任务！<<<')
             return
         if self.switch == 0:
             while True:  # 锁定加号
@@ -49,7 +49,7 @@ class ShuatuBaseMixin(ToolsMixin):
                     # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
                     screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/tilibuzu.jpg'):
-                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
+                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束此次刷图任务！<<<')
                         self.switch = 1
                         self.click(677, 458)  # 取消
                         break
@@ -69,12 +69,12 @@ class ShuatuBaseMixin(ToolsMixin):
                         time.sleep(0.5)
                         tmp_cout = tmp_cout + 1
                     else:
-                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束此次刷图任务！<<<\r\n')
+                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束此次刷图任务！<<<')
                         self.switch = 1
                         self.click(677, 458)  # 取消
                         break
         else:
-            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束刷图任务！<<<\r\n')
+            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券或者无体力！结束刷图任务！<<<')
         while True:
             self.click(1, 1)
             time.sleep(0.3)
@@ -144,7 +144,7 @@ class ShuatuBaseMixin(ToolsMixin):
             self.click(x, y)
             time.sleep(0.5)
         else:
-            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束 全部 刷图任务！<<<\r\n')
+            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束 全部 刷图任务！<<<')
             return
         if self.switch == 0:
             while True:  # 锁定加号
@@ -167,7 +167,7 @@ class ShuatuBaseMixin(ToolsMixin):
                     # a.guochang(screen_shot,['img/shiyongsanzhang.jpg'])
                     screen_shot_ = self.getscreen()
                     if UIMatcher.img_where(screen_shot_, 'img/tilibuzu.jpg'):
-                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<\r\n')
+                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<')
                         self.switch = 1
                         self.click(677, 458)  # 取消
                         break
@@ -187,12 +187,12 @@ class ShuatuBaseMixin(ToolsMixin):
                         time.sleep(0.5)
                         tmp_cout = tmp_cout + 1
                     else:
-                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<\r\n')
+                        pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束此次刷图任务！<<<')
                         self.switch = 1
                         self.click(677, 458)  # 取消
                         break
         else:
-            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束刷图任务！<<<\r\n')
+            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束刷图任务！<<<')
         while True:
             self.click(1, 1)
             time.sleep(0.3)
