@@ -39,7 +39,7 @@ class AsyncMixin(BaseMixin):
                 if UIMatcher.img_where(screenshot, 'img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
                     self.lock_img('img/caidan_yuan.jpg', ifclick=[(917, 39)], ifdelay=1, retry=15)  # 菜单
                     self.lock_img('img/caidan_tiaoguo.jpg', ifclick=[(807, 44)], ifdelay=1, retry=15)  # 跳过
-                    self.lock_img('img/ok.bmp', ifclick=[(589, 367)], ifdelay=5, retry=15)  # 跳过ok
+                    self.lock_img('img/tiaoguo.jpg', ifclick=[(589, 367)], ifdelay=5, retry=15)  # 跳过
                 if UIMatcher.img_where(screenshot, 'img/kekeluo.bmp', at=(181, 388, 384, 451)):
                     # 防妈骑脸
                     self.lock_no_img('img/kekeluo.bmp', elseclick=[(1, 1)], at=(181, 388, 384, 451))
@@ -48,6 +48,9 @@ class AsyncMixin(BaseMixin):
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_2.bmp', at=(580, 320, 649, 468)):
                     self.lock_no_img('img/dxc_tb_2.bmp', ifclick=[(610, 431)], elsedelay=1)
                     self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+                    self.click(480, 505, pre_delay=0.5, post_delay=1)
+                    if self.is_exists('img/dixiacheng.jpg', at=(837, 92, 915, 140)):
+                        self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=1, retry=10)
             except Exception as e:
                 pcr_log(self.account).write_log(level='error', message='异步线程终止并检测出异常{}'.format(e))
                 th_sw = 1
