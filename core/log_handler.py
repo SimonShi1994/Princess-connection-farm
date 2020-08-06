@@ -70,6 +70,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         lev_0 = ['info', 'warning', 'error', '']
         lev_1 = ['warning', 'error', '']
         lev_2 = ['error', '']
+        # 3为0级消息，是消息队列的最高级别,无视log_cache堵塞
         lev_3 = ['']
         lev_dic = {
             '0': lev_0,
@@ -86,7 +87,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
                 self.acc_message[self.acc_name].append('\n')
             # print(self.acc_message[self.acc_name])
             # print(len(self.acc_message[self.acc_name]))
-            if s_level in lev_dic[log_lev] and len(self.acc_message[self.acc_name]) >= log_cache:
+            if s_level in lev_dic['3'] or (s_level in lev_dic[log_lev] and len(self.acc_message[self.acc_name]) >= log_cache):
                 message = ''.join(self.acc_message[self.acc_name]).replace(',', '\n').replace("'", '')
                 # print(message)
                 cpu_percent = psutil.cpu_percent(interval=1)
@@ -107,6 +108,10 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
                 }
                 url = "https://sc.ftqq.com/%s.send" % s_sckey
                 requests.get(url, params=info)
+                # 不因为0级消息而清空消息队列
+                if s_level not in lev_dic['3']:
+                    # 发送完后清空消息队列
+                    self.acc_message = []
 
 
 class pcr_acc_log:  # 帐号日志（全局）

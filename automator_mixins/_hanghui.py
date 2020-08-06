@@ -1,6 +1,7 @@
 import time
 
 from core.cv import UIMatcher
+from core.log_handler import pcr_log
 from ._tools import ToolsMixin
 
 
@@ -13,27 +14,38 @@ class HanghuiMixin(ToolsMixin):
     def hanghui(self):
         """
         行会自动捐赠装备
+        2020/8/6 By:CyiceK 检查完毕
         """
         self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
-        time.sleep(1)
         # self.d.click(693, 436)
-        self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=1)  # 锁定进入行会
-        time.sleep(1)
+        self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], ifbefore=1, elsedelay=1)  # 锁定进入行会
         while True:  # 6-17修改：减少opencv使用量提高稳定性
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
-                for _ in range(2):
-                    time.sleep(2)
+                for _ in range(5):
+                    time.sleep(0.8)
                     screen_shot = self.getscreen()
-                    if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):
-                        self.click(367, 39, post_delay=2)  # 点击定位捐赠按钮
+                    if UIMatcher.img_where(screen_shot, 'img/juanzeng.jpg', threshold=0.90):
                         screen_shot = self.getscreen()
                         self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
-                        self.click(644, 385, pre_delay=1, post_delay=3)  # 点击max
+                        self.lock_no_img('img/max.jpg', elseclick=[(644, 385)], retry=8)  # 点击max
                         screen_shot = self.getscreen()
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                         self.click(560, 369, pre_delay=2, post_delay=1)
+                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=5)
+                    else:
+                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=5)
+                    # self.lock_img('img/juanzengqingqiu.jpg', ifclick=[(367, 39)], retry=2)
+                    # screen_shot = self.getscreen()
+                    # if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):
+                    #    self.click(367, 39, post_delay=2)  # 点击定位捐赠按钮
+                    #    screen_shot = self.getscreen()
+                    #    self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
+                    #    self.click(644, 385, pre_delay=1, post_delay=3)  # 点击max
+                    #    screen_shot = self.getscreen()
+                    #    self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
+                    #    self.click(560, 369, pre_delay=2, post_delay=1)
                 while True:
                     self.click(1, 1, post_delay=1)
                     screen_shot = self.getscreen()
@@ -126,32 +138,28 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/ok.jpg', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
-    def dianzan(self, sortflag=0):  # 行会点赞
-        # TODO 卡顿不确定性大，需要重写
+    def dianzan(self, sortflag=0):
+        """
+        2020/8/6 By:CyiceK 检查完毕
+        :param sortflag:
+        :return:
+        """
+        # 行会点赞
         self.lock_home()
         # 进入行会
-        self.click(688, 432)
-        time.sleep(6)
-        for i in range(2):
-            time.sleep(3)
-            screen_shot_ = self.getscreen()
-            self.guochang(screen_shot_, ['img/zhandou_ok.jpg'], suiji=0)
-        self.click(239, 351)
-        time.sleep(3)
+        self.lock_img('img/zhiyuansheding.bmp', ifclick=[(230, 351)], elseclick=[(688, 432)], elsedelay=3, retry=10)
+        self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
         if sortflag == 1:
-            self.click(720, 97)  # 点击排序
-            if not self.lock_img('img/ok.bmp', elsedelay=1, ifclick=[(289, 303), (587, 372)], ifdelay=1,
-                                 retry=5):  # 按战力降序 这里可以加一步调降序
-                # 如果没有加入公会则返回
-                print("这个账号看起来并没有加入公会")
-                self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1,
-                              at=(891, 413, 930, 452))  # 回首页
-                return
-            self.click(818, 198)  # 点赞 战力降序第一个人
-            time.sleep(2)
+            self.lock_img('img/ok.bmp', elseclick=[(720, 97)], retry=3)  # 点击排序
+            self.lock_no_img('img/ok.bmp', elseclick=[(289, 303), (587, 372)], elsedelay=1, retry=3)  # 按战力降序 这里可以加一步调降序
+            self.lock_img('img/dianzan.bmp', ifclick=[(818, 198), (480, 374), (826, 316), (480, 374), (826, 428)]
+                          , elseclick=[(1, 1)], elsedelay=3, ifdelay=1, retry=10)
+            # 点赞 战力降序第一/第二/第三个人
+            # (480, 374) 是ok的坐标
         else:
-            self.click(829, 316)  # 点赞 职务降序（默认） 第二个人，副会长
-            time.sleep(2)
+            self.lock_img('img/dianzan.bmp', ifclick=[(829, 316), (480, 374), (826, 428)], elseclick=[(1, 1)],
+                          elsedelay=3, ifdelay=1, retry=10)
+            # 点赞 职务降序（默认） 第二/第三个人，副会长
         self.click(479, 381)
         screen_shot_ = self.getscreen()
         self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
