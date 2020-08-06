@@ -27,13 +27,12 @@ class HanghuiMixin(ToolsMixin):
                     if self.is_exists('img/juanzeng.jpg', threshold=0.90):
                         screen_shot = self.getscreen()
                         self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
-                        self.lock_no_img('img/max.jpg', elseclick=[(644, 385)], retry=8)  # 点击max
-                        screen_shot = self.getscreen()
-                        self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
-                        self.click(560, 369, pre_delay=2, post_delay=1)
-                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=5)
+                        # 点击max 后 ok
+                        self.lock_no_img('img/max.jpg', elseclick=[(644, 385), (552, 470)], retry=8)
+                        self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(536, 361)], retry=3)
+                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
                     else:
-                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=5)
+                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
                     # self.lock_img('img/juanzengqingqiu.jpg', ifclick=[(367, 39)], retry=2)
                     # screen_shot = self.getscreen()
                     # if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):

@@ -34,7 +34,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=1, retry=10)
                 self.click(1, 1)
                 # 防止一进去就是塔币教程
-                self.dxc_kkr()
+                # self.dxc_kkr()
                 break
         tmp_cout = 0
         while tmp_cout <= 2:
@@ -107,7 +107,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     pcr_log(self.account).write_log(level='info', message='%s今天已经打过地下城' % self.account)
                     break
                 if self.dxc_switch == 0:
-                    screen_shot_ = self.getscreen()
                     if self.is_exists('img/ok.bmp'):
                         self.click(592, 369)
                     # self.lock_img('img/ok.bmp', ifclick=[(592, 369)], elseclick=[(592, 369)])
@@ -136,7 +135,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         while self.dxc_switch == 0:
             # 防止一进去就是塔币教程
-            self.dxc_kkr()
+            # self.dxc_kkr()
             while True:
                 time.sleep(0.5)
                 if self.is_exists('img/chetui.jpg'):
@@ -187,12 +186,12 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 489)], retry=5)
                     break
             else:
-                self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], ifbefore=0.2, ifdelay=1, retry=4)
-                self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], ifbefore=0.2, ifdelay=1, retry=4)
+                self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], retry=6)
+                self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], retry=6)
             while skip is False:  # 结束战斗返回
                 if self.is_exists('img/shanghaibaogao.jpg'):
-                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 489)], retry=5)
-                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 489)], retry=5)
+                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 460)], retry=5)
+                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 460)], retry=5)
                     break
                 # time.sleep(0.5)
                 # screen_shot_ = self.getscreen()
