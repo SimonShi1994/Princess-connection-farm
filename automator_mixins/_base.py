@@ -495,7 +495,7 @@ class BaseMixin:
                 # print('未找到所需的按钮,无动作')
                 pass
 
-    def _lock_img(self, img: Union[PCRelement, str, dict], ifclick=None, ifbefore=0., ifdelay=1, elseclick=None,
+    def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1, elseclick=None,
                   elsedelay=0.5, alldelay=0.5, retry=0,
                   at=None, is_raise=False, lock_no=False, timeout=None):
         """
@@ -506,6 +506,9 @@ class BaseMixin:
                 或者：
                 {(img,at):return_value}
                 此时，at参数不起作用。
+            2020-08-06： TheAutumnOfRice Add: img可以传入list类型
+                [PCRElement]或者[(img,at)]
+                此时，每一个找到的PCRElement，都会对应True
             2020-07-28：TheAutumnOfRice Add: img支持兼容PCRelement格式
             传入PCRelement后,自动填充img和at。
             如果PCRelement含有at属性而外部设置了at，以lockimg的参数为准
@@ -529,6 +532,7 @@ class BaseMixin:
         # 2020-08-01 Add: 取消了elseclick两个click之间的间隔，elsedelay表
         #                 示elseclick操作之后的等待时间，该时间内会一直检测。
         # 2020-08-01 Add: 增加了局部timeout参数
+        # 2020-08-06 Add: img可以传入list了
         if elseclick is None:
             elseclick = []
         if ifclick is None:
@@ -537,6 +541,11 @@ class BaseMixin:
             ifclick = [ifclick]
         if type(elseclick) is not list:
             elseclick = [elseclick]
+        if isinstance(img, list):
+            tmp = img
+            img = {}
+            for i in tmp:
+                img[i] = True
         if not isinstance(img, dict):
             img = {(img, at): True}
         attempt = 0
@@ -597,8 +606,8 @@ class BaseMixin:
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout)
 
     def click_btn(self, btn: PCRelement, elsedelay=5., timeout=20, wait_self_before=False,
-                  until_appear: Optional[Union[str, PCRelement, dict]] = None,
-                  until_disappear: Optional[Union[str, PCRelement, dict]] = "self"):
+                  until_appear: Optional[Union[PCRelement, dict, list]] = None,
+                  until_disappear: Optional[Union[str, PCRelement, dict, list]] = "self"):
         """
         稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
         :param btn: PCRelement类型，要点击的按钮
