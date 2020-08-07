@@ -1,8 +1,6 @@
 import os
 from multiprocessing import Pool, Manager
 
-import gevent
-
 from core import log_handler
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
@@ -40,22 +38,33 @@ def runmain(params):
 
         a.start_th()  # 提前开启异步：截的图可以给login函数使用
         a.start_async()
+        # 使用协程，里面的Exception出不来
+        """
         gevent.joinall([
             # 这里是协程初始化的一个实例
             gevent.spawn(a.login_auth, account, password),
             gevent.spawn(acclog.Account_Login, account),
             gevent.spawn(a.sw_init())
         ])
+        """
+        acclog.Account_Login(account)
+        a.sw_init()
+        a.login_auth(account, password)
+
         # 日志记录
         # 还是日志
         # 初始化刷图
         # 开始异步
         a.RunTasks(tas, continue_, max_retry)  # 执行主要逻辑
+        """
         gevent.joinall([
             # 这里是协程的一个实例
             gevent.spawn(a.change_acc()),
             gevent.spawn(acclog.Account_Logout, account)
         ])
+        """
+        a.change_acc()
+        acclog.Account_Logout(account)
         # 停止异步
         a.stop_th()
     except Exception as e:

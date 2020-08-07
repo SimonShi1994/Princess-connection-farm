@@ -1,7 +1,6 @@
 import time
 
 from core.constant import MAIN_BTN
-from core.cv import UIMatcher
 # from core.log_handler import pcr_log
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
@@ -46,6 +45,7 @@ class LoginMixin(BaseMixin):
             return 0  # 正常
 
     def login(self, ac, pwd):
+        error_flag = 0
         try:
             try_count = 0
             while True:
@@ -61,6 +61,7 @@ class LoginMixin(BaseMixin):
                             self.change_acc()
                 if try_count > 1000:
                     # 点了1000次了，重启吧
+                    error_flag = 1
                     raise Exception("点了1000次右上角了，重启罢！")
                 # todo 登陆失败报错：-32002 Client error: <> data: Selector [
                 #  resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
@@ -73,7 +74,8 @@ class LoginMixin(BaseMixin):
                     self.click(945, 13)
             return self.do_login(ac, pwd)
         except Exception as e:
-            print(e)
+            if error_flag:
+                raise e
             # 异常重试登陆逻辑
             return self.do_login(ac, pwd)
 

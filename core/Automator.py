@@ -28,7 +28,8 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         DXCMixin.__init__(self)
         self.init_device(address)
 
-    def RunTasks(self, tasks: dict, continue_=True, max_retry=3):
+    def RunTasks(self, tasks: dict, continue_=True, max_retry=3,
+                 first_init_home=True):
         """
         运行任务集
         By TheAutumnOfRice 2020-07-26
@@ -36,6 +37,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         :param tasks: 合法的任务字典
         :param continue_: 是否继续上次未完成的任务
         :param max_retry:  最大试错次数，超过max_retry却还不停报错则只能下次再见！
+        :param first_init_home: 是否一开始执行init_home。
         """
         user = self.AR.getuser()  # 获取配置文件
         account = user["account"]
@@ -85,18 +87,14 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             for key in kwargs:
                 self.log.write_log("info", f"    参数 {key} ： {kwargs[key]}")
         self.ms.exitw(None)  # 结束自动序列创建
-        # 异常检测及恢复跳转逻辑
-        self.ms.addcatch("reboot", "reboot_logic")  # 从异步线程中接收到重启逻辑。遇事不决，直接重启，最为保险。
-        self.ms.addmove("reboot_logic", moveset.w(self.fix_reboot, "__last__"))  # 重启逻辑：执行fix_reboot，然后回到上一步
-
         # 未知异常：仍然是重启哒！万能的重启万岁！
         last_exception = None
 
         if continue_ is False:
             # 初次执行，记录一下
             self.task_start()
-
-        self.init_home()  # 处理第一次进home的一系列问题
+        if first_init_home:
+            self.init_home()  # 处理第一次进home的一系列问题
         for retry in range(max_retry):
             try:
                 self.ms.run(continue_=continue_)
@@ -109,7 +107,18 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 if trace_exception_for_debug:
                     raise e
                 last_exception = e
-                self.fix_reboot()
+                try:
+                    self.fix_reboot()
+                except Exception as e:
+                    pcr_log(account).write_log(level='error', message=f'main-自动重启失败，跳过账号!{e}')
+                    self.task_error(str(last_exception))
+                    try:
+                        self.fix_reboot(False)
+                    except:
+                        pass
+                    return
+
+
         else:
             # 超出最大重试次数,放弃啦！
             pcr_log(account).write_log(level="error", message="超出最大重试次数，跳过账号！")
