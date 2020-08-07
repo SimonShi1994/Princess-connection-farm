@@ -87,7 +87,7 @@ class ShuatuBaseMixin(ToolsMixin):
     def enter_zhuxian(self):
         # 进入主线
         self.lock_home()
-        self.click(*MAIN_BTN["maoxian"])
+        self.click(MAIN_BTN["maoxian"])
         # 进入地图（此处写500，90是为了防止误触到关卡）
         self.lock_img(MAIN_BTN["dxc"], ifclick=MAIN_BTN["zhuxian"], elseclick=MAIN_BTN["maoxian"], ifbefore=2)
         # 判断是否进入地图
@@ -103,7 +103,7 @@ class ShuatuBaseMixin(ToolsMixin):
             elif state == 0:
                 self.enter_zhuxian()
             elif state == 1:
-                self.click(*MAOXIAN_BTN["hard_on"])
+                self.click(MAOXIAN_BTN["hard_on"])
             elif state == 2:
                 return
         raise Exception("进入困难图超过最大尝试次数！")
@@ -430,7 +430,7 @@ class ShuatuBaseMixin(ToolsMixin):
             elif state == 0:
                 self.enter_zhuxian()
             elif state == 2:
-                self.click(*MAOXIAN_BTN["normal_on"])
+                self.click(MAOXIAN_BTN["normal_on"])
             elif state == 1:
                 return
 
@@ -449,7 +449,7 @@ class ShuatuBaseMixin(ToolsMixin):
                 self.wait_for_loading(sc)
                 if self.is_exists(MAOXIAN_BTN["ditu"]):
                     if self.check_maoxian_screen() == 2:
-                        self.click(*MAOXIAN_BTN["normal_on"], post_delay=1)
+                        self.click(MAOXIAN_BTN["normal_on"], post_delay=1)
                     # 重试一次
                     continue
                 else:
@@ -477,7 +477,7 @@ class ShuatuBaseMixin(ToolsMixin):
                 if self.is_exists(MAOXIAN_BTN["ditu"]):
                     # 重试一次
                     if self.check_maoxian_screen() == 1:
-                        self.click(*MAOXIAN_BTN["hard_on"], post_delay=1)
+                        self.click(MAOXIAN_BTN["hard_on"], post_delay=1)
                     continue
                 else:
                     raise Exception("Hard 图号识别失败！")

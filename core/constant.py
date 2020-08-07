@@ -1,25 +1,33 @@
 from typing import Tuple, Optional
 
 
-class PCRelement(tuple):
+class PCRelement:
     """
     漂亮地显示一个PCR的元素
     除了正常的位置坐标，还携带图片和裁剪参数
     """
 
-    def __init__(self, iterable, name: Optional[str] = None, img: Optional[str] = None,
+    def __init__(self, x=None, y=None, name: Optional[str] = None, img: Optional[str] = None,
                  at: Optional[Tuple[float, float, float, float]] = None, **kwargs):
+        self.x = x
+        self.y = y
         self.name = name
         self.img = img
         self.at = at
         for keys in kwargs:
             self.__setattr__(keys, kwargs[keys])
 
-    def __new__(cls, iterable, *args, **kwargs):
-        return super(PCRelement, cls).__new__(cls, iterable)
+    def __iter__(self):
+        return (self.x, self.y).__iter__()
+
+    def __getitem__(self, item):
+        if item == 0:
+            return self.x
+        elif item == 1:
+            return self.y
 
     def __repr__(self):
-        s1 = super().__repr__()
+        s1 = f"({self.x},{self.y})"
         s2 = ""
         s3 = ""
         s4 = ""
@@ -32,11 +40,11 @@ class PCRelement(tuple):
         return "%s%s%s%s" % (s1, s2, s3, s4)
 
 
-def p(*args, name=None, img=None, at=None):
+def p(x=None, y=None, name=None, img=None, at=None):
     """
     快速创建一个PCRelement
     """
-    return PCRelement(args, name=name, img=img, at=at)
+    return PCRelement(x=x, y=y, name=name, img=img, at=at)
 
 
 # 主页面的按钮对象
@@ -103,10 +111,12 @@ LIWU_BTN = {
     "ok2": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
     "chiyoushangxian": p(img="img/home/chiyoushangxian.bmp", at=(433, 134, 529, 159)),
     "chiyoushangxian_ok": p(481, 371),
+    "meiyouliwu": p(img="img/home/meiyouliwu.bmp", at=(381, 239, 571, 274)),
 
 }
 RENWU_BTN = {
-    "quanbushouqu": p(844, 439),
+    "quanbushouqu_off": p(844, 439, img="img/home/quanbushouqu_off.bmp", at=(747, 421, 939, 455)),
+    "quanbushouqu": p(844, 439, img="img/home/quanbushouqu_on.bmp", at=(751, 421, 936, 457)),
     "renwutip": p(img="img/home/renwutip.bmp", at=(466, 363, 803, 389)),
     "guanbi": p(img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),
 }

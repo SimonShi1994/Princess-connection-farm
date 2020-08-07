@@ -88,7 +88,7 @@ class BaseMixin:
         else:
             return at
 
-    def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0.):
+    def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0., method=cv2.TM_CCOEFF_NORMED):
         """
         try to click the img
         :param screen:
@@ -97,7 +97,7 @@ class BaseMixin:
         :return: success
         """
         at = self._get_at(at)
-        position = UIMatcher.img_where(screen, img, threshold, at)
+        position = UIMatcher.img_where(screen, img, threshold, at, method)
         if position:
             self.click(*position, pre_delay, post_delay)
             return True
@@ -114,27 +114,11 @@ class BaseMixin:
             如:self.click(100,200)
 
         2.  若args为PCRelement类型（见core.constant），则：
-            a.  若PCRelement不带任何附加信息，则仅点击其坐标
-            b.  若PCRelement含有img属性，则执行click_img操作
-                若PCRelement还带有at属性，则将at传入click_img
-                    注：若kwargs中带有at参数，则优先使用此at
-
-            如：
-            from core.constant import DXC_ELEMENT
-            self.click(DXC_ELEMENT["chetui"])
-
-        3.  若args仅为一个字符串，则执行click_img操作
-            如:self.click("img/chetui2.bmp")
-        注：当点击的对象为一个图片时：
-            若kwargs中带有screen参数，则将其传入click_img，否则重新截图
-            若kwargs中带有threshold参数，则将其传入click_img
-            若kwargs中带有at参数，则将将其传入click_img
+            点击其坐标
 
         :param pre_delay: 前置延时
         :param post_delay: 后置延时
-        :return: True or False，是否成功点击
-            如果点击对象为坐标，则必定返回True
-            如果点击对象为图片，则当图片不存在时，返回False，否则返回True
+        :return: True
         """
         time.sleep(pre_delay)
         if len(args) == 2 and isinstance(args[0], (int, float)) and isinstance(args[1], (int, float)):
@@ -147,42 +131,9 @@ class BaseMixin:
         elif len(args) == 1 and isinstance(args[0], PCRelement):
             # 点击一个PCRelement元素
             pe = args[0]
-            if pe.img is None:
-                self.d.click(*pe)
-                time.sleep(post_delay)
-                return True
-            else:
-                if "at" in kwargs:
-                    at = self._get_at(kwargs["at"])
-                elif pe.at is not None:
-                    at = pe.at
-                else:
-                    at = None
-                if "screen" in kwargs:
-                    screen = kwargs["screen"]
-                else:
-                    screen = self.getscreen()
-                if "threshold" in kwargs:
-                    threshold = kwargs["threshold"]
-                else:
-                    threshold = 0.84
-                self.click_img(screen, pe.img, threshold, at, 0, post_delay)
-        elif len(args) == 1 and isinstance(args[0], str):
-            # 点击一个图片
-            img = args[0]
-            if "at" in kwargs:
-                at = self._get_at(kwargs["at"])
-            else:
-                at = None
-            if "screen" in kwargs:
-                screen = kwargs["screen"]
-            else:
-                screen = self.getscreen()
-            if "threshold" in kwargs:
-                threshold = kwargs["threshold"]
-            else:
-                threshold = 0.84
-            return self.click_img(screen, img, threshold, at, 0, post_delay)
+            self.d.click(pe.x, pe.y)
+            time.sleep(post_delay)
+            return True
 
     @staticmethod
     def _get_img_at(img, at):
@@ -193,7 +144,7 @@ class BaseMixin:
             img = img.img
         return img, at
 
-    def is_exists(self, img, threshold=0.84, at=None, screen=None):
+    def is_exists(self, img, threshold=0.84, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
         """
         判断一个图片是否存在。
         :param img:
@@ -207,9 +158,9 @@ class BaseMixin:
         if screen is None:
             screen = self.getscreen()
         img, at = self._get_img_at(img, at)
-        return UIMatcher.img_where(screen, img, threshold, at) != False
+        return UIMatcher.img_where(screen, img, threshold, at, method) != False
 
-    def img_prob(self, img, at=None, screen=None):
+    def img_prob(self, img, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
         """
         返回一个图片存在的阈值
         通过比较两幅图片的阈值大小可以分辨它“更”是什么图
@@ -223,9 +174,9 @@ class BaseMixin:
         if screen is None:
             screen = self.getscreen()
         img, at = self._get_img_at(img, at)
-        return UIMatcher.img_prob(screen, img, at)
+        return UIMatcher.img_prob(screen, img, at, method)
 
-    def img_where_all(self, img, threshold=0.9, at=None, screen=None):
+    def img_where_all(self, img, threshold=0.9, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
         """
         返回一个图片所有的位置
         :param img:
@@ -239,7 +190,7 @@ class BaseMixin:
         if screen is None:
             screen = self.getscreen()
         img, at = self._get_img_at(img, at)
-        return UIMatcher.img_all_where(screen, img, threshold, at)
+        return UIMatcher.img_all_where(screen, img, threshold, at, method)
 
     def img_equal(self, img1, img2, at=None, similarity=0.01) -> float:
         """
@@ -469,14 +420,14 @@ class BaseMixin:
             attempt += 1
         return True if inf_attempt or attempt < retry else False
 
-    def guochang(self, screen_shot, template_paths, suiji=1):
+    def guochang(self, screen_shot, template_paths, suiji=1, method=cv2.TM_CCOEFF_NORMED):
         # suji标号置1, 表示未找到时将点击左上角, 置0则不点击
         # 输入截图, 模板list, 得到下一次操作
 
         self.dWidth, self.dHeight = self.d.window_size()
         screen_shot = screen_shot
         template_paths = template_paths
-        active_path = UIMatcher.imgs_where(screen_shot, template_paths)
+        active_path = UIMatcher.imgs_where(screen_shot, template_paths, method)
         if active_path:
             # print(active_path)
             if 'img/caidan_tiaoguo.jpg' in active_path:
@@ -497,7 +448,7 @@ class BaseMixin:
 
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1, elseclick=None,
                   elsedelay=0.5, alldelay=0.5, retry=0,
-                  at=None, is_raise=False, lock_no=False, timeout=None):
+                  at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84):
         """
         @args:
             img:要匹配的图片目录
@@ -560,7 +511,7 @@ class BaseMixin:
                     _img, _at = self._get_img_at(i[0], i[1])
                 else:
                     _img, _at = self._get_img_at(i, None)
-                if self.is_exists(_img, at=_at, screen=screen_shot) is not lock_no:
+                if self.is_exists(_img, at=_at, screen=screen_shot, method=method, threshold=threshold) is not lock_no:
                     if ifclick != []:
                         for clicks in ifclick:
                             time.sleep(ifbefore)
@@ -586,24 +537,27 @@ class BaseMixin:
                 return False
 
     def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
-                 at=None, is_raise=True, timeout=None):
+                 at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84):
         """
         锁定图片，直到该图出现。
         图片出现后，点击ifclick；未出现，点击elseclick
         """
         return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                               elsedelay=elsedelay,
-                              alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout)
+                              alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout,
+                              method=method, threshold=threshold)
 
     def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5,
-                    retry=0, at=None, is_raise=True, timeout=None):  # 锁定指定图像
+                    retry=0, at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED,
+                    threshold=0.84):  # 锁定指定图像
         """
         锁定图片，直到该图消失
         图片消失后，点击ifclick；未消失，点击elseclick
         """
         return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                               elsedelay=elsedelay,
-                              alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout)
+                              alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout,
+                              method=method, threshold=threshold)
 
     def click_btn(self, btn: PCRelement, elsedelay=5., timeout=20, wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
@@ -630,7 +584,7 @@ class BaseMixin:
         if wait_self_before is True:
             r = self.lock_img(btn, timeout=timeout)
         if until_disappear is None and until_appear is None:
-            self.click(*btn)
+            self.click(btn)
         else:
             if until_appear is not None:
                 r = self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout)

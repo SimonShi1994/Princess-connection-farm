@@ -1,12 +1,12 @@
 import os
-import sys
 from tkinter import StringVar, Entry, Tk, Button, mainloop
 
+import adbutils
 import cv2
 import matplotlib
 from matplotlib import pyplot as plt
-from core.Automator import Automator
 
+from core.Automator import Automator
 
 
 def WindowMode(frame=None):
@@ -131,11 +131,17 @@ class AutomatorDebuger(Automator):
 
     @staticmethod
     def Init():
-        os.system('cd adb & adb connect 127.0.0.1:5554')  # 雷电模拟器
+        dlst = adbutils.adb.device_list()
         os.system('python -m uiautomator2 init')
 
-    def Connect(self, address="emulator-5554"):
-        self.init_device(address)
+    def Connect(self, address=None):
+        lst = adbutils.adb.device_list()
+        if len(lst) == 0:
+            print("No Device!")
+        else:
+            if address is None:
+                address = lst[0].serial
+            self.init_device(address)
 
     def Account(self, account):
         self.init_account(account)

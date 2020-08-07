@@ -25,7 +25,7 @@ class DXCBaseMixin(FightBaseMixin):
         if self.is_exists(DXC_ELEMENT["dxc_kkr"]):
             self.chulijiaocheng(turnback=None)
             if self.is_exists(DXC_ELEMENT["dxc_in_shop"]):
-                self.click(*DXC_ELEMENT["dxc_in_shop"])
+                self.click(DXC_ELEMENT["dxc_in_shop"])
             else:
                 # 应急处理：从主页返回
                 self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
@@ -87,7 +87,7 @@ class DXCBaseMixin(FightBaseMixin):
             return 1
         elif mode == 2:
             # 前往地下城
-            self.click(*DXC_ELEMENT["qianwangdixiacheng"], post_delay=3)
+            self.click(DXC_ELEMENT["qianwangdixiacheng"], post_delay=3)
             return 2
 
     def dxc_chetui(self):
@@ -95,7 +95,7 @@ class DXCBaseMixin(FightBaseMixin):
         地下城界面点击撤退，回到选城页面
         场景要求：处于地下城内小人界面，右下角有撤退
         """
-        self.click(*DXC_ELEMENT["chetui"])
+        self.click(DXC_ELEMENT["chetui"])
         self.lock_img(DXC_ELEMENT["chetui_ok"], elseclick=DXC_ELEMENT["chetui"], elsedelay=8, timeout=30)
         self.click_btn(DXC_ELEMENT["chetui_ok"])
 
