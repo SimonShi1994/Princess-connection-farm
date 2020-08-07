@@ -431,8 +431,8 @@ VALID_TASK = ValidTask() \
     .add("r6", "goumaitili", "购买体力", "购买一定次数的体力",
          [TaskParam("times", int, "购买次数", "购买体力的次数")]) \
     .add("r7", "goumaimana", "购买MANA", "购买指定次数的mana",
-         [TaskParam("times", int, "购买mana的次数", "如果mode为0，则为购买mana的次数；\n如果mode为1，则为购买10连mana的次数。【宝石警告】"),
-          TaskParam("mode", int, "模式", "只能为0或1的值。\n0：一连模式。\n1：十连模式", 1)]) \
+         [TaskParam("mode", int, "模式", "如果mode为0，则为购买mana的次数；\n如果mode为1，则为购买10连mana的次数。【宝石警告】", 1),
+          TaskParam("times", int, "购买mana的次数", "购买mana的次数(第一次单抽不计入)")]) \
     .add("r8", "buyExp", "购买经验", "买空商店里的经验药水") \
     .add("r9", "tansuo", "探索", "进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
