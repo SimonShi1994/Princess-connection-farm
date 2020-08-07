@@ -1,3 +1,5 @@
+import ctypes
+import inspect
 import queue
 import threading
 import time
@@ -13,6 +15,28 @@ import websocket
 from pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
 
 lock = threading.Lock()
+
+
+def _async_raise(tid, exctype):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+
+# 此处引入一个结束线程的函数，用于结束快速截图的线程，避免adb爆炸
+# By Moment 2020.8.7
+
+def stop_thread(thread):
+    _async_raise(thread.ident, SystemExit)
 
 
 class ReceiveFromMinicap:
@@ -54,6 +78,13 @@ class ReceiveFromMinicap:
         if self.receive_thread is None:
             self.receive_thread = threading.Thread(target=run, name="minicap_thread", daemon=True)
             self.receive_thread.start()
+
+    def stop(self):
+        if self.receive_thread is not None:
+            try:
+                stop_thread(self.receive_thread)
+            except:
+                pass
 
     # 接收信息回调函数，此处message为接收的信息
     def on_message(self, message):

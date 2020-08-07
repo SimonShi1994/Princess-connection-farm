@@ -121,7 +121,7 @@ class BaseMixin:
         :return: True
         """
         time.sleep(pre_delay)
-        if len(args) == 2 and isinstance(args[0], (int, float)) and isinstance(args[1], (int, float)):
+        if len(args) >= 2 and isinstance(args[0], (int, float)) and isinstance(args[1], (int, float)):
             # (x,y)型：点击坐标
             x = args[0]
             y = args[1]
