@@ -98,7 +98,8 @@ def bak_accounts():
     if not os.path.exists(users_path):
         return
     if os.path.exists(users_bak_path):
-        shutil.rmtree(users_bak_path)
+        shutil.rmtree(users_path)
+        return
     shutil.copytree(users_path, users_bak_path)
 
 
