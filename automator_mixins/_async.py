@@ -185,10 +185,7 @@ class AsyncMixin(BaseMixin):
     def stop_th(self):
         global th_sw
         th_sw = 1
-        try:
-            stop_thread(self.receive_thread)
-        except:
-            pass
+        self.receive_minicap.stop()
 
     def start_async(self):
         account = self.account
@@ -225,27 +222,3 @@ class AsyncMixin(BaseMixin):
         self.click(479, 369)
         time.sleep(8)
         self.click(1, 1)
-
-# 此处引入一个结束线程的函数，用于结束快速截图的线程，避免adb爆炸
-# By Moment 2020.8.7
-
-import ctypes
-
-
-def _async_raise(tid, exctype):
-    """raises the exception, performs cleanup if needed"""
-    tid = ctypes.c_long(tid)
-    if not inspect.isclass(exctype):
-        exctype = type(exctype)
-    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
-    if res == 0:
-        raise ValueError("invalid thread id")
-    elif res != 1:
-        # """if it returns a number greater than one, you're in trouble,
-        # and you should call it again with exc=NULL to revert the effect"""
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-        raise SystemError("PyThreadState_SetAsyncExc failed")
-
-
-def stop_thread(thread):
-    _async_raise(thread.ident, SystemExit)

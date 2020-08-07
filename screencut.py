@@ -1,4 +1,3 @@
-import os
 from tkinter import StringVar, Entry, Tk, Button, mainloop
 
 import adbutils
@@ -131,8 +130,8 @@ class AutomatorDebuger(Automator):
 
     @staticmethod
     def Init():
-        dlst = adbutils.adb.device_list()
-        os.system('python -m uiautomator2 init')
+        from initialize import connect
+        connect()
 
     def Connect(self, address=None):
         lst = adbutils.adb.device_list()
