@@ -20,6 +20,12 @@ class PCRelement:
     def __iter__(self):
         return (self.x, self.y).__iter__()
 
+    def __getitem__(self, item):
+        if item == 0:
+            return self.x
+        elif item == 1:
+            return self.y
+
     def __repr__(self):
         s1 = f"({self.x},{self.y})"
         s2 = ""
