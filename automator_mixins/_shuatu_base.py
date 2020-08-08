@@ -20,7 +20,7 @@ class ShuatuBaseMixin(ToolsMixin):
     def sw_init(self):
         self.switch = 0
 
-    def saodangzuobiao(self, x, y, times, auto_tili=False):
+    def zhandouzuobiao(self, x, y, times, auto_tili=False):
         pass
 
     def shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数

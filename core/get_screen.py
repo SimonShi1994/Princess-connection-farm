@@ -59,7 +59,7 @@ class ReceiveFromMinicap:
                                          on_close=self.on_close,
                                          on_error=self.on_error)
         self.receive_thread: Optional[threading.Thread] = None
-        self.good_thread: Optional[threading.Thread] = None
+        self.ws_stop = 0
 
     def start(self):
         # 开启debug
@@ -68,23 +68,36 @@ class ReceiveFromMinicap:
             raise Exception("请先建立与device的连接！")
 
         def run():
-            while True:
+            while not self.ws_stop:
                 try:
+                    if debug:
+                        print("截图线程开启！")
                     self.ws.run_forever(ping_interval=30, ping_timeout=10)
                 except Exception as e:
                     if debug:
+                        print("截图线程出现问题！")
+                    if debug:
                         print("run minicap", type(e), e)
+                    if self.ws_stop:
+                        return
+                    self.ws.close()
+                    self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
+                                                     # 这三个回调函数见下面
+                                                     on_message=self.on_message,
+                                                     on_close=self.on_close,
+                                                     on_error=self.on_error)
+                    time.sleep(1)
+            if debug:
+                print("截图异步线程已经关闭！")
 
         if self.receive_thread is None:
             self.receive_thread = threading.Thread(target=run, name="minicap_thread", daemon=True)
             self.receive_thread.start()
 
     def stop(self):
-        if self.receive_thread is not None:
-            try:
-                stop_thread(self.receive_thread)
-            except:
-                pass
+        self.ws_stop = 1
+        self.ws.close()
+        self.receive_thread = None
 
     # 接收信息回调函数，此处message为接收的信息
     def on_message(self, message):
@@ -100,7 +113,8 @@ class ReceiveFromMinicap:
 
     # 错误回调函数
     def on_error(self, error):
-        print(error)
+        if debug:
+            print(error)
 
     # 关闭ws的回调函数
     def on_close(self):
