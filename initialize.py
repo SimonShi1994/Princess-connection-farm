@@ -185,7 +185,7 @@ def execute(continue_=False, max_retry=3):
             a = Automator(address)
             # 关闭PCR
             a.d.app_stop("com.bilibili.priconne")
-            queue.put(address)
+            a.receive_minicap.stop()
         # 退出adb
         os.system('cd adb & adb kill-server')
         pcr_log('admin').write_log(level='info', message='任务全部完成')
