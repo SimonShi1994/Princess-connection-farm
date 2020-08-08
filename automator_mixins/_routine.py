@@ -176,7 +176,7 @@ class RoutineMixin(ShuatuBaseMixin):
         if "cur" in var:
             self.log.write_log("info", f"断点恢复：已经购买了{var['cur']}次玛娜，即将购买剩余{times - var['cur']}次。")
         else:
-            var.setdefault("cur", 1)
+            var.setdefault("cur", 0)
         while var["cur"] < times:
             if mode == 1:
                 BuyTen()
