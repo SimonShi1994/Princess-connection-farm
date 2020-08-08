@@ -410,14 +410,15 @@ class BaseMixin:
             attempt += 1
         return True if inf_attempt or attempt < retry else False
 
-    def guochang(self, screen_shot, template_paths, suiji=1, method=cv2.TM_CCOEFF_NORMED):
+    def guochang(self, screen_shot, template_paths, suiji=1):
         # suji标号置1, 表示未找到时将点击左上角, 置0则不点击
         # 输入截图, 模板list, 得到下一次操作
+        # 2020-08-08 建议弃用该函数。
 
         self.dWidth, self.dHeight = self.d.window_size()
         screen_shot = screen_shot
         template_paths = template_paths
-        active_path = UIMatcher.imgs_where(screen_shot, template_paths, 0.84, None, method)
+        active_path = UIMatcher.imgs_where(screen_shot, template_paths)
         if active_path:
             # print(active_path)
             if 'img/caidan_tiaoguo.jpg' in active_path:
