@@ -55,7 +55,7 @@
 
 需要 Python版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）
 
-需要执行指令安装依赖:
+需要执行指令安装依赖: (如果你对终端操作不熟悉，请参考[图文教程](https://github.com/SimonShi1994/Princess-connection-farm/blob/master/docs/tutorial.md))
 
 ```
 pip install -r requirements.txt
@@ -79,7 +79,7 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 1. 在main.py主功能体函数中定制自己需要的功能，不需要的用#号注释，或直接跳过本步骤
 2. 启动雷电模拟器，安装b服版公主连结，设置分辨率为540*960   **注意不是960 * 540**
 3. 启动雷电多开器，用复制模拟器功能 根据电脑性能酌情多开
-4. 然后在终端中输入
+4. 然后在终端中输入(如果你对终端操作不熟悉，请参考[图文教程](https://github.com/SimonShi1994/Princess-connection-farm/blob/master/docs/tutorial.md))
 
 ```
 cd main.py文件所在的目录（自己复制）
