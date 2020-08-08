@@ -45,18 +45,8 @@ class BaseMixin:
 
         # fastscreencap
         if fast_screencut:
-            # Switch:
-            # -1 出错
-            # 0 关闭
-            # 1 启动中
-            # 2 待续
-            # 3 截图中
-            # 4 截图完毕
-            self.fast_screencut_switch = 0
             self.lport: Optional[int] = None
-            self.fast_screencut_cache = dict()
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
-            self.receive_thread: Optional[ReceiveFromMinicap.ReceiveThread] = None
 
     def init_device(self, address):
         """
@@ -420,14 +410,15 @@ class BaseMixin:
             attempt += 1
         return True if inf_attempt or attempt < retry else False
 
-    def guochang(self, screen_shot, template_paths, suiji=1, method=cv2.TM_CCOEFF_NORMED):
+    def guochang(self, screen_shot, template_paths, suiji=1):
         # suji标号置1, 表示未找到时将点击左上角, 置0则不点击
         # 输入截图, 模板list, 得到下一次操作
+        # 2020-08-08 建议弃用该函数。
 
         self.dWidth, self.dHeight = self.d.window_size()
         screen_shot = screen_shot
         template_paths = template_paths
-        active_path = UIMatcher.imgs_where(screen_shot, template_paths, method)
+        active_path = UIMatcher.imgs_where(screen_shot, template_paths)
         if active_path:
             # print(active_path)
             if 'img/caidan_tiaoguo.jpg' in active_path:

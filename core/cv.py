@@ -225,7 +225,7 @@ class UIMatcher:
             return False
 
     @staticmethod
-    def imgs_where(screen, template_paths, threshold=0.84, method=cv2.TM_CCOEFF_NORMED):
+    def imgs_where(screen, template_paths, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
         """
         依次检测template_paths中模板是否存在，返回存在图片字典
         :param screen:
@@ -235,7 +235,7 @@ class UIMatcher:
         """
         return_dic = {}
         for template_path in template_paths:
-            pos = UIMatcher.img_where(screen, template_path, threshold, method)
+            pos = UIMatcher.img_where(screen, template_path, threshold, at, method)
             if pos:
                 return_dic[template_path] = pos
         return return_dic
