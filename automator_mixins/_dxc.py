@@ -106,8 +106,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     pcr_log(self.account).write_log(level='info', message='%s今天已经打过地下城' % self.account)
                     return False
                 if self.dxc_switch == 0:
-                    if self.is_exists('img/ok.bmp'):
-                        self.click(592, 369)
+                    self.lock_no_img('img/ok.bmp', elseclick=[(592, 369)])
+                    # if self.is_exists('img/ok.bmp'):
+                    #    self.click(592, 369)
                     # self.lock_img('img/ok.bmp', ifclick=[(592, 369)], elseclick=[(592, 369)])
                     # 锁定OK
                 else:
@@ -138,7 +139,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             while True:
                 time.sleep(0.5)
                 if self.is_exists('img/chetui.jpg'):
-                    self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360)])
+                    self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)])
                     # 锁定挑战和第一层
                     break
             while True:
@@ -157,7 +158,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 time.sleep(0.8)
                 self.click(100, 173, post_delay=1)  # 支援的第一个人
                 self.click(213, 208)  # 以防万一
-            if self.is_exists('img/notzhandoukaishi.bmp', threshold=0.98):
+            if self.is_exists('img/notzhandoukaishi.bmp', threshold=0.97):
                 # 逻辑顺序改变
                 # 当无法选支援一二位时，将会退出地下城
                 pcr_log(self.account).write_log(level='info', message="%s无法出击!" % self.account)
@@ -169,6 +170,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             while True:
                 # time.sleep(0.5)
                 # screen_shot_ = self.getscreen()
+                if self.is_exists('img/notzhandoukaishi.bmp', threshold=0.97):
+                    # 逻辑顺序改变
+                    # 当无法选支援一二位时，将会退出地下城
+                    pcr_log(self.account).write_log(level='info', message="%s无法出击!" % self.account)
+                    break
                 self.lock_img('img/ok.bmp', ifclick=[(588, 480)], elseclick=[(833, 470)], ifbefore=2, ifdelay=1)
                 # if UIMatcher.img_where(screen_shot_, 'img/zhandoukaishi.jpg'):
                 #    time.sleep(1.5)
@@ -190,10 +196,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], retry=6)
                 self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], retry=6)
             while skip is False:  # 结束战斗返回
+                time.sleep(1)
                 if self.is_exists('img/shanghaibaogao.jpg'):
-                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)], retry=10)
-                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)], retry=10)
+                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)], retry=8)
+                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)], retry=8)
                     break
+                else:
+                    if self.is_exists('img/chetui.jpg'):
+                        break
                 # time.sleep(0.5)
                 # screen_shot_ = self.getscreen()
                 # if UIMatcher.img_where(screen_shot_, 'img/shanghaibaogao.jpg'):

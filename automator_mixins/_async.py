@@ -116,7 +116,7 @@ class AsyncMixin(BaseMixin):
         """
         global screenshot
         while Multithreading({}).is_stopped():
-            print(Multithreading({}).is_stopped())
+            # print(Multithreading({}).is_stopped())
             cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
             if cpu_occupy >= 80:
                 # print('ka')
@@ -192,11 +192,8 @@ class AsyncMixin(BaseMixin):
 
     def fix_reboot(self, back_home=True):
         # 重启逻辑：重启应用，重启异步线程
-        self.stop_th()
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
-        self.start_th()
-        self.start_async()
         if back_home:
             self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
