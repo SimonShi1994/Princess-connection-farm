@@ -47,9 +47,9 @@ def runmain(params):
             gevent.spawn(a.sw_init())
         ])
         """
-        acclog.Account_Login(account)
         a.sw_init()
         a.login_auth(account, password)
+        acclog.Account_Login(account)
 
         # 日志记录
         # 还是日志

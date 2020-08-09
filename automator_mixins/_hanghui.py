@@ -18,21 +18,25 @@ class HanghuiMixin(ToolsMixin):
         """
         self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         # self.d.click(693, 436)
-        self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], ifbefore=1, elsedelay=1)  # 锁定进入行会
+        self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=2)  # 锁定进入行会
         while True:  # 6-17修改：减少opencv使用量提高稳定性
             if self.is_exists('img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
+                self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
                 for _ in range(5):
                     time.sleep(0.8)
                     if self.is_exists('img/juanzeng.jpg', threshold=0.90):
                         screen_shot = self.getscreen()
-                        self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
+                        self.click_img(screen_shot, 'img/juanzeng.jpg')
                         # 点击max 后 ok
-                        self.lock_no_img('img/max.jpg', elseclick=[(644, 385), (552, 470)], retry=8)
+                        time.sleep(2)
+                        self.lock_no_img('img/max.jpg', elseclick=[(644, 385), (552, 470)], elsedelay=1, retry=20)
+                        if self.is_exists('img/ok.bmp', threshold=0.90):
+                            self.lock_no_img('img/ok.bmp', elseclick=[(494, 368)], retry=4)
                         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(536, 361)], retry=3)
                         self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
                     else:
-                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
+                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], elsedelay=1, retry=1)
                     # self.lock_img('img/juanzengqingqiu.jpg', ifclick=[(367, 39)], retry=2)
                     # screen_shot = self.getscreen()
                     # if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):
@@ -158,5 +162,5 @@ class HanghuiMixin(ToolsMixin):
             # 点赞 职务降序（默认） 第二/第三个人，副会长
         self.click(479, 381)
         screen_shot_ = self.getscreen()
-        self.guochang(screen_shot_, ['img/ok.bmp'], suiji=0)
+        self.click_img(screen_shot_, 'img/ok.bmp')
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页

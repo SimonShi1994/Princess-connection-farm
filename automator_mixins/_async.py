@@ -6,10 +6,9 @@ import psutil
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from pcr_config import bad_connecting_time, async_screenshot_freq
-from ._base import BaseMixin
+from ._base import BaseMixin, Multithreading
 
 screenshot = None
-th_sw = 0
 block_sw = 0
 
 
@@ -22,9 +21,8 @@ class AsyncMixin(BaseMixin):
     async def juqingtiaoguo(self):
         # 异步跳过教程 By：CyiceK
         # 测试
-        global th_sw
         global screenshot
-        while th_sw == 0:
+        while Multithreading({}).is_stopped():
             cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
             if screenshot is None:
                 time.sleep(0.8)
@@ -51,9 +49,9 @@ class AsyncMixin(BaseMixin):
                     self.click(480, 505, pre_delay=0.5, post_delay=1)
                     if self.is_exists('img/dixiacheng.jpg', at=(837, 92, 915, 140)):
                         self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=1, retry=10)
+                        raise Exception("地下城吃塔币跳过完成，重启")
             except Exception as e:
                 pcr_log(self.account).write_log(level='error', message='异步线程终止并检测出异常{}'.format(e))
-                th_sw = 1
                 # sys.exit()
                 break
 
@@ -61,9 +59,8 @@ class AsyncMixin(BaseMixin):
         # 异步判断异常 By：CyiceK
         # 测试
         _time = 0
-        global th_sw
         global screenshot
-        while th_sw == 0:
+        while Multithreading({}).is_stopped():
             if screenshot is None:
                 time.sleep(0.8)
                 continue
@@ -108,7 +105,6 @@ class AsyncMixin(BaseMixin):
 
             except Exception as e:
                     pcr_log(self.account).write_log(level='error', message='异步线程终止并检测出异常{}'.format(e))
-                    th_sw = 1
 
                 # sys.exit()
                 # break
@@ -119,7 +115,8 @@ class AsyncMixin(BaseMixin):
         异步‘眨眼’截图
         """
         global screenshot
-        while th_sw == 0:
+        while Multithreading({}).is_stopped():
+            print(Multithreading({}).is_stopped())
             cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
             if cpu_occupy >= 80:
                 # print('ka')
@@ -144,7 +141,7 @@ class AsyncMixin(BaseMixin):
         time.sleep(1)
         # print('c', UIMatcher.img_similar(screenshot))
         _cout = 0
-        while th_sw == 0:
+        while Multithreading({}).is_stopped():
             time.sleep(5)
             # print('c', UIMatcher.img_similar(screenshot))
             # print(UIMatcher.img_similar(screenshot))
@@ -168,7 +165,7 @@ class AsyncMixin(BaseMixin):
         :return:
         """
         global block_sw
-        while th_sw == 0:
+        while Multithreading({}).is_stopped():
             keyboard.wait('shift+p')
             block_sw = 1
             print("下一步，脚本暂停,按shift+p恢复")
@@ -179,12 +176,10 @@ class AsyncMixin(BaseMixin):
             time.sleep(0.8)
 
     def start_th(self):
-        global th_sw
-        th_sw = 0
+        Multithreading({}).resume()
 
     def stop_th(self):
-        global th_sw
-        th_sw = 1
+        Multithreading({}).pause()
         self.receive_minicap.stop()
 
     def start_async(self):

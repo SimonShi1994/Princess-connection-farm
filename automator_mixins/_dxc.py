@@ -71,7 +71,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 else:
                     dixiacheng_floor_times = -1
                     break
-                break
             except Exception as result:
                 pcr_log(self.account).write_log(level='warning', message='1-检测出异常{},重试'.format(result))
                 tmp_cout = tmp_cout + 1
@@ -91,13 +90,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 tmp_cout = tmp_cout + 1
         # 下面这段因为调试而注释了，实际使用时要加上
         while self.dxc_switch == 1:
+            # print(dixiacheng_times, ' ', dixiacheng_floor_times)
+            if dixiacheng_times == -1 and dixiacheng_floor_times == -1:
+                pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
+                pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
+                self.dixiacheng(skip)
+                return False
             try:
-                # print(dixiacheng_times, ' ', dixiacheng_floor_times)
-                if dixiacheng_times == -1 and dixiacheng_floor_times == -1:
-                    pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
-                    pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
-                    self.dixiacheng(skip)
-                    break
                 if self.is_exists('img/yunhai.bmp') and dixiacheng_times == 1:
                     self.dxc_switch = 0
                     # 识别到后满足条件，开锁
@@ -105,7 +104,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 elif self.is_exists('img/yunhai.bmp') and dixiacheng_times == 0:
                     self.dxc_switch = 1
                     pcr_log(self.account).write_log(level='info', message='%s今天已经打过地下城' % self.account)
-                    break
+                    return False
                 if self.dxc_switch == 0:
                     if self.is_exists('img/ok.bmp'):
                         self.click(592, 369)
@@ -115,14 +114,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     pcr_log(self.account).write_log(level='info', message='>>>今天无次数')
                     # LOG().Account_undergroundcity(self.account)
                     self.dxc_switch = 1
-                    break
+                    return False
                 self.d.click(1, 1)
                 # 这里防止卡可可萝
             except Exception as error:
                 pcr_log(self.account).write_log(level='warning', message='3-检测出异常{}'.format(error))
                 pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！')
                 self.dixiacheng(skip)
-                break
+                return False
             try:
                 if self.is_exists('img/chetui.jpg') and dixiacheng_times <= 1:
                     # print('>>>', dixiacheng_times)
@@ -131,7 +130,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
                 pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
                 self.dixiacheng(skip)
-                break
+                return False
 
         while self.dxc_switch == 0:
             # 防止一进去就是塔币教程
@@ -148,12 +147,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     time.sleep(1)
                     # self.click(100, 173)  # 第一个人
                     screen_shot = self.getscreen()
-                    self.guochang(screen_shot, ['img/zhiyuan.jpg'], suiji=0)
+                    self.click_img(screen_shot, 'img/zhiyuan.jpg', pre_delay=2)
                     break
 
             if self.is_exists('img/dengjixianzhi.jpg'):
                 self.click(213, 208, post_delay=1)  # 如果等级不足，就支援的第二个人
+                self.click(100, 173, post_delay=1)  # 支援的第一个人
             else:
+                time.sleep(0.8)
                 self.click(100, 173, post_delay=1)  # 支援的第一个人
                 self.click(213, 208)  # 以防万一
             if self.is_exists('img/notzhandoukaishi.bmp', threshold=0.98):
@@ -190,8 +191,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], retry=6)
             while skip is False:  # 结束战斗返回
                 if self.is_exists('img/shanghaibaogao.jpg'):
-                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 460)], retry=5)
-                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 460)], retry=5)
+                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)], retry=10)
+                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)], retry=10)
                     break
                 # time.sleep(0.5)
                 # screen_shot_ = self.getscreen()
@@ -232,7 +233,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     break
                 else:
                     self.click(1, 1, pre_delay=1)  # 取消显示结算动画
-                break
             break
         while True:  # 首页锁定
             if self.is_exists('img/liwu.bmp', at=(891, 413, 930, 452)):
@@ -240,12 +240,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click(131, 533, post_delay=1)  # 保证回到首页
             # 防卡死
             screen_shot_ = self.getscreen()
-            self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'], suiji=0)
+            # click_img 暂且无法传入list
+            self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'])
             screen_shot = self.getscreen()
-            self.guochang(screen_shot, ['img/chetui.jpg'], suiji=0)
+            self.click_img(screen_shot, 'img/chetui.jpg')
             time.sleep(2)
             screen_shot = self.getscreen()
-            self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
+            self.click_img(screen_shot, 'img/ok.bmp')
 
     def dixiacheng(self, skip):
         """

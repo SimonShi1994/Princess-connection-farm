@@ -313,9 +313,10 @@ class BaseMixin:
         # 凄凄惨惨的替代eval这类危险的函数
         pass
 
-    def c_async(self, a, account, fun, sync=False):
+    def c_async(self, a, account, fun, sync=False, async_sexitflag=False):
         _async_infodic = {'a': a, 'account': account, 'fun': fun,
-                          '"pack_Thread-" + str(account)': "pack_Thread-" + str(account)}
+                          '"pack_Thread-" + str(account)': "pack_Thread-" + str(account),
+                          'async_sexitflag': async_sexitflag}
         th = Multithreading(kwargs=_async_infodic)
         # print(threading.currentThread().ident)
         # id, name
@@ -707,28 +708,36 @@ class Multithreading(threading.Thread, BaseMixin):
     # 2020.7.11 已封装
     # 2020.7.15 改装为进程池
     # 2020.7.16 我又改了回去
+    # 2020.8.9 修复了线程泄漏
 
     def __init__(self, kwargs):
-        threading.Thread.__init__(self)
-        self.th_sw = 0
-        self.exitFlag = 0
-        # print(kwargs)
-        # kwargs = kwargs['kwargs']
-        self.th_id = kwargs['account']
-        self.th_name = kwargs['"pack_Thread-" + str(account)']
-        self.a = kwargs['a']
-        self.fun = kwargs['fun']
-        self.account = kwargs['account']
         self._stop_event = threading.Event()
-        pass
+        if kwargs:
+            threading.Thread.__init__(self)
+            self.th_sw = 0
+            self.exitFlag = 0
+            # print(kwargs)
+            # kwargs = kwargs['kwargs']
+            self.th_id = kwargs['account']
+            self.th_name = kwargs['"pack_Thread-" + str(account)']
+            self.a = kwargs['a']
+            self.fun = kwargs['fun']
+            self.account = kwargs['account']
+        else:
+            # self._stop_event.set()
+            pass
 
     def run(self):
+        self._stop_event.wait()
         self.run_func(self.th_name, self.a, self.fun)
 
-    def stop(self):
-        self._stop_event.set()
+    def pause(self):
+        self._stop_event.clear()  # 设置为False, 让线程阻塞
 
-    def stopped(self):
+    def resume(self):
+        self._stop_event.set()  # 设置为True, 让线程停止阻塞
+
+    def is_stopped(self):
         return self._stop_event.is_set()
 
     pass
