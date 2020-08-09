@@ -52,7 +52,7 @@ MAIN_BTN = {
     # 主页
     "zhuye": p(131, 533, name="我的主页"),
     # 行会按钮 
-    "hanghui": p(693, 430, name="行会"),
+    "hanghui": p(693, 430, img="img/home/hanghui_btn.bmp", at=(677, 419, 702, 441), name="行会"),
     # 角色
     "juese": p(213, 507),
     # 剧情
@@ -139,7 +139,26 @@ HANGHUI_BTN = {
     "chengyuan": p(241, 350),  # 点击成员
     "juanzengqingqiu": p(367, 39),
     "juanzeng": p(644, 385),
-
+    # 返回键隔壁的“行会”字样
+    "hanghui_title": p(img="img/hanghui.bmp", at=(63, 12, 123, 45)),
+    # 成员信息
+    "chengyuanxinxi": p(237,353,img="img/hanghui/chengyuanxinxi.bmp", at=(203, 339, 272, 359)),
+    # 成员信息界面的“成员列表”按钮
+    "chengyuanliebiao": p(img='img/chengyuanliebiao.bmp',at=(329, 15, 450, 42)),
+    # 筛选条件
+    "shaixuantiaojian": p(793,84,img="img/hanghui/shaixuantiaojian.bmp",at=(782,80,810,103)),
+    # 筛选条件里的分类
+    "fenlei": p(img="img/hanghui/fenlei.bmp",at=(454,132,501,158)),
+    # 全角色战力"确认"蓝点
+    "quanjuesezhanli": p(285,299,img="img/hanghui/quanjuesezhanli_true.bmp",at=(265,280,310,326)),
+    # 降序按钮
+    "jiangxu": p(868,92,img="img/hanghui/jiangxu.bmp",at=(843,82,876,102)),
+    # 成员管理(第一个)
+    "chengyuanguanli_first": p(727,191,img="img/hanghui/chengyuanguanli.bmp",at=(701,185,768,211)),
+    # 开除
+    "kaichu": p(647,170,img="img/hanghui/kaichu.bmp",at=(627,161,668,181)),
+    # 行会确认
+    "hanghui_ok": p(605,365,img="img/hanghui/hanghui_ok.bmp",at=(554,353,630,382)),
 }
 FIGHT_BTN = {
     "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(895, 404, 925, 441)),
