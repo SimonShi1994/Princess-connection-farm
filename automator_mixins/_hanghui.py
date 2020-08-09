@@ -1,5 +1,7 @@
 import time
 
+from core.constant import MAIN_BTN, HANGHUI_BTN
+
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from ._tools import ToolsMixin
@@ -62,16 +64,23 @@ class HanghuiMixin(ToolsMixin):
         self.find_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
 
     def tichuhanghui(self):  # 踢出行会
-        self.click(693, 430)  # 点击行会
-        self.lock_img('img/zhiyuansheding.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
-        self.click(241, 350)  # 点击成员
-        self.lock_img('img/chengyuanliebiao.bmp', ifclick=[(720, 97)], ifdelay=1)  # 点击排序按钮
-        self.lock_img('img/ok.bmp', ifclick=[(289, 303), (587, 372)], ifdelay=1)  # 按战力降序 这里可以加一步调降序
-        self.lock_img('img/chengyuanliebiao.bmp', ifclick=[(737, 200)], ifdelay=1)  # 点第一个人
-        self.lock_img('img/jiaojie.bmp', ifclick=[(651, 174)], ifdelay=1)  # 踢出行会
-        self.lock_img('img/ok.bmp', ifclick=[(590, 369)], ifdelay=1)  # 确认踢出
-        self.lock_img('img/chengyuanliebiao.bmp', elseclick=[(1, 1)], alldelay=1)  # 锁定成员列表
-        self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
+        # 进入
+        self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["hanghui_title"])
+        # 管理界面
+        self.click_btn(HANGHUI_BTN["chengyuanxinxi"], elsedelay=1, until_appear=HANGHUI_BTN["shaixuantiaojian"])
+        # 筛选全角色战力
+        self.click_btn(HANGHUI_BTN["shaixuantiaojian"],elsedelay=1,until_appear=HANGHUI_BTN["fenlei"])
+        self.click_btn(HANGHUI_BTN["quanjuesezhanli"],elsedelay=1,until_appear=HANGHUI_BTN["quanjuesezhanli"])
+        self.click_btn(HANGHUI_BTN["hanghui_ok"],elsedelay=1)
+        # 降序排列
+        self.lock_img(HANGHUI_BTN["jiangxu"],elseclick=HANGHUI_BTN["jiangxu"])
+        # 踢出第一
+        self.click_btn(HANGHUI_BTN["chengyuanguanli_first"],elsedelay=1,until_appear=HANGHUI_BTN["kaichu"])
+        self.click_btn(HANGHUI_BTN["kaichu"],elsedelay=1,until_appear=HANGHUI_BTN["hanghui_ok"])
+        self.click_btn(HANGHUI_BTN["hanghui_ok"])
+        # 返回
+        self.lock_home()
 
     def yaoqinghanghui(self, inviteUID):  # 邀请行会
         self.click(693, 430)  # 点击行会
