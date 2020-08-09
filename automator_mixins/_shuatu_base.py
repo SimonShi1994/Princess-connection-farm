@@ -1,12 +1,13 @@
 import time
 
-from automator_mixins._tools import ToolsMixin
-from core.constant import MAOXIAN_BTN, NORMAL_ID, MAIN_BTN, HARD_ID
+from automator_mixins._fight_base import FightBaseMixin
+from core.MoveRecord import movevar
+from core.constant import MAOXIAN_BTN, NORMAL_ID, MAIN_BTN, HARD_ID, PCRelement, FIGHT_BTN, DXC_ELEMENT, SHOP_BTN
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 
 
-class ShuatuBaseMixin(ToolsMixin):
+class ShuatuBaseMixin(FightBaseMixin):
     """
     刷图基础插片
     包含刷图基本操作和基本变量存储
@@ -20,8 +21,240 @@ class ShuatuBaseMixin(ToolsMixin):
     def sw_init(self):
         self.switch = 0
 
-    def zhandouzuobiao(self, x, y, times, auto_tili=False):
-        pass
+    def zhuxian_kkr(self):
+        """
+        处理跳脸
+        :return:
+        """
+        time.sleep(2)  # 等妈出现
+        if self.is_exists(DXC_ELEMENT["dxc_kkr"]):
+            self.chulijiaocheng(turnback=None)
+            self.enter_zhuxian()
+        self.lock_img(MAOXIAN_BTN["ditu"], elseclick=(80, 16), retry=5)  # 避免奇怪对话框
+
+    def zhandouzuobiao(self, x, y, times, drag=None, use_saodang="auto", buy_tili=0, xianding=False,
+                       bianzu=0, duiwu=0, auto=1, speed=1, fastmode=True, fail_retry=False, var={}):
+        """
+        战斗坐标，新刷图函数（手刷+扫荡结合）
+        内置剧情跳过、奇怪对话框跳过功能
+        !! 警告：手刷模式下，限定商店将被自动忽略。
+        !! 警告：手刷Hard图会自动购买额外次数！
+        :param x: 点击图的x坐标
+        :param y: 点击图的y坐标
+        :param times: 刷图/手刷次数
+        :param drag: 是否进行拖动校准
+            设置为None时，点击坐标前不另外拖动给。
+            "left"：进行左移动校准
+            "right"：进行右移动校准
+        :param use_saodang: 是否使用扫荡券
+            True: 使用扫荡券，扫荡不成功则跳过
+            False: 手打
+            "auto“ (默认) 如果扫荡失败，则手打
+        :param buy_tili: 是否自动购买体力。0不买，n表示最多买n次体力
+        :param xianding: 是否买空限定商店
+        :param auto: 是否开启自动
+        :param speed: 是否开启加速
+        :param bianzu: 使用编组号,为0时不切换，为-1时使用前五个角色
+        :param duiwu: 使用队伍号，为0时不切换，为-1时使用前五个角色
+        :param fastmode: 快速手刷模式：不退出重进而是通过“使用同一队伍再次挑战”来加速流程
+        :param fail_retry: 失败是否重试。设置为True时手刷关卡，即使打败了也会重新再打。
+                    重打的次数仍然算进总次数中。
+        :return:
+            -1: 出现未知的错误（场景判断失败）
+            -2: 无法扫荡
+            >=0 整数：成功战胜的次数（非扫荡时）
+            times：扫荡成功至少一次（扫荡时）
+        """
+        mv = movevar(var)
+        var.setdefault("cur_tili", 0)  # 已经购买体力的次数
+        var.setdefault("cur_times", 0)  # 已经战斗的次数
+        var.setdefault("cur_win", 0)  # 已经胜利的次数
+
+        def clear():
+            del var["cur_tili"]
+            del var["cur_times"]
+            del var["cur_win"]
+
+        def tili():
+            if self.is_exists(MAOXIAN_BTN["no_tili"]):
+                if var["cur_tili"] < buy_tili:
+                    var["cur_tili"] += 1
+                    self.log.write_log("info", f"体力不足，购买体力：{var['cur_tili']}/{buy_tili}！")
+                    self.click_btn(MAOXIAN_BTN["buytili_ok"])
+                    self.click_btn(MAOXIAN_BTN["buytili_ok"], wait_self_before=True)
+                    click_ok = self.click_btn(MAOXIAN_BTN["buytili_ok2"], is_raise=False, wait_self_before=True)
+                    if not click_ok:
+                        self.log.write_log("warning", "购买体力可能失败。")
+                    mv.save()
+                    return click_ok
+                else:
+                    self.click_btn(MAOXIAN_BTN["buytili_quxiao"])
+                    return False
+            else:
+                return True
+
+        def buy():
+            if not xianding:
+                return False
+            time.sleep(1.5)  # 等出现
+            if self.is_exists(MAOXIAN_BTN["xianding"]):
+                self.click_btn(MAOXIAN_BTN["xianding"])
+                self.wait_for_loading(delay=2)
+                self.click(388, 148, post_delay=0.8)
+                self.click(558, 149, post_delay=0.8)
+                self.click(729, 149, post_delay=0.8)
+                self.click(900, 148, post_delay=0.8)
+                self.d.drag(613, 392, 613, 140, duration=0.1)
+                self.click(388, 176, post_delay=0.8)
+                self.click(559, 175, post_delay=0.8)
+                self.click(729, 177, post_delay=0.8)
+                self.click(899, 176, post_delay=0.8)
+                # 点击购买
+                self.click(794, 438)
+                # 购买确认
+                self.click_btn(SHOP_BTN["xianding_ok"], wait_self_before=True)
+                for _ in range(5):
+                    self.click(24, 84)
+                # 立即关闭
+                self.click_btn(SHOP_BTN["lijiguanbi"], until_appear=SHOP_BTN["querenchongzhi"])
+                # 确认重制
+                self.click_btn(SHOP_BTN["querenchongzhi"])
+                # 返回
+                for _ in range(5):
+                    self.click(24, 84)
+                self.click_btn(SHOP_BTN["fanhui"])
+                self.wait_for_loading(delay=2)
+            return True
+
+        def shoushua(times):
+            win_cnt = 0
+            self.click_btn(FIGHT_BTN["tiaozhan2"])
+            # 换队
+            if bianzu == -1 and duiwu == -1:
+                self.set_fight_team_order()
+            elif bianzu != 0 and duiwu != 0:
+                self.set_fight_team(bianzu, duiwu)
+            self.click_btn(FIGHT_BTN["zhandoukaishi"])
+            while True:
+                # 刷满times次
+                self.wait_for_loading(delay=2)
+                self.set_fight_auto(auto, screen=self.last_screen)
+                self.set_fight_speed(speed, max_level=1, screen=self.last_screen)
+                mode = 0
+                while mode == 0:
+                    # 等待战斗结束
+                    mode = self.get_fight_state(max_retry=15, delay=3)
+                    time.sleep(3)
+                if mode == -1:
+                    raise Exception("战斗场景识别失败")
+                elif mode == 1:
+                    # 点击下一步：
+                    var["cur_win"] += 1
+                    var["cur_times"] += 1
+                    win_cnt += 1
+                    mv.save()
+                    if win_cnt < times:
+                        # 点击”再次挑战“
+                        if not self.click_btn(MAOXIAN_BTN["zaicitiaozhan"], is_raise=False):
+                            break
+                        if tili():
+                            self.click_btn(MAOXIAN_BTN["chongshi_ok"])
+                            # 点击了重试，继续刷！
+                            continue
+                        else:
+                            # 不刷了，退出
+                            pass
+                    # 结束挑战
+                    self.click_btn(FIGHT_BTN["xiayibu2"], wait_self_before=True)
+                    self.wait_for_loading(delay=1)
+                    self.zhuxian_kkr()  # 跳过剧情，跳过对话框
+                    return 1
+                elif mode == 2:
+                    # 前往主线关卡
+                    var["cur_times"] += 1
+                    mv.save()
+                    self.click(FIGHT_BTN["qwzxgq"], wait_self_before=True)
+                    self.wait_for_loading(delay=1)
+                    return 2
+
+        def saodang(times):
+            # 使用扫荡券
+            sc = self.getscreen()
+            p0 = self.img_prob(MAOXIAN_BTN["saodang_off"], screen=sc, method="sq")
+            p1 = self.img_prob(MAOXIAN_BTN["saodang_on"], screen=sc, method="sq")
+            if p1 > p0:
+                # 可以扫荡
+                for t in range(times):
+                    self.click(MAOXIAN_BTN["saodang_plus"])
+                click_ok = self.lock_img(MAOXIAN_BTN["saodang_ok"], elseclick=MAOXIAN_BTN["saodang_on"], elsedelay=5,
+                                         is_raise=False, retry=2)
+                if not click_ok or self.is_exists(MAOXIAN_BTN["no_cishu"], screen=self.last_screen):
+                    # 可能不可扫荡
+                    for _ in range(5):
+                        self.click(45, 32)  # 瞎点点空一切对话框
+                    self.click_btn(MAOXIAN_BTN["quxiao"])
+                    return 0
+                self.click_btn(MAOXIAN_BTN["saodang_ok"])
+                self.lock_img([MAOXIAN_BTN["saodang_tiaoguo"], MAOXIAN_BTN["saodang_ok2"]])
+                self.click_btn(MAOXIAN_BTN["saodang_tiaoguo"])
+                self.click_btn(MAOXIAN_BTN["saodang_ok2"], wait_self_before=True)
+                buy()
+                self.click_btn(MAOXIAN_BTN["quxiao"])
+                return 1
+            else:
+                # 不可扫荡
+                self.click_btn(MAOXIAN_BTN["quxiao"])
+                return 0
+
+        def enter():
+            btn = PCRelement(x, y)
+            if drag == "left":
+                self.Drag_Left()
+            elif drag == "right":
+                self.Drag_Right()
+            self.click_btn(btn, until_appear=FIGHT_BTN["xuanguan_quxiao"])
+
+        enter()
+        stars = self.get_upperright_stars()
+        if use_saodang in ["auto", True] and stars < 3:
+            if use_saodang == "auto":
+                use_saodang = False
+            else:
+                return -2
+        if use_saodang in ["auto", True]:
+            state = saodang(times)
+            if state == 1:
+                # 扫荡成功
+                clear()
+                return times
+            elif use_saodang == "auto":
+                # 改手刷
+                use_saodang = False
+            else:
+                clear()
+                return -2
+        if use_saodang is False:
+            while var["cur_times"] < times:
+                # 手刷
+                if fastmode:
+                    s = shoushua(times - var["cur_times"])
+                else:
+                    s = shoushua(1)
+                if s == 2:
+                    if not fail_retry:
+                        # 失败了不重试，结束
+                        r = var["cur_win"]
+                        clear()
+                        return r
+                if var["cur_times"] < times - 1:
+                    enter()  # 再次进入
+            r = var["cur_win"]
+            clear()
+            return r
+        else:
+            # 扫荡失败，还不是auto
+            clear()
+            return -2
 
     def shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数
         if self.switch == 0:
@@ -85,13 +318,12 @@ class ShuatuBaseMixin(ToolsMixin):
                 break
 
     def enter_zhuxian(self):
+        # Fix: 2020-08-09 By TheAutumnOfRice: 未解锁地下城也可以使用了。
         # 进入主线
         self.lock_home()
-        self.click(MAIN_BTN["maoxian"])
-        # 进入地图（此处写500，90是为了防止误触到关卡）
-        self.lock_img(MAIN_BTN["dxc"], ifclick=MAIN_BTN["zhuxian"], elseclick=MAIN_BTN["maoxian"], ifbefore=2)
-        # 判断是否进入地图
-        self.lock_img(MAOXIAN_BTN["ditu"], ifclick=MAOXIAN_BTN["normal_on"], elseclick=MAIN_BTN["zhuxian"], ifbefore=2)
+        self.click_btn(MAIN_BTN["maoxian"], until_appear=MAIN_BTN["zhuxian"])
+        # 进入地图
+        self.click_btn(MAIN_BTN["zhuxian"], wait_self_before=True, until_appear=MAOXIAN_BTN["ditu"])
 
     def enter_hard(self, max_retry=3):
         self.enter_zhuxian()

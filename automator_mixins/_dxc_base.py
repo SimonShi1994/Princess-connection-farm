@@ -21,7 +21,7 @@ class DXCBaseMixin(FightBaseMixin):
         处理跳脸
         :return:
         """
-        self.wait_for_stable()
+        time.sleep(2)  # 等妈出现
         if self.is_exists(DXC_ELEMENT["dxc_kkr"]):
             self.chulijiaocheng(turnback=None)
             if self.is_exists(DXC_ELEMENT["dxc_in_shop"]):
@@ -57,7 +57,7 @@ class DXCBaseMixin(FightBaseMixin):
         if not state:
             return -2
         # 点击挑战
-        self.click_btn(DXC_ELEMENT["tiaozhan"])
+        self.click_btn(FIGHT_BTN["tiaozhan"])
         # 换队
         if bianzu == -1 and duiwu == -1:
             self.set_fight_team_order()

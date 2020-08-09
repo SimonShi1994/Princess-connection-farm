@@ -2,7 +2,9 @@ import time
 
 import numpy as np
 
-from core.constant import FIGHT_BTN
+from core.constant import FIGHT_BTN, MAIN_BTN
+from core.cv import UIMatcher
+from pcr_config import debug
 from ._tools import ToolsMixin
 
 
@@ -12,7 +14,7 @@ class FightBaseMixin(ToolsMixin):
     包括与战斗相关的基本操作
     """
 
-    def get_fight_state(self, screen=None, max_retry=3) -> int:
+    def get_fight_state(self, screen=None, max_retry=3, delay=1) -> int:
         """
         获取战斗状态
         注：不适用竞技场的战斗！
@@ -31,12 +33,16 @@ class FightBaseMixin(ToolsMixin):
                 sc = screen
                 screen = None
             if self.is_exists(FIGHT_BTN["shbg"], screen=sc):
-                # 出现伤害报告，战斗结束
+                # 出现伤害报告，战斗结束 （地下城）
                 if self.is_exists(FIGHT_BTN["qwjsyl"], screen=sc):
                     # 前往角色一览：失败
                     return 2
                 elif self.is_exists(FIGHT_BTN["win"], screen=sc):
                     # 找到帽子：成功
+                    return 1
+                elif self.is_exists(FIGHT_BTN["xiayibu"], screen=sc):
+                    # 右下角有长的下一步，但是没找到帽子：点掉它
+                    self.click_btn(FIGHT_BTN["xiayibu"])
                     return 1
                 else:
                     time.sleep(1)
@@ -44,8 +50,15 @@ class FightBaseMixin(ToolsMixin):
             elif self.is_exists(FIGHT_BTN["menu"], screen=sc, threshold=0.95):
                 # 右上角有菜单，说明战斗还未结束
                 return 0
+            elif self.is_exists(FIGHT_BTN["xiayibu2"], screen=sc):
+                # 右下角短的下一步：说明战斗胜利
+                return 1
+            elif self.is_exists(MAIN_BTN["tiaoguo"], screen=sc):
+                # 检测到右上角跳过：点击 （羁绊剧情）
+                self.click(MAIN_BTN["tiaoguo"])
             else:
-                time.sleep(1)
+                self.click(471, 5)  # 避免奇怪的对话框
+                time.sleep(delay)
                 continue
         return -1
 
@@ -111,6 +124,7 @@ class FightBaseMixin(ToolsMixin):
                         speed = (speed + 1) % (max_level + 1)
                         self.click(FIGHT_BTN["speed_0"])
                     # 检查设置情况
+                    time.sleep(0.2)
                     speed = self.get_fight_speed()
                     if speed == -1:
                         return False
@@ -181,6 +195,7 @@ class FightBaseMixin(ToolsMixin):
                 if cur != auto:
                     self.click(FIGHT_BTN["auto_off"])
                     # 检查设置情况
+                    time.sleep(0.2)
                     cur = self.get_fight_auto()
                     if cur == -1:
                         return False
@@ -207,16 +222,22 @@ class FightBaseMixin(ToolsMixin):
         self.click(FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
         self.click(FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
 
-    def get_fight_current_member_count(self):
+    def get_fight_current_member_count(self, screen=None):
         """
         获取”当前的成员"的数量
         要求场景：处于”队伍编组“情况下。
         :return: int 0~5
         """
         count_live = 5
-        sc = self.getscreen()
-        for i in range(5):
-            if self.is_exists(FIGHT_BTN["empty"][i + 1], threshold=0.8, screen=sc):
+        if screen is None:
+            sc = self.getscreen()
+        else:
+            sc = screen
+        for i in range(1, 6):
+            cur = UIMatcher.img_cut(sc, FIGHT_BTN["empty"][i].at)
+            if debug:
+                print("std: ", i, cur.std())
+            if cur.std() <= 15:
                 count_live -= 1
         return count_live
 
@@ -240,3 +261,25 @@ class FightBaseMixin(ToolsMixin):
             self.click(FIGHT_BTN["empty"][1], post_delay=0.5)
         for i in range(5):
             self.click(FIGHT_BTN["first_five"][i + 1], post_delay=0.5)
+
+    def get_upperright_stars(self, screen=None):
+        """
+        获取右上角当前关卡的星星数
+        :param screen: 设置为None时，不另外截屏
+        :return: 0~3
+        """
+        if screen is None:
+            screen = self.getscreen()
+        fc = np.array([98, 228, 245])  # G B R:金色
+        bc = np.array([212, 171, 139])  # G B R:灰色
+        c = []
+        us = FIGHT_BTN["upperright_stars"]
+        for i in range(1, 4):
+            x = us[i].x
+            y = us[i].y
+            c += [screen[y, x]]
+        c = np.array(c)
+        tf = np.sqrt(((c - fc) ** 2)).sum(axis=1)
+        tb = np.sqrt(((c - bc) ** 2)).sum(axis=1)
+        t = tf < tb
+        return np.sum(t)
