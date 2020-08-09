@@ -14,6 +14,8 @@ class PCRelement:
         self.name = name
         self.img = img
         self.at = at
+        self.fc = None  # 进度条：前景色(R,G,B)
+        self.bc = None  # 进度条：背景色(R,G,B)
         for keys in kwargs:
             self.__setattr__(keys, kwargs[keys])
 
@@ -40,11 +42,11 @@ class PCRelement:
         return "%s%s%s%s" % (s1, s2, s3, s4)
 
 
-def p(x=None, y=None, name=None, img=None, at=None):
+def p(x=None, y=None, name=None, img=None, at=None, **kwargs):
     """
     快速创建一个PCRelement
     """
-    return PCRelement(x=x, y=y, name=name, img=img, at=at)
+    return PCRelement(x=x, y=y, name=name, img=img, at=at, **kwargs)
 
 
 # 主页面的按钮对象
@@ -62,7 +64,7 @@ MAIN_BTN = {
     # 地下城
     "dxc": p(874, 122, img="img/home/dxc.bmp", at=(848, 101, 898, 145)),
     # 主线关卡
-    "zhuxian": p(500, 90),
+    "zhuxian": p(500, 90, img="img/home/zhuxian.bmp", at=(526, 117, 587, 186)),
     # 公会之家
     "gonghuizhijia": p(617, 512),
     # 扭蛋
@@ -95,13 +97,14 @@ MAIN_BTN = {
     "mana_ten": p(802, 475),
 
     # 赛马时跳过
-    "tiaoguo": p(img='img/ui/jiasu.jpg', at=(700, 0, 960, 100)),
+    "tiaoguo": p(893, 40, img='img/ui/jiasu.jpg', at=(700, 0, 960, 100)),
     # 竞赛开始按钮
     "jingsaikaishi": p(img='img/home/jingsaikaishi.bmp', at=(755, 471, 922, 512)),
 
     # 用于判断是否处于加载状态（此处只保留at）
     "loading_left": p(at=(36, 87, 224, 386)),
 
+    "exp_bar": p(at=(78, 23, 178, 31), fc=(106, 205, 176), bc=(94, 125, 146)),
 }
 LIWU_BTN = {
     "shouqulvli": p(img="img/home/shouqulvli.bmp", at=(98, 461, 202, 489)),
@@ -148,13 +151,14 @@ FIGHT_BTN = {
     "speed_0": p(910, 490, img="img/fight/speed_0.bmp", at=(895, 478, 928, 510)),
     "speed_2": p(911, 495, img="img/fight/speed_2.bmp", at=(893, 477, 931, 511)),
     "empty": {
-        # 五个角色空位，从左到右分别为5，4，3，2，1
-        # 格子为95*95,两个格子之间距离110
-        5: p(92, 427, img="img/fight/empty.bmp", at=(48, 377, 48 + 95, 377 + 95)),
-        4: p(92 + 110, 405, img="img/fight/empty.bmp", at=(48 + 110, 377, 48 + 95 + 110, 377 + 95)),
-        3: p(92 + 110 * 2, 405, img="img/fight/empty.bmp", at=(48 + 110 * 2, 377, 48 + 95 + 110 * 2, 377 + 95)),
-        2: p(92 + 110 * 3, 405, img="img/fight/empty.bmp", at=(48 + 110 * 3, 377, 48 + 95 + 110 * 3, 377 + 95)),
-        1: p(92 + 110 * 4, 405, img="img/fight/empty.bmp", at=(48 + 110 * 4, 377, 48 + 95 + 110 * 4, 377 + 95)),
+        # 并不是包住整个格子的，只取了其中的一部分
+        # 地下城中，各自下面有进度条，因此格子会上移。
+        # 为了能适用于地下城与主线，所以只取交集。计算方式使用方差进行
+        5: p(92, 434, at=(48, 409, 48 + 95, 409 + 45)),
+        4: p(92 + 110, 434, at=(48 + 110, 409, 48 + 95 + 110, 409 + 45)),
+        3: p(92 + 110 * 2, 434, at=(48 + 110 * 2, 409, 48 + 95 + 110 * 2, 409 + 45)),
+        2: p(92 + 110 * 3, 434, at=(48 + 110 * 3, 409, 48 + 95 + 110 * 3, 409 + 45)),
+        1: p(92 + 110 * 4, 434, at=(48 + 110 * 4, 409, 48 + 95 + 110 * 4, 409 + 45)),
     },
     "sort_down": p(742, 89, img="img/fight/sort_down.bmp", at=(720, 79, 765, 99)),
     "sort_level": p(596, 88, img="img/fight/sort_level.bmp", at=(576, 78, 617, 99)),
@@ -194,11 +198,18 @@ FIGHT_BTN = {
     "qwjsyl": p(576, 495, img="img/fight/qwjsyl.bmp", at=(392, 457, 948, 528)),  # 前往角色一览
     "win": p(img="img/fight/win.bmp", at=(400, 6, 551, 127)),  # 过关的帽子
     "zhandoukaishi": p(834, 453, img="img/fight/zhandoukaishi.bmp", at=(761, 431, 911, 472)),
-
+    "xuanguan_quxiao": p(665, 455, img="img/ui/quxiao2.bmp", at=(597, 440, 736, 470)),  # 选关界面（选择使用扫荡券）右下角的取消
     "upperright_stars":  # “挑战”页面右上角的星星位置
         {
-            1: p(at=(752, 23, 771, 48)),
-        }
+            1: p(762, 35),
+            2: p(825, 35),
+            3: p(889, 35),
+        },
+    "tiaozhan": p(839, 456, img="img/ui/tiaozhan.bmp", at=(788, 444, 889, 467)),
+    "tiaozhan2": p(839, 453, img="img/ui/tiaozhan2.bmp", at=(814, 440, 865, 466)),
+    "xiayibu2": p(829, 490, img="img/ui/xiayibu2.bmp", at=(785, 477, 870, 505)),  # 短的下一步，用于“战利品”界面
+    "xiayibu": p(832, 504, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),  # 长的下一步，用于经验值、好感度页面
+    "qwzxgq": p(808, 493, img="img/fight/qwzxgq.bmp", at=(745, 481, 869, 504)),
 }
 MAX_DXC = 3  # 一共出了多少个地下城关
 
@@ -209,7 +220,6 @@ DXC_ELEMENT = {
     "1/1": p(img="img/dxc/dxc_1_1.bmp", at=(887, 429, 913, 446)),
     "0/1": p(img="img/dxc/dxc_0_1.bmp", at=(883, 429, 910, 445)),
     "qwdxc": p(810, 489),  # 失败：前往地下城
-    "tiaozhan": p(839, 455, img="img/ui/tiaozhan.bmp", at=(760, 432, 917, 477)),
     "shop": p(at=(889, 9, 938, 66)),
     "map": p(at=(7, 66, 954, 391)),
     "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
@@ -338,6 +348,12 @@ HARD_COORD = {
     },
 }
 
+SHOP_BTN = {
+    "xianding_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
+    "lijiguanbi": p(527, 438),
+    "querenchongzhi": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
+}
 MAOXIAN_BTN = {
     "title_box": p(at=(356, 61, 595, 104)),
     "normal_on": p(699, 82, img="img/maoxian/normal_on.bmp", at=(656, 72, 748, 91)),
@@ -346,6 +362,23 @@ MAOXIAN_BTN = {
     "hard_off": p(824, 83, img="img/maoxian/hard_off.bmp", at=(781, 70, 867, 92)),
     "hard_0_3": p(img="img/maoxian/hard_0_3.bmp", at=(887, 402, 919, 422)),  # 剩余挑战次数0/3
     "ditu": p(img="img/maoxian/ditu.bmp", at=(906, 64, 930, 106)),
+    "tili_bar": p(at=(529, 32, 637, 38), fc=(255, 215, 99), bc=(90, 101, 115)),
+    "saodang_on": p(753, 334, img="img/maoxian/saodang_on.bmp", at=(679, 314, 826, 349)),  # 使用1张 蓝色
+    "saodang_plus": p(878, 328),
+    "saodang_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "saodang_tiaoguo": p(475, 477, img="img/maoxian/saodang_tiaoguo.bmp", at=(380, 460, 574, 496)),
+    "saodang_ok2": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
+    "saodang_off": p(img="img/maoxian/saodang_off.bmp", at=(680, 315, 824, 350)),  # 使用1张 灰色
+    "quxiao": p(667, 455, img="img/ui/quxiao2.bmp", at=(597, 440, 736, 470)),
+    "xianding": p(586, 368, img="img/maoxian/xianding.bmp", at=(520, 354, 657, 380)),
+    "zaicitiaozhan": p(658, 489, img="img/maoxian/zaicitiaozhan.bmp", at=(592, 475, 723, 505)),
+    "chongshi_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "no_tili": p(img="img/maoxian/no_tili.bmp", at=(429, 242, 518, 287)),
+    "buytili_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "buytili_quxiao": p(371, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
+    "buytili_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
+    "no_cishu": p(img="img/maoxian/no_cishu.bmp", at=(400, 229, 541, 289)),
+
 }
 NORMAL_ID = {
     1: p(img='img/normal/1.bmp'),

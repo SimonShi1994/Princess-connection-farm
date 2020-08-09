@@ -1,8 +1,9 @@
 import time
 
 import cv2
+import numpy as np
 
-from core.constant import MAIN_BTN
+from core.constant import MAIN_BTN, PCRelement
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 # 临时，等待config的创建
@@ -127,3 +128,36 @@ class ToolsMixin(BaseMixin):
         time.sleep(1)
         self.lock_img('img/bangzhu.bmp', elseclick=[(32, 32)])  # 锁定帮助
         pcr_log(self.account).write_log(level='info', message='账号：%s已修改名字' % name)
+
+    def get_bar(self, bar: PCRelement, screen=None):
+        """
+        进度条类百分比获取
+        :param bar: 含有at,fc,bc元素的PCRelement
+            其中,at为截取进度条，fc为进度条【横向中线】前景色，bc为进度条【横向中线】背景色
+        :param screen: 设置为None，重新截屏
+        :return: 百分比0~1
+        """
+        if screen is None:
+            screen = self.getscreen()
+        at, fc, bc = bar.at, bar.fc, bar.bc
+        x1, y1, x2, y2 = at
+        ym = int((y1 + y2) / 2)  # 只取中之条
+        mid_line = UIMatcher.img_cut(screen, (x1, ym, x2, ym))
+        # R,G,B -> B G R
+        fc = np.array([fc[2], fc[1], fc[0]])
+        bc = np.array([bc[2], bc[1], bc[0]])
+        tf = np.sqrt(((mid_line - fc) ** 2).sum(axis=2)).ravel()
+        tb = np.sqrt(((mid_line - bc) ** 2).sum(axis=2)).ravel()
+        t = tf < tb
+        left = 0
+        right = len(t) - 1
+        for ind in range(len(t)):
+            if t[ind]:
+                left = ind
+                break
+        for ind in range(len(t) - 1, -1, -1):
+            if not t[ind]:
+                right = ind
+                break
+        t = t[left:right + 1]
+        return t.sum() / len(t)
