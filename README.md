@@ -73,7 +73,7 @@ pip install -r requirements.txt
 
 **重要：模拟器分辨率要求540*960**
 
-**重要**：目前关于API部分已经临时移入 pcr_config.py 中
+**重要**：目前关于API部分已经移入 config.ini 中，如何填入请参考目录下的md文件
 
 如何申请百度文字识别apikey和Secret Key:(https://blog.csdn.net/biao197/article/details/102907492 )
 
@@ -388,3 +388,7 @@ python main.py
 - 账号前端页面完成, 前后端联调完毕
 - 优化页面样式, 增加阴影等, 提高立体感
 - 把 Moment 手绘的 logo 换上去了
+
+2020/8/6 By:CyiceK
+
+- 修复异步线程泄漏和一些bug

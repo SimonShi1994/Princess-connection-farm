@@ -98,5 +98,6 @@ class LoginMixin(BaseMixin):
     def change_acc(self):  # 切换账号
         self.lock_img('img/bangzhu.bmp', elseclick=[(871, 513)])  # 锁定帮助
         self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)])
+        self.lock_no_img('img/bangzhu.bmp', elseclick=[(871, 513), (165, 411), (591, 369)])
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
         # pcr_log(self.account).server_bot("warning", "%s账号完成任务" % self.account)
