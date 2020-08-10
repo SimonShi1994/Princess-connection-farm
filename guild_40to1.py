@@ -63,7 +63,7 @@ def bak_accounts():
     # 用户备份路径
     users_bak_path = './users_bak'
     if not os.path.exists(users_path):
-        return
+        os.makedirs(users_path)
     if os.path.exists(users_bak_path):
         shutil.rmtree(users_path)
         return
@@ -106,7 +106,29 @@ if __name__ == "__main__":
     cu.create_account_from_file(guild1_info)
     # 开始公会1
     log_by_admin('开始运行公会1')
+    main.RunContinue()
+
+    # 踢出公会
+    cu.del_all_account()
+    log_by_admin('导入公会1会长数据')
+    cu.create_account(account_guild1_name, account_guild1_pwd, task_remove_guild)
+    log_by_admin('开始踢出公会1')
     main.RunFirstTime()
+
+    # 切换大号，去公会二
+    cu.del_all_account()
+    log_by_admin('导入大号数据')
+    cu.create_account(account_name, account_pwd, task_goto_guild2)
+    log_by_admin('开始加入公会2')
+    main.RunFirstTime()
+
+    # 导入公会2数据
+    cu.del_all_account()
+    log_by_admin('导入公会2数据')
+    cu.create_account_from_file(guild2_info)
+    # 开始公会2
+    log_by_admin('开始运行公会2')
+    main.RunContinue()
 
     # 踢出公会
     cu.del_all_account()
