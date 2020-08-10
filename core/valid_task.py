@@ -392,10 +392,13 @@ VALID_TASK = ValidTask() \
     .add("h3", "yaoqinghanghui", "邀请行会", "邀请指定成员进入行会",
          [TaskParam("inviteUID", str, "UID", "被邀请者的UID号")]) \
     .add("h4", "jieshouhanghui", "接受行会", "接受行会的邀请信息") \
-    .add("h5", "joinhanghui", "加入行会", "小号主动搜索并加入行会",
+    .add("h5", "joinhanghui", "加入行会", "主动搜索并加入行会",
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h6", "dianzan", "行会点赞", "给指定人点赞",
          [TaskParam("sortflag", int, "给谁点赞", "只能为0或者1的值\n0：给副会长点赞。\n1：给战力最高者点赞。", 0)]) \
+    .add("h7", "zhiyuan", "支援设定", "按照战力排行设定支援（最高的）") \
+    .add("h8", "joinhanghui", "加入行会", "主动搜索并加入行会（全识图版）",
+         [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
          [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。")]) \
     .add("d2", "dixiacheng", "地下城", "小号地下城借人换mana",

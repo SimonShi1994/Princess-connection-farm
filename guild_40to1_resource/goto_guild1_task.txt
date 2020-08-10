@@ -1,8 +1,11 @@
 {
  "tasks": [
   {
-   "type": "h5",
+   "type": "h8",
    "clubname": ""
+  },
+  {
+    "type": "h7"
   }
  ]
 }

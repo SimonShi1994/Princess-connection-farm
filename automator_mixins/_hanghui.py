@@ -69,13 +69,13 @@ class HanghuiMixin(ToolsMixin):
         # 进入
         self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["hanghui_title"])
         # 管理界面
-        self.click_btn(HANGHUI_BTN["chengyuanxinxi"], elsedelay=1, until_appear=HANGHUI_BTN["shaixuantiaojian"])
+        self.click_btn(HANGHUI_BTN["chengyuanxinxi"], elsedelay=1, until_appear=HANGHUI_BTN["shaixuantiaojian_chengyuan"])
         # 筛选全角色战力
         self.click_btn(HANGHUI_BTN["shaixuantiaojian_chengyuan"], elsedelay=1, until_appear=HANGHUI_BTN["fenlei"])
         self.click_btn(HANGHUI_BTN["zhanli_chengyuan"], elsedelay=1, until_appear=HANGHUI_BTN["zhanli_chengyuan"])
         self.click_btn(HANGHUI_BTN["hanghui_ok"], elsedelay=1)
         # 降序排列
-        self.lock_img(HANGHUI_BTN["jiangxu_chengyuan"], elseclick=HANGHUI_BTN["jiangxu"])
+        self.lock_img(HANGHUI_BTN["jiangxu_chengyuan"], elseclick=HANGHUI_BTN["jiangxu_chengyuan"])
         # 踢出第一
         self.click_btn(HANGHUI_BTN["chengyuanguanli_first"], elsedelay=1, until_appear=HANGHUI_BTN["kaichu"])
         self.click_btn(HANGHUI_BTN["kaichu"], elsedelay=1, until_appear=HANGHUI_BTN["hanghui_ok"])
@@ -148,7 +148,7 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/ok.jpg', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
-    def join_hanghui(self, clubname, sort):
+    def join_hanghui(self, clubname):
         self.lock_home()
         # 进入
         self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["zujianhanghui"])
