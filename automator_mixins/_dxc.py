@@ -228,8 +228,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click(1, 1, pre_delay=1)  # 取消显示结算动画
             while True:  # 撤退地下城
                 time.sleep(0.5)
+                self.click(1, 1, pre_delay=1)  # 取消显示结算动画
                 if self.is_exists('img/chetui.jpg'):
-                    self.lock_img('img/ok.bmp', ifclick=[(588, 371)], elseclick=[(808, 435)])
+                    self.lock_img('img/ok.bmp', ifclick=[(588, 371)], elseclick=[(808, 435)], retry=20)
                     # for i in range(3):
                     # 保险措施
                     # self.click(808, 435)
@@ -241,8 +242,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     # self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     # LOG().Account_undergroundcity(self.account)
                     break
-                else:
-                    self.click(1, 1, pre_delay=1)  # 取消显示结算动画
+            # 执行完后再检测一轮后跳出大循环
+            self.lock_no_img('img/chetui.jpg', elseclick=[(808, 435), (588, 371)], retry=20)
+            self.lock_img('img/yunhai.bmp')
             break
         while True:  # 首页锁定
             if self.is_exists('img/liwu.bmp', at=(891, 413, 930, 452)):
