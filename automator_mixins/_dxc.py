@@ -199,6 +199,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 time.sleep(1)
                 if self.is_exists('img/shanghaibaogao.jpg'):
                     self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)], retry=8)
+                    break
+                elif self.is_exists('img/shanghaibaogao.jpg'):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)], retry=8)
                     break
                 else:
