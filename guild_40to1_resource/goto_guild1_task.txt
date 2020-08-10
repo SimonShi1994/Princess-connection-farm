@@ -2,7 +2,7 @@
  "tasks": [
   {
    "type": "h5",
-   "clubname": "dfd"
+   "clubname": ""
   }
  ]
 }

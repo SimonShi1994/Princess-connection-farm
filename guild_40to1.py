@@ -5,6 +5,7 @@ import shutil
 import main
 import re
 from core.log_handler import pcr_log
+from guild_40to1_resource.guild_setting import *
 
 def create_daily_task():
     """
