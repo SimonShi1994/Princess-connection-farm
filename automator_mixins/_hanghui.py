@@ -70,14 +70,14 @@ class HanghuiMixin(ToolsMixin):
         # 管理界面
         self.click_btn(HANGHUI_BTN["chengyuanxinxi"], elsedelay=1, until_appear=HANGHUI_BTN["shaixuantiaojian"])
         # 筛选全角色战力
-        self.click_btn(HANGHUI_BTN["shaixuantiaojian"],elsedelay=1,until_appear=HANGHUI_BTN["fenlei"])
-        self.click_btn(HANGHUI_BTN["quanjuesezhanli"],elsedelay=1,until_appear=HANGHUI_BTN["quanjuesezhanli"])
-        self.click_btn(HANGHUI_BTN["hanghui_ok"],elsedelay=1)
+        self.click_btn(HANGHUI_BTN["shaixuantiaojian_chengyuan"], elsedelay=1, until_appear=HANGHUI_BTN["fenlei"])
+        self.click_btn(HANGHUI_BTN["zhanli_chengyuan"], elsedelay=1, until_appear=HANGHUI_BTN["zhanli_chengyuan"])
+        self.click_btn(HANGHUI_BTN["hanghui_ok"], elsedelay=1)
         # 降序排列
-        self.lock_img(HANGHUI_BTN["jiangxu"],elseclick=HANGHUI_BTN["jiangxu"])
+        self.lock_img(HANGHUI_BTN["jiangxu_chengyuan"], elseclick=HANGHUI_BTN["jiangxu"])
         # 踢出第一
-        self.click_btn(HANGHUI_BTN["chengyuanguanli_first"],elsedelay=1,until_appear=HANGHUI_BTN["kaichu"])
-        self.click_btn(HANGHUI_BTN["kaichu"],elsedelay=1,until_appear=HANGHUI_BTN["hanghui_ok"])
+        self.click_btn(HANGHUI_BTN["chengyuanguanli_first"], elsedelay=1, until_appear=HANGHUI_BTN["kaichu"])
+        self.click_btn(HANGHUI_BTN["kaichu"], elsedelay=1, until_appear=HANGHUI_BTN["hanghui_ok"])
         self.click_btn(HANGHUI_BTN["hanghui_ok"])
         # 返回
         self.lock_home()
@@ -146,6 +146,66 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/jiaru.bmp', ifclick=[(839, 443)], ifdelay=1)  # 点击加入
         self.lock_img('img/ok.jpg', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
+
+    def join_hanghui(self, clubname, sort):
+        self.lock_home()
+        # 进入
+        self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["zujianhanghui"])
+        # 点击设定
+        self.click_btn(HANGHUI_BTN["sheding_join"], elsedelay=1, until_appear=HANGHUI_BTN["input_join"])
+        time.sleep(1)
+        while 1:
+            # 搜索
+            self.click_btn(HANGHUI_BTN["input_join"], until_disappear=None)
+            time.sleep(1)
+            self.d.send_keys(clubname)
+            time.sleep(1)
+            self.click(1, 1)
+            time.sleep(1)
+            # 此处必须为0.99
+            if self.is_exists(HANGHUI_BTN["sousuo_join"], threshold=0.99):
+                # 搜索按钮点亮，点击搜索
+                self.click_btn(HANGHUI_BTN["sousuo_join"], elsedelay=1)
+                break
+        # 进入行会
+        self.click_btn(HANGHUI_BTN["in_join"], until_appear=HANGHUI_BTN["join_btn"], elsedelay=1)
+        # 点击加入
+        self.click_btn(HANGHUI_BTN["join_btn"], until_appear=HANGHUI_BTN["hanghui_ok"], elsedelay=1)
+        # 确认
+        self.click_btn(HANGHUI_BTN["hanghui_ok"], elsedelay=1)
+        self.lock_home()
+
+    def zhiyuan(self):
+        self.lock_home()
+        # 进入
+        self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["zhiyuansheding"])
+        # 设置支援
+        self.click_btn(HANGHUI_BTN["zhiyuansheding"],elsedelay=1)
+        # 支援1
+        self.click_btn(HANGHUI_BTN["zhiyuan_dxc1"], until_appear=HANGHUI_BTN["zhiyuanquxiao"], elsedelay=1)
+
+        def zhiyuansheding():
+            # 战力排列
+            if self.is_exists(HANGHUI_BTN["zhanlipaixu"]) is False:
+                self.click_btn(HANGHUI_BTN["shaixuantiaojian_juese"], elsedelay=1)
+                self.click_btn(HANGHUI_BTN["zhanli_juese"], until_appear=HANGHUI_BTN["zhanli_juese"])
+                self.click_btn(HANGHUI_BTN["hanghui_ok_juese"], elsedelay=1)
+            # 降序排列
+            self.lock_img(HANGHUI_BTN["jiangxu_juese"], elseclick=HANGHUI_BTN["jiangxu_juese"])
+            while 1:
+                self.click(HANGHUI_BTN["juese2"],post_delay=0.5)
+                self.click(HANGHUI_BTN["juese1"],post_delay=0.5)
+                # 此处必须为0.99
+                if self.is_exists(HANGHUI_BTN["juesesheding"], threshold=0.99):
+                    self.click_btn(HANGHUI_BTN["juesesheding"], elsedelay=1,until_appear=HANGHUI_BTN["hanghui_ok_double"])
+                    self.click_btn(HANGHUI_BTN["hanghui_ok_double"], elsedelay=1)
+                    break
+
+        zhiyuansheding()
+        # 支援2
+        self.click_btn(HANGHUI_BTN["zhiyuan_dxc2"], until_appear=HANGHUI_BTN["zhiyuanquxiao"], elsedelay=1)
+        zhiyuansheding()
+        self.lock_home()
 
     def dianzan(self, sortflag=0):
         """
