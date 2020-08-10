@@ -219,6 +219,7 @@ class HanghuiMixin(ToolsMixin):
         # 进入行会
         self.lock_img('img/zhiyuansheding.bmp', ifclick=[(230, 351), (1, 1)], elseclick=[(688, 432)], elsedelay=3, retry=10)
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
+        self.lock_no_img('img/zhiyuansheding.bmp', elseclick=[(230, 351)], retry=5)
         if sortflag == 1:
             self.lock_img('img/ok.bmp', elseclick=[(720, 97)], retry=3)  # 点击排序
             self.lock_no_img('img/ok.bmp', elseclick=[(289, 303), (587, 372)], elsedelay=1, retry=3)  # 按战力降序 这里可以加一步调降序

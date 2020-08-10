@@ -197,11 +197,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], retry=6)
             while skip is False:  # 结束战斗返回
                 time.sleep(1)
-                if self.is_exists('img/shanghaibaogao.jpg'):
-                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)], retry=8)
+                if self.is_exists('img/shanghaibaogao.jpg') and self.is_exists('img/xiayibu.jpg'):
+                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)])
                     break
-                elif self.is_exists('img/shanghaibaogao.jpg'):
-                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)], retry=8)
+                elif self.is_exists('img/shanghaibaogao.jpg') and self.is_exists('img/qianwangdixiacheng.jpg'):
+                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
                     break
                 else:
                     if self.is_exists('img/chetui.jpg'):
