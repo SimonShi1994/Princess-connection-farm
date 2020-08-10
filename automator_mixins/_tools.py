@@ -1,3 +1,4 @@
+import random
 import time
 
 import cv2
@@ -61,6 +62,8 @@ class ToolsMixin(BaseMixin):
             'apiKey': baidu_apiKey,
             'secretKey': baidu_secretKey
         }
+        # f百度
+        time.sleep(random.uniform(0.8, 1.8))
         client = AipOcr(**config)
 
         screen_shot_ = self.d.screenshot(format='opencv')
@@ -86,6 +89,8 @@ class ToolsMixin(BaseMixin):
         partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
         try:
             # print('识别成功！')
+            # f百度
+            time.sleep(random.uniform(0.8, 1.8))
             result = client.basicGeneral(partbin)
             # result = requests.post(request_url, data=params, headers=headers)
             return result

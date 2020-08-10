@@ -197,9 +197,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], retry=6)
             while skip is False:  # 结束战斗返回
                 time.sleep(1)
-                if self.is_exists('img/shanghaibaogao.jpg'):
-                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)], retry=8)
-                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)], retry=8)
+                if self.is_exists('img/shanghaibaogao.jpg') and self.is_exists('img/xiayibu.jpg'):
+                    self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)])
+                    break
+                elif self.is_exists('img/shanghaibaogao.jpg') and self.is_exists('img/qianwangdixiacheng.jpg'):
+                    self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
                     break
                 else:
                     if self.is_exists('img/chetui.jpg'):
@@ -228,8 +230,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click(1, 1, pre_delay=1)  # 取消显示结算动画
             while True:  # 撤退地下城
                 time.sleep(0.5)
+                self.click(1, 1, pre_delay=1)  # 取消显示结算动画
                 if self.is_exists('img/chetui.jpg'):
-                    self.lock_img('img/ok.bmp', ifclick=[(588, 371)], elseclick=[(808, 435)])
+                    self.lock_img('img/ok.bmp', ifclick=[(588, 371)], elseclick=[(808, 435)], retry=20)
                     # for i in range(3):
                     # 保险措施
                     # self.click(808, 435)
@@ -241,8 +244,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     # self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     # LOG().Account_undergroundcity(self.account)
                     break
-                else:
-                    self.click(1, 1, pre_delay=1)  # 取消显示结算动画
+            # 执行完后再检测一轮后跳出大循环
+            self.lock_no_img('img/chetui.jpg', elseclick=[(808, 435), (588, 371)], retry=20)
+            self.lock_img('img/yunhai.bmp')
             break
         while True:  # 首页锁定
             if self.is_exists('img/liwu.bmp', at=(891, 413, 930, 452)):

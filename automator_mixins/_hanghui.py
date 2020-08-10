@@ -21,6 +21,7 @@ class HanghuiMixin(ToolsMixin):
         self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
         # self.d.click(693, 436)
         self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=2)  # 锁定进入行会
+        self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
         while True:  # 6-17修改：减少opencv使用量提高稳定性
             if self.is_exists('img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
@@ -216,18 +217,19 @@ class HanghuiMixin(ToolsMixin):
         # 行会点赞
         self.lock_home()
         # 进入行会
-        self.lock_img('img/zhiyuansheding.bmp', ifclick=[(230, 351)], elseclick=[(688, 432)], elsedelay=3, retry=10)
+        self.lock_img('img/zhiyuansheding.bmp', ifclick=[(230, 351), (1, 1)], elseclick=[(688, 432)], elsedelay=3, retry=10)
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
+        self.lock_no_img('img/zhiyuansheding.bmp', elseclick=[(230, 351)], retry=5)
         if sortflag == 1:
             self.lock_img('img/ok.bmp', elseclick=[(720, 97)], retry=3)  # 点击排序
             self.lock_no_img('img/ok.bmp', elseclick=[(289, 303), (587, 372)], elsedelay=1, retry=3)  # 按战力降序 这里可以加一步调降序
             self.lock_img('img/dianzan.bmp', ifclick=[(818, 198), (480, 374), (826, 316), (480, 374), (826, 428)]
-                          , elseclick=[(1, 1)], elsedelay=3, ifdelay=1, retry=10)
+                          , elseclick=[(1, 1)], ifbefore=2, elsedelay=3, ifdelay=1, retry=10)
             # 点赞 战力降序第一/第二/第三个人
             # (480, 374) 是ok的坐标
         else:
             self.lock_img('img/dianzan.bmp', ifclick=[(829, 316), (480, 374), (826, 428)], elseclick=[(1, 1)],
-                          elsedelay=3, ifdelay=1, retry=10)
+                          elsedelay=3, ifbefore=2, ifdelay=1, retry=10)
             # 点赞 职务降序（默认） 第二/第三个人，副会长
         self.click(479, 381)
         screen_shot_ = self.getscreen()
