@@ -68,6 +68,7 @@ def bak_accounts():
         shutil.rmtree(users_path)
         return
     shutil.copytree(users_path, users_bak_path)
+    shutil.rmtree(users_path)
 
 
 def resume_accounts():

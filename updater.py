@@ -83,8 +83,7 @@ class Pcr_Downloader:
             self.abortion()
 
     def move_user_option(self):
-        opt = ['zhanghao.txt', 'zhanghao_init.txt', 'zhanghao2.txt', 'baiduocr.txt', '40_1.txt', '40_2.txt',
-               '40_huizhang.txt']
+        opt = ['zhanghao.txt', 'zhanghao_init.txt', 'zhanghao2.txt', 'baiduocr.txt']
         # 用户所的配置文件
         if not os.path.exists('zhanghao.txt'):
             print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
