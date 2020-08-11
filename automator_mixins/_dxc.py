@@ -84,11 +84,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.dixiacheng(skip)
                     break
                 screen_shot_ = self.d.screenshot(format="opencv")
-                if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp',
-                                       at=(148, 295, 345, 399)) and dixiacheng_times == 1:
+                if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp') and dixiacheng_times == 1:
                     self.click(233, 311, post_delay=1)
-                elif UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp',
-                                         at=(148, 295, 345, 399)) and dixiacheng_times == 0:
+                elif UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp') and dixiacheng_times == 0:
                     self.dxc_switch = 1
                     # LOG().Account_undergroundcity(self.account)
                 if self.dxc_switch == 0:
