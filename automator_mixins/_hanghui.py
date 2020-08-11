@@ -34,6 +34,7 @@ class HanghuiMixin(ToolsMixin):
                         # 点击max 后 ok
                         time.sleep(2)
                         self.lock_no_img('img/max.jpg', elseclick=[(644, 385), (552, 470)], elsedelay=1, retry=20)
+                        time.sleep(0.8)
                         if self.is_exists('img/ok.bmp', threshold=0.90):
                             self.lock_no_img('img/ok.bmp', elseclick=[(494, 368)], retry=4)
                         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(536, 361)], retry=3)
@@ -52,6 +53,9 @@ class HanghuiMixin(ToolsMixin):
                     #    self.click(560, 369, pre_delay=2, post_delay=1)
                 while True:
                     self.click(1, 1, post_delay=1)
+                    # 防止ok卡住了
+                    if self.is_exists('img/ok.bmp', threshold=0.90):
+                        self.lock_no_img('img/ok.bmp', elseclick=[(494, 368)], retry=4)
                     if self.is_exists('img/zhiyuansheding.bmp'):
                         break
                 break
