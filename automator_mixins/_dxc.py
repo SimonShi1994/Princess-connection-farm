@@ -156,6 +156,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 time.sleep(0.8)
                 self.click(100, 173, post_delay=1)  # 支援的第一个人
                 self.click(213, 208)  # 以防万一
+            time.sleep(2)
             if self.is_exists('img/notzhandoukaishi.bmp', threshold=0.97):
                 # 逻辑顺序改变
                 # 当无法选支援一二位时，将会退出地下城
