@@ -101,13 +101,15 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.dxc_switch = 0
                     # 识别到后满足条件，开锁
                     self.click(233, 311, post_delay=1)
+                    # 保险
+                    self.lock_no_img('img/yunhai.bmp', elseclick=[(233, 311)])
                 elif self.is_exists('img/yunhai.bmp') and dixiacheng_times == 0:
                     self.dxc_switch = 1
                     pcr_log(self.account).write_log(level='info', message='%s今天已经打过地下城' % self.account)
                     return False
                 if self.dxc_switch == 0:
                     # 不加可能会导致卡顿找不到图片
-                    self.lock_img('img/ok.bmp')
+                    self.lock_img('img/ok.bmp', elseclick=[(233, 311)])
                     self.lock_no_img('img/ok.bmp', elseclick=[(592, 369)])  # 锁定OK
                 else:
                     pcr_log(self.account).write_log(level='info', message='>>>今天无次数')
@@ -146,16 +148,16 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     time.sleep(1)
                     # self.click(100, 173)  # 第一个人
                     screen_shot = self.getscreen()
-                    self.click_img(screen_shot, 'img/zhiyuan.jpg', pre_delay=2)
+                    self.click_img(screen_shot, 'img/zhiyuan.jpg', pre_delay=1)
                     break
 
             if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
-                self.click(213, 208, post_delay=1)  # 如果等级不足，就支援的第二个人
+                self.click(213, 208, post_delay=1, pre_delay=1.5)  # 如果等级不足，就支援的第二个人
                 # self.click(100, 173, post_delay=1)  # 支援的第一个人
             else:
                 time.sleep(0.8)
-                self.click(100, 173, post_delay=1)  # 支援的第一个人
-                self.click(213, 208)  # 以防万一
+                self.click(100, 173)  # 支援的第一个人
+                self.click(213, 208, pre_delay=1.7)  # 以防万一
             if self.is_exists('img/notzhandoukaishi.bmp', threshold=0.97):
                 # 逻辑顺序改变
                 # 当无法选支援一二位时，将会退出地下城
@@ -164,10 +166,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             else:
                 self.click(98, 88, post_delay=1)  # 全部
                 self.click(100, 173, post_delay=1)  # 第一个人
-                self.click(833, 470)  # 战斗开始
+                self.click(833, 470, pre_delay=2)  # 战斗开始
             while True:
                 if self.is_exists('img/notzhandoukaishi.bmp', threshold=0.97):
-                    # 逻辑顺序改变
                     # 当无法选支援一二位时，将会退出地下城
                     pcr_log(self.account).write_log(level='info', message="%s无法出击!" % self.account)
                     break
@@ -187,8 +188,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
                     break
             else:
-                self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], retry=6)
-                self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], retry=6)
+                # 防止奇奇怪怪的飞到主菜单
+                self.lock_img('img/caidan.jpg')
+                self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], retry=3)
+                self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], retry=3)
             while skip is False:  # 结束战斗返回
                 time.sleep(1)
                 if self.is_exists('img/shanghaibaogao.jpg') and self.is_exists('img/xiayibu.jpg'):
@@ -201,7 +204,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     if self.is_exists('img/chetui.jpg'):
                         break
 
-            self.click(1, 1, pre_delay=1)  # 取消显示结算动画
             while True:  # 撤退地下城
                 time.sleep(0.5)
                 self.click(1, 1, pre_delay=1)  # 取消显示结算动画
