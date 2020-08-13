@@ -231,6 +231,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
     def dixiacheng(self, skip):
         """
         地下城函数于2020/7/14日修改
+        地下城函数再于2020/8/13日修改
         By:Dr-Bluemond
         有任何问题 bug请反馈
         :param skip:
@@ -262,9 +263,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         while True:
             # 锁定挑战和第一层
-            self.lock_img('img/tiaozhan.bmp', elseclick=[(667, 360)], ifclick=[(833, 456)], at=(759, 428, 921, 483))
-            time.sleep(2)
-            self.click(480, 88)
+            time.sleep(1.5)
+            self.lock_img('img/tiaozhan.bmp', elseclick=[(667, 360)], elsedelay=1, ifclick=[(833, 456)], at=(759, 428, 921, 483))
+            self.lock_img('img/dxc/quanbu.bmp', ifclick=[(480, 88)], ifbefore=1, at=(78, 80, 114, 102))
             time.sleep(0.5)
             poses = [(106, 172), (216, 172), (323, 172), (425, 172)]
             for pos in poses:
@@ -293,8 +294,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
             time.sleep(4)  # 这里填写你预估的进入战斗加载所花费的时间
             if skip:  # 直接放弃战斗
-                ok = self.lock_img('img/fangqi.jpg', elseclick=[(902, 33)], elsedelay=0.5, ifclick=[(625, 376)],
-                                   ifbefore=0, ifdelay=0, retry=7, at=(567, 351, 686, 392))
+                ok = self.lock_img('img/fangqi.jpg', elseclick=[(902, 33)], elsedelay=1, ifclick=[(625, 376)],
+                                   ifbefore=0.5, ifdelay=0, retry=10, at=(567, 351, 686, 392))
                 if ok:
                     ok2 = self.lock_img('img/fangqi_2.bmp', ifclick=[(625, 376)], ifbefore=0.5, ifdelay=0, retry=3,
                                         at=(486, 344, 693, 396))
