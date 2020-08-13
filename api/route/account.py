@@ -38,6 +38,8 @@ def list_account():
             data.append({
                 'username': user.get('account'),
                 'password': '********',
+                'taskname': user.get('taskfile'),
+                'tags': '-'
             })
 
     return ListReply(data, count)
@@ -57,7 +59,7 @@ def retrieve_account(username):
             in: path
             type: string
             required: true
-            description: 主键
+            description: 用户名
     responses:
       2xx:
         description: 成功
@@ -70,16 +72,19 @@ def retrieve_account(username):
     data = {
         'username': '',
         'password': '********',
+        'taskname': '',
+        'tags': '-'
     }
 
     try:
         user = AutomatorRecorder(username).getuser()
         if user is not None:
             data['username'] = user.get('account')
+            data['taskname'] = user.get('taskfile')
         return Reply(data)
 
     except Exception as e:
-        return NotFoundError(f"用户{username}不存在")
+        return NotFoundError(f"获取用户 {username} 失败, {e}")
 
 
 @account_api.route('/account', methods=['POST'])
@@ -107,6 +112,9 @@ def create_account():
             password:
               type: string
               description: 密码
+            taskname:
+              type: string
+              description: 任务
     responses:
       2xx:
         description: 成功
@@ -118,12 +126,13 @@ def create_account():
         return BadRequestError(f'参数不合法')
     username = body.get('username', '')
     password = body.get('password', '')
+    taskname = body.get('taskname', '')
     if username == '':
-        return BadRequestError(f'参数不合法, username:{username}')
+        return BadRequestError(f'参数 username 不为空')
     if password == '':
-        return BadRequestError(f'参数不合法, password:{password}')
+        return BadRequestError(f'参数 password 不为空')
 
-    service_create_account(account=username, password=password, taskfile="")
+    service_create_account(account=username, password=password, taskfile=taskname)
 
     return Reply({'username': username, 'password': password})
 
@@ -148,12 +157,13 @@ def update_account(username):
         required: true
         schema:
           id:  账号更新
-          required:
-            - password
           properties:
             password:
               type: string
               description: 密码
+            taskname:
+              type: string
+              description: 任务
     responses:
       2xx:
         description: 成功
@@ -161,17 +171,16 @@ def update_account(username):
         description: 参数有误等
     """
     if username == '':
-        return BadRequestError(f'参数不合法, 用户名:{username}')
+        return BadRequestError(f'参数 username 不为空')
 
     body = request.form or request.get_json()
     if body is None:
         return BadRequestError(f'参数不合法')
-    password = body.get('password', '')
-    if password == '':
-        return BadRequestError(f'参数不合法, password:{password}')
+    password = body.get('password', None)
+    taskname = body.get('taskname', None)
 
-    edit_account(account=username, password=password)
-    return Reply({'username': username, 'password': password})
+    edit_account(account=username, password=password, taskfile=taskname)
+    return Reply({'username': username, 'password': password, 'taskname': taskname})
 
 
 @account_api.route('/account/<username>', methods=['DELETE'])
@@ -196,7 +205,7 @@ def delete_account(username):
         description: 参数有误等
     """
     if username == '':
-        return BadRequestError(f'参数不合法, 用户名:{username}')
+        return BadRequestError(f'参数 username 不为空')
 
     del_account(username)
 

@@ -8,8 +8,11 @@
 # 安装 nodejs
 # https://nodejs.org/zh-cn
 
+# 查看 npm 版本
+yarn --version
+
 # 下载依赖管理工具 yarn
-# https://classic.yarnpkg.com/zh-Hans/docs/install
+# npm i -g yarn
 
 # 查看 yarn 版本
 yarn --version
