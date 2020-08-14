@@ -26,7 +26,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.click(842, 491)  # 开始
                 continue
             self.click(1, 1, post_delay=0.5)
-            self.click(330, 270, post_delay=2)
+            self.click(330, 270, post_delay=1)
             # 跳过特别庆典
 
         self.lock_home()
