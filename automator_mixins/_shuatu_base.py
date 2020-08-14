@@ -2,7 +2,8 @@ import time
 
 from automator_mixins._fight_base import FightBaseMixin
 from core.MoveRecord import movevar
-from core.constant import MAOXIAN_BTN, NORMAL_ID, MAIN_BTN, HARD_ID, PCRelement, FIGHT_BTN, DXC_ELEMENT, SHOP_BTN
+from core.constant import MAOXIAN_BTN, MAIN_BTN, PCRelement, FIGHT_BTN, DXC_ELEMENT, SHOP_BTN, \
+    ZHUXIAN_ID
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 
@@ -37,8 +38,6 @@ class ShuatuBaseMixin(FightBaseMixin):
         """
         战斗坐标，新刷图函数（手刷+扫荡结合）
         内置剧情跳过、奇怪对话框跳过功能
-        !! 警告：手刷模式下，限定商店将被自动忽略。
-        !! 警告：手刷Hard图会自动购买额外次数！
         :param x: 点击图的x坐标
         :param y: 点击图的y坐标
         :param times: 刷图/手刷次数
@@ -105,8 +104,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                         self.log.write_log("warning", "购买次数可能失败。")
                     return click_ok
                 else:
-                    return True
-            return False
+                    return False
+            return True
 
         def buy(entered=False):
             # entered: 是否已经进入了商店，设置为True，则跳过“限定”的检测
@@ -145,7 +144,11 @@ class ShuatuBaseMixin(FightBaseMixin):
 
         def shoushua(times):
             win_cnt = 0
-            self.click_btn(FIGHT_BTN["tiaozhan2"])
+            if not self.is_exists(FIGHT_BTN["tiaozhan2"], method="sq"):  # 不能挑战
+                return 1
+            self.click_btn(FIGHT_BTN["tiaozhan2"], method="sq")
+            if not cishu():
+                return 1
             # 换队
             if bianzu == -1 and duiwu == -1:
                 self.set_fight_team_order()
@@ -342,7 +345,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             self.click(1, 1)
             time.sleep(0.3)
             screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+            if UIMatcher.img_where(screen_shot_, 'img/zhuxian.jpg', at=(660, 72, 743, 94)):
                 break
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
@@ -459,7 +462,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             self.click(1, 1)
             time.sleep(0.3)
             screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
+            if UIMatcher.img_where(screen_shot_, 'img/zhuxian.jpg', at=(660, 72, 743, 94)):
                 break
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
@@ -492,36 +495,30 @@ class ShuatuBaseMixin(FightBaseMixin):
                 tag += 1
                 time.sleep(1.5)
 
-    def check_normal_id(self, screen=None):
+    def check_zhuxian_id(self, screen=None):
         """
-        识别normal图的图号
+        识别主线图的图号
+        2020-08-14 Add: By TheAutumnOfRice :
+            只要截图截的小，普通困难都打倒！
         :param: screen:设置为None时，第一次重新截图
         :return:
         -1：识别失败
         1~ ：图号
         """
-        self.Drag_Left()  # 保证截图区域一致
-        id = self.check_dict_id(MAOXIAN_BTN["title_box"], NORMAL_ID, screen)
+        # self.Drag_Left()  # 保证截图区域一致
+        id = self.check_dict_id(ZHUXIAN_ID, screen)
         if id is None:
             return -1
         else:
             return id
+
+    def check_normal_id(self, screen=None):
+        return self.check_zhuxian_id(screen)
 
     def check_hard_id(self, screen=None):
-        """
-        识别hard图的图号
-        :param: screen:设置为None时，第一次重新截图
-        :return:
-        -1：识别失败
-        1~ ：图号
-        """
-        id = self.check_dict_id(MAOXIAN_BTN["title_box"], HARD_ID, screen)
-        if id is None:
-            return -1
-        else:
-            return id
+        return self.check_zhuxian_id(screen)
 
-    def shoushuazuobiao(self, x, y, jiaocheng=0, lockpic='img/normal.jpg', screencut=None):
+    def shoushuazuobiao(self, x, y, jiaocheng=0, lockpic='img/zhuxian.jpg', screencut=None):
         """
         不使用挑战券挑战，xy为该图坐标
         jiaocheng=0 只处理简单的下一步和解锁内容
@@ -675,7 +672,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         self.lock_img('img/zhuxianguanqia.jpg', elseclick=[(480, 513)], elsedelay=3)
         self.click(562, 253)
         time.sleep(3)
-        self.lock_img('img/normal.jpg', elseclick=[(704, 84)], elsedelay=0.5, alldelay=1, at=(660, 72, 743, 94))
+        self.lock_img('img/zhuxian.jpg', elseclick=[(704, 84)], elsedelay=0.5, alldelay=1, at=(660, 72, 743, 94))
         self.click(923, 272)
         time.sleep(3)
 
