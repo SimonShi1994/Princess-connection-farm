@@ -1,3 +1,4 @@
+import random
 import time
 
 import cv2
@@ -24,7 +25,7 @@ class ToolsMixin(BaseMixin):
         要求场景：存在“我的主页”按钮
         逻辑：不断点击我的主页，直到右下角出现“礼物”
         """
-        self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=2)  # 回首页
+        self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=0.5)  # 回首页
 
     def setting(self):
         self.click(875, 517)
@@ -61,6 +62,8 @@ class ToolsMixin(BaseMixin):
             'apiKey': baidu_apiKey,
             'secretKey': baidu_secretKey
         }
+        # f百度
+        time.sleep(random.uniform(0.8, 1.8))
         client = AipOcr(**config)
 
         screen_shot_ = self.d.screenshot(format='opencv')
@@ -86,6 +89,8 @@ class ToolsMixin(BaseMixin):
         partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
         try:
             # print('识别成功！')
+            # f百度
+            time.sleep(random.uniform(0.8, 1.8))
             result = client.basicGeneral(partbin)
             # result = requests.post(request_url, data=params, headers=headers)
             return result

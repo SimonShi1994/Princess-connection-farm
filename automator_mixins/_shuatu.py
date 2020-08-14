@@ -77,11 +77,13 @@ class ShuatuMixin(ShuatuBaseMixin):
                 cur_map = A
             now_dict = NORMAL_COORD[A]
             if B in now_dict["left"]:
-                self.Drag_Left()
+                if A != 1:
+                    self.Drag_Left()
                 xy = now_dict["left"][B]
                 self.shuatuzuobiao(*xy, Times)
             elif B in now_dict["right"]:
-                self.Drag_Right()
+                if A != 1:
+                    self.Drag_Right()
                 xy = now_dict["right"][B]
                 self.shuatuzuobiao(*xy, Times)
             else:

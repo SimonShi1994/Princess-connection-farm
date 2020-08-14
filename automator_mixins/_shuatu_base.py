@@ -266,7 +266,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         if self.switch == 0:
             while True:  # 锁定加号
                 screen_shot_ = self.getscreen()
-                if UIMatcher.img_where(screen_shot_, 'img/jiahao.bmp'):
+                if UIMatcher.img_where(screen_shot_, 'img/jiahao.bmp', at=(850, 305, 907, 358)):
                     # screen_shot = a.d.screenshot(format="opencv")
                     for i in range(times - 1):  # 基础1次
                         # 扫荡券不必使用opencv来识别，降低效率
@@ -724,8 +724,8 @@ class ShuatuBaseMixin(FightBaseMixin):
 
     def Drag_Right(self):
         self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
-        time.sleep(2)
+        time.sleep(0.5)
 
     def Drag_Left(self):
         self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-        time.sleep(2)
+        time.sleep(0.5)

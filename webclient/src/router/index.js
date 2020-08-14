@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Task from '@/pages/Task'
+import TaskConfig from '@/pages/TaskConfig'
 import Dashboard from '@/pages/Dashboard'
 import AccountConfig from '@/pages/AccountConfig'
 import ClanConfig from '@/pages/ClanConfig'
@@ -20,9 +20,9 @@ export default new Router({
       component: Dashboard
     },
     {
-      path: '/task',
-      name: 'Task',
-      component: Task
+      path: '/task_config',
+      name: 'TaskConfig',
+      component: TaskConfig
     },
     {
       path: '/account_config',

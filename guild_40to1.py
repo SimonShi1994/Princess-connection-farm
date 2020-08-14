@@ -5,40 +5,7 @@ import shutil
 import main
 import re
 from core.log_handler import pcr_log
-
-# 大号的账号，密码
-account_name = ''
-account_pwd = ''
-
-# 会长1账号
-account_guild1_name = ''
-account_guild1_pwd = ''
-
-# 会长2账号
-account_guild2_name = ''
-account_guild2_pwd = ''
-
-# 公会1，2的名称（所以别起些阴间名字，尽量英文）
-guild1_name = ''
-guild2_name = ''
-
-# 公会1，2 的账号
-guild1_info = '40to1_resource/account_guild1.txt'
-guild2_info = '40to1_resource/account_guild2.txt'
-
-# 小号日常任务的名称
-task_name_daily = '40to1_daily_task'
-# 引用的日常任务
-task_name_refer = ''
-
-# 换行会任务
-task_goto_guild1 = 'goto_guild1_task'
-task_goto_guild2 = 'goto_guild2_task'
-task_remove_guild = 'remove_guild_task'
-task_goto_guild1_path = './40to1_resource/goto_guild1_task.txt'
-task_goto_guild2_path = './40to1_resource/goto_guild2_task.txt'
-task_remove_guild_path = './40to1_resource/remove_guild_task.txt'
-
+from guild_40to1_resource.guild_setting import *
 
 def create_daily_task():
     """
@@ -96,11 +63,12 @@ def bak_accounts():
     # 用户备份路径
     users_bak_path = './users_bak'
     if not os.path.exists(users_path):
-        return
+        os.makedirs(users_path)
     if os.path.exists(users_bak_path):
         shutil.rmtree(users_path)
         return
     shutil.copytree(users_path, users_bak_path)
+    shutil.rmtree(users_path)
 
 
 def resume_accounts():
@@ -139,7 +107,7 @@ if __name__ == "__main__":
     cu.create_account_from_file(guild1_info)
     # 开始公会1
     log_by_admin('开始运行公会1')
-    main.RunFirstTime()
+    main.RunContinue()
 
     # 踢出公会
     cu.del_all_account()
@@ -161,6 +129,13 @@ if __name__ == "__main__":
     cu.create_account_from_file(guild2_info)
     # 开始公会2
     log_by_admin('开始运行公会2')
+    main.RunContinue()
+
+    # 踢出公会
+    cu.del_all_account()
+    log_by_admin('导入公会2会长数据')
+    cu.create_account(account_guild2_name, account_guild2_pwd, task_remove_guild)
+    log_by_admin('开始踢出公会2')
     main.RunFirstTime()
 
     # 切换大号，去公会一

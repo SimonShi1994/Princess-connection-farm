@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
-
+from api.constants.errors import NotFoundError, BadRequestError
+from api.constants.reply import Reply, ListReply
+from CreateUser import list_all_tasks, AutomatorRecorder, create_task as service_create_task, del_task
 task_api = Blueprint('task', __name__)
 
 
@@ -18,11 +20,18 @@ def list_task():
       4xx:
         description: 参数有误等
     """
-    return jsonify({})
+    res = []
+    tasks: [] = list_all_tasks()
+    for task in tasks:
+        res.append({
+            'taskname': task,
+            'accounts': '-',
+        })
+    return ListReply(res, len(res))
 
 
-@task_api.route('/task/<pk>', methods=['GET'])
-def retrieve_task(pk):
+@task_api.route('/task/<taskname>', methods=['GET'])
+def retrieve_task(taskname):
     """
     获取单条任务
     ---
@@ -31,18 +40,35 @@ def retrieve_task(pk):
     description:
 
     parameters:
-          - name: pk
+          - name: taskname
             in: path
             type: string
             required: true
-            description: 主键
+            description: 任务名
     responses:
       2xx:
         description: 成功
       4xx:
         description: 参数有误等
     """
-    return jsonify({})
+    if taskname == '':
+        return BadRequestError(f'参数不合法, 任务名:{taskname}')
+
+    data = {
+        'taskname': '',
+        'accounts': '-',
+        'subtask': {},
+    }
+
+    try:
+        subtask = AutomatorRecorder(None).gettask(taskname)
+        if subtask is not None:
+            data['taskname'] = taskname
+            data['subtask'] = subtask
+        return Reply(data)
+
+    except Exception as e:
+        return NotFoundError(f"获取任务 {taskname} 失败, {e}")
 
 
 @task_api.route('/task', methods=['POST'])
@@ -61,21 +87,11 @@ def create_task():
         schema:
           id:  任务添加
           required:
-            task_type
-            params
+            taskname
           properties:
-            task_type:
+            taskname:
               type: string
-              description: 任务类型
-            params:
-              type: string
-              description: 任务参数
-            title:
-              type: string
-              description: 任务标题
-            desc:
-              type: string
-              description: 任务描述
+              description: 任务名
     responses:
       2xx:
         description: 成功
@@ -83,16 +99,19 @@ def create_task():
         description: 参数有误等
     """
 
-    task_type = request.form.get('task_type')
-    params = request.form.get('params')
-    title = request.form.get('title')
-    desc = request.form.get('desc')
+    body = request.form or request.get_json()
+    if body is None:
+        return BadRequestError(f'参数不合法')
+    taskname = body.get('taskname', '')
+    if taskname == '':
+        return BadRequestError(f'参数 taskname 不为空')
 
-    return jsonify({})
+    service_create_task(taskname)
+    return Reply({'taskname': taskname})
 
 
-@task_api.route('/task/<pk>', methods=['PUT'])
-def update_task(pk):
+@task_api.route('/task/<taskname>', methods=['PUT'])
+def update_task(taskname):
     """
     更新任务
     ---
@@ -112,38 +131,22 @@ def update_task(pk):
         schema:
           id:  任务添加
           required:
-            task_type
-            params
+            taskname
           properties:
-            task_type:
+            taskname:
               type: string
-              description: 任务类型
-            params:
-              type: string
-              description: 任务参数
-            title:
-              type: string
-              description: 任务标题
-            desc:
-              type: string
-              description: 任务描述
+              description: 任务名
     responses:
       2xx:
         description: 成功
       4xx:
         description: 参数有误等
     """
-
-    task_type = request.form.get('task_type')
-    params = request.form.get('params')
-    title = request.form.get('title')
-    desc = request.form.get('desc')
-
     return jsonify({})
 
 
-@task_api.route('/task/<pk>', methods=['POST'])
-def delete_task(pk):
+@task_api.route('/task/<taskname>', methods=['DELETE'])
+def delete_task(taskname):
     """
     删除任务
     ---
@@ -152,16 +155,20 @@ def delete_task(pk):
     description:
 
     parameters:
-      - name: pk
+      - name: taskname
         in: path
         type: string
         required: true
-        description: 主键
+        description: 任务名
     responses:
       2xx:
         description: 成功
       4xx:
         description: 参数有误等
     """
+    if taskname == '':
+        return BadRequestError(f'参数 taskname 不为空')
 
-    return jsonify({})
+    del_task(taskname)
+
+    return Reply({'taskname': taskname})
