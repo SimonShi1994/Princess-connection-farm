@@ -41,6 +41,8 @@ class BaseMixin:
         self.ms: Optional[moveset] = None
         self.debug_screen = None  # 如果debug_screen为None，则正常截图；否则，getscreen函数使用debug_screen作为读取的screen
         self.last_screen = None  # 每次调用getscreen会把图片暂存至last_screen
+        self.cpu_occupy = 0
+        self.change_time = 0.5
         self.last_screen_time = 0
 
         # fastscreencap
@@ -718,8 +720,9 @@ class Multithreading(threading.Thread, BaseMixin):
     # 2020.7.16 我又改了回去
     # 2020.8.9 修复了线程泄漏
 
+    _stop_event = threading.Event()
+
     def __init__(self, kwargs):
-        self._stop_event = threading.Event()
         if kwargs:
             threading.Thread.__init__(self)
             self.th_sw = 0

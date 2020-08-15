@@ -751,8 +751,8 @@ class ShuatuBaseMixin(FightBaseMixin):
 
     def Drag_Right(self):
         self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
-        time.sleep(0.5)
+        time.sleep(self.change_time)
 
     def Drag_Left(self):
         self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-        time.sleep(0.5)
+        time.sleep(self.change_time)
