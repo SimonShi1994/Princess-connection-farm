@@ -8,7 +8,7 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.log_handler import pcr_log
 from core.usercentre import list_all_users, AutomatorRecorder
 # 临时解决方案，可以改进
-from pcr_config import trace_exception_for_debug, end_shutdown
+from pcr_config import trace_exception_for_debug, end_shutdown, fast_screencut
 
 acclog = log_handler.pcr_acc_log()
 # 雷电模拟器
@@ -185,7 +185,8 @@ def execute(continue_=False, max_retry=3):
             a = Automator(address)
             # 关闭PCR
             a.d.app_stop("com.bilibili.priconne")
-            a.receive_minicap.stop()
+            if fast_screencut:
+                a.receive_minicap.stop()
         # 退出adb
         os.system('cd adb & adb kill-server')
         pcr_log('admin').write_log(level='info', message='任务全部完成')

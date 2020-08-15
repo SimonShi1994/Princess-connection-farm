@@ -5,7 +5,7 @@ import psutil
 
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from pcr_config import bad_connecting_time, async_screenshot_freq
+from pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut
 from ._base import BaseMixin, Multithreading
 
 screenshot = None
@@ -180,7 +180,8 @@ class AsyncMixin(BaseMixin):
 
     def stop_th(self):
         Multithreading({}).pause()
-        self.receive_minicap.stop()
+        if fast_screencut:
+            self.receive_minicap.stop()
 
     def start_async(self):
         account = self.account
