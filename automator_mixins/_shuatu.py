@@ -152,7 +152,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.click(480, 380)
             time.sleep(0.5)
             self.click(480, 380)
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/zhuxian.jpg'):
                 self.click(880, 80)
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break

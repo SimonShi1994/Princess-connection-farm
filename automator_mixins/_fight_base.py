@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 
-from core.constant import FIGHT_BTN, MAIN_BTN
+from core.constant import FIGHT_BTN, MAIN_BTN, MAOXIAN_BTN
 from core.cv import UIMatcher
 from pcr_config import debug
 from ._tools import ToolsMixin
@@ -14,17 +14,24 @@ class FightBaseMixin(ToolsMixin):
     包括与战斗相关的基本操作
     """
 
-    def get_fight_state(self, screen=None, max_retry=3, delay=1) -> int:
+    def get_fight_state(self, screen=None, max_retry=3, delay=1,
+                        check_hat=True, check_xd=False, go_xd=False) -> int:
         """
         获取战斗状态
         注：不适用竞技场的战斗！
         :param: screen 第一次检测用的截图
         :param max_retry: 最大重试次数
+        以下变量针对具体场景使用
+        :param check_hat: 在地下城中使用，地下城的胜利以对帽子的检测判定。
+        :param check_xd: 刷图中使用，会增加对限定商店的判断。出现限定商店表示成功
+        :param go_xd: 刷图中使用，如果限定商店出现了，是否选择进入。
+            若设置为True，则会进入限定商店，并返回1；否则，停留在胜利页面，返回1。
         :return:
             -1：未知状态
             0： 战斗进行中
             1： 战斗胜利
             2： 战斗失败
+            3:  战斗胜利，并且出现了限定商店，并且进入了限定商店
         """
         for retry in range(max_retry):
             if screen is None:
@@ -37,7 +44,7 @@ class FightBaseMixin(ToolsMixin):
                 if self.is_exists(FIGHT_BTN["qwjsyl"], screen=sc):
                     # 前往角色一览：失败
                     return 2
-                elif self.is_exists(FIGHT_BTN["win"], screen=sc):
+                elif check_hat and self.is_exists(FIGHT_BTN["win"], screen=sc):
                     # 找到帽子：成功
                     return 1
                 elif self.is_exists(FIGHT_BTN["xiayibu"], screen=sc):
@@ -56,6 +63,13 @@ class FightBaseMixin(ToolsMixin):
             elif self.is_exists(MAIN_BTN["tiaoguo"], screen=sc):
                 # 检测到右上角跳过：点击 （羁绊剧情）
                 self.click(MAIN_BTN["tiaoguo"])
+            elif check_xd and self.is_exists(MAOXIAN_BTN["xianding"]):
+                if go_xd:
+                    self.click_btn(MAOXIAN_BTN["xianding"])
+                    return 3
+                else:
+                    self.click_btn(MAOXIAN_BTN["xianding_quxiao"])
+                    return 1
             else:
                 self.click(471, 5)  # 避免奇怪的对话框
                 time.sleep(delay)

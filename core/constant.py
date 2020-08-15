@@ -271,7 +271,7 @@ FIGHT_BTN = {
     "tiaozhan2": p(839, 453, img="img/ui/tiaozhan2.bmp", at=(814, 440, 865, 466)),
     "xiayibu2": p(829, 490, img="img/ui/xiayibu2.bmp", at=(785, 477, 870, 505)),  # 短的下一步，用于“战利品”界面
     "xiayibu": p(832, 504, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),  # 长的下一步，用于经验值、好感度页面
-    "qwzxgq": p(808, 493, img="img/fight/qwzxgq.bmp", at=(745, 481, 869, 504)),
+    "qwzxgq": p(808, 493, img="img/fight/qwzxgq.bmp", at=(745, 481, 869, 504)),  # 前往主线关卡：输的时候会显示
 }
 MAX_DXC = 3  # 一共出了多少个地下城关
 
@@ -333,20 +333,6 @@ DXC_COORD = {
     }
 }
 MAX_MAP = 12
-HARD_ID = {
-    1: p(img='img/hard/1.bmp'),
-    2: p(img='img/hard/2.bmp'),
-    3: p(img='img/hard/3.bmp'),
-    4: p(img='img/hard/4.bmp'),
-    5: p(img='img/hard/5.bmp'),
-    6: p(img='img/hard/6.bmp'),
-    7: p(img='img/hard/7.bmp'),
-    8: p(img='img/hard/8.bmp'),
-    9: p(img='img/hard/9.bmp'),
-    10: p(img='img/hard/10.bmp'),
-    11: p(img='img/hard/11.bmp'),
-    12: p(img='img/hard/12.bmp'),
-}
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -417,7 +403,6 @@ SHOP_BTN = {
     "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
 }
 MAOXIAN_BTN = {
-    "title_box": p(at=(356, 61, 595, 104)),
     "normal_on": p(699, 82, img="img/maoxian/normal_on.bmp", at=(656, 72, 748, 91)),
     "normal_off": p(701, 82, img="img/maoxian/normal_off.bmp", at=(656, 72, 749, 92)),
     "hard_on": p(825, 83, img="img/maoxian/hard_on.bmp", at=(780, 70, 871, 92)),
@@ -433,6 +418,7 @@ MAOXIAN_BTN = {
     "saodang_off": p(img="img/maoxian/saodang_off.bmp", at=(680, 315, 824, 350)),  # 使用1张 灰色
     "quxiao": p(667, 455, img="img/ui/quxiao2.bmp", at=(597, 440, 736, 470)),
     "xianding": p(586, 368, img="img/maoxian/xianding.bmp", at=(520, 354, 657, 380)),
+    "xianding_quxiao": p(371, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
     "zaicitiaozhan": p(658, 489, img="img/maoxian/zaicitiaozhan.bmp", at=(592, 475, 723, 505)),
     "chongshi_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "no_tili": p(img="img/maoxian/no_tili.bmp", at=(429, 242, 518, 287)),
@@ -442,19 +428,19 @@ MAOXIAN_BTN = {
     "no_cishu": p(img="img/maoxian/no_cishu.bmp", at=(400, 229, 541, 289)),
 
 }
-NORMAL_ID = {
-    1: p(img='img/normal/1.bmp'),
-    2: p(img='img/normal/2.bmp'),
-    3: p(img='img/normal/3.bmp'),
-    4: p(img='img/normal/4.bmp'),
-    5: p(img='img/normal/5.bmp'),
-    6: p(img='img/normal/6.bmp'),
-    7: p(img='img/normal/7.bmp'),
-    8: p(img='img/normal/8.bmp'),
-    9: p(img='img/normal/9.bmp'),
-    10: p(img='img/normal/10.bmp'),
-    11: p(img='img/normal/11.bmp'),
-    12: p(img='img/normal/12.bmp'),
+ZHUXIAN_ID = {
+    1: p(img="img/zhuxian/1.bmp", at=(453, 74, 516, 88)),
+    2: p(img="img/zhuxian/2.bmp", at=(447, 74, 530, 88)),
+    3: p(img="img/zhuxian/3.bmp", at=(456, 77, 520, 88)),
+    4: p(img="img/zhuxian/4.bmp", at=(447, 74, 527, 86)),
+    5: p(img="img/zhuxian/5.bmp", at=(446, 74, 530, 86)),
+    6: p(img="img/zhuxian/6.bmp", at=(447, 75, 527, 86)),
+    7: p(img="img/zhuxian/7.bmp", at=(437, 74, 488, 88)),
+    8: p(img="img/zhuxian/8.bmp", at=(449, 75, 528, 87)),
+    9: p(img="img/zhuxian/9.bmp", at=(447, 75, 527, 87)),
+    10: p(img="img/zhuxian/10.bmp", at=(450, 74, 531, 86)),
+    11: p(img="img/zhuxian/11.bmp", at=(449, 73, 523, 88)),
+    12: p(img="img/zhuxian/12.bmp", at=(442, 74, 507, 88)),
 }
 
 NORMAL_COORD = {

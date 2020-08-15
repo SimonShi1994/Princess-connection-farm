@@ -269,10 +269,9 @@ class BaseMixin:
             time.sleep(delay)
             sc = self.getscreen()
 
-    def check_dict_id(self, at, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05):
+    def check_dict_id(self, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05):
         """
-        识别固定区域内不同图的编号
-        :param at: 固定区域
+        识别不同图的编号，比较其概率
         :param id_dict: 字典，{key:PCRElement}，表示{编号:图片}
         :param screen: 设置为None时，第一次重新截图
         :param max_threshold: 最大阈值，获得图片最大概率必须超过max_threshold
@@ -281,14 +280,15 @@ class BaseMixin:
             None: 识别失败
             Else: 识别的key
         """
-        at = self._get_at(at)
         sc = self.getscreen() if screen is None else screen
-        sc_cut = UIMatcher.img_cut(sc, at)
         pdict = {}
         for i, j in id_dict.items():
-            pdict[i] = self.img_prob(j.img, screen=sc_cut)
+            pdict[i] = self.img_prob(j, screen=sc)
         tu = max(pdict, key=lambda x: pdict[x])
         l = sorted(pdict.values(), reverse=True)
+        if debug:
+            print(tu)
+            print(l)
         if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
             return None
         else:
@@ -554,7 +554,7 @@ class BaseMixin:
     def click_btn(self, btn: PCRelement, elsedelay=8., timeout=20, wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
                   until_disappear: Optional[Union[str, PCRelement, dict, list]] = "self",
-                  is_raise=True):
+                  is_raise=True, method=cv2.TM_CCOEFF_NORMED):
         """
         稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
         :param btn: PCRelement类型，要点击的按钮
@@ -572,22 +572,26 @@ class BaseMixin:
         （until_disappear,until_appear不要同时使用）
         :param is_raise:
             是否报错。设置为False时，匹配失败，返回False
+        :param method:
+            用于lockimg的方法
         """
         r = 0
         if isinstance(until_disappear, str):
             assert until_disappear == "self"
         if wait_self_before is True:
-            r = self.lock_img(btn, timeout=timeout, is_raise=is_raise)
+            r = self.lock_img(btn, timeout=timeout, is_raise=is_raise, method=method)
         if until_disappear is None and until_appear is None:
             self.click(btn, post_delay=0.5)  # 这边不加延迟，点击的波纹会影响到until_disappear自己
         else:
             if until_appear is not None:
-                r = self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout, is_raise=is_raise)
+                r = self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout, is_raise=is_raise,
+                                  method=method)
             elif until_disappear == "self":
-                r = self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout, is_raise=is_raise)
+                r = self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout, is_raise=is_raise,
+                                     method=method)
             elif until_disappear is not None:
                 r = self.lock_no_img(until_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout,
-                                     is_raise=is_raise)
+                                     is_raise=is_raise, method=method)
         return r
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
