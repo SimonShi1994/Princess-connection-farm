@@ -345,7 +345,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             self.click(1, 1)
             time.sleep(0.3)
             screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/zhuxian.jpg', at=(660, 72, 743, 94)):
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                 break
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break

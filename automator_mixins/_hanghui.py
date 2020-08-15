@@ -26,7 +26,7 @@ class HanghuiMixin(ToolsMixin):
             if self.is_exists('img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
-                for _ in range(5):
+                for _ in range(2):
                     time.sleep(0.8)
                     if self.is_exists('img/juanzeng.jpg', threshold=0.90):
                         screen_shot = self.getscreen()
