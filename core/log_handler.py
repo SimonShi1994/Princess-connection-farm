@@ -79,6 +79,11 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             '3': lev_3
         }
         if message != tmp_message and len(s_sckey) != 0:
+            if message == 'STATE':
+                from main import CheckStateReturn
+                acc_state = CheckStateReturn()
+            else:
+                acc_state = ''
             # 过滤掉重复信息
             tmp_message = message
             message = ''.join(message).replace('\n', '')
@@ -101,9 +106,9 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
                 # print(memory_info)
                 info = {
                     'text': 'Princess-connection——公主连结农场脚本',
-                    'desp': '#### 系统运行信息：\n- %s\n- %s\n\n------\n\n农场信息：\n\n```\n\n%s\n\n```\n\n'
+                    'desp': '#### 系统运行信息：\n- %s\n- %s\n\n------\n\n农场信息：\n\n```\n\n%s\n\n%s\n\n```\n\n'
                             '来自GITHUB一款开源脚本: https://github.com/SimonShi1994/Princess-connection-farm\n\n ' % (
-                                cpu_info, memory_info, message)
+                                cpu_info, memory_info, message, acc_state)
 
                 }
                 url = "https://sc.ftqq.com/%s.send" % s_sckey
@@ -137,10 +142,10 @@ class pcr_acc_log:  # 帐号日志（全局）
         _time = end_time - star_time
         self.acc_log.info('帐号：' + ac + '成功登出.耗时%s' % _time)
         acc_cout = acc_cout + 1
-        pcr_log(ac).server_bot('', message="账号信息：（单个模拟器）第%s个，%s账号完成任务,耗时%s" % (acc_cout, ac, _time))
+        # pcr_log(ac).server_bot('', message="账号信息：（单个模拟器）第%s个，%s账号完成任务,耗时%s" % (acc_cout, ac, _time))
 
     def Account_Login(self, ac):  # 帐号登陆记录
         global star_time
         star_time = time.time()
         self.acc_log.info('帐号：' + ac + '成功登录.')
-        pcr_log('admin').server_bot('', message="账号信息：%s成功登陆\n" % ac)
+        # pcr_log('admin').server_bot('', message="账号信息：%s成功登陆\n" % ac)

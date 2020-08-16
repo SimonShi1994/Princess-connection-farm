@@ -345,7 +345,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             self.click(1, 1)
             time.sleep(0.3)
             screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/zhuxian.jpg', at=(660, 72, 743, 94)):
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                 break
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
@@ -751,8 +751,8 @@ class ShuatuBaseMixin(FightBaseMixin):
 
     def Drag_Right(self):
         self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
-        time.sleep(0.5)
+        time.sleep(self.change_time)
 
     def Drag_Left(self):
         self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
-        time.sleep(0.5)
+        time.sleep(self.change_time)

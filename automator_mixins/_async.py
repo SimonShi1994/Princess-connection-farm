@@ -5,7 +5,7 @@ import psutil
 
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from pcr_config import bad_connecting_time, async_screenshot_freq
+from pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, s_sentstate, s_sckey
 from ._base import BaseMixin, Multithreading
 
 screenshot = None
@@ -21,34 +21,31 @@ class AsyncMixin(BaseMixin):
     async def juqingtiaoguo(self):
         # 异步跳过教程 By：CyiceK
         # 测试
-        global screenshot
         while Multithreading({}).is_stopped():
-            cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
             if screenshot is None:
                 time.sleep(0.8)
                 continue
-            if cpu_occupy >= 80:
-                # print('ka')
-                time.sleep(0.8)
+            time.sleep(0.8+self.change_time)
+            # print('juqing', self.change_time)
             try:
                 # await asyncio.sleep(10)
                 # time.sleep(10)
                 # 过快可能会卡
                 if UIMatcher.img_where(screenshot, 'img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
-                    self.lock_img('img/caidan_yuan.jpg', ifclick=[(917, 39)], ifdelay=1, retry=15)  # 菜单
-                    self.lock_img('img/caidan_tiaoguo.jpg', ifclick=[(807, 44)], ifdelay=1, retry=15)  # 跳过
-                    self.lock_img('img/tiaoguo.jpg', ifclick=[(589, 367)], ifdelay=5, retry=15)  # 跳过
+                    self.lock_img('img/caidan_yuan.jpg', ifclick=[(917, 39)], ifdelay=self.change_time, retry=15)  # 菜单
+                    self.lock_img('img/caidan_tiaoguo.jpg', ifclick=[(807, 44)], ifdelay=self.change_time, retry=15)  # 跳过
+                    self.lock_img('img/tiaoguo.jpg', ifclick=[(589, 367)], ifdelay=self.change_time, retry=15)  # 跳过
                 if UIMatcher.img_where(screenshot, 'img/kekeluo.bmp', at=(181, 388, 384, 451)):
                     # 防妈骑脸
                     self.lock_no_img('img/kekeluo.bmp', elseclick=[(1, 1)], at=(181, 388, 384, 451))
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_1.bmp', at=(0, 390, 147, 537)):
-                    self.lock_no_img('img/dxc_tb_1.bmp', ifclick=[(131, 533)], elsedelay=1)  # 回首页
+                    self.lock_no_img('img/dxc_tb_1.bmp', ifclick=[(131, 533)], elsedelay=self.change_time)  # 回首页
                 if UIMatcher.img_where(screenshot, 'img/dxc_tb_2.bmp', at=(580, 320, 649, 468)):
-                    self.lock_no_img('img/dxc_tb_2.bmp', ifclick=[(610, 431)], elsedelay=1)
-                    self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
-                    self.click(480, 505, pre_delay=0.5, post_delay=1)
+                    self.lock_no_img('img/dxc_tb_2.bmp', ifclick=[(610, 431)], elsedelay=self.change_time)
+                    self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time)  # 回首页
+                    self.click(480, 505, pre_delay=0.5, post_delay=self.change_time)
                     if self.is_exists('img/dixiacheng.jpg', at=(837, 92, 915, 140)):
-                        self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=1, retry=10)
+                        self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=self.change_time, retry=10)
                         raise Exception("地下城吃塔币跳过完成，重启")
             except Exception as e:
                 pcr_log(self.account).write_log(level='error', message='异步线程终止并检测出异常{}'.format(e))
@@ -59,15 +56,12 @@ class AsyncMixin(BaseMixin):
         # 异步判断异常 By：CyiceK
         # 测试
         _time = 0
-        global screenshot
         while Multithreading({}).is_stopped():
             if screenshot is None:
                 time.sleep(0.8)
                 continue
-            cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
-            if cpu_occupy >= 80:
-                # print('ka')
-                time.sleep(0.8)
+            time.sleep(0.8+self.change_time)
+            # print('bad', self.change_time)
             try:
                 time.sleep(bad_connecting_time)
                 # 过快可能会卡
@@ -115,21 +109,19 @@ class AsyncMixin(BaseMixin):
         异步‘眨眼’截图
         """
         global screenshot
+        screenshot = self.d.screenshot(format="opencv")
         while Multithreading({}).is_stopped():
-            # print(Multithreading({}).is_stopped())
-            cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
-            if cpu_occupy >= 80:
-                # print('ka')
-                time.sleep(async_screenshot_freq)
+            time.sleep(0.8+self.change_time)
+            # print('screen', self.change_time)
             time.sleep(async_screenshot_freq)
             # 如果之前已经截过图了，就不截图了
             if time.time() - self.last_screen_time > async_screenshot_freq:
-                screenshot = self.getscreen()
+                screenshot = self.d.screenshot(format="opencv")
             else:
                 if self.last_screen is not None:
                     screenshot = self.last_screen
                 else:
-                    screenshot = self.getscreen()
+                    screenshot = self.d.screenshot(format="opencv")
             # print('截图中')
             # cv2.imwrite('test.bmp', screenshot)
 
@@ -138,11 +130,11 @@ class AsyncMixin(BaseMixin):
         判断是否一直在同一界面
         :return:
         """
-        time.sleep(1)
+        time.sleep(self.change_time)
         # print('c', UIMatcher.img_similar(screenshot))
         _cout = 0
         while Multithreading({}).is_stopped():
-            time.sleep(5)
+            time.sleep(self.change_time)
             # print('c', UIMatcher.img_similar(screenshot))
             # print(UIMatcher.img_similar(screenshot))
             _same = UIMatcher.img_similar(screenshot, at=(834, 497, 906, 530))
@@ -156,6 +148,47 @@ class AsyncMixin(BaseMixin):
             else:
                 # print('不相似', _same)
                 pass
+
+    async def auto_time_sleep(self):
+        """
+        根据CPU负载调控time sleep
+        By:CyiceK
+        测试
+        :return:
+        """
+        while Multithreading({}).is_stopped():
+            # print(psutil.cpu_times())
+            self.cpu_occupy = psutil.cpu_percent(interval=None, percpu=False)
+            # print(self.cpu_occupy)
+            # 游戏拿不了fps
+            # 最大忍受5s
+            if self.change_time >= 5 and self.cpu_occupy >= 100:
+                self.change_time = 5
+            if self.change_time <= 0.0:
+                # print('重置', self.change_time)
+                self.change_time = 0.5
+            if self.cpu_occupy >= 100:
+                self.change_time = self.change_time + 0.5
+            elif self.cpu_occupy <= 30 and self.change_time - 0.5 > 0.0:
+                self.change_time = self.change_time - 0.1
+
+    async def Report_Information(self):
+        """
+        Server酱播报系统
+        By:CyiceK
+        :return:
+        """
+        _time_start = time.time()
+        # print(Multithreading({}).program_is_stopped())
+        while Multithreading({}).program_is_stopped() and len(s_sckey) != 0:
+            time.sleep(1)
+            _time_end = time.time()
+            _time = int(_time_end - _time_start)/60
+            # print(_time)
+            # 5分钟播报一次
+            if _time >= s_sentstate:
+                pcr_log('admin').server_bot('', message='STATE')
+                _time_start = time.time()
 
     async def aor_purse(self):
         """
@@ -180,22 +213,32 @@ class AsyncMixin(BaseMixin):
 
     def stop_th(self):
         Multithreading({}).pause()
-        self.receive_minicap.stop()
+        if fast_screencut:
+            self.receive_minicap.stop()
+        # print(Multithreading({}).is_stopped())
 
     def start_async(self):
+        # 随着账号开启而开启
         account = self.account
         self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
         self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
         # self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
         self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
+        self.c_async(self, account, self.auto_time_sleep(), sync=False)  # 异步根据CPU负载调控time sleep
+
+    def program_start_async(self):
+        # 随着程序开启而开启
+        print('我开')
+        account = 'admin'
+        self.c_async(self, account, self.Report_Information(), sync=False)  # 异步Server酱播报系统
 
     def fix_reboot(self, back_home=True):
         # 重启逻辑：重启应用，重启异步线程
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
         if back_home:
-            self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
+            self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time)  # 回首页
 
     def fix_fanhuibiaoti(self):
         # 返回标题逻辑

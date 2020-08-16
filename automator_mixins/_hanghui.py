@@ -18,7 +18,7 @@ class HanghuiMixin(ToolsMixin):
         行会自动捐赠装备
         2020/8/6 By:CyiceK 检查完毕
         """
-        self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time, at=(891, 413, 930, 452))  # 回首页
         # self.d.click(693, 436)
         self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=2)  # 锁定进入行会
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
@@ -26,21 +26,23 @@ class HanghuiMixin(ToolsMixin):
             if self.is_exists('img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
-                for _ in range(5):
+                for _ in range(2):
                     time.sleep(0.8)
                     if self.is_exists('img/juanzeng.jpg', threshold=0.90):
                         screen_shot = self.getscreen()
                         self.click_img(screen_shot, 'img/juanzeng.jpg')
                         # 点击max 后 ok
                         time.sleep(2)
-                        self.lock_no_img('img/max.jpg', elseclick=[(644, 385), (552, 470)], elsedelay=1, retry=20)
+                        self.lock_no_img('img/max.jpg', elseclick=[(644, 385), (552, 470)], elsedelay=self.change_time,
+                                         retry=20)
                         time.sleep(0.8)
                         if self.is_exists('img/ok.bmp', threshold=0.90):
                             self.lock_no_img('img/ok.bmp', elseclick=[(494, 368)], retry=4)
                         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(536, 361)], retry=3)
                         self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
                     else:
-                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], elsedelay=1, retry=1)
+                        self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], elsedelay=self.change_time,
+                                         retry=1)
                     # self.lock_img('img/juanzengqingqiu.jpg', ifclick=[(367, 39)], retry=2)
                     # screen_shot = self.getscreen()
                     # if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):
@@ -52,7 +54,7 @@ class HanghuiMixin(ToolsMixin):
                     #    self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     #    self.click(560, 369, pre_delay=2, post_delay=1)
                 while True:
-                    self.click(1, 1, post_delay=1)
+                    self.click(1, 1, post_delay=self.change_time)
                     # 防止ok卡住了
                     if self.is_exists('img/ok.bmp', threshold=0.90):
                         self.lock_no_img('img/ok.bmp', elseclick=[(494, 368)], retry=4)
@@ -63,10 +65,11 @@ class HanghuiMixin(ToolsMixin):
             # 处理多开捐赠失败的情况
             screen_shot = self.getscreen()
             self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
-            self.click(1, 1, post_delay=1)  # 处理被点赞的情况
+            self.click(1, 1, post_delay=self.change_time)  # 处理被点赞的情况
 
-        self.click(100, 505, post_delay=1)  # 回到首页
-        self.find_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.click(100, 505, post_delay=self.change_time)  # 回到首页
+        self.find_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=self.change_time,
+                      at=(891, 413, 930, 452))  # 回首页
 
     def tichuhanghui(self):  # 踢出行会
         self.lock_home()
@@ -221,21 +224,25 @@ class HanghuiMixin(ToolsMixin):
         # 行会点赞
         self.lock_home()
         # 进入行会
-        self.lock_img('img/zhiyuansheding.bmp', ifclick=[(230, 351), (1, 1)], elseclick=[(688, 432)], elsedelay=3, retry=10)
+        self.lock_img('img/zhiyuansheding.bmp', ifclick=[(230, 351), (1, 1)], elseclick=[(1, 1), (688, 432)],
+                      elsedelay=self.change_time, retry=10)
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
         self.lock_no_img('img/zhiyuansheding.bmp', elseclick=[(230, 351)], retry=5)
         if sortflag == 1:
             self.lock_img('img/ok.bmp', elseclick=[(720, 97)], retry=3)  # 点击排序
-            self.lock_no_img('img/ok.bmp', elseclick=[(289, 303), (587, 372)], elsedelay=1, retry=3)  # 按战力降序 这里可以加一步调降序
+            self.lock_no_img('img/ok.bmp', elseclick=[(289, 303), (587, 372)],
+                             elsedelay=self.change_time, retry=3)  # 按战力降序 这里可以加一步调降序
             self.lock_img('img/dianzan.bmp', ifclick=[(818, 198), (480, 374), (826, 316), (480, 374), (826, 428)]
-                          , elseclick=[(1, 1)], ifbefore=2, elsedelay=3, ifdelay=1, retry=10)
+                          , elseclick=[(1, 1)], ifbefore=self.change_time, elsedelay=self.change_time,
+                          ifdelay=self.change_time, retry=10)
             # 点赞 战力降序第一/第二/第三个人
             # (480, 374) 是ok的坐标
         else:
             self.lock_img('img/dianzan.bmp', ifclick=[(829, 316), (480, 374), (826, 428)], elseclick=[(1, 1)],
-                          elsedelay=3, ifbefore=2, ifdelay=1, retry=10)
+                          elsedelay=self.change_time, ifbefore=self.change_time, ifdelay=self.change_time, retry=10)
             # 点赞 职务降序（默认） 第二/第三个人，副会长
         self.click(479, 381)
         screen_shot_ = self.getscreen()
         self.click_img(screen_shot_, 'img/ok.bmp')
-        self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=1, at=(891, 413, 930, 452))  # 回首页
+        self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1), (480, 374)], elsedelay=self.change_time,
+                      at=(891, 413, 930, 452))  # 回首页
