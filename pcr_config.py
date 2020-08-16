@@ -20,6 +20,7 @@ log_lev = cfg.get('log', 'log_lev')
 log_cache = cfg.getint('log', 'log_cache')
 s_sentstate = cfg.getint('log', 's_sentstate')
 
+selected_emulator = cfg.get('pcrfarm_setting', 'selected_emulator')
 baidu_apiKey = cfg.get('pcrfarm_setting', 'baidu_apiKey')
 baidu_secretKey = cfg.get('pcrfarm_setting', 'baidu_secretKey')
 anticlockwise_rotation_times = cfg.getint('pcrfarm_setting', 'anticlockwise_rotation_times')

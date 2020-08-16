@@ -9,15 +9,27 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.log_handler import pcr_log
 from core.usercentre import list_all_users, AutomatorRecorder
 # 临时解决方案，可以改进
-from pcr_config import trace_exception_for_debug, end_shutdown, fast_screencut
+from pcr_config import trace_exception_for_debug, end_shutdown, fast_screencut, selected_emulator
 
 acclog = log_handler.pcr_acc_log()
-# 雷电模拟器
-ld_emulator = '127.0.0.1:5554'
-# Mumu模拟器
-mumu_emulator = '127.0.0.1:7555'
+# 注意！目前逻辑仅支持雷电多开
+all_emulators = {
+    '雷电': '127.0.0.1:5554',
+    '网易MUMU': '127.0.0.1:7555',
+    '逍遥': '127.0.0.1:21503',
+    '天天': '127.0.0.1:6555',
+    '海马': '127.0.0.1:53001',
+    'Genymotion': '127.0.0.1:5555',
+    '谷歌原生': '不支持',
+    '夜神1': '127.0.0.1:62001',
+    '夜神2': '127.0.0.1:52001',
+    '蓝叠': '127.0.0.1:5555',
+    'BlueStacks': '127.0.0.1:5555',
+    '安卓模拟器大师': '127.0.0.1:54001',
+    '腾讯': '127.0.0.1:5555'
+}
 # 选定模拟器
-selected_emulator = ld_emulator
+selected_emulator = all_emulators[selected_emulator]
 
 
 def runmain(params):
@@ -172,6 +184,19 @@ def execute(continue_=False, max_retry=3):
         # 初始化队列, 先把所有的模拟器设备放入队列
         for device in devices:
             queue.put(device)
+
+        # 这里是脱离了runmain的异步
+        for _ in range(len(devices)):
+            address = queue.get()
+            a = Automator(address)
+            # 传递程序启动的flags
+            Multithreading({}).state_sent_resume()
+            # 随着进程的异步
+            a.program_start_async()
+            # 放回address
+            queue.put(address)
+            if fast_screencut:
+                a.receive_minicap.stop()
 
         # 进程池大小为模拟器数量, 保证同一时间最多有模拟器数量个进程在运行
         if trace_exception_for_debug:

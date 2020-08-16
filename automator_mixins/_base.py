@@ -742,7 +742,7 @@ class Multithreading(threading.Thread, BaseMixin):
             pass
 
     def run(self):
-        self._stop_event.wait()
+        self.run_event.wait()
         self.run_func(self.th_name, self.a, self.fun)
 
     def state_sent_resume(self):

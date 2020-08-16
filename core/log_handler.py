@@ -79,6 +79,11 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             '3': lev_3
         }
         if message != tmp_message and len(s_sckey) != 0:
+            if message == 'STATE':
+                from main import CheckStateReturn
+                acc_state = CheckStateReturn()
+            else:
+                acc_state = ''
             # 过滤掉重复信息
             tmp_message = message
             message = ''.join(message).replace('\n', '')
@@ -89,8 +94,6 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             # print(len(self.acc_message[self.acc_name]))
             if s_level in lev_dic['3'] or (s_level in lev_dic[log_lev] and len(self.acc_message[self.acc_name]) >= log_cache):
                 message = ''.join(self.acc_message[self.acc_name]).replace(',', '\n').replace("'", '')
-                from main import CheckStateReturn
-                acc_state = CheckStateReturn()
                 # print(message)
                 cpu_percent = psutil.cpu_percent(interval=1)
                 cpu_info = "CPU使用率：%i%%" % cpu_percent

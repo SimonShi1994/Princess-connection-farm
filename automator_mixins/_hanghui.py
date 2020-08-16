@@ -244,5 +244,5 @@ class HanghuiMixin(ToolsMixin):
         self.click(479, 381)
         screen_shot_ = self.getscreen()
         self.click_img(screen_shot_, 'img/ok.bmp')
-        self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=self.change_time,
+        self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1), (480, 374)], elsedelay=self.change_time,
                       at=(891, 413, 930, 452))  # 回首页

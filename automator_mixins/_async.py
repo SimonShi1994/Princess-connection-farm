@@ -25,7 +25,7 @@ class AsyncMixin(BaseMixin):
             if screenshot is None:
                 time.sleep(0.8)
                 continue
-            time.sleep(self.change_time)
+            time.sleep(0.8+self.change_time)
             # print('juqing', self.change_time)
             try:
                 # await asyncio.sleep(10)
@@ -60,7 +60,7 @@ class AsyncMixin(BaseMixin):
             if screenshot is None:
                 time.sleep(0.8)
                 continue
-            time.sleep(self.change_time)
+            time.sleep(0.8+self.change_time)
             # print('bad', self.change_time)
             try:
                 time.sleep(bad_connecting_time)
@@ -109,8 +109,9 @@ class AsyncMixin(BaseMixin):
         异步‘眨眼’截图
         """
         global screenshot
+        screenshot = self.d.screenshot(format="opencv")
         while Multithreading({}).is_stopped():
-            time.sleep(0.3+self.change_time)
+            time.sleep(0.8+self.change_time)
             # print('screen', self.change_time)
             time.sleep(async_screenshot_freq)
             # 如果之前已经截过图了，就不截图了
@@ -177,10 +178,7 @@ class AsyncMixin(BaseMixin):
         By:CyiceK
         :return:
         """
-        if Multithreading({}).program_is_stopped():
-            pass
-        else:
-            _time_start = time.time()
+        _time_start = time.time()
         # print(Multithreading({}).program_is_stopped())
         while Multithreading({}).program_is_stopped() and len(s_sckey) != 0:
             time.sleep(1)
@@ -189,7 +187,7 @@ class AsyncMixin(BaseMixin):
             # print(_time)
             # 5分钟播报一次
             if _time >= s_sentstate:
-                pcr_log('admin').server_bot('', message='')
+                pcr_log('admin').server_bot('', message='STATE')
                 _time_start = time.time()
 
     async def aor_purse(self):
@@ -212,8 +210,6 @@ class AsyncMixin(BaseMixin):
 
     def start_th(self):
         Multithreading({}).resume()
-        # 传递程序启动的flags
-        Multithreading({}).state_sent_resume()
 
     def stop_th(self):
         Multithreading({}).pause()
@@ -222,6 +218,7 @@ class AsyncMixin(BaseMixin):
         # print(Multithreading({}).is_stopped())
 
     def start_async(self):
+        # 随着账号开启而开启
         account = self.account
         self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
         self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
@@ -229,6 +226,11 @@ class AsyncMixin(BaseMixin):
         # self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
         self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
         self.c_async(self, account, self.auto_time_sleep(), sync=False)  # 异步根据CPU负载调控time sleep
+
+    def program_start_async(self):
+        # 随着程序开启而开启
+        print('我开')
+        account = 'admin'
         self.c_async(self, account, self.Report_Information(), sync=False)  # 异步Server酱播报系统
 
     def fix_reboot(self, back_home=True):
