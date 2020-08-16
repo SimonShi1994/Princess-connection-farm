@@ -25,6 +25,10 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
                 continue
+            num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+            if num_of_white < 77000:
+                break
+
             self.click(1, 1, post_delay=0.5)
             self.click(330, 270, post_delay=1)
             # 跳过特别庆典
@@ -41,6 +45,8 @@ class RoutineMixin(ShuatuBaseMixin):
         if UIMatcher.img_where(screen_shot_, 'img/kekeluo.bmp'):
             self.lock_img('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
             self.lock_home()
+        time.sleep(1)
+        self.lock_home()  # 追加检测
 
     def gonghuizhijia(self):  # 家园领取
         # 2020-07-31 TheAutumnOfRice: 检查完毕
@@ -127,7 +133,8 @@ class RoutineMixin(ShuatuBaseMixin):
                               alldelay=1, method="sq", threshold=0.90, is_raise=False, timeout=10)
         if state:
             # 全部收取亮着
-            self.click_btn(RENWU_BTN["quanbushouqu"], until_appear=RENWU_BTN["guanbi"])
+            self.click_btn(RENWU_BTN["quanbushouqu"], until_appear=RENWU_BTN["guanbi"], elsedelay=5, timeout=10,
+                           is_raise=False)
         self.lock_home()
 
     def goumaitili(self, times, var={}):  # 购买体力
@@ -216,7 +223,8 @@ class RoutineMixin(ShuatuBaseMixin):
         while True:
             self.click(82, 84)
             screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/exp.jpg'):
+            if self.is_exists("img/exp.jpg", screen=screen_shot_) or self.is_exists("img/exp2.jpg",
+                                                                                    screen=screen_shot_):
                 break
             count += 1
             time.sleep(1)

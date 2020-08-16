@@ -14,8 +14,9 @@ class FightBaseMixin(ToolsMixin):
     包括与战斗相关的基本操作
     """
 
-    def get_fight_state(self, screen=None, max_retry=3, delay=1,
-                        check_hat=True, check_xd=False, go_xd=False) -> int:
+    def get_fight_state(self, screen=None, max_retry=10, delay=1,
+                        check_hat=True, check_xd=False, go_xd=False,
+                        check_jq=False) -> int:
         """
         获取战斗状态
         注：不适用竞技场的战斗！
@@ -26,6 +27,9 @@ class FightBaseMixin(ToolsMixin):
         :param check_xd: 刷图中使用，会增加对限定商店的判断。出现限定商店表示成功
         :param go_xd: 刷图中使用，如果限定商店出现了，是否选择进入。
             若设置为True，则会进入限定商店，并返回1；否则，停留在胜利页面，返回1。
+        :param check_jq: 推图中使用，有些boss关卡会有大段前后剧情
+            若设置为True，则会检测是否有人说话的框，有的话则大力跳过
+            实际情况中，该选项开启很容易导致漏点对话框，买体力会失效。
         :return:
             -1：未知状态
             0： 战斗进行中
@@ -33,7 +37,9 @@ class FightBaseMixin(ToolsMixin):
             2： 战斗失败
             3:  战斗胜利，并且出现了限定商店，并且进入了限定商店
         """
-        for retry in range(max_retry):
+        retry = 0
+        while retry < max_retry:
+            retry += 1
             if screen is None:
                 sc = self.getscreen()
             else:
@@ -63,6 +69,7 @@ class FightBaseMixin(ToolsMixin):
             elif self.is_exists(MAIN_BTN["tiaoguo"], screen=sc):
                 # 检测到右上角跳过：点击 （羁绊剧情）
                 self.click(MAIN_BTN["tiaoguo"])
+                retry = 0
             elif check_xd and self.is_exists(MAOXIAN_BTN["xianding"]):
                 if go_xd:
                     self.click_btn(MAOXIAN_BTN["xianding"])
@@ -70,9 +77,14 @@ class FightBaseMixin(ToolsMixin):
                 else:
                     self.click_btn(MAOXIAN_BTN["xianding_quxiao"])
                     return 1
+            elif check_jq and self.is_exists(MAIN_BTN["speaker_box"], screen=sc, method="sq"):
+                for _ in range(5):
+                    self.click(471, 5, post_delay=0.1)
+                retry = 0
+                continue
             else:
-                self.click(471, 5)  # 避免奇怪的对话框
                 time.sleep(delay)
+                self.click(471, 5, post_delay=0.5)  # 避免奇怪的对话框
                 continue
         return -1
 
@@ -255,7 +267,7 @@ class FightBaseMixin(ToolsMixin):
                 count_live -= 1
         return count_live
 
-    def set_fight_team_order(self):
+    def set_fight_team_order(self, order="zhanli"):
         """
         按照战力顺序设置战斗队伍
         要求场景：处于”队伍编组“情况下。
@@ -266,10 +278,16 @@ class FightBaseMixin(ToolsMixin):
         if p0 > p1:
             # 升序改降序
             self.click(FIGHT_BTN["sort_up"], pre_delay=0.5, post_delay=1)
-        if not self.is_exists(FIGHT_BTN["sort_power"], screen=sc):
-            self.click(FIGHT_BTN["sort_power"], pre_delay=0.5, post_delay=1)
-            self.click(FIGHT_BTN["cat_zhanli"], pre_delay=0.5, post_delay=1)
-            self.click(FIGHT_BTN["cat_ok"], pre_delay=0.5, post_delay=1)
+        if order == "zhanli":
+            if not self.is_exists(FIGHT_BTN["sort_power"]):
+                self.click_btn(FIGHT_BTN["sort_power"], until_appear=FIGHT_BTN["cat_ok"])
+                self.click(FIGHT_BTN["cat_zhanli"], pre_delay=0.5, post_delay=1)
+                self.click_btn(FIGHT_BTN["cat_ok"])
+        elif order == "dengji":
+            if not self.is_exists(FIGHT_BTN["sort_level"]):
+                self.click_btn(FIGHT_BTN["sort_level"], until_appear=FIGHT_BTN["cat_ok"])
+                self.click(FIGHT_BTN["cat_dengji"], pre_delay=0.5, post_delay=1)
+                self.click_btn(FIGHT_BTN["cat_ok"])
         # 换人
         for _ in range(5):
             self.click(FIGHT_BTN["empty"][1], post_delay=0.5)

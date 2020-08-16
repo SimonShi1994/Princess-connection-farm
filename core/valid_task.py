@@ -87,7 +87,7 @@ STANDARD_INPUTBOX = {
 class TaskParam:
     def __init__(self, key: str, typ: Optional[Type] = None, title: Optional[str] = None,
                  desc: Optional[str] = None,
-                 default: Optional[Any] = None, inputbox=None, inputcheck=None):
+                 default: Optional[Any] = None, inputbox=None):
         """
         构建一个合法Task的参数
         :param key:
@@ -421,7 +421,6 @@ VALID_TASK = ValidTask() \
           TaskParam("teams", list, "编队列表", "编队列表，参战地下城所使用的编队\n"
                                            "按照列表顺序分别表示编队1号，2号，3号……\n"
                                            "每一个元素为一个字符串\n"
-                                           "若为空字符串，则表示不进行队伍更改，沿用上次队伍\n"
                                            "若为\"zhanli\"，则按照战力排序，选择前五战力为当前队伍\n"
                                            "若为\“a-b\",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b", inputbox=TeamInputer())]) \
     .add("j1", "doJJC", "竞技场", "竞技场白给脚本") \
@@ -449,8 +448,26 @@ VALID_TASK = ValidTask() \
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
+    .add("s1-s", "shuajingyan_super", "超级刷1-1", "扫荡券用完了就采用手刷，有扫荡券就再用扫荡券\n"
+                                                "一直刷到倾家荡产，体力耗尽！",
+         [TaskParam("mode", int, "刷图模式", "0：纯扫荡券\n"
+                                         "1：先扫荡券，无法扫荡时手刷\n"
+                                         "2：纯手刷\n", 1),
+          TaskParam("buytili", int, "体力购买次数", "消耗多少体力执行超级刷经验", 6)]) \
     .add("s2", "shuatuNN", "刷N图", "使用扫荡券刷指定普通副本",
          [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",
          [TaskParam("tu_dict", list, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox())]) \
-    .add("s4", "doActivityHard", "刷活动图", "使用扫荡券刷活动副本（慎用，因为每次活动坐标都不同）")
+    .add("s4", "doActivityHard", "刷活动图", "使用扫荡券刷活动副本（慎用，因为每次活动坐标都不同）") \
+    .add("s5", "chushihua", "初始化", "从1-3自动推到3-1，已经推过的部分不会再推。") \
+    .add("s5-2", "chushihua2", "快速初始化", "从1-3自动推到3-1，已经推过的部分不会再推。\n"
+                                        "先刷经验后推图，效率更高，但是会刷很多次1-1.") \
+    .add("s6", "tuitu", "推图", "使用等级前五的角色自动推图",
+         [TaskParam("mode", int, "推图选择", "0：推普通本；1：推困难本"),
+          TaskParam("to", str, "终点", "字符串A-B,表示推图一直进行至A-B结束"),
+          TaskParam("from_", str, "起点", "字符串 A-B，表示推图起点.若为new，则从最新图开始。", "new"),
+          TaskParam("buy_tili", int, "体力购买次数", "没体力时自动购买体力的上限", 0),
+          TaskParam("auto_upgrade", int, "自动升级模式", "开启后，若战败，将自动升级\n"
+                                                   "0: 关闭自动升级\n"
+                                                   "1: 只自动强化，但是不另外打关拿装备\n"
+                                                   "2: 自动强化并且会补全一切装备", 2)])
