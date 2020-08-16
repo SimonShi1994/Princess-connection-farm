@@ -1,6 +1,7 @@
 import os
 from multiprocessing import Pool, Manager
 
+from automator_mixins._base import Multithreading
 from core import log_handler
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
@@ -65,8 +66,6 @@ def runmain(params):
         """
         a.change_acc()
         acclog.Account_Logout(account)
-        # 停止异步
-        a.stop_th()
     except Exception as e:
         if trace_exception_for_debug:
             raise e
@@ -76,6 +75,7 @@ def runmain(params):
         except:
             pass
     finally:
+        # 停止异步
         a.stop_th()
     # 退出当前账号，切换下一个
     queue.put(address)
@@ -187,6 +187,8 @@ def execute(continue_=False, max_retry=3):
             a.d.app_stop("com.bilibili.priconne")
             if fast_screencut:
                 a.receive_minicap.stop()
+        # 传递程序关闭的flags
+        Multithreading({}).state_sent_pause()
         # 退出adb
         os.system('cd adb & adb kill-server')
         pcr_log('admin').write_log(level='info', message='任务全部完成')

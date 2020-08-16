@@ -34,6 +34,27 @@ def CheckState():
             print("ERROR: ", rs["error"])
 
 
+def CheckStateReturn():
+    users = list_all_users(0)
+    acc_task_info = []
+    for acc in users:
+        AR = AutomatorRecorder(acc)
+        uj = AR.getuser()
+        acc_task_tmpinfo = "账号:%s 任务:%s 状态:" % (acc, "NONE" if uj["taskfile"] == "" else uj["taskfile"])
+        rs = AR.get("run_status", UDD["run_status"])
+        if rs["error"] is None:
+            if rs["finished"]:
+                acc_task_tmpinfo = acc_task_tmpinfo + "FINISHED."
+            else:
+                acc_task_tmpinfo = acc_task_tmpinfo + "CURRENT:%s" % rs["current"]
+        else:
+            acc_task_tmpinfo = acc_task_tmpinfo + "ERROR:%s" % rs["error"]
+        acc_task_info.append(acc_task_tmpinfo)
+        acc_task_info.append('\n')
+    acc_task_info = ''.join(acc_task_info).replace(',', '\n').replace("'", '')
+    return acc_task_info
+
+
 def ClearError(acc):
     """
     重启某用户的错误让他继续跑

@@ -41,6 +41,7 @@ class BaseMixin:
         self.ms: Optional[moveset] = None
         self.debug_screen = None  # 如果debug_screen为None，则正常截图；否则，getscreen函数使用debug_screen作为读取的screen
         self.last_screen = None  # 每次调用getscreen会把图片暂存至last_screen
+        self.address = None
         self.cpu_occupy = 0
         self.change_time = 0.5
         self.last_screen_time = 0
@@ -55,6 +56,7 @@ class BaseMixin:
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
         """
         self.appRunning = False
+        self.address = address
         if address != "debug":
             self.d = u2.connect(address)
             self.dWidth, self.dHeight = self.d.window_size()
@@ -721,6 +723,7 @@ class Multithreading(threading.Thread, BaseMixin):
     # 2020.8.9 修复了线程泄漏
 
     _stop_event = threading.Event()
+    run_event = threading.Event()
 
     def __init__(self, kwargs):
         if kwargs:
@@ -742,11 +745,20 @@ class Multithreading(threading.Thread, BaseMixin):
         self._stop_event.wait()
         self.run_func(self.th_name, self.a, self.fun)
 
+    def state_sent_resume(self):
+        self.run_event.set()  # 设置为True, 让线程停止阻塞
+
     def pause(self):
         self._stop_event.clear()  # 设置为False, 让线程阻塞
 
     def resume(self):
         self._stop_event.set()  # 设置为True, 让线程停止阻塞
+
+    def state_sent_pause(self):
+        self.run_event.clear()  # 设置为False, 让线程阻塞
+
+    def program_is_stopped(self):
+        return self.run_event.is_set()
 
     def is_stopped(self):
         return self._stop_event.is_set()

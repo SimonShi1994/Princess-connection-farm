@@ -80,6 +80,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/yunhai.bmp', elseclick=[(1, 1)])
                 if self.is_exists('img/yunhai.bmp'):
                     dixiacheng_times = self.baidu_ocr(868, 419, 928, 459)
+                    # {'log_id': ***, 'words_result_num': 1, 'words_result': [{'words': '0/1'}]}
+                    # print(dixiacheng_times)
                     dixiacheng_times = int(dixiacheng_times['words_result'][0]['words'].split('/')[0])
                     if dixiacheng_times <= 1:
                         break

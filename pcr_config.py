@@ -18,6 +18,7 @@ baidu_ocr_img = cfg.getboolean('debug', 'baidu_ocr_img')
 s_sckey = cfg.get('log', 's_sckey')
 log_lev = cfg.get('log', 'log_lev')
 log_cache = cfg.getint('log', 'log_cache')
+s_sentstate = cfg.getint('log', 's_sentstate')
 
 baidu_apiKey = cfg.get('pcrfarm_setting', 'baidu_apiKey')
 baidu_secretKey = cfg.get('pcrfarm_setting', 'baidu_secretKey')
