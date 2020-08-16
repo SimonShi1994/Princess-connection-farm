@@ -6,21 +6,127 @@
           <el-button
             size="mini"
             type="success"
-            @click="dialogFormVisible = true">新增
+            @click="dialogCreateFormVisible = true">新增
           </el-button>
         </el-col>
       </el-row>
 
-      <el-dialog title="添加账户" :visible.sync="dialogFormVisible"
-                 @close="()=>{dialogFormVisible = false;form = {taskname: ''}}">
-        <el-form :model="form">
+      <el-dialog title="添加任务" :visible.sync="dialogCreateFormVisible"
+                 @close="()=>{dialogCreateFormVisible = false;createForm = {taskname: ''}}">
+        <el-form :model="createForm">
           <el-form-item label="任务名">
-            <el-input v-model="form.taskname" autocomplete="off"></el-input>
+            <el-input v-model="createForm.taskname" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="()=>{dialogFormVisible = false;form = {taskname: ''}}">取 消</el-button>
-          <el-button type="primary" @click="handleCreate(form.taskname)">确 定</el-button>
+          <el-button @click="()=>{dialogCreateFormVisible = false;createForm = {taskname: ''}}">取 消</el-button>
+          <el-button type="primary" @click="handleCreate(createForm.taskname)">确 定</el-button>
+        </div>
+      </el-dialog>
+
+      <el-dialog title="编辑任务" :visible.sync="dialogUpdateFormVisible" width="80%"
+                 @close="handleCancelEdit()">
+        <el-form :model="updateForm">
+          <el-form-item label="任务名">
+            <el-input disabled v-model="updateForm.row.taskname" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="关联账号">
+            <el-input disabled v-model="updateForm.row.accounts" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="子任务列表">
+            <el-table
+              :data="updateForm.row.subtasks.tasks"
+              stripe
+              style="width: 100%">
+              <el-table-column
+                prop="type"
+                label="ID"
+                width="50"
+              >
+              </el-table-column>
+
+              <el-table-column
+                label="名称" width="80">
+                <template slot-scope="scope">
+                  {{subtaskSchema[scope.row.type].title}}
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                label="描述" width="100">
+                <template slot-scope="scope">
+                  {{subtaskSchema[scope.row.type].desc}}
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                label="参数">
+                <template slot-scope="scope">
+                  <el-table
+                    v-if="subtaskSchema[scope.row.type].params.length>0"
+                    :data="subtaskSchema[scope.row.type].params"
+                    stripe
+                    style="width: 100%">
+                    <el-table-column
+                      prop="key"
+                      label="变量"
+                      width="100">
+                    </el-table-column>
+                    <el-table-column
+                      prop="key_type"
+                      label="类型"
+                      width="50">
+                    </el-table-column>
+                    <el-table-column
+                      prop="title"
+                      label="名称"
+                      width="80">
+                    </el-table-column>
+                    <el-table-column
+                      prop="desc"
+                      label="描述"
+                      width="300">
+                    </el-table-column>
+                    <el-table-column
+                      label="值">
+                      <template slot-scope="scope1">
+                        <el-input v-if='scope1.row.key_type !== "bool"' v-model='scope.row[scope1.row.key]'></el-input>
+                        <el-switch
+                          v-if='scope1.row.key_type === "bool"'
+                          v-model='scope.row[scope1.row.key]'
+                          active-text="True"
+                          inactive-text="False">
+                        </el-switch>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </template>
+              </el-table-column>
+
+              <el-table-column label="操作" width="50">
+                <template slot-scope="scope">
+                  <el-button type="danger" size="mini" icon="el-icon-delete" circle @click="deleteSubtask(scope.$index)"></el-button>
+                </template>
+              </el-table-column>
+
+            </el-table>
+          </el-form-item>
+          <el-form-item label="添加子任务">
+            <el-select v-model="updateForm.row.newSubtask" placeholder="请选择">
+              <el-option
+                v-for="item in subtaskSchema"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+                :disabled="item.disabled">
+              </el-option>
+            </el-select>
+            <el-button type="success" icon="el-icon-check" circle @click="addSubtask()"></el-button>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleCancelEdit()">取 消</el-button>
+          <el-button type="primary" @click="handleSubmitEdit()">确 定</el-button>
         </div>
       </el-dialog>
 
@@ -52,34 +158,20 @@
           </template>
 
           <template slot-scope="scope">
-<!--            <el-button-->
-<!--              v-if="!scope.row.edit"-->
-<!--              size="mini"-->
-<!--              @click="handleStartEdit(scope.$index, scope.row)">编辑-->
-<!--            </el-button>-->
+            <el-button
+              size="mini"
+              @click="handleStartEdit(scope.$index, scope.row)">编辑
+            </el-button>
             <el-popconfirm
-              v-if="!scope.row.edit"
               title="确定删除这个任务吗？"
               @onConfirm="handleDelete(scope.$index, scope.row)">
               <el-button
-                v-if="!scope.row.edit"
                 slot="reference"
                 size="mini"
                 type="danger"
                 @click="preHandleDelete(scope.$index, scope.row)">删除
               </el-button>
             </el-popconfirm>
-            <el-button
-              v-if="scope.row.edit"
-              size="mini"
-              type="success"
-              @click="handleSubmitEdit(scope.$index, scope.row)">确定
-            </el-button>
-            <el-button
-              v-if="scope.row.edit"
-              size="mini"
-              @click="handleCancelEdit(scope.$index, scope.row)">取消
-            </el-button>
           </template>
 
         </el-table-column>
@@ -89,7 +181,8 @@
 </template>
 
 <script>
-import {listTask, createTask, updateTask, deleteTask} from '@/request/api'
+
+import {listTask, createTask, deleteTask, listSubtaskSchema, updateTask} from '@/request/api'
 
 export default {
   name: 'TaskConfig',
@@ -97,10 +190,24 @@ export default {
     return {
       tableData: [],
       search: '',
-      dialogFormVisible: false,
-      form: {
+
+      dialogCreateFormVisible: false,
+      createForm: {
         taskname: ''
-      }
+      },
+
+      dialogUpdateFormVisible: false,
+      updateForm: {
+        index: null,
+        row: {
+          taskname: '',
+          accounts: '',
+          subtasks: {tasks: []},
+          newSubtask: ''
+        }
+      },
+
+      subtaskSchema: {}
     }
   },
   mounted () {
@@ -114,7 +221,7 @@ export default {
           message: taskname,
           type: 'success'
         })
-        this.dialogFormVisible = false
+        this.dialogCreateFormVisible = false
         this.refreshTableData()
       }).catch(err => {
         if (err.response && err.response.status) {
@@ -133,20 +240,38 @@ export default {
       })
     },
     handleStartEdit (index, row) {
-      row.edit = !row.edit
-    },
-    handleCancelEdit (index, row) {
-      row.edit = !row.edit
-    },
-    handleSubmitEdit (index, row) {
-      row.edit = !row.edit
+      this.updateForm.index = index
+      this.updateForm.row = row
+      console.log(this.updateForm.row)
 
-      updateTask(row.taskname).then(res => {
+      this.dialogUpdateFormVisible = true
+    },
+    addSubtask () {
+      let abbr = this.updateForm.row.newSubtask
+      let templateSubtask = {
+        'type': abbr
+      }
+      let params = this.subtaskSchema[abbr].params
+      for (let i = 0; i < params.length; i++) {
+        templateSubtask[params[i].key] = null
+      }
+      this.updateForm.row.subtasks.tasks.push(templateSubtask)
+      this.updateForm.row.newSubtask = ''
+      console.log(templateSubtask)
+    },
+    deleteSubtask (index) {
+      console.log(this.updateForm.row.subtasks.tasks)
+      this.updateForm.row.subtasks.tasks.splice(index, 1)
+    },
+    handleSubmitEdit () {
+      console.log(this.updateForm.row)
+      updateTask(this.updateForm.row.taskname, this.updateForm.row.subtasks).then(res => {
         this.$notify({
-          title: '修改成功',
-          message: row.taskname,
+          title: '更新成功',
+          message: this.updateForm.row.taskname,
           type: 'success'
         })
+        this.dialogUpdateFormVisible = false
         this.refreshTableData()
       }).catch(err => {
         if (err.response && err.response.status) {
@@ -163,6 +288,11 @@ export default {
           })
         }
       })
+    },
+    handleCancelEdit () {
+      console.log(this.updateForm.row)
+
+      this.dialogUpdateFormVisible = false
     },
     handleDelete (index, row) {
       deleteTask(row.taskname).then(res => {
@@ -194,26 +324,19 @@ export default {
       this.multipleSelection = val
     },
     refreshTableData () {
-      var _this = this
       listTask().then(res => {
         console.log(res)
-        for (var i = 0; i < res.data.length; i++) {
-          res.data[i]['edit'] = false
-        }
-        _this.tableData = res.data
+        this.tableData = res.data
       }).catch(err => {
-        _this.tableData = [{
+        this.tableData = [{
           taskname: 'mana号任务',
-          accounts: '张三,罗某',
-          edit: false
+          accounts: '张三,罗某'
         }, {
           taskname: '装备号任务',
-          accounts: '某翔,韩立',
-          edit: false
+          accounts: '某翔,韩立'
         }, {
           taskname: '大号任务',
-          accounts: '咕噜灵波',
-          edit: false
+          accounts: '咕噜灵波'
         }
         ]
         this.$notify({
@@ -221,6 +344,18 @@ export default {
           message: err,
           type: 'success'
         })
+      })
+
+      listSubtaskSchema().then(res => {
+        let data = res.data
+        for (let i = 0; i < data.length; i++) {
+          this.subtaskSchema[data[i].abbr] = data[i]
+          this.subtaskSchema[data[i].abbr].value = data[i].abbr
+          this.subtaskSchema[data[i].abbr].label = data[i].abbr + '(' + data[i].title + ')'
+        }
+        console.log(res)
+        console.log('load schema')
+        console.log(this.subtaskSchema)
       })
     }
   }

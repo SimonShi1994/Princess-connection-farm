@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from api.constants.errors import NotFoundError, BadRequestError
 from api.constants.reply import Reply, ListReply
 from CreateUser import list_all_tasks, AutomatorRecorder, create_task as service_create_task, del_task
+
 task_api = Blueprint('task', __name__)
 
 
@@ -23,10 +24,22 @@ def list_task():
     res = []
     tasks: [] = list_all_tasks()
     for task in tasks:
-        res.append({
+        r = {
             'taskname': task,
             'accounts': '-',
-        })
+            'subtasks': {'task': []}
+        }
+
+        try:
+            subtasks = AutomatorRecorder(None).gettask(task)
+            if subtasks is not None:
+                r['subtasks'] = subtasks
+        except Exception as e:
+            print(e)
+            pass
+
+        res.append(r)
+
     return ListReply(res, len(res))
 
 
@@ -57,14 +70,14 @@ def retrieve_task(taskname):
     data = {
         'taskname': '',
         'accounts': '-',
-        'subtask': {},
+        'subtasks': {},
     }
 
     try:
-        subtask = AutomatorRecorder(None).gettask(taskname)
-        if subtask is not None:
+        subtasks = AutomatorRecorder(None).gettask(taskname)
+        if subtasks is not None:
             data['taskname'] = taskname
-            data['subtask'] = subtask
+            data['subtasks'] = subtasks
         return Reply(data)
 
     except Exception as e:
@@ -136,13 +149,23 @@ def update_task(taskname):
             taskname:
               type: string
               description: 任务名
+            subtasks:
+              type: string
+              description: 任务名
     responses:
       2xx:
         description: 成功
       4xx:
         description: 参数有误等
     """
-    return jsonify({})
+    if taskname == '':
+        return BadRequestError(f'参数 taskname 不为空')
+
+    body = request.form or request.get_json()
+    if body is None:
+        return BadRequestError(f'参数不合法')
+
+    return Reply({})
 
 
 @task_api.route('/task/<taskname>', methods=['DELETE'])
