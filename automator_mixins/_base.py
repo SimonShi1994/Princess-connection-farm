@@ -12,9 +12,9 @@ from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
+from core.get_screen import ReceiveFromMinicap
 from core.usercentre import AutomatorRecorder
 from pcr_config import debug, fast_screencut, lockimg_timeout
-
 
 lock = threading.Lock()
 
@@ -43,6 +43,7 @@ class BaseMixin:
         self.cpu_occupy = 0
         self.change_time = 0.5
         self.last_screen_time = 0
+        self.async_juqingtiaoguo_switch = False
 
         # fastscreencap
         if fast_screencut:

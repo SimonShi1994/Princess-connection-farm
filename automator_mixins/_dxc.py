@@ -26,6 +26,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         """
         # global dixiacheng_floor_times
         # 全局变量贯通两个场景的地下层次数识别
+
+        self.async_juqingtiaoguo_switch = True
         while True:
             # 进入流程先锁上地下城执行函数
             self.dxc_switch = 1
@@ -233,6 +235,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             time.sleep(2+self.change_time)
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ok.bmp')
+        self.async_juqingtiaoguo_switch = False
 
     def dixiacheng(self, skip):
         """
@@ -244,6 +247,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         :return:
         """
         # 首页 -> 地下城选章/（新号）地下城章内
+        self.async_juqingtiaoguo_switch = True
         self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
         self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
                          at=(837, 92, 915, 140))
@@ -327,6 +331,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             break
 
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
+        self.async_juqingtiaoguo_switch = False
 
     def dixiachengYunhai(self):  # 地下城 云海 （第一个）
         self.click(480, 505)
