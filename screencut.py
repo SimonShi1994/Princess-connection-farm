@@ -5,6 +5,7 @@ import cv2
 import matplotlib
 from matplotlib import pyplot as plt
 
+from automator_mixins._base import Multithreading
 from core.Automator import Automator
 
 
@@ -140,6 +141,7 @@ class AutomatorDebuger(Automator):
         else:
             if address is None:
                 address = lst[0].serial
+            Multithreading({}).state_sent_resume()
             self.init_device(address)
 
     def Account(self, account):

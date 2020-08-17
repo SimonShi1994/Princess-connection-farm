@@ -282,15 +282,19 @@ class ShuatuBaseMixin(FightBaseMixin):
         def saodang(times):
             # 使用扫荡券
             def alllll():
+                # 最快速点光扫荡
                 at = (729, 316, 788, 343)
+                sc1 = self.getscreen()
+                handle = self.d.touch.down(*MAOXIAN_BTN["saodang_plus"])
+                time.sleep(1)
                 while True:
-                    sc1 = self.getscreen()
-                    for _ in range(10):
-                        self.click(MAOXIAN_BTN["saodang_plus"])
+                    time.sleep(1)
                     sc2 = self.getscreen()
                     p = self.img_equal(sc1, sc2, at=at)
                     if p > 0.95:
                         break
+                    sc1 = sc2
+                handle.up(*MAOXIAN_BTN["saodang_plus"])
 
             sc = self.getscreen()
             p0 = self.img_prob(MAOXIAN_BTN["saodang_off"], screen=sc, method="sq")
