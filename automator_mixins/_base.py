@@ -15,8 +15,6 @@ from core.cv import UIMatcher
 from core.usercentre import AutomatorRecorder
 from pcr_config import debug, fast_screencut, lockimg_timeout
 
-if fast_screencut:
-    from core.get_screen import ReceiveFromMinicap
 
 lock = threading.Lock()
 
@@ -60,7 +58,8 @@ class BaseMixin:
         if address != "debug":
             self.d = u2.connect(address)
             self.dWidth, self.dHeight = self.d.window_size()
-            if fast_screencut:
+            if fast_screencut and Multithreading({}).program_is_stopped():
+                from core.get_screen import ReceiveFromMinicap
                 self.receive_minicap = ReceiveFromMinicap(address)
                 self.receive_minicap.start()
 

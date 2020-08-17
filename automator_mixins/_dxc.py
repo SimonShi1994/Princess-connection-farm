@@ -139,6 +139,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while self.dxc_switch == 0:
             # 防止一进去就是塔币教程
             # self.dxc_kkr()
+            # 又一防御措施，防止没进去地下城
+            self.lock_no_img('img/yunhai.bmp', elseclick=[(233, 311), (233, 311)])
             while True:
                 time.sleep(0.5)
                 if self.is_exists('img/chetui.jpg'):
