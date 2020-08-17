@@ -12,9 +12,9 @@ from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
+from core.get_screen import ReceiveFromMinicap
 from core.usercentre import AutomatorRecorder
 from pcr_config import debug, fast_screencut, lockimg_timeout
-
 
 lock = threading.Lock()
 
@@ -32,8 +32,8 @@ class BaseMixin:
         self.appRunning = False
         self.account = "debug"
         self.d: Optional[u2.Device] = None
-        self.dWidth = 0
-        self.dHeight = 0
+        self.dWidth = 960
+        self.dHeight = 540
         self.log: Optional[log_handler.pcr_log] = None
         self.AR: Optional[AutomatorRecorder] = None
         self.ms: Optional[moveset] = None
@@ -43,6 +43,7 @@ class BaseMixin:
         self.cpu_occupy = 0
         self.change_time = 0.5
         self.last_screen_time = 0
+        self.async_juqingtiaoguo_switch = False
 
         # fastscreencap
         if fast_screencut:
@@ -259,11 +260,16 @@ class BaseMixin:
         :param screen: 设置为None时，截图，否则使用screen
         :param delay: 检测间隔
         :param timeout: 超过timeout，报错
+        Add 2020-08-15: 增加对Connect的检测。
         """
         time.sleep(delay)
         sc = self.getscreen() if screen is None else screen
         last_time = time.time()
         while True:
+            if self.is_exists(img='img/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
+                time.sleep(delay)
+                sc = self.getscreen()
+                continue
             sc_cut = UIMatcher.img_cut(sc, MAIN_BTN["loading_left"].at)
             if not (sc_cut == 1).all():
                 break
@@ -520,7 +526,7 @@ class BaseMixin:
             if time.time() - ec_time >= elsedelay:
                 if elseclick != []:
                     for clicks in elseclick:
-                        self.click(clicks[0], clicks[1])
+                        self.click(clicks[0], clicks[1], post_delay=0.8)
                     attempt += 1
                     ec_time = time.time()
             time.sleep(alldelay)

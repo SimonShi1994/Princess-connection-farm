@@ -75,7 +75,8 @@ class DXCBaseMixin(FightBaseMixin):
         mode = 0
         while mode == 0:
             # 等待战斗结束
-            mode = self.get_fight_state(max_retry=10)
+            mode = self.get_fight_state(max_retry=15, check_hat=True)
+            time.sleep(3)
         if mode == -1:
             return -1
         elif mode == 1:
