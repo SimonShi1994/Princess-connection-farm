@@ -13,7 +13,6 @@ from pcr_config import s_sckey, log_lev, log_cache
 acc_cout = 0
 star_time = 0
 end_time = 0
-tmp_message = ''
 
 
 class pcr_log():  # 帐号内部日志（从属于每一个帐号）
@@ -66,26 +65,26 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         server酱连接 2020/7/21 by:CyiceK
         s_level 为日志级别
         """
-        global tmp_message
-        lev_0 = ['info', 'warning', 'error', '']
-        lev_1 = ['warning', 'error', '']
-        lev_2 = ['error', '']
+        # 日志级别所区分的头
+        # STATE头为任务状态头，发送及包含STATE
+        lev_0 = ['info', 'warning', 'error', 'STATE', '']
+        lev_1 = ['warning', 'error', 'STATE', '']
+        lev_2 = ['error', 'STATE', '']
         # 3为0级消息，是消息队列的最高级别,无视log_cache堵塞
-        lev_3 = ['']
+        lev_3 = ['STATE', '']
+        # 日志级别
         lev_dic = {
             '0': lev_0,
             '1': lev_1,
             '2': lev_2,
             '3': lev_3
         }
-        if message != tmp_message and len(s_sckey) != 0:
-            if message == 'STATE':
+        # 先不填acc_state
+        acc_state = ''
+        if len(s_sckey) != 0:
+            if s_level in lev_dic[log_lev]:
                 from main import CheckStateReturn
                 acc_state = CheckStateReturn()
-            else:
-                acc_state = ''
-            # 过滤掉重复信息
-            tmp_message = message
             message = ''.join(message).replace('\n', '')
             if s_level in lev_dic[log_lev]:
                 self.acc_message[self.acc_name].append(message)

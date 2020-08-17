@@ -40,6 +40,8 @@ def runmain(params):
     max_retry = params[4]
     address = queue.get()
     try:
+        # 传递程序启动的flags
+        Multithreading({}).state_sent_resume()
         a = Automator(address)
         a.init_account(acc)
         a.start()
@@ -186,17 +188,14 @@ def execute(continue_=False, max_retry=3):
             queue.put(device)
 
         # 这里是脱离了runmain的异步
-        for _ in range(len(devices)):
-            address = queue.get()
-            a = Automator(address)
-            # 传递程序启动的flags
-            Multithreading({}).state_sent_resume()
-            # 随着进程的异步
-            a.program_start_async()
-            # 放回address
-            queue.put(address)
-            if fast_screencut:
-                a.receive_minicap.stop()
+        address = queue.get()
+        a = Automator(address)
+        # 传递程序启动的flags
+        Multithreading({}).state_sent_resume()
+        # 随着进程的异步
+        a.program_start_async()
+        # 放回address
+        queue.put(address)
 
         # 进程池大小为模拟器数量, 保证同一时间最多有模拟器数量个进程在运行
         if trace_exception_for_debug:
@@ -205,15 +204,14 @@ def execute(continue_=False, max_retry=3):
             with Pool(len(devices)) as mp:
                 mp.map(runmain, params)
 
+        # 传递程序关闭的flags
+        Multithreading({}).state_sent_pause()
+
         for _ in range(len(devices)):
             address = queue.get()
             a = Automator(address)
             # 关闭PCR
             a.d.app_stop("com.bilibili.priconne")
-            if fast_screencut:
-                a.receive_minicap.stop()
-        # 传递程序关闭的flags
-        Multithreading({}).state_sent_pause()
         # 退出adb
         os.system('cd adb & adb kill-server')
         pcr_log('admin').write_log(level='info', message='任务全部完成')
