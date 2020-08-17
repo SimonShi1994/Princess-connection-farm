@@ -33,6 +33,13 @@ def CheckState():
         else:
             print("ERROR: ", rs["error"])
 
+def CheckTuitu():
+    users = list_all_users(0)
+    for acc in users:
+        AR = AutomatorRecorder(acc)
+        ts = AR.get("tuitu_status", UDD["tuitu_status"])
+        if ts['max'] is not None:
+            print("USER: ", acc, " Normal: ", ts['max'])
 
 def CheckStateReturn():
     users = list_all_users(0)
@@ -114,6 +121,7 @@ if __name__ == '__main__':
                 print("first 所有脚本全部重跑")
                 print("continue 所有脚本从上次断点开始继续跑")
                 print("state 显示所有用户的状态")
+                print("state -tuitu 显示所有用户推图的状态")
                 print("clear ACCOUNT 清除Account的错误状态让它继续跑")
                 print("restart ACCOUNT 清除Account的运行记录，让它重新开始")
                 print("finish ACCOUNT 标记Account已经刷完，不再继续刷")
@@ -123,7 +131,10 @@ if __name__ == '__main__':
             elif order == "continue":
                 RunContinue()
             elif order == "state":
-                CheckState()
+                if len(cmds) == 2 and cmds[1] == "-tuitu":
+                    CheckTuitu()
+                else:
+                    CheckState()
             elif order == "clear":
                 if len(cmds) > 1:
                     ClearError(cmds[1])
