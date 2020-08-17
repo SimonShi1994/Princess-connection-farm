@@ -221,7 +221,7 @@ class AsyncMixin(BaseMixin):
         # 随着账号开启而开启
         account = self.account
         self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
-        # self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
+        self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
         # self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
         self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断

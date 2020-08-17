@@ -15,7 +15,7 @@ class FightBaseMixin(ToolsMixin):
     """
 
     def get_fight_state(self, screen=None, max_retry=10, delay=1,
-                        check_hat=True, check_xd=False, go_xd=False,
+                        check_hat=False, check_xd=False, go_xd=False,
                         check_jq=False) -> int:
         """
         获取战斗状态

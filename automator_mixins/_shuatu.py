@@ -158,7 +158,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         assert len(strs) == 2, f"错误的编队信息：{tustr}"
         return int(strs[0]), int(strs[1])
 
-    def tuitu(self, mode, to, from_="new", buy_tili=0, auto_upgrade=2, clear_tili=True, var={}):
+    def tuitu(self, mode, to, from_="new", buy_tili=0, auto_upgrade=2, use_ub=2, clear_tili=True, var={}):
         """
         自动推图，目前仅支持使用以等级排序前五的角色进行推图。
         ！你使用的五个队员目前只能是等级最高的五位
@@ -179,6 +179,10 @@ class ShuatuMixin(ShuatuBaseMixin):
             0: 关闭自动升级
             1: 只自动强化，但是不另外打关拿装备
             2: 自动强化并且会补全一切装备
+        :param use_ub: 是否开大
+            0：推图不开大
+            1：非Boss图不开大，boss图开大
+            2：全程开大
         :param clear_tili: 是否执行self.clear_tili_info
         注：推图的记录会被记录在users/tuitu中
         注：tuitu任务跳出的情况如下：
@@ -233,17 +237,19 @@ class ShuatuMixin(ShuatuBaseMixin):
                 D = HARD_COORD[nowA]
                 return D[nowB].x, D[nowB].y, 1, None
 
-        def Record(nowA, nowB):
+        def Record(nowA, nowB, last=True):
             data = self.AR.get("tuitu_status", UDD["tuitu_status"])
             if mode == 0:
-                data["last"] = f"{nowA}-{nowB}"
+                if last:
+                    data["last"] = f"{nowA}-{nowB}"
                 if data["max"] is None:
                     data["max"] = "1-1"
                 a, b = self.parse_tu_str(data["max"])
                 if nowA > a or (nowA == a and nowB > b):
                     data["max"] = f"{nowA}-{nowB}"
             elif mode == 1:
-                data["Hlast"] = f"{nowA}-{nowB}"
+                if last:
+                    data["Hlast"] = f"{nowA}-{nowB}"
                 if data["Hmax"] is None:
                     data["Hmax"] = "1-1"
                 a, b = self.parse_tu_str(data["Hmax"])
@@ -259,25 +265,43 @@ class ShuatuMixin(ShuatuBaseMixin):
         toA, toB = self.parse_tu_str(to)
         if from_ == "new":
             fromA, fromB = self.get_next_normal_id()
+            Record(fromA, fromB, False)
         else:
             fromA, fromB = self.parse_tu_str(from_)
         nowA, nowB = fromA, fromB
         bianzu = -2
         duiwu = -2
         last_lose = False
+        retry_cnt = 0
         while nowA < toA or (nowA == toA and nowB <= toB):
             if not self.check_shuatu():
                 break
             jq = (mode == 0) and (nowB == GetMax(nowA))
+            if use_ub == 0:
+                ub = 0
+            elif use_ub == 1:
+                ub = 1 if nowB == GetMax(nowA) else 0
+            else:
+                ub = 1
             # 剧情在普通关的关末触发
-            s = self.zhandouzuobiao(*GetXYTD(nowA, nowB), buy_tili=buy_tili, duiwu=duiwu,
+            # 删除之前的刷图记录避免冲突
+            if "cur_times" in var:
+                del var["cur_times"]
+            if "cur_win" in var:
+                del var["cur_win"]
+            s = self.zhandouzuobiao(*GetXYTD(nowA, nowB), buy_tili=buy_tili, duiwu=duiwu, auto=ub,
                                     bianzu=bianzu, var=var, juqing_in_fight=jq, end_mode=2 if jq else 1)
             duiwu = 0
             bianzu = 0
+            if s >= 0:
+                retry_cnt = 0
             if s < 0:
                 if s == -3:
+                    if retry_cnt == 1:
+                        raise Exception("进入刷图失败！")
                     self.lock_home()
                     enter()
+                    retry_cnt += 1
                     continue
                 self.log.write_log("error", f"推图过程中遇到未知的错误 :{s}，终止推图。")
                 break  # 出现未知错误
@@ -332,21 +356,25 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.setting()
             mv.setflag("set")
         if a == 1 and b < 8:
+            print("1")
             self.tuitu(0, "1-8", buy_tili=3, clear_tili=False, var=var)
             a, b = getab()
         if a == 1 and b == 8:
             self.auto_upgrade(buy_tili=3, var=var)
         if a == 1 or (a == 2 and b < 5):
+            print("2")
             self.tuitu(0, "2-5", buy_tili=3, clear_tili=False, var=var)
             a, b = getab()
         if a == 2 and b == 5:
             self.auto_upgrade(buy_tili=3, var=var)
         if a == 1 or (a == 2 and b < 11):
+            print("3")
             self.tuitu(0, "2-11", buy_tili=3, clear_tili=False, var=var)
             a, b = getab()
         if a == 2 and b == 11:
             self.auto_upgrade(buy_tili=3, var=var)
         if a < 3:
+            print("4")
             self.tuitu(0, "3-1", buy_tili=3, clear_tili=False, var=var)
         self.clear_tili_info(var)
         mv.clearflags()
@@ -391,12 +419,12 @@ class ShuatuMixin(ShuatuBaseMixin):
             mv.setflag("shengji")
         self.start_shuatu()
         if a == 1 and b < 8:
-            self.tuitu(0, "1-8", buy_tili=3, auto_upgrade=1, clear_tili=False, var=var)
+            self.tuitu(0, "1-8", buy_tili=3, auto_upgrade=1, use_ub=1, clear_tili=False, var=var)
             a, b = getab()
         if a == 1 and b == 8:
             self.auto_upgrade(0, True, False)
         if a < 3:
-            self.tuitu(0, "3-1", buy_tili=3, auto_upgrade=1, clear_tili=False, var=var)
+            self.tuitu(0, "3-1", buy_tili=3, auto_upgrade=1, use_ub=1, clear_tili=False, var=var)
         self.clear_tili_info(var)
         mv.clearflags()
 

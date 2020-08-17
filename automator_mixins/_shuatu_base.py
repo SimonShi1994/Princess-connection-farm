@@ -521,7 +521,7 @@ class ShuatuBaseMixin(FightBaseMixin):
     def goRight(self):
         self.click(925, 275, post_delay=3)
 
-    def check_maoxian_screen(self):
+    def check_maoxian_screen(self, screen=None):
         """
         获得冒险界面屏幕状态
         :return:
@@ -530,7 +530,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         1:  Normal图
         2： Hard图
         """
-        sc = self.getscreen()
+        sc = screen if screen is not None else self.getscreen()
         pn1 = self.img_prob(MAOXIAN_BTN["normal_on"], screen=sc)
         ph1 = self.img_prob(MAOXIAN_BTN["hard_on"], screen=sc)
         if pn1 > 0.9:
@@ -1041,8 +1041,12 @@ class ShuatuBaseMixin(FightBaseMixin):
         要求场景：已经在normal内
         :param id: 图号
         """
-        while True:
+        retry_cnt = 0
+        all_cnt = 0
+        while all_cnt < 3:
             sc = self.getscreen()
+            if self.check_maoxian_screen(sc) == 2:
+                self.click(MAOXIAN_BTN["normal_on"], post_delay=1)
             cur_id = self.check_normal_id(sc)
             if cur_id == -1:
                 self.wait_for_loading(sc)
@@ -1052,7 +1056,18 @@ class ShuatuBaseMixin(FightBaseMixin):
                     # 重试一次
                     continue
                 else:
-                    raise Exception("Normal 图号识别失败！")
+                    retry_cnt += 1
+                    if retry_cnt == 1:
+                        for _ in range(6):
+                            self.click(76, 15)  # 防止奇怪对话框
+                        continue
+                    elif retry_cnt == 2:
+                        self.lock_home()  # 发大招
+                        self.enter_normal()
+                        continue
+                    else:
+                        raise Exception("Normal 图号识别失败！")
+
             if cur_id == id:
                 return
             elif cur_id < id:
@@ -1061,6 +1076,8 @@ class ShuatuBaseMixin(FightBaseMixin):
             elif cur_id > id:
                 for i in range(cur_id - id):
                     self.goLeft()
+            all_cnt += 1
+        raise Exception("可能不存在的图号！")
 
     def select_hard_id(self, id):
         """
@@ -1068,8 +1085,12 @@ class ShuatuBaseMixin(FightBaseMixin):
         要求场景：已经在hard内
         :param id: 图号
         """
-        while True:
+        retry_cnt = 0
+        all_cnt = 0
+        while all_cnt < 3:
             sc = self.getscreen()
+            if self.check_maoxian_screen(sc) == 1:
+                self.click(MAOXIAN_BTN["hard_on"], post_delay=1)
             cur_id = self.check_hard_id(sc)
             if cur_id == -1:
                 self.wait_for_loading(sc)
@@ -1079,7 +1100,17 @@ class ShuatuBaseMixin(FightBaseMixin):
                         self.click(MAOXIAN_BTN["hard_on"], post_delay=1)
                     continue
                 else:
-                    raise Exception("Hard 图号识别失败！")
+                    retry_cnt += 1
+                    if retry_cnt == 1:
+                        for _ in range(6):
+                            self.click(76, 15)  # 防止奇怪对话框
+                        continue
+                    elif retry_cnt == 2:
+                        self.lock_home()  # 发大招
+                        self.enter_hard()
+                        continue
+                    else:
+                        raise Exception("Hard 图号识别失败！")
             if cur_id == id:
                 return
             elif cur_id < id:
@@ -1088,6 +1119,8 @@ class ShuatuBaseMixin(FightBaseMixin):
             elif cur_id > id:
                 for i in range(cur_id - id):
                     self.goLeft()
+            all_cnt += 1
+        raise Exception("可能不存在的图号！")
 
     def Drag_Right(self):
         self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
