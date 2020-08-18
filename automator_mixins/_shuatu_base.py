@@ -839,6 +839,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                                 break
                             if not self.check_shuatu():
                                 _xiadian()
+                                # TODO 这边不知为何跳不出
                                 break
                             stars = self.get_tuijian_stars(screen=self.last_screen)
                             if stars == 3:
