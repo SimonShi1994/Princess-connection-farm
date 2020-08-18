@@ -1,0 +1,76 @@
+{
+  "emulators": [
+    {
+      "default_ports": [
+        5555
+      ],
+      "name": "官方模拟器",
+      "process_name": "qemu-system-i386.exe",
+      "re_port": "",
+      "type": "official_emulator",
+      "unique_id": ".android/avd/qemu-system-i386.exe"
+    },
+    {
+      "default_ports": [
+        5555,
+        5556
+      ],
+      "name": "腾讯手游助手",
+      "process_name": "TBoxHeadless.exe",
+      "re_port": "^5\\d{3,5}",
+      "type": "tbox",
+      "unique_id": "TBoxHeadless.exe"
+    },
+    {
+      "default_ports": [
+        62001,
+        62025,
+        62026
+      ],
+      "desc": null,
+      "name": "夜神模拟器",
+      "process_name": "NoxVMHandle.exe",
+      "re_port": "^6\\d{3,5}",
+      "type": "nox",
+      "unique_id": "BigNoxVM/RT/NoxVMHandle.exe",
+      "upload_tip_level": 0
+    },
+    {
+      "default_ports": [
+        7555
+      ],
+      "name": "网易MuMu模拟器",
+      "process_name": "NemuHeadless.exe",
+      "re_port": "",
+      "type": "mumu",
+      "unique_id": "NemuHeadless.exe",
+      "upload_tip_level": 0
+    },
+    {
+      "default_ports": [
+        21503,
+        21513,
+        21523
+      ],
+      "desc": null,
+      "name": "逍遥安卓模拟器",
+      "process_name": "MEmuHeadless.exe",
+      "re_port": null,
+      "type": "memu",
+      "unique_id": "Microvirt/MEmuHyperv/MEmuHeadless.exe",
+      "upload_tip_level": 0
+    },
+    {
+      "default_ports": [
+        5555
+      ],
+      "desc": null,
+      "name": "BlueStacks蓝叠",
+      "process_name": "HD-Player.exe",
+      "re_port": null,
+      "type": "HD-Player.exe",
+      "unique_id": "Program Files/BlueStacks/HD-Player.exe",
+      "upload_tip_level": 0
+    }
+  ]
+}

@@ -29,3 +29,5 @@ fast_screencut_delay = cfg.getfloat('pcrfarm_setting', 'fast_screencut_delay')
 fast_screencut_timeout = cfg.getint('pcrfarm_setting', 'fast_screencut_timeout')
 end_shutdown = cfg.getboolean('pcrfarm_setting', 'end_shutdown')
 lockimg_timeout = cfg.getint('pcrfarm_setting', 'lockimg_timeout')
+
+enable_auto_find_emulator = cfg.getboolean('emulator_setting', 'enable_auto_find_emulator')
