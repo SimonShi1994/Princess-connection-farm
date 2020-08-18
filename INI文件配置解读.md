@@ -6,6 +6,7 @@
 |  trace_exception_for_debug   | 开启后，所有的try向上传递错误信息，并且只用第一个device跑第一个任务（单进程） |  bool  |          |      False      |
 |      use_template_cache      |                 在开发工具使用时可以将其关闭                 |  bool  |          |      True       |
 |        baidu_ocr_img         |      是否输出名为 baidu_ocr.bmp的图片，该图片为原生截图      |  bool  |          |      False      |
+|        disable_timeout_raise         |      如果lock_img报错，是否禁用错误      |  bool  |          |      False      |
 |           s_sckey            |                     s_sckey为Server酱API                     | string |          | SCU6390~94d830b |
 |         s_sentstate          |                 Server酱播定时报脚本任务状态                 |  int   | 单位分钟 |        5        |
 |           log_lev            | log_levServer酱的日志等级，微信日志等级 仅有0/1/2/3，越小越详细，注意每天接口调用有上限！ |  int   |          |        1        |
@@ -18,7 +19,7 @@
 |        fast_screencut        |                       mincap 快速截图                        |  bool  |          |      True       |
 |     fast_screencut_delay     | 由于截图太快造成脚本崩溃，可以使用这个加上全局的截图delay，模拟卡顿。 | float  |          |       0.5       |
 |    fast_screencut_timeout    |                      等待服传输数据超时                      | float  |          |       10        |
-|         end_shutdown         |                   非常“危险”的Windows功能                    |  bool  |          |      True       |
+|         end_shutdown         |                   非常“危险”的Windows功能:自动关机           |  bool  |          |      True       |
 |       lockimg_timeout        |               90秒如果还在lockimg，则跳出重启                |  int   |          |       90        |
 
 ------

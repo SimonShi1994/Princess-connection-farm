@@ -455,10 +455,10 @@ class ShuatuMixin(ShuatuBaseMixin):
                                         var=var)
                 if T == -2:
                     if mode == 1:
-                        T = self.zhandouzuobiao(P.x, P.y, 5, None, use_saodang="auto", auto=0, speed=1,
+                        T = self.zhandouzuobiao(P.x, P.y, 99999999, None, use_saodang=False, auto=0, speed=1,
                                                 buy_tili=buytili, var=var)
             else:
-                T = self.zhandouzuobiao(P.x, P.y, "all", None, use_saodang=False, auto=0, speed=1, buy_tili=buytili,
+                T = self.zhandouzuobiao(P.x, P.y, 99999999, None, use_saodang=False, auto=0, speed=1, buy_tili=buytili,
                                         var=var)
 
         self.clear_tili_info(var)

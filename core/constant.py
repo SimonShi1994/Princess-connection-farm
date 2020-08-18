@@ -198,15 +198,32 @@ HANGHUI_BTN = {
     # 筛选条件里的分类
     "fenlei": p(img="img/hanghui/fenlei.bmp",at=(454,132,501,158)),
     # 成员全角色战力"确认"蓝点
-    "zhanli_chengyuan": p(285,299,img="img/hanghui/landian_true.bmp",at=(265,280,310,326)),
+    "zhanli_chengyuan": p(285, 299, img="img/hanghui/landian_true.bmp", at=(265, 280, 310, 326)),
     # 降序按钮（筛选成员界面）
-    "jiangxu_chengyuan": p(868,92,img="img/hanghui/jiangxu_chengyuan.bmp",at=(843,82,876,102)),
+    "jiangxu_chengyuan": p(868, 92, img="img/hanghui/jiangxu_chengyuan.bmp", at=(843, 82, 876, 102)),
     # 成员管理(第一个)
-    "chengyuanguanli_first": p(727,191,img="img/hanghui/chengyuanguanli.bmp",at=(701,185,768,211)),
+    "chengyuanguanli_first": p(727, 191, img="img/hanghui/chengyuanguanli.bmp", at=(701, 185, 768, 211)),
     # 开除
-    "kaichu": p(647,170,img="img/hanghui/kaichu.bmp",at=(627,161,668,181)),
+    "kaichu": p(647, 170, img="img/hanghui/kaichu.bmp", at=(627, 161, 668, 181)),
     # 行会确认
-    "hanghui_ok": p(605,365,img="img/hanghui/hanghui_ok.bmp",at=(554,353,630,382)),
+    "hanghui_ok": p(605, 365, img="img/hanghui/hanghui_ok.bmp", at=(554, 353, 630, 382)),
+    # 请求捐赠装备
+    "qqjzzb": p(404, 431, img="img/hanghui/qqzjzb.bmp", at=(342, 419, 460, 440)),
+    # 发起捐赠请求
+    "fqjzqq": p(585, 478, img="img/hanghui/fqjzqq.bmp", at=(528, 466, 646, 485)),
+    # 确认发出请求
+    "jzqq_ok": p(589, 433, img="img/ui/ok_btn_1.bmp", at=(487, 409, 691, 457)),
+    # 稀有度
+    "sort_xiyou": p(694, 83, img="img/hanghui/sort_xiyou.bmp", at=(670, 73, 719, 90)),
+    # 降序（捐赠装备）
+    "sort_down": p(860, 82, img="img/hanghui/sort_down.bmp", at=(841, 73, 877, 91)),
+    # 分类（捐赠装备）-ok
+    "sort_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    # 捐赠请求情况
+    "jzqqqk": p(405, 429, img="img/hanghui/jzqqqk.bmp", at=(351, 421, 450, 441)),
+    # 捐赠请求结果
+    "jzqqjg": p(402, 432, img="img/hanghui/jzqqjg.bmp", at=(357, 422, 447, 436)),
+
 }
 FIGHT_BTN = {
     "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(895, 404, 925, 441)),
@@ -763,6 +780,10 @@ USER_DEFAULT_DICT = {
         "max": None,
         "Hlast": None,
         "Hmax": None,
+    },
+    "time_status": {
+        # 时间状态
+        "juanzeng": None,  # 上次捐赠时间
     }
 
 }

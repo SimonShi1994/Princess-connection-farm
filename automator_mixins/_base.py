@@ -14,7 +14,7 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
 from core.usercentre import AutomatorRecorder
-from pcr_config import debug, fast_screencut, lockimg_timeout
+from pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise
 
 lock = threading.Lock()
 
@@ -534,6 +534,8 @@ class BaseMixin:
                 return False
             if timeout != 0 and time.time() - lasttime > timeout:
                 if is_raise:
+                    if disable_timeout_raise:
+                        continue
                     raise Exception("lock_img 超时！")
                 return False
 
