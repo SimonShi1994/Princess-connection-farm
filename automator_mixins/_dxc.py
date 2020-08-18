@@ -79,7 +79,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while tmp_cout <= 3 and self.dxc_switch == 1:
             try:
                 # 防可可萝
-                self.lock_img('img/yunhai.bmp', elseclick=[(1, 1)])
+                self.lock_img('img/yunhai.bmp', elseclick=[(1, 1)], retry=10)
                 if self.is_exists('img/yunhai.bmp'):
                     dixiacheng_times = self.baidu_ocr(868, 419, 928, 459)
                     # {'log_id': ***, 'words_result_num': 1, 'words_result': [{'words': '0/1'}]}
@@ -93,7 +93,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 # 休息3s，等解锁动画
                 time.sleep(3)
                 tmp_cout = tmp_cout + 1
-        # 下面这段因为调试而注释了，实际使用时要加上
         while self.dxc_switch == 1:
             # print(dixiacheng_times, ' ', dixiacheng_floor_times)
             if dixiacheng_times == -1 and dixiacheng_floor_times == -1:
@@ -142,7 +141,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             # 防止一进去就是塔币教程
             # self.dxc_kkr()
             # 又一防御措施，防止没进去地下城
-            self.lock_no_img('img/yunhai.bmp', elseclick=[(233, 311), (233, 311)])
+            self.lock_no_img('img/yunhai.bmp', elseclick=[(233, 311), (592, 369)])
             while True:
                 time.sleep(0.5)
                 if self.is_exists('img/chetui.jpg'):

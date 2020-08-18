@@ -8,7 +8,6 @@ from core.log_handler import pcr_log
 from pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, s_sentstate, s_sckey
 from ._base import BaseMixin, Multithreading
 
-screenshot = None
 block_sw = 0
 
 
@@ -23,9 +22,6 @@ class AsyncMixin(BaseMixin):
         # 测试
         cumulative_time = 0.1
         while Multithreading({}).is_stopped():
-            if screenshot is None:
-                time.sleep(0.8)
-                continue
             time.sleep(0.8+self.change_time)
             # print('juqing', self.change_time)
             try:
@@ -71,9 +67,6 @@ class AsyncMixin(BaseMixin):
         _time = 0
         cumulative_time = 0.1
         while Multithreading({}).is_stopped():
-            if screenshot is None:
-                time.sleep(0.8)
-                continue
             time.sleep(0.8+self.change_time)
             # print('bad', self.change_time)
             try:
