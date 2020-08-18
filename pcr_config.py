@@ -1,5 +1,6 @@
 # encoding=utf-8
-import configparser
+import configparser,json
+from typing import Optional
 
 cfg = configparser.ConfigParser()
 cfg.read('config.ini', encoding="utf-8")
@@ -33,3 +34,4 @@ end_shutdown = cfg.getboolean('pcrfarm_setting', 'end_shutdown')
 lockimg_timeout = cfg.getint('pcrfarm_setting', 'lockimg_timeout')
 
 enable_auto_find_emulator = cfg.getboolean('emulator_setting', 'enable_auto_find_emulator')
+emulator_ports: Optional[list] = json.loads(cfg.get('emulator_setting', 'emulator_ports'))
