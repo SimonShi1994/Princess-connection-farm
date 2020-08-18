@@ -8,8 +8,9 @@ from core.constant import USER_DEFAULT_DICT as UDD
 # 账号日志
 from core.log_handler import pcr_log
 from core.usercentre import list_all_users, AutomatorRecorder
+from emulator_port import check_known_emulators, emulator_ip
 # 临时解决方案，可以改进
-from pcr_config import trace_exception_for_debug, end_shutdown, fast_screencut, selected_emulator
+from pcr_config import trace_exception_for_debug, end_shutdown, fast_screencut, enable_auto_find_emulator,selected_emulator,emulator_ports
 
 acclog = log_handler.pcr_acc_log()
 # 注意！目前逻辑仅支持雷电多开
@@ -97,6 +98,14 @@ def runmain(params):
 
 def connect():  # 连接adb与uiautomator
     try:
+        if enable_auto_find_emulator:
+            port_list = check_known_emulators()
+            print("自动搜寻模拟器：" + str(port_list))
+            for port in port_list:
+                os.system('cd adb & adb connect ' + emulator_ip + ':' + str(port))
+        if len(emulator_ports) != 0:
+            for port in emulator_ports:
+                os.system('cd adb & adb connect ' + emulator_ip + ':' + str(port))
         # os.system 函数正常情况下返回是进程退出码，0为正常退出码，其余为异常
         if os.system('cd adb & adb connect ' + selected_emulator) != 0:
             pcr_log('admin').write_log(level='error', message="连接模拟器失败")
