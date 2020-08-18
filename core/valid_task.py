@@ -444,6 +444,12 @@ VALID_TASK = ValidTask() \
                                        "mode 3: 第一次手动过最上面的，再刷一次最上面的")]) \
     .add("t1", "rename", "重命名", "给自己换个名字",
          [TaskParam("name", str, "新名字", "你的新名字")]) \
+    .add("t2", "save_box_screen", "box截图", "按照战力/等级/星数截屏前两行box",
+         [TaskParam("dir", str, "box存放位置", "填写box存放文件夹", "box_pic"),
+          TaskParam("sort", str, "排序方式", "只能填写下列三个字符串中的一个：\n"
+                                         "xingshu：按照星级降序\n"
+                                         "zhanli：按照战力降序\n"
+                                         "dengji:按照等级降序", "xingshu")]) \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",

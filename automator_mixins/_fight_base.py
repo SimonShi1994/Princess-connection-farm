@@ -267,9 +267,11 @@ class FightBaseMixin(ToolsMixin):
                 count_live -= 1
         return count_live
 
-    def set_fight_team_order(self, order="zhanli"):
+    def set_fight_team_order(self, order="zhanli", change=2):
         """
         按照战力顺序设置战斗队伍
+        order in ["zhanli","dengji","xingshu"]
+        change:0-不换人 1-人全部换下不上 2-默认：全部换人
         要求场景：处于”队伍编组“情况下。
         """
         sc = self.getscreen()
@@ -288,11 +290,18 @@ class FightBaseMixin(ToolsMixin):
                 self.click_btn(FIGHT_BTN["sort_level"], until_appear=FIGHT_BTN["cat_ok"])
                 self.click(FIGHT_BTN["cat_dengji"], pre_delay=0.5, post_delay=1)
                 self.click_btn(FIGHT_BTN["cat_ok"])
-        # 换人
-        for _ in range(5):
-            self.click(FIGHT_BTN["empty"][1], post_delay=0.5)
-        for i in range(5):
-            self.click(FIGHT_BTN["first_five"][i + 1], post_delay=0.5)
+        elif order == "xingshu":
+            if not self.is_exists(FIGHT_BTN["sort_star"]):
+                self.click_btn(FIGHT_BTN["sort_star"], until_appear=FIGHT_BTN["cat_ok"])
+                self.click(FIGHT_BTN["cat_star"], pre_delay=0.5, post_delay=1)
+                self.click_btn(FIGHT_BTN["cat_ok"])
+        # 换人3
+        if change >= 1:
+            for _ in range(5):
+                self.click(FIGHT_BTN["empty"][1], post_delay=0.5)
+        if change >= 2:
+            for i in range(5):
+                self.click(FIGHT_BTN["first_five"][i + 1], post_delay=0.5)
 
     def get_upperright_stars(self, screen=None):
         """

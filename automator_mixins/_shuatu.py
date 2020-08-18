@@ -1,7 +1,8 @@
+import os
 import time
 
 from core.MoveRecord import movevar
-from core.constant import HARD_COORD, NORMAL_COORD
+from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -461,4 +462,44 @@ class ShuatuMixin(ShuatuBaseMixin):
                                         var=var)
 
         self.clear_tili_info(var)
+        self.lock_home()
+
+    def save_box_screen(self, dir: str, sort: str = "xingshu"):
+        """
+        拍下自己的box并保存到dir文件夹中
+        sort in [zhanli,xingshu,dengji]
+        :return:
+        """
+        self.enter_normal()
+        os.makedirs(dir, exist_ok=True)
+
+        def do():
+            nid = self.check_zhuxian_id(self.last_screen)
+            if nid == -1:
+                return
+            drag = "left" if 1 in NORMAL_COORD[nid]["left"] else "right"
+            if drag == "left":
+                self.Drag_Left()
+            elif drag == "right":
+                self.Drag_Right()
+            if not self.click_btn(NORMAL_COORD[nid][drag][1], until_appear=FIGHT_BTN["xuanguan_quxiao"],
+                                  is_raise=False):
+                return False
+            if not self.is_exists(FIGHT_BTN["tiaozhan2"], method="sq"):  # 不能挑战
+                return False
+            out = self.click_btn(FIGHT_BTN["tiaozhan2"], until_appear={
+                MAOXIAN_BTN["no_cishu"]: 1,
+                MAOXIAN_BTN["no_tili"]: 2,
+                FIGHT_BTN["zhandoukaishi"]: 3
+            }, is_raise=False)
+            if out != 3:
+                return False
+            self.set_fight_team_order(sort, 1)
+            self.getscreen(os.path.join(dir, f"{self.account}.jpg"))
+            return True
+
+        if do():
+            self.log.write_log("info", "前两行box拍摄成功！")
+        else:
+            self.log.write_log("error", "box拍摄失败！")
         self.lock_home()
