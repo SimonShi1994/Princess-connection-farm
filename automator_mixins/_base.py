@@ -12,11 +12,9 @@ from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
+from core.get_screen import ReceiveFromMinicap
 from core.usercentre import AutomatorRecorder
 from pcr_config import debug, fast_screencut, lockimg_timeout
-
-if fast_screencut:
-    from core.get_screen import ReceiveFromMinicap
 
 lock = threading.Lock()
 
@@ -34,16 +32,18 @@ class BaseMixin:
         self.appRunning = False
         self.account = "debug"
         self.d: Optional[u2.Device] = None
-        self.dWidth = 0
-        self.dHeight = 0
+        self.dWidth = 960
+        self.dHeight = 540
         self.log: Optional[log_handler.pcr_log] = None
         self.AR: Optional[AutomatorRecorder] = None
         self.ms: Optional[moveset] = None
         self.debug_screen = None  # 如果debug_screen为None，则正常截图；否则，getscreen函数使用debug_screen作为读取的screen
         self.last_screen = None  # 每次调用getscreen会把图片暂存至last_screen
+        self.address = None
         self.cpu_occupy = 0
         self.change_time = 0.5
         self.last_screen_time = 0
+        self.async_juqingtiaoguo_switch = False
 
         # fastscreencap
         if fast_screencut:
@@ -55,10 +55,12 @@ class BaseMixin:
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
         """
         self.appRunning = False
+        self.address = address
         if address != "debug":
             self.d = u2.connect(address)
             self.dWidth, self.dHeight = self.d.window_size()
-            if fast_screencut:
+            if fast_screencut and Multithreading({}).program_is_stopped():
+                from core.get_screen import ReceiveFromMinicap
                 self.receive_minicap = ReceiveFromMinicap(address)
                 self.receive_minicap.start()
 
@@ -258,11 +260,16 @@ class BaseMixin:
         :param screen: 设置为None时，截图，否则使用screen
         :param delay: 检测间隔
         :param timeout: 超过timeout，报错
+        Add 2020-08-15: 增加对Connect的检测。
         """
         time.sleep(delay)
         sc = self.getscreen() if screen is None else screen
         last_time = time.time()
         while True:
+            if self.is_exists(img='img/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
+                time.sleep(delay)
+                sc = self.getscreen()
+                continue
             sc_cut = UIMatcher.img_cut(sc, MAIN_BTN["loading_left"].at)
             if not (sc_cut == 1).all():
                 break
@@ -519,7 +526,7 @@ class BaseMixin:
             if time.time() - ec_time >= elsedelay:
                 if elseclick != []:
                     for clicks in elseclick:
-                        self.click(clicks[0], clicks[1])
+                        self.click(clicks[0], clicks[1], post_delay=0.8)
                     attempt += 1
                     ec_time = time.time()
             time.sleep(alldelay)
@@ -721,6 +728,7 @@ class Multithreading(threading.Thread, BaseMixin):
     # 2020.8.9 修复了线程泄漏
 
     _stop_event = threading.Event()
+    run_event = threading.Event()
 
     def __init__(self, kwargs):
         if kwargs:
@@ -739,14 +747,23 @@ class Multithreading(threading.Thread, BaseMixin):
             pass
 
     def run(self):
-        self._stop_event.wait()
+        self.run_event.wait()
         self.run_func(self.th_name, self.a, self.fun)
+
+    def state_sent_resume(self):
+        self.run_event.set()  # 设置为True, 让线程停止阻塞
 
     def pause(self):
         self._stop_event.clear()  # 设置为False, 让线程阻塞
 
     def resume(self):
         self._stop_event.set()  # 设置为True, 让线程停止阻塞
+
+    def state_sent_pause(self):
+        self.run_event.clear()  # 设置为False, 让线程阻塞
+
+    def program_is_stopped(self):
+        return self.run_event.is_set()
 
     def is_stopped(self):
         return self._stop_event.is_set()

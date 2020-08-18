@@ -224,7 +224,7 @@ class HanghuiMixin(ToolsMixin):
         # 行会点赞
         self.lock_home()
         # 进入行会
-        self.lock_img('img/zhiyuansheding.bmp', ifclick=[(230, 351), (1, 1)], elseclick=[(688, 432)],
+        self.lock_img('img/zhiyuansheding.bmp', ifclick=[(230, 351), (1, 1)], elseclick=[(1, 1), (688, 432)],
                       elsedelay=self.change_time, retry=10)
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
         self.lock_no_img('img/zhiyuansheding.bmp', elseclick=[(230, 351)], retry=5)
@@ -244,5 +244,5 @@ class HanghuiMixin(ToolsMixin):
         self.click(479, 381)
         screen_shot_ = self.getscreen()
         self.click_img(screen_shot_, 'img/ok.bmp')
-        self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=self.change_time,
+        self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1), (480, 374)], elsedelay=self.change_time,
                       at=(891, 413, 930, 452))  # 回首页

@@ -26,6 +26,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         """
         # global dixiacheng_floor_times
         # 全局变量贯通两个场景的地下层次数识别
+
+        self.async_juqingtiaoguo_switch = True
         while True:
             # 进入流程先锁上地下城执行函数
             self.dxc_switch = 1
@@ -80,6 +82,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/yunhai.bmp', elseclick=[(1, 1)])
                 if self.is_exists('img/yunhai.bmp'):
                     dixiacheng_times = self.baidu_ocr(868, 419, 928, 459)
+                    # {'log_id': ***, 'words_result_num': 1, 'words_result': [{'words': '0/1'}]}
+                    # print(dixiacheng_times)
                     dixiacheng_times = int(dixiacheng_times['words_result'][0]['words'].split('/')[0])
                     if dixiacheng_times <= 1:
                         break
@@ -137,6 +141,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while self.dxc_switch == 0:
             # 防止一进去就是塔币教程
             # self.dxc_kkr()
+            # 又一防御措施，防止没进去地下城
+            self.lock_no_img('img/yunhai.bmp', elseclick=[(233, 311), (233, 311)])
             while True:
                 time.sleep(0.5)
                 if self.is_exists('img/chetui.jpg'):
@@ -229,6 +235,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             time.sleep(2+self.change_time)
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ok.bmp')
+        self.async_juqingtiaoguo_switch = False
 
     def dixiacheng(self, skip):
         """
@@ -240,6 +247,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         :return:
         """
         # 首页 -> 地下城选章/（新号）地下城章内
+        self.async_juqingtiaoguo_switch = True
         self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
         self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
                          at=(837, 92, 915, 140))
@@ -323,6 +331,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             break
 
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
+        self.async_juqingtiaoguo_switch = False
 
     def dixiachengYunhai(self):  # 地下城 云海 （第一个）
         self.click(480, 505)

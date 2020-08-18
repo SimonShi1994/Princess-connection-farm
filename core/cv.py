@@ -163,7 +163,7 @@ class UIMatcher:
                     _at = (x1 + j, y1 + i, x1 + j + tw - 1, y1 + i + th - 1)
                     l += [_x, _y, _at]
                     if debug:
-                        print("Find: ", (_x, _y), "at", _at, "CCOEFF=", res[i, j])
+                        print(f"p({_x},{_y},img=\"{template_path}\",at={_at}), \nCCOEFF=", res[i, j])
         return l
 
     @classmethod

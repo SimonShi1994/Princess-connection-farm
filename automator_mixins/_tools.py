@@ -8,7 +8,7 @@ from core.constant import MAIN_BTN, PCRelement
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 # 临时，等待config的创建
-from pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times
+from pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout
 from ._base import BaseMixin
 
 
@@ -25,13 +25,24 @@ class ToolsMixin(BaseMixin):
         要求场景：存在“我的主页”按钮
         逻辑：不断点击我的主页，直到右下角出现“礼物”
         """
-        self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=0.5)  # 回首页
+        last = time.time()
+        while True:
+            sc = self.getscreen()
+            num_of_white, x, y = UIMatcher.find_gaoliang(sc)
+            if num_of_white < 77000:
+                self.chulijiaocheng(None)  # 增加对教程的处理功能
+                last = time.time()
+            if self.is_exists(MAIN_BTN["liwu"], screen=sc):
+                return
+            self.click(MAIN_BTN["zhuye"])
+            time.sleep(1.5)
+            if time.time() - last > lockimg_timeout:
+                raise Exception("lock_home时出错：超时！")
 
     def setting(self):
-        self.click(875, 517)
-        time.sleep(2)
-        self.click(149, 269)
-        time.sleep(2)
+        self.lock_home()
+        self.click_btn(MAIN_BTN["zhucaidan"], until_appear=MAIN_BTN["setting_pic"])
+        self.click_btn(MAIN_BTN["setting_pic"])
         self.click(769, 87)
         time.sleep(1)
         self.click(735, 238)
@@ -41,11 +52,11 @@ class ToolsMixin(BaseMixin):
         self.click(479, 479)
         time.sleep(1)
         self.click(95, 516)
+        self.lock_home()
 
-        # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
-        # 使用Baidu OCR接口
-        # 离线接口还没写
-
+    # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
+    # 使用Baidu OCR接口
+    # 离线接口还没写
     def baidu_ocr(self, x1, y1, x2, y2, size=1.0):
         # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
         # 默认原图大小（1.0）
