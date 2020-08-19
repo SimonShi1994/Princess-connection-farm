@@ -264,9 +264,9 @@ class HanghuiMixin(ToolsMixin):
         """
 
         def get_equ_at(r, c):
-            EQU_X = [57, 164, 272, 381, 488]
-            EQU_Y = [132, 240, 349]
-            EQU_A = 85
+            EQU_X = [53, 160, 268, 377, 484]
+            EQU_Y = [128, 236, 345]
+            EQU_A = 93
             return (EQU_X[c], EQU_Y[r], EQU_X[c] + EQU_A, EQU_Y[r] + EQU_A)
 
         def check_current():
@@ -282,7 +282,7 @@ class HanghuiMixin(ToolsMixin):
         def dragdown():
             obj = self.d.touch.down(55, 347)
             time.sleep(0.1)
-            obj.move(55, 130)
+            obj.move(55, 130.5)
             time.sleep(0.8)
             sc = self.getscreen()
             r1c0 = UIMatcher.img_cut(sc, get_equ_at(1, 0))
@@ -334,7 +334,7 @@ class HanghuiMixin(ToolsMixin):
                 time.sleep(wait)
                 self.log.write_log("info", "脚本继续执行。")
             else:
-                self.log.write_log("warning", f"离下次捐赠还有f{int(wait)}秒，跳过该脚本。")
+                self.log.write_log("warning", f"离下次捐赠还有{int(wait)}秒，跳过该脚本。")
                 return
 
         self.lock_home()

@@ -2,7 +2,7 @@ import os
 import time
 
 from core.MoveRecord import movevar
-from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN
+from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -159,11 +159,11 @@ class ShuatuMixin(ShuatuBaseMixin):
         assert len(strs) == 2, f"错误的编队信息：{tustr}"
         return int(strs[0]), int(strs[1])
 
-    def tuitu(self, mode, to, from_="new", buy_tili=0, auto_upgrade=2, use_ub=2, clear_tili=True, var={}):
+    def tuitu(self, mode, to, from_="new", buy_tili=0, auto_upgrade=2, use_ub=2,
+              force_three_star=False, clear_tili=True, var={}):
         """
         自动推图，目前仅支持使用以等级排序前五的角色进行推图。
         ！你使用的五个队员目前只能是等级最高的五位
-        ! 必须先使用self.start_shuatu才能进行推图！
         :param mode:
             0: 推普通图
             1: 推困难本
@@ -184,6 +184,10 @@ class ShuatuMixin(ShuatuBaseMixin):
             0：推图不开大
             1：非Boss图不开大，boss图开大
             2：全程开大
+        :param force_three_star: 强制三星
+            如果某一关没打到三星，就认为这一关已经输了。
+            False: 打输才算输
+            True: 打赢但是没有三星，也判断为输
         :param clear_tili: 是否执行self.clear_tili_info
         注：推图的记录会被记录在users/tuitu中
         注：tuitu任务跳出的情况如下：
@@ -259,10 +263,13 @@ class ShuatuMixin(ShuatuBaseMixin):
 
             self.AR.set("tuitu_status", data)
 
-        # 解析to与from
+        var.setdefault("buy_tili", 0)
+        if var["buy_tili"] < buy_tili:
+            self.start_shuatu()
         if not self.check_shuatu():
             return
         enter()
+        # 解析to与from
         toA, toB = self.parse_tu_str(to)
         if from_ == "new":
             fromA, fromB = self.get_next_normal_id()
@@ -290,8 +297,14 @@ class ShuatuMixin(ShuatuBaseMixin):
                 del var["cur_times"]
             if "cur_win" in var:
                 del var["cur_win"]
+            if mode == 0:
+                self.select_normal_id(nowA)
+            elif mode == 1:
+                self.select_hard_id(nowA)
             s = self.zhandouzuobiao(*GetXYTD(nowA, nowB), buy_tili=buy_tili, duiwu=duiwu, auto=ub,
                                     bianzu=bianzu, var=var, juqing_in_fight=jq, end_mode=2 if jq else 1)
+            if s > 0 and force_three_star and self.last_star < 3:
+                s = 0  # 没达到三星就算输
             duiwu = 0
             bianzu = 0
             if s >= 0:
@@ -347,10 +360,10 @@ class ShuatuMixin(ShuatuBaseMixin):
                     self.log.write_log("info", "该账号已经成功初始化。")
             return a, b
 
+        self.start_shuatu()
         a, b = getab()
         if a >= 3:
             return
-        self.start_shuatu()
         mv = movevar(var)
         if not mv.flag("set"):
             self.lock_home()
@@ -395,6 +408,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     self.log.write_log("info", "该账号已经成功初始化。")
             return a, b
 
+        self.start_shuatu()
         a, b = getab()
         if a >= 3:
             return
@@ -418,7 +432,6 @@ class ShuatuMixin(ShuatuBaseMixin):
         if not mv.flag("shengji"):
             self.auto_upgrade(0, True, False)
             mv.setflag("shengji")
-        self.start_shuatu()
         if a == 1 and b < 8:
             self.tuitu(0, "1-8", buy_tili=3, auto_upgrade=1, use_ub=1, clear_tili=False, var=var)
             a, b = getab()
@@ -440,10 +453,14 @@ class ShuatuMixin(ShuatuBaseMixin):
             2：纯手刷
         :param buytili: 购买体力次数
         """
+        var.setdefault("buy_tili", 0)
+        if var["buy_tili"] < buytili:
+            self.start_shuatu()
+        if not self.check_shuatu():
+            return
         self.lock_home()
         self.enter_normal()
         self.select_normal_id(1)
-        self.start_shuatu()
         P = NORMAL_COORD[1]['left'][1]
         T = 1
         while T > 0:
@@ -503,3 +520,17 @@ class ShuatuMixin(ShuatuBaseMixin):
         else:
             self.log.write_log("error", "box拍摄失败！")
         self.lock_home()
+
+    def zidongtuitu_normal(self, buy_tili=3, var={}):
+        """
+        装备号自动推图，没达到三星自动强化。
+        体力用光/强化后仍然失败 - 退出
+        :param buy_tili: 购买体力的次数
+        """
+        var.setdefault("buy_tili", 0)
+        if var["buy_tili"] < buy_tili:
+            self.start_shuatu()
+        if not self.check_shuatu():
+            return
+        max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
+        self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var)

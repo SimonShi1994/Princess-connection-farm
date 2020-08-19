@@ -229,9 +229,9 @@ class RoutineMixin(ShuatuBaseMixin):
                 break
             count += 1
             time.sleep(1)
-            if count > 4:
+            if count > 5:
                 break
-        if count <= 4:
+        if count <= 5:
             self.click(386, 148)
             self.click(556, 148)
             self.click(729, 148)

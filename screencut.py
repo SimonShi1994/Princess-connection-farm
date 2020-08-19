@@ -146,6 +146,7 @@ class AutomatorDebuger(Automator):
 
     def Account(self, account):
         self.init_account(account)
+        self.start_shuatu()
 
     def Shot(self, file="test.bmp", show=True):
         self.getscreen(file)

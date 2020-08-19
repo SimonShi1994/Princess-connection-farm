@@ -43,6 +43,9 @@ class BaseMixin:
         self.cpu_occupy = 0
         self.change_time = 0.5
         self.last_screen_time = 0
+        self.async_juqingtiaoguo_switch = False
+        self.last_star = 0  # 上次战斗的星数
+
         # fastscreencap
         if fast_screencut:
             self.lport: Optional[int] = None
@@ -454,7 +457,7 @@ class BaseMixin:
                 # print('未找到所需的按钮,无动作')
                 pass
 
-    def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1, elseclick=None,
+    def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
                   elsedelay=0.5, alldelay=0.5, retry=0, side_check=None,
                   at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84):
         """
@@ -565,7 +568,7 @@ class BaseMixin:
                     raise Exception("lock_img 超时！")
                 return False
 
-    def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
+    def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
                  at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84, side_check=None):
         """
         锁定图片，直到该图出现。
@@ -576,7 +579,7 @@ class BaseMixin:
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout,
                               method=method, threshold=threshold, side_check=side_check)
 
-    def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5,
+    def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5,
                     retry=0, at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED,
                     threshold=0.84, side_check=None):  # 锁定指定图像
         """
@@ -588,7 +591,7 @@ class BaseMixin:
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout,
                               method=method, threshold=threshold, side_check=side_check)
 
-    def click_btn(self, btn: PCRelement, elsedelay=8., timeout=20, wait_self_before=False,
+    def click_btn(self, btn: PCRelement, elsedelay=8., timeout=20., wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
                   until_disappear: Optional[Union[str, PCRelement, dict, list]] = "self",
                   is_raise=True, method=cv2.TM_CCOEFF_NORMED):
