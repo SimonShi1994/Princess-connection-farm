@@ -38,6 +38,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     break
                 # 防止一进去就是塔币教程
                 self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr, retry=20, at=(738, 420, 872, 442))
+                break
                 # self.dxc_kkr()
         tmp_cout = 0
         while tmp_cout <= 2:
@@ -161,12 +162,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     break
 
             if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
-                self.click(213, 208, post_delay=self.change_time, pre_delay=self.change_time)  # 如果等级不足，就支援的第二个人
+                self.click(213, 208, post_delay=self.change_time, pre_delay=2.5+self.change_time)  # 如果等级不足，就支援的第二个人
                 # self.click(100, 173, post_delay=1)  # 支援的第一个人
             else:
                 time.sleep(self.change_time)
                 self.click(100, 173)  # 支援的第一个人
                 self.click(213, 208, pre_delay=2.5+self.change_time)  # 以防万一
+            time.sleep(1+self.change_time)
             if self.is_exists('img/notzhandoukaishi.bmp', threshold=0.97):
                 # 逻辑顺序改变
                 # 当无法选支援一二位时，将会退出地下城
@@ -214,6 +216,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     if self.is_exists('img/chetui.jpg'):
                         break
 
+            self.click(1, 1)  # 跳过结算
             while True:  # 撤退地下城
                 time.sleep(self.change_time)
                 self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
