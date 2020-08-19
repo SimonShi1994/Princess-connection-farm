@@ -414,3 +414,8 @@ python main.py
 2020/8/18 By:TheAutumnOfRice
 
 - 增加box截图功能
+
+2020/8/19 By:CyiceK
+
+- 随心所欲的暂停 shift+p
+- 改动了 lock方法然后异步剧情跳过弃用

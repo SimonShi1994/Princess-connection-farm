@@ -20,7 +20,7 @@ class HanghuiMixin(ToolsMixin):
         self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time, at=(891, 413, 930, 452))  # 回首页
         # self.d.click(693, 436)
         self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=2)  # 锁定进入行会
-        self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
+        self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5, side_check=self.juqing_kkr)
         while True:  # 6-17修改：减少opencv使用量提高稳定性
             if self.is_exists('img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟

@@ -1,6 +1,8 @@
 import os
 from multiprocessing import Pool, Manager
 
+import keyboard
+
 from automator_mixins._base import Multithreading
 from core import log_handler
 from core.Automator import Automator
@@ -41,6 +43,9 @@ def runmain(params):
     max_retry = params[4]
     address = queue.get()
     try:
+        # 这是一个奇妙的bug，需要在启动异步前实例化keyboard，否则暂停无法使用
+        # 按住p即可堵塞
+        keyboard.release('p')
         # 传递程序启动的flags
         Multithreading({}).state_sent_resume()
         a = Automator(address)

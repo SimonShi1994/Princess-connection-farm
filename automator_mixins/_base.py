@@ -43,8 +43,6 @@ class BaseMixin:
         self.cpu_occupy = 0
         self.change_time = 0.5
         self.last_screen_time = 0
-        self.async_juqingtiaoguo_switch = False
-
         # fastscreencap
         if fast_screencut:
             self.lport: Optional[int] = None
@@ -114,6 +112,15 @@ class BaseMixin:
         :param post_delay: 后置延时
         :return: True
         """
+        try:
+            from automator_mixins._async import block_sw
+            if block_sw == 1:
+                print("脚本暂停中~")
+                while block_sw == 1:
+                    from automator_mixins._async import block_sw
+                    time.sleep(1)
+        except Exception as error:
+            print('暂停-错误:', error)
         time.sleep(pre_delay)
         if len(args) >= 2 and isinstance(args[0], (int, float)) and isinstance(args[1], (int, float)):
             # (x,y)型：点击坐标
@@ -448,7 +455,7 @@ class BaseMixin:
                 pass
 
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1, elseclick=None,
-                  elsedelay=0.5, alldelay=0.5, retry=0,
+                  elsedelay=0.5, alldelay=0.5, retry=0, side_check=None,
                   at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84):
         """
         @args:
@@ -473,6 +480,7 @@ class BaseMixin:
             is_raise: 失败时，是否弹出错误
             lock_no: False: lock_img True: lock_no_img
             timeout: 设置为None时，使用pcr_config中的lockimg_timeout，否则用自己的。
+            side_check：传入字符串然后调用字符串里边的基于_base的函数方法
         @pcr_config:
             lockimg_timeout: 设置为0时，不做超时处理；否则，如果超过该时间，报错
         @return:是否在retry次内点击成功
@@ -485,6 +493,7 @@ class BaseMixin:
         #                 示elseclick操作之后的等待时间，该时间内会一直检测。
         # 2020-08-01 Add: 增加了局部timeout参数
         # 2020-08-06 Add: img可以传入list了
+        # 2020-8-19 Add:暂停+方法调用
         if elseclick is None:
             elseclick = []
         if ifclick is None:
@@ -507,6 +516,23 @@ class BaseMixin:
             timeout = lockimg_timeout
         while True:
             screen_shot = self.getscreen()
+            # 方法配对，如有需要可以加个验证side_check是否合法
+            if side_check is not None:
+                # 感谢Sisphyus大佬分享的文章
+                # side_check理论支持调用_base的所有子类方法
+                # _method = getattr(self, side_check)
+                side_check()
+                lasttime = time.time()
+            try:
+                from automator_mixins._async import block_sw
+                if block_sw == 1:
+                    print("脚本暂停中~")
+                    while block_sw == 1:
+                        from automator_mixins._async import block_sw
+                        time.sleep(1)
+                    lasttime = time.time()
+            except Exception as error:
+                print('暂停-错误:', error)
             for i, j in img.items():
                 if not isinstance(i, PCRelement):
                     _img, _at = self._get_img_at(i[0], i[1])
@@ -540,7 +566,7 @@ class BaseMixin:
                 return False
 
     def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
-                 at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84):
+                 at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84, side_check=None):
         """
         锁定图片，直到该图出现。
         图片出现后，点击ifclick；未出现，点击elseclick
@@ -548,11 +574,11 @@ class BaseMixin:
         return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                               elsedelay=elsedelay,
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout,
-                              method=method, threshold=threshold)
+                              method=method, threshold=threshold, side_check=side_check)
 
     def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1, elseclick=None, elsedelay=2., alldelay=0.5,
                     retry=0, at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED,
-                    threshold=0.84):  # 锁定指定图像
+                    threshold=0.84, side_check=None):  # 锁定指定图像
         """
         锁定图片，直到该图消失
         图片消失后，点击ifclick；未消失，点击elseclick
@@ -560,7 +586,7 @@ class BaseMixin:
         return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                               elsedelay=elsedelay,
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout,
-                              method=method, threshold=threshold)
+                              method=method, threshold=threshold, side_check=side_check)
 
     def click_btn(self, btn: PCRelement, elsedelay=8., timeout=20, wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
@@ -712,6 +738,20 @@ class BaseMixin:
         d["error"] = error
         self.AR.set("run_status", d)
 
+    def juqing_kkr(self):
+        """
+        处理剧情+剧情版的可可萝
+        :return:
+        """
+        if self.is_exists(img='img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
+            self.lock_img('img/caidan_yuan.jpg', ifclick=[(917, 39)], ifdelay=self.change_time, retry=15)  # 菜单
+            self.lock_img('img/caidan_tiaoguo.jpg', ifclick=[(807, 44)], ifdelay=self.change_time,
+                          retry=15)  # 跳过
+            self.lock_img('img/tiaoguo.jpg', ifclick=[(589, 367)], ifdelay=self.change_time, retry=15)  # 跳过
+        elif self.is_exists(img='img/kekeluo.bmp', at=(181, 388, 384, 451)):
+            # 防妈骑脸
+            self.lock_no_img('img/kekeluo.bmp', elseclick=[(1, 1)], at=(181, 388, 384, 451))
+
 
 class Multithreading(threading.Thread, BaseMixin):
     """
@@ -730,7 +770,7 @@ class Multithreading(threading.Thread, BaseMixin):
     # 2020.8.9 修复了线程泄漏
 
     _stop_event = threading.Event()
-    run_event = threading.Event()
+    _run_event = threading.Event()
 
     def __init__(self, kwargs):
         if kwargs:
@@ -749,11 +789,11 @@ class Multithreading(threading.Thread, BaseMixin):
             pass
 
     def run(self):
-        self.run_event.wait()
+        self._run_event.wait()
         self.run_func(self.th_name, self.a, self.fun)
 
     def state_sent_resume(self):
-        self.run_event.set()  # 设置为True, 让线程停止阻塞
+        self._run_event.set()  # 设置为True, 让线程停止阻塞
 
     def pause(self):
         self._stop_event.clear()  # 设置为False, 让线程阻塞
@@ -762,10 +802,10 @@ class Multithreading(threading.Thread, BaseMixin):
         self._stop_event.set()  # 设置为True, 让线程停止阻塞
 
     def state_sent_pause(self):
-        self.run_event.clear()  # 设置为False, 让线程阻塞
+        self._run_event.clear()  # 设置为False, 让线程阻塞
 
     def program_is_stopped(self):
-        return self.run_event.is_set()
+        return self._run_event.is_set()
 
     def is_stopped(self):
         return self._stop_event.is_set()

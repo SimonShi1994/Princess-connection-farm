@@ -21,7 +21,7 @@ class DXCBaseMixin(FightBaseMixin):
         处理跳脸
         :return:
         """
-        time.sleep(2)  # 等妈出现
+        # time.sleep(2)  # 等妈出现
         if self.is_exists(DXC_ELEMENT["dxc_kkr"]):
             self.chulijiaocheng(turnback=None)
             if self.is_exists(DXC_ELEMENT["dxc_in_shop"]):
