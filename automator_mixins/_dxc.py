@@ -27,7 +27,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         # global dixiacheng_floor_times
         # 全局变量贯通两个场景的地下层次数识别
 
-        self.async_juqingtiaoguo_switch = True
         while True:
             # 进入流程先锁上地下城执行函数
             self.dxc_switch = 1
@@ -35,13 +34,16 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             if self.is_exists('img/dixiacheng.jpg', at=(837, 92, 915, 140)):
                 self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=self.change_time, retry=10)
                 self.click(1, 1, pre_delay=3.5)
+                if self.is_exists('img/yunhai.bmp'):
+                    break
                 # 防止一进去就是塔币教程
-                # self.dxc_kkr()
+                self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr, retry=20, at=(738, 420, 872, 442))
                 break
+                # self.dxc_kkr()
         tmp_cout = 0
         while tmp_cout <= 2:
             try:
-                if self.is_exists('img/chetui.jpg'):
+                if self.is_exists('img/chetui.jpg', at=(738, 420, 872, 442)):
                     dixiacheng_floor = self.baidu_ocr(200, 410, 263, 458)
                     # print(dixiacheng_floor)
                     dixiacheng_floor = int(dixiacheng_floor['words_result'][0]['words'].split('/')[0])
@@ -79,7 +81,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while tmp_cout <= 3 and self.dxc_switch == 1:
             try:
                 # 防可可萝
-                self.lock_img('img/yunhai.bmp', elseclick=[(1, 1)])
+                self.lock_img('img/yunhai.bmp', side_check=self.juqing_kkr, retry=10)
                 if self.is_exists('img/yunhai.bmp'):
                     dixiacheng_times = self.baidu_ocr(868, 419, 928, 459)
                     # {'log_id': ***, 'words_result_num': 1, 'words_result': [{'words': '0/1'}]}
@@ -93,7 +95,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 # 休息3s，等解锁动画
                 time.sleep(3)
                 tmp_cout = tmp_cout + 1
-        # 下面这段因为调试而注释了，实际使用时要加上
         while self.dxc_switch == 1:
             # print(dixiacheng_times, ' ', dixiacheng_floor_times)
             if dixiacheng_times == -1 and dixiacheng_floor_times == -1:
@@ -140,13 +141,15 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         while self.dxc_switch == 0:
             # 防止一进去就是塔币教程
-            # self.dxc_kkr()
+            self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr)
             # 又一防御措施，防止没进去地下城
-            self.lock_no_img('img/yunhai.bmp', elseclick=[(233, 311), (233, 311)])
+            self.lock_no_img('img/yunhai.bmp', elseclick=[(233, 311), (592, 369)])
             while True:
                 time.sleep(0.5)
+                self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr)
                 if self.is_exists('img/chetui.jpg'):
-                    self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)])
+                    self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
+                                  side_check=self.juqing_kkr)
                     # 锁定挑战和第一层
                     break
             while True:
@@ -159,12 +162,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     break
 
             if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
-                self.click(213, 208, post_delay=self.change_time, pre_delay=self.change_time)  # 如果等级不足，就支援的第二个人
+                self.click(213, 208, post_delay=self.change_time, pre_delay=2.5+self.change_time)  # 如果等级不足，就支援的第二个人
                 # self.click(100, 173, post_delay=1)  # 支援的第一个人
             else:
                 time.sleep(self.change_time)
                 self.click(100, 173)  # 支援的第一个人
-                self.click(213, 208, pre_delay=self.change_time)  # 以防万一
+                self.click(213, 208, pre_delay=2.5+self.change_time)  # 以防万一
+            time.sleep(1+self.change_time)
             if self.is_exists('img/notzhandoukaishi.bmp', threshold=0.97):
                 # 逻辑顺序改变
                 # 当无法选支援一二位时，将会退出地下城
@@ -212,6 +216,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     if self.is_exists('img/chetui.jpg'):
                         break
 
+            self.click(1, 1)  # 跳过结算
             while True:  # 撤退地下城
                 time.sleep(self.change_time)
                 self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
@@ -235,7 +240,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             time.sleep(2+self.change_time)
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ok.bmp')
-        self.async_juqingtiaoguo_switch = False
 
     def dixiacheng(self, skip):
         """
@@ -247,10 +251,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         :return:
         """
         # 首页 -> 地下城选章/（新号）地下城章内
-        self.async_juqingtiaoguo_switch = True
         self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
+        # 防止一进去就是塔币教程
+        self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr, retry=10, at=(738, 420, 872, 442))
         self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
                          at=(837, 92, 915, 140))
+        # 防止教程
+        self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=10)
 
         # 撤退 如果 已经进入
         while True:
@@ -272,6 +279,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             return
 
         while True:
+            # 防止塔币教程
+            self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr, at=(738, 420, 872, 442))
             # 锁定挑战和第一层
             time.sleep(1.5)
             self.lock_img('img/tiaozhan.bmp', elseclick=[(667, 360)], elsedelay=1, ifclick=[(833, 456)], at=(759, 428, 921, 483))
@@ -331,7 +340,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             break
 
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
-        self.async_juqingtiaoguo_switch = False
 
     def dixiachengYunhai(self):  # 地下城 云海 （第一个）
         self.click(480, 505)

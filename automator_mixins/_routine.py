@@ -50,12 +50,11 @@ class RoutineMixin(ShuatuBaseMixin):
 
     def gonghuizhijia(self):  # 家园领取
         # 2020-07-31 TheAutumnOfRice: 检查完毕
-        self.async_juqingtiaoguo_switch = True
         self.lock_home()
         self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], elsedelay=1)
-        self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5, retry=3)
+        self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
+                      side_check=self.juqing_kkr, retry=3)
         self.lock_home()
-        self.async_juqingtiaoguo_switch = False
 
     def mianfeiniudan(self):
         # 免费扭蛋

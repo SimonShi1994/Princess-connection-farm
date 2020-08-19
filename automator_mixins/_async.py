@@ -8,7 +8,6 @@ from core.log_handler import pcr_log
 from pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, s_sentstate, s_sckey
 from ._base import BaseMixin, Multithreading
 
-screenshot = None
 block_sw = 0
 
 
@@ -20,12 +19,9 @@ class AsyncMixin(BaseMixin):
 
     async def juqingtiaoguo(self):
         # 异步跳过教程 By：CyiceK
-        # 测试
+        # 废弃
         cumulative_time = 0.1
         while Multithreading({}).is_stopped():
-            if screenshot is None:
-                time.sleep(0.8)
-                continue
             time.sleep(0.8+self.change_time)
             # print('juqing', self.change_time)
             try:
@@ -33,8 +29,6 @@ class AsyncMixin(BaseMixin):
                 # time.sleep(10)
                 # 过快可能会卡
                 time.sleep(cumulative_time)
-                if not self.async_juqingtiaoguo_switch:
-                    continue
                 screenshot = self.d.screenshot(format="opencv")
                 if self.is_exists(screen=screenshot, img='img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
                     self.lock_img('img/caidan_yuan.jpg', ifclick=[(917, 39)], ifdelay=self.change_time, retry=15)  # 菜单
@@ -71,9 +65,6 @@ class AsyncMixin(BaseMixin):
         _time = 0
         cumulative_time = 0.1
         while Multithreading({}).is_stopped():
-            if screenshot is None:
-                time.sleep(0.8)
-                continue
             time.sleep(0.8+self.change_time)
             # print('bad', self.change_time)
             try:
@@ -221,6 +212,7 @@ class AsyncMixin(BaseMixin):
         :return:
         """
         global block_sw
+        # print(Multithreading({}).is_stopped())
         while Multithreading({}).is_stopped():
             keyboard.wait('shift+p')
             block_sw = 1
@@ -243,8 +235,8 @@ class AsyncMixin(BaseMixin):
     def start_async(self):
         # 随着账号开启而开启
         account = self.account
-        # self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
-        self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
+        self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
+        # self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
         # self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
         self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
