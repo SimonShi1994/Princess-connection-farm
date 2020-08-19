@@ -1,9 +1,8 @@
 import time
 
-from core.constant import MAIN_BTN, HANGHUI_BTN
-
+from core.constant import MAIN_BTN, HANGHUI_BTN, PCRelement
+from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
-from core.log_handler import pcr_log
 from ._tools import ToolsMixin
 
 
@@ -184,50 +183,57 @@ class HanghuiMixin(ToolsMixin):
         self.lock_home()
 
     def zhiyuan(self):
+        # Add: By TheAutumnOfRice 考虑了无法撤下支援的情况
         self.lock_home()
         # 进入
-        self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["zhiyuansheding"])
+        self.click_btn(MAIN_BTN["hanghui"], until_appear=HANGHUI_BTN["zhiyuansheding"])
         # 设置支援
-        self.click_btn(HANGHUI_BTN["zhiyuansheding"],elsedelay=1)
-        # 支援1
-        self.click_btn(HANGHUI_BTN["zhiyuan_dxc1"], until_appear=HANGHUI_BTN["zhiyuanquxiao"], elsedelay=1)
+        self.click_btn(HANGHUI_BTN["zhiyuansheding"])
 
         def zhiyuansheding():
             # 战力排列
             if self.is_exists(HANGHUI_BTN["zhanlipaixu"]) is False:
-                self.click_btn(HANGHUI_BTN["shaixuantiaojian_juese"], elsedelay=1)
+                self.click_btn(HANGHUI_BTN["shaixuantiaojian_juese"])
                 self.click_btn(HANGHUI_BTN["zhanli_juese"], until_appear=HANGHUI_BTN["zhanli_juese"])
-                self.click_btn(HANGHUI_BTN["hanghui_ok_juese"], elsedelay=1)
+                self.click_btn(HANGHUI_BTN["hanghui_ok_juese"])
             # 降序排列
             self.lock_img(HANGHUI_BTN["jiangxu_juese"], elseclick=HANGHUI_BTN["jiangxu_juese"])
             while 1:
-                self.click(HANGHUI_BTN["juese2"],post_delay=0.5)
-                self.click(HANGHUI_BTN["juese1"],post_delay=0.5)
+                self.click(HANGHUI_BTN["juese2"], post_delay=0.5)
+                self.click(HANGHUI_BTN["juese1"], post_delay=0.5)
                 # 此处必须为0.99
                 if self.is_exists(HANGHUI_BTN["juesesheding"], threshold=0.99):
-                    self.click_btn(HANGHUI_BTN["juesesheding"], elsedelay=1,until_appear=HANGHUI_BTN["hanghui_ok_double"])
-                    self.click_btn(HANGHUI_BTN["hanghui_ok_double"], elsedelay=1)
+                    self.click_btn(HANGHUI_BTN["juesesheding"], until_appear=HANGHUI_BTN["hanghui_ok_double"])
+                    self.click_btn(HANGHUI_BTN["hanghui_ok_double"])
                     break
+                # 支援1
 
-        zhiyuansheding()
+        if self.click_btn(HANGHUI_BTN["zhiyuan_dxc1"], until_appear=HANGHUI_BTN["zhiyuanquxiao"], elsedelay=1,
+                          timeout=6, is_raise=False):
+            zhiyuansheding()
         # 支援2
-        self.click_btn(HANGHUI_BTN["zhiyuan_dxc2"], until_appear=HANGHUI_BTN["zhiyuanquxiao"], elsedelay=1)
-        zhiyuansheding()
+        if self.click_btn(HANGHUI_BTN["zhiyuan_dxc2"], until_appear=HANGHUI_BTN["zhiyuanquxiao"], elsedelay=1,
+                          timeout=6, is_raise=False):
+            zhiyuansheding()
         self.lock_home()
 
     def dianzan(self, sortflag=0):
         """
         2020/8/6 By:CyiceK 检查完毕
+        2020/8/18 TheAutumnOfRice：加了一点点at。
+            ↑@CyiceK真的，加了at之后的运算速度飞升，不能为了图方便而不加at的。
         :param sortflag:
         :return:
         """
         # 行会点赞
         self.lock_home()
         # 进入行会
-        self.lock_img('img/zhiyuansheding.bmp', ifclick=[(230, 351), (1, 1)], elseclick=[(1, 1), (688, 432)],
-                      elsedelay=self.change_time, retry=10)
+        self.lock_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)), ifclick=[(230, 351), (1, 1)],
+                      elseclick=[(1, 1), (688, 432)],
+                      elsedelay=8, retry=10)
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
-        self.lock_no_img('img/zhiyuansheding.bmp', elseclick=[(230, 351)], retry=5)
+        self.lock_no_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)), elseclick=[(230, 351)],
+                         retry=5)
         if sortflag == 1:
             self.lock_img('img/ok.bmp', elseclick=[(720, 97)], retry=3)  # 点击排序
             self.lock_no_img('img/ok.bmp', elseclick=[(289, 303), (587, 372)],
@@ -238,7 +244,8 @@ class HanghuiMixin(ToolsMixin):
             # 点赞 战力降序第一/第二/第三个人
             # (480, 374) 是ok的坐标
         else:
-            self.lock_img('img/dianzan.bmp', ifclick=[(829, 316), (480, 374), (826, 428)], elseclick=[(1, 1)],
+            self.lock_img(PCRelement(img='img/dianzan.bmp', at=(756, 184, 857, 227)),
+                          ifclick=[(829, 316), (480, 374), (826, 428)], elseclick=[(1, 1)],
                           elsedelay=self.change_time, ifbefore=self.change_time, ifdelay=self.change_time, retry=10)
             # 点赞 职务降序（默认） 第二/第三个人，副会长
         self.click(479, 381)
@@ -246,3 +253,122 @@ class HanghuiMixin(ToolsMixin):
         self.click_img(screen_shot_, 'img/ok.bmp')
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1), (480, 374)], elsedelay=self.change_time,
                       at=(891, 413, 930, 452))  # 回首页
+
+    def faqijuanzeng(self, equip_img: str, wait_time: int = 300):
+        """
+        发起装备捐赠。
+        :param equip_img: 装备图片路径
+        :param wait_time: 等待时间（如果上次已经使用faqijuanzeng捐赠但是还没有过8小时零1分钟，
+            若等待时间不超过wait_time秒则等待，否则跳过该任务
+        :return:
+        """
+
+        def get_equ_at(r, c):
+            EQU_X = [57, 164, 272, 381, 488]
+            EQU_Y = [132, 240, 349]
+            EQU_A = 85
+            return (EQU_X[c], EQU_Y[r], EQU_X[c] + EQU_A, EQU_Y[r] + EQU_A)
+
+        def check_current():
+            sc = self.getscreen()
+            for r in range(3):
+                for c in range(5):
+                    at = get_equ_at(r, c)
+                    print(at)
+                    if self.is_exists(img=equip_img, at=at, screen=sc):
+                        return (at[0] + 37, at[1] + 37)
+            return None
+
+        def dragdown():
+            obj = self.d.touch.down(55, 347)
+            time.sleep(0.1)
+            obj.move(55, 130)
+            time.sleep(0.8)
+            sc = self.getscreen()
+            r1c0 = UIMatcher.img_cut(sc, get_equ_at(1, 0))
+            flag = False
+            if r1c0.std() < 15:
+                # 拖到底了
+                flag = True
+            obj.up(55, 130)
+            time.sleep(1)
+            return flag
+
+        def get_equ_xy():
+            while True:
+                c = check_current()
+                if c is not None:
+                    return PCRelement(*c)
+                if dragdown():
+                    return None
+
+        def sort_down():
+            if not self.is_exists(HANGHUI_BTN["sort_down"]):
+                self.click_btn(HANGHUI_BTN["sort_down"], until_appear=HANGHUI_BTN["sort_down"])
+
+        def sort_xiyou():
+            if not self.is_exists(HANGHUI_BTN["sort_xiyou"]):
+                self.click_btn(HANGHUI_BTN["sort_xiyou"], until_appear=HANGHUI_BTN["sort_ok"])
+                self.click(291, 305, post_delay=0.8)
+                self.click_btn(HANGHUI_BTN["sort_ok"])
+
+        def get_last_record():
+            ts = self.AR.get("time_status", UDD["time_status"])
+            if ts["juanzeng"] is None:
+                return 0
+            else:
+                return ts["juanzeng"]
+
+        def set_last_record():
+            ts = self.AR.get("time_status", UDD["time_status"])
+            ts["juanzeng"] = time.time()
+            self.AR.set("time_status", ts)
+
+        tm = get_last_record()
+        min_time = 8 * 3600 + 60
+        diff = time.time() - tm
+        if diff < min_time:
+            wait = min_time - diff
+            if wait <= wait_time:
+                self.log.write_log("info", f"离下次捐赠还有{int(wait)}秒，进入等待。")
+                time.sleep(wait)
+                self.log.write_log("info", "脚本继续执行。")
+            else:
+                self.log.write_log("warning", f"离下次捐赠还有f{int(wait)}秒，跳过该脚本。")
+                return
+
+        self.lock_home()
+        # 进入
+        self.click_btn(MAIN_BTN["hanghui"], until_appear=HANGHUI_BTN["zhiyuansheding"])
+        # 请求捐赠装备
+        if self.is_exists(HANGHUI_BTN["jzqqqk"], screen=self.last_screen):
+            # 不敢确定是不是捐赠结束后还会出现“捐赠请求情况”。
+            self.click_btn(HANGHUI_BTN["jzqqqk"])
+            for _ in range(5):
+                self.click(16, 92)
+            if self.is_exists(HANGHUI_BTN["jzqqqk"]):
+                self.log.write_log("warning", "捐赠失败，可能上次捐赠请求仍未结束")
+                self.lock_home()
+                return
+
+        if self.is_exists(HANGHUI_BTN["jzqqjg"], screen=self.last_screen):
+            self.click_btn(HANGHUI_BTN["jzqqjg"])
+            for _ in range(5):
+                self.click(16, 92)
+
+        if not self.click_btn(HANGHUI_BTN["qqjzzb"], until_appear=HANGHUI_BTN["fqjzqq"], is_raise=False):
+            self.log.write_log("warning", "捐赠失败，可能捐赠仍在冷却")
+            self.lock_home()
+            return
+
+        sort_down()
+        sort_xiyou()
+        btn = get_equ_xy()
+        if btn is None:
+            self.log.write_log("error", "没有找到要捐赠的装备！")
+        else:
+            self.click(btn, post_delay=1)
+            self.click_btn(HANGHUI_BTN["fqjzqq"], until_appear=HANGHUI_BTN["jzqq_ok"])
+            self.click_btn(HANGHUI_BTN["jzqq_ok"])
+            set_last_record()
+        self.lock_home()

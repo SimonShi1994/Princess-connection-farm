@@ -1,5 +1,6 @@
 # encoding=utf-8
-import configparser,json
+import configparser
+import json
 from typing import Optional
 
 cfg = configparser.ConfigParser()
@@ -15,6 +16,7 @@ debug = cfg.getboolean('debug', 'debug')
 trace_exception_for_debug = cfg.getboolean('debug', 'trace_exception_for_debug')
 use_template_cache = cfg.get('debug', 'use_template_cache')
 baidu_ocr_img = cfg.getboolean('debug', 'baidu_ocr_img')
+disable_timeout_raise = cfg.getboolean('debug', 'disable_timeout_raise')
 
 s_sckey = cfg.get('log', 's_sckey')
 log_lev = cfg.get('log', 'log_lev')
