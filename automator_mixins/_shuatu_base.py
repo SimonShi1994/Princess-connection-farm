@@ -9,6 +9,7 @@ from core.constant import MAOXIAN_BTN, MAIN_BTN, PCRelement, FIGHT_BTN, DXC_ELEM
     ZHUXIAN_ID, JUESE_BTN, NORMAL_COORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
+from pcr_config import debug
 
 
 class ShuatuBaseMixin(FightBaseMixin):
@@ -240,7 +241,10 @@ class ShuatuBaseMixin(FightBaseMixin):
                 while mode == 0:
                     # 等待战斗结束
                     mode = self.get_fight_state(delay=3, check_hat=False,
-                                                check_xd=xianding, go_xd=xianding, check_jq=juqing_in_fight)
+                                                check_xd=xianding, go_xd=xianding,
+                                                check_jq=juqing_in_fight, check_star=True)
+                    if debug:
+                        print("上次星数：", self.last_star)
                     time.sleep(3)
                 if mode == -1:
                     raise Exception("战斗场景识别失败")
@@ -746,7 +750,14 @@ class ShuatuBaseMixin(FightBaseMixin):
                 self.click_btn(FIGHT_BTN["cat_ok"])
 
         _check_level_sort()
-        self.click_btn(JUESE_BTN["first_juese"], until_appear=JUESE_BTN["mana_ball"])
+        mode = self.click_btn(JUESE_BTN["first_juese"], until_appear={
+            JUESE_BTN["mana_ball"]: 1,
+            DXC_ELEMENT["dxc_kkr"]: 2,
+        })
+        if mode == 2:
+            self.chulijiaocheng(turnback=None)
+            self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
+            self.click_btn(JUESE_BTN["first_juese"], until_appear=JUESE_BTN["mana_ball"])
 
     def get_tuijian_stars(self, screen=None):
         """
@@ -786,13 +797,19 @@ class ShuatuBaseMixin(FightBaseMixin):
             name_at = (182, 78, 315, 98)
             self.click(929, 269)
             # TODO 这里会卡，原因不明
-            m = self.wait_for_change(screen=sc, at=name_at, delay=1, threshold=0.84, max_retry=10)
-            if not m:
+            for _ in range(10):
+                m = self.wait_for_change(screen=sc, at=name_at, delay=1, threshold=0.84, max_retry=1)
+                if self.is_exists(JUESE_BTN["fhqhdj_ok"], screen=self.last_screen):
+                    self.click_btn(JUESE_BTN["fhqhdj_ok"])
+                    time.sleep(0.5)
+                    sc = self.getscreen()
+                elif m:
+                    break
+            else:
                 raise Exception("原因不明的wait_for_change错误！")
 
         def _rank_up():
             # rank提升步骤
-            # TODO 强化石头返还窗口阻碍了后续过程
             if do_rank and self.is_exists(JUESE_BTN["rank_tisheng"]):
                 out = self.click_btn(JUESE_BTN["rank_tisheng"], until_appear={
                     JUESE_BTN["rank_tisheng_ok"]: 1,
@@ -815,7 +832,6 @@ class ShuatuBaseMixin(FightBaseMixin):
             while True:
                 if self.is_exists(JUESE_BTN["zdqh"], method="sq"):
                     self.click_btn(JUESE_BTN["zdqh"])
-                    # TODO 这里会有剧情跳脸
                     mode = self.lock_img({JUESE_BTN["rank_tisheng_ok"]: 1, JUESE_BTN["tjqhcd"]: 2})
                     if mode == 1:
                         # 存在正常的强化
@@ -824,7 +840,11 @@ class ShuatuBaseMixin(FightBaseMixin):
                             out = self.lock_img({
                                 JUESE_BTN["yjzb_off"]: 1,
                                 JUESE_BTN["rank_tisheng"]: 2,
+                                JUESE_BTN["fhqhdj_ok"]: 3,
                             }, is_raise=False, timeout=15)
+                            if out == 3:
+                                self.click_btn(JUESE_BTN["fhqhdj_ok"])
+                                continue
                             if out == 2 and do_rank:
                                 _rank_up()
                             else:

@@ -14,9 +14,35 @@ class FightBaseMixin(ToolsMixin):
     包括与战斗相关的基本操作
     """
 
+    def get_fight_middle_stars(self, screen=None):
+        """
+        获取战斗胜利后中间的星数
+        :param screen: 设置为None时，不另外截屏
+        :return: 0~3
+        """
+        if screen is None:
+            screen = self.getscreen()
+        fc = np.array([98, 228, 245])  # G B R:金色
+        bc = np.array([212, 171, 139])  # G B R:灰色
+        c = []
+        us = {
+            1: (424, 135),
+            2: (478, 135),
+            3: (533, 135)
+        }
+        for i in range(1, 4):
+            x = us[i][0]
+            y = us[i][1]
+            c += [screen[y, x]]
+        c = np.array(c)
+        tf = np.sqrt(((c - fc) ** 2)).sum(axis=1)
+        tb = np.sqrt(((c - bc) ** 2)).sum(axis=1)
+        t = tf < tb
+        return np.sum(t)
+
     def get_fight_state(self, screen=None, max_retry=10, delay=1,
                         check_hat=False, check_xd=False, go_xd=False,
-                        check_jq=False) -> int:
+                        check_jq=False, check_star=False) -> int:
         """
         获取战斗状态
         注：不适用竞技场的战斗！
@@ -30,6 +56,7 @@ class FightBaseMixin(ToolsMixin):
         :param check_jq: 推图中使用，有些boss关卡会有大段前后剧情
             若设置为True，则会检测是否有人说话的框，有的话则大力跳过
             实际情况中，该选项开启很容易导致漏点对话框，买体力会失效。
+        :param check_star: 推图中使用，Win界面出来后统计星数并存在self.last_star
         :return:
             -1：未知状态
             0： 战斗进行中
@@ -55,6 +82,13 @@ class FightBaseMixin(ToolsMixin):
                     return 1
                 elif self.is_exists(FIGHT_BTN["xiayibu"], screen=sc):
                     # 右下角有长的下一步，但是没找到帽子：点掉它
+                    if check_star:
+                        stars = self.get_fight_middle_stars(sc)
+                        if stars > 0:
+                            self.last_star = stars
+                        else:
+                            self.log.write_log("warning", "战斗结束星数检测失败，默认三星")
+                            self.last_star = 3
                     self.click_btn(FIGHT_BTN["xiayibu"])
                     return 1
                 else:
