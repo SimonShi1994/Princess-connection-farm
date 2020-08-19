@@ -9,7 +9,7 @@ import uiautomator2 as u2
 
 from core import log_handler
 from core.MoveRecord import moveset
-from core.constant import PCRelement, MAIN_BTN
+from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
@@ -746,11 +746,10 @@ class BaseMixin:
         处理剧情+剧情版的可可萝
         :return:
         """
-        if self.is_exists(img='img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
-            self.lock_img('img/caidan_yuan.jpg', ifclick=[(917, 39)], ifdelay=self.change_time, retry=15)  # 菜单
-            self.lock_img('img/caidan_tiaoguo.jpg', ifclick=[(807, 44)], ifdelay=self.change_time,
-                          retry=15)  # 跳过
-            self.lock_img('img/tiaoguo.jpg', ifclick=[(589, 367)], ifdelay=self.change_time, retry=15)  # 跳过
+        if self.is_exists(JUQING_BTN["caidanyuan"]):
+            self.click_btn(JUQING_BTN["caidanyuan"], wait_self_before=True, until_appear=JUQING_BTN["tiaoguo_1"])  # 菜单
+            self.click_btn(JUQING_BTN["tiaoguo_1"], wait_self_before=True, until_appear=JUQING_BTN["tiaoguo_2"])  # 跳过
+            self.click_btn(JUQING_BTN["tiaoguo_2"], wait_self_before=True, until_disappear=JUQING_BTN["tiaoguo_2"])  # 蓝色跳过
         elif self.is_exists(img='img/kekeluo.bmp', at=(181, 388, 384, 451)):
             # 防妈骑脸
             self.lock_no_img('img/kekeluo.bmp', elseclick=[(1, 1)], at=(181, 388, 384, 451))
