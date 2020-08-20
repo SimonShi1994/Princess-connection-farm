@@ -54,7 +54,7 @@ def runmain(address, account, password):
 
         template_paths = {
             'img/tongyi.jpg': (490, 459, 686, 496),
-            'img/tiaoguo.jpg': None,
+            'img/juqing/tiaoguo_2.bmp': None,
             'img/dengji.jpg': (382, 352, 578, 391),
             'img/ok.bmp': None,
             'img/niudan_jiasu.jpg': (700, 0, 960, 100)
@@ -70,7 +70,7 @@ def runmain(address, account, password):
             a.d.click(591, 370)
             time.sleep(0.5)
             continue
-        if UIMatcher.img_where(screen, 'img/caidan_yuan.jpg', at=(898, 23, 939, 62)):
+        if UIMatcher.img_where(screen, 'img/juqing/caidanyuan.bmp', at=(898, 23, 939, 62)):
             a.d.click(919, 45)
             time.sleep(0.8)
             a.d.click(806, 46)

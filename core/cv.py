@@ -40,7 +40,7 @@ class UIMatcher:
         @return: 中心坐标lists, 对应的可信度list
         """
         if template_paths is None:
-            template_paths = ['img/tiaoguo.jpg']
+            template_paths = ['img/juqing/tiaoguo_2.bmp']
         zhongxings = []
         max_vals = []
         # 增加判断screen方向
