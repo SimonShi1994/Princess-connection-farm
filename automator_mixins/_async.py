@@ -30,11 +30,11 @@ class AsyncMixin(BaseMixin):
                 # 过快可能会卡
                 time.sleep(cumulative_time)
                 screenshot = self.d.screenshot(format="opencv")
-                if self.is_exists(screen=screenshot, img='img/caidan_yuan.jpg', at=(860, 0, 960, 100)):
-                    self.lock_img('img/caidan_yuan.jpg', ifclick=[(917, 39)], ifdelay=self.change_time, retry=15)  # 菜单
-                    self.lock_img('img/caidan_tiaoguo.jpg', ifclick=[(807, 44)], ifdelay=self.change_time,
+                if self.is_exists(screen=screenshot, img='img/juqing/caidanyuan.bmp', at=(860, 0, 960, 100)):
+                    self.lock_img('img/juqing/caidanyuan.bmp', ifclick=[(917, 39)], ifdelay=self.change_time, retry=15)  # 菜单
+                    self.lock_img('img/juqing/tiaoguo_1.bmp', ifclick=[(807, 44)], ifdelay=self.change_time,
                                   retry=15)  # 跳过
-                    self.lock_img('img/tiaoguo.jpg', ifclick=[(589, 367)], ifdelay=self.change_time, retry=15)  # 跳过
+                    self.lock_img('img/juqing/tiaoguo_2.bmp', ifclick=[(589, 367)], ifdelay=self.change_time, retry=15)  # 跳过
                     cumulative_time = 0.1
                 elif self.is_exists(screen=screenshot, img='img/kekeluo.bmp', at=(181, 388, 384, 451)):
                     # 防妈骑脸

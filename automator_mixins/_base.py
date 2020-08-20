@@ -441,8 +441,8 @@ class BaseMixin:
         active_path = UIMatcher.imgs_where(screen_shot, template_paths)
         if active_path:
             # print(active_path)
-            if 'img/caidan_tiaoguo.jpg' in active_path:
-                x, y = active_path['img/caidan_tiaoguo.jpg']
+            if 'img/juqing/tiaoguo_1.bmp' in active_path:
+                x, y = active_path['img/juqing/tiaoguo_1.bmp']
                 self.click(x, y)
             else:
                 for name, (x, y) in active_path.items():
@@ -676,11 +676,11 @@ class BaseMixin:
                 pass
             elif self.click_img(screen_shot_, 'img/wuyuyin.jpg', at=(450, 355, 512, 374)):
                 time.sleep(3)
-            elif self.click_img(screen_shot_, 'img/tiaoguo.jpg'):
+            elif self.click_img(screen_shot_, 'img/juqing/tiaoguo_2.bmp'):
                 time.sleep(3)
             elif self.click_img(screen_shot_, 'img/zhuye.jpg', at=(46, 496, 123, 537)):
                 pass
-            elif self.click_img(screen_shot_, 'img/caidan_yuan.jpg', at=(898, 23, 939, 62)):
+            elif self.click_img(screen_shot_, 'img/juqing/caidanyuan.bmp', at=(898, 23, 939, 62)):
                 time.sleep(0.7)
                 self.click(804, 45)
                 time.sleep(0.7)
@@ -748,8 +748,8 @@ class BaseMixin:
         """
         if self.is_exists(JUQING_BTN["caidanyuan"]):
             self.click_btn(JUQING_BTN["caidanyuan"], wait_self_before=True, until_appear=JUQING_BTN["tiaoguo_1"])  # 菜单
-            self.click_btn(JUQING_BTN["tiaoguo_1"], wait_self_before=True, until_appear=JUQING_BTN["tiaoguo_2"])  # 跳过
-            self.click_btn(JUQING_BTN["tiaoguo_2"], wait_self_before=True, until_disappear=JUQING_BTN["tiaoguo_2"])  # 蓝色跳过
+            self.click_btn(JUQING_BTN["tiaoguo_1"],  until_appear=JUQING_BTN["tiaoguo_2"])  # 跳过
+            self.click_btn(JUQING_BTN["tiaoguo_2"],  until_disappear=JUQING_BTN["tiaoguo_2"])  # 蓝色跳过
         elif self.is_exists(img='img/kekeluo.bmp', at=(181, 388, 384, 451)):
             # 防妈骑脸
             self.lock_no_img('img/kekeluo.bmp', elseclick=[(1, 1)], at=(181, 388, 384, 451))
