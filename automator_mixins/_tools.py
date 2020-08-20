@@ -118,7 +118,7 @@ class ToolsMixin(BaseMixin):
         self.click(871, 513)  # 主菜单
         while True:  # 锁定帮助
             screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/bangzhu.jpg'):
+            if UIMatcher.img_where(screen_shot_, 'img/bangzhu.bmp'):
                 break
         # cv2.imwrite('all.png',screen_shot_)
         # part = screen_shot_[526:649, 494:524]

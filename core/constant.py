@@ -108,6 +108,12 @@ MAIN_BTN = {
     "speaker_box": p(img="img/ui/speaker_box.bmp", at=(182, 395, 209, 409)),  # 有人说话时名字左上角的红色
     "setting_pic": p(74, 268, img="img/home/setting.bmp", at=(59, 253, 91, 281)),
 }
+JUQING_BTN = {
+    "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(901, 25, 934, 56)),
+    "tiaoguo_1": p(804, 38, img="img/juqing/tiaoguo_1.bmp", at=(765, 24, 849, 65)),
+    "tiaoguo_2": p(589, 367, img="img/juqing/tiaoguo_2.bmp", at=(567, 356, 611, 379))
+}
+
 LIWU_BTN = {
     "shouqulvli": p(img="img/home/shouqulvli.bmp", at=(98, 461, 202, 489)),
     "quanbushouqu": p(812, 470, img="img/home/quanbushouqu_on.bmp", at=(715, 458, 900, 494)),
@@ -144,59 +150,58 @@ HANGHUI_BTN = {
     "juanzengqingqiu": p(367, 39),
     "juanzeng": p(644, 385),
     # 组建行会（未加入公会）
-    "zujianhanghui": p(851,442,img="img/zujianhanghui.bmp",at=(746, 426, 931, 464)),
+    "zujianhanghui": p(851, 442, img="img/zujianhanghui.bmp", at=(746, 426, 931, 464)),
     # 设定（加入行会）
-    "sheding_join": p(860,79,img="img/hanghui/sheding_join.bmp",at=(840,68,879,89)),
+    "sheding_join": p(860, 79, img="img/hanghui/sheding_join.bmp", at=(840, 68, 879, 89)),
     # 加入行会设定输入框
-    "input_join": p(370,180,img="img/hanghui/input_join.bmp",at=(320,165,424,191)),
+    "input_join": p(370, 180, img="img/hanghui/input_join.bmp", at=(320, 165, 424, 191)),
     # 搜索（加入行会，亮）注意，暗的时候为0.97，亮为0.99
-    "sousuo_join": p(589,431,img="img/hanghui/sousuo_join.bmp",at=(506,417,663,448)),
+    "sousuo_join": p(589, 431, img="img/hanghui/sousuo_join.bmp", at=(506, 417, 663, 448)),
     # 进入行会（从搜索界面）
-    "in_join": p(890,155,img="img/hanghui/in_join.bmp",at=(878,126,902,185)),
+    "in_join": p(890, 155, img="img/hanghui/in_join.bmp", at=(878, 126, 902, 185)),
     # 加入行会
-    "join_btn": p(854,444,img='img/jiaru.bmp',at=(749, 427, 933, 460)),
+    "join_btn": p(854, 444, img='img/jiaru.bmp', at=(749, 427, 933, 460)),
     # 支援设定
-    "zhiyuansheding": p(83,348,img="img/hanghui/zhiyuansheding.bmp",at=(48,336,120,361)),
+    "zhiyuansheding": p(83, 348, img="img/hanghui/zhiyuansheding.bmp", at=(48, 336, 120, 361)),
     # 地下城支援1
-    "zhiyuan_dxc1": p(105,232,img="img/hanghui/zhiyuanjuese1.bmp",at=(65,194,142,272)),
+    "zhiyuan_dxc1": p(105, 232, img="img/hanghui/zhiyuanjuese1.bmp", at=(65, 194, 142, 272)),
     # 地下城支援2
-    "zhiyuan_dxc2": p(102,355,img="img/hanghui/zhiyuanjuese2.bmp",at=(64,315,140,393)),
+    "zhiyuan_dxc2": p(102, 355, img="img/hanghui/zhiyuanjuese2.bmp", at=(64, 315, 140, 393)),
     # 支援取消
-    "zhiyuanquxiao": p(img="img/hanghui/zhiyuanquxiao.bmp",at=(645,438,694,466)),
+    "zhiyuanquxiao": p(img="img/hanghui/zhiyuanquxiao.bmp", at=(645, 438, 694, 466)),
     # 战力排序（支援界面）用于判断是否处在战力排序状态
-    "zhanlipaixu": p(img="img/hanghui/zhanlipaixu.bmp",at=(684,78,722,100)),
+    "zhanlipaixu": p(img="img/hanghui/zhanlipaixu.bmp", at=(684, 78, 722, 100)),
     # 降序（支援界面）
-    "jiangxu_juese": p(863,90,img="img/hanghui/jiangxu_juese.bmp",at=(828,78,903,99)),
+    "jiangxu_juese": p(863, 90, img="img/hanghui/jiangxu_juese.bmp", at=(828, 78, 903, 99)),
     # 筛选条件（支援界面）
-    "shaixuantiaojian_juese": p(788,88,img="img/hanghui/shaixuantiaojian_juese.bmp",at=(777,78,800,99)),
+    "shaixuantiaojian_juese": p(788, 88, img="img/hanghui/shaixuantiaojian_juese.bmp", at=(777, 78, 800, 99)),
     # 角色战力”确认“蓝点
-    "zhanli_juese": p(289, 141,img="img/hanghui/landian_true.bmp",at=(266, 118, 311, 164)),
+    "zhanli_juese": p(289, 141, img="img/hanghui/landian_true.bmp", at=(266, 118, 311, 164)),
     # 角色筛选条件界面确认
-    "hanghui_ok_juese": p(591, 476,img="img/hanghui/hanghui_ok.bmp",at= (553, 461, 629, 490)),
+    "hanghui_ok_juese": p(591, 476, img="img/hanghui/hanghui_ok.bmp", at=(553, 461, 629, 490)),
     # 角色选择1
-    "juese1": p(102,162),
+    "juese1": p(102, 162),
     # 角色选择2
-    "juese2": p(210,164),
+    "juese2": p(210, 164),
     # 角色选择3
-    "juese3": p(318,166),
+    "juese3": p(318, 166),
     # 角色选择4
-    "juese4": p(431,166),
+    "juese4": p(431, 166),
     # 角色选择确认
-    "juesesheding": p(838,454,img="img/hanghui/juesesheding.bmp",at=(791,440,885,466)),
+    "juesesheding": p(838, 454, img="img/hanghui/juesesheding.bmp", at=(791, 440, 885, 466)),
     # 角色选择二次确认
-    "hanghui_ok_double": p(591,431,img="img/hanghui/hanghui_ok.bmp",at=(553, 416, 630, 446)),
-
+    "hanghui_ok_double": p(591, 431, img="img/hanghui/hanghui_ok.bmp", at=(553, 416, 630, 446)),
 
     # 返回键隔壁的“行会”字样
     "hanghui_title": p(img="img/hanghui.bmp", at=(63, 12, 123, 45)),
     # 成员信息
-    "chengyuanxinxi": p(237,353,img="img/hanghui/chengyuanxinxi.bmp", at=(203, 339, 272, 359)),
+    "chengyuanxinxi": p(237, 353, img="img/hanghui/chengyuanxinxi.bmp", at=(203, 339, 272, 359)),
     # 成员信息界面的“成员列表”按钮
-    "chengyuanliebiao": p(img='img/chengyuanliebiao.bmp',at=(329, 15, 450, 42)),
+    "chengyuanliebiao": p(img='img/chengyuanliebiao.bmp', at=(329, 15, 450, 42)),
     # 筛选条件（成员界面）
-    "shaixuantiaojian_chengyuan": p(793,84,img="img/hanghui/shaixuantiaojian_chengyuan.bmp",at=(782,80,810,103)),
+    "shaixuantiaojian_chengyuan": p(793, 84, img="img/hanghui/shaixuantiaojian_chengyuan.bmp", at=(782, 80, 810, 103)),
     # 筛选条件里的分类
-    "fenlei": p(img="img/hanghui/fenlei.bmp",at=(454,132,501,158)),
+    "fenlei": p(img="img/hanghui/fenlei.bmp", at=(454, 132, 501, 158)),
     # 成员全角色战力"确认"蓝点
     "zhanli_chengyuan": p(285, 299, img="img/hanghui/landian_true.bmp", at=(265, 280, 310, 326)),
     # 降序按钮（筛选成员界面）

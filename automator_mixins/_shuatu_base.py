@@ -477,8 +477,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                         self.click(677, 458)  # 取消
                         break
                     screen_shot = self.getscreen()
-                    if UIMatcher.img_where(screen_shot, 'img/tiaoguo.jpg'):
-                        self.guochang(screen_shot, ['img/tiaoguo.jpg'], suiji=0)
+                    if UIMatcher.img_where(screen_shot, 'img/juqing/tiaoguo_2.bmp'):
+                        self.guochang(screen_shot, ['img/juqing/tiaoguo_2.bmp'], suiji=0)
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     else:
                         time.sleep(1)
@@ -594,8 +594,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                         self.click(677, 458)  # 取消
                         break
                     screen_shot = self.getscreen()
-                    if UIMatcher.img_where(screen_shot, 'img/tiaoguo.jpg'):
-                        self.guochang(screen_shot, ['img/tiaoguo.jpg'], suiji=0)
+                    if UIMatcher.img_where(screen_shot, 'img/juqing/tiaoguo_2.bmp'):
+                        self.guochang(screen_shot, ['img/juqing/tiaoguo_2.bmp'], suiji=0)
                         self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
                     else:
                         time.sleep(1)
@@ -990,9 +990,9 @@ class ShuatuBaseMixin(FightBaseMixin):
                                 screen_shot_ = self.getscreen()
                                 active_paths = UIMatcher.imgs_where(screen_shot_,
                                                                     ['img/tuijianguanqia.jpg', 'img/zidongqianghua.jpg',
-                                                                     'img/tiaoguo.jpg'])
-                                if 'img/tiaoguo.jpg' in active_paths:
-                                    x, y = active_paths['img/tiaoguo.jpg']
+                                                                     'img/juqing/tiaoguo_2.bmp'])
+                                if 'img/juqing/tiaoguo_2.bmp' in active_paths:
+                                    x, y = active_paths['img/juqing/tiaoguo_2.bmp']
                                     self.click(x, y)
                                 if 'img/tuijianguanqia.jpg' in active_paths:
                                     flag = 'img/tuijianguanqia.jpg'
