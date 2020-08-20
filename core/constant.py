@@ -787,6 +787,14 @@ USER_DEFAULT_DICT = {
         # 时间状态
         "juanzeng": None,  # 上次捐赠时间
     }
+    ,
+    "daily_status": {
+        # 每日刷图
+        "buy_tili": 0,  # 当日买体力次数
+        "normal": {},  # normal图刷图记录
+        "hard": {},  # hard图刷图记录
+        "last_time": 0,  # 上一次刷图时间
+    }
 
 }
 # 显然后面还没写
