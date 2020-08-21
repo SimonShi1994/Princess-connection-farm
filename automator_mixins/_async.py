@@ -172,7 +172,9 @@ class AsyncMixin(BaseMixin):
         """
         while Multithreading({}).is_stopped():
             # print(psutil.cpu_times())
-            self.cpu_occupy = psutil.cpu_percent(interval=None, percpu=False)
+            # 我休眠我自己
+            time.sleep(self.change_time)
+            self.cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
             # print(self.cpu_occupy)
             # 游戏拿不了fps
             # 最大忍受5s

@@ -524,8 +524,9 @@ class BaseMixin:
                 # 感谢Sisphyus大佬分享的文章
                 # side_check理论支持调用_base的所有子类方法
                 # _method = getattr(self, side_check)
-                side_check()
-                lasttime = time.time()
+                determine = side_check(screen_shot)
+                if determine:
+                    lasttime = time.time()
             try:
                 from automator_mixins._async import block_sw
                 if block_sw == 1:
@@ -741,18 +742,23 @@ class BaseMixin:
         d["error"] = error
         self.AR.set("run_status", d)
 
-    def juqing_kkr(self):
+    def juqing_kkr(self, screen_shot=None):
         """
         处理剧情+剧情版的可可萝
         :return:
         """
-        if self.is_exists(JUQING_BTN["caidanyuan"]):
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+        if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen_shot):
             self.click_btn(JUQING_BTN["caidanyuan"], wait_self_before=True, until_appear=JUQING_BTN["tiaoguo_1"])  # 菜单
             self.click_btn(JUQING_BTN["tiaoguo_1"],  until_appear=JUQING_BTN["tiaoguo_2"])  # 跳过
             self.click_btn(JUQING_BTN["tiaoguo_2"],  until_disappear=JUQING_BTN["tiaoguo_2"])  # 蓝色跳过
-        elif self.is_exists(img='img/kekeluo.bmp', at=(181, 388, 384, 451)):
+            return True
+        elif self.is_exists(img='img/kekeluo.bmp', at=(181, 388, 384, 451), screen=screen_shot):
             # 防妈骑脸
             self.lock_no_img('img/kekeluo.bmp', elseclick=[(1, 1)], at=(181, 388, 384, 451))
+            return True
+        return False
 
 
 class Multithreading(threading.Thread, BaseMixin):
