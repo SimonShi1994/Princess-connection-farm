@@ -16,11 +16,13 @@ class DXCBaseMixin(FightBaseMixin):
         self.dxc_switch = 0  # 0开，1锁
         self.is_dixiacheng_end = 0  # 地下城是否结束，0未结束，1结束
 
-    def dxc_kkr(self, screen_shot):
+    def dxc_kkr(self, screen_shot=None):
         """
         处理跳脸
         :return:
         """
+        if screen_shot is None:
+            screen_shot = self.getscreen()
         # time.sleep(2)  # 等妈出现
         if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen_shot):
             self.chulijiaocheng(turnback=None)

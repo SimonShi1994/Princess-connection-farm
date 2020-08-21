@@ -742,11 +742,13 @@ class BaseMixin:
         d["error"] = error
         self.AR.set("run_status", d)
 
-    def juqing_kkr(self, screen_shot):
+    def juqing_kkr(self, screen_shot=None):
         """
         处理剧情+剧情版的可可萝
         :return:
         """
+        if screen_shot is None:
+            screen_shot = self.getscreen()
         if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen_shot):
             self.click_btn(JUQING_BTN["caidanyuan"], wait_self_before=True, until_appear=JUQING_BTN["tiaoguo_1"])  # 菜单
             self.click_btn(JUQING_BTN["tiaoguo_1"],  until_appear=JUQING_BTN["tiaoguo_2"])  # 跳过
