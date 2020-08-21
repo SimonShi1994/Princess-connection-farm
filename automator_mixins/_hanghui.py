@@ -3,6 +3,7 @@ import time
 from core.constant import MAIN_BTN, HANGHUI_BTN, PCRelement
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
+from core.utils import diffday
 from ._tools import ToolsMixin
 
 
@@ -226,6 +227,12 @@ class HanghuiMixin(ToolsMixin):
         :return:
         """
         # 行会点赞
+        # 一天只能点一次
+        ts = self.AR.get("daily_status", UDD["daily_status"])
+        cur = time.time()
+        if not diffday(cur, ts["dianzan"]):
+            self.log.write_log("info", "今日已经点过赞！")
+            return
         self.lock_home()
         # 进入行会
         self.lock_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)), ifclick=[(230, 351), (1, 1)],
@@ -251,6 +258,9 @@ class HanghuiMixin(ToolsMixin):
         self.click(479, 381)
         screen_shot_ = self.getscreen()
         self.click_img(screen_shot_, 'img/ok.bmp')
+        # 保存点赞时间
+        ts["dianzan"] = time.time()
+        self.AR.set("daily_status", ts)
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1), (480, 374)], elsedelay=self.change_time,
                       at=(891, 413, 930, 452))  # 回首页
 
@@ -314,10 +324,7 @@ class HanghuiMixin(ToolsMixin):
 
         def get_last_record():
             ts = self.AR.get("time_status", UDD["time_status"])
-            if ts["juanzeng"] is None:
-                return 0
-            else:
-                return ts["juanzeng"]
+            return ts["juanzeng"]
 
         def set_last_record():
             ts = self.AR.get("time_status", UDD["time_status"])

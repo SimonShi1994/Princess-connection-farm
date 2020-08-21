@@ -554,22 +554,9 @@ class ShuatuMixin(ShuatuBaseMixin):
         :param xianding: 是否买空限定商店（如果出现的话）
         """
         # 每日更新
+        from core.utils import diffday
         ds = self.AR.get("daily_status", UDD["daily_status"])
-
         def new_day(ds):
-            def diffday(t1, t2):
-                if (t1 - t2) > 3600 * 24:
-                    return True
-                # -5小时，将一天的开始定位5:00AM
-                s1 = time.localtime(t1 - 5 * 3600)
-                s2 = time.localtime(t2 - 5 * 3600)
-                day1 = s1.tm_year * 366 + s1.tm_yday
-                day2 = s2.tm_year * 366 + s2.tm_yday
-                if day1 > day2:
-                    return True
-                else:
-                    return False
-
             t1 = time.time()
             t2 = ds["last_time"]
             if diffday(t1, t2):

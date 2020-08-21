@@ -790,7 +790,10 @@ USER_DEFAULT_DICT = {
     },
     "time_status": {
         # 时间状态
-        "juanzeng": None,  # 上次捐赠时间
+        "juanzeng": 0,  # 上次捐赠时间
+        "dianzan": 0,  # 上次点赞时间
+        "buyexp": 0,  # 上次购买经验时间
+        "niudan": 0,  # 上次免费扭蛋时间
     }
     ,
     "daily_status": {
