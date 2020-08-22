@@ -1,5 +1,5 @@
-from os import getcwd
 import re
+from os import getcwd
 
 from core.usercentre import *
 
@@ -17,8 +17,9 @@ DOC_STR = {
     "help?":
         """
         帮助手册  在命令后输入?查看具体使用方法
-        user 创建或编辑一个新的用户信息
-        task 创建或编辑一个任务列表
+        user     创建或编辑一个新的用户信息
+        task     创建或编辑一个任务列表
+        group    创建或编辑一个用户组
         """,
     "user?":
         """
@@ -49,6 +50,16 @@ DOC_STR = {
         task -e TaskName 进入TaskName的编辑模式
         task -d TaskName 删除某一Task
         task -d -all 删除全部Task
+        """,
+    "group?":
+        """
+        帮助：group
+        group -l 列举全部组列表
+        group GroupName 显示某个组的全部成员
+        group的创建：非常简单，不写方法了。
+        Step 1. 前往./groups 文件夹
+        Step 2. 创建一个.txt文件，文件名为组名
+        Step 3. 在该txt文件内每行一个用户名，表示该组的成员
         """
 }
 
@@ -189,6 +200,15 @@ def del_all_task():
         del_task(t)
 
 
+def show_group(GroupName):
+    gp = get_group(GroupName)
+    users = list_all_users(0)
+    for i in gp:
+        if i in users:
+            print(i)
+        else:
+            print(i, " 【未找到】")
+
 if __name__ == "__main__":
     print(DOC_STR["title"])
     print("当前工作路径：", getcwd())
@@ -205,6 +225,8 @@ if __name__ == "__main__":
                 print(DOC_STR["user?"])
             elif order == "task?" or cmd == "task":
                 print(DOC_STR["task?"])
+            elif order == "group?" or cmd == "group":
+                print(DOC_STR["group?"])
             elif order == "user":
                 if len(cmds) == 2 and cmds[1] == "-l":
                     list_all_users()
@@ -253,6 +275,11 @@ if __name__ == "__main__":
                     del_all_task()
                 else:
                     print("Wrong Order!")
+            elif order == "group":
+                if len(cmds) == 2 and cmds[1] == "-l":
+                    list_all_groups()
+                elif len(cmds) == 2:
+                    show_group(cmds[1])
             else:
                 print("Wrong Order!")
         except Exception as e:
