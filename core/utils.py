@@ -1,5 +1,6 @@
 import random
 import string
+import time
 
 
 def random_name():
@@ -81,6 +82,77 @@ def token():
         token += random.choice(s)
         token += str(random.choice(range(10)))
     return token
+
+
+def diffday(t1, t2):
+    """
+    判断两天不同（以5AM为界限）
+    :param t1: 当前时间
+    :param t2: 上一时间
+    :return:
+    """
+    if (t1 - t2) > 3600 * 24:
+        return True
+    # -5小时，将一天的开始定位5:00AM
+    s1 = time.localtime(t1 - 5 * 3600)
+    s2 = time.localtime(t2 - 5 * 3600)
+    day1 = s1.tm_year * 366 + s1.tm_yday
+    day2 = s2.tm_year * 366 + s2.tm_yday
+    if day1 > day2:
+        return True
+    else:
+        return False
+
+
+def diff_6hour(t1, t2):
+    """
+    以0h,6h,12h,18h为界判断两个时间是否在两个区间
+    :param t1: 当前时间
+    :param t2: 上一时间
+    :return:
+    """
+    if (t1 - t2) > 3600 * 6:
+        return True
+    s1 = time.localtime(t1)
+    s2 = time.localtime(t2)
+    day1 = s1.tm_year * 366 + s1.tm_yday
+    day2 = s2.tm_year * 366 + s2.tm_yday
+    if day1 > day2:
+        return True
+    else:
+        h1 = s1.tm_hour
+        h2 = s2.tm_hour
+        span = [(0, 6), (6, 12), (12, 18), (18, 24)]
+        for l, r in span:
+            if l <= h1 < r and l <= h2 < r:
+                return False
+        return True
+
+
+def diff_5_12hour(t1, t2):
+    """
+    以5h和12h为界判断两个时间是否在两个区间
+    :param t1: 当前时间
+    :param t2: 上一时间
+    :return:
+    """
+    if (t1 - t2) > 3600 * 6:
+        return True
+    # 5h->0h, 12h->7h
+    s1 = time.localtime(t1 - 5 * 3600)
+    s2 = time.localtime(t2 - 5 * 3600)
+    day1 = s1.tm_year * 366 + s1.tm_yday
+    day2 = s2.tm_year * 366 + s2.tm_yday
+    if day1 > day2:
+        return True
+    else:
+        h1 = s1.tm_hour
+        h2 = s2.tm_hour
+        span = [(0, 7), (7, 24)]
+        for l, r in span:
+            if l <= h1 < r and l <= h2 < r:
+                return False
+        return True
 
 
 if __name__ == '__main__':

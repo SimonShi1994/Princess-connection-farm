@@ -2,7 +2,9 @@ import time
 
 from core.MoveRecord import movevar
 from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN
+from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
+from core.utils import diff_6hour, diff_5_12hour
 from ._shuatu_base import ShuatuBaseMixin
 
 
@@ -59,6 +61,10 @@ class RoutineMixin(ShuatuBaseMixin):
     def mianfeiniudan(self):
         # 免费扭蛋
         # 2020-07-31 TheAutumnOfRice: 检查完毕
+        ts = self.AR.get("time_status", UDD["time_status"])
+        if not diff_5_12hour(time.time(), ts["niudan"]):
+            self.log.write_log("info", "该时间段已经抽取过免费扭蛋！")
+            return
         self.lock_home()
         self.lock_img(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
         while True:
@@ -82,6 +88,8 @@ class RoutineMixin(ShuatuBaseMixin):
             # TODO 第一次扭蛋设置
         else:
             self.log.write_log("info", "可能已经领取过免费扭蛋了")
+        ts["niudan"] = time.time()
+        self.AR.set("time_status", ts)
         self.lock_home()
 
     def mianfeishilian(self):
@@ -218,6 +226,10 @@ class RoutineMixin(ShuatuBaseMixin):
 
     def buyExp(self):
         # 进入商店
+        ts = self.AR.get("time_status", UDD["time_status"])
+        if not diff_6hour(time.time(), ts["buyexp"]):
+            self.log.write_log("info", "该时间段内已经买过经验了！")
+            return
         self.lock_home()
         count = 0
         self.click(616, 434)
@@ -240,6 +252,8 @@ class RoutineMixin(ShuatuBaseMixin):
             time.sleep(1)
             self.click(596, 478)
             time.sleep(1)
+        ts["buyexp"] = time.time()
+        self.AR.set("time_status", ts)
         self.lock_home()
 
     def tansuo(self, mode=0):  # 探索函数
