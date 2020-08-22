@@ -1,6 +1,6 @@
 import time
 
-from core.constant import MAIN_BTN
+from core.constant import MAIN_BTN, ZHUCAIDAN_BTN
 # from core.log_handler import pcr_log
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
@@ -96,8 +96,8 @@ class LoginMixin(BaseMixin):
             self.auth(auth_name=auth_name, auth_id=auth_id)
 
     def change_acc(self):  # 切换账号
-        self.lock_img('img/bangzhu.bmp', elseclick=[(871, 513)], at=(493, 247, 695, 290))  # 锁定帮助
+        self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
         self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)], at=(495, 353, 687, 388))
-        self.lock_no_img('img/bangzhu.bmp', elseclick=[(871, 513), (165, 411), (591, 369)], at=(493, 247, 695, 290))
+        self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
         # pcr_log(self.account).server_bot("warning", "%s账号完成任务" % self.account)

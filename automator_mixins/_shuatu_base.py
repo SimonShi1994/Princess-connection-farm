@@ -566,7 +566,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             self.click(x, y)
             time.sleep(0.5)
         else:
-            pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束 全部 刷图任务！<<<')
+            # pcr_log(self.account).write_log(level='info', message='>>>无扫荡券,无体力,无次数！结束 全部 刷图任务！<<<')
             return
         if self.switch == 0:
             while True:  # 锁定加号

@@ -46,11 +46,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/chetui.jpg', at=(738, 420, 872, 442)):
                     dixiacheng_floor = self.baidu_ocr(200, 410, 263, 458)
                     # print(dixiacheng_floor)
-                    dixiacheng_floor = int(dixiacheng_floor['words_result'][0]['words'].split('/')[0])
+                    dixiacheng_floor = int(dixiacheng_floor.get('words_result')[0].get('words').split('/')[0])
                     time.sleep(0.8)
                     dixiacheng_floor_times = self.baidu_ocr(668, 421, 697, 445)
                     # print(dixiacheng_floor_times)
-                    dixiacheng_floor_times = int(dixiacheng_floor_times['words_result'][0]['words'].split('/')[0])
+                    dixiacheng_floor_times = int(dixiacheng_floor_times.get('words_result')[0].get('words').split('/')[0])
                     tmp_cout = tmp_cout + 1
                     dixiacheng_times = dixiacheng_floor_times
                     # print(dixiacheng_floor, ' ', dixiacheng_floor_times)
@@ -86,7 +86,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     dixiacheng_times = self.baidu_ocr(868, 419, 928, 459)
                     # {'log_id': ***, 'words_result_num': 1, 'words_result': [{'words': '0/1'}]}
                     # print(dixiacheng_times)
-                    dixiacheng_times = int(dixiacheng_times['words_result'][0]['words'].split('/')[0])
+                    dixiacheng_times = int(dixiacheng_times.get('words_result')[0].get('words').split('/')[0])
                     if dixiacheng_times <= 1:
                         break
                     tmp_cout = tmp_cout + 1
@@ -252,10 +252,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         """
         # 首页 -> 地下城选章/（新号）地下城章内
         self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
-        # 防止一进去就是塔币教程
-        self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr, retry=10, at=(738, 420, 872, 442))
         self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
                          at=(837, 92, 915, 140))
+        # 防止一进去就是塔币教程
+        self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr, retry=10, at=(738, 420, 872, 442))
         # 防止教程
         self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=10)
 
@@ -273,6 +273,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         ok = self.lock_img('img/ok.bmp', elseclick=[(298, 213)], elsedelay=0.5, ifclick=[(596, 371)], ifbefore=1,
                            ifdelay=0, retry=3, at=(495, 353, 687, 388))
+        # 防止教程
+        self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=10)
         if not ok:
             pcr_log(self.account).write_log(level='error', message="%s未能成功进入云海的山脉，跳过刷地下城" % self.account)
             self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
