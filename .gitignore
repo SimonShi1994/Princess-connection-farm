@@ -14,6 +14,9 @@ diy.py
 /rec/
 log
 /tasks/
+/batches/
+/schedules/
+/groups/
 /developutils/*.bmp
 
 # 测试用文件夹
