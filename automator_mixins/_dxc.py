@@ -255,9 +255,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
                          at=(837, 92, 915, 140))
         # 防止一进去就是塔币教程
-        self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr, retry=10, at=(738, 420, 872, 442))
+        self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.dxc_kkr, retry=10, at=(738, 420, 872, 442))
         # 防止教程
-        self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=10)
+        self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=10)
 
         # 撤退 如果 已经进入
         while True:
@@ -282,7 +282,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         while True:
             # 防止塔币教程
-            self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr, at=(738, 420, 872, 442))
+            self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.dxc_kkr, at=(738, 420, 872, 442), retry=10)
             # 锁定挑战和第一层
             time.sleep(1.5)
             self.lock_img('img/tiaozhan.bmp', elseclick=[(667, 360)], elsedelay=1, ifclick=[(833, 456)], at=(759, 428, 921, 483))
