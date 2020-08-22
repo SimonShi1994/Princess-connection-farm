@@ -20,6 +20,7 @@ DOC_STR = {
         user     创建或编辑一个新的用户信息
         task     创建或编辑一个任务列表
         group    创建或编辑一个用户组
+        batch    创建或编辑一个批策略
         """,
     "user?":
         """
@@ -60,6 +61,15 @@ DOC_STR = {
         Step 1. 前往./groups 文件夹
         Step 2. 创建一个.txt文件，文件名为组名
         Step 3. 在该txt文件内每行一个用户名，表示该组的成员
+        """,
+    "batch?":
+        """
+        帮助：batch
+        batch -l 列举全部批配置
+        batch BatchName 显示某项批配置的详细信息
+        batch -c BatchName 创建一个名称为BatchName的批配置
+        batch -e BatchName 进入BatchName的编辑模式
+        batch文件默认存放于./batches中。
         """
 }
 
@@ -83,6 +93,8 @@ def TaskEditor(taskname):
                 print("list -t 显示工具指令")
                 print("list -s 显示刷图指令")
                 print("show 显示现在的任务情况")
+                print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
+                print("== 一定记住：先保存，再退出！！==")
             elif order == "exit":
                 return
             elif order == "save":
@@ -201,13 +213,120 @@ def del_all_task():
 
 
 def show_group(GroupName):
-    gp = get_group(GroupName)
+    gp = AutomatorRecorder.getgroup(GroupName)
     users = list_all_users(0)
     for i in gp:
         if i in users:
             print(i)
         else:
             print(i, " 【未找到】")
+
+
+def create_batch(BatchName):
+    d = {"batch": []}
+    AutomatorRecorder.setbatch(BatchName, d)
+
+
+def show_batch(BatchName):
+    obj = AutomatorRecorder.getbatch(BatchName)
+    for i in obj["batch"]:
+        if "group" in i:
+            print("组", i["group"], "任务：", i["taskfile"], "优先级：", i["priority"])
+        elif "account" in i:
+            print("用户", i["account"], "任务：", i["taskfile"], "优先级：", i["priority"])
+
+
+def edit_batch(BatchName):
+    print(f"Batch编辑器  当前文件：  {BatchName}")
+    print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
+    print("什么是batch:  what")
+    obj = AutomatorRecorder.getbatch(BatchName)
+    while True:
+        try:
+            cmd = input("> ")
+            cmds = cmd.split(" ")
+            order = cmds[0]
+            if order == "help":
+                print("add account task [priority=0]")
+                print("    增加一个优先级为priority的account做task的任务")
+                print("add -g group task [priority=0]")
+                print("    增加一个优先级为priorityd的组group做task的任务")
+                print("add -file filename")
+                print("    从文件中添加一组任务")
+                print("    该文件由若干行组成，每一行应填入四个空格隔开的元素：")
+                print("    若添加单独任务，则第一列写字母A，后面三个空依次填入account,task,priority。")
+                print("    若添加组任务，则第一列写字母G，后面三个空依次填入group,task,priority")
+                print("show 显示现在的任务情况")
+                print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
+                print("什么是batch:  what")
+                print("== 一定记住：先保存，再退出！！==")
+            elif order == "what":
+                print("batch，批配置，为一系列X执行X的任务集合。")
+                print("这可以是用户执行任务(account - task)，也可以是组执行任务(group - task)")
+                print("每一个batch间的运行记录相互独立。对于同一个用户，在不同的两个batch中执行相同或"
+                      "不同的任务时，各自的任务进度会被分别保留。")
+                print("使用batch的好处在于将用户与任务脱钩，如果对于同一个用户需要频繁执行不同的任务，"
+                      "则只需要制定两个独立的batch即可。这在40to1或早晚任务中非常有效。")
+                print("在一个batch中可以给不同的任务指定优先级.同优先级任务会同批次完成，而高"
+                      "优先级任务会优先进行。单开时，必然先执行高优先级任务，再执行低优先级任务，"
+                      "但多开时，如果有空闲的设备，也可能高优先级任务和低优先级任务同时执行。")
+                print("默认的优先级为0，也就是最低优先级，对于某些特殊任务（如大号的任务），可以调高优先级。")
+            elif order == "exit":
+                return
+            elif order == "save":
+                AutomatorRecorder.setbatch(BatchName, obj)
+            elif order == "load":
+                obj = AutomatorRecorder.getbatch(BatchName)
+            elif order == "clear":
+                obj = {"batch": []}
+            elif order == "show":
+                for i in obj["batch"]:
+                    if "group" in i:
+                        print("组", i["group"], "任务：", i["taskfile"], "优先级：", i["priority"])
+                    elif "account" in i:
+                        print("用户", i["account"], "任务：", i["taskfile"], "优先级：", i["priority"])
+            elif order == "add":
+                if len(cmds) in [4, 5] and cmds[1] == '-g':
+                    group = cmds[2]
+                    task = cmds[3]
+                    if len(cmds) == 5:
+                        priority = int(cmds[4])
+                    else:
+                        priority = 0
+                    obj["batch"] += [dict(group=group, taskfile=task, priority=priority)]
+                elif len(cmds) == 3 and cmds[1] == "-file":
+                    with open(cmds[2], "r", encoding="utf-8") as f:
+                        for line in f:
+                            cur = line.strip()
+                            curs = cur.split(" ")
+                            assert len(curs) in [3, 4]
+                            assert curs[0] in ['A', 'G']
+                            d = {}
+                            if len(curs) == 3:
+                                d['priority'] = 0
+                            else:
+                                d['priority'] = int(curs[3])
+                            if curs[0] == 'A':
+                                d['account'] = curs[1]
+                            elif curs[0] == 'G':
+                                d['group'] = curs[1]
+                            d['taskfile'] = curs[2]
+                            obj["batch"] += d
+                elif len(cmds) in [3, 4]:
+                    account = cmds[1]
+                    task = cmds[2]
+                    if len(cmds) == 4:
+                        priority = int(cmds[3])
+                    else:
+                        priority = 0
+                    obj["batch"] += [dict(account=account, taskfile=task, priority=priority)]
+                else:
+                    print("add命令有误！")
+            else:
+                print("不认识的命令。")
+        except Exception as e:
+            print("输入错误！", e)
+
 
 if __name__ == "__main__":
     print(DOC_STR["title"])
@@ -227,6 +346,8 @@ if __name__ == "__main__":
                 print(DOC_STR["task?"])
             elif order == "group?" or cmd == "group":
                 print(DOC_STR["group?"])
+            elif order == "batch?" or cmd == "batch":
+                print(DOC_STR["batch?"])
             elif order == "user":
                 if len(cmds) == 2 and cmds[1] == "-l":
                     list_all_users()
@@ -280,6 +401,19 @@ if __name__ == "__main__":
                     list_all_groups()
                 elif len(cmds) == 2:
                     show_group(cmds[1])
+                else:
+                    print("Wrong Order!")
+            elif order == "batch":
+                if len(cmds) == 2 and cmds[1] == "-l":
+                    list_all_batches()
+                elif len(cmds) == 3 and cmds[1] == "-c":
+                    create_batch(cmds[2])
+                elif len(cmds) == 3 and cmds[1] == "-e":
+                    edit_batch(cmds[2])
+                elif len(cmds) == 2:
+                    show_batch(cmds[1])
+                else:
+                    print("Wrong Order!")
             else:
                 print("Wrong Order!")
         except Exception as e:

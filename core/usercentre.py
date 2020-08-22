@@ -46,7 +46,7 @@ from core.valid_task import VALID_TASK
 [
         {
             "account":"..."    # 账号名称
-            "group":"..."      # 组名（和账号名称只能出现一个，优先检测组名。）
+            "group":"..."      # 组名（和账号名称只能出现一个）
             "taskfile":"..."   # 所用任务文件
             "priority":int     # 整数，优先级。 
                 # 注：同优先级任务同批次执行，优先级高优先执行（但若有模拟器空余，仍然和其它任务同时执行）
@@ -246,20 +246,6 @@ def list_all_tasks(verbose=1) -> List[str]:
     return tasks
 
 
-def get_group(group: str) -> List[str]:
-    target_name = "%s/%s.txt" % (group_addr, group)
-    users = []
-    with open(target_name, "r", encoding="utf-8") as f:
-        for j in f:
-            line = j.strip()
-            if line == "":
-                continue
-            if line[0] == "#":
-                continue
-            users += [line]
-    return users
-
-
 def check_users_exists(users: List[str], is_raise=True) -> bool:
     all_users = list_all_users(0)
     for i in users:
@@ -280,7 +266,7 @@ def list_all_groups(verbose=1) -> List[str]:
     for i in ld:
         if not os.path.isdir(i) and i.endswith(".txt"):
             try:
-                users = get_group(i)
+                users = AutomatorRecorder.getgroup(i.rstrip(".txt"))
                 check_users_exists(users)
                 if verbose:
                     print("组配置", i, "加载成功！")
@@ -291,6 +277,55 @@ def list_all_groups(verbose=1) -> List[str]:
     if verbose:
         print("加载完成，一共加载成功", count, "个组配置。")
     return groups
+
+
+def check_valid_batch(batch: dict, is_raise=True) -> bool:
+    try:
+        assert "batch" in batch
+        B = batch["batch"]
+        assert type(B) is list
+        for i in B:
+            f1 = "account" in i
+            f2 = "group" in i
+            if f1 + f2 == 0:
+                raise Exception("必须至少含有account,group中的一个！")
+            if f1 + f2 == 2:
+                raise Exception("account和group键只能出现其中一个！")
+            assert "taskfile" in i
+            assert type("taskfile") is str
+            assert "priority" in i
+
+    except Exception as e:
+        if is_raise:
+            raise e
+        else:
+            return False
+    return True
+
+
+def list_all_batches(verbose=1) -> List[str]:
+    if not os.path.exists(batch_addr):
+        os.makedirs(batch_addr)
+    ld = os.listdir(batch_addr)
+    batches = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".txt"):
+            nam = ""
+            try:
+                nam = i.rstrip(".txt")
+                batch = AutomatorRecorder.getbatch(nam)
+                check_valid_batch(batch)
+                batches += [nam]
+                if verbose:
+                    print("批配置", nam, "加载成功！")
+                count += 1
+            except Exception as e:
+                if verbose:
+                    print("打开批配置", nam, "失败！", e)
+    if verbose:
+        print("加载完成，一共加载成功", count, "个批配置。")
+    return batches
 
 
 def init_user(account: str, password: str) -> bool:
@@ -378,9 +413,31 @@ class AutomatorRecorder:
         check_task_dict(d, True)
         return d
 
+    @staticmethod
+    def getgroup(groupfile) -> list:
+        target_name = "%s/%s.txt" % (group_addr, groupfile)
+        users = []
+        with open(target_name, "r", encoding="utf-8") as f:
+            for j in f:
+                line = j.strip()
+                if line == "":
+                    continue
+                if line[0] == "#":
+                    continue
+                users += [line]
+        check_users_exists(users)
+        return users
+
+    @staticmethod
+    def getbatch(batchfile) -> dict:
+        target_name = "%s/%s.txt" % (batch_addr, batchfile)
+        d = AutomatorRecorder._load(target_name)
+        check_valid_batch(d)
+        return d
+
     def setuser(self, userobj: dict):
         target_name = "%s/%s.txt" % (user_addr, self.account)
-        if check_user_dict(userobj):
+        if check_user_dict(userobj, is_raise=False):
             AutomatorRecorder._save(target_name, userobj)
         else:
             print("用户文件不合法，保存失败")
@@ -388,10 +445,18 @@ class AutomatorRecorder:
     @staticmethod
     def settask(taskfile, taskobj: dict):
         target_name = "%s/%s.txt" % (task_addr, taskfile)
-        if check_task_dict(taskobj):
+        if check_task_dict(taskobj, is_raise=False):
             AutomatorRecorder._save(target_name, taskobj)
         else:
             print("任务文件不合法，保存失败")
+
+    @staticmethod
+    def setbatch(batchfile, batchobj: dict):
+        target_name = "%s/%s.txt" % (batch_addr, batchfile)
+        if check_valid_batch(batchobj, is_raise=False):
+            AutomatorRecorder._save(target_name, batchobj)
+        else:
+            print("批配置不合法，保存失败")
 
     def get(self, key: str, default: Optional[dict] = None) -> dict:
         """
