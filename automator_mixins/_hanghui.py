@@ -228,7 +228,7 @@ class HanghuiMixin(ToolsMixin):
         """
         # 行会点赞
         # 一天只能点一次
-        ts = self.AR.get("daily_status", UDD["daily_status"])
+        ts = self.AR.get("time_status", UDD["time_status"])
         cur = time.time()
         if not diffday(cur, ts["dianzan"]):
             self.log.write_log("info", "今日已经点过赞！")
@@ -260,7 +260,7 @@ class HanghuiMixin(ToolsMixin):
         self.click_img(screen_shot_, 'img/ok.bmp')
         # 保存点赞时间
         ts["dianzan"] = time.time()
-        self.AR.set("daily_status", ts)
+        self.AR.set("time_status", ts)
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1), (480, 374)], elsedelay=self.change_time,
                       at=(891, 413, 930, 452))  # 回首页
 
