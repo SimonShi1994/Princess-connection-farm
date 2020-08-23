@@ -349,6 +349,26 @@ def init_user(account: str, password: str) -> bool:
         return False
     return True
 
+def parse_batch(batch: dict):
+    """
+    解析batch，统一转化为Tuple(priority, account, task)
+    并且装入优先级队列中。
+    其中task为解析后的dict
+    :param batch: 合法的batch字典
+    :return: Tuple(priority, account, task)
+    """
+    B = batch["batch"]
+    L = []
+    for cur in B:
+        task = AutomatorRecorder.gettask(cur["taskfile"])
+        if "account" in cur:
+            L += [(cur["priority"], cur["account"], task)]
+        elif "group" in cur:
+            G = AutomatorRecorder.getgroup(cur["group"])
+            for mem in G:
+                L += [(cur["priority"], mem, task)]
+    L.sort(reverse=True)
+    return L
 
 class AutomatorRecorder:
     """
