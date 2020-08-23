@@ -30,9 +30,98 @@ from core.valid_task import VALID_TASK
         {...},...
 ]
 }
+
+组说明：
+默认路径：/groups
+存储格式：txt
+组名：.txt文件的文件名
+每个组包含的成员：
+    txt文件每行一个account，表示这个account包含于该组中。
+
+批处理说明：
+默认路径： /batches
+存储格式：json
+必须含有的元素：
+{"batch":
+[
+        {
+            "account":"..."    # 账号名称
+            "group":"..."      # 组名（和账号名称只能出现一个）
+            "taskfile":"..."   # 所用任务文件
+            "priority":int     # 整数，优先级。 
+                # 注：同优先级任务同批次执行，优先级高优先执行（但若有模拟器空余，仍然和其它任务同时执行）
+        },
+        {...},...
+]
+}
+
+计划文件说明：
+默认路径： /schedules
+存储格式：json
+必须含有的元素：
+{"schedules"
+[
+        # 立刻执行计划
+        # schedule被执行时，如果condition满足，则立刻将该batch解析放入任务队列
+        # 如果condition不满足，则跳过该batch。
+        # 例子：制定两个schedule，一个早上执行，一个晚上执行
+        # 希望早上start schedule时执行早上任务，晚上start schedule时执行晚上任务
+        # 则可以创建两个asap计划，其中一个的condition定在5~12，一个定在12~29
+        # 此时若早上执行，第一个计划condition满足，立刻执行；第二个不满足，不执行。
+        # 若晚上执行，第一个计划contidion不满足，不执行，第二个满足，执行。
+        {
+            "type":"asap"  # As soon as possible
+            "batchfile":"..."  # batch文件所在位置
+            "batchlist":[
+                # 为40 to 1设计，多个batch依次执行，两个batch之间清空记录
+                # 若一个batch未成功运行，则后一个batch也不会运行。
+                # batchlist和batchfile只应该存在一个。
+                "...",
+                "...",
+                ...
+            ]
+            ”condition”:{
+                # condition为条件，对asap任务，只有condition全部满足，才会执行。
+                # condition可以是一个空字典，表示不设置条件
+                "start_hour":int  # 小时开始，只有小时数>start_hour时才会执行任务
+                "end_hour":int  # 小时结束，只有小时数<end_hour时才会执行任务
+                "can_juanzeng":account  # account可以发起捐赠了
+                # 还可以补充其它condition，但暂时没想到。
+            }
+        }
+        
+        # 等待执行计划
+        # schedule执行时，首先将所有的asap计划加入任务队列
+        # 如果有等待执行计划，则schedule持续运行，直到指定条件出现。
+        # 应用场景 1：自动发起捐赠。可以设置condition为can_juanzeng，则
+        # 当指定账号可以捐赠时，自动将该batch放入任务队列。
+        # 发起捐赠可以设置为高优先级，从而可以插队执行。
+        # 应用场景 2：24h挂机。可以设置condition为时间段，则
+        # 当到达指定时间段后，自动将该batch加入任务队列。
+        {
+            "type":"wait"
+            "batchfile":"..."
+            "batchlist":["...","...",...]
+            "condition":{...}
+        }
+        
+        # schedule控制代码
+        # 如果要实现24小时自动，那么必须每天5:00清除schedule的记录。
+        {
+            "type":"config"
+            "clear":int  # 整数，表示每天清理记录的时间
+            # 其它有关控制的任务都可以放在这里
+        }
+]
+}
+
+
 """
 user_addr = "users"  # 存放用户配置的文件夹
 task_addr = "tasks"  # 存放任务配置的文件夹
+group_addr = "groups"  # 存放用户组的文件夹
+batch_addr = "batches"  # 存放批任务的文件夹
+schedule_addr = "schedules"  # 存放计划的文件夹
 
 
 def check_user_dict(d: dict, is_raise=False) -> bool:
@@ -157,6 +246,88 @@ def list_all_tasks(verbose=1) -> List[str]:
     return tasks
 
 
+def check_users_exists(users: List[str], is_raise=True) -> bool:
+    all_users = list_all_users(0)
+    for i in users:
+        if i not in all_users:
+            if is_raise:
+                raise Exception(f"用户 {i} 不存在！")
+            else:
+                return False
+    return True
+
+
+def list_all_groups(verbose=1) -> List[str]:
+    if not os.path.exists(group_addr):
+        os.makedirs(group_addr)
+    ld = os.listdir(group_addr)
+    groups = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".txt"):
+            try:
+                users = AutomatorRecorder.getgroup(i.rstrip(".txt"))
+                check_users_exists(users)
+                if verbose:
+                    print("组配置", i, "加载成功！")
+                count += 1
+            except Exception as e:
+                if verbose:
+                    print("打开组配置", i, "失败！", e)
+    if verbose:
+        print("加载完成，一共加载成功", count, "个组配置。")
+    return groups
+
+
+def check_valid_batch(batch: dict, is_raise=True) -> bool:
+    try:
+        assert "batch" in batch
+        B = batch["batch"]
+        assert type(B) is list
+        for i in B:
+            f1 = "account" in i
+            f2 = "group" in i
+            if f1 + f2 == 0:
+                raise Exception("必须至少含有account,group中的一个！")
+            if f1 + f2 == 2:
+                raise Exception("account和group键只能出现其中一个！")
+            assert "taskfile" in i
+            assert type("taskfile") is str
+            assert "priority" in i
+
+    except Exception as e:
+        if is_raise:
+            raise e
+        else:
+            return False
+    return True
+
+
+def list_all_batches(verbose=1) -> List[str]:
+    if not os.path.exists(batch_addr):
+        os.makedirs(batch_addr)
+    ld = os.listdir(batch_addr)
+    batches = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".txt"):
+            nam = ""
+            try:
+                nam = i.rstrip(".txt")
+                batch = AutomatorRecorder.getbatch(nam)
+                check_valid_batch(batch)
+                batches += [nam]
+                if verbose:
+                    print("批配置", nam, "加载成功！")
+                count += 1
+            except Exception as e:
+                if verbose:
+                    print("打开批配置", nam, "失败！", e)
+    if verbose:
+        print("加载完成，一共加载成功", count, "个批配置。")
+    return batches
+
+
 def init_user(account: str, password: str) -> bool:
     """
     以account和password在user_addr下新增一条用户记录
@@ -242,9 +413,31 @@ class AutomatorRecorder:
         check_task_dict(d, True)
         return d
 
+    @staticmethod
+    def getgroup(groupfile) -> list:
+        target_name = "%s/%s.txt" % (group_addr, groupfile)
+        users = []
+        with open(target_name, "r", encoding="utf-8") as f:
+            for j in f:
+                line = j.strip()
+                if line == "":
+                    continue
+                if line[0] == "#":
+                    continue
+                users += [line]
+        check_users_exists(users)
+        return users
+
+    @staticmethod
+    def getbatch(batchfile) -> dict:
+        target_name = "%s/%s.txt" % (batch_addr, batchfile)
+        d = AutomatorRecorder._load(target_name)
+        check_valid_batch(d)
+        return d
+
     def setuser(self, userobj: dict):
         target_name = "%s/%s.txt" % (user_addr, self.account)
-        if check_user_dict(userobj):
+        if check_user_dict(userobj, is_raise=False):
             AutomatorRecorder._save(target_name, userobj)
         else:
             print("用户文件不合法，保存失败")
@@ -252,10 +445,18 @@ class AutomatorRecorder:
     @staticmethod
     def settask(taskfile, taskobj: dict):
         target_name = "%s/%s.txt" % (task_addr, taskfile)
-        if check_task_dict(taskobj):
+        if check_task_dict(taskobj, is_raise=False):
             AutomatorRecorder._save(target_name, taskobj)
         else:
             print("任务文件不合法，保存失败")
+
+    @staticmethod
+    def setbatch(batchfile, batchobj: dict):
+        target_name = "%s/%s.txt" % (batch_addr, batchfile)
+        if check_valid_batch(batchobj, is_raise=False):
+            AutomatorRecorder._save(target_name, batchobj)
+        else:
+            print("批配置不合法，保存失败")
 
     def get(self, key: str, default: Optional[dict] = None) -> dict:
         """
