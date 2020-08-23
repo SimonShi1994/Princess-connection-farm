@@ -108,7 +108,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     # 识别到后满足条件，开锁
                     self.click(130, 259, post_delay=self.change_time)
                     # 保险
-                    self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259)])
+                    self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259)], threshold=0.97)
                 elif self.is_exists('img/yunhai.bmp') and dixiacheng_times == 0:
                     self.dxc_switch = 1
                     pcr_log(self.account).write_log(level='info', message='%s今天已经打过地下城' % self.account)
@@ -143,7 +143,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             # 防止一进去就是塔币教程
             self.lock_img('img/chetui.jpg', side_check=self.dxc_kkr)
             # 又一防御措施，防止没进去地下城
-            self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259), (592, 369)])
+            self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259), (592, 369)], threshold=0.97)
             while True:
                 time.sleep(0.5)
                 self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr)
