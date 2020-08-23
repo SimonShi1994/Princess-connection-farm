@@ -328,6 +328,58 @@ def list_all_batches(verbose=1) -> List[str]:
     return batches
 
 
+def check_valid_schedule(schedule: dict, is_raise=True) -> bool:
+    try:
+        assert "schedules" in schedule
+        S = schedule["schedules"]
+        assert type(S) is list
+        for i in S:
+            assert "type" in i
+            assert i["type"] in ["asap", "wait", "config"]
+            if i["type"] in ["asap", "wait"]:
+                f1 = "batchfile" in i
+                f2 = "batchlist" in i
+                assert (f1 + f2) == 1, "batchfile 和 batchlist关键字只能存在其一！"
+                if "batchfile" in i:
+                    assert type(i["batchfile"]) is str
+                if "batchlist" in i:
+                    assert type(i["batchlist"]) is list
+                assert "condition" in i
+                assert type(i["condition"]) is dict
+
+    except Exception as e:
+        if is_raise:
+            raise e
+        else:
+            return False
+    return True
+
+
+def list_all_schedules(verbose=1) -> List[str]:
+    if not os.path.exists(schedule_addr):
+        os.makedirs(schedule_addr)
+    ld = os.listdir(schedule_addr)
+    schedules = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".txt"):
+            nam = ""
+            try:
+                nam = i.rstrip(".txt")
+                schedule = AutomatorRecorder.getschedule(nam)
+                check_valid_schedule(schedule)
+                schedules += [nam]
+                if verbose:
+                    print("计划配置", nam, "加载成功！")
+                count += 1
+            except Exception as e:
+                if verbose:
+                    print("打开计划配置", nam, "失败！", e)
+    if verbose:
+        print("加载完成，一共加载成功", count, "个计划配置。")
+    return schedules
+
+
 def init_user(account: str, password: str) -> bool:
     """
     以account和password在user_addr下新增一条用户记录
@@ -455,6 +507,13 @@ class AutomatorRecorder:
         check_valid_batch(d)
         return d
 
+    @staticmethod
+    def getschedule(schedulefile):
+        target_name = "%s/%s.txt" % (schedule_addr, schedulefile)
+        d = AutomatorRecorder._load(target_name)
+        check_valid_schedule(d)
+        return d
+
     def setuser(self, userobj: dict):
         target_name = "%s/%s.txt" % (user_addr, self.account)
         if check_user_dict(userobj, is_raise=False):
@@ -477,6 +536,14 @@ class AutomatorRecorder:
             AutomatorRecorder._save(target_name, batchobj)
         else:
             print("批配置不合法，保存失败")
+
+    @staticmethod
+    def setschedule(schedulefile, scheduleobj: dict):
+        target_name = "%s/%s.txt" % (schedule_addr, schedulefile)
+        if check_valid_schedule(scheduleobj, is_raise=False):
+            AutomatorRecorder._save(target_name, scheduleobj)
+        else:
+            print("计划配置不合法，保存失败")
 
     def get(self, key: str, default: Optional[dict] = None) -> dict:
         """
