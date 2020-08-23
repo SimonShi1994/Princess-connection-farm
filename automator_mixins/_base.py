@@ -6,6 +6,7 @@ from typing import Optional, Union
 import cv2
 import numpy as np
 import uiautomator2 as u2
+import datetime
 
 from core import log_handler
 from core.MoveRecord import moveset
@@ -40,6 +41,7 @@ class BaseMixin:
         self.debug_screen = None  # 如果debug_screen为None，则正常截图；否则，getscreen函数使用debug_screen作为读取的screen
         self.last_screen = None  # 每次调用getscreen会把图片暂存至last_screen
         self.address = None
+        self.today_date = datetime.date.today()
         self.cpu_occupy = 0
         self.change_time = 0.5
         self.last_screen_time = 0

@@ -1,6 +1,9 @@
 adbutils
 websocket_client
 numpy
+pandas
+xlrd
+xlutils
 gevent==20.6.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 psutil==5.7.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 baidu-aip==2.2.18.0

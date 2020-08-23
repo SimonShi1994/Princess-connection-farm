@@ -459,6 +459,18 @@ VALID_TASK = ValidTask() \
                                          "xingshu：按照星级降序\n"
                                          "zhanli：按照战力降序\n"
                                          "dengji:按照等级降序", "xingshu")]) \
+    .add("t3", "get_base_info", "OCR获取账号信息", "识别会单独消耗时间，大约几分钟\n利用OCR获取等级/名字/行会名/mana/宝石/战力/"
+                                             "扫荡券，并输出成xls表格到xls文件夹\n注意：请不要在生成表格的期间打开表格！",
+         [TaskParam("acc_nature", int, "XLS输出格式", "0：小号、农场号\n1：大号"),
+          TaskParam("base_info", bool, "账号基础信息", "是否获取账号基本信息（等级/mana/宝石）【True/False】"),
+          TaskParam("introduction_info", bool, "简介基础信息", "是否获取账号简介基本信息（等级/全角色战力/所属行会/玩家ID）"
+                                                         "【True/False】"),
+          TaskParam("props_info", bool, "道具基础信息", "是否获取账号道具基本信息（扫荡券）【True/False】"),
+          TaskParam("out_xls", bool, "\033[0;41;47m 是否输出为表格 \033[0m", "是否获取账号道具基本信息（扫荡券）"
+                                                                      "【True/False】"),
+          TaskParam("s_sent", bool, "\033[0;44;47m 是否用Server酱发送（暂无） \033[0m", "每个账号识别结果会直接一个个"
+                                                                              "推送到你手机上【True/False】"),
+          ]) \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",

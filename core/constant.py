@@ -230,6 +230,14 @@ HANGHUI_BTN = {
     "jzqqjg": p(402, 432, img="img/hanghui/jzqqjg.bmp", at=(357, 422, 447, 436)),
 
 }
+ZHUCAIDAN_BTN = {
+    "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(493, 247, 695, 290)),
+    "jianjie": p(img="img/zhucaidan/jianjie.bmp", at=(267, 241, 499, 290)),
+    "daoju": p(img="img/zhucaidan/daoju.bmp", at=(475, 112, 610, 187)),
+    "saodangquan": p(img="img/zhucaidan/saodangquan.bmp"),
+    "jianjie_L": p(img="img/zhucaidan/jianjie_L.bmp", at=(59, 1, 137, 48)),
+    "daojuyilan": p(img="img/zhucaidan/daojuyilan.bmp", at=(57, 3, 172, 51)),
+}
 FIGHT_BTN = {
     "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(895, 404, 925, 441)),
     "auto_off": p(914, 421, img="img/fight/auto_off.bmp", at=(895, 407, 929, 441)),

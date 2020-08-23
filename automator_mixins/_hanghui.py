@@ -28,7 +28,7 @@ class HanghuiMixin(ToolsMixin):
                 self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
                 for _ in range(2):
                     time.sleep(0.8)
-                    if self.is_exists('img/juanzeng.jpg', threshold=0.90):
+                    if self.is_exists('img/juanzeng.jpg', threshold=0.865):
                         screen_shot = self.getscreen()
                         self.click_img(screen_shot, 'img/juanzeng.jpg')
                         # 点击max 后 ok
