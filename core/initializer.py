@@ -1,6 +1,8 @@
 """
 新的启动函数，支持Batch，schedule操作等。
 """
+import multiprocessing
+import shutil
 import time
 import traceback
 from multiprocessing import Process
@@ -14,6 +16,8 @@ import keyboard
 from automator_mixins._base import Multithreading
 from core import log_handler
 from core.Automator import Automator
+from core.constant import USER_DEFAULT_DICT as UDD
+from core.usercentre import AutomatorRecorder, parse_batch
 from emulator_port import *
 from pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
     trace_exception_for_debug
@@ -85,6 +89,12 @@ class Device:
     def offline(self):
         self.state = self.DEVICE_OFFLINE
 
+    def in_process(self):
+        self._in_process = True
+
+    def out_process(self):
+        self._in_process = False
+
     @staticmethod
     def device_is_connected(d: adbutils.AdbDevice):
         try:
@@ -133,6 +143,12 @@ class AllDevices:
         for d in dl:
             self.add_device(d)
 
+    def process_method(self, device_message: dict):
+        serial = device_message["serial"]
+        method = device_message["method"]
+        device = self.devices[serial]
+        device.__getattribute__(method)()
+
     def get(self):
         """
         获取一个空闲的设备，若获取失败，返回None
@@ -173,6 +189,16 @@ class AllDevices:
                 cnt += 1
         return cnt
 
+    def count_processed(self):
+        """
+        返回当前_in_process的设备总数
+        """
+        cnt = 0
+        for i in self.devices.values():
+            if i._in_process:
+                cnt += 1
+        return cnt
+
     def list_all_free_devices(self) -> List[Device]:
         """
         返回当前全部空闲的设备
@@ -200,6 +226,8 @@ class PCRInitializer:
         self.devices = AllDevices()
         self.mgr = _get_manager()
         self.tasks: MyPriorityQueue = self.mgr.__getattribute__("PriorityQueue")()  # 优先级队列
+        self.out_queue: multiprocessing.Queue = self.mgr.Queue()  # 外部接收信息的队列
+        self.listening = False  # 侦听线程是否开启
 
     def connect(self):
         """
@@ -210,30 +238,42 @@ class PCRInitializer:
             pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
             exit(1)
 
-    def add_task(self, task: Tuple[int, str, dict], continue_):
+    def add_task(self, task: Tuple[int, str, dict], continue_, rec_addr):
         """
         向优先级队列中增加一个task
-        该task为四元组，(priority, account, task, continue_)
+        该task为四元组，(priority, account, task, continue_, rec_addr)
         """
-        task = (0 - task[0], task[1], task[2], continue_)  # 最大优先队列
+        task = (0 - task[0], task[1], task[2], continue_, rec_addr)  # 最大优先队列
         self.tasks.put(task)
 
-    def add_tasks(self, tasks: list, continue_):
+    def add_tasks(self, tasks: list, continue_, rec_addr):
         """
         向优先级队列中增加一系列tasks
-        该tasks为一个列表类型，每个元素为四元组，(priority, account, task, continue_)
+        该tasks为一个列表类型，每个元素为四元组，(priority, account, task, continue_, rec_addr)
         """
         for task in tasks:
-            self.add_task(task, continue_)
+            self.add_task(task, continue_, rec_addr)
+
+    def clear_tasks(self):
+        """
+        清空任务队列
+        """
+        while not self.tasks.empty():
+            try:
+                self.tasks.get(False)
+            except queue.Empty:
+                continue
+            self.tasks.task_done()
 
     @staticmethod
-    def run_task(device, account, task, continue_):
+    def run_task(device, account, task, continue_, rec_addr):
         """
         让device执行任务：account做task
         :param device: 设备名
         :param account:  账户名
         :param task:  任务名
         :param continue_:  是否继续上次中断的位置
+        :param rec_addr: 进度保存目录
         :return 是否成功执行
         """
         a: Optional[Automator] = None
@@ -252,7 +292,7 @@ class PCRInitializer:
             a.start_shuatu()
             a.login_auth(account, password)
             acclog.Account_Login(account)
-            a.RunTasks(task, continue_, max_reboot)
+            a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr)
             a.change_acc()
             acclog.Account_Logout(account)
             return True
@@ -273,35 +313,328 @@ class PCRInitializer:
             a.stop_th()
 
     @staticmethod
-    def _do_process(device: Device, queue):
+    def _do_process(device: Device, queue, out_queue):
         """
         执行run_task的消费者进程
+        device: 传入的设备信息
+        queue：  任务优先级队列
+        out_queue： 向外消息传递的队列
         """
+        serial = device.serial
         while True:
             task = queue.get()
             if task is None:
                 break
-            serial = device.serial
             priority, account, task, continue_ = task
             res = PCRInitializer.run_task(serial, account, task, continue_)
             if not res and not device.is_connected():
                 # 可能模拟器断开
-                device.offline()
+                out_queue.put({"device": {"serial": serial, "method": "offline"}})
             else:
-                device.stop()
-        device._in_process = False
+                out_queue.put({"device": {"serial": serial, "method": "stop"}})
+        out_queue.put({"device": {"serial": serial, "method": "out_process"}})
+
+    def _listener(self):
+        """
+        侦听线程，获取子进程从out_queue中返回的消息
+        """
+        self.listening = True
+        while True:
+            msg = self.out_queue.get()
+            if msg is None:
+                break
+            if "device" in msg:
+                self.devices.process_method(msg["device"])
+        self.listening = False
 
     def start(self):
         """
         进入分配任务给空闲设备的循环
         """
         device_list = self.devices.list_all_free_devices()
+        if not self.listening:
+            # 打开侦听线程
+            threading.Thread(target=PCRInitializer._listener, args=(self,), daemon=True).start()
         for d in device_list:
             if not d._in_process:
                 d._in_process = True
-                Process(target=PCRInitializer._do_process, kwargs=dict(device=d, queue=self.tasks), daemon=True).start()
+                Process(target=PCRInitializer._do_process,
+                        kwargs=dict(device=d, queue=self.tasks, out_queue=self.out_queue), daemon=True).start()
 
-    def stop(self, join=False):
+    def stop(self, join=False, clear=False):
+        if clear:
+            self.clear_tasks()
+        for _ in range(self.devices.count_processed()):
+            self.tasks.put(None)
         if join:
             while not self.devices.full():
                 time.sleep(1)
+        # 侦听线程不能结束，要持续接收可能出现的method信息
+
+
+class Schedule:
+    """
+    Schedule控制器：控制向PCRInitializer中定时添加task。
+    """
+
+    def __init__(self, name: str, schedule: dict, pcr: PCRInitializer):
+        self.name = name
+        self.schedule = schedule
+        self.pcr = pcr
+        self.state = 0
+        self.config = {}
+        self.SL = []  # 处理后的schedule
+        self.run_status = {}  # 运行状态
+        self.checked_status = {}  # 存放一个计划是否已经被add过
+        self.subs = {}  # 关系表
+        self._parse()
+
+    def _parse(self):
+        """
+        将schedule进一步处理为适合读取的形式 -> List[
+            (type,name,batch,condition,rec_addr)
+        ]与self.config
+        其中，将batchlist解析为新condition：前置batch已经完成。
+        此外，构造关系表：self.subs={
+            "name":("batch","rec_addr")
+             or "name":[("batch1","rec_addr1"),("batch2","rec_addr2"),...]
+        }
+        """
+        for s in self.schedule["schedules"]:
+            if s["type"] == "config":
+                self.config.update(s)
+                continue
+            typ = s["type"]
+            nam = s["name"]
+            cond = s["condition"]
+            if "batchfile" in s:
+                rec_addr = os.path.join("rec", self.name, s["name"], s["batchfile"])
+                self.SL += [(typ, nam, s["batchfile"], cond, rec_addr)]
+                self.subs[nam] = (s["batchfile"], rec_addr)
+            elif "batchlist" in s:
+                b0 = s["batchlist"][0]
+                rec_addr = os.path.join("rec", self.name, s["name"], b0)
+                self.SL += [(typ, nam, b0, cond, rec_addr)]
+                self.subs[nam] = [(b0, rec_addr)]
+                for b in s["batchlist"][1:]:
+                    cond = cond.copy()
+                    cond["_last_rec"] = rec_addr  # 完成的batch会在rec_addr中留下一个_fin文件用于检测。
+                    rec_addr = os.path.join("rec", self.name, s["name"], b)
+                    self.SL += [("wait", nam, b, cond, rec_addr)]  # 后续任务均为wait（等待前一batch完成）
+                    self.subs[nam] += [(b, rec_addr)]
+
+    @staticmethod
+    def _default_state():
+        return {}
+
+    def _save(self, obj):
+        """
+        将自身的状态存储至rec/<schedule_name>/state.txt
+        """
+        os.makedirs(os.path.join("rec", self.name), exist_ok=True)
+        with open(os.path.join("rec", self.name, "state.txt"), "w") as f:
+            json.dump(obj, f)
+
+    def _load(self) -> dict:
+        """
+        获取自身的状态
+        """
+        os.makedirs(os.path.join("rec", self.name), exist_ok=True)
+        target = os.path.join("rec", self.name, "state.txt")
+        try:
+            f = open(target, "r")
+            js = json.load(f)
+            f.close()
+            return js
+        except:
+            self._save(self._default_state())
+            return self._default_state()
+
+    def restart(self, name=None):
+        """
+        重新开始某一个schedule，
+        name设置为None时，全部重新开始
+        """
+        self.clear_error()
+        for _, nam, _, _, ra in self.SL:
+            if name is None or name == nam:
+                if os.path.isdir(ra):
+                    shutil.rmtree(ra, True)
+        self._save(self._default_state())
+
+    def clear_error(self, name=None):
+        """
+        清除某一个schedule的错误
+        name设置为None时，清除全部错误
+        """
+        for _, nam, b, _, _ in self.SL:
+            if nam == name or name is None:
+                parsed = parse_batch(AutomatorRecorder.getbatch(b))
+                for _, acc, _ in parsed:
+                    AR = AutomatorRecorder(acc)
+                    rs = AR.get("run_status", UDD["run_status"])
+                    rs["error"] = None
+                    rs["finished"] = False
+                    AR.set("run_status", rs)
+
+    def _init_status(self):
+        """
+        初始化运行状态self.run_status
+        self.run_status={
+            rec_addr : state
+        }
+        其中rec_addr为存档路径，state为：
+            0： 未执行 <- 初始状态
+            1： 已完成
+            2： 已跳过
+        """
+        for _, _, _, _, rec in self.SL:
+            self.run_status[rec] = 0
+            self.checked_status[rec] = False
+
+    def _get_status(self):
+        """
+        获取保存的进度，写入self.run_status
+        """
+        obj = self._load()
+        obj.setdefault("run_status", {})
+        for i, j in obj["run_status"].items():
+            self.run_status[i] = j
+
+    def _set_status(self):
+        """
+        写入当前的进度
+        """
+        obj = self._load()
+        obj["run_status"] = self.run_status
+        self._save(obj)
+
+    def _add(self, name, batch):
+        """
+        将一个schedule添加到PCR中
+        运行路径：
+        rec/<schedules_name>/<schedule_name>/<batch_name>
+        """
+        rec_addr = os.path.join("rec", self.name, name, batch)
+        os.makedirs(rec_addr, exist_ok=True)
+        parsed = parse_batch(AutomatorRecorder.getbatch(batch))
+        self.pcr.add_tasks(parsed, True, rec_addr)
+
+    def log(self, level, content):
+        """
+        生成log文件在log/schedule_<schedule_name>.txt中
+        """
+        pcr_log(f"schedule_{self.name}").write_log(level, content)
+
+    @staticmethod
+    def is_complete(rec):
+        """
+        判断记录Rec是否已经全部完成
+        :param rec: 存档目录
+        """
+        if os.path.exists(os.path.join(rec, "_fin")):
+            return True
+        _, bat = os.path.split(rec)
+        parsed = parse_batch(AutomatorRecorder.getbatch(bat))
+        for _, acc, _ in parsed:
+            if not os.path.exists(os.path.join(rec, f"_fin_{acc}")):
+                return False
+        with open(os.path.join(rec, "_fin"), "w") as f:
+            f.write("出现这个文件表示该文件夹内的记录已经刷完。")
+        return True
+
+    def _run(self):
+        self._get_status()
+        while self.state == 1:
+            for ind, t5 in enumerate(self.SL):
+                typ, nam, bat, cond, rec = t5
+                # 已经完成、跳过
+                if self.run_status[rec] != 0:
+                    continue
+                # 检查是否已经完成
+                if self.is_complete(rec):
+                    self.run_status[rec] = 1
+                    self.log("info", f"计划** {nam} - {bat} **已经完成")
+                    self._set_status()
+                    continue
+                # 已经处理过
+                if self.checked_status[rec] is True:
+                    continue
+                if self._check(cond):
+                    # 满足条件
+                    self.checked_status[rec] = True
+                    self._add(nam, bat)
+                    self.log("info", f"开始执行计划：** {nam} - {bat} **")
+                else:
+                    if typ == "asap":
+                        self.run_status[rec] = 2
+                        self.log("info", f"跳过计划：** {nam} **")
+            time.sleep(1)
+            # TODO config
+
+    def run(self):
+        """
+        开启新线程，执行存储在self.SL中的逻辑
+        """
+        if self.state == 0:
+            self.state = 1
+            self._init_status()
+            threading.Thread(target=Schedule._run, args=(self,), daemon=True).start()
+            self.log("info", "Schedule线程启动！")
+        else:
+            self.log("info", "Schedule线程已经启动了。")
+
+    @staticmethod
+    def _check(cond: dict) -> bool:
+        """
+        检查某个计划是否满足全部condition
+        """
+        tm = time.time()
+        st = time.localtime(tm)
+        if "start_hour" in cond:
+            # 时间段条件
+            sh = cond["start_hour"]
+            eh = cond["end_hour"]
+            ch = st.tm_hour
+            if sh <= eh:
+                flag = sh <= ch <= eh
+            else:
+                flag = (0 <= ch <= eh) or (sh <= ch <= 23)
+            if not flag:
+                return False
+        if "can_juanzeng" in cond:
+            # 可以捐赠条件
+            AR = AutomatorRecorder(cond["can_juanzeng"])
+            ts = AR.get("time_status", UDD["time_status"])
+            tm = ts["juanzeng"]
+            diff = time.time() - tm
+            if diff < 8 * 3600 + 60:
+                return False
+        if "_last_rec" in cond:
+            # 前置batch条件
+            if not Schedule.is_complete(cond["_last_rec"]):
+                return False
+        return True
+
+    def run_first_time(self):
+        """
+        清除全部记录并运行
+        """
+        self.restart()
+        self.run()
+
+    def run_continue(self):
+        """
+        从上次进度继续运行
+        """
+        self.run()
+
+    def stop(self):
+        """
+        停止Schedule运行。
+        清空PCR中剩下未完成的任务队列，并且等待当前执行完毕。
+        """
+        self.state = 0
+        self.log("info", "停止中，已清空任务队列，等待当前任务执行完毕")
+        self.pcr.stop(True, True)
+        self.log("info", "Schedule已经停止。")

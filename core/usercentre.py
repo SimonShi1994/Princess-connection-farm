@@ -12,7 +12,7 @@ from core.valid_task import VALID_TASK
 {
     "account":"..."  # 用户名
     "password":"..." # 密码
-    "taskfile":"..." #任务配置文件名 如果为""则不进行任务。
+    # "taskfile":"..." #任务配置文件名 如果为""则不进行任务。 <- 已经不需要了
 }
 
 任务配置文件存储说明：
@@ -71,6 +71,7 @@ from core.valid_task import VALID_TASK
         # 若晚上执行，第一个计划contidion不满足，不执行，第二个满足，执行。
         {
             "type":"asap"  # As soon as possible
+            "name":"..."
             "batchfile":"..."  # batch文件所在位置
             "batchlist":[
                 # 为40 to 1设计，多个batch依次执行，两个batch之间清空记录
@@ -86,6 +87,7 @@ from core.valid_task import VALID_TASK
                 "start_hour":int  # 小时开始，只有小时数>start_hour时才会执行任务
                 "end_hour":int  # 小时结束，只有小时数<end_hour时才会执行任务
                 "can_juanzeng":account  # account可以发起捐赠了
+                "_last_rec":dir  # 用户无法编辑、查看此条。_last_rec文件夹下无_fin文件时执行。
                 # 还可以补充其它condition，但暂时没想到。
             }
         }
@@ -100,6 +102,7 @@ from core.valid_task import VALID_TASK
         # 当到达指定时间段后，自动将该batch加入任务队列。
         {
             "type":"wait"
+            "name":"..."
             "batchfile":"..."
             "batchlist":["...","...",...]
             "condition":{...}
@@ -109,7 +112,7 @@ from core.valid_task import VALID_TASK
         # 如果要实现24小时自动，那么必须每天5:00清除schedule的记录。
         {
             "type":"config"
-            "clear":int  # 整数，表示每天清理记录的时间
+            "restart":int  # 整数，表示每天清理记录的时间
             # 其它有关控制的任务都可以放在这里
         }
 ]
@@ -136,8 +139,8 @@ def check_user_dict(d: dict, is_raise=False) -> bool:
         assert type(d["account"]) is str, f"account必须为字符串类型而不应是{type(d['account'])}"
         assert "password" in d, "必须含有password关键字以存储密码！"
         assert type(d["password"]) is str, f"password必须为字符串类型而不应是{type(d['password'])}"
-        assert "taskfile" in d, "必须含有任务列表taskfile！"
-        assert type(d["taskfile"]) is str, f"tasks必须为字符串类型而不应是{type(d['tasks'])}"
+        # assert "taskfile" in d, "必须含有任务列表taskfile！"
+        # assert type(d["taskfile"]) is str, f"tasks必须为字符串类型而不应是{type(d['tasks'])}"
         return True
     except Exception as e:
         if is_raise:
