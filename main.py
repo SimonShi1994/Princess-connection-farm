@@ -24,7 +24,7 @@ def CheckState():
         AR = AutomatorRecorder(acc)
         uj = AR.getuser()
         print("USER: ", acc, " TASK: ", "NONE" if uj["taskfile"] == "" else uj["taskfile"], "STATUS ", end="")
-        rs = AR.get("run_status", UDD["run_status"])
+        rs = AR.get_run_status()
         if rs["error"] is None:
             if rs["finished"]:
                 print("FINISHED.")
@@ -48,7 +48,7 @@ def CheckStateReturn():
         AR = AutomatorRecorder(acc)
         uj = AR.getuser()
         acc_task_tmpinfo = "账号:%s 任务:%s 状态:" % (acc, "NONE" if uj["taskfile"] == "" else uj["taskfile"])
-        rs = AR.get("run_status", UDD["run_status"])
+        rs = AR.get_run_status()
         if rs["error"] is None:
             if rs["finished"]:
                 acc_task_tmpinfo = acc_task_tmpinfo + "FINISHED."
@@ -68,10 +68,10 @@ def ClearError(acc):
     :param acc: 要处理的用户名字
     """
     AR = AutomatorRecorder(acc)
-    rs = AR.get("run_status", UDD["run_status"])
+    rs = AR.get_run_status()
     rs["error"] = None
     rs["finished"] = False
-    AR.set("run_status", rs)
+    AR.set_run_status(rs)
 
 
 def Restart(acc):
@@ -81,11 +81,11 @@ def Restart(acc):
     :param acc: 要处理的用户的名字
     """
     AR = AutomatorRecorder(acc)
-    rs = AR.get("run_status", UDD["run_status"])
+    rs = AR.get_run_status()
     rs["error"] = None
     rs["finished"] = False
     rs["current"] = "..."
-    AR.set("run_status", rs)
+    AR.set_run_status(rs)
     target = "rec/%s.rec" % acc
     if os.path.exists(target):
         os.remove(target)  # 删除行动记录文件
@@ -97,11 +97,11 @@ def SetFinished(acc):
     :param acc: 用户
     """
     AR = AutomatorRecorder(acc)
-    rs = AR.get("run_status", UDD["run_status"])
+    rs = AR.get_run_status()
     rs["error"] = None
     rs["finished"] = True
     rs["current"] = "..."
-    AR.set("run_status", rs)
+    AR.set_run_status(rs)
 
 
 if __name__ == '__main__':

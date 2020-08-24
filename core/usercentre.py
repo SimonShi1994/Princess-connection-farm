@@ -2,6 +2,7 @@ import json
 import os
 from typing import List, Optional
 
+from core.constant import USER_DEFAULT_DICT as UDD
 from core.valid_task import VALID_TASK
 
 """
@@ -433,11 +434,13 @@ class AutomatorRecorder:
     每一个分区内，创建一条%account%.txt的记录文件，均为json格式
     """
 
-    def __init__(self, account):
+    def __init__(self, account, rec_addr="users/run_status"):
         """
         :param account: 账号名称
+        :param rec_addr: 记录位置（只影响run_status的获取）
         """
         self.account = account
+        self.rec_addr = rec_addr
 
     @staticmethod
     def _load(jsonaddr) -> Optional[dict]:
@@ -548,6 +551,64 @@ class AutomatorRecorder:
         else:
             print("计划配置不合法，保存失败")
 
+    @staticmethod
+    def get_user_state(acc, rec_addr):
+        """
+        以字符串的形式返回某一个账号的状态
+        """
+        rs = AutomatorRecorder(acc, rec_addr).get_run_status()
+        if rs["error"] is not None:
+            state = f"执行于 {rs['current']} 时发生错误：{rs['error']}"
+        else:
+            if rs["finished"]:
+                state = "完成"
+            else:
+                state = f"执行中：{rs['current']}"
+        return state
+
+    @staticmethod
+    def get_batch_state(batch, rec_addr):
+        """
+        返回某一个batch中所有涉及到的账号的状态
+        {
+            detail[acc]:{
+                state_str: 字符串表示的状态
+                current：  正在执行
+                error：    产生错误
+                finished： 完成表只
+            }
+            total:   batch内acc总数
+            finish:  完成的acc总数
+            error:   出错的acc总数
+        }
+
+        """
+        parsed = parse_batch(AutomatorRecorder.getbatch(batch))
+        ALL = {}
+        D = {}
+        tot = 0
+        err_cnt = 0
+        finish_cnt = 0
+        for _, acc, _ in parsed:
+            if acc not in D:
+                tot += 1
+                d = {}
+                rs = AutomatorRecorder(acc, rec_addr).get_run_status()
+                d["state_str"] = AutomatorRecorder.get_user_state(acc, rec_addr)
+                d["current"] = rs["current"]
+                d["error"] = rs["error"]
+                d["finished"] = rs["finished"]
+                if rs["error"] is not None:
+                    err_cnt += 1
+                elif rs["finished"] is True:
+                    finish_cnt += 1
+                D[acc] = d
+        ALL["detail"] = D
+        ALL["total"] = tot
+        ALL["error"] = err_cnt
+        ALL["finish"] = finish_cnt
+        return ALL
+
     def get(self, key: str, default: Optional[dict] = None) -> dict:
         """
         获取某一个分区对应的记录
@@ -581,16 +642,30 @@ class AutomatorRecorder:
         target_name = "%s/%s/%s.txt" % (user_addr, key, self.account)
         return self._save(target_name, obj)
 
+    def get_run_status(self):
+        """
+        获取运行时状态
+        :return: run_status
+        """
+        target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.txt")
+        dir = os.path.dirname(target_name)
+        default = UDD["run_status"]
+        if not os.path.isdir(dir) or not os.path.exists(target_name):
+            self._save(target_name, default)
+        now = self._load(target_name)
+        flag = False
+        # 检查缺失值，用默认值填充
+        for k, v in default.items():
+            if k not in now:
+                now[k] = v
+                flag = True
+        if flag:
+            self._save(target_name, now)
+        return now
 
-if __name__ == "__main__":
-    # 测试
-    AR = AutomatorRecorder("testaccount")
-    init_user("testaccount", "testpassword")
-    init_user("abc", "def")
-    init_user("cde", "fff")
-    print(list_all_users())
-    print(AR.getuser())
-    test_info = {"time": 0, "lv": 60}
-    TI = AR.get("test_info", test_info)
-    TI["lv"] += 10
-    AR.set("test_info", TI)
+    def set_run_status(self, rs):
+        """
+        设置运行时状态
+        """
+        target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.txt")
+        return self._save(target_name, rs)

@@ -60,7 +60,16 @@ def _get_manager():
     m.start()
     return m
 
-
+def time_period_format(tm) -> str:
+    tm = int(tm)
+    if tm < 60:
+        return f"{tm}s"
+    elif tm < 3600:
+        return f"{tm // 60}m {tm % 60}s"
+    elif tm < 3600 * 24:
+        return f"{tm // 3600}h {(tm % 3600) // 60}m {tm % 60}s"
+    else:
+        return f"{tm // (3600 * 24)}d {(tm % (3600 * 24)) // 3600}h {(tm % 3600) // 60}m {tm % 60}s"
 class Device:
     """
     设备类，存储设备状态等。
@@ -76,18 +85,33 @@ class Device:
         self.d = d
         self.state = 0
         self._in_process = False  # 是否已经进入多进程
+        self.cur_acc = ""  # 当前正在处理的账号
+        self.cur_rec = ""  # 当前正在处理的存档目录
+        self.time_wake = 0  # 上次开机时间
+        self.time_busy = 0  # 上次忙碌时间
 
     def init(self):
         self.state = self.DEVICE_AVAILABLE
+        self.time_busy = 0
+        self.time_wake = time.time()
 
     def start(self):
         self.state = self.DEVICE_BUSY
+        self.time_busy = time.time()
+
+    def register(self, acc="", rec=""):
+        self.cur_acc = acc
+        self.cur_rec = rec
 
     def stop(self):
         self.state = self.DEVICE_AVAILABLE
+        self.time_busy = 0
+        self.cur_acc = ""
+        self.cur_rec = ""
 
     def offline(self):
         self.state = self.DEVICE_OFFLINE
+        self.time_wake = 0
 
     def in_process(self):
         self._in_process = True
@@ -147,7 +171,10 @@ class AllDevices:
         serial = device_message["serial"]
         method = device_message["method"]
         device = self.devices[serial]
-        device.__getattribute__(method)()
+        if type(method) is str:
+            device.__getattribute__(method)()
+        elif type(method) is tuple:
+            device.__getattribute__(method[0])(*method[1:])
 
     def get(self):
         """
@@ -208,6 +235,26 @@ class AllDevices:
             if i.state == Device.DEVICE_AVAILABLE:
                 L += [i]
         return L
+
+    def show(self):
+        """
+        显示当前全部设备状态
+        """
+        print("============================= 设备信息 ===============================")
+        for i, j in self.devices.items():
+            print(i, ": ", end="")
+            if j.state == Device.DEVICE_OFFLINE:
+                print("离线")
+            elif j.state == Device.DEVICE_AVAILABLE:
+                print("空闲", " 开机时间", time_period_format(time.time() - j.time_wake))
+            elif j.state == Device.DEVICE_BUSY:
+                tm = time.time()
+                print("正忙", " 开机时间", time_period_format(tm - j.time_wake), " 本次工作时间",
+                      time_period_format(tm - j.time_wake), end="")
+                if j.cur_acc != "":
+                    print(" 当前任务：账号", j.cur_acc, " 记录保存位置", j.cur_rec, end="")
+                print()
+        print("=====================================================================")
 
 
 class PCRInitializer:
@@ -281,7 +328,7 @@ class PCRInitializer:
             keyboard.release('p')
             Multithreading({}).state_sent_resume()
             a = Automator(device)
-            a.init_account(account)
+            a.init_account(account, rec_addr)
             a.start()
             user = a.AR.getuser()
             account = user["account"]
@@ -310,7 +357,8 @@ class PCRInitializer:
                     pcr_log(account).write_log('error', message=tb)
                 return False
         finally:
-            a.stop_th()
+            if a is not None:
+                a.stop_th()
 
     @staticmethod
     def _do_process(device: Device, queue, out_queue):
@@ -325,8 +373,10 @@ class PCRInitializer:
             task = queue.get()
             if task is None:
                 break
-            priority, account, task, continue_ = task
-            res = PCRInitializer.run_task(serial, account, task, continue_)
+            priority, account, task, continue_, rec_addr = task
+            out_queue.put({"device": {"serial": serial, "method": "start"}})
+            out_queue.put({"device": {"serial": serial, "method": ("register", account, rec_addr)}})
+            res = PCRInitializer.run_task(serial, account, task, continue_, rec_addr)
             if not res and not device.is_connected():
                 # 可能模拟器断开
                 out_queue.put({"device": {"serial": serial, "method": "offline"}})
@@ -355,6 +405,8 @@ class PCRInitializer:
         if not self.listening:
             # 打开侦听线程
             threading.Thread(target=PCRInitializer._listener, args=(self,), daemon=True).start()
+        while self.listening == 0:
+            pass
         for d in device_list:
             if not d._in_process:
                 d._in_process = True
@@ -370,6 +422,41 @@ class PCRInitializer:
             while not self.devices.full():
                 time.sleep(1)
         # 侦听线程不能结束，要持续接收可能出现的method信息
+
+    def get_status(self):
+        """
+        获取队列中序号、账号、执行目录、当前状态
+        """
+        q = self.tasks.get_attribute("queue")
+        L = []
+        for ind, (_, acc, _, _, rec) in enumerate(q):
+            state = AutomatorRecorder.get_user_state(acc, rec)
+            L += [(ind, acc, rec, state)]
+        return L
+
+    def is_batch_running(self, batch) -> bool:
+        """
+        检测某一个batch是否在执行中
+        :param batch:
+        """
+        q = self.tasks.get_attribute("queue")
+        for _, _, _, _, rec in q:
+            a, b = os.path.split(rec)
+            if a == '':
+                continue
+            if b == batch:
+                return True
+        return False
+
+    def show(self):
+        """
+        显示当前队列中的任务
+        """
+        L = self.get_status()
+        print("↑↑ ========================= 任务队列 ============================")
+        for ind, acc, rec, state in L:
+            print(f"<{ind}> 账号：{acc}  执行目录：{rec}  当前状态： {state}")
+        print("↑↑ =============================================================")
 
 
 class Schedule:
@@ -455,27 +542,39 @@ class Schedule:
         重新开始某一个schedule，
         name设置为None时，全部重新开始
         """
-        self.clear_error()
+        self._init_status()
+        self._set_users(name, 2)
         for _, nam, _, _, ra in self.SL:
             if name is None or name == nam:
                 if os.path.isdir(ra):
                     shutil.rmtree(ra, True)
         self._save(self._default_state())
 
+    def _set_users(self, name, mode):
+        """
+        统一设置run_status。
+        mode = 1：清除Error
+        mode = 2：重置
+        """
+        for _, nam, b, _, rec in self.SL:
+            if nam == name or name is None:
+                parsed = parse_batch(AutomatorRecorder.getbatch(b))
+                for _, acc, _ in parsed:
+                    AR = AutomatorRecorder(acc, rec)
+                    rs = AR.get_run_status()
+                    if mode >= 1:
+                        rs["error"] = None
+                        rs["finished"] = False
+                    if mode == 2:
+                        rs["current"] = "..."
+                    AR.set_run_status(rs)
+
     def clear_error(self, name=None):
         """
         清除某一个schedule的错误
         name设置为None时，清除全部错误
         """
-        for _, nam, b, _, _ in self.SL:
-            if nam == name or name is None:
-                parsed = parse_batch(AutomatorRecorder.getbatch(b))
-                for _, acc, _ in parsed:
-                    AR = AutomatorRecorder(acc)
-                    rs = AR.get("run_status", UDD["run_status"])
-                    rs["error"] = None
-                    rs["finished"] = False
-                    AR.set("run_status", rs)
+        self._set_users(name, 1)
 
     def _init_status(self):
         """
@@ -537,11 +636,31 @@ class Schedule:
         _, bat = os.path.split(rec)
         parsed = parse_batch(AutomatorRecorder.getbatch(bat))
         for _, acc, _ in parsed:
-            if not os.path.exists(os.path.join(rec, f"_fin_{acc}")):
+            rs = AutomatorRecorder(acc, rec).get_run_status()
+            if not rs["finished"] or rs["error"] is not None:
                 return False
         with open(os.path.join(rec, "_fin"), "w") as f:
             f.write("出现这个文件表示该文件夹内的记录已经刷完。")
         return True
+
+    @staticmethod
+    def count_complete(rec):
+        """
+        统计记录Rec中完成账号的数量
+        输出：完成数 / 总数
+        """
+        _, bat = os.path.split(rec)
+        parsed = parse_batch(AutomatorRecorder.getbatch(bat))
+        L = len(parsed)
+        if os.path.exists(os.path.join(rec, "_fin")):
+            return L, L
+        else:
+            cnt = 0
+            for _, acc, _ in parsed:
+                rs = AutomatorRecorder(acc, rec).get_run_status()
+                if rs["finished"] and rs["error"] is None:
+                    cnt += 1
+            return cnt, L
 
     def _run(self):
         self._get_status()
@@ -604,7 +723,7 @@ class Schedule:
                 return False
         if "can_juanzeng" in cond:
             # 可以捐赠条件
-            AR = AutomatorRecorder(cond["can_juanzeng"])
+            AR = AutomatorRecorder(cond["can_juanzeng"], None)
             ts = AR.get("time_status", UDD["time_status"])
             tm = ts["juanzeng"]
             diff = time.time() - tm
@@ -638,3 +757,139 @@ class Schedule:
         self.log("info", "停止中，已清空任务队列，等待当前任务执行完毕")
         self.pcr.stop(True, True)
         self.log("info", "Schedule已经停止。")
+
+    def get_rec_status(self, rec):
+        """
+        获取某一个记录目录下的任务运行情况
+        """
+        if self.is_complete(rec):
+            return "执行完毕"
+        elif self.run_status[rec] == 2:
+            return "跳过"
+        elif self.checked_status[rec]:
+            cnt, tot = self.count_complete(rec)
+            return f"执行中： {cnt} / {tot}"
+        else:
+            return "等待执行"
+
+    def get_status(self):
+        """
+        获取当前计划执行状态
+        其中，每个rec的状态包括：
+        status：状态
+            wait 等待执行
+            skip 跳过
+            busy 正在执行
+            fin  完成
+            err  错误
+        """
+        L = []
+        for i, j in self.subs.items():
+            D = {}
+            D["name"] = i
+            if type(j) is tuple:
+                D["mode"] = "batch"
+                bat, rec = j
+                if self.run_status[rec] == 1:
+                    D["status"] = "fin"  # 完成执行
+                elif self.run_status[rec] == 2:
+                    D["status"] = "skip"  # 跳过
+                elif self.checked_status[rec]:
+                    D["status"] = "busy"  # 正在执行
+                    D["detail"] = AutomatorRecorder.get_batch_state(bat, rec)
+                    D["error"] = {}
+                    D["cnt"] = D["detail"]["error"] + D["detail"]["finish"]
+                    D["tot"] = D["detail"]["total"]
+                    if D["detail"]["error"] != 0:
+                        D["status"] = "err"
+                        # 统计出错用户
+                        for _acc, _c in D["detail"]["detail"].items():
+                            if _c["error"] is not None:
+                                D["error"][_acc] = _c
+                else:
+                    D["status"] = "wait"  # 等待执行
+            else:
+                tot = len(j)
+                cnt = 0
+                D["mode"] = "batches"
+                D["status"] = "wait"
+                for bat, rec in j:
+                    if self.run_status[rec] == 1:
+                        cnt += 1
+                        continue
+                    elif self.run_status[rec] == 2:
+                        D["status"] = "skip"
+                    elif self.checked_status[rec]:
+                        D["status"] = "busy"
+                        D["current"] = bat
+                        D["detail"] = AutomatorRecorder.get_batch_state(bat, rec)
+                        D["error"] = {}
+                        D["cnt"] = D["detail"]["error"] + D["detail"]["finish"]
+                        D["tot"] = D["detail"]["total"]
+                        if D["detail"]["error"] != 0:
+                            D["status"] = "err"
+                            # 统计出错用户
+                            for _acc, _c in D["detail"]["detail"].items():
+                                if _c["error"] is not None:
+                                    D["error"][_acc] = _c
+                    else:
+                        break
+                    if D["status"] != "busy":
+                        break
+                D["batch_fin"] = cnt
+                D["batch_tot"] = tot
+            L += [D]
+        return L
+
+    def show_schedule(self):
+        """
+        展示当前计划执行情况
+        """
+        status = self.get_status()
+        print("=========================== 执行进度 ========================")
+        for D in status:
+            if D["mode"] == "batch":
+                print(f"** {D['name']} ** ", end="")
+                if D["status"] == "wait":
+                    print("等待执行")
+                elif D["status"] == "fin":
+                    print("执行完毕")
+                elif D["status"] == "skip":
+                    print("跳过")
+                else:
+                    if D["cnt"] < D["tot"]:
+                        print("进行中 进度：", D["cnt"], "/", D["tot"])
+                    else:
+                        print("+ 存在未解决的错误")
+                        for _acc, _err in D["error"]:
+                            print("+ ", _acc, ":", _err["state_str"])
+            elif D["mode"] == "batches":
+                print(f"** {D['name']} ** ", end="")
+                if D["status"] == "wait":
+                    print("等待执行")
+                elif D["status"] == "fin":
+                    print("执行完毕")
+                elif D["status"] == "skip":
+                    print("跳过")
+                else:
+                    print("批次：", D["batch_fin"], "/", D["batch_tot"])
+                    print("+ 当前批次：", D["current"], end=" ")
+                    if D["cnt"] < D["tot"]:
+                        print("进行中 进度：", D["cnt"], "/", D["tot"])
+                    else:
+                        print("+ 存在未解决的错误")
+                        for _acc, _err in D["error"]:
+                            print("+ ", _acc, ":", _err["state_str"])
+        print("============================================================")
+
+    def show_queue(self):
+        """
+        显示任务队列
+        """
+        self.pcr.show()
+
+    def show_device(self):
+        """
+        显示设备情况
+        """
+        self.pcr.devices.show()

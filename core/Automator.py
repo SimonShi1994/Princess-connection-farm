@@ -1,5 +1,4 @@
 # coding=utf-8
-import os
 
 from automator_mixins._async import AsyncMixin
 from automator_mixins._base import BaseMixin
@@ -85,8 +84,6 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         if continue_ is False:
             # 初次执行，记录一下
             self.task_start()
-            if os.path.exists(os.path.join(rec_addr, f"_fin_{account}")):
-                os.remove(os.path.join(rec_addr, f"_fin_{account}"))
         if first_init_home:
             self.init_home()  # 处理第一次进home的一系列问题
         for retry in range(max_retry):
@@ -94,8 +91,6 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 self.ms.run(continue_=continue_)
                 # 刷完啦！标记一下”我刷完了“
                 self.task_finished()
-                with open(os.path.join(rec_addr, f"_fin_{account}"), "w") as f:
-                    f.write("出现这个文件表示该记录已经刷完。")
                 break
             except Exception as e:
                 continue_ = True
