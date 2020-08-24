@@ -597,9 +597,10 @@ class BaseMixin:
     def click_btn(self, btn: PCRelement, elsedelay=8., timeout=20., wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
                   until_disappear: Optional[Union[str, PCRelement, dict, list]] = "self",
-                  is_raise=True, method=cv2.TM_CCOEFF_NORMED):
+                  retry=0, is_raise=True, method=cv2.TM_CCOEFF_NORMED):
         """
         稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
+        :param retry: 尝试次数,少用
         :param btn: PCRelement类型，要点击的按钮
         :param elsedelay: 尝试点击按钮后等待响应的间隔
         :param timeout: lockimg和lock_no_img所用的超时参数
@@ -622,19 +623,19 @@ class BaseMixin:
         if isinstance(until_disappear, str):
             assert until_disappear == "self"
         if wait_self_before is True:
-            r = self.lock_img(btn, timeout=timeout, is_raise=is_raise, method=method)
+            r = self.lock_img(btn, timeout=timeout, retry=retry, is_raise=is_raise, method=method)
         if until_disappear is None and until_appear is None:
             self.click(btn, post_delay=0.5)  # 这边不加延迟，点击的波纹会影响到until_disappear自己
         else:
             if until_appear is not None:
-                r = self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout, is_raise=is_raise,
-                                  method=method)
+                r = self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout, retry=retry,
+                                  is_raise=is_raise, method=method)
             elif until_disappear == "self":
-                r = self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout, is_raise=is_raise,
-                                     method=method)
+                r = self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout, retry=retry,
+                                     is_raise=is_raise, method=method)
             elif until_disappear is not None:
                 r = self.lock_no_img(until_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout,
-                                     is_raise=is_raise, method=method)
+                                     retry=retry, is_raise=is_raise, method=method)
         return r
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
@@ -753,8 +754,8 @@ class BaseMixin:
             screen_shot = self.getscreen()
         if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen_shot):
             self.click_btn(JUQING_BTN["caidanyuan"], wait_self_before=True, until_appear=JUQING_BTN["tiaoguo_1"])  # 菜单
-            self.click_btn(JUQING_BTN["tiaoguo_1"],  until_appear=JUQING_BTN["tiaoguo_2"])  # 跳过
-            self.click_btn(JUQING_BTN["tiaoguo_2"],  until_disappear=JUQING_BTN["tiaoguo_2"])  # 蓝色跳过
+            self.click_btn(JUQING_BTN["tiaoguo_1"], until_appear=JUQING_BTN["tiaoguo_2"])  # 跳过
+            self.click_btn(JUQING_BTN["tiaoguo_2"], until_disappear=JUQING_BTN["tiaoguo_2"])  # 蓝色跳过
             return True
         elif self.is_exists(img='img/kekeluo.bmp', at=(181, 388, 384, 451), screen=screen_shot):
             # 防妈骑脸

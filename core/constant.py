@@ -307,6 +307,9 @@ FIGHT_BTN = {
     "qwzxgq": p(808, 493, img="img/fight/qwzxgq.bmp", at=(745, 481, 869, 504)),  # 前往主线关卡：输的时候会显示
     "baochou": p(img="img/fight/baochou.bmp", at=(61, 414, 114, 481)),
     "dengjitisheng": p(img="img/fight/dengjitisheng.bmp", at=(431, 132, 525, 158)),
+    "caidan": p(902, 33, img="img/fight/menu.bmp", at=(856, 14, 942, 35)),
+    "fangqi_1": p(625, 376, img="img/fight/fangqi_1.bmp", at=(558, 346, 690, 392)),
+    "fangqi_2": p(625, 376, img="img/fight/fangqi_2.bmp", at=(491, 346, 686, 392)),
 }
 
 JUESE_BTN = {
@@ -333,7 +336,7 @@ JUESE_BTN = {
     "fhqhdj_ok": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),  # 返还强化道具
 
 }
-MAX_DXC = 3  # 一共出了多少个地下城关
+MAX_DXC = 4  # 一共出了多少个地下城关
 
 DXC_ELEMENT = {
     "chetui": p(806, 431, img="img/dxc/chetui.bmp", at=(779, 421, 833, 440)),
@@ -355,6 +358,18 @@ DXC_ELEMENT = {
     "dxc_shop_btn": p(918, 30, img="img/dxc/shop.bmp", at=(905, 21, 924, 41)),
     # 地下城选关界面商店
     "dxc_choose_shop": p(917, 28, img="img/dxc/dxc_choose_shop.bmp", at=(906, 19, 928, 36)),
+    # 支援
+    "zhiyuan_dianren": {
+        1: p(100, 173),
+        2: p(213, 208),
+    },
+    # 勾选了支援
+    # 1: p(100, 173, img="img/dxc/dxc_gouxuan.bmp", at=(158, 142, 164, 164)),
+    # 2: p(213, 208, img="img/dxc/dxc_gouxuan.bmp", at=(260, 131, 295, 185)),
+    "zhiyuan_gouxuan": p(img="img/dxc/dxc_gouxuan.bmp"),
+    "quanbu_white": p(98, 88, img="img/dxc/quanbu_white.bmp", at=(49, 71, 141, 109)),
+    "quanbu_blue": p(98, 88, img="img/dxc/quanbu_blue.bmp", at=(49, 71, 141, 109)),
+    "zhandoukaishi": p(833, 470, img="img/dxc/zhandoukaishi.bmp", at=(761, 430, 912, 471)),
 }
 DXC_NUM = {
     # 没有OCR用此来检测层数
