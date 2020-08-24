@@ -259,9 +259,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
                          at=(837, 92, 915, 140))
         # 防止一进去就是塔币教程
-        self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.dxc_kkr, retry=10, at=(738, 420, 872, 442))
+        self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.dxc_kkr, retry=3, at=(738, 420, 872, 442))
         # 防止教程
-        self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=10)
+        self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.juqing_kkr, retry=3, at=(738, 420, 872, 442))
 
         # 撤退 如果 已经进入
         while True:
@@ -275,14 +275,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click(1, 100)
             time.sleep(0.3)
 
-        ok = self.lock_img('img/ok.bmp', elseclick=[(298, 213)], elsedelay=0.5, ifclick=[(596, 371)], ifbefore=1,
-                           ifdelay=0, retry=3, at=(495, 353, 687, 388))
-        # 防止教程
-        self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=10)
+        ok = self.lock_img('img/ok.bmp', elseclick=[(131, 159)], elsedelay=2, ifclick=[(596, 371)], ifbefore=0.5,
+                           ifdelay=0, retry=3)
         if not ok:
             pcr_log(self.account).write_log(level='error', message="%s未能成功进入云海的山脉，跳过刷地下城" % self.account)
             self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
             return
+        # 防止教程
+        self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=10)
 
         while True:
             # 防止塔币教程
