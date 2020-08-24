@@ -262,7 +262,7 @@ class PCRInitializer:
     PCR启动器，包含进程池逻辑、任务调度方法等。
     """
 
-    def __init__(self):
+    def __init__(self, emulator="雷电"):
         """
         self.available_devices：multiprocessing.queue类型
             用于多进程，存放当前已连接但是空闲中的设备。queue[str]
@@ -270,7 +270,7 @@ class PCRInitializer:
             {device_str : state_dict}
         self.tasks：queue.PriorityQueue类型，按优先级从高到低排序一系列任务
         """
-        self.devices = AllDevices()
+        self.devices = AllDevices(emulator)
         self.mgr = _get_manager()
         self.tasks: MyPriorityQueue = self.mgr.__getattribute__("PriorityQueue")()  # 优先级队列
         self.out_queue: multiprocessing.Queue = self.mgr.Queue()  # 外部接收信息的队列
@@ -464,9 +464,9 @@ class Schedule:
     Schedule控制器：控制向PCRInitializer中定时添加task。
     """
 
-    def __init__(self, name: str, schedule: dict, pcr: PCRInitializer):
+    def __init__(self, name: str, pcr: Optional[PCRInitializer]):
         self.name = name
-        self.schedule = schedule
+        self.schedule = AutomatorRecorder.getschedule(name)
         self.pcr = pcr
         self.state = 0
         self.config = {}
@@ -553,6 +553,7 @@ class Schedule:
     def _set_users(self, name, mode):
         """
         统一设置run_status。
+        mode = 0：完成并清除Error
         mode = 1：清除Error
         mode = 2：重置
         """
@@ -562,11 +563,15 @@ class Schedule:
                 for _, acc, _ in parsed:
                     AR = AutomatorRecorder(acc, rec)
                     rs = AR.get_run_status()
-                    if mode >= 1:
+                    if mode == 0:
+                        rs["finished"] = True
                         rs["error"] = None
-                        rs["finished"] = False
-                    if mode == 2:
-                        rs["current"] = "..."
+                    else:
+                        if mode >= 1:
+                            rs["error"] = None
+                            rs["finished"] = False
+                        if mode == 2:
+                            rs["current"] = "..."
                     AR.set_run_status(rs)
 
     def clear_error(self, name=None):
@@ -575,6 +580,13 @@ class Schedule:
         name设置为None时，清除全部错误
         """
         self._set_users(name, 1)
+
+    def finish_schedule(self, name=None):
+        """
+        完成某一个schedule的内容
+        name设置为None时，全部完成。（这还有意义吗。。）
+        """
+        self._set_users(name, 0)
 
     def _init_status(self):
         """
