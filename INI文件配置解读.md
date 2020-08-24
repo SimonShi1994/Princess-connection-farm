@@ -22,6 +22,7 @@
 |         end_shutdown         |                   非常“危险”的Windows功能:自动关机           |  bool  |          |      True       |
 |       lockimg_timeout        |               90秒如果还在lockimg，则跳出重启                |  int   |          |       90        |
 |         enable_pause         |              开启后，可以按下Shift+P暂停脚本。                |  bool  |          |     True       |
+|       running_input          |           开启后，可以在运行时向控制台输入指令                   |  bool |          |      True  |
 
 ------
 

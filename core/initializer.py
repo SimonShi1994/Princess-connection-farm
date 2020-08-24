@@ -150,9 +150,13 @@ class AllDevices:
             if s in self.devices:
                 if self.devices[s].state == Device.DEVICE_OFFLINE:
                     self.devices[s].init()
+                    return True
+                else:
+                    return False
             else:
                 self.devices[s] = Device(d)
                 self.devices[s].init()
+                return True
         else:
             if s in self.devices:
                 if self.devices[s].state != Device.DEVICE_OFFLINE:
@@ -164,8 +168,11 @@ class AllDevices:
     def connect(self):
         _connect()
         dl = adbutils.adb.device_list()
+        t = False
         for d in dl:
-            self.add_device(d)
+            if self.add_device(d):
+                t = True
+        return t
 
     def process_method(self, device_message: dict):
         serial = device_message["serial"]
@@ -280,7 +287,9 @@ class PCRInitializer:
         """
         连接设备，初始化设备
         """
-        self.devices.connect()
+        t = self.devices.connect()
+        if not t:
+            return
         if os.system('python -m uiautomator2 init') != 0:
             pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
             exit(1)
@@ -453,9 +462,9 @@ class PCRInitializer:
         显示当前队列中的任务
         """
         L = self.get_status()
-        print("↑↑ ========================= 任务队列 ============================")
-        for ind, acc, rec, state in L:
-            print(f"<{ind}> 账号：{acc}  执行目录：{rec}  当前状态： {state}")
+        print("↑↑ ====================== 任务等待队列 ===========================")
+        for ind, acc, rec, _ in L:
+            print(f"<{ind}> 账号：{acc}  执行目录：{rec}")
         print("↑↑ =============================================================")
 
 
@@ -475,6 +484,7 @@ class Schedule:
         self.checked_status = {}  # 存放一个计划是否已经被add过
         self.subs = {}  # 关系表
         self._parse()
+        self._init_status()
 
     def _parse(self):
         """
@@ -784,9 +794,10 @@ class Schedule:
         else:
             return "等待执行"
 
-    def get_status(self):
+    def get_status(self, last_state=False):
         """
         获取当前计划执行状态
+        last_state：不是获得当前状态，而是获取上次状态
         其中，每个rec的状态包括：
         status：状态
             wait 等待执行
@@ -794,6 +805,7 @@ class Schedule:
             busy 正在执行
             fin  完成
             err  错误
+            last 上次
         """
         L = []
         for i, j in self.subs.items():
@@ -802,12 +814,17 @@ class Schedule:
             if type(j) is tuple:
                 D["mode"] = "batch"
                 bat, rec = j
-                if self.run_status[rec] == 1:
+                if not last_state and self.run_status[rec] == 1:
                     D["status"] = "fin"  # 完成执行
-                elif self.run_status[rec] == 2:
+                elif last_state and self.is_complete(rec):
+                    D["status"] = "fin"
+                elif not last_state and self.run_status[rec] == 2:
                     D["status"] = "skip"  # 跳过
-                elif self.checked_status[rec]:
-                    D["status"] = "busy"  # 正在执行
+                elif last_state or self.checked_status[rec]:
+                    if last_state:
+                        D["status"] = "last"
+                    else:
+                        D["status"] = "busy"  # 正在执行
                     D["detail"] = AutomatorRecorder.get_batch_state(bat, rec)
                     D["error"] = {}
                     D["cnt"] = D["detail"]["error"] + D["detail"]["finish"]
@@ -826,38 +843,59 @@ class Schedule:
                 D["mode"] = "batches"
                 D["status"] = "wait"
                 for bat, rec in j:
-                    if self.run_status[rec] == 1:
-                        cnt += 1
-                        continue
-                    elif self.run_status[rec] == 2:
-                        D["status"] = "skip"
-                    elif self.checked_status[rec]:
-                        D["status"] = "busy"
-                        D["current"] = bat
-                        D["detail"] = AutomatorRecorder.get_batch_state(bat, rec)
-                        D["error"] = {}
-                        D["cnt"] = D["detail"]["error"] + D["detail"]["finish"]
-                        D["tot"] = D["detail"]["total"]
-                        if D["detail"]["error"] != 0:
-                            D["status"] = "err"
-                            # 统计出错用户
-                            for _acc, _c in D["detail"]["detail"].items():
-                                if _c["error"] is not None:
-                                    D["error"][_acc] = _c
+                    if not last_state:
+                        if self.run_status[rec] == 1:
+                            cnt += 1
+                            continue
+                        elif self.run_status[rec] == 2:
+                            D["status"] = "skip"
+                        elif self.checked_status[rec]:
+                            D["status"] = "busy"
+                            D["current"] = bat
+                            D["detail"] = AutomatorRecorder.get_batch_state(bat, rec)
+                            D["error"] = {}
+                            D["cnt"] = D["detail"]["error"] + D["detail"]["finish"]
+                            D["tot"] = D["detail"]["total"]
+                            if D["detail"]["error"] != 0:
+                                D["status"] = "err"
+                                # 统计出错用户
+                                for _acc, _c in D["detail"]["detail"].items():
+                                    if _c["error"] is not None:
+                                        D["error"][_acc] = _c
+                        else:
+                            break
+                        if D["status"] != "busy":
+                            break
                     else:
-                        break
-                    if D["status"] != "busy":
-                        break
+                        D["status"] = "last"
+                        if self.is_complete(rec):
+                            cnt += 1
+                            if cnt == tot:
+                                D["status"] = "fin"
+                            continue
+                        else:
+                            D["current"] = bat
+                            D["detail"] = AutomatorRecorder.get_batch_state(bat, rec)
+                            D["error"] = {}
+                            D["cnt"] = D["detail"]["error"] + D["detail"]["finish"]
+                            D["tot"] = D["detail"]["total"]
+                            if D["detail"]["error"] != 0:
+                                D["status"] = "err"
+                                # 统计出错用户
+                                for _acc, _c in D["detail"]["detail"].items():
+                                    if _c["error"] is not None:
+                                        D["error"][_acc] = _c
+                            break
                 D["batch_fin"] = cnt
                 D["batch_tot"] = tot
             L += [D]
         return L
 
-    def show_schedule(self):
+    def show_schedule(self, last_state=False):
         """
         展示当前计划执行情况
         """
-        status = self.get_status()
+        status = self.get_status(last_state)
         print("=========================== 执行进度 ========================")
         for D in status:
             if D["mode"] == "batch":
@@ -871,7 +909,7 @@ class Schedule:
                 else:
                     if D["cnt"] < D["tot"]:
                         print("进行中 进度：", D["cnt"], "/", D["tot"])
-                    else:
+                    if len(D["error"]) > 0:
                         print("+ 存在未解决的错误")
                         for _acc, _err in D["error"]:
                             print("+ ", _acc, ":", _err["state_str"])
@@ -888,7 +926,7 @@ class Schedule:
                     print("+ 当前批次：", D["current"], end=" ")
                     if D["cnt"] < D["tot"]:
                         print("进行中 进度：", D["cnt"], "/", D["tot"])
-                    else:
+                    if len(D["error"]) > 0:
                         print("+ 存在未解决的错误")
                         for _acc, _err in D["error"]:
                             print("+ ", _acc, ":", _err["state_str"])

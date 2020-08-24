@@ -42,6 +42,7 @@ def CheckTuitu():
             print("USER: ", acc, " Normal: ", ts['max'])
 
 def CheckStateReturn():
+    """
     users = list_all_users(0)
     acc_task_info = []
     for acc in users:
@@ -59,7 +60,8 @@ def CheckStateReturn():
         acc_task_info.append(acc_task_tmpinfo)
         acc_task_info.append('\n')
     acc_task_info = ''.join(acc_task_info).replace(',', '\n').replace("'", '')
-    return acc_task_info
+    """
+    return "server酱，时代变啦~"
 
 
 def ClearError(acc):
