@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import threading
 import time
 from typing import Optional, Union
@@ -6,12 +7,10 @@ from typing import Optional, Union
 import cv2
 import numpy as np
 import uiautomator2 as u2
-import datetime
 
 from core import log_handler
 from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
-from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
 from core.usercentre import AutomatorRecorder
@@ -67,10 +66,10 @@ class BaseMixin:
                 self.receive_minicap = ReceiveFromMinicap(address)
                 self.receive_minicap.start()
 
-    def init_account(self, account):
+    def init_account(self, account, rec_addr):
         self.account = account
         self.log = log_handler.pcr_log(account)  # 初始化日志
-        self.AR = AutomatorRecorder(account)
+        self.AR = AutomatorRecorder(account, rec_addr)
 
     def init(self, address, account):
         # 兼容
@@ -720,30 +719,30 @@ class BaseMixin:
 
     def task_start(self):
         # 标记这个用户开始重新刷图了
-        d = self.AR.get("run_status", UDD["run_status"])
+        d = self.AR.get_run_status()
         d["finished"] = False
         d["current"] = "..."
-        self.AR.set("run_status", d)
+        self.AR.set_run_status(d)
 
     def task_finished(self):
         # 标记这个用户已经刷完了图
-        d = self.AR.get("run_status", UDD["run_status"])
+        d = self.AR.get_run_status()
         d["finished"] = True
-        self.AR.set("run_status", d)
+        self.AR.set_run_status(d)
 
     def task_current(self, title):
         # 标记这个用户当前正在进行的项目
-        d = self.AR.get("run_status", UDD["run_status"])
+        d = self.AR.get_run_status()
         d["current"] = title
-        self.AR.set("run_status", d)
+        self.AR.set_run_status(d)
 
     def task_error(self, error):
         # 标记某一项错误，并停止刷图
-        d = self.AR.get("run_status", UDD["run_status"])
+        d = self.AR.get_run_status()
         d["finished"] = True
         d["current"] = "..."
         d["error"] = error
-        self.AR.set("run_status", d)
+        self.AR.set_run_status(d)
 
     def juqing_kkr(self, screen_shot=None):
         """

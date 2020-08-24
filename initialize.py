@@ -6,7 +6,6 @@ import keyboard
 from automator_mixins._base import Multithreading
 from core import log_handler
 from core.Automator import Automator
-from core.constant import USER_DEFAULT_DICT as UDD
 # 账号日志
 from core.log_handler import pcr_log
 from core.usercentre import list_all_users, AutomatorRecorder
@@ -50,7 +49,7 @@ def runmain(params):
         # 传递程序启动的flags
         Multithreading({}).state_sent_resume()
         a = Automator(address)
-        a.init_account(acc)
+        a.init_account(acc, "temp_rec")
         a.start()
         user = a.AR.getuser()
         account = user["account"]
@@ -171,7 +170,7 @@ def execute(continue_=False, max_retry=3):
             if user_dict["taskfile"] == "":
                 # 无任务，跳过
                 continue
-            run_status = AR.get("run_status", UDD["run_status"])
+            run_status = AR.get_run_status()
             if run_status["error"] is not None:
                 # 报错
                 print("账号 ", acc, " 含有未解决的错误：", run_status["error"])

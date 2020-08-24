@@ -24,7 +24,7 @@ def CheckState():
         AR = AutomatorRecorder(acc)
         uj = AR.getuser()
         print("USER: ", acc, " TASK: ", "NONE" if uj["taskfile"] == "" else uj["taskfile"], "STATUS ", end="")
-        rs = AR.get("run_status", UDD["run_status"])
+        rs = AR.get_run_status()
         if rs["error"] is None:
             if rs["finished"]:
                 print("FINISHED.")
@@ -42,13 +42,14 @@ def CheckTuitu():
             print("USER: ", acc, " Normal: ", ts['max'])
 
 def CheckStateReturn():
+    """
     users = list_all_users(0)
     acc_task_info = []
     for acc in users:
         AR = AutomatorRecorder(acc)
         uj = AR.getuser()
         acc_task_tmpinfo = "账号:%s 任务:%s 状态:" % (acc, "NONE" if uj["taskfile"] == "" else uj["taskfile"])
-        rs = AR.get("run_status", UDD["run_status"])
+        rs = AR.get_run_status()
         if rs["error"] is None:
             if rs["finished"]:
                 acc_task_tmpinfo = acc_task_tmpinfo + "FINISHED."
@@ -59,7 +60,8 @@ def CheckStateReturn():
         acc_task_info.append(acc_task_tmpinfo)
         acc_task_info.append('\n')
     acc_task_info = ''.join(acc_task_info).replace(',', '\n').replace("'", '')
-    return acc_task_info
+    """
+    return "server酱，时代变啦~"
 
 
 def ClearError(acc):
@@ -68,10 +70,10 @@ def ClearError(acc):
     :param acc: 要处理的用户名字
     """
     AR = AutomatorRecorder(acc)
-    rs = AR.get("run_status", UDD["run_status"])
+    rs = AR.get_run_status()
     rs["error"] = None
     rs["finished"] = False
-    AR.set("run_status", rs)
+    AR.set_run_status(rs)
 
 
 def Restart(acc):
@@ -81,11 +83,11 @@ def Restart(acc):
     :param acc: 要处理的用户的名字
     """
     AR = AutomatorRecorder(acc)
-    rs = AR.get("run_status", UDD["run_status"])
+    rs = AR.get_run_status()
     rs["error"] = None
     rs["finished"] = False
     rs["current"] = "..."
-    AR.set("run_status", rs)
+    AR.set_run_status(rs)
     target = "rec/%s.rec" % acc
     if os.path.exists(target):
         os.remove(target)  # 删除行动记录文件
@@ -97,11 +99,11 @@ def SetFinished(acc):
     :param acc: 用户
     """
     AR = AutomatorRecorder(acc)
-    rs = AR.get("run_status", UDD["run_status"])
+    rs = AR.get_run_status()
     rs["error"] = None
     rs["finished"] = True
     rs["current"] = "..."
-    AR.set("run_status", rs)
+    AR.set_run_status(rs)
 
 
 if __name__ == '__main__':
@@ -109,6 +111,9 @@ if __name__ == '__main__':
     print("help 查看帮助                   exit 退出")
     print("By TheAutumnOfRice")
     print("----------------------------------------")
+    print("↑当你看到这条消息时，最好尽快使用新的main_new.py")
+    print("它支持schedule模式，虽然上手可能有点难，但绝对会让你爽翻天。")
+    print("目前老版本的user-task模式仍能运行，但已经不能使用edit编辑了。")
     while True:
         try:
             cmd = input("> ")

@@ -28,7 +28,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         self.init_device(address)
 
     def RunTasks(self, tasks: dict, continue_=True, max_retry=3,
-                 first_init_home=True):
+                 first_init_home=True, rec_addr="rec"):
         """
         运行任务集
         By TheAutumnOfRice 2020-07-26
@@ -37,11 +37,12 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         :param continue_: 是否继续上次未完成的任务
         :param max_retry:  最大试错次数，超过max_retry却还不停报错则只能下次再见！
         :param first_init_home: 是否一开始执行init_home。
+        :param rec_addr: 记录文件存放目录
         """
         user = self.AR.getuser()  # 获取配置文件
         account = user["account"]
         check_task_dict(tasks, True)
-        self.ms = moveset(account, "rec")  # 创建行为列表用于断点恢复
+        self.ms = moveset(account, rec_addr)  # 创建行为列表用于断点恢复
         self.ms.startw(None, start=True)  # 使用自动序列创建的起手式
 
         def funwarper(funname, title, kwargs):
@@ -49,7 +50,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             def fun(var):
                 # var参数：用于断点恢复的变量
                 # 使用try来保证兼容性：如果函数没有var参数，则不传入var参数。
-                self.log.write_log("info", f"正在执行： {title}")
+                self.log.write_log("info", f"正在执行： {title} 记录存放目录： {rec_addr}")
                 # 标记当前执行的位置！
                 self.task_current(title)
                 try:

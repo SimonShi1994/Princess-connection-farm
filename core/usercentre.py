@@ -2,6 +2,7 @@ import json
 import os
 from typing import List, Optional
 
+from core.constant import USER_DEFAULT_DICT as UDD
 from core.valid_task import VALID_TASK
 
 """
@@ -12,7 +13,7 @@ from core.valid_task import VALID_TASK
 {
     "account":"..."  # 用户名
     "password":"..." # 密码
-    "taskfile":"..." #任务配置文件名 如果为""则不进行任务。
+    # "taskfile":"..." #任务配置文件名 如果为""则不进行任务。 <- 已经不需要了
 }
 
 任务配置文件存储说明：
@@ -71,6 +72,7 @@ from core.valid_task import VALID_TASK
         # 若晚上执行，第一个计划contidion不满足，不执行，第二个满足，执行。
         {
             "type":"asap"  # As soon as possible
+            "name":"..."
             "batchfile":"..."  # batch文件所在位置
             "batchlist":[
                 # 为40 to 1设计，多个batch依次执行，两个batch之间清空记录
@@ -86,6 +88,7 @@ from core.valid_task import VALID_TASK
                 "start_hour":int  # 小时开始，只有小时数>start_hour时才会执行任务
                 "end_hour":int  # 小时结束，只有小时数<end_hour时才会执行任务
                 "can_juanzeng":account  # account可以发起捐赠了
+                "_last_rec":dir  # 用户无法编辑、查看此条。_last_rec文件夹下无_fin文件时执行。
                 # 还可以补充其它condition，但暂时没想到。
             }
         }
@@ -100,6 +103,7 @@ from core.valid_task import VALID_TASK
         # 当到达指定时间段后，自动将该batch加入任务队列。
         {
             "type":"wait"
+            "name":"..."
             "batchfile":"..."
             "batchlist":["...","...",...]
             "condition":{...}
@@ -109,7 +113,7 @@ from core.valid_task import VALID_TASK
         # 如果要实现24小时自动，那么必须每天5:00清除schedule的记录。
         {
             "type":"config"
-            "clear":int  # 整数，表示每天清理记录的时间
+            "restart":int  # 整数，表示每天清理记录的时间
             # 其它有关控制的任务都可以放在这里
         }
 ]
@@ -136,8 +140,8 @@ def check_user_dict(d: dict, is_raise=False) -> bool:
         assert type(d["account"]) is str, f"account必须为字符串类型而不应是{type(d['account'])}"
         assert "password" in d, "必须含有password关键字以存储密码！"
         assert type(d["password"]) is str, f"password必须为字符串类型而不应是{type(d['password'])}"
-        assert "taskfile" in d, "必须含有任务列表taskfile！"
-        assert type(d["taskfile"]) is str, f"tasks必须为字符串类型而不应是{type(d['tasks'])}"
+        # assert "taskfile" in d, "必须含有任务列表taskfile！"
+        # assert type(d["taskfile"]) is str, f"tasks必须为字符串类型而不应是{type(d['tasks'])}"
         return True
     except Exception as e:
         if is_raise:
@@ -328,6 +332,58 @@ def list_all_batches(verbose=1) -> List[str]:
     return batches
 
 
+def check_valid_schedule(schedule: dict, is_raise=True) -> bool:
+    try:
+        assert "schedules" in schedule
+        S = schedule["schedules"]
+        assert type(S) is list
+        for i in S:
+            assert "type" in i
+            assert i["type"] in ["asap", "wait", "config"]
+            if i["type"] in ["asap", "wait"]:
+                f1 = "batchfile" in i
+                f2 = "batchlist" in i
+                assert (f1 + f2) == 1, "batchfile 和 batchlist关键字只能存在其一！"
+                if "batchfile" in i:
+                    assert type(i["batchfile"]) is str
+                if "batchlist" in i:
+                    assert type(i["batchlist"]) is list
+                assert "condition" in i
+                assert type(i["condition"]) is dict
+
+    except Exception as e:
+        if is_raise:
+            raise e
+        else:
+            return False
+    return True
+
+
+def list_all_schedules(verbose=1) -> List[str]:
+    if not os.path.exists(schedule_addr):
+        os.makedirs(schedule_addr)
+    ld = os.listdir(schedule_addr)
+    schedules = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".txt"):
+            nam = ""
+            try:
+                nam = i.rstrip(".txt")
+                schedule = AutomatorRecorder.getschedule(nam)
+                check_valid_schedule(schedule)
+                schedules += [nam]
+                if verbose:
+                    print("计划配置", nam, "加载成功！")
+                count += 1
+            except Exception as e:
+                if verbose:
+                    print("打开计划配置", nam, "失败！", e)
+    if verbose:
+        print("加载完成，一共加载成功", count, "个计划配置。")
+    return schedules
+
+
 def init_user(account: str, password: str) -> bool:
     """
     以account和password在user_addr下新增一条用户记录
@@ -349,6 +405,26 @@ def init_user(account: str, password: str) -> bool:
         return False
     return True
 
+def parse_batch(batch: dict):
+    """
+    解析batch，统一转化为Tuple(priority, account, task)
+    并且装入优先级队列中。
+    其中task为解析后的dict
+    :param batch: 合法的batch字典
+    :return: Tuple(priority, account, task)
+    """
+    B = batch["batch"]
+    L = []
+    for cur in B:
+        task = AutomatorRecorder.gettask(cur["taskfile"])
+        if "account" in cur:
+            L += [(cur["priority"], cur["account"], task)]
+        elif "group" in cur:
+            G = AutomatorRecorder.getgroup(cur["group"])
+            for mem in G:
+                L += [(cur["priority"], mem, task)]
+    L.sort(reverse=True)
+    return L
 
 class AutomatorRecorder:
     """
@@ -358,11 +434,13 @@ class AutomatorRecorder:
     每一个分区内，创建一条%account%.txt的记录文件，均为json格式
     """
 
-    def __init__(self, account):
+    def __init__(self, account, rec_addr="users/run_status"):
         """
         :param account: 账号名称
+        :param rec_addr: 记录位置（只影响run_status的获取）
         """
         self.account = account
+        self.rec_addr = rec_addr
 
     @staticmethod
     def _load(jsonaddr) -> Optional[dict]:
@@ -435,6 +513,13 @@ class AutomatorRecorder:
         check_valid_batch(d)
         return d
 
+    @staticmethod
+    def getschedule(schedulefile):
+        target_name = "%s/%s.txt" % (schedule_addr, schedulefile)
+        d = AutomatorRecorder._load(target_name)
+        check_valid_schedule(d)
+        return d
+
     def setuser(self, userobj: dict):
         target_name = "%s/%s.txt" % (user_addr, self.account)
         if check_user_dict(userobj, is_raise=False):
@@ -457,6 +542,72 @@ class AutomatorRecorder:
             AutomatorRecorder._save(target_name, batchobj)
         else:
             print("批配置不合法，保存失败")
+
+    @staticmethod
+    def setschedule(schedulefile, scheduleobj: dict):
+        target_name = "%s/%s.txt" % (schedule_addr, schedulefile)
+        if check_valid_schedule(scheduleobj, is_raise=False):
+            AutomatorRecorder._save(target_name, scheduleobj)
+        else:
+            print("计划配置不合法，保存失败")
+
+    @staticmethod
+    def get_user_state(acc, rec_addr):
+        """
+        以字符串的形式返回某一个账号的状态
+        """
+        rs = AutomatorRecorder(acc, rec_addr).get_run_status()
+        if rs["error"] is not None:
+            state = f"执行于 {rs['current']} 时发生错误：{rs['error']}"
+        else:
+            if rs["finished"]:
+                state = "完成"
+            else:
+                state = f"执行中：{rs['current']}"
+        return state
+
+    @staticmethod
+    def get_batch_state(batch, rec_addr):
+        """
+        返回某一个batch中所有涉及到的账号的状态
+        {
+            detail[acc]:{
+                state_str: 字符串表示的状态
+                current：  正在执行
+                error：    产生错误
+                finished： 完成表只
+            }
+            total:   batch内acc总数
+            finish:  完成的acc总数
+            error:   出错的acc总数
+        }
+
+        """
+        parsed = parse_batch(AutomatorRecorder.getbatch(batch))
+        ALL = {}
+        D = {}
+        tot = 0
+        err_cnt = 0
+        finish_cnt = 0
+        for _, acc, _ in parsed:
+            if acc not in D:
+                tot += 1
+                d = {}
+                rs = AutomatorRecorder(acc, rec_addr).get_run_status()
+                d["state_str"] = AutomatorRecorder.get_user_state(acc, rec_addr)
+                d["current"] = rs["current"]
+                d["error"] = rs["error"]
+                d["finished"] = rs["finished"]
+                if rs["error"] is not None:
+                    err_cnt += 1
+                elif rs["finished"] is True:
+                    finish_cnt += 1
+                D[acc] = d
+        ALL["detail"] = D
+        ALL["total"] = tot
+        ALL["error"] = err_cnt
+        ALL["finish"] = finish_cnt
+        return ALL
 
     def get(self, key: str, default: Optional[dict] = None) -> dict:
         """
@@ -491,16 +642,30 @@ class AutomatorRecorder:
         target_name = "%s/%s/%s.txt" % (user_addr, key, self.account)
         return self._save(target_name, obj)
 
+    def get_run_status(self):
+        """
+        获取运行时状态
+        :return: run_status
+        """
+        target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.txt")
+        dir = os.path.dirname(target_name)
+        default = UDD["run_status"]
+        if not os.path.isdir(dir) or not os.path.exists(target_name):
+            self._save(target_name, default)
+        now = self._load(target_name)
+        flag = False
+        # 检查缺失值，用默认值填充
+        for k, v in default.items():
+            if k not in now:
+                now[k] = v
+                flag = True
+        if flag:
+            self._save(target_name, now)
+        return now
 
-if __name__ == "__main__":
-    # 测试
-    AR = AutomatorRecorder("testaccount")
-    init_user("testaccount", "testpassword")
-    init_user("abc", "def")
-    init_user("cde", "fff")
-    print(list_all_users())
-    print(AR.getuser())
-    test_info = {"time": 0, "lv": 60}
-    TI = AR.get("test_info", test_info)
-    TI["lv"] += 10
-    AR.set("test_info", TI)
+    def set_run_status(self, rs):
+        """
+        设置运行时状态
+        """
+        target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.txt")
+        return self._save(target_name, rs)
