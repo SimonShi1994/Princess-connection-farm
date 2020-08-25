@@ -300,6 +300,9 @@ class PCRInitializer:
         该task为四元组，(priority, account, task, continue_, rec_addr)
         """
         task = (0 - task[0], task[1], task[2], continue_, rec_addr)  # 最大优先队列
+        rs = AutomatorRecorder(task[1], task[4]).get_run_status()
+        if continue_ and rs["finished"]:
+            return
         self.tasks.put(task)
 
     def add_tasks(self, tasks: list, continue_, rec_addr):
@@ -332,6 +335,7 @@ class PCRInitializer:
         :param rec_addr: 进度保存目录
         :return 是否成功执行
         """
+
         a: Optional[Automator] = None
         try:
             keyboard.release('p')
@@ -386,6 +390,8 @@ class PCRInitializer:
             out_queue.put({"device": {"serial": serial, "method": "start"}})
             out_queue.put({"device": {"serial": serial, "method": ("register", account, rec_addr)}})
             res = PCRInitializer.run_task(serial, account, task, continue_, rec_addr)
+            if not res:
+                queue.put(task)
             if not res and not device.is_connected():
                 # 可能模拟器断开
                 out_queue.put({"device": {"serial": serial, "method": "offline"}})
@@ -814,9 +820,7 @@ class Schedule:
             if type(j) is tuple:
                 D["mode"] = "batch"
                 bat, rec = j
-                if not last_state and self.run_status[rec] == 1:
-                    D["status"] = "fin"  # 完成执行
-                elif last_state and self.is_complete(rec):
+                if self.is_complete(rec):
                     D["status"] = "fin"
                 elif not last_state and self.run_status[rec] == 2:
                     D["status"] = "skip"  # 跳过
@@ -844,7 +848,7 @@ class Schedule:
                 D["status"] = "wait"
                 for bat, rec in j:
                     if not last_state:
-                        if self.run_status[rec] == 1:
+                        if self.is_complete(rec) == 1:
                             cnt += 1
                             continue
                         elif self.run_status[rec] == 2:

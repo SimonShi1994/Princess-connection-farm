@@ -385,6 +385,32 @@ class TeamInputer(InputBoxBase):
                 return f"队号A-B中队伍B必须为1~3的整数，但{i}不满足要求"
         return ""
 
+class MeiRiHTuInputer(InputBoxBase):
+    def create(self):
+        print("输入A-B字符串，表示刷Hard A-B图。")
+        print("输入end结束。")
+        lst = []
+        while True:
+            s = input(">")
+            if s == "end":
+                break
+            else:
+                lst += [s]
+        return lst
+
+    def check(self, obj):
+        if type(obj) is not list:
+            return "参数必须为list类型"
+        for s in obj:
+            try:
+                a, b = tuple(s.split("-"))
+                A = int(a)
+                B = int(b)
+                assert 1 <= B <= 3, "图号不合法"
+                assert 1 <= A <= max(HARD_COORD), "图号不合法"
+            except Exception as e:
+                return str(e)
+        return ""
 
 VALID_TASK = ValidTask() \
     .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备") \
@@ -493,4 +519,16 @@ VALID_TASK = ValidTask() \
                                                    "如果某一关没有三星过关，则强化重打。\n"
                                                    "若强化了还是打不过，则退出。\n"
                                                    "若没体力了，也退出。",
-         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3)])
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3)]) \
+    .add("s6-h", "zidongtuitu_hard", "自动推Hard图", "使用等级前五的角色自动推Hard图\n"
+                                                 "如果某一关没有三星过关，则强化重打。\n"
+                                                 "若强化了还是打不过，则退出。\n"
+                                                 "若没体力了，也退出。",
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3)]) \
+    .add("s7", "meiriHtu", "每日H图", "每天按照顺序依次扫荡H图，直到体力耗尽。\n"
+                                   "扫过的图当日不会再扫，第二天重置。",
+         [TaskParam("H_list", list, "H图列表", "H图图号", inputbox=MeiRiHTuInputer()),
+          TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+          TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True)]) \
+    .add("s7-a", "xiaohaoHtu", "每日H图全刷", "从H1-1开始一直往后刷直到没法刷为止。",
+         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0)])
