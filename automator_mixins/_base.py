@@ -593,7 +593,7 @@ class BaseMixin:
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout,
                               method=method, threshold=threshold, side_check=side_check)
 
-    def click_btn(self, btn: PCRelement, elsedelay=8., timeout=20., wait_self_before=False,
+    def click_btn(self, btn: PCRelement, elsedelay=8., timeout=30., wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
                   until_disappear: Optional[Union[str, PCRelement, dict, list]] = "self",
                   retry=0, is_raise=True, method=cv2.TM_CCOEFF_NORMED):

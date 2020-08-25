@@ -388,9 +388,10 @@ DXC_NUM = {
 }
 DXC_ENTRANCE = {
     # 大按钮：云海、密林、断崖的坐标
-    1: p(252, 255, name="云海的山脉"),
-    2: p(485, 250, name="密林的大树"),
-    3: p(711, 247, name="断崖的遗迹"),
+    1: p(129, 244, name="云海的山脉"),
+    2: p(366, 245, name="密林的大树"),
+    3: p(600, 246, name="断崖的遗迹"),
+    4: p(831, 246, name="沧海的孤塔"),
 }
 DXC_COORD = {
     # 每个地下城里面每一个关卡的位置
@@ -507,8 +508,11 @@ MAOXIAN_BTN = {
     "buytili_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
     "tlhf": p(img="img/maoxian/tlhf.bmp", at=(434, 137, 524, 157)),
     "no_cishu": p(img="img/maoxian/no_cishu.bmp", at=(400, 229, 541, 289)),
-    "tiaozhan_off": p(img="img/maoxian/tiaozhan_off.bmp", at=(771, 435, 907, 473)),
     "chaochushangxian": p(img="img/maoxian/chaochushangxian.bmp", at=(343, 207, 602, 232)),
+    "sytzcshf": p(img="img/maoxian/sytzcshf.bmp", at=(391, 132, 562, 155)),  # 剩余挑战次数恢复
+    "lock": p(img="img/maoxian/lock.bmp"),
+    "tiaozhan_off": p(img="img/maoxian/tiaozhan_off.bmp", at=(768, 437, 909, 468)),
+    "tiaozhan_on": p(img="img/maoxian/tiaozhan_on.bmp", at=(768, 439, 910, 470)),
 }
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(453, 74, 516, 88)),

@@ -107,13 +107,23 @@ def StopSchedule():
     SCH.stop()
     SCH = None
 
+
+def ShowInfo():
+    print("更新信息:")
+    print("2020-8-24 计划Schedule上线啦~")
+    print("2020-8-25 修复自动推图，新增推H图，小号每日刷H图 <- 测试中")
+    print("当前BUG：")
+    print("Server酱暂时无法适配最新版本")
+    print("免费扭蛋偶尔会失灵")
+    print("竞技场经常会失灵")
+
+
 if __name__ == "__main__":
     print("------------- 用户脚本控制台 --------------")
     print("help 查看帮助                   exit 退出")
+    print("info 查看版本信息")
     print("By TheAutumnOfRice")
     print("----------------------------------------")
-    print("更新信息:")
-    print("2020-8-24 计划Schedule上线啦~")
     while True:
         try:
             cmd = input("> ")
@@ -123,6 +133,8 @@ if __name__ == "__main__":
                 if SCH is not None:
                     StopSchedule()
                 break
+            elif order == "info":
+                ShowInfo()
             elif order == "help":
                 if SCH is None:
                     print("脚本控制帮助")

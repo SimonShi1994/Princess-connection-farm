@@ -49,7 +49,7 @@ def runmain(params):
         # 传递程序启动的flags
         Multithreading({}).state_sent_resume()
         a = Automator(address)
-        a.init_account(acc, "temp_rec")
+        a.init_account(acc, "users")
         a.start()
         user = a.AR.getuser()
         account = user["account"]

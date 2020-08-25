@@ -145,7 +145,7 @@ class AutomatorDebuger(Automator):
             self.init_device(address)
 
     def Account(self, account):
-        self.init_account(account)
+        self.init_account(account, "users")
         self.start_shuatu()
 
     def Shot(self, file="test.bmp", show=True):

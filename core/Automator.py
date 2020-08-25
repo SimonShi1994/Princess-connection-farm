@@ -1,4 +1,5 @@
 # coding=utf-8
+import traceback
 
 from automator_mixins._async import AsyncMixin
 from automator_mixins._base import BaseMixin
@@ -96,7 +97,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 continue_ = True
                 pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry + 1}/{max_retry}')
                 if trace_exception_for_debug:
-                    raise e
+                    traceback.print_exc()
                 last_exception = e
                 try:
                     self.fix_reboot()
@@ -108,7 +109,6 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                     except:
                         pass
                     return
-
 
         else:
             # 超出最大重试次数,放弃啦！
