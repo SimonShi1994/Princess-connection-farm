@@ -117,8 +117,8 @@ class ToolsMixin(BaseMixin):
                 screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
             part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
             img_binary = cv2.imencode('.png', part)[1].tobytes()
-            ocr_text = sdk.predict(image_bytes=img_binary)
-            return ocr_text
+            local_ocr_text = sdk.predict(image_bytes=img_binary)
+            return local_ocr_text
         except Exception as ocr_error:
             pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
             return -1
@@ -251,7 +251,7 @@ class ToolsMixin(BaseMixin):
                 self.lock_img(ZHUCAIDAN_BTN["daojuyilan"], elseclick=[(536, 159)])  # 锁定道具一览
                 screen_shot = self.getscreen()
                 self.click_img(screen=screen_shot, img="img/zhucaidan/saodangquan.bmp")
-                acc_info_dict["saodangquan"] = self.ocr_center(627, 196, 713, 216).replace('x', '')
+                acc_info_dict["saodangquan"] = self.ocr_center(627, 196, 713, 216).replace('x', '').replace('.', '')
             acc_info_list.append(acc_info_dict)
             self.lock_home()
             # 表格数据整理和转换
