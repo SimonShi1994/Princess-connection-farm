@@ -13,6 +13,7 @@ cfg.read('config.ini', encoding="utf-8")
 # 上面为读取的三种方法（str/int/bool)
 
 debug = cfg.getboolean('debug', 'debug')
+ignore_warning = cfg.getboolean('debug', 'ignore_warning')
 trace_exception_for_debug = cfg.getboolean('debug', 'trace_exception_for_debug')
 use_template_cache = cfg.get('debug', 'use_template_cache')
 baidu_ocr_img = cfg.getboolean('debug', 'baidu_ocr_img')
