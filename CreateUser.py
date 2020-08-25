@@ -155,6 +155,7 @@ def create_account(account, password):
 
 
 def create_account_from_file(file):
+    # 此处会有以前的task参数
     pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s]*([^\\s]*)')
     with open(file, "r", encoding="utf-8") as f:
         for line in f:
@@ -163,7 +164,7 @@ def create_account_from_file(file):
                 account, password, task = result[0]
             else:
                 continue
-            create_account(account, password, task)
+            create_account(account, password)
 
 
 def del_account(account):
@@ -515,10 +516,10 @@ if __name__ == "__main__":
             elif order == "user":
                 if len(cmds) == 2 and cmds[1] == "-l":
                     list_all_users()
-                elif len(cmds) == 4 and cmds[1] == "-c":
-                    create_account(cmds[2], cmds[3])
                 elif len(cmds) == 4 and cmds[1] == "-c" and cmds[2] == "-file":
                     create_account_from_file(cmds[3])
+                elif len(cmds) == 4 and cmds[1] == "-c":
+                    create_account(cmds[2], cmds[3])
                 elif len(cmds) == 4 and cmds[1] == '-d' and cmds[2] == "-file":
                     del_account_from_file(cmds[3])
                 elif len(cmds) == 3 and cmds[1] == '-d' and cmds[2] == '-all':
