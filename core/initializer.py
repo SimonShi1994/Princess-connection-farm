@@ -384,7 +384,7 @@ class PCRInitializer:
         serial = device.serial
         while True:
             task = queue.get()
-            if task is None:
+            if task == (-99999999, None, None, None, None):
                 break
             priority, account, task, continue_, rec_addr = task
             out_queue.put({"device": {"serial": serial, "method": "start"}})
@@ -432,7 +432,7 @@ class PCRInitializer:
         if clear:
             self.clear_tasks()
         for _ in range(self.devices.count_processed()):
-            self.tasks.put(None)
+            self.tasks.put((-99999999, None, None, None, None))
         if join:
             while not self.devices.full():
                 time.sleep(1)
