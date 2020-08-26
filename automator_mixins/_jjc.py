@@ -1,7 +1,6 @@
 import time
 
 from automator_mixins._tools import ToolsMixin
-from core.cv import UIMatcher
 
 
 class JJCMixin(ToolsMixin):
@@ -14,22 +13,14 @@ class JJCMixin(ToolsMixin):
     def enterJJC(self, x, y):
         self.click(480, 505)
         time.sleep(2)
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
-                break
+        self.lock_img('img/dixiacheng.jpg')
         self.click(x, y)
         time.sleep(2)
-        while True:
-            screen_shot_ = self.getscreen()
-            self.click(36, 77)
-            if UIMatcher.img_where(screen_shot_, 'img/list.jpg'):
-                break
+        self.lock_img('img/list.jpg', elseclick=(36, 77), elsedelay=8)
 
     # 做jjc任务
     def doJJC(self):
-        # TODO 这个也很卡，基本没法成功，需要改
-
+        # 以后再改，先用不稳定的苟。
         # 进入jjc
         self.enterJJC(579, 411)
 
@@ -38,12 +29,8 @@ class JJCMixin(ToolsMixin):
         time.sleep(4)
         # 点击战斗开始
         self.click(822, 456)
-
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/xiayibu.jpg'):
-                self.click(803, 496)
-                break
+        self.lock_img('img/xiayibu.jpg', elsedelay=8, timeout=180)
+        self.click(803, 496)
         time.sleep(1)
         self.lock_home()
 
@@ -65,11 +52,7 @@ class JJCMixin(ToolsMixin):
         time.sleep(1)
         # 确保战斗开始
         self.click(822, 456)
-
-        while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/xiayibu.jpg'):
-                self.click(803, 506)
-                break
+        self.lock_img('img/xiayibu.jpg', timeout=180 * 3)
+        self.click(803, 506)
         time.sleep(1)
         self.lock_home()
