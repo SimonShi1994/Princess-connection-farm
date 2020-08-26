@@ -352,8 +352,8 @@ class PCRInitializer:
             a.start_shuatu()
             a.login_auth(account, password)
             acclog.Account_Login(account)
-            a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr)
-            a.change_acc()
+            if a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr):
+                a.change_acc()
             acclog.Account_Logout(account)
             return True
         except Exception as e:
@@ -384,7 +384,7 @@ class PCRInitializer:
         serial = device.serial
         while True:
             task = queue.get()
-            if task is None:
+            if task == (-99999999, None, None, None, None):
                 break
             priority, account, task, continue_, rec_addr = task
             out_queue.put({"device": {"serial": serial, "method": "start"}})
@@ -432,7 +432,7 @@ class PCRInitializer:
         if clear:
             self.clear_tasks()
         for _ in range(self.devices.count_processed()):
-            self.tasks.put(None)
+            self.tasks.put((-99999999, None, None, None, None))
         if join:
             while not self.devices.full():
                 time.sleep(1)
@@ -520,7 +520,7 @@ class Schedule:
                 self.SL += [(typ, nam, b0, cond, rec_addr)]
                 self.subs[nam] = [(b0, rec_addr)]
                 for b in s["batchlist"][1:]:
-                    cond = cond.copy()
+                    cond = {}
                     cond["_last_rec"] = rec_addr  # 完成的batch会在rec_addr中留下一个_fin文件用于检测。
                     rec_addr = os.path.join("rec", self.name, s["name"], b)
                     self.SL += [("wait", nam, b, cond, rec_addr)]  # 后续任务均为wait（等待前一batch完成）
@@ -915,8 +915,9 @@ class Schedule:
                         print("进行中 进度：", D["cnt"], "/", D["tot"])
                     if len(D["error"]) > 0:
                         print("+ 存在未解决的错误")
-                        for _acc, _err in D["error"]:
-                            print("+ ", _acc, ":", _err["state_str"])
+                        DEL = [(_a, _b["state_str"]) for _a, _b in D["error"].items()]
+                        for _acc, _err in DEL:
+                            print("+ ", _acc, ":", _err)
             elif D["mode"] == "batches":
                 print(f"** {D['name']} ** ", end="")
                 if D["status"] == "wait":
@@ -932,8 +933,9 @@ class Schedule:
                         print("进行中 进度：", D["cnt"], "/", D["tot"])
                     if len(D["error"]) > 0:
                         print("+ 存在未解决的错误")
-                        for _acc, _err in D["error"]:
-                            print("+ ", _acc, ":", _err["state_str"])
+                        DEL = [(_a, _b["state_str"]) for _a, _b in D["error"].items()]
+                        for _acc, _err in DEL:
+                            print("+ ", _acc, ":", _err)
         print("============================================================")
 
     def show_queue(self):

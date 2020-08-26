@@ -27,14 +27,19 @@ class ShuatuBaseMixin(FightBaseMixin):
     def sw_init(self):
         self.switch = 0
 
-    def zhuxian_kkr(self):
+    def zhuxian_kkr(self, screen=None):
         """
         处理跳脸
         :return:
         """
         cnt = 0
         while cnt <= 2:
-            sc = self.getscreen()
+            if screen is not None:
+                sc = screen
+                screen = None
+            else:
+                sc = self.getscreen()
+
             if self.click_img(img="img/ui/close_btn_1.bmp", screen=sc):
                 continue
             if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=sc):
@@ -127,11 +132,11 @@ class ShuatuBaseMixin(FightBaseMixin):
             del var["cur_times"]
             del var["cur_win"]
 
-        def end():
+        def end(screen=None):
             if end_mode == 0:
                 pass
             elif end_mode == 1:
-                self.zhuxian_kkr()
+                self.zhuxian_kkr(screen)
             elif end_mode == 2:
                 self.lock_home()
                 self.enter_zhuxian()
@@ -292,6 +297,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                     mv.save()
                     self.click(FIGHT_BTN["qwzxgq"], wait_self_before=True)
                     self.wait_for_loading(delay=1)
+                    end()
                     return 2
                 elif mode == 3:
                     # 买东西
@@ -429,7 +435,20 @@ class ShuatuBaseMixin(FightBaseMixin):
                 self.Drag_Left()
             elif drag == "right":
                 self.Drag_Right()
-            s = self.click_btn(btn, until_appear=FIGHT_BTN["xuanguan_quxiao"], is_raise=mode)
+
+            def sidecheck(screen):
+                while True:
+                    if self.click_img(img="img/ui/close_btn_1.bmp", screen=screen):
+                        continue
+                    if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen):
+                        self.chulijiaocheng(turnback=None)
+                        self.enter_zhuxian()
+                        return True
+                    return False
+
+            self.zhuxian_kkr()
+            self.lock_img(FIGHT_BTN["xuanguan_quxiao"], is_raise=mode, elseclick=btn, timeout=30,
+                          elsedelay=8, side_check=sidecheck)
             return s
 
         if not enter(False):
@@ -440,6 +459,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                 use_saodang = False
             else:
                 self.click_btn(MAOXIAN_BTN["quxiao"])
+                self._zdzb_info = "nosaodang"
                 return -2
         if use_saodang in ["auto", True]:
             state = saodang(times)
@@ -478,6 +498,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                 if var["cur_times"] < times - 1:
                     if not self.check_shuatu():
                         self.click_btn(MAOXIAN_BTN["quxiao"])
+                        self._zdzb_info = "notili"
                         return -2
                     enter()  # 再次进入
             r = var["cur_win"]

@@ -743,5 +743,5 @@ class ShuatuMixin(ShuatuBaseMixin):
         L = []
         for i in range(MAX_MAP):
             for j in [1, 2, 3]:
-                L += [f"{i + 1}-j"]
+                L += [f"{i + 1}-{j}"]
         self.meiriHtu(L, daily_tili, False, var)
