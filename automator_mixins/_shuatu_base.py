@@ -439,6 +439,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             def sidecheck(screen):
                 while True:
                     if self.click_img(img="img/ui/close_btn_1.bmp", screen=screen):
+                        screen = self.getscreen()
                         continue
                     if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen):
                         self.chulijiaocheng(turnback=None)
@@ -446,10 +447,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                         return True
                     return False
 
-            self.zhuxian_kkr()
-            self.lock_img(FIGHT_BTN["xuanguan_quxiao"], is_raise=mode, elseclick=btn, timeout=30,
-                          elsedelay=8, side_check=sidecheck)
-            return s
+            return self.lock_img(FIGHT_BTN["xuanguan_quxiao"], is_raise=mode, elseclick=btn, timeout=30,
+                                 elsedelay=8, side_check=sidecheck)
 
         if not enter(False):
             return -3

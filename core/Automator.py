@@ -15,7 +15,11 @@ from core.log_handler import pcr_log
 from core.usercentre import check_task_dict
 from core.valid_task import VALID_TASK
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
-from pcr_config import trace_exception_for_debug
+from pcr_config import trace_exception_for_debug, ignore_warning
+
+if ignore_warning:
+    import warnings
+    warnings.filterwarnings('ignore')
 
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
@@ -84,7 +88,6 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         self.ms.exitw(None)  # 结束自动序列创建
         # 未知异常：仍然是重启哒！万能的重启万岁！
         last_exception = None
-
         if continue_ is False:
             # 初次执行，记录一下
             self.task_start()

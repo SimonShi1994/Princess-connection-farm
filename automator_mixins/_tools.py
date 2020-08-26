@@ -6,14 +6,25 @@ import time
 import cv2
 import numpy as np
 import pandas as pd
+import requests
 import xlrd
 from xlutils.copy import copy
 
 from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout
+from pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
+    ocr_mode, ignore_warning
 from ._base import BaseMixin
+
+if ocr_mode != "网络" and len(ocr_mode) != 0:
+    import muggle_ocr
+    # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
+    sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
+
+if ignore_warning:
+    import warnings
+    warnings.filterwarnings('ignore')
 
 
 class ToolsMixin(BaseMixin):
@@ -58,9 +69,69 @@ class ToolsMixin(BaseMixin):
         self.click(95, 516)
         self.lock_home()
 
+    def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
+        """
+        :param size: 放大的大小
+        :param x1: 左上坐标
+        :param y1: 左上坐标
+        :param x2: 右下坐标
+        :param y2: 右下坐标
+        :param screen_shot: 截图
+        :return:
+        """
+        global ocr_text
+        if len(ocr_mode) == 0:
+            return -1
+        # OCR识别任务分配
+        if ocr_mode == "智能":
+            baidu_ocr_ping = requests.get(url="https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic")
+            code = baidu_ocr_ping.status_code
+            if code == 200:
+                ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+            else:
+                ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+        elif ocr_mode == "网络":
+            ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+        elif ocr_mode == "本地":
+            ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+        elif ocr_mode == "混合":
+            # 机器伪随机
+            ocr_way = random.randint(1, 2)
+            if ocr_way == 1:
+                ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+            elif ocr_way == 2:
+                ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+
+        # OCR返回的数据 纠错
+        try:
+            if ocr_text:
+                return ocr_text
+            else:
+                # text是字符串，不怕会回传int型的-1
+                return -1
+        except:
+            raise Exception("ocr-error", "OCR识别错误。")
+
+    def ocr_local(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+        try:
+            if screen_shot.shape[0] > screen_shot.shape[1]:
+                if anticlockwise_rotation_times >= 1:
+                    for _ in range(anticlockwise_rotation_times):
+                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            img_binary = cv2.imencode('.png', part)[1].tobytes()
+            local_ocr_text = sdk.predict(image_bytes=img_binary)
+            return local_ocr_text
+        except Exception as ocr_error:
+            pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
+            return -1
+
     # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
     # 使用Baidu OCR接口
-    # 离线接口还没写
     def baidu_ocr(self, x1, y1, x2, y2, size=1.0, screen_shot=None):
         # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
         # 默认原图大小（1.0）
@@ -78,7 +149,7 @@ class ToolsMixin(BaseMixin):
             'secretKey': baidu_secretKey
         }
         # f百度
-        time.sleep(random.uniform(0.8, 1.8))
+        time.sleep(random.uniform(0.8, 1.2))
         client = AipOcr(**config)
         if screen_shot is None:
             screen_shot = self.d.screenshot(format='opencv')
@@ -101,13 +172,14 @@ class ToolsMixin(BaseMixin):
         # cv2.imwrite('test2.bmp', part)
         # cv2.imshow('part',part)
         # cv2.waitKey(0)
-        partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
+        partbin = cv2.imencode('.png', part)[1]  # 转成base64编码（误）
         try:
             # print('识别成功！')
             # f百度
-            time.sleep(random.uniform(0.8, 1.8))
+            time.sleep(random.uniform(0.8, 1.2))
             # 原生输出有助于开发者
             result = client.basicGeneral(partbin)
+            result = result.get('words_result')[0].get('words')
             # result = requests.post(request_url, data=params, headers=headers)
             return result
         except:
@@ -158,34 +230,27 @@ class ToolsMixin(BaseMixin):
                 self.lock_home()
                 screen_shot = self.getscreen()
                 # 体力 包括/
-                acc_info_dict["tili"] = self.baidu_ocr(243, 6, 305, 22, screen_shot=screen_shot) \
-                    .get('words_result')[0].get('words')
+                acc_info_dict["tili"] = self.ocr_center(243, 6, 305, 22, screen_shot=screen_shot, size=2.0) \
+                    .replace('=', '').replace('-', '').replace('一', '').replace('_', '')
                 # 等级
-                acc_info_dict["dengji"] = self.baidu_ocr(29, 43, 60, 67, screen_shot=screen_shot) \
-                    .get('words_result')[0].get('words')
+                acc_info_dict["dengji"] = self.ocr_center(29, 43, 60, 67, screen_shot=screen_shot, size=2.0)
                 # mana
-                acc_info_dict["mana"] = self.baidu_ocr(107, 54, 177, 76, screen_shot=screen_shot) \
-                    .get('words_result')[0].get('words').replace(',', '').replace('.', '')
+                acc_info_dict["mana"] = self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot, size=2.0) \
+                    .replace(',', '').replace('.', '')
                 # 宝石
-                acc_info_dict["baoshi"] = self.baidu_ocr(258, 52, 306, 72, screen_shot=screen_shot) \
-                    .get('words_result')[0].get('words').replace(',', '').replace('.', '')
+                acc_info_dict["baoshi"] = self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, size=2.0)\
+                    .replace(',', '').replace('.', '')
             if introduction_info:
                 self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
                 # 去简介
                 self.lock_no_img(ZHUCAIDAN_BTN["jianjie"], elseclick=[(382, 268)])
                 self.lock_img(ZHUCAIDAN_BTN["jianjie_L"], elseclick=[(382, 268)])  # 锁定简介
                 screen_shot = self.getscreen()
-                acc_info_dict["jianjie_name"] = self.baidu_ocr(607, 126, 880, 152, screen_shot=screen_shot) \
-                    .get('words_result')[0].get('words')
-                acc_info_dict["dengji"] = self.baidu_ocr(761, 163, 799, 182, screen_shot=screen_shot) \
-                    .get('words_result')[0].get('words')
-                acc_info_dict["jianjie_zhanli"] = self.baidu_ocr(703, 195, 801, 216, screen_shot=screen_shot) \
-                    .get('words_result')[0].get('words')
-                acc_info_dict["jianjie_hanghui"] = self.baidu_ocr(703, 230, 917, 248, screen_shot=screen_shot) \
-                    .get('words_result')[0].get(
-                    'words')
-                acc_info_dict["jianjie_id"] = self.baidu_ocr(600, 415, 765, 435, screen_shot=screen_shot) \
-                    .get('words_result')[0].get('words')
+                acc_info_dict["jianjie_name"] = self.ocr_center(607, 126, 880, 152, screen_shot=screen_shot, size=2.0)
+                acc_info_dict["dengji"] = self.ocr_center(761, 163, 799, 182, screen_shot=screen_shot, size=2.0)
+                acc_info_dict["jianjie_zhanli"] = self.ocr_center(703, 195, 801, 216, screen_shot=screen_shot, size=2.0)
+                acc_info_dict["jianjie_hanghui"] = self.ocr_center(703, 230, 917, 248, screen_shot=screen_shot, size=2.0)
+                acc_info_dict["jianjie_id"] = self.ocr_center(600, 415, 765, 435, screen_shot=screen_shot, size=2.0)
             if props_info:
                 self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
                 # 去道具
@@ -193,8 +258,8 @@ class ToolsMixin(BaseMixin):
                 self.lock_img(ZHUCAIDAN_BTN["daojuyilan"], elseclick=[(536, 159)])  # 锁定道具一览
                 screen_shot = self.getscreen()
                 self.click_img(screen=screen_shot, img="img/zhucaidan/saodangquan.bmp")
-                acc_info_dict["saodangquan"] = self.baidu_ocr(627, 196, 713, 216).get('words_result')[0].get('words') \
-                    .replace('x', '')
+                acc_info_dict["saodangquan"] = self.ocr_center(627, 196, 713, 216, size=1.5)\
+                    .replace('x', '').replace('.', '').replace('X', '')
             acc_info_list.append(acc_info_dict)
             self.lock_home()
             # 表格数据整理和转换

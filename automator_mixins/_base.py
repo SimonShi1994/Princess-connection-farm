@@ -460,7 +460,8 @@ class BaseMixin:
 
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
                   elsedelay=0.5, alldelay=0.5, retry=0, side_check=None,
-                  at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84):
+                  at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84,
+                  elseafter=0.):
         """
         @args:
             img:要匹配的图片目录
@@ -485,6 +486,7 @@ class BaseMixin:
             lock_no: False: lock_img True: lock_no_img
             timeout: 设置为None时，使用pcr_config中的lockimg_timeout，否则用自己的。
             side_check：传入字符串然后调用字符串里边的基于_base的函数方法
+            elseafter: 点击elseclick后等待的时间
         @pcr_config:
             lockimg_timeout: 设置为0时，不做超时处理；否则，如果超过该时间，报错
         @return:是否在retry次内点击成功
@@ -547,7 +549,7 @@ class BaseMixin:
                     if ifclick != []:
                         for clicks in ifclick:
                             time.sleep(ifbefore)
-                            self.click(clicks[0], clicks[1])
+                            self.click(clicks[0], clicks[1], post_delay=elseafter)
                             time.sleep(ifdelay)
                     return j
             if ec_time == 0:
@@ -557,7 +559,7 @@ class BaseMixin:
             if time.time() - ec_time >= elsedelay:
                 if elseclick != []:
                     for clicks in elseclick:
-                        self.click(clicks[0], clicks[1], post_delay=0.8)
+                        self.click(clicks[0], clicks[1], post_delay=elseafter)
                     attempt += 1
                     ec_time = time.time()
             time.sleep(alldelay)
@@ -567,11 +569,12 @@ class BaseMixin:
                 if is_raise:
                     if disable_timeout_raise:
                         continue
-                    raise Exception("lock_img 超时！")
+                    raise Exception("%s——lock_img 超时！" % img)
                 return False
 
     def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
-                 at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84, side_check=None):
+                 at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84, side_check=None,
+                 elseafter=0.):
         """
         锁定图片，直到该图出现。
         图片出现后，点击ifclick；未出现，点击elseclick
@@ -579,11 +582,11 @@ class BaseMixin:
         return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                               elsedelay=elsedelay,
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout,
-                              method=method, threshold=threshold, side_check=side_check)
+                              method=method, threshold=threshold, side_check=side_check, elseafter=elseafter)
 
     def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5,
                     retry=0, at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED,
-                    threshold=0.84, side_check=None):  # 锁定指定图像
+                    threshold=0.84, side_check=None, elseafter=0.):  # 锁定指定图像
         """
         锁定图片，直到该图消失
         图片消失后，点击ifclick；未消失，点击elseclick
@@ -591,12 +594,12 @@ class BaseMixin:
         return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                               elsedelay=elsedelay,
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout,
-                              method=method, threshold=threshold, side_check=side_check)
+                              method=method, threshold=threshold, side_check=side_check, elseafter=elseafter)
 
     def click_btn(self, btn: PCRelement, elsedelay=8., timeout=30., wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
                   until_disappear: Optional[Union[str, PCRelement, dict, list]] = "self",
-                  retry=0, is_raise=True, method=cv2.TM_CCOEFF_NORMED):
+                  retry=0, is_raise=True, method=cv2.TM_CCOEFF_NORMED, elseafter=None):
         """
         稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
         :param retry: 尝试次数,少用
@@ -617,6 +620,9 @@ class BaseMixin:
             是否报错。设置为False时，匹配失败，返回False
         :param method:
             用于lockimg的方法
+        :param elseafter:
+            默认值None，此时，若条件为until_disappear="self"，则设置为0.8，否则为0.
+            点击之后的等待时间。
         """
         r = 0
         if isinstance(until_disappear, str):
@@ -628,13 +634,15 @@ class BaseMixin:
         else:
             if until_appear is not None:
                 r = self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout, retry=retry,
-                                  is_raise=is_raise, method=method)
+                                  is_raise=is_raise, method=method, elseafter=0 if elseafter is None else elseafter)
             elif until_disappear == "self":
                 r = self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout, retry=retry,
-                                     is_raise=is_raise, method=method)
+                                     is_raise=is_raise, method=method,
+                                     elseafter=0.8 if elseafter is None else elseafter)
             elif until_disappear is not None:
                 r = self.lock_no_img(until_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout,
-                                     retry=retry, is_raise=is_raise, method=method)
+                                     retry=retry, is_raise=is_raise, method=method,
+                                     elseafter=0 if elseafter is None else elseafter)
         return r
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面

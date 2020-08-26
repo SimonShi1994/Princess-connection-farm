@@ -1,6 +1,8 @@
 import random
 import string
+import sys
 import time
+from io import StringIO
 
 
 def random_name():
@@ -84,9 +86,9 @@ def token():
     return token
 
 
-def diffday(t1, t2):
+def diffday(t1, t2, AM=5):
     """
-    判断两天不同（以5AM为界限）
+    判断两天不同（以默认5AM为界限）
     :param t1: 当前时间
     :param t2: 上一时间
     :return:
@@ -94,8 +96,8 @@ def diffday(t1, t2):
     if (t1 - t2) > 3600 * 24:
         return True
     # -5小时，将一天的开始定位5:00AM
-    s1 = time.localtime(t1 - 5 * 3600)
-    s2 = time.localtime(t2 - 5 * 3600)
+    s1 = time.localtime(t1 - AM * 3600)
+    s2 = time.localtime(t2 - AM * 3600)
     day1 = s1.tm_year * 366 + s1.tm_yday
     day2 = s2.tm_year * 366 + s2.tm_yday
     if day1 > day2:
@@ -153,6 +155,15 @@ def diff_5_12hour(t1, t2):
             if l <= h1 < r and l <= h2 < r:
                 return False
         return True
+
+
+def PrintToStr(fun, *args, **kwargs):
+    old_stdout = sys.stdout
+    result = StringIO()
+    sys.stdout = result
+    fun(*args, **kwargs)
+    sys.stdout = old_stdout
+    return result.getvalue()
 
 
 if __name__ == '__main__':

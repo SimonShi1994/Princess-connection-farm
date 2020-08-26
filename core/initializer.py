@@ -18,12 +18,12 @@ from core import log_handler
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.usercentre import AutomatorRecorder, parse_batch
+from core.utils import diffday, PrintToStr
 from emulator_port import *
 from pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
-    trace_exception_for_debug
+    trace_exception_for_debug, s_sckey, s_sentstate
 
 acclog = log_handler.pcr_acc_log()
-
 
 def _connect():  # 连接adb与uiautomator
     try:
@@ -257,7 +257,7 @@ class AllDevices:
             elif j.state == Device.DEVICE_BUSY:
                 tm = time.time()
                 print("正忙", " 开机时间", time_period_format(tm - j.time_wake), " 本次工作时间",
-                      time_period_format(tm - j.time_wake), end="")
+                      time_period_format(tm - j.time_busy), end="")
                 if j.cur_acc != "":
                     print(" 当前任务：账号", j.cur_acc, " 记录保存位置", j.cur_rec, end="")
                 print()
@@ -383,15 +383,15 @@ class PCRInitializer:
         """
         serial = device.serial
         while True:
-            task = queue.get()
-            if task == (-99999999, None, None, None, None):
+            _task = queue.get()
+            if _task == (-99999999, None, None, None, None):
                 break
-            priority, account, task, continue_, rec_addr = task
+            priority, account, task, continue_, rec_addr = _task
             out_queue.put({"device": {"serial": serial, "method": "start"}})
             out_queue.put({"device": {"serial": serial, "method": ("register", account, rec_addr)}})
             res = PCRInitializer.run_task(serial, account, task, continue_, rec_addr)
             if not res:
-                queue.put(task)
+                queue.put(_task)
             if not res and not device.is_connected():
                 # 可能模拟器断开
                 out_queue.put({"device": {"serial": serial, "method": "offline"}})
@@ -438,13 +438,23 @@ class PCRInitializer:
                 time.sleep(1)
         # 侦听线程不能结束，要持续接收可能出现的method信息
 
+    def join(self):
+        """
+        等待任务队列中所有任务全部执行完毕且所有device空闲
+        """
+        self.stop(join=True, clear=False)
+
     def get_status(self):
         """
         获取队列中序号、账号、执行目录、当前状态
         """
         q = self.tasks.get_attribute("queue")
         L = []
-        for ind, (_, acc, _, _, rec) in enumerate(q):
+        for ind, T in enumerate(q):
+            if type(T) is not tuple or len(T) is not 5:
+                print("DEBUG: ", T)
+                break
+            (_, acc, _, _, rec) = T
             state = AutomatorRecorder.get_user_state(acc, rec)
             L += [(ind, acc, rec, state)]
         return L
@@ -489,6 +499,8 @@ class Schedule:
         self.run_status = {}  # 运行状态
         self.checked_status = {}  # 存放一个计划是否已经被add过
         self.subs = {}  # 关系表
+        self.not_restart_name = []  # record=1，不用重启的列表
+        self.always_restart_name = []  # record=2，循环执行的列表
         self._parse()
         self._init_status()
 
@@ -510,10 +522,15 @@ class Schedule:
             typ = s["type"]
             nam = s["name"]
             cond = s["condition"]
+            rectype = s["record"]
+            if rectype == 1:
+                self.not_restart_name += [nam]
             if "batchfile" in s:
                 rec_addr = os.path.join("rec", self.name, s["name"], s["batchfile"])
                 self.SL += [(typ, nam, s["batchfile"], cond, rec_addr)]
                 self.subs[nam] = (s["batchfile"], rec_addr)
+                if rectype == 2:
+                    self.always_restart_name += [(nam, s["batchfile"])]
             elif "batchlist" in s:
                 b0 = s["batchlist"][0]
                 rec_addr = os.path.join("rec", self.name, s["name"], b0)
@@ -525,6 +542,8 @@ class Schedule:
                     rec_addr = os.path.join("rec", self.name, s["name"], b)
                     self.SL += [("wait", nam, b, cond, rec_addr)]  # 后续任务均为wait（等待前一batch完成）
                     self.subs[nam] += [(b, rec_addr)]
+                if rectype == 2:
+                    self.always_restart_name += [(nam, s["batchlist"][-1])]
 
     @staticmethod
     def _default_state():
@@ -561,6 +580,8 @@ class Schedule:
         self._init_status()
         self._set_users(name, 2)
         for _, nam, _, _, ra in self.SL:
+            if name is None and nam in self.not_restart_name:
+                continue
             if name is None or name == nam:
                 if os.path.isdir(ra):
                     shutil.rmtree(ra, True)
@@ -628,12 +649,22 @@ class Schedule:
         for i, j in obj["run_status"].items():
             self.run_status[i] = j
 
+    def _get_last_time(self):
+        obj = self._load()
+        obj.setdefault("last_time", 0)
+        return obj["last_time"]
+
     def _set_status(self):
         """
         写入当前的进度
         """
         obj = self._load()
         obj["run_status"] = self.run_status
+        self._save(obj)
+
+    def _set_time(self, time):
+        obj = self._load()
+        obj["last_time"] = time
         self._save(obj)
 
     def _add(self, name, batch):
@@ -690,9 +721,43 @@ class Schedule:
                     cnt += 1
             return cnt, L
 
+    def is_free(self):
+        """
+        判断是否闲置
+        """
+        if self.pcr.devices.count() > 0:
+            return False
+        if len(self.pcr.tasks.queue) > 0:
+            return False
+        return True
+
     def _run(self):
         self._get_status()
+        _time_start = time.time()  # 第一次直接输出初始状态
+        if len(s_sckey) != 0:
+            acc_state = f"Schedule {self.name} 开始运行！\n"
+            from CreateUser import _show_schedule
+            acc_state += PrintToStr(_show_schedule, self.schedule)
+            acc_state += PrintToStr(self.show_device)
+            acc_state += PrintToStr(self.show_schedule)
+            pcr_log("admin").server_bot("STATE", acc_state=acc_state)
+
         while self.state == 1:
+            # Report Information
+            if Multithreading({}).program_is_stopped() and len(s_sckey) != 0:
+                _time_end = time.time()
+                _time = int(_time_end - _time_start) / 60
+                if _time >= s_sentstate:
+                    pcr_log("admin").server_bot("STATE", acc_state=PrintToStr(self.show_everything))
+                    _time_start = time.time()
+            if "restart" in self.config:
+                last_time = self._get_last_time()
+                cur_time = time.time()
+                # flag: 一个是否需要restart的标记
+                if last_time == 0 or diffday(cur_time, last_time, self.config["restart"]):
+                    self.restart()
+                    self._set_time(cur_time)
+
             for ind, t5 in enumerate(self.SL):
                 typ, nam, bat, cond, rec = t5
                 # 已经完成、跳过
@@ -700,9 +765,13 @@ class Schedule:
                     continue
                 # 检查是否已经完成
                 if self.is_complete(rec):
-                    self.run_status[rec] = 1
-                    self.log("info", f"计划** {nam} - {bat} **已经完成")
-                    self._set_status()
+                    # 记录设置2：运行完成后立刻restart
+                    if (nam, bat) in self.always_restart_name:
+                        self.restart(nam)
+                    else:
+                        self.run_status[rec] = 1
+                        self.log("info", f"计划** {nam} - {bat} **已经完成")
+                        self._set_status()
                     continue
                 # 已经处理过
                 if self.checked_status[rec] is True:
@@ -717,7 +786,6 @@ class Schedule:
                         self.run_status[rec] = 2
                         self.log("info", f"跳过计划：** {nam} **")
             time.sleep(1)
-            # TODO config
 
     def run(self):
         """
@@ -785,6 +853,18 @@ class Schedule:
         self.log("info", "停止中，已清空任务队列，等待当前任务执行完毕")
         self.pcr.stop(True, True)
         self.log("info", "Schedule已经停止。")
+
+    def join(self):
+        """
+        一直运行直到队列全部任务运行完毕
+        """
+        while True:
+            for i in self.run_status:
+                if self.run_status[i] == 0:
+                    break
+            else:
+                break
+            time.sleep(1)
 
     def get_rec_status(self, rec):
         """
@@ -949,3 +1029,8 @@ class Schedule:
         显示设备情况
         """
         self.pcr.devices.show()
+
+    def show_everything(self):
+        self.show_schedule()
+        self.show_queue()
+        self.show_device()
