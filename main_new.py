@@ -15,7 +15,7 @@ last_schedule = ""
 
 def RunFirstTime(schedule):
     global PCR, SCH, last_schedule
-    if last_schedule != schedule and last_schedule != "":
+    if SCH is not None:
         SCH.stop()
     if PCR is None:
         PCR = PCRInitializer(selected_emulator)
@@ -32,7 +32,7 @@ def RunFirstTime(schedule):
 
 def RunContinue(schedule):
     global PCR, SCH, last_schedule
-    if last_schedule != schedule and last_schedule != "":
+    if SCH is not None:
         SCH.stop()
     if PCR is None:
         PCR = PCRInitializer(selected_emulator)

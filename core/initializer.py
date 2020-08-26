@@ -723,14 +723,14 @@ class Schedule:
 
     def _run(self):
         self._get_status()
-        _time_start = time.time()
+        _time_start = time.time() - s_sentstate * 100  # 第一次直接输出初始状态
         while self.state == 1:
             # Report Information
             if Multithreading({}).program_is_stopped() and len(s_sckey) != 0:
                 _time_end = time.time()
                 _time = int(_time_end - _time_start) / 60
                 if _time >= s_sentstate:
-                    pcr_log("admin").server_bot("STATE", message=PrintToStr(self.show_everything))
+                    pcr_log("admin").server_bot("STATE", acc_state=PrintToStr(self.show_everything))
                     _time_start = time.time()
             if "restart" in self.config:
                 last_time = self._get_last_time()
