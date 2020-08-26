@@ -92,12 +92,13 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 self.ms.run(continue_=continue_)
                 # 刷完啦！标记一下”我刷完了“
                 self.task_finished()
-                break
+                return True
             except Exception as e:
                 continue_ = True
                 pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry + 1}/{max_retry}')
                 if trace_exception_for_debug:
-                    traceback.print_exc()
+                    tb = traceback.format_exc()
+                    pcr_log(account).write_log(level="error", message=tb)
                 last_exception = e
                 try:
                     self.fix_reboot()
@@ -108,7 +109,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                         self.fix_reboot(False)
                     except:
                         pass
-                    return
+                    return False
 
         else:
             # 超出最大重试次数,放弃啦！
@@ -116,6 +117,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             # 标记错误！
             self.task_error(str(last_exception))
             self.fix_reboot(False)
+            return False
 
 
 if __name__ == "__main__":
