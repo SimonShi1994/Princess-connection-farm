@@ -60,7 +60,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         else:
             self.norm_log.critical(message)
 
-    def server_bot(self, s_level, message):
+    def server_bot(self, s_level, message='', acc_state=''):
         """
         server酱连接 2020/7/21 by:CyiceK
         s_level 为日志级别
@@ -80,18 +80,15 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             '3': lev_3
         }
         # 先不填acc_state
-        acc_state = ''
         if len(s_sckey) != 0:
-            if s_level in lev_dic[log_lev]:
-                from main import CheckStateReturn
-                acc_state = CheckStateReturn()
             message = ''.join(message).replace('\n', '')
             if s_level in lev_dic[log_lev]:
                 self.acc_message[self.acc_name].append(message)
                 self.acc_message[self.acc_name].append('\n')
             # print(self.acc_message[self.acc_name])
             # print(len(self.acc_message[self.acc_name]))
-            if s_level in lev_dic['3'] or (s_level in lev_dic[log_lev] and len(self.acc_message[self.acc_name]) >= log_cache):
+            if s_level in lev_dic['3'] or (
+                    s_level in lev_dic[log_lev] and len(self.acc_message[self.acc_name]) >= log_cache):
                 message = ''.join(self.acc_message[self.acc_name]).replace(',', '\n').replace("'", '')
                 # print(message)
                 cpu_percent = psutil.cpu_percent(interval=1)

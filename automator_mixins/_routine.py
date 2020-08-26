@@ -146,9 +146,10 @@ class RoutineMixin(ShuatuBaseMixin):
                            is_raise=False)
         self.lock_home()
 
-    def goumaitili(self, times, var={}):  # 购买体力
+    def goumaitili(self, times, var={}, limit_today=False):  # 购买体力
         # 稳定性保证
         # 2020-07-31 TheAutumnOfRice: 检查完毕
+
         mv = movevar(var)
         if "cur" in var:
             self.log.write_log("info", f"断点恢复：已经购买了{var['cur']}次体力，即将购买剩余{times - var['cur']}次。")
@@ -156,6 +157,19 @@ class RoutineMixin(ShuatuBaseMixin):
             var.setdefault("cur", 0)
         self.lock_home()
         while var["cur"] < times:
+            self.lock_img(img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394), elseclick=MAIN_BTN["tili_plus"],
+                          elsedelay=2, retry=3)
+
+            # 这里限制了一天只能够购买多少次体力
+            try:
+                if limit_today:
+                    tili_time = self.ocr_center(530, 313, 583, 338, size=1.2).split('/')
+                    tili_time = int(tili_time[1]) - int(tili_time[0])
+                    if tili_time >= times:
+                        return False
+            except:
+                pass
+
             state = self.lock_img(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_plus"], elsedelay=2, retry=3)
             if not state:
                 self.log.write_log("warning", "体力达到上限，中断体力购买")
@@ -169,12 +183,22 @@ class RoutineMixin(ShuatuBaseMixin):
         del var["cur"]
         mv.save()
 
-    def goumaimana(self, times, mode=1, var={}):
+    def goumaimana(self, times, mode=1, var={}, limit_today=False):
         # mode 1: 购买times次10连
         # mode 0：购买times次1连
 
         self.lock_home()
         self.lock_img(MAIN_BTN["mana_title"], elseclick=MAIN_BTN["mana_plus"])
+
+        # 这里限制了一天只能购买mana多少次，通过OCR判断
+        try:
+            if limit_today:
+                mana_time = self.ocr_center(422, 451, 480, 471, size=2.0).split('/')
+                mana_time = int(mana_time[0])
+                if mana_time >= times:
+                    return False
+        except:
+            pass
 
         def BuyOne():
             self.lock_img(MAIN_BTN["mana_ok"], elseclick=MAIN_BTN["mana_one"])
