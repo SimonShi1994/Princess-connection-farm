@@ -18,12 +18,12 @@ from core import log_handler
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.usercentre import AutomatorRecorder, parse_batch
+from core.utils import diffday, PrintToStr
 from emulator_port import *
 from pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
-    trace_exception_for_debug
+    trace_exception_for_debug, s_sckey, s_sentstate
 
 acclog = log_handler.pcr_acc_log()
-
 
 def _connect():  # 连接adb与uiautomator
     try:
@@ -438,6 +438,12 @@ class PCRInitializer:
                 time.sleep(1)
         # 侦听线程不能结束，要持续接收可能出现的method信息
 
+    def join(self):
+        """
+        等待任务队列中所有任务全部执行完毕且所有device空闲
+        """
+        self.stop(join=True, clear=False)
+
     def get_status(self):
         """
         获取队列中序号、账号、执行目录、当前状态
@@ -493,6 +499,8 @@ class Schedule:
         self.run_status = {}  # 运行状态
         self.checked_status = {}  # 存放一个计划是否已经被add过
         self.subs = {}  # 关系表
+        self.not_restart_name = []  # record=1，不用重启的列表
+        self.always_restart_name = []  # record=2，循环执行的列表
         self._parse()
         self._init_status()
 
@@ -514,10 +522,15 @@ class Schedule:
             typ = s["type"]
             nam = s["name"]
             cond = s["condition"]
+            rectype = s["record"]
+            if rectype == 1:
+                self.not_restart_name += [nam]
             if "batchfile" in s:
                 rec_addr = os.path.join("rec", self.name, s["name"], s["batchfile"])
                 self.SL += [(typ, nam, s["batchfile"], cond, rec_addr)]
                 self.subs[nam] = (s["batchfile"], rec_addr)
+                if rectype == 2:
+                    self.always_restart_name += [(nam, s["batchfile"])]
             elif "batchlist" in s:
                 b0 = s["batchlist"][0]
                 rec_addr = os.path.join("rec", self.name, s["name"], b0)
@@ -529,6 +542,8 @@ class Schedule:
                     rec_addr = os.path.join("rec", self.name, s["name"], b)
                     self.SL += [("wait", nam, b, cond, rec_addr)]  # 后续任务均为wait（等待前一batch完成）
                     self.subs[nam] += [(b, rec_addr)]
+                if rectype == 2:
+                    self.always_restart_name += [(nam, s["batchlist"][-1])]
 
     @staticmethod
     def _default_state():
@@ -632,12 +647,22 @@ class Schedule:
         for i, j in obj["run_status"].items():
             self.run_status[i] = j
 
+    def _get_last_time(self):
+        obj = self._load()
+        obj.setdefault("last_time", 0)
+        return obj["last_time"]
+
     def _set_status(self):
         """
         写入当前的进度
         """
         obj = self._load()
         obj["run_status"] = self.run_status
+        self._save(obj)
+
+    def _set_time(self, time):
+        obj = self._load()
+        obj["last_time"] = time
         self._save(obj)
 
     def _add(self, name, batch):
@@ -696,7 +721,22 @@ class Schedule:
 
     def _run(self):
         self._get_status()
+        _time_start = time.time()
         while self.state == 1:
+            # Report Information
+            if Multithreading({}).program_is_stopped() and len(s_sckey) != 0:
+                _time_end = time.time()
+                _time = int(_time_end - _time_start) / 60
+                if _time >= s_sentstate:
+                    pcr_log("admin").server_bot("STATE", message=PrintToStr(self.show_everything))
+                    _time_start = time.time()
+            if "restart" in self.config:
+                last_time = self._get_last_time()
+                cur_time = time.time()
+                # flag: 一个是否需要restart的标记
+                if last_time == 0 or diffday(cur_time, last_time, self.config["restart"]):
+                    self.restart()
+
             for ind, t5 in enumerate(self.SL):
                 typ, nam, bat, cond, rec = t5
                 # 已经完成、跳过
@@ -704,9 +744,13 @@ class Schedule:
                     continue
                 # 检查是否已经完成
                 if self.is_complete(rec):
-                    self.run_status[rec] = 1
-                    self.log("info", f"计划** {nam} - {bat} **已经完成")
-                    self._set_status()
+                    # 记录设置2：运行完成后立刻restart
+                    if (nam, bat) in self.always_restart_name:
+                        self.restart(nam)
+                    else:
+                        self.run_status[rec] = 1
+                        self.log("info", f"计划** {nam} - {bat} **已经完成")
+                        self._set_status()
                     continue
                 # 已经处理过
                 if self.checked_status[rec] is True:
@@ -721,7 +765,6 @@ class Schedule:
                         self.run_status[rec] = 2
                         self.log("info", f"跳过计划：** {nam} **")
             time.sleep(1)
-            # TODO config
 
     def run(self):
         """
@@ -789,6 +832,18 @@ class Schedule:
         self.log("info", "停止中，已清空任务队列，等待当前任务执行完毕")
         self.pcr.stop(True, True)
         self.log("info", "Schedule已经停止。")
+
+    def join(self):
+        """
+        一直运行直到队列全部任务运行完毕
+        """
+        while True:
+            for i in self.run_status:
+                if self.run_status[i] == 0:
+                    break
+            else:
+                break
+            time.sleep(1)
 
     def get_rec_status(self, rec):
         """
@@ -953,3 +1008,8 @@ class Schedule:
         显示设备情况
         """
         self.pcr.devices.show()
+
+    def show_everything(self):
+        self.show_schedule()
+        self.show_queue()
+        self.show_device()

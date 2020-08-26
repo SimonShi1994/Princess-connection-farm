@@ -1,3 +1,4 @@
+import os
 import time
 import traceback
 from typing import Optional
@@ -104,17 +105,24 @@ def StopSchedule():
     global SCH
     if SCH is None:
         print("还没有运行任何Schedule")
+        return
     SCH.stop()
     SCH = None
 
+
+def JoinShutdown():
+    global SCH
+    if SCH is None:
+        print("还没有任何Schedule")
+        return
+    SCH.join()
+    os.system("shutdown -s -f -t 120")
 
 def ShowInfo():
     print("更新信息:")
     print("2020-8-24 计划Schedule上线啦~")
     print("2020-8-25 修复自动推图，新增推H图，小号每日刷H图 <- 测试中")
     print("当前BUG：")
-    print("Server酱暂时无法适配最新版本")
-    print("免费扭蛋偶尔会失灵")
     print("竞技场经常会失灵")
 
 
@@ -156,6 +164,7 @@ if __name__ == "__main__":
                     print("state 查看当前运行状态")
                     print("device 查看当前设备状态")
                     print("queue 查看当前任务队列")
+                    print("join-shutdown 一直运行至队列为空、设备全部闲置时，关机")
                     print("reconnect 重新搜索模拟器 （貌似还有BUG）")
             elif order == "first" and len(cmds) == 2:
                 if SCH is None:
@@ -216,6 +225,8 @@ if __name__ == "__main__":
                     CheckQueue()
                 elif order == "reconnect":
                     ReconnectPCR()
+                elif order == "join-shutdown":
+                    JoinShutdown()
                 else:
                     print("未知的命令！")
             else:

@@ -358,6 +358,10 @@ def _show_schedule(obj):
                     print("+ 时间段: ", con["start_hour"], "h ~ ", con["end_hour"], "h")
                 if "can_juanzeng" in con:
                     print("+ 当", con["can_juanzeng"], "可以捐赠")
+            if i["record"] == 1:
+                print("+ 记录设置：持久运行")
+            elif i["record"] == 2:
+                print("+ 记录设置：循环运行")
         if i["type"] == "config":
             print("ID", ind, "：** 配置 **")
             if "restart" in i:
@@ -422,6 +426,23 @@ def _edit_asap_wait_config(typ):
             elif I == '2':
                 acc = input("请输入检测的账号：").strip()
                 obj["condition"]["can_juanzeng"] = acc
+            else:
+                print("输入错误!")
+        obj["record"] = 0
+        while True:
+            print("-- 记录设置 --")
+            print("0 正常运行（默认）")
+            print("1 持久运行：不受到first或restart的影响，除非使用restart schedule name单独指定。")
+            print("2 循环运行：适用于装备捐赠等条件，运行完毕后自动执行restart。")
+            I = input(">").strip()
+            if I == '0':
+                break
+            elif I == '1':
+                obj["record"] = 1
+                break
+            elif I == '2':
+                obj["record"] = 2
+                break
             else:
                 print("输入错误!")
         return obj

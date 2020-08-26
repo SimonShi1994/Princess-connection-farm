@@ -5,7 +5,7 @@ import psutil
 
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, s_sentstate, s_sckey, enable_pause
+from pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause
 from ._base import BaseMixin, Multithreading
 
 block_sw = 0
@@ -194,18 +194,8 @@ class AsyncMixin(BaseMixin):
         By:CyiceK
         :return:
         """
-        _time_start = time.time()
-        # print(Multithreading({}).program_is_stopped())
-        while Multithreading({}).program_is_stopped() and len(s_sckey) != 0:
-            time.sleep(1)
-            _time_end = time.time()
-            _time = int(_time_end - _time_start)/60
-            # print(_time)
-            # 5分钟播报一次
-            if _time >= s_sentstate:
-                pcr_log('admin').server_bot('STATE', message='')
-                _time_start = time.time()
-
+        # 2020-8-26 播报系统移动至core.initializer._run
+        pass
     async def aor_purse(self):
         """
         脚本暂停函数
@@ -248,8 +238,9 @@ class AsyncMixin(BaseMixin):
 
     def program_start_async(self):
         # 随着程序开启而开启
-        account = 'admin'
-        self.c_async(self, account, self.Report_Information(), sync=False)  # 异步Server酱播报系统
+        # account = 'admin'
+        # self.c_async(self, account, self.Report_Information(), sync=False)  # 异步Server酱播报系统
+        pass
 
     def fix_reboot(self, back_home=True):
         # 重启逻辑：重启应用，重启异步线程

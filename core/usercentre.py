@@ -91,6 +91,7 @@ from core.valid_task import VALID_TASK
                 "_last_rec":dir  # 用户无法编辑、查看此条。_last_rec文件夹下无_fin文件时执行。
                 # 还可以补充其它condition，但暂时没想到。
             }
+            "record":int  # 记录模式
         }
         
         # 等待执行计划
@@ -107,6 +108,7 @@ from core.valid_task import VALID_TASK
             "batchfile":"..."
             "batchlist":["...","...",...]
             "condition":{...}
+            "record":int
         }
         
         # schedule控制代码
@@ -350,6 +352,11 @@ def check_valid_schedule(schedule: dict, is_raise=True) -> bool:
                     assert type(i["batchlist"]) is list
                 assert "condition" in i
                 assert type(i["condition"]) is dict
+                if "record" not in i:
+                    i["record"] = 0
+                assert "record" in i
+                assert type(i["record"]) is int
+                
 
     except Exception as e:
         if is_raise:
