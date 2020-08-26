@@ -390,3 +390,9 @@ class RoutineMixin(ShuatuBaseMixin):
                 time.sleep(1)
         # 完成战斗后
         self.lock_home()
+
+    def tansuo_new(self):
+        """
+        重写探索
+        """
+        pass

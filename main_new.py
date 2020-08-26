@@ -127,6 +127,7 @@ def ShowInfo():
 
 
 if __name__ == "__main__":
+
     print("------------- 用户脚本控制台 --------------")
     print("help 查看帮助                   exit 退出")
     print("info 查看版本信息")
