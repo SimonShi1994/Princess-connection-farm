@@ -60,7 +60,6 @@ class BaseMixin:
         self.address = address
         if address != "debug":
             self.d = u2.connect(address)
-            self.dWidth, self.dHeight = self.d.window_size()
             if fast_screencut and Multithreading({}).program_is_stopped():
                 from core.get_screen import ReceiveFromMinicap
                 self.receive_minicap = ReceiveFromMinicap(address)
@@ -436,7 +435,6 @@ class BaseMixin:
         # 输入截图, 模板list, 得到下一次操作
         # 2020-08-08 建议弃用该函数。
 
-        self.dWidth, self.dHeight = self.d.window_size()
         screen_shot = screen_shot
         template_paths = template_paths
         active_path = UIMatcher.imgs_where(screen_shot, template_paths)

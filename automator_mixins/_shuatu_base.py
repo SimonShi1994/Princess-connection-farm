@@ -439,19 +439,8 @@ class ShuatuBaseMixin(FightBaseMixin):
             elif drag == "right":
                 self.Drag_Right()
 
-            def sidecheck(screen):
-                while True:
-                    if self.click_img(img="img/ui/close_btn_1.bmp", screen=screen):
-                        screen = self.getscreen()
-                        continue
-                    if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen):
-                        self.chulijiaocheng(turnback=None)
-                        self.enter_zhuxian()
-                        return True
-                    return False
-
             return self.lock_img(FIGHT_BTN["xuanguan_quxiao"], is_raise=mode, elseclick=btn, timeout=30,
-                                 elsedelay=8, side_check=sidecheck)
+                                 elsedelay=8)
 
         if not enter(False):
             return -3

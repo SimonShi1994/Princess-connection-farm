@@ -346,7 +346,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     break
                 last_lose = True
                 if auto_upgrade > 0:
-                    self.auto_upgrade(buy_tili=buy_tili, do_shuatu=True if auto_upgrade == 2 else 1, var=var)
+                    self.auto_upgrade(buy_tili=buy_tili, do_shuatu=True if auto_upgrade == 2 else False, var=var)
                     # 还要回来
                     enter()
                     continue
@@ -539,12 +539,18 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.log.write_log("error", "box拍摄失败！")
         self.lock_home()
 
-    def zidongtuitu_normal(self, buy_tili=3, max_tu="max", var={}):
+    def zidongtuitu_normal(self, buy_tili=3, max_tu="max", var={},auto_upgrade = 1):
         """
         装备号自动推图，没达到三星自动强化。
         体力用光/强化后仍然失败 - 退出
         :param buy_tili: 购买体力的次数
         :param max_tu: 终点图号，"max"表示推到不能推为止
+        :param auto_upgrade: 失败自动升级
+            开启后，如果推图失败，则会进入升级逻辑
+            如果升级之后仍然推图失败，则放弃推图
+            0: 关闭自动升级
+            1: 只自动强化，但是不另外打关拿装备
+            2: 自动强化并且会补全一切装备
         """
         var.setdefault("cur_tili", 0)
         if var["cur_tili"] < buy_tili:
@@ -553,14 +559,20 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         if max_tu == "max":
             max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
-        self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var)
+        self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var,auto_upgrade=auto_upgrade)
 
-    def zidongtuitu_hard(self, buy_tili=3, max_tu="max", var={}):
+    def zidongtuitu_hard(self, buy_tili=3, max_tu="max", var={},auto_upgrade = 1):
         """
         装备号自动推HARD图，没达到三星自动强化。
         体力用光/强化后仍然失败 - 退出
         :param buy_tili: 购买体力的次数
         :param max_tu: 终点图号，"max"表示推到不能推为止
+        :param auto_upgrade: 失败自动升级
+            开启后，如果推图失败，则会进入升级逻辑
+            如果升级之后仍然推图失败，则放弃推图
+            0: 关闭自动升级
+            1: 只自动强化，但是不另外打关拿装备
+            2: 自动强化并且会补全一切装备
         """
         var.setdefault("cur_tili", 0)
         if var["cur_tili"] < buy_tili:
@@ -569,7 +581,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         if max_tu == "max":
             max_tu = f"{MAX_MAP}-3"
-        self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, var=var)
+        self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, var=var,auto_upgrade = auto_upgrade)
 
     def shuatu_daily(self, tu_order: list, daily_tili=0, xianding=False, var={}):
         """
