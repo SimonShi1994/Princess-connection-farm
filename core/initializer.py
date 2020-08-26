@@ -383,15 +383,15 @@ class PCRInitializer:
         """
         serial = device.serial
         while True:
-            task = queue.get()
-            if task == (-99999999, None, None, None, None):
+            _task = queue.get()
+            if _task == (-99999999, None, None, None, None):
                 break
-            priority, account, task, continue_, rec_addr = task
+            priority, account, task, continue_, rec_addr = _task
             out_queue.put({"device": {"serial": serial, "method": "start"}})
             out_queue.put({"device": {"serial": serial, "method": ("register", account, rec_addr)}})
             res = PCRInitializer.run_task(serial, account, task, continue_, rec_addr)
             if not res:
-                queue.put(task)
+                queue.put(_task)
             if not res and not device.is_connected():
                 # 可能模拟器断开
                 out_queue.put({"device": {"serial": serial, "method": "offline"}})
@@ -444,7 +444,11 @@ class PCRInitializer:
         """
         q = self.tasks.get_attribute("queue")
         L = []
-        for ind, (_, acc, _, _, rec) in enumerate(q):
+        for ind, T in enumerate(q):
+            if type(T) is not tuple or len(T) is not 5:
+                print("DEBUG: ", T)
+                break
+            (_, acc, _, _, rec) = T
             state = AutomatorRecorder.get_user_state(acc, rec)
             L += [(ind, acc, rec, state)]
         return L

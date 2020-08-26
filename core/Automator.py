@@ -84,7 +84,6 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         self.ms.exitw(None)  # 结束自动序列创建
         # 未知异常：仍然是重启哒！万能的重启万岁！
         last_exception = None
-
         if continue_ is False:
             # 初次执行，记录一下
             self.task_start()
