@@ -135,6 +135,8 @@ if __name__ == "__main__":
                 break
             elif order == "info":
                 ShowInfo()
+            elif order == "break":
+                break
             elif order == "help":
                 if SCH is None:
                     print("脚本控制帮助")
