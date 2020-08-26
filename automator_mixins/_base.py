@@ -569,7 +569,7 @@ class BaseMixin:
                 if is_raise:
                     if disable_timeout_raise:
                         continue
-                    raise Exception("lock_img 超时！")
+                    raise Exception("%s——lock_img 超时！" % img)
                 return False
 
     def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
