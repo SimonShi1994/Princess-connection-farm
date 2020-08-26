@@ -70,7 +70,7 @@ class ShuatuBaseMixin(FightBaseMixin):
     def zhandouzuobiao(self, x, y, times, drag=None, use_saodang: Union[bool, str] = "auto", buy_tili=0, buy_cishu=0,
                        xianding=False,
                        bianzu=0, duiwu=0, auto=1, speed=1, fastmode=True, fail_retry=False,
-                       juqing_in_fight=False, end_mode=0, var={}):
+                       juqing_in_fight=False, end_mode=0, saodang_ok2=MAOXIAN_BTN["saodang_ok2"], var={}):
         """
         战斗坐标，新刷图函数（手刷+扫荡结合）
         内置剧情跳过、奇怪对话框跳过功能
@@ -112,6 +112,9 @@ class ShuatuBaseMixin(FightBaseMixin):
             mode=0：退出战斗后，什么都不做，不进行场景检测
             mode=1：退出战斗后，执行zhuxian_kkr，可以一定程度点击出现的对话框和跳过剧情
             mode=2：退出战斗后，必定lock_home后重enter_zhuxian
+        :param saodang_ok2: 扫荡结束click的按钮
+            默认的MAOXIAN_BTN["saodang_ok2"]适用于NORMAL和HARD图推图
+            如果对于探索，需要设置为MAIN_BTN["tansuo_saodangok2"]
         :return:
             raise Error：场景判断错误
             -2: 无法挑战
@@ -386,11 +389,11 @@ class ShuatuBaseMixin(FightBaseMixin):
                         self.click_btn(MAOXIAN_BTN["quxiao"])
                         return 0
                     self.click_btn(MAOXIAN_BTN["saodang_ok"])
-                    self.lock_img([MAOXIAN_BTN["saodang_tiaoguo"], MAOXIAN_BTN["saodang_ok2"]])
+                    self.lock_img([MAOXIAN_BTN["saodang_tiaoguo"], saodang_ok2])
                     out = self.click_btn(MAOXIAN_BTN["saodang_tiaoguo"], until_appear={
                         MAOXIAN_BTN["saodang_ok"]: 1,
                         MAOXIAN_BTN["chaochushangxian"]: 2,
-                        MAOXIAN_BTN["saodang_ok2"]: 3
+                        saodang_ok2: 3
                     })
                     if out == 2:
                         if times == "all2":
@@ -400,7 +403,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                             enter()
                             times = "all"
                             continue
-                    self.click_btn(MAOXIAN_BTN["saodang_ok2"], wait_self_before=True, elsedelay=2)
+                    self.click_btn(saodang_ok2, wait_self_before=True, elsedelay=2)
                     # 此处会有升级提示
                     while True:
                         time.sleep(0.5)
@@ -439,6 +442,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             def sidecheck(screen):
                 while True:
                     if self.click_img(img="img/ui/close_btn_1.bmp", screen=screen):
+                        screen = self.getscreen()
                         continue
                     if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen):
                         self.chulijiaocheng(turnback=None)

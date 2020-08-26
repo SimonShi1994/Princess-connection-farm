@@ -1,10 +1,10 @@
 import time
 
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN
+from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN, FIGHT_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
-from core.utils import diff_6hour, diff_5_12hour
+from core.utils import diff_6hour, diff_5_12hour, diffday
 from ._shuatu_base import ShuatuBaseMixin
 
 
@@ -389,4 +389,68 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.click(1, 1)
                 time.sleep(1)
         # 完成战斗后
+        self.lock_home()
+
+    def tansuo_new(self, mode=0):
+        """
+        重写探索：刷/打最上可行的关卡
+        mode=0 刷最上关卡（适合大号）
+        mode=1 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）
+        mode=2 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）
+        """
+
+        def tryfun():
+            if mode == 0:
+                ec = [(539, 146)]
+            elif mode == 1:
+                ec = [(539, 146), (541, 255)]
+            else:
+                ec = [(541, 255), (539, 146)]
+            t = 0
+            while t < 2:
+                out = self.lock_img(FIGHT_BTN["xuanguan_quxiao"], elseclick=ec, elsedelay=8,
+                                    is_raise=False, retry=2, elseafter=0.5)
+                if out:
+                    c = self.get_upperright_stars(self.last_screen)
+                    if c == 3:
+                        self.zhandouzuobiao(30, 30, 2, use_saodang=True, saodang_ok2=MAIN_BTN["tansuo_saodangok2"])
+                        t += 2
+                    else:
+                        self.log.write_log("info", "最上的关卡还没有三星通关，即将进入战斗。")
+                        s = self.zhandouzuobiao(30, 30, 1, use_saodang=False)
+                        if s == 0:
+                            self.log.write_log("warning", "探索战斗失败！")
+                        elif s == 1:
+                            self.log.write_log("info", "探索战斗成功！")
+                        else:
+                            self.log.write_log("warning", f"探索战斗出现未知的错误：s={s}, info={self._zdzb_info}")
+                        t += 1
+                else:
+                    self.log.write_log("warning", "无法进入探索！")
+                    t += 2
+
+        ts = self.AR.get("time_status", UDD["time_status"])
+        if not diffday(time.time(), ts["niudan"]):
+            self.log.write_log("info", "今天已经探索过！")
+            return
+
+        self.lock_home()
+        self.click_btn(MAIN_BTN["maoxian"], until_appear=MAIN_BTN["zhuxian"])
+        self.click_btn(MAIN_BTN["tansuo"], until_appear=MAIN_BTN["jingyanzhiguanqia"])
+        # 经验
+        self.click_btn(MAIN_BTN["jingyanzhiguanqia"], until_appear=MAIN_BTN["tansuo_sytzcs"])
+        if self.is_exists(MAIN_BTN["tansuo_zero"], screen=self.last_screen):
+            self.log.write_log("info", "无经验挑战次数。")
+        else:
+            tryfun()
+        self.click_btn(MAIN_BTN["tansuo_back"], until_appear=MAIN_BTN["jingyanzhiguanqia"])
+        # mana
+        self.click_btn(MAIN_BTN["managuanqia"], until_appear=MAIN_BTN["tansuo_sytzcs"])
+        if self.is_exists(MAIN_BTN["tansuo_zero"], screen=self.last_screen):
+            self.log.write_log("info", "无玛娜挑战次数。")
+        else:
+            tryfun()
+        self.click_btn(MAIN_BTN["tansuo_back"], until_appear=MAIN_BTN["jingyanzhiguanqia"])
+        ts["tansuo"] = time.time()
+        self.AR.set("time_status", ts)
         self.lock_home()

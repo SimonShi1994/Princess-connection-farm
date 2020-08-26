@@ -107,6 +107,16 @@ MAIN_BTN = {
     "exp_bar": p(at=(78, 23, 178, 31), fc=(106, 205, 176), bc=(94, 125, 146)),
     "speaker_box": p(img="img/ui/speaker_box.bmp", at=(182, 395, 209, 409)),  # 有人说话时名字左上角的红色
     "setting_pic": p(74, 268, img="img/home/setting.bmp", at=(59, 253, 91, 281)),
+    "tansuo": p(738, 137),
+
+    # 探索
+    "jingyanzhiguanqia": p(591, 237, img="img/tansuo/jingyan.bmp", at=(529, 160, 605, 236)),  # 经验值关卡
+    "managuanqia": p(801, 221),  # 玛娜关卡
+    "tansuo_zero": p(img="img/tansuo/zero.bmp", at=(654, 433, 678, 448)),
+    "tansuo_sytzcs": p(img="img/tansuo/sytzcs.bmp", at=(485, 432, 575, 452)),
+    "tansuo_back": p(30, 32),
+    "tansuo_saodangok2": p(472, 478, img="img/tansuo/jrtssy.bmp", at=(412, 462, 539, 487)),
+
 }
 JUQING_BTN = {
     "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(901, 25, 934, 56)),
@@ -821,6 +831,7 @@ USER_DEFAULT_DICT = {
         "dianzan": 0,  # 上次点赞时间
         "buyexp": 0,  # 上次购买经验时间
         "niudan": 0,  # 上次免费扭蛋时间
+        "tansuo": 0,  # 上次探索时间
     }
     ,
     "daily_status": {

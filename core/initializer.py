@@ -257,7 +257,7 @@ class AllDevices:
             elif j.state == Device.DEVICE_BUSY:
                 tm = time.time()
                 print("正忙", " 开机时间", time_period_format(tm - j.time_wake), " 本次工作时间",
-                      time_period_format(tm - j.time_wake), end="")
+                      time_period_format(tm - j.time_busy), end="")
                 if j.cur_acc != "":
                     print(" 当前任务：账号", j.cur_acc, " 记录保存位置", j.cur_rec, end="")
                 print()
@@ -727,7 +727,7 @@ class Schedule:
         """
         if self.pcr.devices.count() > 0:
             return False
-        if len(self.pcr.tasks.queue) > 0:
+        if len(self.pcr.tasks.get_attribute("queue")) > 0:
             return False
         return True
 
@@ -744,7 +744,7 @@ class Schedule:
 
         while self.state == 1:
             # Report Information
-            if Multithreading({}).program_is_stopped() and len(s_sckey) != 0:
+            if not self.is_free() and len(s_sckey) != 0:
                 _time_end = time.time()
                 _time = int(_time_end - _time_start) / 60
                 if _time >= s_sentstate:
