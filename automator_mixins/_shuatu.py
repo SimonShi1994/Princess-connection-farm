@@ -539,32 +539,36 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.log.write_log("error", "box拍摄失败！")
         self.lock_home()
 
-    def zidongtuitu_normal(self, buy_tili=3, var={}):
+    def zidongtuitu_normal(self, buy_tili=3, max_tu="max", var={}):
         """
         装备号自动推图，没达到三星自动强化。
         体力用光/强化后仍然失败 - 退出
         :param buy_tili: 购买体力的次数
+        :param max_tu: 终点图号，"max"表示推到不能推为止
         """
         var.setdefault("cur_tili", 0)
         if var["cur_tili"] < buy_tili:
             self.start_shuatu()
         if not self.check_shuatu():
             return
-        max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
+        if max_tu == "max":
+            max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
         self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var)
 
-    def zidongtuitu_hard(self, buy_tili=3, var={}):
+    def zidongtuitu_hard(self, buy_tili=3, max_tu="max", var={}):
         """
         装备号自动推HARD图，没达到三星自动强化。
         体力用光/强化后仍然失败 - 退出
         :param buy_tili: 购买体力的次数
+        :param max_tu: 终点图号，"max"表示推到不能推为止
         """
         var.setdefault("cur_tili", 0)
         if var["cur_tili"] < buy_tili:
             self.start_shuatu()
         if not self.check_shuatu():
             return
-        max_tu = f"{MAX_MAP}-3"
+        if max_tu == "max":
+            max_tu = f"{MAX_MAP}-3"
         self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, var=var)
 
     def shuatu_daily(self, tu_order: list, daily_tili=0, xianding=False, var={}):

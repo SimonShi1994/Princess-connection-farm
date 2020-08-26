@@ -526,12 +526,14 @@ VALID_TASK = ValidTask() \
                                                    "如果某一关没有三星过关，则强化重打。\n"
                                                    "若强化了还是打不过，则退出。\n"
                                                    "若没体力了，也退出。",
-         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3)]) \
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3),
+          TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max")]) \
     .add("s6-h", "zidongtuitu_hard", "自动推Hard图", "使用等级前五的角色自动推Hard图\n"
                                                  "如果某一关没有三星过关，则强化重打。\n"
                                                  "若强化了还是打不过，则退出。\n"
                                                  "若没体力了，也退出。",
-         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3)]) \
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3),
+          TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max")]) \
     .add("s7", "meiriHtu", "每日H图", "每天按照顺序依次扫荡H图，直到体力耗尽。\n"
                                    "扫过的图当日不会再扫，第二天重置。",
          [TaskParam("H_list", list, "H图列表", "H图图号", inputbox=MeiRiHTuInputer()),
