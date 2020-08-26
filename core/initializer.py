@@ -727,7 +727,7 @@ class Schedule:
         """
         if self.pcr.devices.count() > 0:
             return False
-        if len(self.pcr.tasks.queue) > 0:
+        if len(self.pcr.tasks.get_attribute("queue")) > 0:
             return False
         return True
 
