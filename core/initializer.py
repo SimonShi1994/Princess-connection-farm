@@ -744,7 +744,7 @@ class Schedule:
 
         while self.state == 1:
             # Report Information
-            if Multithreading({}).program_is_stopped() and len(s_sckey) != 0:
+            if not self.is_free() and len(s_sckey) != 0:
                 _time_end = time.time()
                 _time = int(_time_end - _time_start) / 60
                 if _time >= s_sentstate:

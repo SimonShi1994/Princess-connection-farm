@@ -471,7 +471,7 @@ VALID_TASK = ValidTask() \
     .add("r7", "goumaimana", "购买MANA", "购买指定次数的mana",
          [TaskParam("mode", int, "模式", "如果mode为0，则为购买mana的次数；\n如果mode为1，则为购买10连mana的次数。【宝石警告】", 1),
           TaskParam("times", int, "购买mana的次数", "购买mana的次数(第一次单抽不计入)"),
-          TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False"),]) \
+          TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False"), ]) \
     .add("r8", "buyExp", "购买经验", "买空商店里的经验药水") \
     .add("r9", "tansuo", "探索", "进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
@@ -479,6 +479,11 @@ VALID_TASK = ValidTask() \
                                        "mode 1: 刷次上面的\n"
                                        "mode 2: 第一次手动过最上面的，再刷一次次上面的\n"
                                        "mode 3: 第一次手动过最上面的，再刷一次最上面的")]) \
+    .add("r9-n", "tansuo_new", "可推图探索", "进行探索活动",
+         [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
+                                       "mode 0: 刷最上关卡（适合大号） \n"
+                                       "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
+                                       "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）")]) \
     .add("t1", "rename", "重命名", "给自己换个名字",
          [TaskParam("name", str, "新名字", "你的新名字")]) \
     .add("t2", "save_box_screen", "box截图", "按照战力/等级/星数截屏前两行box",
