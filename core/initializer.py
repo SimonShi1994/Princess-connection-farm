@@ -723,7 +723,15 @@ class Schedule:
 
     def _run(self):
         self._get_status()
-        _time_start = time.time() - s_sentstate * 100  # 第一次直接输出初始状态
+        _time_start = time.time()  # 第一次直接输出初始状态
+        if len(s_sckey) != 0:
+            acc_state = f"Schedule {self.name} 开始运行！\n"
+            from CreateUser import _show_schedule
+            acc_state += PrintToStr(_show_schedule, self.schedule)
+            acc_state += PrintToStr(self.show_device)
+            acc_state += PrintToStr(self.show_schedule)
+            pcr_log("admin").server_bot("STATE", acc_state=acc_state)
+
         while self.state == 1:
             # Report Information
             if Multithreading({}).program_is_stopped() and len(s_sckey) != 0:
