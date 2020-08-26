@@ -736,6 +736,7 @@ class Schedule:
                 # flag: 一个是否需要restart的标记
                 if last_time == 0 or diffday(cur_time, last_time, self.config["restart"]):
                     self.restart()
+                    self._set_time(cur_time)
 
             for ind, t5 in enumerate(self.SL):
                 typ, nam, bat, cond, rec = t5
