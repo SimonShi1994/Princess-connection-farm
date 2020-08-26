@@ -114,6 +114,11 @@ if __name__ == '__main__':
     print("↑当你看到这条消息时，最好尽快使用新的main_new.py")
     print("它支持schedule模式，虽然上手可能有点难，但绝对会让你爽翻天。")
     print("目前老版本的user-task模式仍能运行，但已经不能使用edit编辑了。")
+    print("!!")
+    print("trace_exception_for_debug默认开启，因为在main_new中，该选项会将")
+    print("traceback记录到log中。使用main.py请手动关闭。")
+    print("!!")
+    print("main.py不再支持server酱定时发送state的功能")
     while True:
         try:
             cmd = input("> ")
