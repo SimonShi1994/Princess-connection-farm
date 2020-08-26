@@ -259,7 +259,7 @@ class AllDevices:
                 print("正忙", " 开机时间", time_period_format(tm - j.time_wake), " 本次工作时间",
                       time_period_format(tm - j.time_busy), end="")
                 if j.cur_acc != "":
-                    print(" 当前任务：账号", j.cur_acc, " 记录保存位置", j.cur_rec, end="")
+                    print(" 当前任务：账号", j.cur_acc, AutomatorRecorder.get_user_state(j.cur_acc, j.cur_rec), end="")
                 print()
         print("=====================================================================")
 
