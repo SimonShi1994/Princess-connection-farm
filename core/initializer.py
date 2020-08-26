@@ -580,6 +580,8 @@ class Schedule:
         self._init_status()
         self._set_users(name, 2)
         for _, nam, _, _, ra in self.SL:
+            if name is None and nam in self.not_restart_name:
+                continue
             if name is None or name == nam:
                 if os.path.isdir(ra):
                     shutil.rmtree(ra, True)
