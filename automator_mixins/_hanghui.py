@@ -235,9 +235,14 @@ class HanghuiMixin(ToolsMixin):
             return
         self.lock_home()
         # 进入行会
-        self.lock_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)), ifclick=[(230, 351), (1, 1)],
-                      elseclick=[(1, 1), (688, 432)],
-                      elsedelay=8, retry=10)
+        out = self.lock_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)),
+                            ifclick=[(230, 351), (1, 1)],
+                            elseclick=[(1, 1), (688, 432)],
+                            elsedelay=8, retry=3, is_raise=False)
+        if not out:
+            self.log.write_log("error", "无法进入行会")
+            self.lock_home()
+            return
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
         self.lock_no_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)), elseclick=[(230, 351)],
                          retry=5)

@@ -54,9 +54,12 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 self.log.write_log("info", f"正在执行： {title} 记录存放目录： {rec_addr}")
                 # 标记当前执行的位置！
                 self.task_current(title)
+                flag = False
                 try:
                     self.__getattribute__(funname)(**kwargs, var=var)
                 except TypeError:
+                    flag = True
+                if flag:
                     self.__getattribute__(funname)(**kwargs)
             return fun
 
