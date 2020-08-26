@@ -160,9 +160,10 @@ def diff_5_12hour(t1, t2):
 def PrintToStr(fun, *args, **kwargs):
     old_stdout = sys.stdout
     result = StringIO()
+    sys.stdout = result
     fun(*args, **kwargs)
     sys.stdout = old_stdout
-    return result
+    return result.getvalue()
 
 
 if __name__ == '__main__':

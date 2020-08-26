@@ -721,6 +721,16 @@ class Schedule:
                     cnt += 1
             return cnt, L
 
+    def is_free(self):
+        """
+        判断是否闲置
+        """
+        if self.pcr.devices.count() > 0:
+            return False
+        if len(self.pcr.tasks.queue) > 0:
+            return False
+        return True
+
     def _run(self):
         self._get_status()
         _time_start = time.time()  # 第一次直接输出初始状态
