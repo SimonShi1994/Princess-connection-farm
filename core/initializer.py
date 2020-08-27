@@ -251,7 +251,7 @@ class AllDevices:
         """
         显示当前全部设备状态
         """
-        print("============================= 设备信息 ===============================")
+        print("= 设备信息 =")
         for i, j in self.devices.items():
             print(i, ": ", end="")
             if j.state == Device.DEVICE_OFFLINE:
@@ -265,7 +265,6 @@ class AllDevices:
                 if j.cur_acc != "":
                     print(" 当前任务：账号", j.cur_acc, AutomatorRecorder.get_user_state(j.cur_acc, j.cur_rec), end="")
                 print()
-        print("=====================================================================")
 
 
 class PCRInitializer:
@@ -518,10 +517,9 @@ class PCRInitializer:
         显示当前队列中的任务
         """
         L = self.get_status()
-        print("↑↑ ====================== 任务等待队列 ===========================")
+        print("↑↑ 任务等待队列")
         for ind, acc, rec, _ in L:
             print(f"<{ind}> 账号：{acc}  执行目录：{rec}")
-        print("↑↑ =============================================================")
 
 
 class Schedule:
@@ -1049,7 +1047,7 @@ class Schedule:
         展示当前计划执行情况
         """
         status = self.get_status(last_state)
-        print("=========================== 执行进度 ========================")
+        print("= 执行进度 =")
         for D in status:
             if D["mode"] == "batch":
                 print(f"** {D['name']} ** ", end="")
@@ -1085,7 +1083,6 @@ class Schedule:
                         DEL = [(_a, _b["state_str"]) for _a, _b in D["error"].items()]
                         for _acc, _err in DEL:
                             print("+ ", _acc, ":", _err)
-        print("============================================================")
 
     def show_queue(self):
         """
