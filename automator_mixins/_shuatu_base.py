@@ -224,6 +224,12 @@ class ShuatuBaseMixin(FightBaseMixin):
                 return True
             return False
 
+        def tdz_sidecheck(screen):
+            if self.is_exists(MAOXIAN_BTN["tuanduizhan"], screen=screen):
+                self.click_btn(MAOXIAN_BTN["tuanduizhan_quxiao"])
+                return True
+            return False
+
         def shoushua(times):
             # return:
             # 0: 无法挑战
@@ -263,7 +269,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                 while mode == 0:
                     # 等待战斗结束
                     mode = self.get_fight_state(delay=3, check_hat=False,
-                                                check_xd=xianding, go_xd=xianding,
+                                                check_xd=True, go_xd=xianding,
                                                 check_jq=juqing_in_fight, check_star=True)
                     if debug:
                         print("上次星数：", self.last_star)
@@ -278,7 +284,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                     mv.save()
                     if win_cnt < times:
                         # 点击”再次挑战“
-                        if not self.click_btn(MAOXIAN_BTN["zaicitiaozhan"], is_raise=False):
+                        if not self.click_btn(MAOXIAN_BTN["zaicitiaozhan"], is_raise=False, side_check=tdz_sidecheck):
                             break
                         cishu()
                         if tili() < 2:
@@ -290,7 +296,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                             # 不刷了，退出
                             pass
                     # 结束挑战
-                    self.click_btn(FIGHT_BTN["xiayibu2"], wait_self_before=True)
+                    self.click_btn(FIGHT_BTN["xiayibu2"], wait_self_before=True, side_check=tdz_sidecheck)
                     self.wait_for_loading(delay=1)
                     end()
                     return 1
@@ -388,7 +394,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                             self.click(45, 32)  # 瞎点点空一切对话框
                         self.click_btn(MAOXIAN_BTN["quxiao"])
                         return 0
-                    self.click_btn(MAOXIAN_BTN["saodang_ok"])
+                    self.click_btn(MAOXIAN_BTN["saodang_ok"], wait_self_before=True)
                     self.lock_img([MAOXIAN_BTN["saodang_tiaoguo"], saodang_ok2])
                     out = self.click_btn(MAOXIAN_BTN["saodang_tiaoguo"], until_appear={
                         MAOXIAN_BTN["saodang_ok"]: 1,
@@ -419,6 +425,9 @@ class ShuatuBaseMixin(FightBaseMixin):
                             continue
                         if buy():
                             return 1
+                        if self.is_exists(MAOXIAN_BTN["tuanduizhan"], screen=sc):
+                            self.click_btn(MAOXIAN_BTN["tuanduizhan_quxiao"])  # 跳过团队站
+                            continue
                         break
                     if times == "all2" and self.is_exists(MAOXIAN_BTN["tiaozhan_off"], method="sq", threshold=0.92):
                         # 挑战还是暗的，还能继续刷
@@ -438,20 +447,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                 self.Drag_Left()
             elif drag == "right":
                 self.Drag_Right()
-
-            def sidecheck(screen):
-                while True:
-                    if self.click_img(img="img/ui/close_btn_1.bmp", screen=screen):
-                        screen = self.getscreen()
-                        continue
-                    if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen):
-                        self.chulijiaocheng(turnback=None)
-                        self.enter_zhuxian()
-                        return True
-                    return False
-
             return self.lock_img(FIGHT_BTN["xuanguan_quxiao"], is_raise=mode, elseclick=btn, timeout=30,
-                                 elsedelay=8, side_check=sidecheck)
+                                 elsedelay=8)
 
         if not enter(False):
             return -3

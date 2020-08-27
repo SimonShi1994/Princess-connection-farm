@@ -123,6 +123,10 @@ class Device:
     def device_is_connected(d: adbutils.AdbDevice):
         try:
             d.say_hello()
+            s = d.shell("dumpsys activity | grep mResume", timeout=5)
+            if "Error" in s:
+                # adb 崩坏
+                return False
         except adbutils.errors.AdbError:
             return False
         else:
@@ -259,7 +263,7 @@ class AllDevices:
                 print("正忙", " 开机时间", time_period_format(tm - j.time_wake), " 本次工作时间",
                       time_period_format(tm - j.time_busy), end="")
                 if j.cur_acc != "":
-                    print(" 当前任务：账号", j.cur_acc, " 记录保存位置", j.cur_rec, end="")
+                    print(" 当前任务：账号", j.cur_acc, AutomatorRecorder.get_user_state(j.cur_acc, j.cur_rec), end="")
                 print()
         print("=====================================================================")
 
@@ -282,6 +286,8 @@ class PCRInitializer:
         self.tasks: MyPriorityQueue = self.mgr.__getattribute__("PriorityQueue")()  # 优先级队列
         self.out_queue: multiprocessing.Queue = self.mgr.Queue()  # 外部接收信息的队列
         self.listening = False  # 侦听线程是否开启
+        self.finished_tasks = []  # 已经完成的任务
+        self.log_queue = queue.Queue()  # 消息队列
 
     def connect(self):
         """
@@ -294,6 +300,21 @@ class PCRInitializer:
             pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
             exit(1)
 
+    def write_log(self, msg):
+        self.log_queue.put(msg)
+
+    def get_log(self):
+        try:
+            return self.log_queue.get(block=False)
+        except queue.Empty:
+            return None
+
+    def _add_task(self, task5):
+        """
+        队列中添加任务五元组
+        """
+        self.tasks.put(task5)
+
     def add_task(self, task: Tuple[int, str, dict], continue_, rec_addr):
         """
         向优先级队列中增加一个task
@@ -303,7 +324,7 @@ class PCRInitializer:
         rs = AutomatorRecorder(task[1], task[4]).get_run_status()
         if continue_ and rs["finished"]:
             return
-        self.tasks.put(task)
+        self._add_task(task)
 
     def add_tasks(self, tasks: list, continue_, rec_addr):
         """
@@ -387,17 +408,33 @@ class PCRInitializer:
             if _task == (-99999999, None, None, None, None):
                 break
             priority, account, task, continue_, rec_addr = _task
+            out_queue.put({"task": {"statue": "start", "task": _task, "device": serial}})
             out_queue.put({"device": {"serial": serial, "method": "start"}})
             out_queue.put({"device": {"serial": serial, "method": ("register", account, rec_addr)}})
             res = PCRInitializer.run_task(serial, account, task, continue_, rec_addr)
             if not res:
-                queue.put(_task)
+                out_queue.put({"task": {"statue": "fail", "task": _task, "device": serial}})
+            else:
+                out_queue.put({"task": {"statue": "success", "task": _task, "device": serial}})
             if not res and not device.is_connected():
                 # 可能模拟器断开
                 out_queue.put({"device": {"serial": serial, "method": "offline"}})
+                queue.put(_task)
             else:
                 out_queue.put({"device": {"serial": serial, "method": "stop"}})
         out_queue.put({"device": {"serial": serial, "method": "out_process"}})
+
+    def process_task_method(self, msg):
+        priority, account, task, continue_, rec_addr = msg["task"]
+        if msg["statue"] in ["fail", "success"]:
+            self.finished_tasks += [msg["task"]]
+            if msg["statue"] == "fail":
+                self.write_log(
+                    f"账号{account}执行失败！设备：{msg['device']} 状态：{AutomatorRecorder.get_user_state(account, rec_addr)}")
+            else:
+                self.write_log(f"账号{account}执行成功！")
+        elif msg["statue"] == "start":
+            self.write_log(f"账号{account}开始执行，设备：{msg['device']} 进度存储目录 {rec_addr}")
 
     def _listener(self):
         """
@@ -410,6 +447,8 @@ class PCRInitializer:
                 break
             if "device" in msg:
                 self.devices.process_method(msg["device"])
+            if "task" in msg:
+                self.process_task_method(msg["task"])
         self.listening = False
 
     def start(self):
@@ -572,6 +611,20 @@ class Schedule:
             self._save(self._default_state())
             return self._default_state()
 
+    def reload(self):
+        """
+        已经完成的任务再次加入队列中。
+        :return:
+        """
+        Q = self.pcr.tasks.get_attribute("queue")
+        L = []
+        for i in self.pcr.finished_tasks:
+            if i not in Q:
+                L += [i]
+        self.pcr.finished_tasks.clear()
+        for i in L:
+            self.pcr._add_task(i)
+
     def restart(self, name=None):
         """
         重新开始某一个schedule，
@@ -586,6 +639,7 @@ class Schedule:
                 if os.path.isdir(ra):
                     shutil.rmtree(ra, True)
         self._save(self._default_state())
+        self.reload()
 
     def _set_users(self, name, mode):
         """
@@ -605,8 +659,9 @@ class Schedule:
                         rs["error"] = None
                     else:
                         if mode >= 1:
-                            rs["error"] = None
-                            rs["finished"] = False
+                            if rs["error"] is not None:
+                                rs["error"] = None
+                                rs["finished"] = False
                         if mode == 2:
                             rs["current"] = "..."
                     AR.set_run_status(rs)
@@ -743,18 +798,28 @@ class Schedule:
             pcr_log("admin").server_bot("STATE", acc_state=acc_state)
 
         while self.state == 1:
+            # PCRInitializer information
+            while True:
+                p = self.pcr.get_log()
+                if p is None:
+                    break
+                self.log("info", p)
+
             # Report Information
             if not self.is_free() and len(s_sckey) != 0:
                 _time_end = time.time()
                 _time = int(_time_end - _time_start) / 60
                 if _time >= s_sentstate:
+                    self.log("info", "server_bot 播报当前状态")
                     pcr_log("admin").server_bot("STATE", acc_state=PrintToStr(self.show_everything))
                     _time_start = time.time()
+
             if "restart" in self.config:
                 last_time = self._get_last_time()
                 cur_time = time.time()
                 # flag: 一个是否需要restart的标记
                 if last_time == 0 or diffday(cur_time, last_time, self.config["restart"]):
+                    self.log("info", "Config-清除全部运行记录")
                     self.restart()
                     self._set_time(cur_time)
 

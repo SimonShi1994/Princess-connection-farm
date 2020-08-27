@@ -28,7 +28,6 @@ class LoginMixin(BaseMixin):
                 self.app = self.d.session("com.bilibili.priconne")
                 self.appRunning = False
                 continue
-        self.dWidth, self.dHeight = self.d.window_size()
 
     def do_login(self, ac, pwd):  # 执行登陆逻辑
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()

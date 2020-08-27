@@ -41,8 +41,8 @@ class FightBaseMixin(ToolsMixin):
         return np.sum(t)
 
     def get_fight_state(self, screen=None, max_retry=10, delay=1,
-                        check_hat=False, check_xd=False, go_xd=False,
-                        check_jq=False, check_star=False) -> int:
+                        check_hat=False, check_xd=True, go_xd=False,
+                        check_jq=False, check_ghz=True, check_star=False) -> int:
         """
         获取战斗状态
         注：不适用竞技场的战斗！
@@ -56,6 +56,7 @@ class FightBaseMixin(ToolsMixin):
         :param check_jq: 推图中使用，有些boss关卡会有大段前后剧情
             若设置为True，则会检测是否有人说话的框，有的话则大力跳过
             实际情况中，该选项开启很容易导致漏点对话框，买体力会失效。
+        Lparam check_ghz: 检查是否跳出公会战对话框
         :param check_star: 推图中使用，Win界面出来后统计星数并存在self.last_star
         :return:
             -1：未知状态
@@ -114,6 +115,10 @@ class FightBaseMixin(ToolsMixin):
             elif check_jq and self.is_exists(MAIN_BTN["speaker_box"], screen=sc, method="sq"):
                 for _ in range(5):
                     self.click(471, 5, post_delay=0.1)
+                retry = 0
+                continue
+            elif check_ghz and self.is_exists(MAOXIAN_BTN["tuanduizhan"]):
+                self.click_btn(MAOXIAN_BTN["tuanduizhan_quxiao"])
                 retry = 0
                 continue
             else:
