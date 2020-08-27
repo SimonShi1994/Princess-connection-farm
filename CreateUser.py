@@ -155,6 +155,7 @@ def create_account(account, password):
 
 
 def create_account_from_file(file):
+    # 此处会有以前的task参数
     pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s]*([^\\s]*)')
     with open(file, "r", encoding="utf-8") as f:
         for line in f:
