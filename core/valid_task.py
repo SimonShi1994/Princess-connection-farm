@@ -422,7 +422,8 @@ VALID_TASK = ValidTask() \
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h6", "dianzan", "行会点赞", "给指定人点赞",
          [TaskParam("sortflag", int, "给谁点赞", "只能为0或者1的值\n0：给副会长点赞。\n1：给战力最高者点赞。", 0)]) \
-    .add("h7", "zhiyuan", "支援设定", "按照战力排行设定支援（最高的）") \
+    .add("h7", "zhiyuan", "支援设定", "按照战力排行设定支援（最高的）",
+         [TaskParam("zhiyuanjieshu", bool, "支援结束", "是否按下支援结束按钮并收取Mana。", False)]) \
     .add("h8", "join_hanghui", "加入行会", "主动搜索并加入行会（全识图版）",
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h9", "faqijuanzeng", "发起捐赠", "自动发起装备捐赠，需要自行截装备图。",

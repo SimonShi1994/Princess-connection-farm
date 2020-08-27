@@ -239,6 +239,16 @@ HANGHUI_BTN = {
     "jzqqqk": p(405, 429, img="img/hanghui/jzqqqk.bmp", at=(351, 421, 450, 441)),
     # 捐赠请求结果
     "jzqqjg": p(402, 432, img="img/hanghui/jzqqjg.bmp", at=(357, 422, 447, 436)),
+    # 撤下支援 1
+    "zyjs_1": p(406, 252),
+    # 撤下支援 2
+    "zyjs_2": p(407, 373),
+    # 支援结束确认
+    "zyjsqr": p(img="img/hanghui/zyjsqr.bmp", at=(419, 133, 540, 155)),
+    # 支援结束确认_ok
+    "zyjsqr_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    # 收取报酬
+    "sqbc": p(img="img/hanghui/sqbc.bmp", at=(439, 32, 521, 52)),
 
 }
 ZHUCAIDAN_BTN = {

@@ -430,7 +430,7 @@ class RoutineMixin(ShuatuBaseMixin):
                     t += 2
 
         ts = self.AR.get("time_status", UDD["time_status"])
-        if not diffday(time.time(), ts["niudan"]):
+        if not diffday(time.time(), ts["tansuo"]):
             self.log.write_log("info", "今天已经探索过！")
             return
 
