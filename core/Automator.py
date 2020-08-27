@@ -1,5 +1,9 @@
 # coding=utf-8
+import datetime
+import os
 import traceback
+
+import cv2
 
 from automator_mixins._async import AsyncMixin
 from automator_mixins._base import BaseMixin
@@ -93,19 +97,34 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             self.task_start()
         if first_init_home:
             self.init_home()  # 处理第一次进home的一系列问题
-        for retry in range(max_retry):
+        for retry in range(max_retry + 1):
             try:
                 self.ms.run(continue_=continue_)
                 # 刷完啦！标记一下”我刷完了“
                 self.task_finished()
                 return True
             except Exception as e:
-                continue_ = True
-                pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry + 1}/{max_retry}')
+                try:
+                    os.makedirs(f"error_screenshot/{account}", exist_ok=True)
+                    nowtime = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
+                    target = f"error_screenshot/{account}/{nowtime}_RT{retry + 1}.bmp"
+                    cv2.imwrite(target, self.last_screen)
+                    pcr_log(account).write_log(level="error", message=f"错误截图已经保存至{target}")
+                except Exception as es:
+                    pcr_log(account).write_log(level="error", message=f"错误截图保存失败：{es}")
                 if trace_exception_for_debug:
                     tb = traceback.format_exc()
                     pcr_log(account).write_log(level="error", message=tb)
                 last_exception = e
+                continue_ = True
+                if retry == max_retry:
+                    pcr_log(account).write_log(level="error", message=f"main-检测出异常{e} 超出最大重试次数，跳过账号！")
+                    # 标记错误！
+                    self.task_error(str(last_exception))
+                    self.fix_reboot(False)
+                    return False
+                pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry + 1}/{max_retry}')
+
                 try:
                     self.fix_reboot()
                 except Exception as e:
@@ -117,13 +136,6 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                         pass
                     return False
 
-        else:
-            # 超出最大重试次数,放弃啦！
-            pcr_log(account).write_log(level="error", message="超出最大重试次数，跳过账号！")
-            # 标记错误！
-            self.task_error(str(last_exception))
-            self.fix_reboot(False)
-            return False
 
 
 if __name__ == "__main__":
