@@ -746,7 +746,6 @@ class BaseMixin:
         # 标记某一项错误，并停止刷图
         d = self.AR.get_run_status()
         d["finished"] = True
-        d["current"] = "..."
         d["error"] = error
         self.AR.set_run_status(d)
 
