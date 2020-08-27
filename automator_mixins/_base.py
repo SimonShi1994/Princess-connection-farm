@@ -318,12 +318,7 @@ class BaseMixin:
             th_name.exit()
             pass
         else:
-            try:
-                self.do(a, fun)
-                pass
-            except:
-                pass
-        pass
+            self.do(a, fun)
 
     def do(self, a, fun):
         # 自定义，在此定义你要运行的参数
