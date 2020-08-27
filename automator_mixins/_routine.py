@@ -260,8 +260,9 @@ class RoutineMixin(ShuatuBaseMixin):
         while True:
             self.click(82, 84)
             screen_shot_ = self.getscreen()
-            if self.is_exists("img/exp.jpg", screen=screen_shot_) or self.is_exists("img/exp2.jpg",
-                                                                                    screen=screen_shot_):
+            if self.is_exists("img/exp.jpg", screen=screen_shot_) \
+                    or self.is_exists("img/exp2.jpg", screen=screen_shot_) \
+                    or self.is_exists("img/exp3.jpg", screen=screen_shot_):
                 break
             count += 1
             time.sleep(1)

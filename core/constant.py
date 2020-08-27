@@ -116,6 +116,22 @@ MAIN_BTN = {
     "tansuo_sytzcs": p(img="img/tansuo/sytzcs.bmp", at=(485, 432, 575, 452)),
     "tansuo_back": p(30, 32),
     "tansuo_saodangok2": p(472, 478, img="img/tansuo/jrtssy.bmp", at=(412, 462, 539, 487)),
+    "zdjjc": p(578, 402),
+    "gzjjc": p(820, 395),
+
+    # 右侧的kkr
+    "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),
+
+}
+JJC_BTN = {
+    "list": p(img="img/jjc/list.bmp", at=(829, 80, 926, 101)),  # 列表更新
+    "shouqu": p(289, 334),
+    "shouqu_ok": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
+    "player": p(866, 168),
+    "tzcs": p(img="img/jjc/tzcs.bmp", at=(433, 134, 520, 158)),  # 挑战次数
+    "zdks": p(834, 454, img="img/jjc/zdks.bmp", at=(760, 429, 911, 473)),  # 战斗开始
+    "xyb": p(img="img/jjc/xyb.bmp", at=(642, 427, 948, 530)),
+    "dwbz": p(img="img/jjc/dwbz.bmp", at=(431, 24, 524, 51)),  # 队伍编组
 
 }
 JUQING_BTN = {
