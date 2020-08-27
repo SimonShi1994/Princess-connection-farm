@@ -132,6 +132,9 @@ if __name__ == "__main__":
     print("info 查看版本信息")
     print("By TheAutumnOfRice")
     print("----------------------------------------")
+    print("注：关于running_input配置")
+    print("开启后，可以在运行时向控制台输入参数来监测运行状态，")
+    print("但是可能会造成u2不响应的情况。该配置已经默认关闭。")
     while True:
         try:
             cmd = input("> ")
