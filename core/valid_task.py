@@ -385,7 +385,6 @@ class TeamInputer(InputBoxBase):
                 return f"队号A-B中队伍B必须为1~3的整数，但{i}不满足要求"
         return ""
 
-
 class MeiRiHTuInputer(InputBoxBase):
     def create(self):
         print("输入A-B字符串，表示刷Hard A-B图。")
@@ -413,7 +412,6 @@ class MeiRiHTuInputer(InputBoxBase):
                 return str(e)
         return ""
 
-
 VALID_TASK = ValidTask() \
     .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备") \
     .add("h2", "tichuhanghui", "踢出行会", "将战力排名第一人踢出行会") \
@@ -424,7 +422,8 @@ VALID_TASK = ValidTask() \
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h6", "dianzan", "行会点赞", "给指定人点赞",
          [TaskParam("sortflag", int, "给谁点赞", "只能为0或者1的值\n0：给副会长点赞。\n1：给战力最高者点赞。", 0)]) \
-    .add("h7", "zhiyuan", "支援设定", "按照战力排行设定支援（最高的）") \
+    .add("h7", "zhiyuan", "支援设定", "按照战力排行设定支援（最高的）",
+         [TaskParam("zhiyuanjieshu", bool, "支援结束", "是否按下支援结束按钮并收取Mana。", False)]) \
     .add("h8", "join_hanghui", "加入行会", "主动搜索并加入行会（全识图版）",
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h9", "faqijuanzeng", "发起捐赠", "自动发起装备捐赠，需要自行截装备图。",
@@ -469,11 +468,11 @@ VALID_TASK = ValidTask() \
     .add("r5", "shouqurenwu", "收取任务", "收取全部任务奖励。\n如果日常任务和主线任务都存在，需要收取两遍。") \
     .add("r6", "goumaitili", "购买体力", "购买一定次数的体力",
          [TaskParam("times", int, "购买次数", "购买体力的次数"),
-          TaskParam("limit_today", bool, "是否用times限制今天脚本购买体力的次数", "True/False"), ]) \
+          TaskParam("limit_today", bool, "是否用times限制今天脚本购买体力的次数", "True/False", False), ]) \
     .add("r7", "goumaimana", "购买MANA", "购买指定次数的mana",
          [TaskParam("mode", int, "模式", "如果mode为0，则为购买mana的次数；\n如果mode为1，则为购买10连mana的次数。【宝石警告】", 1),
           TaskParam("times", int, "购买mana的次数", "购买mana的次数(第一次单抽不计入)"),
-          TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False"), ]) \
+          TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False", False), ]) \
     .add("r8", "buyExp", "购买经验", "买空商店里的经验药水") \
     .add("r9", "tansuo", "探索", "进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
@@ -550,6 +549,8 @@ VALID_TASK = ValidTask() \
                                    "扫过的图当日不会再扫，第二天重置。",
          [TaskParam("H_list", list, "H图列表", "H图图号", inputbox=MeiRiHTuInputer()),
           TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
-          TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True)]) \
+          TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True),
+          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
     .add("s7-a", "xiaohaoHtu", "每日H图全刷", "从H1-1开始一直往后刷直到没法刷为止。",
-         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0)])
+         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)])

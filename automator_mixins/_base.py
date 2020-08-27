@@ -770,6 +770,24 @@ class BaseMixin:
             return True
         return False
 
+    def right_kkr(self, screen=None):
+        """
+        处理提示kkr。一般在右边。
+        处理方法：点屏幕
+        :param screen:
+        """
+        flag = False
+        if screen is None:
+            screen = self.getscreen()
+        cnt = 0
+        while self.is_exists(MAIN_BTN["right_kkr"], screen=screen):
+            self.click(1, 1, post_delay=1)
+            flag = True
+            cnt += 1
+            if cnt >= 10:
+                raise Exception("点了10次，可可罗依然没有消失！")
+            screen = self.getscreen()
+        return flag
 
 class Multithreading(threading.Thread, BaseMixin):
     """

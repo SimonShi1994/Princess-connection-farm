@@ -116,6 +116,22 @@ MAIN_BTN = {
     "tansuo_sytzcs": p(img="img/tansuo/sytzcs.bmp", at=(485, 432, 575, 452)),
     "tansuo_back": p(30, 32),
     "tansuo_saodangok2": p(472, 478, img="img/tansuo/jrtssy.bmp", at=(412, 462, 539, 487)),
+    "zdjjc": p(578, 402),
+    "gzjjc": p(820, 395),
+
+    # 右侧的kkr
+    "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),
+
+}
+JJC_BTN = {
+    "list": p(img="img/jjc/list.bmp", at=(829, 80, 926, 101)),  # 列表更新
+    "shouqu": p(289, 334),
+    "shouqu_ok": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
+    "player": p(866, 168),
+    "tzcs": p(img="img/jjc/tzcs.bmp", at=(433, 134, 520, 158)),  # 挑战次数
+    "zdks": p(834, 454, img="img/jjc/zdks.bmp", at=(760, 429, 911, 473)),  # 战斗开始
+    "xyb": p(img="img/jjc/xyb.bmp", at=(642, 427, 948, 530)),
+    "dwbz": p(img="img/jjc/dwbz.bmp", at=(431, 24, 524, 51)),  # 队伍编组
 
 }
 JUQING_BTN = {
@@ -147,13 +163,14 @@ JIAYUAN_BTN = {
 }
 
 NIUDAN_BTN = {
+    # 扭蛋的坐标会偏移！
     "PT_reset_ok": p(479, 365),
     "putong": p(862, 71),
-    "putong_mianfei": p(717, 354, img="img/niudan/putong_mianfei.bmp", at=(680, 358, 754, 383)),
+    "putong_mianfei": p(717, 364, img="img/niudan/putong_mianfei.bmp", at=(650, 340, 750, 400)),
     "putong_quxiao": p(367, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
     "putong_ok": p(591, 360, img="img/ui/ok_btn_1.bmp", at=(493, 347, 688, 387)),
     "niudanjieguo_ok": p(481, 443, img="img/ui/ok_btn_2.bmp", at=(383, 423, 597, 462)),
-    "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(647, 329, 784, 378)),
+    "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(610, 320, 750, 450)),
 
 }
 HANGHUI_BTN = {
@@ -172,7 +189,7 @@ HANGHUI_BTN = {
     # 加入行会
     "join_btn": p(854, 444, img='img/jiaru.bmp', at=(749, 427, 933, 460)),
     # 支援设定
-    "zhiyuansheding": p(83, 348, img="img/hanghui/zhiyuansheding.bmp", at=(48, 336, 120, 361)),
+    "zhiyuansheding": p(83, 348, img="img/hanghui/zhiyuansheding.bmp", at=(48, 336, 120, 362)),
     # 地下城支援1
     "zhiyuan_dxc1": p(105, 232, img="img/hanghui/zhiyuanjuese1.bmp", at=(65, 194, 142, 272)),
     # 地下城支援2
@@ -238,6 +255,16 @@ HANGHUI_BTN = {
     "jzqqqk": p(405, 429, img="img/hanghui/jzqqqk.bmp", at=(351, 421, 450, 441)),
     # 捐赠请求结果
     "jzqqjg": p(402, 432, img="img/hanghui/jzqqjg.bmp", at=(357, 422, 447, 436)),
+    # 撤下支援 1
+    "zyjs_1": p(406, 252),
+    # 撤下支援 2
+    "zyjs_2": p(407, 373),
+    # 支援结束确认
+    "zyjsqr": p(img="img/hanghui/zyjsqr.bmp", at=(419, 133, 540, 155)),
+    # 支援结束确认_ok
+    "zyjsqr_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    # 收取报酬
+    "sqbc": p(img="img/hanghui/sqbc.bmp", at=(439, 32, 521, 52)),
 
 }
 ZHUCAIDAN_BTN = {
@@ -525,6 +552,7 @@ MAOXIAN_BTN = {
     "tiaozhan_on": p(img="img/maoxian/tiaozhan_on.bmp", at=(768, 439, 910, 470)),
     "tuanduizhan": p(img="img/maoxian/tztdzb.bmp", at=(415, 77, 540, 97)),
     "tuanduizhan_quxiao": p(371, 433, img="img/ui/quxiao.bmp", at=(274, 415, 468, 451)),
+    "sdqqr": p(img="img/maoxian/sdqqr.bmp", at=(429, 129, 527, 154)),  # 扫荡券确认
 }
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(453, 74, 516, 88)),

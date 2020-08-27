@@ -260,8 +260,9 @@ class RoutineMixin(ShuatuBaseMixin):
         while True:
             self.click(82, 84)
             screen_shot_ = self.getscreen()
-            if self.is_exists("img/exp.jpg", screen=screen_shot_) or self.is_exists("img/exp2.jpg",
-                                                                                    screen=screen_shot_):
+            if self.is_exists("img/exp.jpg", screen=screen_shot_) \
+                    or self.is_exists("img/exp2.jpg", screen=screen_shot_) \
+                    or self.is_exists("img/exp3.jpg", screen=screen_shot_):
                 break
             count += 1
             time.sleep(1)
@@ -430,7 +431,7 @@ class RoutineMixin(ShuatuBaseMixin):
                     t += 2
 
         ts = self.AR.get("time_status", UDD["time_status"])
-        if not diffday(time.time(), ts["niudan"]):
+        if not diffday(time.time(), ts["tansuo"]):
             self.log.write_log("info", "今天已经探索过！")
             return
 

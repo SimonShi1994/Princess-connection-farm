@@ -183,8 +183,11 @@ class HanghuiMixin(ToolsMixin):
         self.click_btn(HANGHUI_BTN["hanghui_ok"], elsedelay=1)
         self.lock_home()
 
-    def zhiyuan(self):
+    def zhiyuan(self, zhiyuanjieshu=False):
         # Add: By TheAutumnOfRice 考虑了无法撤下支援的情况
+        """
+        :param zhiyuanjieshu: 是否尝试点击”支援结束“按钮
+        """
         self.lock_home()
         # 进入
         self.click_btn(MAIN_BTN["hanghui"], until_appear=HANGHUI_BTN["zhiyuansheding"])
@@ -209,6 +212,19 @@ class HanghuiMixin(ToolsMixin):
                     break
                 # 支援1
 
+        def shouqubaochou():
+            self.click_btn(HANGHUI_BTN["zyjsqr_ok"], until_appear=HANGHUI_BTN["sqbc"])
+            for _ in range(5):
+                self.click(40, 82)
+
+        if zhiyuanjieshu:
+            if self.click_btn(HANGHUI_BTN["zyjs_1"], until_appear=HANGHUI_BTN["zyjsqr"], elsedelay=3, retry=3,
+                              is_raise=False):
+                shouqubaochou()
+
+            if self.click_btn(HANGHUI_BTN["zyjs_2"], until_appear=HANGHUI_BTN["zyjsqr"], elsedelay=3, retry=3,
+                              is_raise=False):
+                shouqubaochou()
         if self.click_btn(HANGHUI_BTN["zhiyuan_dxc1"], until_appear=HANGHUI_BTN["zhiyuanquxiao"], elsedelay=1,
                           timeout=6, is_raise=False):
             zhiyuansheding()

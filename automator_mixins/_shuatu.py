@@ -583,7 +583,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             max_tu = f"{MAX_MAP}-3"
         self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, var=var,auto_upgrade = auto_upgrade)
 
-    def shuatu_daily(self, tu_order: list, daily_tili=0, xianding=False, var={}):
+    def shuatu_daily(self, tu_order: list, daily_tili=0, xianding=False, do_tuitu=False, var={}):
         """
         每日刷图（使用扫荡券）。每天重置一次刷图记录。
         气死我了，本来想做通用刷图的，可全是BUG，现在看来只能刷H本了。
@@ -602,6 +602,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             该刷图列表表示的刷图顺序为录入顺序。
         :param daily_tili: 每日买体力次数。
         :param xianding: 是否买空限定商店（如果出现的话）
+        :param do_tuitu: 不能扫荡时，是否手刷
         """
         # 每日更新
         from core.utils import diffday
@@ -686,6 +687,17 @@ class ShuatuMixin(ShuatuBaseMixin):
                 self._zdzb_info = ""
                 s = self.zhandouzuobiao(x, y, 1, d, use_saodang=True, buy_tili=buy_tili, buy_cishu=0, xianding=xianding,
                                         var=var)
+                if s == -2 and self._zdzb_info == "nosaodang" and do_tuitu:
+                    # 无扫荡，进推图
+                    self._zdzb_info = ""
+                    s = self.zhandouzuobiao(x, y, 1, d, use_saodang="auto", buy_tili=buy_tili, buy_cishu=0,
+                                            xianding=xianding,
+                                            end_mode=1, juqing_in_fight=True, var=var)
+                    # 坐标重新确认
+                    if m == "N":
+                        self.select_normal_id(a)
+                    else:
+                        self.select_hard_id(a)
                 new_tili = var["cur_tili"]
                 if new_tili > last_tili:
                     # 之前的战斗中购买了体力
@@ -732,32 +744,36 @@ class ShuatuMixin(ShuatuBaseMixin):
                     self.lock_home()
                     return
                 else:
-                    raise Exception(f"未知的错误：s={s}, info={self._zdzb_info}")
+                    self.log.write_log("info", "战斗失败，刷图终止。")
+                    self.lock_home()
+                    return
             self.log.write_log("info", f"{a}-{b}刷图成功！")
         self.log.write_log("info", f"全部刷图任务已经完成。")
         self.lock_home()
 
-    def meiriHtu(self, H_list, daily_tili, xianding, var={}):
+    def meiriHtu(self, H_list, daily_tili, xianding, do_tuitu, var={}):
         """
         每日H本。
         H_list：list["A-B"],刷什么H图
         daily_tili：购买体力次数
         xianding：是否买空限定商店
+        do_tuitu 是否允许推图
         """
         lst = []
         for s in H_list:
             A, B = tuple(s.split("-"))
             lst += [f"H{A}-{B}-3"]
-        self.shuatu_daily(lst, daily_tili, xianding, var=var)
+        self.shuatu_daily(lst, daily_tili, xianding, do_tuitu, var=var)
 
-    def xiaohaoHtu(self, daily_tili, var={}):
+    def xiaohaoHtu(self, daily_tili, do_tuitu, var={}):
         """
         小号每日打H本。
         一个接一个打。
         :param daily_tili:购买体力次数
+        :param do_tuitu: 是否允许推图
         """
         L = []
         for i in range(MAX_MAP):
             for j in [1, 2, 3]:
                 L += [f"{i + 1}-{j}"]
-        self.meiriHtu(L, daily_tili, False, var)
+        self.meiriHtu(L, daily_tili, False, do_tuitu, var)

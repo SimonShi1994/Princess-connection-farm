@@ -373,10 +373,11 @@ class PCRInitializer:
             a.start_shuatu()
             a.login_auth(account, password)
             acclog.Account_Login(account)
-            if a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr):
+            out = a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr)
+            if out:
                 a.change_acc()
             acclog.Account_Logout(account)
-            return True
+            return out
         except Exception as e:
             pcr_log(account).write_log('error', message=f'initialize-检测出异常：{type(e)} {e}')
             if trace_exception_for_debug:
@@ -542,6 +543,7 @@ class Schedule:
         self.always_restart_name = []  # record=2，循环执行的列表
         self._parse()
         self._init_status()
+        self.run_thread: Optional[threading.Thread] = None
 
     def _parse(self):
         """
@@ -859,7 +861,7 @@ class Schedule:
         if self.state == 0:
             self.state = 1
             self._init_status()
-            threading.Thread(target=Schedule._run, args=(self,), daemon=True).start()
+            self.run_thread = threading.Thread(target=Schedule._run, args=(self,), daemon=True).start()
             self.log("info", "Schedule线程启动！")
         else:
             self.log("info", "Schedule线程已经启动了。")
@@ -924,6 +926,9 @@ class Schedule:
         一直运行直到队列全部任务运行完毕
         """
         while True:
+            if "restart" in self.config:
+                time.sleep(1000)
+                continue
             for i in self.run_status:
                 if self.run_status[i] == 0:
                     break

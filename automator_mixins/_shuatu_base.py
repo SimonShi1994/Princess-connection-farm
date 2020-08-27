@@ -389,11 +389,17 @@ class ShuatuBaseMixin(FightBaseMixin):
                             self.click_btn(MAOXIAN_BTN["quxiao"])
                             return -1
                         elif c == 1:
+                            for _ in range(5):
+                                self.click(45, 32)  # 瞎点点空一切对话框
                             continue
                         for _ in range(5):
                             self.click(45, 32)  # 瞎点点空一切对话框
                         self.click_btn(MAOXIAN_BTN["quxiao"])
                         return 0
+                    if not self.lock_img(MAOXIAN_BTN["sdqqr"], timeout=10, is_raise=False):
+                        for _ in range(5):
+                            self.click(45, 32)  # 瞎点点空一切对话框
+                        continue
                     self.click_btn(MAOXIAN_BTN["saodang_ok"], wait_self_before=True)
                     self.lock_img([MAOXIAN_BTN["saodang_tiaoguo"], saodang_ok2])
                     out = self.click_btn(MAOXIAN_BTN["saodang_tiaoguo"], until_appear={
@@ -799,6 +805,15 @@ class ShuatuBaseMixin(FightBaseMixin):
                 if UIMatcher.img_where(screen_shot_, lockpic, at=screencut):
                     break
 
+    def upgrade_kkr(self, screen_shot=None):
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+        if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen_shot):
+            self.chulijiaocheng(turnback=None)
+            self.enter_upgrade()
+            return True
+        return False
+
     def enter_upgrade(self):
         self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
 
@@ -821,7 +836,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         if mode == 2:
             self.chulijiaocheng(turnback=None)
             self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
-            self.click_btn(JUESE_BTN["first_juese"], until_appear=JUESE_BTN["mana_ball"])
+            self.click_btn(JUESE_BTN["first_juese"], until_appear=JUESE_BTN["mana_ball"], side_check=self.upgrade_kkr)
 
     def get_tuijian_stars(self, screen=None):
         """
@@ -869,6 +884,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                     sc = self.getscreen()
                 elif m:
                     break
+                if self.upgrade_kkr(sc):
+                    break
             else:
                 raise Exception("原因不明的wait_for_change错误！")
 
@@ -877,7 +894,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             if do_rank and self.is_exists(JUESE_BTN["rank_tisheng"]):
                 out = self.click_btn(JUESE_BTN["rank_tisheng"], until_appear={
                     JUESE_BTN["rank_tisheng_ok"]: 1,
-                    JUESE_BTN["rank_tisheng_ok_noequ"]: 2})
+                    JUESE_BTN["rank_tisheng_ok_noequ"]: 2}, side_check=self.upgrade_kkr)
                 if out == 1:
                     self.click_btn(JUESE_BTN["rank_tisheng_ok"])
                 else:
@@ -895,7 +912,7 @@ class ShuatuBaseMixin(FightBaseMixin):
 
             while True:
                 if self.is_exists(JUESE_BTN["zdqh"], method="sq"):
-                    self.click_btn(JUESE_BTN["zdqh"])
+                    self.click_btn(JUESE_BTN["zdqh"], side_check=self.upgrade_kkr)
                     mode = self.lock_img({JUESE_BTN["rank_tisheng_ok"]: 1, JUESE_BTN["tjqhcd"]: 2})
                     if mode == 1:
                         # 存在正常的强化
@@ -923,7 +940,6 @@ class ShuatuBaseMixin(FightBaseMixin):
                                 break
                             if not self.check_shuatu():
                                 _xiadian()
-                                # TODO 这边不知为何跳不出
                                 break
                             stars = self.get_tuijian_stars(screen=self.last_screen)
                             if stars == 3:
