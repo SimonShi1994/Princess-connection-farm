@@ -373,10 +373,11 @@ class PCRInitializer:
             a.start_shuatu()
             a.login_auth(account, password)
             acclog.Account_Login(account)
-            if a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr):
+            out = a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr)
+            if out:
                 a.change_acc()
             acclog.Account_Logout(account)
-            return True
+            return out
         except Exception as e:
             pcr_log(account).write_log('error', message=f'initialize-检测出异常：{type(e)} {e}')
             if trace_exception_for_debug:
