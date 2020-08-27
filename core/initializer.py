@@ -927,7 +927,7 @@ class Schedule:
         """
         while True:
             if "restart" in self.config:
-                time.sleep(100000000)
+                time.sleep(1000)
                 continue
             for i in self.run_status:
                 if self.run_status[i] == 0:
