@@ -828,18 +828,17 @@ class Schedule:
             for ind, t5 in enumerate(self.SL):
                 typ, nam, bat, cond, rec = t5
                 # 已经完成、跳过
+                if self.run_status[rec] != 0 and (nam, bat) in self.always_restart_name:
+                    self.log("info", f"计划 {nam} 重置。")
+                    self.restart(nam)
                 if self.run_status[rec] != 0:
                     continue
                 # 检查是否已经完成
                 if self.is_complete(rec):
                     # 记录设置2：运行完成后立刻restart
-                    if (nam, bat) in self.always_restart_name:
-                        self.restart(nam)
-                    else:
-                        self.run_status[rec] = 1
-                        self.log("info", f"计划** {nam} - {bat} **已经完成")
-                        self._set_status()
-                    continue
+                    self.run_status[rec] = 1
+                    self.log("info", f"计划** {nam} - {bat} **已经完成")
+                    self._set_status()
                 # 已经处理过
                 if self.checked_status[rec] is True:
                     continue
