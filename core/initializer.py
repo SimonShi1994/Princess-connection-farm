@@ -308,11 +308,16 @@ class PCRInitializer:
         except queue.Empty:
             return None
 
-    def _add_task(self, task5):
+    def _add_task(self, task):
         """
         队列中添加任务五元组
         """
-        self.tasks.put(task5)
+        rs = AutomatorRecorder(task[1], task[4]).get_run_status()
+        if task[3] and rs["finished"]:
+            if task not in self.finished_tasks:
+                self.finished_tasks += [task]
+        else:
+            self.tasks.put(task)
 
     def add_task(self, task: Tuple[int, str, dict], continue_, rec_addr):
         """
@@ -320,9 +325,6 @@ class PCRInitializer:
         该task为四元组，(priority, account, task, continue_, rec_addr)
         """
         task = (0 - task[0], task[1], task[2], continue_, rec_addr)  # 最大优先队列
-        rs = AutomatorRecorder(task[1], task[4]).get_run_status()
-        if continue_ and rs["finished"]:
-            return
         self._add_task(task)
 
     def add_tasks(self, tasks: list, continue_, rec_addr):
@@ -384,6 +386,7 @@ class PCRInitializer:
                 pcr_log(account).write_log('error', message=tb)
             try:
                 a.fix_reboot(False)
+                return False
             except Exception as e:
                 pcr_log(account).write_log('error', message=f'initialize-自动重启失败：{type(e)} {e}')
                 if trace_exception_for_debug:
@@ -632,13 +635,6 @@ class Schedule:
         """
         self._init_status()
         self._set_users(name, 2)
-        for _, nam, _, _, ra in self.SL:
-            if name is None and nam in self.not_restart_name:
-                continue
-            if name is None or name == nam:
-                if os.path.isdir(ra):
-                    shutil.rmtree(ra, True)
-        self._save(self._default_state())
         self.reload()
 
     def _set_users(self, name, mode):
@@ -657,13 +653,19 @@ class Schedule:
                     if mode == 0:
                         rs["finished"] = True
                         rs["error"] = None
-                    else:
-                        if mode >= 1:
-                            if rs["error"] is not None:
-                                rs["error"] = None
+                    if mode == 1:
+                        if rs["error"] is not None:
+                            rs["error"] = None
+                            rs["finished"] = False
+                    if mode == 2:
+                        if name is None and nam in self.not_restart_name:
+                            continue
+                        if name is None or name == nam:
+                            if os.path.isdir(rec):
+                                shutil.rmtree(rec, True)
+                            if rs["error"] is None:
                                 rs["finished"] = False
-                        if mode == 2:
-                            rs["current"] = "..."
+                                rs["current"] = "..."
                     AR.set_run_status(rs)
 
     def clear_error(self, name=None):
