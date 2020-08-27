@@ -346,7 +346,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     break
                 last_lose = True
                 if auto_upgrade > 0:
-                    self.auto_upgrade(buy_tili=buy_tili, do_shuatu=True if auto_upgrade == 2 else 1, var=var)
+                    self.auto_upgrade(buy_tili=buy_tili, do_shuatu=True if auto_upgrade == 2 else False, var=var)
                     # 还要回来
                     enter()
                     continue
@@ -553,7 +553,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         if max_tu == "max":
             max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
-        self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var)
+        self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, auto_upgrade=1, var=var)
 
     def zidongtuitu_hard(self, buy_tili=3, max_tu="max", var={}):
         """
@@ -569,7 +569,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         if max_tu == "max":
             max_tu = f"{MAX_MAP}-3"
-        self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, var=var)
+        self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, auto_upgrade=1, var=var)
 
     def shuatu_daily(self, tu_order: list, daily_tili=0, xianding=False, var={}):
         """

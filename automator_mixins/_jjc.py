@@ -24,12 +24,7 @@ class JJCMixin(ToolsMixin):
         # 进入jjc
         self.enterJJC(579, 411)
 
-        # 选择第一位进入对战
-        self.click(604, 162)
-        time.sleep(4)
-        # 点击战斗开始
-        self.click(822, 456)
-        self.lock_img('img/xiayibu.jpg', elsedelay=8, timeout=180)
+        self.lock_img('img/xiayibu.jpg', elseclick=[(604, 162), (822, 456)], elseafter=4, elsedelay=8, timeout=180)
         self.click(803, 496)
         time.sleep(1)
         self.lock_home()
