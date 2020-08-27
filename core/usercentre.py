@@ -169,7 +169,7 @@ def check_task_dict(d: dict, is_raise=False) -> bool:
             params = VALID_TASK.T[i["type"]]["params"]
 
             for j in params:
-                if j.default is not None:
+                if j.default is None:
                     assert j.key in i, f"任务 {i['type']} 必须含有参数 {j.key}！"
 
             v_k = [i.key for i in params]

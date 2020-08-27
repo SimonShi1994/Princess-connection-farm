@@ -538,6 +538,8 @@ VALID_TASK = ValidTask() \
                                    "扫过的图当日不会再扫，第二天重置。",
          [TaskParam("H_list", list, "H图列表", "H图图号", inputbox=MeiRiHTuInputer()),
           TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
-          TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True)]) \
+          TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True),
+          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
     .add("s7-a", "xiaohaoHtu", "每日H图全刷", "从H1-1开始一直往后刷直到没法刷为止。",
-         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0)])
+         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)])

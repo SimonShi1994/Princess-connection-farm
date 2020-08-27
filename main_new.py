@@ -1,5 +1,4 @@
 import os
-import time
 import traceback
 from typing import Optional
 
@@ -27,7 +26,7 @@ def RunFirstTime(schedule):
     if running_input:
         print("注：虽然这么做很反人类，但是在前端出来之前，你还可以试试在运行中输入help。可以在config.ini - running_input中关闭该功能。")
     else:
-        time.sleep(100000000)
+        SCH.join()
 
 
 def RunContinue(schedule):
@@ -44,7 +43,7 @@ def RunContinue(schedule):
     if running_input:
         print("注：虽然这么做很反人类，但是在前端出来之前，你还可以试试在运行中输入help。可以在config.ini - running_input中关闭该功能。")
     else:
-        time.sleep(100000000)
+        SCH.join()
 
 
 def CheckTuitu():

@@ -147,13 +147,14 @@ JIAYUAN_BTN = {
 }
 
 NIUDAN_BTN = {
+    # 扭蛋的坐标会偏移！
     "PT_reset_ok": p(479, 365),
     "putong": p(862, 71),
-    "putong_mianfei": p(717, 354, img="img/niudan/putong_mianfei.bmp", at=(680, 358, 754, 383)),
+    "putong_mianfei": p(717, 364, img="img/niudan/putong_mianfei.bmp", at=(650, 340, 750, 400)),
     "putong_quxiao": p(367, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
     "putong_ok": p(591, 360, img="img/ui/ok_btn_1.bmp", at=(493, 347, 688, 387)),
     "niudanjieguo_ok": p(481, 443, img="img/ui/ok_btn_2.bmp", at=(383, 423, 597, 462)),
-    "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(647, 329, 784, 378)),
+    "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(610, 320, 750, 450)),
 
 }
 HANGHUI_BTN = {
@@ -525,6 +526,7 @@ MAOXIAN_BTN = {
     "tiaozhan_on": p(img="img/maoxian/tiaozhan_on.bmp", at=(768, 439, 910, 470)),
     "tuanduizhan": p(img="img/maoxian/tztdzb.bmp", at=(415, 77, 540, 97)),
     "tuanduizhan_quxiao": p(371, 433, img="img/ui/quxiao.bmp", at=(274, 415, 468, 451)),
+    "sdqqr": p(img="img/maoxian/sdqqr.bmp", at=(429, 129, 527, 154)),  # 扫荡券确认
 }
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(453, 74, 516, 88)),

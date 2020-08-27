@@ -389,11 +389,17 @@ class ShuatuBaseMixin(FightBaseMixin):
                             self.click_btn(MAOXIAN_BTN["quxiao"])
                             return -1
                         elif c == 1:
+                            for _ in range(5):
+                                self.click(45, 32)  # 瞎点点空一切对话框
                             continue
                         for _ in range(5):
                             self.click(45, 32)  # 瞎点点空一切对话框
                         self.click_btn(MAOXIAN_BTN["quxiao"])
                         return 0
+                    if not self.lock_img(MAOXIAN_BTN["sdqqr"], timeout=10, is_raise=False):
+                        for _ in range(5):
+                            self.click(45, 32)  # 瞎点点空一切对话框
+                        continue
                     self.click_btn(MAOXIAN_BTN["saodang_ok"], wait_self_before=True)
                     self.lock_img([MAOXIAN_BTN["saodang_tiaoguo"], saodang_ok2])
                     out = self.click_btn(MAOXIAN_BTN["saodang_tiaoguo"], until_appear={

@@ -542,6 +542,7 @@ class Schedule:
         self.always_restart_name = []  # record=2，循环执行的列表
         self._parse()
         self._init_status()
+        self.run_thread: Optional[threading.Thread] = None
 
     def _parse(self):
         """
@@ -859,7 +860,7 @@ class Schedule:
         if self.state == 0:
             self.state = 1
             self._init_status()
-            threading.Thread(target=Schedule._run, args=(self,), daemon=True).start()
+            self.run_thread = threading.Thread(target=Schedule._run, args=(self,), daemon=True).start()
             self.log("info", "Schedule线程启动！")
         else:
             self.log("info", "Schedule线程已经启动了。")
@@ -924,6 +925,9 @@ class Schedule:
         一直运行直到队列全部任务运行完毕
         """
         while True:
+            if "restart" in self.config:
+                time.sleep(100000000)
+                continue
             for i in self.run_status:
                 if self.run_status[i] == 0:
                     break
