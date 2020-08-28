@@ -2,7 +2,6 @@
 新的启动函数，支持Batch，schedule操作等。
 """
 import multiprocessing
-import shutil
 import time
 import traceback
 from multiprocessing import Process
@@ -637,6 +636,17 @@ class Schedule:
         self._set_users(name, 2)
         self.reload()
 
+    def del_file_in_path(self, path):
+        for i in os.listdir(path):
+            path_file = os.path.join(path, i)
+            if os.path.isfile(path_file):
+                try:
+                    os.remove(path_file)
+                except Exception as e:
+                    self.log('error', f'删除记录文件出现错误：{e}')
+            else:
+                self.del_file_in_path(path_file)
+
     def _set_users(self, name, mode):
         """
         统一设置run_status。
@@ -662,7 +672,7 @@ class Schedule:
                             continue
                         if name is None or name == nam:
                             if os.path.isdir(rec):
-                                shutil.rmtree(rec, True)
+                                self.del_file_in_path(rec)
                             if rs["error"] is None:
                                 rs["finished"] = False
                                 rs["current"] = "..."
