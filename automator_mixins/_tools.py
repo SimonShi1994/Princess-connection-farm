@@ -152,7 +152,7 @@ class ToolsMixin(BaseMixin):
         time.sleep(random.uniform(0.8, 1.2))
         client = AipOcr(**config)
         if screen_shot is None:
-            screen_shot = self.d.screenshot(format='opencv')
+            screen_shot = self.getscreen()
         # from numpy import rot90
         # screen_shot_ = rot90(screen_shot_)  # 旋转90°
         if baidu_ocr_img:

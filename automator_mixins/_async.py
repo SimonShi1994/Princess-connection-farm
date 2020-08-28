@@ -29,7 +29,7 @@ class AsyncMixin(BaseMixin):
                 # time.sleep(10)
                 # 过快可能会卡
                 time.sleep(cumulative_time)
-                screenshot = self.d.screenshot(format="opencv")
+                screenshot = self.getscreen()
                 if self.is_exists(screen=screenshot, img='img/juqing/caidanyuan.bmp', at=(860, 0, 960, 100)):
                     self.lock_img('img/juqing/caidanyuan.bmp', ifclick=[(917, 39)], ifdelay=self.change_time, retry=15)  # 菜单
                     self.lock_img('img/juqing/tiaoguo_1.bmp', ifclick=[(807, 44)], ifdelay=self.change_time,
@@ -70,7 +70,7 @@ class AsyncMixin(BaseMixin):
             try:
                 time.sleep(bad_connecting_time+cumulative_time)
                 # 过快可能会卡
-                screenshot = self.d.screenshot(format="opencv")
+                screenshot = self.getscreen()
                 time_start = time.time()
                 if self.is_exists(screen=screenshot, img='img/connecting.bmp', at=(748, 20, 931, 53)):
                     cumulative_time = 0.1
@@ -124,19 +124,19 @@ class AsyncMixin(BaseMixin):
         暂时废弃，等优化
         """
         global screenshot
-        screenshot = self.d.screenshot(format="opencv")
+        screenshot = self.getscreen()
         while Multithreading({}).is_stopped():
             time.sleep(0.8+self.change_time)
             # print('screen', self.change_time)
             time.sleep(async_screenshot_freq)
             # 如果之前已经截过图了，就不截图了
             if time.time() - self.last_screen_time > async_screenshot_freq:
-                screenshot = self.d.screenshot(format="opencv")
+                screenshot = self.getscreen()
             else:
                 if self.last_screen is not None:
                     screenshot = self.last_screen
                 else:
-                    screenshot = self.d.screenshot(format="opencv")
+                    screenshot = self.getscreen()
             # print('截图中')
             # cv2.imwrite('test.bmp', screenshot)
 
@@ -224,7 +224,8 @@ class AsyncMixin(BaseMixin):
     def stop_th(self):
         Multithreading({}).pause()
         if fast_screencut:
-            self.receive_minicap.stop()
+            if self.receive_minicap is not None:
+                self.receive_minicap.stop()
         # print(Multithreading({}).is_stopped())
 
     def start_async(self):

@@ -50,8 +50,8 @@ class ReceiveFromMinicap:
         # 模拟器地址
         self.address = address
         # 设置端口
-        d = adbutils.adb.device(address)
-        self.lport = d.forward_port(7912)
+        self.d = adbutils.adb.device(address)
+        self.lport = self.d.forward_port(7912)
         # 这里设置websocket
         self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
                                          # 这三个回调函数见下面
@@ -81,6 +81,7 @@ class ReceiveFromMinicap:
                     if self.ws_stop:
                         return
                     self.ws.close()
+                    self.lport = self.d.forward_port(7912)
                     self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
                                                      # 这三个回调函数见下面
                                                      on_message=self.on_message,
@@ -115,6 +116,16 @@ class ReceiveFromMinicap:
     def on_error(self, error):
         if debug:
             print(error)
+        if self.ws_stop:
+            return
+        self.ws.close()
+        self.lport = self.d.forward_port(7912)
+        self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
+                                         # 这三个回调函数见下面
+                                         on_message=self.on_message,
+                                         on_close=self.on_close,
+                                         on_error=self.on_error)
+        time.sleep(1)
 
     # 关闭ws的回调函数
     def on_close(self):
