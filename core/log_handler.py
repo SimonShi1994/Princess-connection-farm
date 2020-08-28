@@ -87,8 +87,9 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
                 acc_state = CheckStateReturn()
             message = ''.join(message).replace('\n', '')
             if s_level in lev_dic[log_lev]:
-                self.acc_message[self.acc_name].append(message)
-                self.acc_message[self.acc_name].append('\n')
+                if s_level not in lev_dic['3']:
+                    self.acc_message[self.acc_name].append(message)
+                    self.acc_message[self.acc_name].append('\n')
             # print(self.acc_message[self.acc_name])
             # print(len(self.acc_message[self.acc_name]))
             if s_level in lev_dic['3'] or (s_level in lev_dic[log_lev] and len(self.acc_message[self.acc_name]) >= log_cache):

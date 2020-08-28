@@ -43,16 +43,6 @@ class HanghuiMixin(ToolsMixin):
                     else:
                         self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], elsedelay=self.change_time,
                                          retry=1)
-                    # self.lock_img('img/juanzengqingqiu.jpg', ifclick=[(367, 39)], retry=2)
-                    # screen_shot = self.getscreen()
-                    # if UIMatcher.img_where(screen_shot, 'img/juanzengqingqiu.jpg'):
-                    #    self.click(367, 39, post_delay=2)  # 点击定位捐赠按钮
-                    #    screen_shot = self.getscreen()
-                    #    self.guochang(screen_shot, ['img/juanzeng.jpg'], suiji=0)
-                    #    self.click(644, 385, pre_delay=1, post_delay=3)  # 点击max
-                    #    screen_shot = self.getscreen()
-                    #    self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
-                    #    self.click(560, 369, pre_delay=2, post_delay=1)
                 while True:
                     self.click(1, 1, post_delay=self.change_time)
                     # 防止ok卡住了

@@ -174,6 +174,7 @@ class RoutineMixin(ShuatuBaseMixin):
             if not state:
                 self.log.write_log("warning", "体力达到上限，中断体力购买")
                 break
+
             self.lock_no_img(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_ok"], elsedelay=2)
             state = self.lock_img(MAIN_BTN["tili_ok2"], retry=3)
             # TODO 宝石不够时的判断
@@ -193,6 +194,7 @@ class RoutineMixin(ShuatuBaseMixin):
         # 这里限制了一天只能购买mana多少次，通过OCR判断
         try:
             if limit_today:
+                self.lock_img(MAIN_BTN["mana_title"], elseclick=MAIN_BTN["mana_plus"])
                 mana_time = self.ocr_center(422, 451, 480, 471, size=2.0).split('/')
                 mana_time = int(mana_time[0])
                 if mana_time >= times:

@@ -178,12 +178,12 @@ class AsyncMixin(BaseMixin):
             # print(self.cpu_occupy)
             # 游戏拿不了fps
             # 最大忍受5s
-            if self.change_time >= 5 and self.cpu_occupy >= 100:
+            if self.change_time >= 5 and self.cpu_occupy >= 99:
                 self.change_time = 5
             if self.change_time <= 0.0:
                 # print('重置', self.change_time)
                 self.change_time = 0.5
-            if self.cpu_occupy >= 100:
+            if self.cpu_occupy >= 99:
                 self.change_time = self.change_time + 0.5
             elif self.cpu_occupy <= 30 and self.change_time - 0.5 > 0.0:
                 self.change_time = self.change_time - 0.1
