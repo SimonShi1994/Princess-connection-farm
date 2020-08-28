@@ -111,7 +111,8 @@ class AsyncMixin(BaseMixin):
                     cumulative_time = cumulative_time + 1
 
             except Exception as e:
-                    pcr_log(self.account).write_log(level='error', message='bad_connecting-异步线程终止并检测出异常{}'.format(e))
+                self.send_move_method("restart", f"bad_connecting-{e}")
+                time.sleep(1)
 
                 # sys.exit()
                 # break

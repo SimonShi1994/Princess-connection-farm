@@ -46,6 +46,8 @@ class BaseMixin:
         self.last_screen_time = 0
         self.async_juqingtiaoguo_switch = False
         self.last_star = 0  # 上次战斗的星数
+        self._move_method = ""  # 接收其它线程发送的处理方法
+        self._move_msg = ""  # 接收其它线程发送的信息
 
         # fastscreencap
         if fast_screencut:
@@ -70,10 +72,10 @@ class BaseMixin:
         self.log = log_handler.pcr_log(account)  # 初始化日志
         self.AR = AutomatorRecorder(account, rec_addr)
 
-    def init(self, address, account):
+    def init(self, address, account, rec_addr="users"):
         # 兼容
         self.init_device(address)
-        self.init_account(account)
+        self.init_account(account, rec_addr)
 
     @staticmethod
     def _get_at(at):
@@ -83,6 +85,37 @@ class BaseMixin:
         else:
             return at
 
+    def send_move_method(self, method, msg):
+        """
+        给主线程发送一条消息
+        :param method: 处理方法
+            restart: 重启
+        :param msg: 附带信息
+            restart: 重启时显示的错误提示
+        """
+        self._move_msg = msg
+        self._move_method = method
+
+    def _move_check(self):
+        """
+        作为最小执行单元，接收暂停、退出等信息
+        :return: False：无影响 True：造成影响
+        """
+        try:
+            from automator_mixins._async import block_sw
+            if block_sw == 1:
+                print("脚本暂停中~")
+                while block_sw == 1:
+                    from automator_mixins._async import block_sw
+                    time.sleep(1)
+                return True
+        except Exception as error:
+            print('暂停-错误:', error)
+            return True
+        if self._move_method == "restart":
+            self._move_method = ""
+            raise Exception(self._move_msg)
+
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0., method=cv2.TM_CCOEFF_NORMED):
         """
         try to click the img
@@ -91,6 +124,7 @@ class BaseMixin:
         :param img:
         :return: success
         """
+        self._move_check()
         at = self._get_at(at)
         position = UIMatcher.img_where(screen, img, threshold, at, method)
         if position:
@@ -115,15 +149,7 @@ class BaseMixin:
         :param post_delay: 后置延时
         :return: True
         """
-        try:
-            from automator_mixins._async import block_sw
-            if block_sw == 1:
-                print("脚本暂停中~")
-                while block_sw == 1:
-                    from automator_mixins._async import block_sw
-                    time.sleep(1)
-        except Exception as error:
-            print('暂停-错误:', error)
+        self._move_check()
         time.sleep(pre_delay)
         if len(args) >= 2 and isinstance(args[0], (int, float)) and isinstance(args[1], (int, float)):
             # (x,y)型：点击坐标
@@ -225,6 +251,7 @@ class BaseMixin:
         :param screen: 设置为None时，参照图截图获得，否则参照图
         :return: True：动画结束 False：动画未结束
         """
+        self._move_check()
         sc = self.getscreen() if screen is None else screen
         retry = 0
         at = self._get_at(at)
@@ -250,6 +277,7 @@ class BaseMixin:
         :param screen: 设置为None时，参照图截图获得，否则参照图
         :return: True：动画改变 False：动画未改变
         """
+        self._move_check()
         sc = self.getscreen() if screen is None else screen
         retry = 0
         at = self._get_at(at)
@@ -272,6 +300,7 @@ class BaseMixin:
         :param timeout: 超过timeout，报错
         Add 2020-08-15: 增加对Connect的检测。
         """
+        self._move_check()
         time.sleep(delay)
         sc = self.getscreen() if screen is None else screen
         last_time = time.time()
@@ -318,12 +347,7 @@ class BaseMixin:
             th_name.exit()
             pass
         else:
-            try:
-                self.do(a, fun)
-                pass
-            except:
-                pass
-        pass
+            self.do(a, fun)
 
     def do(self, a, fun):
         # 自定义，在此定义你要运行的参数
@@ -528,16 +552,8 @@ class BaseMixin:
                 determine = side_check(screen_shot)
                 if determine:
                     lasttime = time.time()
-            try:
-                from automator_mixins._async import block_sw
-                if block_sw == 1:
-                    print("脚本暂停中~")
-                    while block_sw == 1:
-                        from automator_mixins._async import block_sw
-                        time.sleep(1)
-                    lasttime = time.time()
-            except Exception as error:
-                print('暂停-错误:', error)
+            if self._move_check():
+                lasttime = time.time()
             for i, j in img.items():
                 if not isinstance(i, PCRelement):
                     _img, _at = self._get_img_at(i[0], i[1])

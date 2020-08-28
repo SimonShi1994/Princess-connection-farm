@@ -64,6 +64,8 @@ class LoginMixin(BaseMixin):
                     raise Exception("点了1000次右上角了，重启罢！")
                 # todo 登陆失败报错：-32002 Client error: <> data: Selector [
                 #  resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
+                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.1):
+                    return True
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").exists():
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").click()
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():

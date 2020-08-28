@@ -1049,7 +1049,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         last_tu = None
         last_cnt = None
         while True:
-            tu = self.check_zhuxian_id()
+            tu = self.check_zhuxian_id(max_retry=5)  # 此处老是图号识别失败，很诡异
             cnt = count_lock(tu)
             if tu == last_tu:
                 return tu, 3 - cnt

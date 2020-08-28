@@ -2,7 +2,6 @@
 新的启动函数，支持Batch，schedule操作等。
 """
 import multiprocessing
-import shutil
 import time
 import traceback
 from multiprocessing import Process
@@ -251,7 +250,7 @@ class AllDevices:
         """
         显示当前全部设备状态
         """
-        print("============================= 设备信息 ===============================")
+        print("= 设备信息 =")
         for i, j in self.devices.items():
             print(i, ": ", end="")
             if j.state == Device.DEVICE_OFFLINE:
@@ -265,7 +264,6 @@ class AllDevices:
                 if j.cur_acc != "":
                     print(" 当前任务：账号", j.cur_acc, AutomatorRecorder.get_user_state(j.cur_acc, j.cur_rec), end="")
                 print()
-        print("=====================================================================")
 
 
 class PCRInitializer:
@@ -309,11 +307,16 @@ class PCRInitializer:
         except queue.Empty:
             return None
 
-    def _add_task(self, task5):
+    def _add_task(self, task):
         """
         队列中添加任务五元组
         """
-        self.tasks.put(task5)
+        rs = AutomatorRecorder(task[1], task[4]).get_run_status()
+        if task[3] and rs["finished"]:
+            if task not in self.finished_tasks:
+                self.finished_tasks += [task]
+        else:
+            self.tasks.put(task)
 
     def add_task(self, task: Tuple[int, str, dict], continue_, rec_addr):
         """
@@ -321,9 +324,6 @@ class PCRInitializer:
         该task为四元组，(priority, account, task, continue_, rec_addr)
         """
         task = (0 - task[0], task[1], task[2], continue_, rec_addr)  # 最大优先队列
-        rs = AutomatorRecorder(task[1], task[4]).get_run_status()
-        if continue_ and rs["finished"]:
-            return
         self._add_task(task)
 
     def add_tasks(self, tasks: list, continue_, rec_addr):
@@ -385,6 +385,7 @@ class PCRInitializer:
                 pcr_log(account).write_log('error', message=tb)
             try:
                 a.fix_reboot(False)
+                return False
             except Exception as e:
                 pcr_log(account).write_log('error', message=f'initialize-自动重启失败：{type(e)} {e}')
                 if trace_exception_for_debug:
@@ -518,10 +519,9 @@ class PCRInitializer:
         显示当前队列中的任务
         """
         L = self.get_status()
-        print("↑↑ ====================== 任务等待队列 ===========================")
+        print("↑↑ 任务等待队列")
         for ind, acc, rec, _ in L:
             print(f"<{ind}> 账号：{acc}  执行目录：{rec}")
-        print("↑↑ =============================================================")
 
 
 class Schedule:
@@ -634,14 +634,18 @@ class Schedule:
         """
         self._init_status()
         self._set_users(name, 2)
-        for _, nam, _, _, ra in self.SL:
-            if name is None and nam in self.not_restart_name:
-                continue
-            if name is None or name == nam:
-                if os.path.isdir(ra):
-                    shutil.rmtree(ra, True)
-        self._save(self._default_state())
         self.reload()
+
+    def del_file_in_path(self, path):
+        for i in os.listdir(path):
+            path_file = os.path.join(path, i)
+            if os.path.isfile(path_file):
+                try:
+                    os.remove(path_file)
+                except Exception as e:
+                    self.log('error', f'删除记录文件出现错误：{e}')
+            else:
+                self.del_file_in_path(path_file)
 
     def _set_users(self, name, mode):
         """
@@ -659,13 +663,19 @@ class Schedule:
                     if mode == 0:
                         rs["finished"] = True
                         rs["error"] = None
-                    else:
-                        if mode >= 1:
-                            if rs["error"] is not None:
-                                rs["error"] = None
+                    if mode == 1:
+                        if rs["error"] is not None:
+                            rs["error"] = None
+                            rs["finished"] = False
+                    if mode == 2:
+                        if name is None and nam in self.not_restart_name:
+                            continue
+                        if name is None or name == nam:
+                            if os.path.isdir(rec):
+                                self.del_file_in_path(rec)
+                            if rs["error"] is None:
                                 rs["finished"] = False
-                        if mode == 2:
-                            rs["current"] = "..."
+                                rs["current"] = "..."
                     AR.set_run_status(rs)
 
     def clear_error(self, name=None):
@@ -828,18 +838,17 @@ class Schedule:
             for ind, t5 in enumerate(self.SL):
                 typ, nam, bat, cond, rec = t5
                 # 已经完成、跳过
+                if self.run_status[rec] != 0 and (nam, bat) in self.always_restart_name:
+                    self.log("info", f"计划 {nam} 重置。")
+                    self.restart(nam)
                 if self.run_status[rec] != 0:
                     continue
                 # 检查是否已经完成
                 if self.is_complete(rec):
                     # 记录设置2：运行完成后立刻restart
-                    if (nam, bat) in self.always_restart_name:
-                        self.restart(nam)
-                    else:
-                        self.run_status[rec] = 1
-                        self.log("info", f"计划** {nam} - {bat} **已经完成")
-                        self._set_status()
-                    continue
+                    self.run_status[rec] = 1
+                    self.log("info", f"计划** {nam} - {bat} **已经完成")
+                    self._set_status()
                 # 已经处理过
                 if self.checked_status[rec] is True:
                     continue
@@ -1050,7 +1059,7 @@ class Schedule:
         展示当前计划执行情况
         """
         status = self.get_status(last_state)
-        print("=========================== 执行进度 ========================")
+        print("= 执行进度 =")
         for D in status:
             if D["mode"] == "batch":
                 print(f"** {D['name']} ** ", end="")
@@ -1086,7 +1095,6 @@ class Schedule:
                         DEL = [(_a, _b["state_str"]) for _a, _b in D["error"].items()]
                         for _acc, _err in DEL:
                             print("+ ", _acc, ":", _err)
-        print("============================================================")
 
     def show_queue(self):
         """

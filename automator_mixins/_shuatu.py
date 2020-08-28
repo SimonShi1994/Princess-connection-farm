@@ -318,7 +318,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             bianzu = 0
             if s >= 0:
                 retry_cnt = 0
-            if s < 0:
+            if s < 0 and not (s == -2 and self._zdzb_info == "nocishu"):
                 if s == -3:
                     if mode == 1:
                         self.log.write_log("info", "无法点进关卡，可能当前关卡还未解锁，请先推Normal本。")
@@ -330,9 +330,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     retry_cnt += 1
                     continue
                 else:
-                    if self._zdzb_info == "nocishu":
-                        self.log.write_log("error", f"推图中竟然遇到次数不足的错误。")
-                    elif self._zdzb_info == "notili":
+                    if self._zdzb_info == "notili":
                         self.log.write_log("info", f"体力不足，终止推图。")
                     else:
                         self.log.write_log("error", f"推图过程中遇到未知的错误 :{s}，终止推图。")
