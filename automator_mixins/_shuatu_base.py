@@ -913,7 +913,10 @@ class ShuatuBaseMixin(FightBaseMixin):
             while True:
                 if self.is_exists(JUESE_BTN["zdqh"], method="sq"):
                     self.click_btn(JUESE_BTN["zdqh"], side_check=self.upgrade_kkr)
-                    mode = self.lock_img({JUESE_BTN["rank_tisheng_ok"]: 1, JUESE_BTN["tjqhcd"]: 2})
+                    mode = self.lock_img(
+                        {JUESE_BTN["rank_tisheng_ok"]: 1, JUESE_BTN["tjqhcd"]: 2, JUESE_BTN["zdqh"]: 99})
+                    if mode == 99:
+                        continue  # 报错修补
                     if mode == 1:
                         # 存在正常的强化
                         self.click_btn(JUESE_BTN["rank_tisheng_ok"])

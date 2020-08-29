@@ -805,6 +805,8 @@ class Schedule:
         已经完成的任务再次加入队列中。
         :return:
         """
+        if self.pcr is None:
+            return
         Q = self.pcr.tasks.get_attribute("queue")
         L = []
         for i in self.pcr.finished_tasks:
