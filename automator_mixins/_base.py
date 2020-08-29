@@ -13,11 +13,27 @@ from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
+from core.safe_u2 import SafeU2Handle, safe_u2_connect
 from core.usercentre import AutomatorRecorder
-from pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise
+from pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning
 
 lock = threading.Lock()
 
+if ignore_warning:
+    if debug:
+        print("WARNING IGNORED.")
+    import warnings
+    import uiautomator2
+    import logging
+
+    warnings.filterwarnings('ignore')
+    uiautomator2.logger.disabled = True
+    logging.disable()
+
+class ForceKillException(Exception):
+    def __init__(self, *args):
+        super().__init__()
+        self.args = args
 
 class BaseMixin:
     """
@@ -31,7 +47,8 @@ class BaseMixin:
 
         self.appRunning = False
         self.account = "debug"
-        self.d: Optional[u2.Device] = None
+        self._d: Optional[u2.Device] = None
+        self.d: Optional[SafeU2Handle] = None
         self.dWidth = 960
         self.dHeight = 540
         self.log: Optional[log_handler.pcr_log] = None
@@ -61,7 +78,8 @@ class BaseMixin:
         self.appRunning = False
         self.address = address
         if address != "debug":
-            self.d = u2.connect(address)
+            self._d = safe_u2_connect(address)
+            self.d = SafeU2Handle(self._d)
             if fast_screencut and Multithreading({}).program_is_stopped():
                 from core.get_screen import ReceiveFromMinicap
                 self.receive_minicap = ReceiveFromMinicap(address)
@@ -76,6 +94,13 @@ class BaseMixin:
         # 兼容
         self.init_device(address)
         self.init_account(account, rec_addr)
+
+    def force_kill(self):
+        """
+        强制结束Automator
+        :return:
+        """
+        self.send_move_method("forcekill", "")
 
     @staticmethod
     def _get_at(at):
@@ -93,8 +118,12 @@ class BaseMixin:
         :param msg: 附带信息
             restart: 重启时显示的错误提示
         """
+        while self._move_method != "":
+            pass
         self._move_msg = msg
         self._move_method = method
+        while self._move_method != "":
+            pass
 
     def _move_check(self):
         """
@@ -115,6 +144,9 @@ class BaseMixin:
         if self._move_method == "restart":
             self._move_method = ""
             raise Exception(self._move_msg)
+        if self._move_method == "forcekill":
+            self._move_method = ""
+            raise ForceKillException()
 
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0., method=cv2.TM_CCOEFF_NORMED):
         """
@@ -251,11 +283,11 @@ class BaseMixin:
         :param screen: 设置为None时，参照图截图获得，否则参照图
         :return: True：动画结束 False：动画未结束
         """
-        self._move_check()
         sc = self.getscreen() if screen is None else screen
         retry = 0
         at = self._get_at(at)
         while retry < max_retry or max_retry == 0:
+            self._move_check()
             retry += 1
             time.sleep(delay)
             sc2 = self.getscreen()
@@ -277,11 +309,11 @@ class BaseMixin:
         :param screen: 设置为None时，参照图截图获得，否则参照图
         :return: True：动画改变 False：动画未改变
         """
-        self._move_check()
         sc = self.getscreen() if screen is None else screen
         retry = 0
         at = self._get_at(at)
         while retry < max_retry or max_retry == 0:
+            self._move_check()
             retry += 1
             time.sleep(delay)
             sc2 = self.getscreen()
@@ -300,11 +332,11 @@ class BaseMixin:
         :param timeout: 超过timeout，报错
         Add 2020-08-15: 增加对Connect的检测。
         """
-        self._move_check()
         time.sleep(delay)
         sc = self.getscreen() if screen is None else screen
         last_time = time.time()
         while True:
+            self._move_check()
             if self.is_exists(img='img/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
                 time.sleep(delay)
                 sc = self.getscreen()
@@ -441,6 +473,7 @@ class BaseMixin:
         inf_attempt = True if retry == 0 else False
         attempt = 0
         while inf_attempt or attempt < retry:
+            self._move_check()
             screen_shot = self.getscreen()
             if UIMatcher.img_where(screen_shot, img, at=at):
                 # 成功匹配图片

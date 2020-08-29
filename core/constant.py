@@ -66,7 +66,7 @@ MAIN_BTN = {
     # 主线关卡
     "zhuxian": p(500, 90, img="img/home/zhuxian.bmp", at=(526, 117, 587, 186)),
     # 公会之家
-    "gonghuizhijia": p(617, 512),
+    "gonghuizhijia": p(617, 530),
     # 扭蛋
     "niudan": p(753, 514),
     # 主菜单

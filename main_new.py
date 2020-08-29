@@ -17,8 +17,9 @@ def RunFirstTime(schedule):
     if SCH is not None:
         SCH.stop()
     if PCR is None:
-        PCR = PCRInitializer(selected_emulator)
+        PCR = PCRInitializer()
         PCR.connect()
+    PCR.devices.add_from_config()
     PCR.start()
     last_schedule = schedule
     SCH = Schedule(schedule, PCR)
@@ -34,8 +35,9 @@ def RunContinue(schedule):
     if SCH is not None:
         SCH.stop()
     if PCR is None:
-        PCR = PCRInitializer(selected_emulator)
+        PCR = PCRInitializer()
         PCR.connect()
+    PCR.devices.add_from_config()
     PCR.start()
     last_schedule = schedule
     SCH = Schedule(schedule, PCR)

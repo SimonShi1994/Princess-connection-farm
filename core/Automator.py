@@ -6,7 +6,7 @@ import traceback
 import cv2
 
 from automator_mixins._async import AsyncMixin
-from automator_mixins._base import BaseMixin
+from automator_mixins._base import BaseMixin, ForceKillException
 from automator_mixins._dxc import DXCMixin
 from automator_mixins._hanghui import HanghuiMixin
 from automator_mixins._jjc import JJCMixin
@@ -19,11 +19,7 @@ from core.log_handler import pcr_log
 from core.usercentre import check_task_dict
 from core.valid_task import VALID_TASK
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
-from pcr_config import trace_exception_for_debug, ignore_warning
-
-if ignore_warning:
-    import warnings
-    warnings.filterwarnings('ignore')
+from pcr_config import trace_exception_for_debug
 
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
@@ -103,6 +99,13 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 # 刷完啦！标记一下”我刷完了“
                 self.task_finished()
                 return True
+            except ForceKillException as e:
+                pcr_log(account).write_log(level='info', message=f'强制终止')
+                try:
+                    self.fix_reboot(False)
+                except:
+                    pcr_log(account).write_log(level='warning', message=f'强制终止-重启失败！')
+                raise e
             except Exception as e:
                 try:
                     os.makedirs(f"error_screenshot/{account}", exist_ok=True)

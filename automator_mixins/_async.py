@@ -22,16 +22,19 @@ class AsyncMixin(BaseMixin):
         # 废弃
         cumulative_time = 0.1
         while Multithreading({}).is_stopped():
-            time.sleep(0.8+self.change_time)
+            if not self.async_juqingtiaoguo_switch:
+                time.sleep(1)
+                continue
             # print('juqing', self.change_time)
             try:
                 # await asyncio.sleep(10)
                 # time.sleep(10)
                 # 过快可能会卡
                 time.sleep(cumulative_time)
-                screenshot = self.d.screenshot(format="opencv")
+                screenshot = self.last_screen
                 if self.is_exists(screen=screenshot, img='img/juqing/caidanyuan.bmp', at=(860, 0, 960, 100)):
-                    self.lock_img('img/juqing/caidanyuan.bmp', ifclick=[(917, 39)], ifdelay=self.change_time, retry=15)  # 菜单
+                    self.lock_img('img/juqing/caidanyuan.bmp', ifclick=[(917, 39)], ifdelay=self.change_time,
+                                  retry=15)  # 菜单
                     self.lock_img('img/juqing/tiaoguo_1.bmp', ifclick=[(807, 44)], ifdelay=self.change_time,
                                   retry=15)  # 跳过
                     self.lock_img('img/juqing/tiaoguo_2.bmp', ifclick=[(589, 367)], ifdelay=self.change_time, retry=15)  # 跳过
@@ -58,6 +61,7 @@ class AsyncMixin(BaseMixin):
                 pcr_log(self.account).write_log(level='error', message='juqingtiaoguo-异步线程终止并检测出异常{}'.format(e))
                 # sys.exit()
                 break
+            time.sleep(0.8 + self.change_time)
 
     async def bad_connecting(self):
         # 异步判断异常 By：CyiceK
@@ -65,12 +69,8 @@ class AsyncMixin(BaseMixin):
         _time = 0
         cumulative_time = 0.1
         while Multithreading({}).is_stopped():
-            time.sleep(0.8+self.change_time)
-            # print('bad', self.change_time)
             try:
-                time.sleep(bad_connecting_time+cumulative_time)
-                # 过快可能会卡
-                screenshot = self.d.screenshot(format="opencv")
+                screenshot = self.last_screen
                 time_start = time.time()
                 if self.is_exists(screen=screenshot, img='img/connecting.bmp', at=(748, 20, 931, 53)):
                     cumulative_time = 0.1
@@ -110,12 +110,17 @@ class AsyncMixin(BaseMixin):
                 elif cumulative_time < 10:
                     cumulative_time = cumulative_time + 1
 
+                time.sleep(bad_connecting_time + cumulative_time)
+                # 过快可能会卡
+
             except Exception as e:
                 self.send_move_method("restart", f"bad_connecting-{e}")
                 time.sleep(1)
+            time.sleep(0.8 + self.change_time)
+            # print('bad', self.change_time)
 
-                # sys.exit()
-                # break
+            # sys.exit()
+            # break
 
     async def screenshot(self):
         """
@@ -123,20 +128,16 @@ class AsyncMixin(BaseMixin):
         异步‘眨眼’截图
         暂时废弃，等优化
         """
-        global screenshot
-        screenshot = self.d.screenshot(format="opencv")
         while Multithreading({}).is_stopped():
-            time.sleep(0.8+self.change_time)
+            if time.time() - self.last_screen_time > async_screenshot_freq:
+                self.getscreen()
+            else:
+                if self.last_screen is None:
+                    self.getscreen()
+            time.sleep(0.8 + self.change_time)
             # print('screen', self.change_time)
             time.sleep(async_screenshot_freq)
             # 如果之前已经截过图了，就不截图了
-            if time.time() - self.last_screen_time > async_screenshot_freq:
-                screenshot = self.d.screenshot(format="opencv")
-            else:
-                if self.last_screen is not None:
-                    screenshot = self.last_screen
-                else:
-                    screenshot = self.d.screenshot(format="opencv")
             # print('截图中')
             # cv2.imwrite('test.bmp', screenshot)
 
@@ -152,7 +153,7 @@ class AsyncMixin(BaseMixin):
             time.sleep(self.change_time)
             # print('c', UIMatcher.img_similar(screenshot))
             # print(UIMatcher.img_similar(screenshot))
-            _same = UIMatcher.img_similar(screenshot, at=(834, 497, 906, 530))
+            _same = UIMatcher.img_similar(self.last_screen, at=(834, 497, 906, 530))
             # at在右下角的主菜单
             if _same >= 0.9:
                 # print('相似', _same)
@@ -224,7 +225,8 @@ class AsyncMixin(BaseMixin):
     def stop_th(self):
         Multithreading({}).pause()
         if fast_screencut:
-            self.receive_minicap.stop()
+            if self.receive_minicap is not None:
+                self.receive_minicap.stop()
         # print(Multithreading({}).is_stopped())
 
     def start_async(self):

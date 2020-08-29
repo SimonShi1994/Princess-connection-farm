@@ -44,14 +44,14 @@ class ReceiveFromMinicap:
         # 当前最后接收到的1帧数据
         self.receive_data = queue.Queue()
         # 接收标志位（每次接收1帧都会重置）
-        self.receive_flag = 0
+        self.receive_flag = queue.Queue()
         # 关闭接收线程
         self.receive_close = 0
         # 模拟器地址
         self.address = address
         # 设置端口
-        d = adbutils.adb.device(address)
-        self.lport = d.forward_port(7912)
+        self.d = adbutils.adb.device(address)
+        self.lport = self.d.forward_port(7912)
         # 这里设置websocket
         self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
                                          # 这三个回调函数见下面
@@ -81,6 +81,7 @@ class ReceiveFromMinicap:
                     if self.ws_stop:
                         return
                     self.ws.close()
+                    self.lport = self.d.forward_port(7912)
                     self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
                                                      # 这三个回调函数见下面
                                                      on_message=self.on_message,
@@ -102,19 +103,31 @@ class ReceiveFromMinicap:
     # 接收信息回调函数，此处message为接收的信息
     def on_message(self, message):
         if message is not None:
-            if self.receive_flag == 1:
+            try:
                 # 如果不是bytes，那就是图像
                 if isinstance(message, (bytes, bytearray)) and len(message) > 100:
-                    self.receive_data.put(message)
-                    self.receive_flag = 0
+                    if self.receive_flag.get(block=False):
+                        self.receive_data.put(message)
                 else:
                     if debug:
                         print(message)
+            except queue.Empty:
+                pass
 
     # 错误回调函数
     def on_error(self, error):
         if debug:
             print(error)
+        if self.ws_stop:
+            return
+        self.ws.close()
+        self.lport = self.d.forward_port(7912)
+        self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
+                                         # 这三个回调函数见下面
+                                         on_message=self.on_message,
+                                         on_close=self.on_close,
+                                         on_error=self.on_error)
+        time.sleep(1)
 
     # 关闭ws的回调函数
     def on_close(self):
@@ -126,7 +139,7 @@ class ReceiveFromMinicap:
         retry = 0
         max_retry = 3
         while retry <= max_retry:
-            self.receive_flag = 1
+            self.receive_flag.put(1)
             try:
                 data = self.receive_data.get(timeout=fast_screencut_timeout)
                 if debug:

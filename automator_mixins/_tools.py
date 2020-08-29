@@ -14,7 +14,7 @@ from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
-    ocr_mode, ignore_warning
+    ocr_mode
 from ._base import BaseMixin
 
 if ocr_mode != "网络" and len(ocr_mode) != 0:
@@ -22,9 +22,6 @@ if ocr_mode != "网络" and len(ocr_mode) != 0:
     # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
     sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
 
-if ignore_warning:
-    import warnings
-    warnings.filterwarnings('ignore')
 
 
 class ToolsMixin(BaseMixin):
@@ -152,7 +149,7 @@ class ToolsMixin(BaseMixin):
         time.sleep(random.uniform(0.8, 1.2))
         client = AipOcr(**config)
         if screen_shot is None:
-            screen_shot = self.d.screenshot(format='opencv')
+            screen_shot = self.getscreen()
         # from numpy import rot90
         # screen_shot_ = rot90(screen_shot_)  # 旋转90°
         if baidu_ocr_img:

@@ -56,6 +56,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             self.server_bot(lev, message)
         elif lev == 'error':
             self.norm_log.error(message)
+            pcr_log("__ERROR_LOG__").write_log("info", f"账号 {self.acc_name} ： {message}")
             self.server_bot(lev, message)
         else:
             self.norm_log.critical(message)
