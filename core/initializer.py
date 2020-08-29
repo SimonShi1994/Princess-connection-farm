@@ -140,6 +140,8 @@ class Device:
         self.time_wake = time.time()
 
     def start(self):
+        if self.state == self.DEVICE_OFFLINE:
+            self.init()
         self.state = self.DEVICE_BUSY
         self.time_busy = time.time()
 
@@ -531,7 +533,7 @@ class PCRInitializer:
                 continue
             if device.a is None:
                 device.a = Automator("debug")
-            priority, account, task, continue_, rec_addr = _task
+            priority, account, task_name, rec_addr, task, continue_ = _task
             out_queue.put({"task": {"status": "start", "task": _task, "device": serial}})
             out_queue.put({"device": {"serial": serial, "method": "start"}})
             out_queue.put({"device": {"serial": serial, "method": ("register", account, rec_addr)}})
@@ -564,6 +566,7 @@ class PCRInitializer:
                         out_queue.put({"task": {"status": "retry", "task": _task, "device": serial}})
                         if device.with_emulator():
                             device.quit_emulator()
+                        break
                     else:
                         out_queue.put({"device": {"serial": serial, "method": "stop"}})
                         break
@@ -579,7 +582,7 @@ class PCRInitializer:
         out_queue.put({"device": {"serial": serial, "method": "out_process"}})
 
     def process_task_method(self, msg):
-        priority, account, task, continue_, rec_addr = msg["task"]
+        priority, account, task_name, rec_addr, task, continue_ = msg["task"]
         if msg["status"] in ["fail", "success"]:
             self.finished_tasks += [msg["task"]]
             if task in self.running_tasks:
