@@ -153,7 +153,7 @@ class AsyncMixin(BaseMixin):
             time.sleep(self.change_time)
             # print('c', UIMatcher.img_similar(screenshot))
             # print(UIMatcher.img_similar(screenshot))
-            _same = UIMatcher.img_similar(screenshot, at=(834, 497, 906, 530))
+            _same = UIMatcher.img_similar(self.last_screen, at=(834, 497, 906, 530))
             # at在右下角的主菜单
             if _same >= 0.9:
                 # print('相似', _same)
