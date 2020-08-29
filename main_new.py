@@ -5,7 +5,7 @@ from typing import Optional
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.initializer import PCRInitializer, Schedule
 from core.usercentre import AutomatorRecorder, list_all_users
-from pcr_config import selected_emulator, trace_exception_for_debug, running_input
+from pcr_config import trace_exception_for_debug, running_input
 
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
@@ -71,7 +71,7 @@ def CheckState(schedule=None):
 def CheckDevice():
     global PCR
     if PCR is None:
-        PCR = PCRInitializer(selected_emulator)
+        PCR = PCRInitializer()
         PCR.connect()
     PCR.devices.show()
 
@@ -79,7 +79,7 @@ def CheckDevice():
 def CheckQueue():
     global PCR
     if PCR is None:
-        PCR = PCRInitializer(selected_emulator)
+        PCR = PCRInitializer()
         PCR.connect()
     PCR.show()
 
@@ -87,7 +87,7 @@ def CheckQueue():
 def ReconnectPCR():
     global PCR
     if PCR is None:
-        PCR = PCRInitializer(selected_emulator)
+        PCR = PCRInitializer()
     PCR.connect()
     PCR.start()
 
