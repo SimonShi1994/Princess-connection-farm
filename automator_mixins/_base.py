@@ -15,10 +15,20 @@ from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
 from core.safe_u2 import SafeU2Handle, safe_u2_connect
 from core.usercentre import AutomatorRecorder
-from pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise
+from pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning
 
 lock = threading.Lock()
 
+if ignore_warning:
+    if debug:
+        print("WARNING IGNORED.")
+    import warnings
+    import uiautomator2
+    import logging
+
+    warnings.filterwarnings('ignore')
+    uiautomator2.logger.disabled = True
+    logging.disable()
 
 class ForceKillException(Exception):
     def __init__(self, *args):
