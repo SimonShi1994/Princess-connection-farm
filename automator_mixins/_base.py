@@ -28,7 +28,7 @@ if ignore_warning:
 
     warnings.filterwarnings('ignore')
     uiautomator2.logger.disabled = True
-    logging.disable()
+    # logging.disable()
 
 class ForceKillException(Exception):
     def __init__(self, *args):
