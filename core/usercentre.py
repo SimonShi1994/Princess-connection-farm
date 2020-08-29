@@ -414,22 +414,22 @@ def init_user(account: str, password: str) -> bool:
 
 def parse_batch(batch: dict):
     """
-    解析batch，统一转化为Tuple(priority, account, task)
+    解析batch，统一转化为Tuple(priority, account, taskfile task)
     并且装入优先级队列中。
     其中task为解析后的dict
     :param batch: 合法的batch字典
-    :return: Tuple(priority, account, task)
+    :return: Tuple(priority, account, taskfile,task)
     """
     B = batch["batch"]
     L = []
     for cur in B:
         task = AutomatorRecorder.gettask(cur["taskfile"])
         if "account" in cur:
-            L += [(cur["priority"], cur["account"], task)]
+            L += [(cur["priority"], cur["account"], cur["taskfile"], task)]
         elif "group" in cur:
             G = AutomatorRecorder.getgroup(cur["group"])
             for mem in G:
-                L += [(cur["priority"], mem, task)]
+                L += [(cur["priority"], mem, cur["taskfile"], task)]
     L.sort(reverse=True)
     return L
 
@@ -596,7 +596,7 @@ class AutomatorRecorder:
         tot = 0
         err_cnt = 0
         finish_cnt = 0
-        for _, acc, _ in parsed:
+        for _, acc, _, _ in parsed:
             if acc not in D:
                 tot += 1
                 d = {}

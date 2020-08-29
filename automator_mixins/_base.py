@@ -24,7 +24,6 @@ if ignore_warning:
         print("WARNING IGNORED.")
     import warnings
     import uiautomator2
-    import logging
 
     warnings.filterwarnings('ignore')
     uiautomator2.logger.disabled = True

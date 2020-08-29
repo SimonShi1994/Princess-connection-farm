@@ -140,6 +140,8 @@ class Device:
         self.time_wake = time.time()
 
     def start(self):
+        if self.state == self.DEVICE_OFFLINE:
+            self.init()
         self.state = self.DEVICE_BUSY
         self.time_busy = time.time()
 
@@ -207,7 +209,7 @@ class AllDevices:
         if serial not in self.devices:
             self.devices[serial] = Device(serial, id, launcher)
             if self.devices[serial].is_connected():
-                self.devices[serial].start()
+                self.devices[serial].init()
                 return True
             else:
                 self.devices[serial].offline()
@@ -341,6 +343,7 @@ class PCRInitializer:
         self.in_queue: Dict[Device, multiprocessing.Queue] = {}  # 内部接收信息的队列
         self.listening = False  # 侦听线程是否开启
         self.finished_tasks = []  # 已经完成的任务
+        self.running_tasks = []  # 正在进行的任务  任务：设备
         self.paused_tasks = []  # 暂停的任务
         self.log_queue = queue.Queue()  # 消息队列
         self.emulator_keeper_switch = 0  # 0 关闭 1 开启
@@ -397,25 +400,29 @@ class PCRInitializer:
         """
         队列中添加任务五元组
         """
-        rs = AutomatorRecorder(task[1], task[4]).get_run_status()
-        if task[3] and rs["finished"]:
+        rs = AutomatorRecorder(task[1], task[3]).get_run_status()
+        if task[5] and rs["finished"]:
             if task not in self.finished_tasks:
                 self.finished_tasks += [task]
         else:
-            self.tasks.put(task)
+            try:
+                if task not in self.running_tasks and task not in self.tasks.get_attribute("queue"):
+                    self.tasks.put(task)
+            except Exception as e:
+                pass
 
-    def add_task(self, task: Tuple[int, str, dict], continue_, rec_addr):
+    def add_task(self, task: Tuple[int, str, str, dict], continue_, rec_addr):
         """
         向优先级队列中增加一个task
-        该task为四元组，(priority, account, task, continue_, rec_addr)
+        该task为六元组，(priority, account, taskname,rec_addr, task, continue_)
         """
-        task = (0 - task[0], task[1], task[2], continue_, rec_addr)  # 最大优先队列
+        task = (0 - task[0], task[1], task[2], rec_addr, task[3], continue_)  # 最大优先队列
         self._add_task(task)
 
     def add_tasks(self, tasks: list, continue_, rec_addr):
         """
         向优先级队列中增加一系列tasks
-        该tasks为一个列表类型，每个元素为四元组，(priority, account, task, continue_, rec_addr)
+        该task为六元组，(priority, account, taskname,rec_addr, task, continue_)
         """
         for task in tasks:
             self.add_task(task, continue_, rec_addr)
@@ -526,7 +533,7 @@ class PCRInitializer:
                 continue
             if device.a is None:
                 device.a = Automator("debug")
-            priority, account, task, continue_, rec_addr = _task
+            priority, account, task_name, rec_addr, task, continue_ = _task
             out_queue.put({"task": {"status": "start", "task": _task, "device": serial}})
             out_queue.put({"device": {"serial": serial, "method": "start"}})
             out_queue.put({"device": {"serial": serial, "method": ("register", account, rec_addr)}})
@@ -559,6 +566,7 @@ class PCRInitializer:
                         out_queue.put({"task": {"status": "retry", "task": _task, "device": serial}})
                         if device.with_emulator():
                             device.quit_emulator()
+                        break
                     else:
                         out_queue.put({"device": {"serial": serial, "method": "stop"}})
                         break
@@ -574,9 +582,11 @@ class PCRInitializer:
         out_queue.put({"device": {"serial": serial, "method": "out_process"}})
 
     def process_task_method(self, msg):
-        priority, account, task, continue_, rec_addr = msg["task"]
+        priority, account, task_name, rec_addr, task, continue_ = msg["task"]
         if msg["status"] in ["fail", "success"]:
             self.finished_tasks += [msg["task"]]
+            if task in self.running_tasks:
+                del self.running_tasks[self.running_tasks.index(task)]
             if msg["status"] == "fail":
                 self.write_log(
                     f"账号{account}执行失败！设备：{msg['device']} 状态：{AutomatorRecorder.get_user_state(account, rec_addr)}")
@@ -584,10 +594,16 @@ class PCRInitializer:
                 self.write_log(f"账号{account}执行成功！")
         elif msg["status"] == "start":
             self.write_log(f"账号{account}开始执行，设备：{msg['device']} 进度存储目录 {rec_addr}")
+            if task not in self.running_tasks:
+                self.running_tasks += [task]
         elif msg["status"] == "retry":
+            if task in self.running_tasks:
+                del self.running_tasks[self.running_tasks.index(task)]
             self._add_task(msg["task"])
             self.write_log(f"账号{account}重新进入任务队列，进度存储目录 {rec_addr}")
         elif msg["status"] == "forcekill":
+            if task in self.running_tasks:
+                del self.running_tasks[self.running_tasks.index(task)]
             self.write_log(
                 f"账号{account}强制退出！设备：{msg['device']} 状态：{AutomatorRecorder.get_user_state(account, rec_addr)}")
             self.paused_tasks += msg["task"]
@@ -679,12 +695,12 @@ class PCRInitializer:
         q = self.tasks.get_attribute("queue")
         L = []
         for ind, T in enumerate(q):
-            if type(T) is not tuple or len(T) is not 5:
+            if type(T) is not tuple or len(T) is not 6:
                 print("DEBUG: ", T)
                 break
-            (_, acc, _, _, rec) = T
+            (_, acc, taskname, rec, _, _) = T
             state = AutomatorRecorder.get_user_state(acc, rec)
-            L += [(ind, acc, rec, state)]
+            L += [(ind, acc, taskname, rec, state)]
         return L
 
     def is_batch_running(self, batch) -> bool:
@@ -693,7 +709,7 @@ class PCRInitializer:
         :param batch:
         """
         q = self.tasks.get_attribute("queue")
-        for _, _, _, _, rec in q:
+        for _, _, _, rec, _, _ in q:
             a, b = os.path.split(rec)
             if a == '':
                 continue
@@ -707,8 +723,8 @@ class PCRInitializer:
         """
         L = self.get_status()
         print("↑↑ 任务等待队列")
-        for ind, acc, rec, _ in L:
-            print(f"<{ind}> 账号：{acc}  执行目录：{rec}")
+        for ind, acc, taskname, rec, _ in L:
+            print(f"<{ind}> 账号：{acc}  任务：{taskname}")
 
 
 class Schedule:
@@ -807,11 +823,9 @@ class Schedule:
         """
         if self.pcr is None:
             return
-        Q = self.pcr.tasks.get_attribute("queue")
         L = []
         for i in self.pcr.finished_tasks:
-            if i not in Q:
-                L += [i]
+            L += [i]
         self.pcr.finished_tasks.clear()
         for i in L:
             self.pcr._add_task(i)
@@ -821,7 +835,7 @@ class Schedule:
         重新开始某一个schedule，
         name设置为None时，全部重新开始
         """
-        self._init_status()
+        self._init_status(name)
         self._set_users(name, 2)
         self.reload()
 
@@ -846,7 +860,7 @@ class Schedule:
         for _, nam, b, _, rec in self.SL:
             if nam == name or name is None:
                 parsed = parse_batch(AutomatorRecorder.getbatch(b))
-                for _, acc, _ in parsed:
+                for _, acc, _, _ in parsed:
                     AR = AutomatorRecorder(acc, rec)
                     rs = AR.get_run_status()
                     if mode == 0:
@@ -881,7 +895,7 @@ class Schedule:
         """
         self._set_users(name, 0)
 
-    def _init_status(self):
+    def _init_status(self, name=None):
         """
         初始化运行状态self.run_status
         self.run_status={
@@ -892,7 +906,9 @@ class Schedule:
             1： 已完成
             2： 已跳过
         """
-        for _, _, _, _, rec in self.SL:
+        for _, nam, _, _, rec in self.SL:
+            if name is not None and name != nam:
+                continue
             self.run_status[rec] = 0
             self.checked_status[rec] = False
 
@@ -950,7 +966,7 @@ class Schedule:
             return True
         _, bat = os.path.split(rec)
         parsed = parse_batch(AutomatorRecorder.getbatch(bat))
-        for _, acc, _ in parsed:
+        for _, acc, _, _ in parsed:
             rs = AutomatorRecorder(acc, rec).get_run_status()
             if not rs["finished"] or rs["error"] is not None:
                 return False
@@ -971,7 +987,7 @@ class Schedule:
             return L, L
         else:
             cnt = 0
-            for _, acc, _ in parsed:
+            for _, acc, _, _ in parsed:
                 rs = AutomatorRecorder(acc, rec).get_run_status()
                 if rs["finished"] and rs["error"] is None:
                     cnt += 1
@@ -988,7 +1004,7 @@ class Schedule:
         return True
 
     def _run(self):
-        self._get_status()
+        # self._get_status()
         _time_start = time.time()  # 第一次直接输出初始状态
         if len(s_sckey) != 0:
             acc_state = f"Schedule {self.name} 开始运行！\n"

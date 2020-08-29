@@ -80,7 +80,11 @@ class RoutineMixin(ShuatuBaseMixin):
                 time.sleep(2)
                 break
         state = self.lock_img({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
-                              elseclick=NIUDAN_BTN["putong"])
+                              elseclick=NIUDAN_BTN["putong"], retry=5, is_raise=False)
+        if not state:
+            self.log.write_log("error", "扭蛋检测失败。")
+            self.lock_home()
+            return
         if state == 1:
             self.lock_img(NIUDAN_BTN["putong_quxiao"], elseclick=NIUDAN_BTN["putong_mianfei"])
             self.lock_no_img(NIUDAN_BTN["putong_quxiao"], elseclick=NIUDAN_BTN["putong_ok"])
