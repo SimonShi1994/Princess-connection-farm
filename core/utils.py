@@ -4,6 +4,12 @@ import time
 
 
 def random_name():
+    """
+    项目地址:https://github.com/bbpp222006/Princess-connection
+    作者：bbpp222006
+    协议：MIT License
+    :return:
+    """
     # 删减部分，比较大众化姓氏
     firstName = "赵钱孙李周吴郑王冯陈褚卫蒋沈韩杨朱秦尤许何吕施张孔曹严华金魏陶姜戚谢邹喻水云苏潘葛奚范彭郎鲁韦昌马苗凤花方俞任袁柳鲍史唐费岑薛雷贺倪汤滕殷罗毕郝邬安常乐于时傅卞齐康伍余元卜顾孟平" \
                 "黄和穆萧尹姚邵湛汪祁毛禹狄米贝明臧计成戴宋茅庞熊纪舒屈项祝董粱杜阮席季麻强贾路娄危江童颜郭梅盛林刁钟徐邱骆高夏蔡田胡凌霍万柯卢莫房缪干解应宗丁宣邓郁单杭洪包诸左石崔吉" \
@@ -46,6 +52,12 @@ def random_name():
 
 
 def CreatIDnum():
+    """
+    项目地址:https://github.com/bbpp222006/Princess-connection
+    作者：bbpp222006
+    协议：MIT License
+    :return:
+    """
     jiaoyan = 10
     all_ = 0
     result = 0

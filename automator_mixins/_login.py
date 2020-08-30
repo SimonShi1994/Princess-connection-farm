@@ -14,6 +14,9 @@ class LoginMixin(BaseMixin):
 
     def start(self):
         """
+        项目地址:https://github.com/bbpp222006/Princess-connection
+        作者：bbpp222006
+        协议：MIT License
         启动脚本，请确保已进入游戏页面。
         """
         while True:
@@ -31,6 +34,11 @@ class LoginMixin(BaseMixin):
         self.dWidth, self.dHeight = self.d.window_size()
 
     def do_login(self, ac, pwd):  # 执行登陆逻辑
+        """
+        :param ac:
+        :param pwd:
+        :return:
+        """
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
         self.d.clear_text()
         self.d.send_keys(str(ac))
@@ -45,6 +53,14 @@ class LoginMixin(BaseMixin):
             return 0  # 正常
 
     def login(self, ac, pwd):
+        """
+        项目地址:https://github.com/bbpp222006/Princess-connection
+        作者：bbpp222006
+        协议：MIT License
+        :param ac:
+        :param pwd:
+        :return:
+        """
         error_flag = 0
         try:
             try_count = 0
@@ -80,6 +96,14 @@ class LoginMixin(BaseMixin):
             return self.do_login(ac, pwd)
 
     def auth(self, auth_name, auth_id):
+        """
+        项目地址:https://github.com/bbpp222006/Princess-connection
+        作者：bbpp222006
+        协议：MIT License
+        :param auth_name:
+        :param auth_id:
+        :return:
+        """
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
         self.d.clear_text()
         self.d.send_keys(str(auth_name))
