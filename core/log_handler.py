@@ -84,6 +84,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         if len(s_sckey) != 0:
             message = ''.join(message).replace('\n', '')
             if s_level in lev_dic[log_lev]:
+                self.acc_message.setdefault([])
                 self.acc_message[self.acc_name].append(message)
                 self.acc_message[self.acc_name].append('\n')
             # print(self.acc_message[self.acc_name])

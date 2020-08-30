@@ -71,6 +71,8 @@ class AsyncMixin(BaseMixin):
         while Multithreading({}).is_stopped():
             try:
                 screenshot = self.last_screen
+                if screenshot is None:
+                    continue
                 time_start = time.time()
                 if self.is_exists(screen=screenshot, img='img/connecting.bmp', at=(748, 20, 931, 53)):
                     cumulative_time = 0.1
@@ -129,17 +131,20 @@ class AsyncMixin(BaseMixin):
         暂时废弃，等优化
         """
         while Multithreading({}).is_stopped():
-            if time.time() - self.last_screen_time > async_screenshot_freq:
-                self.getscreen()
-            else:
-                if self.last_screen is None:
+            try:
+                if time.time() - self.last_screen_time > async_screenshot_freq:
                     self.getscreen()
-            time.sleep(0.8 + self.change_time)
-            # print('screen', self.change_time)
-            time.sleep(async_screenshot_freq)
-            # 如果之前已经截过图了，就不截图了
-            # print('截图中')
-            # cv2.imwrite('test.bmp', screenshot)
+                else:
+                    if self.last_screen is None:
+                        self.getscreen()
+                time.sleep(0.8 + self.change_time)
+                # print('screen', self.change_time)
+                time.sleep(async_screenshot_freq)
+                # 如果之前已经截过图了，就不截图了
+                # print('截图中')
+                # cv2.imwrite('test.bmp', screenshot)
+            except Exception as e:
+                pass
 
     async def same_img(self):
         """
