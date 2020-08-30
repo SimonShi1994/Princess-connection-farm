@@ -162,6 +162,7 @@ if __name__ == "__main__":
                     print("restart schedule name 清除schedule中名称为name子计划的运行记录")
                     print("restart schedule -all 清除schedule中全部子计划的运行记录")
                     print("edit 进入用户配置编辑模式")
+                    print("screencut 进入截图小工具")
                 else:
                     print("实时控制帮助")
                     print("exit 终止并退出")
@@ -218,6 +219,11 @@ if __name__ == "__main__":
             elif order == "edit":
                 if SCH is None:
                     exec(open("CreateUser.py", "r", encoding="utf-8").read())
+                else:
+                    print("请先关闭当前的计划！")
+            elif order == "screencut":
+                if SCH is None:
+                    exec(open("screencut.py", "r", encoding="utf-8").read())
                 else:
                     print("请先关闭当前的计划！")
             elif SCH is not None:
