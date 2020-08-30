@@ -23,7 +23,7 @@ flasgger==0.9.5 -i https://pypi.douban.com/simple
 
 #OCR
 tensorflow -i https://pypi.douban.com/simple
-numpy -i https://pypi.douban.com/simple
+numpy == 1.19.0 -i https://pypi.douban.com/simple
 pillow -i https://pypi.douban.com/simple
 pyyaml -i https://pypi.douban.com/simple
 muggle-ocr
