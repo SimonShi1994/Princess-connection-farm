@@ -6,10 +6,15 @@ import numpy as np
 
 from core.log_handler import pcr_log
 # 临时，等待config的创建
-from pcr_config import debug, use_template_cache
+from core.pcr_config import debug, use_template_cache
 
 
 def cv_imread(file_path):  # 用于中文目录的imread函数
+    """
+    项目地址:https://github.com/bbpp222006/Princess-connection
+    作者：bbpp222006
+    协议：MIT License
+    """
     cv_img = cv2.imdecode(np.fromfile(file_path, dtype=np.uint8), -1)
     return cv_img
 
@@ -20,6 +25,11 @@ class UIMatcher:
 
     @staticmethod
     def RotateClockWise90(img):
+        """
+        项目地址:https://github.com/bbpp222006/Princess-connection
+        作者：bbpp222006
+        协议：MIT License
+        """
         trans_img = cv2.transpose(img)
         new_img = cv2.flip(trans_img, 0)
         return new_img
@@ -33,9 +43,13 @@ class UIMatcher:
 
     @staticmethod
     def findpic(screen, template_paths=None):
+        """
+        项目地址:https://github.com/bbpp222006/Princess-connection
+        作者：bbpp222006
+        协议：MIT License
+
         # 返回相对坐标
         # 已使用img_where代替
-        """
         检测各种按钮(头像?)
         @return: 中心坐标lists, 对应的可信度list
         """
@@ -243,6 +257,10 @@ class UIMatcher:
     @staticmethod
     def find_gaoliang(screen):
         """
+        项目地址:https://github.com/bbpp222006/Princess-connection
+        作者：bbpp222006
+        协议：MIT License
+
         检测高亮位置(忽略了上板边,防止成就栏弹出遮挡)
         @return: 高亮中心相对坐标[x,y]
         """

@@ -5,7 +5,7 @@ import subprocess
 import time
 from abc import abstractmethod, ABCMeta
 
-from pcr_config import emulator_console, emulator_id
+from core.pcr_config import emulator_console, emulator_id
 
 
 class LauncherBase(metaclass=ABCMeta):

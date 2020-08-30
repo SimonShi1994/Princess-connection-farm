@@ -131,8 +131,8 @@ class AutomatorDebuger(Automator):
 
     @staticmethod
     def Init():
-        from initialize import connect
-        connect()
+        from core.initializer import _connect
+        _connect()
 
     def Connect(self, address=None):
         lst = adbutils.adb.device_list()

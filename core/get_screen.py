@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import websocket
 
 # from core.Automator import Automator
-from pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
+from core.pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
 
 lock = threading.Lock()
 
@@ -145,7 +145,7 @@ class ReceiveFromMinicap:
                 if debug:
                     print("data len:", len(data))
                 data = BytesIO(data)
-                data = plt.imread(data, "jpg")
+                data = plt.imread(data, "PNG")
                 # 转rgb
                 data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
                 time.sleep(fast_screencut_delay)

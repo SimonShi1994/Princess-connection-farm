@@ -4,7 +4,7 @@ import numpy as np
 
 from core.constant import FIGHT_BTN, MAIN_BTN, MAOXIAN_BTN
 from core.cv import UIMatcher
-from pcr_config import debug
+from core.pcr_config import debug
 from ._tools import ToolsMixin
 
 

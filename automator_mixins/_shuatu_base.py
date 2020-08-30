@@ -9,7 +9,7 @@ from core.constant import MAOXIAN_BTN, MAIN_BTN, PCRelement, FIGHT_BTN, DXC_ELEM
     ZHUXIAN_ID, JUESE_BTN, NORMAL_COORD, HARD_COORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from pcr_config import debug
+from core.pcr_config import debug
 
 
 class ShuatuBaseMixin(FightBaseMixin):

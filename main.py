@@ -1,10 +1,10 @@
 import os
 
+from _deprecated.initialize import execute
 from core.constant import USER_DEFAULT_DICT as UDD
-from core.usercentre import AutomatorRecorder, list_all_users
-from initialize import execute
 # 主程序
-from pcr_config import trace_exception_for_debug
+from core.pcr_config import trace_exception_for_debug
+from core.usercentre import AutomatorRecorder, list_all_users
 
 
 def RunFirstTime():
@@ -42,7 +42,6 @@ def CheckTuitu():
             print("USER: ", acc, " Normal: ", ts['max'])
 
 def CheckStateReturn():
-    """
     users = list_all_users(0)
     acc_task_info = []
     for acc in users:
@@ -60,8 +59,7 @@ def CheckStateReturn():
         acc_task_info.append(acc_task_tmpinfo)
         acc_task_info.append('\n')
     acc_task_info = ''.join(acc_task_info).replace(',', '\n').replace("'", '')
-    """
-    return "server酱，时代变啦~"
+    return acc_task_info
 
 
 def ClearError(acc):
@@ -111,14 +109,9 @@ if __name__ == '__main__':
     print("help 查看帮助                   exit 退出")
     print("By TheAutumnOfRice")
     print("----------------------------------------")
-    print("↑当你看到这条消息时，最好尽快使用新的main_new.py")
-    print("它支持schedule模式，虽然上手可能有点难，但绝对会让你爽翻天。")
-    print("目前老版本的user-task模式仍能运行，但已经不能使用edit编辑了。")
-    print("!!")
-    print("trace_exception_for_debug默认开启，因为在main_new中，该选项会将")
-    print("traceback记录到log中。使用main.py请手动关闭。")
-    print("!!")
-    print("main.py不再支持server酱定时发送state的功能")
+    print("!! 警告：该控制器已经于2020-08-04停止维护，请使用最新的main_new.py享受“计划” Schedule的运行模式")
+    print("!! 旧版本可能仍然可以继续使用，但是可能存在与新版本不兼容的地方")
+    print("!! 该版本将不再支持server酱定时发送状态的功能")
     while True:
         try:
             cmd = input("> ")
@@ -161,7 +154,7 @@ if __name__ == '__main__':
                 else:
                     print("需要指定Account")
             elif order == "edit":
-                exec(open("CreateUser.py", "r", encoding="utf-8").read())
+                exec(open("_deprecated\\CreateUser.py", "r", encoding="utf-8").read())
             else:
                 print("未知的命令")
         except Exception as e:

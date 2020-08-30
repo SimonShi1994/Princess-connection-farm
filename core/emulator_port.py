@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import copy
+import gettext
+import json
 import os
 import platform
+import queue
 import re
-import json
-import gettext
-
-import psutil
-import copy
 import subprocess
 import threading
-import queue
+
+import psutil
 
 from core.log_handler import pcr_log
 

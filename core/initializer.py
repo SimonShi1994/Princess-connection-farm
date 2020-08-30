@@ -15,13 +15,13 @@ import keyboard
 from automator_mixins._base import Multithreading, ForceKillException
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
+from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
+from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
+    trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free
 from core.safe_u2 import OfflineException
 from core.usercentre import AutomatorRecorder, parse_batch
 from core.utils import diffday, PrintToStr
-from emulator_port import *
-from pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
-    trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free
 
 
 def _connect():  # 连接adb与uiautomator

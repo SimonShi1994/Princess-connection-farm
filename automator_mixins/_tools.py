@@ -13,7 +13,7 @@ from xlutils.copy import copy
 from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
+from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
     ocr_mode
 from ._base import BaseMixin
 
@@ -102,9 +102,8 @@ class ToolsMixin(BaseMixin):
         # OCR返回的数据 纠错
         try:
             if ocr_text:
-                return ocr_text
+                return str(ocr_text)
             else:
-                # text是字符串，不怕会回传int型的-1
                 return -1
         except:
             raise Exception("ocr-error", "OCR识别错误。")
@@ -140,6 +139,10 @@ class ToolsMixin(BaseMixin):
         if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
             pcr_log(self.account).write_log(level='error', message='读取SecretKey或apiKey失败！')
             return -1
+
+        # 强制size为1.0，避免百度无法识图
+        size = 1.0
+
         config = {
             'appId': 'PCR',
             'apiKey': baidu_apiKey,
@@ -169,7 +172,7 @@ class ToolsMixin(BaseMixin):
         # cv2.imwrite('test2.bmp', part)
         # cv2.imshow('part',part)
         # cv2.waitKey(0)
-        partbin = cv2.imencode('.png', part)[1]  # 转成base64编码（误）
+        partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
         try:
             # print('识别成功！')
             # f百度
@@ -180,7 +183,8 @@ class ToolsMixin(BaseMixin):
             # result = requests.post(request_url, data=params, headers=headers)
             return result
         except:
-            pcr_log(self.account).write_log(level='error', message='百度云识别失败！请检查apikey和secretkey是否有误！')
+            pcr_log(self.account).write_log(level='error', message='百度云识别失败！请检查apikey和secretkey以及截图范围返回结果'
+                                                                   '是否有误！')
             return -1
 
     def get_base_info(self, base_info=False, introduction_info=False, props_info=False, out_xls=False, s_sent=False,
@@ -235,7 +239,7 @@ class ToolsMixin(BaseMixin):
                 acc_info_dict["mana"] = self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot, size=2.0) \
                     .replace(',', '').replace('.', '')
                 # 宝石
-                acc_info_dict["baoshi"] = self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, size=2.0)\
+                acc_info_dict["baoshi"] = self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, size=2.0) \
                     .replace(',', '').replace('.', '')
             if introduction_info:
                 self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
@@ -246,8 +250,9 @@ class ToolsMixin(BaseMixin):
                 acc_info_dict["jianjie_name"] = self.ocr_center(607, 126, 880, 152, screen_shot=screen_shot, size=2.0)
                 acc_info_dict["dengji"] = self.ocr_center(761, 163, 799, 182, screen_shot=screen_shot, size=2.0)
                 acc_info_dict["jianjie_zhanli"] = self.ocr_center(703, 195, 801, 216, screen_shot=screen_shot, size=2.0)
-                acc_info_dict["jianjie_hanghui"] = self.ocr_center(703, 230, 917, 248, screen_shot=screen_shot, size=2.0)
-                acc_info_dict["jianjie_id"] = self.ocr_center(600, 415, 765, 435, screen_shot=screen_shot, size=2.0)
+                acc_info_dict["jianjie_hanghui"] = self.ocr_center(703, 230, 917, 248, screen_shot=screen_shot,
+                                                                   size=2.0)
+                acc_info_dict["jianjie_id"] = self.ocr_center(600, 415, 765, 435, screen_shot=screen_shot, size=1.2)
             if props_info:
                 self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
                 # 去道具
@@ -255,7 +260,9 @@ class ToolsMixin(BaseMixin):
                 self.lock_img(ZHUCAIDAN_BTN["daojuyilan"], elseclick=[(536, 159)])  # 锁定道具一览
                 screen_shot = self.getscreen()
                 self.click_img(screen=screen_shot, img="img/zhucaidan/saodangquan.bmp")
-                acc_info_dict["saodangquan"] = self.ocr_center(627, 196, 713, 216, size=1.5)\
+                time.sleep(2)
+                screen_shot = self.getscreen()
+                acc_info_dict["saodangquan"] = self.ocr_center(627, 196, 713, 216, size=1.1, screen_shot=screen_shot) \
                     .replace('x', '').replace('.', '').replace('X', '')
             acc_info_list.append(acc_info_dict)
             self.lock_home()

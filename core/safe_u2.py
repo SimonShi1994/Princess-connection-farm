@@ -5,7 +5,7 @@ import adbutils
 import requests
 import uiautomator2
 
-from pcr_config import adb_dir
+from core.pcr_config import adb_dir
 
 
 def run_adb(cmd: str, timeout=None):

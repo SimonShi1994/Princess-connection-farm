@@ -13,9 +13,9 @@ from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
+from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning
 from core.safe_u2 import SafeU2Handle, safe_u2_connect
 from core.usercentre import AutomatorRecorder
-from pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning
 
 lock = threading.Lock()
 
