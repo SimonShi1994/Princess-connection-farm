@@ -16,6 +16,7 @@ from automator_mixins._shuatu import ShuatuMixin
 from automator_mixins._tools import ToolsMixin
 from core.MoveRecord import moveset
 from core.log_handler import pcr_log
+from core.safe_u2 import OfflineException
 from core.usercentre import check_task_dict
 from core.valid_task import VALID_TASK
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
@@ -106,6 +107,9 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 except:
                     pcr_log(account).write_log(level='warning', message=f'强制终止-重启失败！')
                 raise e
+            except OfflineException as e:
+                pcr_log(account).write_log('error', message=f'main-检测到设备离线：{e}')
+                return False
             except Exception as e:
                 try:
                     os.makedirs(f"error_screenshot/{account}", exist_ok=True)
