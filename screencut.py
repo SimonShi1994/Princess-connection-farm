@@ -131,7 +131,7 @@ class AutomatorDebuger(Automator):
 
     @staticmethod
     def Init():
-        from initialize import connect
+        from deprecated.initialize import connect
         connect()
 
     def Connect(self, address=None):

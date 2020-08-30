@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import websocket
 
 # from core.Automator import Automator
-from pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
+from core.pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
 
 lock = threading.Lock()
 

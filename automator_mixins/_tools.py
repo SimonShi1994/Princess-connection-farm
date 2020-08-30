@@ -13,7 +13,7 @@ from xlutils.copy import copy
 from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
+from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
     ocr_mode
 from ._base import BaseMixin
 

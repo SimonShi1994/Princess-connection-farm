@@ -4,8 +4,8 @@ from typing import Optional
 
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.initializer import PCRInitializer, Schedule
+from core.pcr_config import trace_exception_for_debug, running_input
 from core.usercentre import AutomatorRecorder, list_all_users
-from pcr_config import trace_exception_for_debug, running_input
 
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None

@@ -6,13 +6,13 @@ import keyboard
 from automator_mixins._base import Multithreading
 from core import log_handler
 from core.Automator import Automator
+from core.emulator_port import check_known_emulators, emulator_ip
 # 账号日志
 from core.log_handler import pcr_log
-from core.usercentre import list_all_users, AutomatorRecorder
-from emulator_port import check_known_emulators, emulator_ip
 # 临时解决方案，可以改进
-from pcr_config import trace_exception_for_debug, end_shutdown, enable_auto_find_emulator, selected_emulator, \
+from core.pcr_config import trace_exception_for_debug, end_shutdown, enable_auto_find_emulator, selected_emulator, \
     emulator_ports
+from core.usercentre import list_all_users, AutomatorRecorder
 
 acclog = log_handler.pcr_acc_log()
 # 注意！目前逻辑仅支持雷电多开

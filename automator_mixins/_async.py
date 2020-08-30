@@ -5,7 +5,7 @@ import psutil
 
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause
+from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause
 from ._base import BaseMixin, Multithreading
 
 block_sw = 0

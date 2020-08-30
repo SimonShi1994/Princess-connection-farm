@@ -7,7 +7,7 @@ import psutil
 import requests
 
 # 临时，等待config的创建
-from pcr_config import s_sckey, log_lev, log_cache
+from core.pcr_config import s_sckey, log_lev, log_cache
 
 # 各项需要累积的初始化
 acc_cout = 0

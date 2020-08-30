@@ -16,11 +16,11 @@ from automator_mixins._shuatu import ShuatuMixin
 from automator_mixins._tools import ToolsMixin
 from core.MoveRecord import moveset
 from core.log_handler import pcr_log
+# 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
+from core.pcr_config import trace_exception_for_debug
 from core.safe_u2 import OfflineException
 from core.usercentre import check_task_dict
 from core.valid_task import VALID_TASK
-# 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
-from pcr_config import trace_exception_for_debug
 
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
