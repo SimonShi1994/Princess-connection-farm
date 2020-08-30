@@ -121,15 +121,15 @@ class Device:
     def is_connected(self):
         try:
             self.device.say_hello()
-        except adbutils.errors.AdbError:
+        except:
             return False
         else:
             return True
 
     def is_healthy(self):
-        if not self.is_connected():
-            return False
         try:
+            if not self.is_connected():
+                return False
             out = self.device.shell("dumpsys activity | grep mResume", timeout=5)
             if "Error" in out:
                 return False
