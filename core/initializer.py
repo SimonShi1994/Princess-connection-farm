@@ -103,14 +103,20 @@ class Device:
         if self.emulator_launcher is not None:
             if not self.emulator_launcher.is_running(self.emulator_id):
                 self.emulator_launcher.launch(self.emulator_id, block)
+            if block:
+                self.wait_for_healthy()
 
     def quit_emulator(self):
         if self.emulator_launcher is not None:
-            self.emulator_launcher.quit(self.emulator_id)
+            if self.emulator_launcher is not None:
+                self.emulator_launcher.quit(self.emulator_id)
 
     def restart_emulator(self, block=False):
         if self.emulator_launcher is not None:
-            self.emulator_launcher.restart(self.emulator_id, block)
+            if self.emulator_launcher is not None:
+                self.emulator_launcher.restart(self.emulator_id, block)
+            if block:
+                self.wait_for_healthy()
 
     def is_connected(self):
         try:
@@ -130,6 +136,13 @@ class Device:
         except:
             return False
         return True
+
+    def wait_for_healthy(self, timeout=30):
+        last = time.time()
+        while time.time() - last < timeout:
+            if self.is_healthy():
+                return True
+        return False
 
     def start_u2(self):
         self.device.shell("/data/local/tmp/atx-agent server -d", timeout=5)
@@ -555,7 +568,7 @@ class PCRInitializer:
                             out_queue.put({"device": {"serial": serial, "method": "offline"}})
                             device.restart_emulator(True)
                             # 尝试重启模拟器
-                            if device.is_healthy():
+                            if device.wait_for_healthy():
                                 out_queue.put({"device_status": {"serial": serial, "status": "restart_success"}})
                                 device.start_u2()
                                 continue  # 重启成功
@@ -566,6 +579,7 @@ class PCRInitializer:
                         out_queue.put({"task": {"status": "retry", "task": _task, "device": serial}})
                         if device.with_emulator():
                             device.quit_emulator()
+                        flag["exit"] = True
                         break
                     else:
                         out_queue.put({"device": {"serial": serial, "method": "stop"}})
@@ -577,6 +591,7 @@ class PCRInitializer:
                         out_queue.put({"device": {"serial": serial, "method": "stop"}})
                     else:
                         out_queue.put({"device": {"serial": serial, "method": "offline"}})
+                        flag["exit"] = True
                     break
             last_busy_time = time.time()
         out_queue.put({"device": {"serial": serial, "method": "out_process"}})
