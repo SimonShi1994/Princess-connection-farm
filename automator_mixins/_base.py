@@ -55,6 +55,7 @@ class BaseMixin:
         self.ms: Optional[moveset] = None
         self.debug_screen = None  # 如果debug_screen为None，则正常截图；否则，getscreen函数使用debug_screen作为读取的screen
         self.last_screen = None  # 每次调用getscreen会把图片暂存至last_screen
+        self.fastscreencut_retry = 0  # 快速截图失败次数
         self.address = None
         self.today_date = datetime.date.today()
         self.cpu_occupy = 0
@@ -414,7 +415,7 @@ class BaseMixin:
         # 如果debug_screen为None，则正常截图；
         # 否则，getscreen函数使用debug_screen作为读取的screen
         if self.debug_screen is None:
-            if fast_screencut:
+            if fast_screencut and self.fastscreencut_retry < 3:
                 try:
                     data = self.receive_minicap.receive_img()
                     if data is None:
@@ -424,8 +425,13 @@ class BaseMixin:
                     # 如果传入了文件路径参数，则保存文件
                     if filename is not None:
                         cv2.imwrite(filename, self.last_screen)
+                    self.fastscreencut_retry = 0
                 except Exception as e:
-                    self.log.write_log("error", f"快速截图出错 {e},采用低速截图")
+                    self.log.write_log("warning", f"快速截图出错 {e},采用低速截图")
+                    self.fastscreencut_retry += 1
+                    if self.fastscreencut_retry == 3:
+                        self.log.write_log("error", f"快速截图连续出错3次，关闭快速截图。")
+                        self.receive_minicap.stop()
                     self.last_screen = self.d.screenshot(filename, format="opencv")
             else:
                 self.last_screen = self.d.screenshot(filename, format="opencv")
