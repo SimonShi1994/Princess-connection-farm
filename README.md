@@ -1,4 +1,4 @@
-# Princess connection 公主连结农场脚本v0.5
+# Princess connection 公主连结农场脚本v0.6
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -67,7 +67,7 @@
 
 ## 环境
 
-需要 Python版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）
+需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）
 
 需要执行指令安装依赖:
 
@@ -75,7 +75,7 @@
 pip install -r requirements.txt
 ```
 
-若使用模拟器，则需要将模拟器设置为桥接模式，同时需要打开开发者usb调试。具体参考这个项目(https://github.com/Jiahonzheng/JGM-Automator)
+若使用模拟器，则需要将模拟器设置为桥接模式，同时需要打开开发者usb调试。
 
 建议使用雷电模拟器，本项目中均以雷电模拟器为示例。
 
@@ -87,33 +87,13 @@ pip install -r requirements.txt
 
 Server酱食用方法：（http://sc.ftqq.com/3.version）
 
-
 ## 使用方式
 
-1. 启动main.py：在中端中输入：
+- 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
 
-```
-cd main.py文件所在的目录（自己复制）
-例如：
-cd C:
-cd .\Users\Administrator\Documents\Princess-connection-farm
-```
+![](/docs/cmd_guide.png)
 
-再输入
-
-```
-python main.py
-```
-
-输入edit，根据提示导入用户信息和制定任务规划。
-
-2. 启动雷电模拟器，安装b服版公主连结，设置分辨率为540*960   **注意不是960 * 540**
-
-3. 启动雷电多开器，用复制模拟器功能 根据电脑性能酌情多开
-
-4. 最后在main.py中输入first即可。如果需要继续上次中断的刷图，输入continue即可。
-
-5. 更多对刷图的控制操作可以向控制器中输入help。
+- 出现“No module named 'XXX'，请执行`pip install -r requirements.txt`重新安装依赖
 
 
 
@@ -125,22 +105,6 @@ python main.py
     
     >另注：该版本下当前仅main.py可用，其它脚本暂时无法使用，我们正在尽快合并。如有需求，可以使用Release 0.5版本使用
    
-3. **本项目下goumaimana.py为购买70次mana**，执行方法参照main.py
-
-4. **本项目下juanzeng.py为行会捐赠装备**；
-   
-   该程序会读取zhanghao.txt中**标有图号**的账号，进行捐赠。没有标图号的认为是mana号不进行捐赠；
-
-   建议每天上午跑一次main.py，8小时后请求新的装备后再跑juanzeng.py；
-
-5. **本项目下dixiacheng.py为自动刷完第三个地下城（断崖的遗迹）及自动探索**；
-
-   请在zhanghao2.txt中输入账号密码；
-
-   请把”我的队伍“中1队设为打boss队，2队设为aoe队；
-
-   探索默认打第5级；
-
 6. **本项目下chushihua.py为自动完成从全新B站账号到3-1的农场号初始化功能**；
 
    请在zhanghao_init.txt中输入账号密码

@@ -145,7 +145,7 @@ class ReceiveFromMinicap:
                 if debug:
                     print("data len:", len(data))
                 data = BytesIO(data)
-                data = plt.imread(data, "jpg")
+                data = plt.imread(data, "PNG")
                 # 转rgb
                 data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
                 time.sleep(fast_screencut_delay)
