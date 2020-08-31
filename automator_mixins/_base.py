@@ -71,6 +71,11 @@ class BaseMixin:
             self.lport: Optional[int] = None
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
 
+    def do_nothing(self):
+        # 啥事不干
+        self.log.write_log("info", "Do nothing.")
+        pass
+
     def init_device(self, address):
         """
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。

@@ -132,7 +132,7 @@ class LDLauncher(LauncherBase):
     def get_list(self):
         # 获取模拟器列表
         cmd = f"{self.console_str} list2"
-        text = subprocess.check_output(cmd).decode("utf-8")
+        text = subprocess.check_output(cmd).decode("gbk")
         info = text.split('\n')
         result = list()
         for line in info:

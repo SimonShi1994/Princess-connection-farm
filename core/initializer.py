@@ -18,7 +18,8 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
-    trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free
+    trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
+    max_free_time
 from core.safe_u2 import OfflineException
 from core.usercentre import AutomatorRecorder, parse_batch
 from core.utils import diffday, PrintToStr
@@ -539,7 +540,7 @@ class PCRInitializer:
         device_on = False
         while not flag["exit"]:
             try:
-                if quit_emulator_when_free and device_on and time.time() - last_busy_time > 1:
+                if quit_emulator_when_free and device_on and time.time() - last_busy_time > max_free_time:
                     device_on = False
                     device.quit_emulator()
                     out_queue.put({"device_status": {"serial": serial, "status": "sleep"}})

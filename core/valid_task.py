@@ -553,4 +553,5 @@ VALID_TASK = ValidTask() \
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
     .add("s7-a", "xiaohaoHtu", "每日H图全刷", "从H1-1开始一直往后刷直到没法刷为止。",
          [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
-          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)])
+          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
+    .add("nothing", "do_nothing", "啥事不干", "啥事不干，调试用")
