@@ -47,9 +47,13 @@ class LauncherBase(metaclass=ABCMeta):
         time.sleep(3)
         self.launch(id, block)
 
-    def wait_for_launch(self, id: int):
+    def wait_for_launch(self, id: int, timeout=60):
+        last_time = time.time()
         while not self.is_running(id):
             time.sleep(1)
+            if time.time() - last_time > timeout:
+                return False
+        return True
 
     def wait_for_all(self):
         for i in emulator_id:
@@ -128,7 +132,7 @@ class LDLauncher(LauncherBase):
     def get_list(self):
         # 获取模拟器列表
         cmd = f"{self.console_str} list2"
-        text = subprocess.check_output(cmd).decode("utf-8")
+        text = subprocess.check_output(cmd).decode("gbk")
         info = text.split('\n')
         result = list()
         for line in info:
