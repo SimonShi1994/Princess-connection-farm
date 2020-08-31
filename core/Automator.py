@@ -14,7 +14,7 @@ from automator_mixins._login import LoginMixin
 from automator_mixins._routine import RoutineMixin
 from automator_mixins._shuatu import ShuatuMixin
 from automator_mixins._tools import ToolsMixin
-from core.MoveRecord import moveset
+from core.MoveRecord import moveset, UnknownMovesetException
 from core.log_handler import pcr_log
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
 from core.pcr_config import trace_exception_for_debug
@@ -96,7 +96,11 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             self.init_home()  # 处理第一次进home的一系列问题
         for retry in range(max_retry + 1):
             try:
-                self.ms.run(continue_=continue_)
+                try:
+                    self.ms.run(continue_=continue_)
+                except UnknownMovesetException as e:
+                    pcr_log(account).write_log("warning", message=f'记录文件冲突，自动刷新运行记录：{e}')
+                    self.ms.run(continue_=False)
                 # 刷完啦！标记一下”我刷完了“
                 self.task_finished()
                 return True

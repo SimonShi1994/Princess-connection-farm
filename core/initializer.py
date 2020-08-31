@@ -7,7 +7,7 @@ import traceback
 from multiprocessing import Process
 from multiprocessing.managers import SyncManager
 from queue import PriorityQueue
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple, Optional, Dict, Union
 
 import adbutils
 import keyboard
@@ -18,7 +18,8 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
-    trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free
+    trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
+    max_free_time
 from core.safe_u2 import OfflineException
 from core.usercentre import AutomatorRecorder, parse_batch
 from core.utils import diffday, PrintToStr
@@ -104,12 +105,12 @@ class Device:
             if not self.emulator_launcher.is_running(self.emulator_id):
                 self.emulator_launcher.launch(self.emulator_id, block)
             if block:
-                self.wait_for_healthy()
+                return self.wait_for_healthy()
+        return True
 
     def quit_emulator(self):
         if self.emulator_launcher is not None:
-            if self.emulator_launcher is not None:
-                self.emulator_launcher.quit(self.emulator_id)
+            self.emulator_launcher.quit(self.emulator_id)
 
     def restart_emulator(self, block=False):
         if self.emulator_launcher is not None:
@@ -424,12 +425,15 @@ class PCRInitializer:
             except Exception as e:
                 pass
 
-    def add_task(self, task: Tuple[int, str, str, dict], continue_, rec_addr):
+    def add_task(self, task: Union[Tuple[int, str, str, dict], Tuple[int, str, str]], continue_, rec_addr):
         """
         向优先级队列中增加一个task
         该task为六元组，(priority, account, taskname,rec_addr, task, continue_)
         """
-        task = (0 - task[0], task[1], task[2], rec_addr, task[3], continue_)  # 最大优先队列
+        if len(task) == 3:
+            task = (0 - task[0], task[1], task[2], rec_addr, AutomatorRecorder.gettask(task[2]), continue_)
+        else:
+            task = (0 - task[0], task[1], task[2], rec_addr, task[3], continue_)  # 最大优先队列
         self._add_task(task)
 
     def add_tasks(self, tasks: list, continue_, rec_addr):
@@ -536,7 +540,7 @@ class PCRInitializer:
         device_on = False
         while not flag["exit"]:
             try:
-                if quit_emulator_when_free and device_on and time.time() - last_busy_time > 120:
+                if quit_emulator_when_free and device_on and time.time() - last_busy_time > max_free_time:
                     device_on = False
                     device.quit_emulator()
                     out_queue.put({"device_status": {"serial": serial, "status": "sleep"}})

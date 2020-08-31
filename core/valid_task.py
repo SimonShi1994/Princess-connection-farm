@@ -554,6 +554,7 @@ VALID_TASK = ValidTask() \
     .add("s7-a", "xiaohaoHtu", "每日H图全刷", "从H1-1开始一直往后刷直到没法刷为止。",
          [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
+    .add("nothing", "do_nothing", "啥事不干", "啥事不干，调试用")\
     .add("s8","upgrade","自动升级","此功能为自动升级角色功能",
          [TaskParam("buy_tili", int, "体力次数","如果要通过刷图来获取装备，最多买体力次数"),
           TaskParam("do_rank",bool,"是否升rank","是否自动升rank"),

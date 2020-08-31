@@ -28,6 +28,9 @@ class moveerr(Exception):
         self.code = code
         self.desc = desc
 
+class UnknownMovesetException(Exception):
+    def __init__(self, *args):
+        super().__init__(args)
 
 class movevar:
     """
@@ -972,7 +975,7 @@ class moveset:
         self.var["__current__"] = None
         self.savestate()
         if cur != "__exit__":
-            raise Exception("Unknown Moveset:", cur)
+            raise UnknownMovesetException("Unknown Moveset:", cur)
         if "__parent__" in self.var:
             del self.var["__parent__"]
         del self.var["__self__"]
