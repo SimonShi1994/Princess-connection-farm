@@ -16,12 +16,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
     def __init__(self):
         super().__init__()
 
-    def dixiacheng_ocr(self, skip):
+    def dixiacheng_ocr(self, skip, stuck_today=False, stuck_notzhandoukaishi=False):
         """
         地下城函数已于2020/7/11日重写
         By:Cyice
         有任何问题 bug请反馈
-        :param skip:
+        :param stuck_notzhandoukaishi: 卡住等级不足
+        :param stuck_today: 今天卡住地下城
+        :param skip: 跳过战斗
         :return:
         """
         # global dixiacheng_floor_times
@@ -140,6 +142,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 return False
 
         while self.dxc_switch == 0:
+            if stuck_today:
+                pcr_log(self.account).write_log(level='info', message="%s今天选择了卡住地下城哦~" % self.account)
+                break
+
             # 防止一进去就是塔币教程
             self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440))
             # 又一防御措施，防止没进去地下城
@@ -154,12 +160,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     break
             while True:
                 time.sleep(self.change_time)
-                if self.is_exists('img/zhiyuan.jpg', at=(448, 78, 512, 102)):
-                    time.sleep(self.change_time)
-                    # self.click(100, 173)  # 第一个人
-                    screen_shot = self.getscreen()
-                    self.click_img(screen_shot, 'img/zhiyuan.jpg', pre_delay=self.change_time)
-                    break
+                self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"], retry=3
+                               , wait_self_before=True)
+                break
 
             if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
                 # 如果等级不足，就支援的第二个人
@@ -243,8 +246,12 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             screen_shot_ = self.getscreen()
             # click_img 暂且无法传入list
             self.guochang(screen_shot_, ['img/xiayibu.jpg', 'img/qianwangdixiacheng.jpg'])
+
+            if stuck_today or stuck_notzhandoukaishi:
+                continue
+
             screen_shot = self.getscreen()
-            self.click_img(screen_shot, 'img/dxc/chetui.bmp')
+            self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(779, 421, 833, 440))
             time.sleep(2+self.change_time)
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ui/ok_btn_1.bmp')
