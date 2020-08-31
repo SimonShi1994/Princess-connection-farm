@@ -419,7 +419,7 @@ class PCRInitializer:
                 self.finished_tasks += [task]
         else:
             try:
-                if task not in self.running_tasks and task not in self.tasks.get_attribute("queue"):
+                if task not in self.tasks.get_attribute("queue"):
                     self.tasks.put(task)
             except Exception as e:
                 pass
@@ -850,9 +850,9 @@ class Schedule:
         重新开始某一个schedule，
         name设置为None时，全部重新开始
         """
-        self._init_status(name)
         self._set_users(name, 2)
-        self.reload()
+        self._init_status(name)
+        # self.reload()
 
     def del_file_in_path(self, path):
         for i in os.listdir(path):
