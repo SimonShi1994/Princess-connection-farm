@@ -514,7 +514,7 @@ VALID_TASK = ValidTask() \
          [TaskParam("mode", int, "刷图模式", "0：纯扫荡券\n"
                                          "1：先扫荡券，无法扫荡时手刷\n"
                                          "2：纯手刷\n", 1),
-          TaskParam("buytili", int, "体力购买次数", "消耗多少体力执行超级刷经验", 6)]) \
+          TaskParam("buytili", int, "体力购买次数", "消耗多少管体力执行超级刷经验", 6)]) \
     .add("s2", "shuatuNN", "刷N图", "使用扫荡券刷指定普通副本",
          [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",

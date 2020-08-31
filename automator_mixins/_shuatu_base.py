@@ -812,6 +812,11 @@ class ShuatuBaseMixin(FightBaseMixin):
             self.chulijiaocheng(turnback=None)
             self.enter_upgrade()
             return True
+        if self.is_exists(MAOXIAN_BTN["jsjsqr"], screen=screen_shot):
+            self.click(369, 485)
+            for _ in range(5):
+                self.click(5, 117)
+            return True
         return False
 
     def enter_upgrade(self):
@@ -829,14 +834,24 @@ class ShuatuBaseMixin(FightBaseMixin):
                 self.click_btn(FIGHT_BTN["cat_ok"])
 
         _check_level_sort()
-        mode = self.click_btn(JUESE_BTN["first_juese"], until_appear={
-            JUESE_BTN["mana_ball"]: 1,
-            DXC_ELEMENT["dxc_kkr"]: 2,
-        })
-        if mode == 2:
-            self.chulijiaocheng(turnback=None)
-            self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
-            self.click_btn(JUESE_BTN["first_juese"], until_appear=JUESE_BTN["mana_ball"], side_check=self.upgrade_kkr)
+        juese = 1
+        while juese <= 9:
+            mode = self.click_btn(JUESE_BTN["nine_juese"][juese], until_appear={
+                JUESE_BTN["mana_ball"]: 1,
+                DXC_ELEMENT["dxc_kkr"]: 2,
+                MAOXIAN_BTN["jsjsqr"]: 3,
+            })
+            if mode == 2:
+                self.chulijiaocheng(turnback=None)
+                self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
+                continue
+            if mode == 3:
+                self.click(369, 485)
+                for _ in range(5):
+                    self.click(5, 117)
+                juese += 1
+            if mode == 1:
+                break
 
     def get_tuijian_stars(self, screen=None):
         """

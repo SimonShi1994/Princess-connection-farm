@@ -353,6 +353,17 @@ JUESE_BTN = {
     "duiwu": p(img="img/juese/duiwu.bmp", at=(855, 15, 929, 35)),
     "mana_ball": p(img="img/juese/mana_ball.bmp", at=(609, 21, 620, 34)),
     "first_juese": p(175, 140),
+    "nine_juese": {
+        1: p(173, 147),
+        2: p(464, 150),
+        3: p(768, 145),
+        4: p(174, 290),
+        5: p(480, 292),
+        6: p(772, 299),
+        7: p(163, 438),
+        8: p(476, 430),
+        9: p(789, 427),
+    },
     "rank_tisheng": p(246, 333, img="img/juese/rank_tisheng.bmp", at=(204, 323, 289, 335)),
     "rank_tisheng_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
     "rank_tisheng_ok_noequ": p(588, 369, img="img/juese/ok_btn.bmp", at=(567, 358, 611, 380)),  # 不需要消耗时，强化的OK在上头
@@ -553,6 +564,8 @@ MAOXIAN_BTN = {
     "tuanduizhan": p(img="img/maoxian/tztdzb.bmp", at=(415, 77, 540, 97)),
     "tuanduizhan_quxiao": p(371, 433, img="img/ui/quxiao.bmp", at=(274, 415, 468, 451)),
     "sdqqr": p(img="img/maoxian/sdqqr.bmp", at=(429, 129, 527, 154)),  # 扫荡券确认
+    "jsjsqr": p(img="img/maoxian/jsqsqr.bmp", at=(415, 31, 550, 52)),  # 角色解锁确认
+
 }
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(453, 74, 516, 88)),
