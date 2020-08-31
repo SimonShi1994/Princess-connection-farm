@@ -812,6 +812,11 @@ class ShuatuBaseMixin(FightBaseMixin):
             self.chulijiaocheng(turnback=None)
             self.enter_upgrade()
             return True
+        if self.is_exists(MAOXIAN_BTN["jsqsqr"], screen=screen_shot):
+            self.click(369, 485)
+            for _ in range(5):
+                self.click(5, 117)
+            return True
         return False
 
     def enter_upgrade(self):
