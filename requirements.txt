@@ -1,9 +1,8 @@
-adbutils
-websocket_client
-numpy
-pandas
-xlrd
-xlutils
+adbutils -i https://pypi.douban.com/simple
+websocket_client -i https://pypi.douban.com/simple
+pandas -i https://pypi.douban.com/simple
+xlrd -i https://pypi.douban.com/simple
+xlutils -i https://pypi.douban.com/simple
 gevent==20.6.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 psutil==5.7.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 baidu-aip==2.2.18.0
@@ -23,7 +22,7 @@ flasgger==0.9.5 -i https://pypi.douban.com/simple
 
 #OCR
 tensorflow -i https://pypi.douban.com/simple
-numpy == 1.19.0 -i https://pypi.douban.com/simple
+numpy==1.19.0 -i https://pypi.douban.com/simple
 pillow -i https://pypi.douban.com/simple
 pyyaml -i https://pypi.douban.com/simple
 muggle-ocr
