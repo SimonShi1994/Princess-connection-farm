@@ -6,12 +6,13 @@ import psutil
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause
-from ._base import BaseMixin, Multithreading
+from ._base import Multithreading
+from ._tools import ToolsMixin
 
 block_sw = 0
 
 
-class AsyncMixin(BaseMixin):
+class AsyncMixin(ToolsMixin):
     """
     异步插片
     包含异步函数
@@ -255,22 +256,4 @@ class AsyncMixin(BaseMixin):
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
         if back_home:
-            self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time)  # 回首页
-
-    def fix_fanhuibiaoti(self):
-        # 返回标题逻辑
-        # 放弃不用，没有重启来的稳
-        self.stop_th()
-        self.guochang(screenshot, ['img/fanhuibiaoti.bmp'], suiji=0)
-        time.sleep(8)
-        self.start_th()
-        self.start_async()
-        self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
-
-    def fix_shujucuowu(self):
-        # 数据错误逻辑
-        # 放弃不用，没有重启来的稳
-        time.sleep(1)
-        self.click(479, 369)
-        time.sleep(8)
-        self.click(1, 1)
+            self.lock_home()

@@ -540,7 +540,8 @@ class PCRInitializer:
         device_on = False
         while not flag["exit"]:
             try:
-                if quit_emulator_when_free and device_on and time.time() - last_busy_time > max_free_time:
+                if quit_emulator_when_free and device_on \
+                        and device.with_emulator() and time.time() - last_busy_time > max_free_time:
                     device_on = False
                     device.quit_emulator()
                     out_queue.put({"device_status": {"serial": serial, "status": "sleep"}})
@@ -563,6 +564,7 @@ class PCRInitializer:
                     res = PCRInitializer.run_task(device, account, task, continue_, rec_addr)
                     if res:  # 任务执行成功
                         out_queue.put({"task": {"status": "success", "task": _task, "device": serial}})
+                        out_queue.put({"device": {"serial": serial, "method": "stop"}})
                         break
                     out_queue.put({"task": {"status": "fail", "task": _task, "device": serial}})
                     if not device.is_healthy():
