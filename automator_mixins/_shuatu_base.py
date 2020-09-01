@@ -969,6 +969,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                                 _xiadian()
                                 break
                             _xiadian()
+                            if self._zdzb_info == "nocishu":
+                                break
                         else:
                             # 直接结束
                             _xiadian()
