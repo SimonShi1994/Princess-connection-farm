@@ -51,6 +51,42 @@ class ToolsMixin(BaseMixin):
             if time.time() - last > lockimg_timeout:
                 raise Exception("lock_home时出错：超时！")
 
+    def init_home(self):
+        # 2020-07-31 TheAutumnOfRice: 检查完毕
+        while True:
+            screen_shot_ = self.getscreen()
+            if self.is_exists(MAIN_BTN["liwu"], screen=screen_shot_):
+                break
+            if self.is_exists(MAIN_BTN["tiaoguo"], screen=screen_shot_):
+                self.click(893, 39, post_delay=0.5)  # 跳过
+                continue
+            if self.is_exists(MAIN_BTN["jingsaikaishi"], screen=screen_shot_):
+                self.click(786, 308, post_delay=0.2)  # 选角色
+                self.click(842, 491)  # 开始
+                continue
+            num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+            if num_of_white < 77000:
+                break
+
+            self.click(1, 1, post_delay=0.5)
+            self.click(330, 270, post_delay=1)
+            # 跳过特别庆典
+
+        self.lock_home()
+        time.sleep(0.5)
+        # 这里防一波第二天可可萝跳脸教程
+        screen_shot_ = self.getscreen()
+        num_of_white, _, _ = UIMatcher.find_gaoliang(screen_shot_)
+        if num_of_white < 50000:
+            self.lock_img('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
+            self.lock_home()
+            return
+        if UIMatcher.img_where(screen_shot_, 'img/kekeluo.bmp'):
+            self.lock_img('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
+            self.lock_home()
+        time.sleep(1)
+        self.lock_home()  # 追加检测
+
     def setting(self):
         self.lock_home()
         self.click_btn(MAIN_BTN["zhucaidan"], until_appear=MAIN_BTN["setting_pic"])
