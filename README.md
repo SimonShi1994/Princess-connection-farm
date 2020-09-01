@@ -86,9 +86,11 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
 
+- 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
+
 - 出现“No module named 'XXX'，请执行`pip install -r requirements.txt`重新安装依赖
 
-- **第一次使用，完全不懂什么叫做Schedule？** 
+- **第一次使用，完全不懂怎么办？** 
 [Schedule使用方法](docs/introduce_to_schedule.md)
 
 - 感觉还是不会使用，怎么办？
