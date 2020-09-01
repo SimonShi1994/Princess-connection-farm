@@ -115,6 +115,8 @@ class LDLauncher(LauncherBase):
         return f"emulator-{5554 + id * 2}"
 
     def launch(self, id: int, block: bool = False) -> None:
+        print("Launch:", id)
+        return
         cmd = f"{self.console_str} globalsetting --audio 0 --fastplay 1 --cleanmode 1"
         subprocess.check_call(cmd)
         cmd = f"{self.console_str} launch --index {id}"
@@ -125,6 +127,8 @@ class LDLauncher(LauncherBase):
                 time.sleep(1)
 
     def quit(self, id: int) -> None:
+        print("Quit:", id)
+        return
         cmd = f"{self.console_str} quit --index {id}"
         subprocess.check_call(cmd)
         time.sleep(3)
@@ -142,6 +146,8 @@ class LDLauncher(LauncherBase):
         return result
 
     def is_running(self, id: int) -> bool:
+        print("Isrunning:", id)
+        return True
         try:
             all = self.get_list()
         except Exception as e:
