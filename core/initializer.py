@@ -91,11 +91,12 @@ class Device:
         self.time_wake = 0  # 上次开机时间
         self.time_busy = 0  # 上次忙碌时间
         self.a: Optional[Automator] = None  # Automator,先不启动，在子进程中启动
-        self.device = adbutils.adb.device(serial)
         self.emulator_id: Optional[int] = id  # 模拟器ID
         self.emulator_launcher: Optional[LauncherBase] = launcher  # 模拟器控制器
         if self.emulator_launcher is not None:
-            self.serial = self.emulator_launcher.id_to_serial(self.emulator_id)
+            if self.serial is None:
+                self.serial = self.emulator_launcher.id_to_serial(self.emulator_id)
+        self.device = adbutils.adb.device(self.serial)
 
     def with_emulator(self):
         return self.emulator_launcher is not None
