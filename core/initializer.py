@@ -141,8 +141,10 @@ class Device:
     def wait_for_healthy(self, timeout=30):
         last = time.time()
         while time.time() - last < timeout:
-            if self.is_healthy():
-                return True
+            if self.is_connected():
+                if self.is_healthy():
+                    return True
+            time.sleep(1)
         return False
 
     def start_u2(self):
@@ -475,14 +477,10 @@ class PCRInitializer:
             a.init_device(device.serial)
             a.init_account(account, rec_addr)
             a.start()
-            user = a.AR.getuser()
-            account = user["account"]
-            password = user["password"]
             a.log.write_log("info", f"即将登陆： 用户名 {account}")  # 显然不需要输出密码啊喂！
             a.start_th()
             a.start_async()
             a.start_shuatu()
-            a.login_auth(account, password)
             out = a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr)
             if out:
                 a.change_acc()
@@ -545,6 +543,7 @@ class PCRInitializer:
                     device_on = False
                     device.quit_emulator()
                     out_queue.put({"device_status": {"serial": serial, "status": "sleep"}})
+                    out_queue.put({"device": {"serial": serial, "method": "offline"}})
                 _task = task_queue.get(False)
             except queue.Empty:
                 time.sleep(1)
@@ -559,7 +558,16 @@ class PCRInitializer:
                 device_on = True
                 if device.with_emulator() and not device.is_connected():
                     out_queue.put({"device_status": {"serial": serial, "status": "launch"}})
-                    device.launch_emulator(True)
+                    if not device.launch_emulator(True):
+                        out_queue.put({"device_status": {"serial": serial, "status": "launch_fail"}})
+                        out_queue.put({"device": {"serial": serial, "method": "offline"}})
+                        out_queue.put({"task": {"status": "retry", "task": _task, "device": serial}})
+                        if device.with_emulator():
+                            device.quit_emulator()
+                        flag["exit"] = True
+                        break
+                    else:
+                        out_queue.put({"device_status": {"serial": serial, "status": "launch_success"}})
                 try:
                     res = PCRInitializer.run_task(device, account, task, continue_, rec_addr)
                     if res:  # 任务执行成功
@@ -642,6 +650,10 @@ class PCRInitializer:
             self.write_log(f"设备 {serial} 重启失败！")
         elif status == "sleep":
             self.write_log(f"设备 {serial} 闲置，自动关闭")
+        elif status == "launuch_success":
+            self.write_log(f"设备 {serial} 启动成功！")
+        elif status == "launch_fail":
+            self.write_log(f"设备 {serial} 启动失败！")
 
     def _listener(self):
         """
