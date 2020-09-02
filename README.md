@@ -104,7 +104,7 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice)对本项目的倾力帮助。
+2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice) 对本项目的倾力帮助。
 
 3. **来个 star 吧(*/ω＼*)，有问题请提交issue**
 
