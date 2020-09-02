@@ -31,6 +31,7 @@ anticlockwise_rotation_times = cfg.getint('pcrfarm_setting', 'anticlockwise_rota
 async_screenshot_freq = cfg.getint('pcrfarm_setting', 'async_screenshot_freq')
 bad_connecting_time = cfg.getint('pcrfarm_setting', 'bad_connecting_time')
 fast_screencut = cfg.getboolean('pcrfarm_setting', 'fast_screencut')
+force_fast_screencut = cfg.getboolean('pcrfarm_setting', 'force_fast_screencut')
 fast_screencut_delay = cfg.getfloat('pcrfarm_setting', 'fast_screencut_delay')
 fast_screencut_timeout = cfg.getint('pcrfarm_setting', 'fast_screencut_timeout')
 end_shutdown = cfg.getboolean('pcrfarm_setting', 'end_shutdown')

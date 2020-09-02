@@ -13,7 +13,8 @@ from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
-from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning
+from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
+    force_fast_screencut
 from core.safe_u2 import SafeU2Handle, safe_u2_connect
 from core.usercentre import AutomatorRecorder
 
@@ -435,7 +436,10 @@ class BaseMixin:
                     self.log.write_log("warning", f"快速截图出错 {e},采用低速截图")
                     self.fastscreencut_retry += 1
                     if self.fastscreencut_retry == 3:
-                        self.log.write_log("error", f"快速截图连续出错3次，关闭快速截图。")
+                        if force_fast_screencut:
+                            raise Exception("快速截图连续出错3次")
+                        else:
+                            self.log.write_log("error", f"快速截图连续出错3次，关闭快速截图。")
                         self.receive_minicap.stop()
                     self.last_screen = self.d.screenshot(filename, format="opencv")
             else:
