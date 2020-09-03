@@ -47,6 +47,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         """
         user = self.AR.getuser()  # 获取配置文件
         account = user["account"]
+        password = user["password"]
         check_task_dict(tasks, True)
         self.ms = moveset(account, rec_addr)  # 创建行为列表用于断点恢复
         self.ms.startw(None, start=True)  # 使用自动序列创建的起手式
@@ -89,13 +90,18 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         self.ms.exitw(None)  # 结束自动序列创建
         # 未知异常：仍然是重启哒！万能的重启万岁！
         last_exception = None
-        if continue_ is False:
-            # 初次执行，记录一下
-            self.task_start()
-        if first_init_home:
-            self.init_home()  # 处理第一次进home的一系列问题
+        before_ = True
         for retry in range(max_retry + 1):
             try:
+                if before_:
+                    self.task_current("登录")
+                    self.login_auth(account, password)
+                    if continue_ is False:
+                        # 初次执行，记录一下
+                        self.task_start()
+                    if first_init_home:
+                        self.init_home()  # 处理第一次进home的一系列问题
+                    before_ = False
                 try:
                     self.ms.run(continue_=continue_)
                 except UnknownMovesetException as e:
@@ -137,7 +143,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry + 1}/{max_retry}')
 
                 try:
-                    self.fix_reboot()
+                    self.fix_reboot(before_)
                 except Exception as e:
                     pcr_log(account).write_log(level='error', message=f'main-自动重启失败，跳过账号!{e}')
                     self.task_error(str(last_exception))
