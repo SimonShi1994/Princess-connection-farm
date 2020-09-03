@@ -4,48 +4,99 @@ from typing import Optional
 
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.initializer import PCRInitializer, Schedule
-from core.pcr_config import trace_exception_for_debug, running_input
-from core.usercentre import AutomatorRecorder, list_all_users
+from core.pcr_config import trace_exception_for_debug
+from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
 
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
 
 
-def RunFirstTime(schedule):
-    global PCR, SCH, last_schedule
-    if SCH is not None:
-        SCH.stop()
+def StartPCR():
+    global PCR
     if PCR is None:
         PCR = PCRInitializer()
         PCR.connect()
     PCR.devices.add_from_config()
     PCR.start()
-    last_schedule = schedule
+
+
+def BindSchedule(schedule):
+    global SCH, PCR, last_schedule
+    if PCR is None:
+        StartPCR()
+
+    if SCH is not None:
+        raise Exception("无法绑定Schedule：请先结束之前的Schedule！")
     SCH = Schedule(schedule, PCR)
+    last_schedule = schedule
+    print("Schedule绑定成功：", schedule)
+
+
+def FirstSchedule():
+    global SCH
+    if SCH is None:
+        raise Exception("请先绑定Schedule！")
+
+    if SCH.state == 1:
+        raise Exception("Schedule已经运行，请先关闭！")
+
     SCH.run_first_time()
-    if running_input:
-        print("注：虽然这么做很反人类，但是在前端出来之前，你还可以试试在运行中输入help。可以在config.ini - running_input中关闭该功能。")
-    else:
-        SCH.join()
 
 
-def RunContinue(schedule):
-    global PCR, SCH, last_schedule
-    if SCH is not None:
-        SCH.stop()
-    if PCR is None:
-        PCR = PCRInitializer()
-        PCR.connect()
-    PCR.devices.add_from_config()
-    PCR.start()
-    last_schedule = schedule
-    SCH = Schedule(schedule, PCR)
+def ContinueSchedule():
+    global SCH
+    if SCH is None:
+        raise Exception("请先绑定Schedule！")
+
+    if SCH.state == 1:
+        raise Exception("Schedule已经运行，请先关闭！")
+
     SCH.run_continue()
-    if running_input:
-        print("注：虽然这么做很反人类，但是在前端出来之前，你还可以试试在运行中输入help。可以在config.ini - running_input中关闭该功能。")
+
+
+def FirstBatch(batch):
+    global PCR
+    if PCR is None:
+        StartPCR()
+    bj = AutomatorRecorder.getbatch(batch)
+    parsed = parse_batch(bj)
+    PCR.add_tasks(parsed, False, f"rec/__batch__/{batch}")
+
+
+def ContinueBatch(batch):
+    global PCR
+    if PCR is None:
+        StartPCR()
+    bj = AutomatorRecorder.getbatch(batch)
+    parsed = parse_batch(bj)
+    PCR.add_tasks(parsed, True, f"rec/__batch__/{batch}")
+
+
+def FirstTask(is_group, name, taskname, priority):
+    global PCR
+    if PCR is None:
+        StartPCR()
+    if is_group:
+        accs = AutomatorRecorder.getgroup(name)
     else:
-        SCH.join()
+        accs = [name]
+        check_users_exists(accs)
+    for acc in accs:
+        PCR.add_task((priority, acc, taskname), False, "rec/__directly__")
+
+
+def ContinueTask(is_group, name, taskname, priority):
+    global PCR
+    if PCR is None:
+        StartPCR()
+    if is_group:
+        accs = AutomatorRecorder.getgroup(name)
+    else:
+        accs = [name]
+        check_users_exists(accs)
+    for acc in accs:
+        PCR.add_task((priority, acc, taskname), True, "rec/__directly__")
 
 
 def CheckTuitu():
