@@ -234,7 +234,12 @@ def JoinShutdown(nowait=False):
 
 
 def ShowGuide():
-    print("暂无教程")
+    print("/docs/introduce_to_schedule.md  Schedule使用帮助")
+    print("/INI文件配置解读.md               配置文件使用说明")
+    print("/AboutUpdater.md                自动更新使用说明")
+    print("/webclient/README.md            前端使用说明")
+    print("/tasks_example/                 样例任务json文件")
+    print("/equip/                         自动发起捐赠所用的样例装备")
 
 
 def ShowServerChan():
@@ -343,6 +348,16 @@ def ShowInfo():
 
 if __name__ == "__main__":
     GetLastSchedule()
+    argv = sys.argv
+    if len(argv) >= 2:
+        if argv[1] == "first":
+            assert len(argv) >= 3
+            BindSchedule(argv[2])
+            FirstSchedule()
+        elif argv[1] == "continue":
+            assert len(argv) >= 3
+            BindSchedule(argv[2])
+            ContinueSchedule()
     print("------------- 用户脚本控制台 --------------")
     print("help 查看帮助                   exit 退出")
     print("info 查看配置信息               guide 教程")
