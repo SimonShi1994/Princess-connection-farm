@@ -253,7 +253,10 @@ class AsyncMixin(ToolsMixin):
 
     def fix_reboot(self, back_home=True):
         # 重启逻辑：重启应用，重启异步线程
+        self.stop_th()
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
+        self.d.app_wait("com.bilibili.priconne")
+        self.start_th()
         if back_home:
             self.lock_home()

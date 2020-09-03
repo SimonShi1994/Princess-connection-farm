@@ -107,6 +107,8 @@ class Device:
                 self.emulator_launcher.launch(self.emulator_id, block)
             if block:
                 return self.wait_for_healthy()
+            if self.a is not None:
+                self.a.fastscreencut_retry = 0  # 重置快速截图次数
         return True
 
     def quit_emulator(self):
