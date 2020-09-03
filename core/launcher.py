@@ -5,7 +5,7 @@ import subprocess
 import time
 from abc import abstractmethod, ABCMeta
 
-from core.pcr_config import emulator_console, emulator_id
+from core.pcr_config import emulator_console, emulator_id, emulator_address, auto_emulator_address
 
 
 class LauncherBase(metaclass=ABCMeta):
@@ -112,7 +112,10 @@ class LDLauncher(LauncherBase):
         self.console_str = emulator_console
 
     def id_to_serial(self, id: int) -> str:
-        return f"emulator-{5554 + id * 2}"
+        if auto_emulator_address:
+            return f"emulator-{5554 + id * 2}"
+        else:
+            return emulator_address[id]
 
     def launch(self, id: int, block: bool = False) -> None:
         print("Launch:", id)
@@ -157,3 +160,8 @@ class LDLauncher(LauncherBase):
             return False
         else:
             return all[id].is_running()
+
+
+EMULATOR_DICT = {
+    "雷电": LDLauncher,
+}

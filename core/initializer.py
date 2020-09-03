@@ -91,11 +91,12 @@ class Device:
         self.time_wake = 0  # 上次开机时间
         self.time_busy = 0  # 上次忙碌时间
         self.a: Optional[Automator] = None  # Automator,先不启动，在子进程中启动
-        self.device = adbutils.adb.device(serial)
         self.emulator_id: Optional[int] = id  # 模拟器ID
         self.emulator_launcher: Optional[LauncherBase] = launcher  # 模拟器控制器
         if self.emulator_launcher is not None:
-            self.serial = self.emulator_launcher.id_to_serial(self.emulator_id)
+            if self.serial is None:
+                self.serial = self.emulator_launcher.id_to_serial(self.emulator_id)
+        self.device = adbutils.adb.device(self.serial)
 
     def with_emulator(self):
         return self.emulator_launcher is not None
@@ -106,6 +107,8 @@ class Device:
                 self.emulator_launcher.launch(self.emulator_id, block)
             if block:
                 return self.wait_for_healthy()
+            if self.a is not None:
+                self.a.fastscreencut_retry = 0  # 重置快速截图次数
         return True
 
     def quit_emulator(self):
@@ -141,8 +144,10 @@ class Device:
     def wait_for_healthy(self, timeout=30):
         last = time.time()
         while time.time() - last < timeout:
-            if self.is_healthy():
-                return True
+            if self.is_connected():
+                if self.is_healthy():
+                    return True
+            time.sleep(1)
         return False
 
     def start_u2(self):
@@ -475,14 +480,10 @@ class PCRInitializer:
             a.init_device(device.serial)
             a.init_account(account, rec_addr)
             a.start()
-            user = a.AR.getuser()
-            account = user["account"]
-            password = user["password"]
             a.log.write_log("info", f"即将登陆： 用户名 {account}")  # 显然不需要输出密码啊喂！
             a.start_th()
             a.start_async()
             a.start_shuatu()
-            a.login_auth(account, password)
             out = a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr)
             if out:
                 a.change_acc()
@@ -530,7 +531,8 @@ class PCRInitializer:
                     break
                 if msg == "forcekill":
                     flag["exit"] = True
-                    device.a.force_kill()
+                    if device.a is not None:
+                        device.a.force_kill()
                     break
                 time.sleep(1)
 
@@ -545,6 +547,7 @@ class PCRInitializer:
                     device_on = False
                     device.quit_emulator()
                     out_queue.put({"device_status": {"serial": serial, "status": "sleep"}})
+                    out_queue.put({"device": {"serial": serial, "method": "offline"}})
                 _task = task_queue.get(False)
             except queue.Empty:
                 time.sleep(1)
@@ -559,7 +562,16 @@ class PCRInitializer:
                 device_on = True
                 if device.with_emulator() and not device.is_connected():
                     out_queue.put({"device_status": {"serial": serial, "status": "launch"}})
-                    device.launch_emulator(True)
+                    if not device.launch_emulator(True):
+                        out_queue.put({"device_status": {"serial": serial, "status": "launch_fail"}})
+                        out_queue.put({"device": {"serial": serial, "method": "offline"}})
+                        out_queue.put({"task": {"status": "retry", "task": _task, "device": serial}})
+                        if device.with_emulator():
+                            device.quit_emulator()
+                        flag["exit"] = True
+                        break
+                    else:
+                        out_queue.put({"device_status": {"serial": serial, "status": "launch_success"}})
                 try:
                     res = PCRInitializer.run_task(device, account, task, continue_, rec_addr)
                     if res:  # 任务执行成功
@@ -642,6 +654,10 @@ class PCRInitializer:
             self.write_log(f"设备 {serial} 重启失败！")
         elif status == "sleep":
             self.write_log(f"设备 {serial} 闲置，自动关闭")
+        elif status == "launch_success":
+            self.write_log(f"设备 {serial} 启动成功！")
+        elif status == "launch_fail":
+            self.write_log(f"设备 {serial} 启动失败！")
 
     def _listener(self):
         """
@@ -754,8 +770,6 @@ class Schedule:
     """
 
     def __init__(self, name: str, pcr: Optional[PCRInitializer]):
-        self.name = name
-        self.schedule = AutomatorRecorder.getschedule(name)
         self.pcr = pcr
         self.state = 0
         self.config = {}
@@ -765,8 +779,14 @@ class Schedule:
         self.subs = {}  # 关系表
         self.not_restart_name = []  # record=1，不用重启的列表
         self.always_restart_name = []  # record=2，循环执行的列表
-        self._parse()
-        self._init_status()
+        if name != "":
+            self.name = name
+            self.schedule = AutomatorRecorder.getschedule(name)
+            self._parse()
+            self._init_status()
+        else:
+            self.name = ""
+            self.schedule = {}
         self.run_thread: Optional[threading.Thread] = None
 
     def _parse(self):
@@ -818,6 +838,8 @@ class Schedule:
         """
         将自身的状态存储至rec/<schedule_name>/state.txt
         """
+        if self.name == "":
+            return
         os.makedirs(os.path.join("rec", self.name), exist_ok=True)
         with open(os.path.join("rec", self.name, "state.txt"), "w") as f:
             json.dump(obj, f)
@@ -826,6 +848,8 @@ class Schedule:
         """
         获取自身的状态
         """
+        if self.name == "":
+            return
         os.makedirs(os.path.join("rec", self.name), exist_ok=True)
         target = os.path.join("rec", self.name, "state.txt")
         try:
@@ -975,7 +999,10 @@ class Schedule:
         """
         生成log文件在log/schedule_<schedule_name>.txt中
         """
-        pcr_log(f"schedule_{self.name}").write_log(level, content)
+        if self.name == "":
+            pcr_log("__schedule_free__").write_log(level, content)
+        else:
+            pcr_log(f"schedule_{self.name}").write_log(level, content)
 
     @staticmethod
     def is_complete(rec):
@@ -1027,7 +1054,7 @@ class Schedule:
     def _run(self):
         # self._get_status()
         _time_start = time.time()  # 第一次直接输出初始状态
-        if len(s_sckey) != 0:
+        if len(s_sckey) != 0 and self.name != "":
             acc_state = f"Schedule {self.name} 开始运行！\n"
             from CreateUser import _show_schedule
             acc_state += PrintToStr(_show_schedule, self.schedule)
@@ -1146,29 +1173,36 @@ class Schedule:
         """
         self.run()
 
-    def stop(self):
+    def stop(self, force=False):
         """
         停止Schedule运行。
         清空PCR中剩下未完成的任务队列，并且等待当前执行完毕。
         """
         self.state = 0
-        self.log("info", "停止中，已清空任务队列，等待当前任务执行完毕")
-        self.pcr.stop(True, True)
+        if force:
+            self.log("info", "强制停止中，已清空任务队列，等待全部任务退出")
+        else:
+            self.log("info", "停止中，已清空任务队列，等待当前任务执行完毕")
+        self.pcr.stop(True, True, force)
         self.log("info", "Schedule已经停止。")
 
-    def join(self):
+    def join(self, nowait=False):
         """
         一直运行直到队列全部任务运行完毕
         """
         while True:
-            if "restart" in self.config:
+            if not nowait and "restart" in self.config:
                 time.sleep(1000)
                 continue
-            for i in self.run_status:
-                if self.run_status[i] == 0:
+            if nowait:
+                if self.pcr.is_free():
                     break
             else:
-                break
+                if len(self.run_status) == 0:
+                    break
+                for i in self.run_status:
+                    if self.run_status[i] == 0:
+                        break
             time.sleep(1)
 
     def get_rec_status(self, rec):
