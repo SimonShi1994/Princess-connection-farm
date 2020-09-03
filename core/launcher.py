@@ -154,3 +154,8 @@ class LDLauncher(LauncherBase):
             return False
         else:
             return all[id].is_running()
+
+
+EMULATOR_DICT = {
+    "雷电": LDLauncher,
+}
