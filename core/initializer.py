@@ -531,7 +531,8 @@ class PCRInitializer:
                     break
                 if msg == "forcekill":
                     flag["exit"] = True
-                    device.a.force_kill()
+                    if device.a is not None:
+                        device.a.force_kill()
                     break
                 time.sleep(1)
 
@@ -653,7 +654,7 @@ class PCRInitializer:
             self.write_log(f"设备 {serial} 重启失败！")
         elif status == "sleep":
             self.write_log(f"设备 {serial} 闲置，自动关闭")
-        elif status == "launuch_success":
+        elif status == "launch_success":
             self.write_log(f"设备 {serial} 启动成功！")
         elif status == "launch_fail":
             self.write_log(f"设备 {serial} 启动失败！")
@@ -769,8 +770,6 @@ class Schedule:
     """
 
     def __init__(self, name: str, pcr: Optional[PCRInitializer]):
-        self.name = name
-        self.schedule = AutomatorRecorder.getschedule(name)
         self.pcr = pcr
         self.state = 0
         self.config = {}
@@ -780,8 +779,14 @@ class Schedule:
         self.subs = {}  # 关系表
         self.not_restart_name = []  # record=1，不用重启的列表
         self.always_restart_name = []  # record=2，循环执行的列表
-        self._parse()
-        self._init_status()
+        if name != "":
+            self.name = name
+            self.schedule = AutomatorRecorder.getschedule(name)
+            self._parse()
+            self._init_status()
+        else:
+            self.name = ""
+            self.schedule = {}
         self.run_thread: Optional[threading.Thread] = None
 
     def _parse(self):
@@ -833,6 +838,8 @@ class Schedule:
         """
         将自身的状态存储至rec/<schedule_name>/state.txt
         """
+        if self.name == "":
+            return
         os.makedirs(os.path.join("rec", self.name), exist_ok=True)
         with open(os.path.join("rec", self.name, "state.txt"), "w") as f:
             json.dump(obj, f)
@@ -841,6 +848,8 @@ class Schedule:
         """
         获取自身的状态
         """
+        if self.name == "":
+            return
         os.makedirs(os.path.join("rec", self.name), exist_ok=True)
         target = os.path.join("rec", self.name, "state.txt")
         try:
@@ -990,7 +999,10 @@ class Schedule:
         """
         生成log文件在log/schedule_<schedule_name>.txt中
         """
-        pcr_log(f"schedule_{self.name}").write_log(level, content)
+        if self.name == "":
+            pcr_log("__schedule_free__").write_log(level, content)
+        else:
+            pcr_log(f"schedule_{self.name}").write_log(level, content)
 
     @staticmethod
     def is_complete(rec):
@@ -1042,7 +1054,7 @@ class Schedule:
     def _run(self):
         # self._get_status()
         _time_start = time.time()  # 第一次直接输出初始状态
-        if len(s_sckey) != 0:
+        if len(s_sckey) != 0 and self.name != "":
             acc_state = f"Schedule {self.name} 开始运行！\n"
             from CreateUser import _show_schedule
             acc_state += PrintToStr(_show_schedule, self.schedule)
@@ -1161,29 +1173,36 @@ class Schedule:
         """
         self.run()
 
-    def stop(self):
+    def stop(self, force=False):
         """
         停止Schedule运行。
         清空PCR中剩下未完成的任务队列，并且等待当前执行完毕。
         """
         self.state = 0
-        self.log("info", "停止中，已清空任务队列，等待当前任务执行完毕")
-        self.pcr.stop(True, True)
+        if force:
+            self.log("info", "强制停止中，已清空任务队列，等待全部任务退出")
+        else:
+            self.log("info", "停止中，已清空任务队列，等待当前任务执行完毕")
+        self.pcr.stop(True, True, force)
         self.log("info", "Schedule已经停止。")
 
-    def join(self):
+    def join(self, nowait=False):
         """
         一直运行直到队列全部任务运行完毕
         """
         while True:
-            if "restart" in self.config:
+            if not nowait and "restart" in self.config:
                 time.sleep(1000)
                 continue
-            for i in self.run_status:
-                if self.run_status[i] == 0:
+            if nowait:
+                if self.pcr.is_free():
                     break
             else:
-                break
+                if len(self.run_status) == 0:
+                    break
+                for i in self.run_status:
+                    if self.run_status[i] == 0:
+                        break
             time.sleep(1)
 
     def get_rec_status(self, rec):
