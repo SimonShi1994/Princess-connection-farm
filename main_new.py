@@ -343,6 +343,16 @@ def ShowInfo():
 
 if __name__ == "__main__":
     GetLastSchedule()
+    argv = sys.argv
+    if len(argv) >= 2:
+        if argv[1] == "first":
+            assert len(argv) >= 3
+            BindSchedule(argv[2])
+            FirstSchedule()
+        elif argv[1] == "continue":
+            assert len(argv) >= 3
+            BindSchedule(argv[2])
+            ContinueSchedule()
     print("------------- 用户脚本控制台 --------------")
     print("help 查看帮助                   exit 退出")
     print("info 查看配置信息               guide 教程")
