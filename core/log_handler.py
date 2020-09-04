@@ -20,6 +20,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
     acc_message = {}
 
     def __init__(self, acc):  # acc为账户名
+        os.makedirs("log", exist_ok=True)
         self.acc_name = acc  # 账户名
         self.acc_message[self.acc_name] = []
         # self.clean()

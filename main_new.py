@@ -205,11 +205,12 @@ def Restart(name):
 
 
 def StopSchedule(force=False):
-    global SCH
+    global SCH, PCR
     if SCH is None:
         print("还没有运行任何Schedule")
         return
     SCH.stop(force)
+    PCR = None
     SCH = None
 
 
@@ -358,14 +359,15 @@ if __name__ == "__main__":
             assert len(argv) >= 3
             BindSchedule(argv[2])
             ContinueSchedule()
-    print("------------- 用户脚本控制台 --------------")
-    print("help 查看帮助                   exit 退出")
-    print("info 查看配置信息               guide 教程")
-    print("By TheAutumnOfRice")
-    print("----------------------------------------")
-    if last_schedule != "":
-        print("当前绑定计划：", last_schedule)
-    print("新的脚本控制方法更新！输入help查看帮助。")
+    else:
+        print("------------- 用户脚本控制台 --------------")
+        print("help 查看帮助                   exit 退出")
+        print("info 查看配置信息               guide 教程")
+        print("By TheAutumnOfRice")
+        print("----------------------------------------")
+        if last_schedule != "":
+            print("当前绑定计划：", last_schedule)
+        print("新的脚本控制方法更新！输入help查看帮助。")
     while True:
         try:
             cmd = input("> ")
@@ -473,19 +475,19 @@ if __name__ == "__main__":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 assert last_schedule != "", "需要先绑定具体的计划！"
                 assert len(cmds) == 2, "需要指定具体名称"
-                if cmds[2] == "-all":
+                if cmds[1] == "-all":
                     ClearError(None)
                 else:
-                    ClearError(cmds[2])
+                    ClearError(cmds[1])
 
             elif order == "restart":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 assert last_schedule != "", "需要先绑定具体的计划！"
                 assert len(cmds) == 2, "需要指定具体名称"
-                if cmds[2] == "-all":
+                if cmds[1] == "-all":
                     Restart(None)
                 else:
-                    Restart(cmds[2])
+                    Restart(cmds[1])
 
             elif order == "edit":
                 assert SCH is None, "必须先停止正在运行的Schedule"

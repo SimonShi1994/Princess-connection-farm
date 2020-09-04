@@ -38,6 +38,13 @@ class LoginMixin(BaseMixin):
         :param pwd:
         :return:
         """
+        for retry in range(30):
+            if not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
+                time.sleep(2)
+            else:
+                break
+        else:
+            raise Exception("进入登陆页面失败！")
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
         self.d.clear_text()
         self.d.send_keys(str(ac))
