@@ -30,10 +30,18 @@ if ignore_warning:
     uiautomator2.logger.disabled = True
     # logging.disable()
 
+
 class ForceKillException(Exception):
     def __init__(self, *args):
         super().__init__()
         self.args = args
+
+
+class FastScreencutException(Exception):
+    def __init__(self, *args):
+        super().__init__()
+        self.args = args
+
 
 class BaseMixin:
     """
@@ -77,6 +85,34 @@ class BaseMixin:
         self.log.write_log("info", "Do nothing.")
         pass
 
+    def init_fastscreen(self):
+        if fast_screencut and Multithreading({}).program_is_stopped():
+            from core.get_screen import ReceiveFromMinicap
+            self.receive_minicap = ReceiveFromMinicap(self.address)
+            self.receive_minicap.start()
+            print("Device:", self._d.serial, "快速截图已打开，测试中……")
+            for retry in range(3):
+                try:
+                    data = self.receive_minicap.receive_img()
+                    if data is None:
+                        raise Exception("读取数据超过最大尝试次数")
+                    self.fastscreencut_retry = 0
+                    print("Device:", self._d.serial, "快速截图运行正常。")
+                    break
+                except Exception as e:
+                    self.receive_minicap.stop()
+                    time.sleep(1)
+                    if retry < 2:
+                        print("Device:", self._d.serial, f"尝试重新开启快速截图...{e}")
+                        self.receive_minicap = ReceiveFromMinicap(self.address)
+                        self.receive_minicap.start()
+            else:
+                self.fastscreencut_retry = 3
+                if force_fast_screencut:
+                    raise Exception("快速截图打开失败！")
+                else:
+                    print("Device:", self._d.serial, f"快速截图打开失败！使用慢速截图。")
+
     def init_device(self, address):
         """
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
@@ -86,32 +122,7 @@ class BaseMixin:
         if address != "debug":
             self._d = safe_u2_connect(address)
             self.d = SafeU2Handle(self._d)
-            if fast_screencut and Multithreading({}).program_is_stopped():
-                from core.get_screen import ReceiveFromMinicap
-                self.receive_minicap = ReceiveFromMinicap(address)
-                self.receive_minicap.start()
-                print("Device:", self._d.serial, "快速截图已打开，测试中……")
-                for retry in range(3):
-                    try:
-                        data = self.receive_minicap.receive_img()
-                        if data is None:
-                            raise Exception("读取数据超过最大尝试次数")
-                        self.fastscreencut_retry = 0
-                        print("Device:", self._d.serial, "快速截图运行正常。")
-                        break
-                    except Exception as e:
-                        self.receive_minicap.stop()
-                        time.sleep(1)
-                        if retry < 2:
-                            print("Device:", self._d.serial, f"尝试重新开启快速截图...{e}")
-                            self.receive_minicap = ReceiveFromMinicap(address)
-                            self.receive_minicap.start()
-                else:
-                    self.fastscreencut_retry = 3
-                    if force_fast_screencut:
-                        raise Exception("快速截图打开失败！")
-                    else:
-                        print("Device:", self._d.serial, f"快速截图打开失败！使用慢速截图。")
+            self.init_fastscreen()
 
     def init_account(self, account, rec_addr):
         self.account = account
@@ -459,7 +470,7 @@ class BaseMixin:
                     self.fastscreencut_retry += 1
                     if self.fastscreencut_retry == 3:
                         if force_fast_screencut:
-                            raise Exception("快速截图连续出错3次")
+                            raise FastScreencutException(*e.args)
                         else:
                             self.log.write_log("error", f"快速截图连续出错3次，关闭快速截图。")
                         self.receive_minicap.stop()

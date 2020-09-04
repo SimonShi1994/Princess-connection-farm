@@ -44,7 +44,7 @@ class ReceiveFromMinicap:
         # 当前最后接收到的1帧数据
         self.receive_data = queue.Queue()
         # 接收标志位（每次接收1帧都会重置）
-        self.receive_flag = queue.Queue()
+        self.receive_flag = 0
         # 关闭接收线程
         self.receive_close = 0
         # 模拟器地址
@@ -106,8 +106,9 @@ class ReceiveFromMinicap:
             try:
                 # 如果不是bytes，那就是图像
                 if isinstance(message, (bytes, bytearray)) and len(message) > 100:
-                    if self.receive_flag.get(block=False):
+                    if self.receive_flag == 1:
                         self.receive_data.put(message)
+                        self.receive_flag = 0
                 else:
                     if debug:
                         print(message)
@@ -138,8 +139,9 @@ class ReceiveFromMinicap:
     def receive_img(self):
         retry = 0
         max_retry = 3
+        lock.acquire()
         while retry <= max_retry:
-            self.receive_flag.put(1)
+            self.receive_flag = 1
             try:
                 data = self.receive_data.get(timeout=fast_screencut_timeout)
                 if debug:
@@ -149,6 +151,7 @@ class ReceiveFromMinicap:
                 # 转rgb
                 data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
                 time.sleep(fast_screencut_delay)
+                lock.release()
                 return data
             except queue.Empty:
                 # 读取超时
@@ -163,7 +166,8 @@ class ReceiveFromMinicap:
                 continue
         if debug:
             print("快速截图失败！")
-            return None
+        lock.release()
+        return None
 
 # if __name__ == '__main__':
 #     a = Automator("emulator-5554")
