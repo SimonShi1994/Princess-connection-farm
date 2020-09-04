@@ -36,9 +36,11 @@ def _connect():  # 连接adb与uiautomator
             for port in emulator_ports:
                 os.system('cd adb & adb connect ' + emulator_ip + ':' + str(port))
         # os.system 函数正常情况下返回是进程退出码，0为正常退出码，其余为异常
+        """
         if os.system('cd adb & adb connect ' + selected_emulator) != 0:
             pcr_log('admin').write_log(level='error', message="连接模拟器失败")
             exit(1)
+        """
     except Exception as e:
         pcr_log('admin').write_log(level='error', message='连接失败, 原因: {}'.format(e))
         exit(1)
