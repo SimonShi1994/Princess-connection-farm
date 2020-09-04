@@ -832,5 +832,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 L += [f"{i + 1}-{j}"]
         self.meiriHtu(L, daily_tili, False, do_tuitu, var)
 
-    def upgrade(self, buy_tili=0, do_rank=True, do_shuatu=True):
+    def shengjijuese(self, buy_tili=0, do_rank=True, do_shuatu=True):
+        self.lock_home()
         self.auto_upgrade(buy_tili=buy_tili, do_rank=do_rank, do_shuatu=do_shuatu)
+        self.lock_home()
