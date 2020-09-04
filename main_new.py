@@ -205,11 +205,12 @@ def Restart(name):
 
 
 def StopSchedule(force=False):
-    global SCH
+    global SCH, PCR
     if SCH is None:
         print("还没有运行任何Schedule")
         return
     SCH.stop(force)
+    PCR = None
     SCH = None
 
 
@@ -234,7 +235,12 @@ def JoinShutdown(nowait=False):
 
 
 def ShowGuide():
-    print("暂无教程")
+    print("/docs/introduce_to_schedule.md  Schedule使用帮助")
+    print("/INI文件配置解读.md               配置文件使用说明")
+    print("/AboutUpdater.md                自动更新使用说明")
+    print("/webclient/README.md            前端使用说明")
+    print("/tasks_example/                 样例任务json文件")
+    print("/equip/                         自动发起捐赠所用的样例装备")
 
 
 def ShowServerChan():
@@ -343,14 +349,25 @@ def ShowInfo():
 
 if __name__ == "__main__":
     GetLastSchedule()
-    print("------------- 用户脚本控制台 --------------")
-    print("help 查看帮助                   exit 退出")
-    print("info 查看配置信息               guide 教程")
-    print("By TheAutumnOfRice")
-    print("----------------------------------------")
-    if last_schedule != "":
-        print("当前绑定计划：", last_schedule)
-    print("新的脚本控制方法更新！输入help查看帮助。")
+    argv = sys.argv
+    if len(argv) >= 2:
+        if argv[1] == "first":
+            assert len(argv) >= 3
+            BindSchedule(argv[2])
+            FirstSchedule()
+        elif argv[1] == "continue":
+            assert len(argv) >= 3
+            BindSchedule(argv[2])
+            ContinueSchedule()
+    else:
+        print("------------- 用户脚本控制台 --------------")
+        print("help 查看帮助                   exit 退出")
+        print("info 查看配置信息               guide 教程")
+        print("By TheAutumnOfRice")
+        print("----------------------------------------")
+        if last_schedule != "":
+            print("当前绑定计划：", last_schedule)
+        print("新的脚本控制方法更新！输入help查看帮助。")
     while True:
         try:
             cmd = input("> ")
@@ -458,19 +475,19 @@ if __name__ == "__main__":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 assert last_schedule != "", "需要先绑定具体的计划！"
                 assert len(cmds) == 2, "需要指定具体名称"
-                if cmds[2] == "-all":
+                if cmds[1] == "-all":
                     ClearError(None)
                 else:
-                    ClearError(cmds[2])
+                    ClearError(cmds[1])
 
             elif order == "restart":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 assert last_schedule != "", "需要先绑定具体的计划！"
                 assert len(cmds) == 2, "需要指定具体名称"
-                if cmds[2] == "-all":
+                if cmds[1] == "-all":
                     Restart(None)
                 else:
-                    Restart(cmds[2])
+                    Restart(cmds[1])
 
             elif order == "edit":
                 assert SCH is None, "必须先停止正在运行的Schedule"

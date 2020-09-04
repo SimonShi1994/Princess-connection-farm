@@ -104,7 +104,7 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice)对本项目的倾力帮助。
+2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice) 对本项目的倾力帮助。
 
 3. **来个 star 吧(*/ω＼*)，有问题请提交issue**
 
@@ -112,8 +112,8 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 
 ## 更新计划
 
-- [ ] 模拟器自启动控制
-- [ ] 简化Schedule操作模式
+- [x] 模拟器自启动控制
+- [x] 简化Schedule操作模式
 - [ ] WebGUI界面
 
 ## 免责声明
@@ -123,6 +123,11 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2020/9/3 By:TheAutumnOfRice
+
+- 控制台使用更新，更加丝滑，扩展实时控制功能
+- 上线模拟器控制
 
 2020/9/2 By:TheAutumnOfRice
 

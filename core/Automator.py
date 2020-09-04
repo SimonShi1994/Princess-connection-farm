@@ -6,7 +6,7 @@ import traceback
 import cv2
 
 from automator_mixins._async import AsyncMixin
-from automator_mixins._base import BaseMixin, ForceKillException
+from automator_mixins._base import BaseMixin, ForceKillException, FastScreencutException
 from automator_mixins._dxc import DXCMixin
 from automator_mixins._hanghui import HanghuiMixin
 from automator_mixins._jjc import JJCMixin
@@ -91,7 +91,8 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         # 未知异常：仍然是重启哒！万能的重启万岁！
         last_exception = None
         before_ = True
-        for retry in range(max_retry + 1):
+        retry = 0
+        while retry <= max_retry:
             try:
                 if before_:
                     self.task_current("登录")
@@ -117,10 +118,14 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 except:
                     pcr_log(account).write_log(level='warning', message=f'强制终止-重启失败！')
                 raise e
+            except FastScreencutException as e:
+                pcr_log(account).write_log(level='error', message=f'快速截图出现错误，{e},尝试重新连接……')
+                self.init_fastscreen()
             except OfflineException as e:
                 pcr_log(account).write_log('error', message=f'main-检测到设备离线：{e}')
                 return False
             except Exception as e:
+                retry += 1
                 try:
                     os.makedirs(f"error_screenshot/{account}", exist_ok=True)
                     nowtime = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
