@@ -41,6 +41,9 @@ def _connect():  # 连接adb与uiautomator
             pcr_log('admin').write_log(level='error', message="连接模拟器失败")
             exit(1)
         """
+        if os.system('python -m uiautomator2 init') != 0:
+            pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
+            exit(1)
     except Exception as e:
         pcr_log('admin').write_log(level='error', message='连接失败, 原因: {}'.format(e))
         exit(1)
