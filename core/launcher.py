@@ -145,8 +145,6 @@ class LDLauncher(LauncherBase):
         return result
 
     def is_running(self, id: int) -> bool:
-        print("Isrunning:", id)
-        return True
         try:
             all = self.get_list()
         except Exception as e:
