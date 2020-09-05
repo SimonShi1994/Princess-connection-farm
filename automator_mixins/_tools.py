@@ -17,12 +17,6 @@ from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticl
     ocr_mode
 from ._base import BaseMixin
 
-if ocr_mode != "网络" and len(ocr_mode) != 0:
-    import muggle_ocr
-    # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
-    sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
-
-
 
 class ToolsMixin(BaseMixin):
     """
@@ -156,8 +150,10 @@ class ToolsMixin(BaseMixin):
             part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
             part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             img_binary = cv2.imencode('.png', part)[1].tobytes()
-            local_ocr_text = sdk.predict(image_bytes=img_binary)
-            return local_ocr_text
+            files = {'file': ('tmp.png', img_binary, 'image/png')}
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/", files=files)
+            # local_ocr_text = sdk.predict(image_bytes=img_binary)
+            return local_ocr_text.text
         except Exception as ocr_error:
             pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
             return -1

@@ -436,7 +436,7 @@ VALID_TASK = ValidTask() \
                                               "如果两次捐赠小于8小时，且相差小于等待时间\n"
                                               "则程序进入什么都不做的等待，否则跳过。", 300)]) \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
-         [TaskParam("assist_num", bool, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个"),
+         [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个"),
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。"),
           TaskParam("stuck_today", bool, "卡住地下城", "设置为True时，无论如何，进去地下城但是不打。\n设置为False时，为正常借人。"),
           TaskParam("stuck_notzhandoukaishi", bool, "无法出击但不撤退", "设置为True时，如果发现无法出击，那就不撤退。\n设置为False时，则相反。"),]) \
