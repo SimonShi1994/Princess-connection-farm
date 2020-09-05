@@ -2,7 +2,7 @@ import os
 import time
 
 from core.MoveRecord import movevar
-from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP
+from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, ACTIVITY_COORD
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -151,6 +151,62 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.continueDo9(440, 255)  # 1-3
         self.continueDo9(300, 339)  # 1-2
         self.continueDo9(142, 267)  # 1-1
+        self.lock_home()
+
+    # 刷活动normal图(有bug，不可用）
+    def do_activity_normal(self, buy_tili=0, activity_name="", mode=0):
+        self.lock_home()
+        if activity_name == "":
+            raise Exception("请指定活动名")
+
+        def enter_activity():
+            # 进入冒险
+            time.sleep(2)
+            self.click(480, 505)
+            time.sleep(2)
+            while True:
+                screen_shot_ = self.getscreen()
+                if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
+                    break
+            # 点击进入活动
+            self.click(415, 430)
+            time.sleep(3)
+
+        def GetXYTD_activity(activity_name, mode, num):
+            if mode == 0:
+                D = ACTIVITY_COORD[activity_name]
+                DR = D["right"]
+                DL = D["left"]
+                if num in DR:
+                    return DR[num].x, DR[num].y, 1, "right"
+                else:
+                    return DL[num].x, DL[num].y, 1, "left"
+            elif mode == 1:
+                D = HARD_COORD[activity_name]
+                return D[num].x, D[num].y, 1, None
+
+        enter_activity()
+        while True:
+            screen_shot_ = self.getscreen()
+            self.click(480, 380)
+            time.sleep(0.5)
+            self.click(480, 380)
+            if UIMatcher.img_where(screen_shot_, 'img/home/zhuxian.bmp'):
+                self.click(880, 80)
+            if UIMatcher.img_where(screen_shot_, 'img/juqing/caidanyuan.bmp'):
+                self.chulijiaocheng(turnback=None)
+                enter_activity()
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
+                break
+        for i in range(1,5):
+            result = self.zhandouzuobiao(*GetXYTD_activity(activity_name=activity_name, mode=mode, num=i),
+                                         buy_tili=buy_tili, duiwu=-2,
+                                         bianzu=-2, juqing_in_fight=1, end_mode=1)
+            if result < 3:
+                raise Exception("你的练度不适合刷活动图，请提升练度后重试")
+        result = self.zhandouzuobiao(*GetXYTD_activity(activity_name=activity_name, mode=mode, num=5),
+                                     buy_tili=buy_tili, use_saodang=True, times="all",
+                                     juqing_in_fight=1, end_mode=1)
         self.lock_home()
 
     @staticmethod
@@ -775,3 +831,8 @@ class ShuatuMixin(ShuatuBaseMixin):
             for j in [1, 2, 3]:
                 L += [f"{i + 1}-{j}"]
         self.meiriHtu(L, daily_tili, False, do_tuitu, var)
+
+    def shengjijuese(self, buy_tili=0, do_rank=True, do_shuatu=True):
+        self.lock_home()
+        self.auto_upgrade(buy_tili=buy_tili, do_rank=do_rank, do_shuatu=do_shuatu)
+        self.lock_home()
