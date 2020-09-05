@@ -19,7 +19,7 @@ from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
     trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
-    max_free_time
+    max_free_time, adb_dir
 from core.safe_u2 import OfflineException
 from core.usercentre import AutomatorRecorder, parse_batch
 from core.utils import diffday, PrintToStr
@@ -31,16 +31,17 @@ def _connect():  # 连接adb与uiautomator
             port_list = check_known_emulators()
             print("自动搜寻模拟器：" + str(port_list))
             for port in port_list:
-                os.system('cd adb & adb connect ' + emulator_ip + ':' + str(port))
+                os.system(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(port))
         if len(emulator_ports) != 0:
             for port in emulator_ports:
-                os.system('cd adb & adb connect ' + emulator_ip + ':' + str(port))
+                os.system(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(port))
         # os.system 函数正常情况下返回是进程退出码，0为正常退出码，其余为异常
         """
         if os.system('cd adb & adb connect ' + selected_emulator) != 0:
             pcr_log('admin').write_log(level='error', message="连接模拟器失败")
             exit(1)
         """
+        os.system(f"cd {adb_dir} & adb kill-server")
         if os.system('python -m uiautomator2 init') != 0:
             pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
             exit(1)
