@@ -461,7 +461,7 @@ if __name__ == "__main__":
                     ContinueTask(False, cmds[1], cmds[2], 0)
                 elif len(cmds) == 4:
                     assert SCH is not None, "脚本未启动！"
-                    ContinueTask(False, cmds[1], cmds[2], int(cmds[4]))
+                    ContinueTask(False, cmds[1], cmds[2], int(cmds[3]))
                 else:
                     raise Exception("命令错误")
 
