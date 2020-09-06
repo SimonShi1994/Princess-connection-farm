@@ -17,7 +17,6 @@ from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticl
     ocr_mode
 from ._base import BaseMixin
 
-
 class ToolsMixin(BaseMixin):
     """
     工具类插片
@@ -152,7 +151,7 @@ class ToolsMixin(BaseMixin):
             img_binary = cv2.imencode('.png', part)[1].tobytes()
             files = {'file': ('tmp.png', img_binary, 'image/png')}
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/", files=files)
-            # local_ocr_text = sdk.predict(image_bytes=img_binary)
+            pcr_log(self.account).write_log(level='info',message='本地OCR识别结果：%s'% local_ocr_text.text)
             return local_ocr_text.text
         except Exception as ocr_error:
             pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
