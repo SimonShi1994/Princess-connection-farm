@@ -24,6 +24,6 @@ pip install -r requirements.txt
 ## 运行程序
 回到Powershell窗口，输入运行命令
 ```
-python main.py
+python main_new.py
 ```
 ![run](https://github.com/Dr-Bluemond/Princess-connection-farm/raw/master/docs/img/run.jpg)
