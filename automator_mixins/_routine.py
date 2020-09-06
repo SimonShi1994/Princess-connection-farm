@@ -14,40 +14,6 @@ class RoutineMixin(ShuatuBaseMixin):
     包含日常行动相关的脚本
     """
 
-<<<<<<< HEAD
-    def init_home(self):
-        while True:
-            screen_shot_ = self.d.screenshot(format="opencv")
-            if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp', at=(891, 413, 930, 452)):
-                break
-            if UIMatcher.img_where(screen_shot_, 'img/niudan_jiasu.jpg', at=(700, 0, 960, 100)):
-                self.d.click(893, 39)  # 跳过
-                time.sleep(0.5)
-                continue
-            if UIMatcher.img_where(screen_shot_, 'img/jingsaikaishi.bmp', at=(755, 471, 922, 512)):
-                self.d.click(786, 308)  # 选角色
-                time.sleep(0.2)
-                self.d.click(842, 491)  # 开始
-                time.sleep(0.5)
-                continue
-            self.d.click(1, 1)
-            self.d.click(330, 270)
-            # 跳过特别庆典
-        self.lockimg('img/liwu.bmp', elseclick=[(1, 1)], elsedelay=0.2, at=(891, 413, 930, 452))  # 首页锁定
-        time.sleep(0.5)
-        # 这里防一波第二天可可萝跳脸教程
-        screen_shot_ = self.d.screenshot(format="opencv")
-        num_of_white, _, _ = UIMatcher.find_gaoliang(screen_shot_)
-        if num_of_white < 50000:
-            self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
-            self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2, at=(891, 413, 930, 452))
-            return
-        if UIMatcher.img_where(screen_shot_, 'img/kekeluo.bmp'):
-            self.lockimg('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
-            self.lockimg('img/liwu.bmp', elseclick=[(90, 514)], elsedelay=0.2, at=(891, 413, 930, 452))
-
-=======
->>>>>>> develop
     def gonghuizhijia(self):  # 家园领取
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         self.lock_home()
