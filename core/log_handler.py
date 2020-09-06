@@ -7,7 +7,7 @@ import psutil
 import requests
 
 # 临时，等待config的创建
-from pcr_config import s_sckey, log_lev, log_cache
+from core.pcr_config import s_sckey, log_lev, log_cache
 
 # 各项需要累积的初始化
 acc_cout = 0
@@ -20,6 +20,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
     acc_message = {}
 
     def __init__(self, acc):  # acc为账户名
+        os.makedirs("log", exist_ok=True)
         self.acc_name = acc  # 账户名
         self.acc_message[self.acc_name] = []
         # self.clean()
@@ -56,11 +57,12 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             self.server_bot(lev, message)
         elif lev == 'error':
             self.norm_log.error(message)
+            pcr_log("__ERROR_LOG__").write_log("info", f"账号 {self.acc_name} ： {message}")
             self.server_bot(lev, message)
         else:
             self.norm_log.critical(message)
 
-    def server_bot(self, s_level, message):
+    def server_bot(self, s_level, message='', acc_state=''):
         """
         server酱连接 2020/7/21 by:CyiceK
         s_level 为日志级别
@@ -80,19 +82,16 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             '3': lev_3
         }
         # 先不填acc_state
-        acc_state = ''
         if len(s_sckey) != 0:
-            if s_level in lev_dic[log_lev]:
-                from main import CheckStateReturn
-                acc_state = CheckStateReturn()
             message = ''.join(message).replace('\n', '')
             if s_level in lev_dic[log_lev]:
-                if s_level not in lev_dic['3']:
-                    self.acc_message[self.acc_name].append(message)
-                    self.acc_message[self.acc_name].append('\n')
+                self.acc_message.setdefault(self.acc_name,[])
+                self.acc_message[self.acc_name].append(message)
+                self.acc_message[self.acc_name].append('\n')
             # print(self.acc_message[self.acc_name])
             # print(len(self.acc_message[self.acc_name]))
-            if s_level in lev_dic['3'] or (s_level in lev_dic[log_lev] and len(self.acc_message[self.acc_name]) >= log_cache):
+            if s_level in lev_dic['3'] or (
+                    s_level in lev_dic[log_lev] and len(self.acc_message[self.acc_name]) >= log_cache):
                 message = ''.join(self.acc_message[self.acc_name]).replace(',', '\n').replace("'", '')
                 # print(message)
                 cpu_percent = psutil.cpu_percent(interval=1)
@@ -116,7 +115,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
                 # 不因为0级消息而清空消息队列
                 if s_level not in lev_dic['3']:
                     # 发送完后清空消息队列
-                    self.acc_message = []
+                    self.acc_message = {}
 
 
 class pcr_acc_log:  # 帐号日志（全局）

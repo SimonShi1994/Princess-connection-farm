@@ -23,9 +23,19 @@
 |         end_shutdown         |                   非常“危险”的Windows功能:自动关机           |  bool  |          |      True       |
 |       lockimg_timeout        |               90秒如果还在lockimg，则跳出重启                |  int   |          |       90        |
 |         enable_pause         |              开启后，可以按下Shift+P暂停脚本。                |  bool  |          |     True       |
+|       running_input          |           开启后，可以在运行时向控制台输入指令                   |  bool |          |      True  |
+|selected_emulator|使用的模拟器的名称|string||雷电|
+|enable_auto_find_emulator|启动自动模拟器搜索，理论支持各种模拟器共同使用|bool|建议关闭|False|
+|emulator_ports|（除雷电外的的）模拟器端口|list|雷电可以不写|[]|
+|adb_dir|adb目录|str|可以使用脚本自带adb|adb|
+|emulator_console|模拟器控制台目录|str|目前仅支持雷电|F:\XuanZhi\LDPlayer\ldconsole.exe|
+|emulator_id|模拟器设备编号|list|目前只支持雷电|[0,1]|
+|quit_emulator_when_free|空闲时退出模拟器|bool||True|
+|max_free_tine|空闲多久触发推出模拟器|int|单位：秒|120|
 
 ------
 
 小脚印
 
 - 2020/8/5 By:CyiceK
+- 2020/8/30 By:TheAutumnOfRice

@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import threading
 import time
 from typing import Optional, Union
@@ -6,18 +7,40 @@ from typing import Optional, Union
 import cv2
 import numpy as np
 import uiautomator2 as u2
-import datetime
 
 from core import log_handler
 from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
-from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
+from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
+    force_fast_screencut
+from core.safe_u2 import SafeU2Handle, safe_u2_connect
 from core.usercentre import AutomatorRecorder
-from pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise
 
 lock = threading.Lock()
+
+if ignore_warning:
+    if debug:
+        print("WARNING IGNORED.")
+    import warnings
+    import uiautomator2
+
+    warnings.filterwarnings('ignore')
+    uiautomator2.logger.disabled = True
+    # logging.disable()
+
+
+class ForceKillException(Exception):
+    def __init__(self, *args):
+        super().__init__()
+        self.args = args
+
+
+class FastScreencutException(Exception):
+    def __init__(self, *args):
+        super().__init__()
+        self.args = args
 
 
 class BaseMixin:
@@ -32,7 +55,8 @@ class BaseMixin:
 
         self.appRunning = False
         self.account = "debug"
-        self.d: Optional[u2.Device] = None
+        self._d: Optional[u2.Device] = None
+        self.d: Optional[SafeU2Handle] = None
         self.dWidth = 960
         self.dHeight = 540
         self.log: Optional[log_handler.pcr_log] = None
@@ -40,6 +64,7 @@ class BaseMixin:
         self.ms: Optional[moveset] = None
         self.debug_screen = None  # 如果debug_screen为None，则正常截图；否则，getscreen函数使用debug_screen作为读取的screen
         self.last_screen = None  # 每次调用getscreen会把图片暂存至last_screen
+        self.fastscreencut_retry = 0  # 快速截图失败次数
         self.address = None
         self.today_date = datetime.date.today()
         self.cpu_occupy = 0
@@ -47,11 +72,46 @@ class BaseMixin:
         self.last_screen_time = 0
         self.async_juqingtiaoguo_switch = False
         self.last_star = 0  # 上次战斗的星数
+        self._move_method = ""  # 接收其它线程发送的处理方法
+        self._move_msg = ""  # 接收其它线程发送的信息
 
         # fastscreencap
         if fast_screencut:
             self.lport: Optional[int] = None
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
+
+    def do_nothing(self):
+        # 啥事不干
+        self.log.write_log("info", "Do nothing.")
+        pass
+
+    def init_fastscreen(self):
+        if fast_screencut and Multithreading({}).program_is_stopped():
+            from core.get_screen import ReceiveFromMinicap
+            self.receive_minicap = ReceiveFromMinicap(self.address)
+            self.receive_minicap.start()
+            print("Device:", self._d.serial, "快速截图已打开，测试中……")
+            for retry in range(3):
+                try:
+                    data = self.receive_minicap.receive_img()
+                    if data is None:
+                        raise Exception("读取数据超过最大尝试次数")
+                    self.fastscreencut_retry = 0
+                    print("Device:", self._d.serial, "快速截图运行正常。")
+                    break
+                except Exception as e:
+                    self.receive_minicap.stop()
+                    time.sleep(1)
+                    if retry < 2:
+                        print("Device:", self._d.serial, f"尝试重新开启快速截图...{e}")
+                        self.receive_minicap = ReceiveFromMinicap(self.address)
+                        self.receive_minicap.start()
+            else:
+                self.fastscreencut_retry = 3
+                if force_fast_screencut:
+                    raise Exception("快速截图打开失败！")
+                else:
+                    print("Device:", self._d.serial, f"快速截图打开失败！使用慢速截图。")
 
     def init_device(self, address):
         """
@@ -60,22 +120,26 @@ class BaseMixin:
         self.appRunning = False
         self.address = address
         if address != "debug":
-            self.d = u2.connect(address)
-            self.dWidth, self.dHeight = self.d.window_size()
-            if fast_screencut and Multithreading({}).program_is_stopped():
-                from core.get_screen import ReceiveFromMinicap
-                self.receive_minicap = ReceiveFromMinicap(address)
-                self.receive_minicap.start()
+            self._d = safe_u2_connect(address)
+            self.d = SafeU2Handle(self._d)
+            self.init_fastscreen()
 
-    def init_account(self, account):
+    def init_account(self, account, rec_addr):
         self.account = account
         self.log = log_handler.pcr_log(account)  # 初始化日志
-        self.AR = AutomatorRecorder(account)
+        self.AR = AutomatorRecorder(account, rec_addr)
 
-    def init(self, address, account):
+    def init(self, address, account, rec_addr="users"):
         # 兼容
         self.init_device(address)
-        self.init_account(account)
+        self.init_account(account, rec_addr)
+
+    def force_kill(self):
+        """
+        强制结束Automator
+        :return:
+        """
+        self.send_move_method("forcekill", "")
 
     @staticmethod
     def _get_at(at):
@@ -85,6 +149,44 @@ class BaseMixin:
         else:
             return at
 
+    def send_move_method(self, method, msg):
+        """
+        给主线程发送一条消息
+        :param method: 处理方法
+            restart: 重启
+        :param msg: 附带信息
+            restart: 重启时显示的错误提示
+        """
+        while self._move_method != "":
+            pass
+        self._move_msg = msg
+        self._move_method = method
+        while self._move_method != "":
+            pass
+
+    def _move_check(self):
+        """
+        作为最小执行单元，接收暂停、退出等信息
+        :return: False：无影响 True：造成影响
+        """
+        try:
+            from automator_mixins._async import block_sw
+            if block_sw == 1:
+                print("脚本暂停中~")
+                while block_sw == 1:
+                    from automator_mixins._async import block_sw
+                    time.sleep(1)
+                return True
+        except Exception as error:
+            print('暂停-错误:', error)
+            return True
+        if self._move_method == "restart":
+            self._move_method = ""
+            raise Exception(self._move_msg)
+        if self._move_method == "forcekill":
+            self._move_method = ""
+            raise ForceKillException()
+
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0., method=cv2.TM_CCOEFF_NORMED):
         """
         try to click the img
@@ -93,6 +195,7 @@ class BaseMixin:
         :param img:
         :return: success
         """
+        self._move_check()
         at = self._get_at(at)
         position = UIMatcher.img_where(screen, img, threshold, at, method)
         if position:
@@ -117,15 +220,7 @@ class BaseMixin:
         :param post_delay: 后置延时
         :return: True
         """
-        try:
-            from automator_mixins._async import block_sw
-            if block_sw == 1:
-                print("脚本暂停中~")
-                while block_sw == 1:
-                    from automator_mixins._async import block_sw
-                    time.sleep(1)
-        except Exception as error:
-            print('暂停-错误:', error)
+        self._move_check()
         time.sleep(pre_delay)
         if len(args) >= 2 and isinstance(args[0], (int, float)) and isinstance(args[1], (int, float)):
             # (x,y)型：点击坐标
@@ -231,6 +326,7 @@ class BaseMixin:
         retry = 0
         at = self._get_at(at)
         while retry < max_retry or max_retry == 0:
+            self._move_check()
             retry += 1
             time.sleep(delay)
             sc2 = self.getscreen()
@@ -256,6 +352,7 @@ class BaseMixin:
         retry = 0
         at = self._get_at(at)
         while retry < max_retry or max_retry == 0:
+            self._move_check()
             retry += 1
             time.sleep(delay)
             sc2 = self.getscreen()
@@ -278,6 +375,7 @@ class BaseMixin:
         sc = self.getscreen() if screen is None else screen
         last_time = time.time()
         while True:
+            self._move_check()
             if self.is_exists(img='img/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
                 time.sleep(delay)
                 sc = self.getscreen()
@@ -320,12 +418,7 @@ class BaseMixin:
             th_name.exit()
             pass
         else:
-            try:
-                self.do(a, fun)
-                pass
-            except:
-                pass
-        pass
+            self.do(a, fun)
 
     def do(self, a, fun):
         # 自定义，在此定义你要运行的参数
@@ -361,7 +454,7 @@ class BaseMixin:
         # 如果debug_screen为None，则正常截图；
         # 否则，getscreen函数使用debug_screen作为读取的screen
         if self.debug_screen is None:
-            if fast_screencut:
+            if fast_screencut and self.fastscreencut_retry < 3:
                 try:
                     data = self.receive_minicap.receive_img()
                     if data is None:
@@ -371,8 +464,16 @@ class BaseMixin:
                     # 如果传入了文件路径参数，则保存文件
                     if filename is not None:
                         cv2.imwrite(filename, self.last_screen)
+                    self.fastscreencut_retry = 0
                 except Exception as e:
-                    self.log.write_log("error", f"快速截图出错 {e},采用低速截图")
+                    self.log.write_log("warning", f"快速截图出错 {e},采用低速截图")
+                    self.fastscreencut_retry += 1
+                    if self.fastscreencut_retry == 3:
+                        if force_fast_screencut:
+                            raise FastScreencutException(*e.args)
+                        else:
+                            self.log.write_log("error", f"快速截图连续出错3次，关闭快速截图。")
+                        self.receive_minicap.stop()
                     self.last_screen = self.d.screenshot(filename, format="opencv")
             else:
                 self.last_screen = self.d.screenshot(filename, format="opencv")
@@ -419,6 +520,7 @@ class BaseMixin:
         inf_attempt = True if retry == 0 else False
         attempt = 0
         while inf_attempt or attempt < retry:
+            self._move_check()
             screen_shot = self.getscreen()
             if UIMatcher.img_where(screen_shot, img, at=at):
                 # 成功匹配图片
@@ -437,7 +539,6 @@ class BaseMixin:
         # 输入截图, 模板list, 得到下一次操作
         # 2020-08-08 建议弃用该函数。
 
-        self.dWidth, self.dHeight = self.d.window_size()
         screen_shot = screen_shot
         template_paths = template_paths
         active_path = UIMatcher.imgs_where(screen_shot, template_paths)
@@ -461,7 +562,8 @@ class BaseMixin:
 
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
                   elsedelay=0.5, alldelay=0.5, retry=0, side_check=None,
-                  at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84):
+                  at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84,
+                  elseafter=0.):
         """
         @args:
             img:要匹配的图片目录
@@ -486,6 +588,7 @@ class BaseMixin:
             lock_no: False: lock_img True: lock_no_img
             timeout: 设置为None时，使用pcr_config中的lockimg_timeout，否则用自己的。
             side_check：传入字符串然后调用字符串里边的基于_base的函数方法
+            elseafter: 点击elseclick后等待的时间
         @pcr_config:
             lockimg_timeout: 设置为0时，不做超时处理；否则，如果超过该时间，报错
         @return:是否在retry次内点击成功
@@ -529,16 +632,8 @@ class BaseMixin:
                 determine = side_check(screen_shot)
                 if determine:
                     lasttime = time.time()
-            try:
-                from automator_mixins._async import block_sw
-                if block_sw == 1:
-                    print("脚本暂停中~")
-                    while block_sw == 1:
-                        from automator_mixins._async import block_sw
-                        time.sleep(1)
-                    lasttime = time.time()
-            except Exception as error:
-                print('暂停-错误:', error)
+            if self._move_check():
+                lasttime = time.time()
             for i, j in img.items():
                 if not isinstance(i, PCRelement):
                     _img, _at = self._get_img_at(i[0], i[1])
@@ -548,7 +643,7 @@ class BaseMixin:
                     if ifclick != []:
                         for clicks in ifclick:
                             time.sleep(ifbefore)
-                            self.click(clicks[0], clicks[1])
+                            self.click(clicks[0], clicks[1], post_delay=elseafter)
                             time.sleep(ifdelay)
                     return j
             if ec_time == 0:
@@ -558,7 +653,7 @@ class BaseMixin:
             if time.time() - ec_time >= elsedelay:
                 if elseclick != []:
                     for clicks in elseclick:
-                        self.click(clicks[0], clicks[1], post_delay=0.8)
+                        self.click(clicks[0], clicks[1], post_delay=elseafter)
                     attempt += 1
                     ec_time = time.time()
             time.sleep(alldelay)
@@ -572,7 +667,8 @@ class BaseMixin:
                 return False
 
     def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
-                 at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84, side_check=None):
+                 at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84, side_check=None,
+                 elseafter=0.):
         """
         锁定图片，直到该图出现。
         图片出现后，点击ifclick；未出现，点击elseclick
@@ -580,11 +676,11 @@ class BaseMixin:
         return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                               elsedelay=elsedelay,
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout,
-                              method=method, threshold=threshold, side_check=side_check)
+                              method=method, threshold=threshold, side_check=side_check, elseafter=elseafter)
 
     def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5,
                     retry=0, at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED,
-                    threshold=0.84, side_check=None):  # 锁定指定图像
+                    threshold=0.84, side_check=None, elseafter=0.):  # 锁定指定图像
         """
         锁定图片，直到该图消失
         图片消失后，点击ifclick；未消失，点击elseclick
@@ -592,12 +688,13 @@ class BaseMixin:
         return self._lock_img(img, ifclick=ifclick, ifbefore=ifbefore, ifdelay=ifdelay, elseclick=elseclick,
                               elsedelay=elsedelay,
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout,
-                              method=method, threshold=threshold, side_check=side_check)
+                              method=method, threshold=threshold, side_check=side_check, elseafter=elseafter)
 
-    def click_btn(self, btn: PCRelement, elsedelay=8., timeout=20., wait_self_before=False,
+    def click_btn(self, btn: PCRelement, elsedelay=8., timeout=30., wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
                   until_disappear: Optional[Union[str, PCRelement, dict, list]] = "self",
-                  retry=0, is_raise=True, method=cv2.TM_CCOEFF_NORMED):
+                  retry=0, is_raise=True, method=cv2.TM_CCOEFF_NORMED, elseafter=None,
+                  side_check=None):
         """
         稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
         :param retry: 尝试次数,少用
@@ -618,24 +715,31 @@ class BaseMixin:
             是否报错。设置为False时，匹配失败，返回False
         :param method:
             用于lockimg的方法
+        :param elseafter:
+            默认值None，此时，若条件为until_disappear="self"，则设置为0.8，否则为0.
+            点击之后的等待时间。
         """
         r = 0
         if isinstance(until_disappear, str):
             assert until_disappear == "self"
         if wait_self_before is True:
-            r = self.lock_img(btn, timeout=timeout, retry=retry, is_raise=is_raise, method=method)
+            r = self.lock_img(btn, timeout=timeout, retry=retry, is_raise=is_raise, method=method,
+                              side_check=side_check)
         if until_disappear is None and until_appear is None:
             self.click(btn, post_delay=0.5)  # 这边不加延迟，点击的波纹会影响到until_disappear自己
         else:
             if until_appear is not None:
                 r = self.lock_img(until_appear, elseclick=btn, elsedelay=elsedelay, timeout=timeout, retry=retry,
-                                  is_raise=is_raise, method=method)
+                                  is_raise=is_raise, method=method, elseafter=0 if elseafter is None else elseafter,
+                                  side_check=side_check)
             elif until_disappear == "self":
                 r = self.lock_no_img(btn, elseclick=btn, elsedelay=elsedelay, timeout=timeout, retry=retry,
-                                     is_raise=is_raise, method=method)
+                                     is_raise=is_raise, method=method,
+                                     elseafter=0.8 if elseafter is None else elseafter, side_check=side_check)
             elif until_disappear is not None:
                 r = self.lock_no_img(until_disappear, elseclick=btn, elsedelay=elsedelay, timeout=timeout,
-                                     retry=retry, is_raise=is_raise, method=method)
+                                     retry=retry, is_raise=is_raise, method=method,
+                                     elseafter=0 if elseafter is None else elseafter, side_check=side_check)
         return r
 
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
@@ -720,30 +824,29 @@ class BaseMixin:
 
     def task_start(self):
         # 标记这个用户开始重新刷图了
-        d = self.AR.get("run_status", UDD["run_status"])
+        d = self.AR.get_run_status()
         d["finished"] = False
         d["current"] = "..."
-        self.AR.set("run_status", d)
+        self.AR.set_run_status(d)
 
     def task_finished(self):
         # 标记这个用户已经刷完了图
-        d = self.AR.get("run_status", UDD["run_status"])
+        d = self.AR.get_run_status()
         d["finished"] = True
-        self.AR.set("run_status", d)
+        self.AR.set_run_status(d)
 
     def task_current(self, title):
         # 标记这个用户当前正在进行的项目
-        d = self.AR.get("run_status", UDD["run_status"])
+        d = self.AR.get_run_status()
         d["current"] = title
-        self.AR.set("run_status", d)
+        self.AR.set_run_status(d)
 
     def task_error(self, error):
         # 标记某一项错误，并停止刷图
-        d = self.AR.get("run_status", UDD["run_status"])
+        d = self.AR.get_run_status()
         d["finished"] = True
-        d["current"] = "..."
         d["error"] = error
-        self.AR.set("run_status", d)
+        self.AR.set_run_status(d)
 
     def juqing_kkr(self, screen_shot=None):
         """
@@ -763,6 +866,24 @@ class BaseMixin:
             return True
         return False
 
+    def right_kkr(self, screen=None):
+        """
+        处理提示kkr。一般在右边。
+        处理方法：点屏幕
+        :param screen:
+        """
+        flag = False
+        if screen is None:
+            screen = self.getscreen()
+        cnt = 0
+        while self.is_exists(MAIN_BTN["right_kkr"], screen=screen):
+            self.click(1, 1, post_delay=1)
+            flag = True
+            cnt += 1
+            if cnt >= 10:
+                raise Exception("点了10次，可可罗依然没有消失！")
+            screen = self.getscreen()
+        return flag
 
 class Multithreading(threading.Thread, BaseMixin):
     """

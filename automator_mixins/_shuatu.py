@@ -2,7 +2,7 @@ import os
 import time
 
 from core.MoveRecord import movevar
-from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP
+from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, ACTIVITY_COORD
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -153,6 +153,62 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.continueDo9(142, 267)  # 1-1
         self.lock_home()
 
+    # 刷活动normal图(有bug，不可用）
+    def do_activity_normal(self, buy_tili=0, activity_name="", mode=0):
+        self.lock_home()
+        if activity_name == "":
+            raise Exception("请指定活动名")
+
+        def enter_activity():
+            # 进入冒险
+            time.sleep(2)
+            self.click(480, 505)
+            time.sleep(2)
+            while True:
+                screen_shot_ = self.getscreen()
+                if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
+                    break
+            # 点击进入活动
+            self.click(415, 430)
+            time.sleep(3)
+
+        def GetXYTD_activity(activity_name, mode, num):
+            if mode == 0:
+                D = ACTIVITY_COORD[activity_name]
+                DR = D["right"]
+                DL = D["left"]
+                if num in DR:
+                    return DR[num].x, DR[num].y, 1, "right"
+                else:
+                    return DL[num].x, DL[num].y, 1, "left"
+            elif mode == 1:
+                D = HARD_COORD[activity_name]
+                return D[num].x, D[num].y, 1, None
+
+        enter_activity()
+        while True:
+            screen_shot_ = self.getscreen()
+            self.click(480, 380)
+            time.sleep(0.5)
+            self.click(480, 380)
+            if UIMatcher.img_where(screen_shot_, 'img/home/zhuxian.bmp'):
+                self.click(880, 80)
+            if UIMatcher.img_where(screen_shot_, 'img/juqing/caidanyuan.bmp'):
+                self.chulijiaocheng(turnback=None)
+                enter_activity()
+            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
+                break
+        for i in range(1,5):
+            result = self.zhandouzuobiao(*GetXYTD_activity(activity_name=activity_name, mode=mode, num=i),
+                                         buy_tili=buy_tili, duiwu=-2,
+                                         bianzu=-2, juqing_in_fight=1, end_mode=1)
+            if result < 3:
+                raise Exception("你的练度不适合刷活动图，请提升练度后重试")
+        result = self.zhandouzuobiao(*GetXYTD_activity(activity_name=activity_name, mode=mode, num=5),
+                                     buy_tili=buy_tili, use_saodang=True, times="all",
+                                     juqing_in_fight=1, end_mode=1)
+        self.lock_home()
+
     @staticmethod
     def parse_tu_str(tustr: str):
         strs = tustr.split("-")
@@ -272,8 +328,12 @@ class ShuatuMixin(ShuatuBaseMixin):
         # 解析to与from
         toA, toB = self.parse_tu_str(to)
         if from_ == "new":
-            fromA, fromB = self.get_next_normal_id()
-            Record(fromA, fromB, False)
+            if mode == 0:
+                fromA, fromB = self.get_next_normal_id()
+                Record(fromA, fromB, False)
+            else:
+                fromA, fromB = self.get_next_hard_id()
+                Record(fromA, fromB, False)
         else:
             fromA, fromB = self.parse_tu_str(from_)
         nowA, nowB = fromA, fromB
@@ -284,7 +344,12 @@ class ShuatuMixin(ShuatuBaseMixin):
         while nowA < toA or (nowA == toA and nowB <= toB):
             if not self.check_shuatu():
                 break
-            jq = (mode == 0) and (nowB == GetMax(nowA))
+            if mode == 0:
+                jq = (nowB == GetMax(nowA))
+                em = 2 if jq else 1
+            else:
+                jq = (nowB == 1 and nowA == 1)
+                em = 1
             if use_ub == 0:
                 ub = 0
             elif use_ub == 1:
@@ -302,23 +367,30 @@ class ShuatuMixin(ShuatuBaseMixin):
             elif mode == 1:
                 self.select_hard_id(nowA)
             s = self.zhandouzuobiao(*GetXYTD(nowA, nowB), buy_tili=buy_tili, duiwu=duiwu, auto=ub,
-                                    bianzu=bianzu, var=var, juqing_in_fight=jq, end_mode=2 if jq else 1)
+                                    bianzu=bianzu, var=var, juqing_in_fight=jq, end_mode=em)
             if s > 0 and force_three_star and self.last_star < 3:
                 s = 0  # 没达到三星就算输
             duiwu = 0
             bianzu = 0
             if s >= 0:
                 retry_cnt = 0
-            if s < 0:
+            if s < 0 and not (s == -2 and self._zdzb_info == "nocishu"):
                 if s == -3:
+                    if mode == 1:
+                        self.log.write_log("info", "无法点进关卡，可能当前关卡还未解锁，请先推Normal本。")
+                        break
                     if retry_cnt == 1:
                         raise Exception("进入刷图失败！")
                     self.lock_home()
                     enter()
                     retry_cnt += 1
                     continue
-                self.log.write_log("error", f"推图过程中遇到未知的错误 :{s}，终止推图。")
-                break  # 出现未知错误
+                else:
+                    if self._zdzb_info == "notili":
+                        self.log.write_log("info", f"体力不足，终止推图。")
+                    else:
+                        self.log.write_log("error", f"推图过程中遇到未知的错误 :{s}，终止推图。")
+                    break  # 出现未知错误
             elif s == 0:
                 if last_lose:
                     if mode == 0:
@@ -328,7 +400,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     break
                 last_lose = True
                 if auto_upgrade > 0:
-                    self.auto_upgrade(buy_tili=buy_tili, do_shuatu=True if auto_upgrade == 2 else 1, var=var)
+                    self.auto_upgrade(buy_tili=buy_tili, do_shuatu=True if auto_upgrade == 2 else False, var=var)
                     # 还要回来
                     enter()
                     continue
@@ -521,23 +593,55 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.log.write_log("error", "box拍摄失败！")
         self.lock_home()
 
-    def zidongtuitu_normal(self, buy_tili=3, var={}):
+    def zidongtuitu_normal(self, buy_tili=3, max_tu="max", var={},auto_upgrade = 1):
         """
         装备号自动推图，没达到三星自动强化。
         体力用光/强化后仍然失败 - 退出
         :param buy_tili: 购买体力的次数
+        :param max_tu: 终点图号，"max"表示推到不能推为止
+        :param auto_upgrade: 失败自动升级
+            开启后，如果推图失败，则会进入升级逻辑
+            如果升级之后仍然推图失败，则放弃推图
+            0: 关闭自动升级
+            1: 只自动强化，但是不另外打关拿装备
+            2: 自动强化并且会补全一切装备
         """
         var.setdefault("cur_tili", 0)
         if var["cur_tili"] < buy_tili:
             self.start_shuatu()
         if not self.check_shuatu():
             return
-        max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
-        self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var)
+        if max_tu == "max":
+            max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
+        self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var,auto_upgrade=auto_upgrade)
 
-    def shuatu_daily(self, tu_order: list, daily_tili=0, xianding=False, var={}):
+    def zidongtuitu_hard(self, buy_tili=3, max_tu="max", var={},auto_upgrade = 1):
+        """
+        装备号自动推HARD图，没达到三星自动强化。
+        体力用光/强化后仍然失败 - 退出
+        :param buy_tili: 购买体力的次数
+        :param max_tu: 终点图号，"max"表示推到不能推为止
+        :param auto_upgrade: 失败自动升级
+            开启后，如果推图失败，则会进入升级逻辑
+            如果升级之后仍然推图失败，则放弃推图
+            0: 关闭自动升级
+            1: 只自动强化，但是不另外打关拿装备
+            2: 自动强化并且会补全一切装备
+        """
+        var.setdefault("cur_tili", 0)
+        if var["cur_tili"] < buy_tili:
+            self.start_shuatu()
+        if not self.check_shuatu():
+            return
+        if max_tu == "max":
+            max_tu = f"{MAX_MAP}-3"
+        self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, var=var,auto_upgrade = auto_upgrade)
+
+    def shuatu_daily(self, tu_order: list, daily_tili=0, xianding=False, do_tuitu=False, var={}):
         """
         每日刷图（使用扫荡券）。每天重置一次刷图记录。
+        气死我了，本来想做通用刷图的，可全是BUG，现在看来只能刷H本了。
+            —— TheAutumnOfRice
         !!注:为了记录刷图次数，由于暂未使用OCR，
             刷图通过”一个一个刷“来确保计数准确。
             所以暂时不适合用于小号的刷图（还请用shuatuXX）
@@ -552,6 +656,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             该刷图列表表示的刷图顺序为录入顺序。
         :param daily_tili: 每日买体力次数。
         :param xianding: 是否买空限定商店（如果出现的话）
+        :param do_tuitu: 不能扫荡时，是否手刷
         """
         # 每日更新
         from core.utils import diffday
@@ -630,28 +735,104 @@ class ShuatuMixin(ShuatuBaseMixin):
                     self.select_hard_id(a)
 
             now_time = 0
+            retry_cnt = 0
             while now_time < t:
                 last_tili = var["cur_tili"]
-                s = self.zhandouzuobiao(x, y, 1, d, buy_tili=buy_tili, buy_cishu=1, xianding=xianding, var=var)
+                self._zdzb_info = ""
+                s = self.zhandouzuobiao(x, y, 1, d, use_saodang=True, buy_tili=buy_tili, buy_cishu=0, xianding=xianding,
+                                        var=var)
+                if s == -2 and self._zdzb_info == "nosaodang" and do_tuitu:
+                    # 无扫荡，进推图
+                    self._zdzb_info = ""
+                    s = self.zhandouzuobiao(x, y, 1, d, use_saodang="auto", buy_tili=buy_tili, buy_cishu=0,
+                                            xianding=xianding,
+                                            end_mode=1, juqing_in_fight=True, var=var)
+                    # 坐标重新确认
+                    if m == "N":
+                        self.select_normal_id(a)
+                    else:
+                        self.select_hard_id(a)
                 new_tili = var["cur_tili"]
                 if new_tili > last_tili:
                     # 之前的战斗中购买了体力
                     ds["buy_tili"] += last_tili - new_tili
                     self.AR.set("daily_status", ds)
-                if s <= 0:
+                if s < 0 and self._zdzb_info == "notili":
                     # 扫荡失败了，结束吧。
-                    self.log.write_log("info", f"刷图终止，队列中还有{len(cur) - ind}个任务待完成。")
+                    self.log.write_log("info", f"体力不足，刷图终止，队列中还有{len(cur) - ind}个任务待完成。")
+                    self.lock_home()
+                    return
+                elif s < 0 and self._zdzb_info == "nosaodang":
+                    self.log.write_log("info", "无法扫荡，刷图终止。")
+                    self.lock_home()
+                    return
+                elif s == -3:
+                    if retry_cnt == 0:
+                        self.log.write_log("error", f"无法进入刷图，刷图终止")
+                        self.lock_home()
+                        return
+                    retry_cnt += 1
+                    self.lock_home()
+                    self.enter_zhuxian()
+                    continue
+                elif s > 0 or self._zdzb_info == "nocishu":
+                    # 扫荡成功，记录一下~
+                    if s == 1:
+                        now_time += 1
+                    else:
+                        now_time += t
+                    if m == "N":
+                        if s == 1:
+                            ds["normal"][f"{a}-{b}"] += 1
+                        else:
+                            ds["normal"][f"{a}-{b}"] += t
+                    else:
+                        if s == 1:
+                            ds["hard"][f"{a}-{b}"] += 1
+                        else:
+                            ds["hard"][f"{a}-{b}"] += t
+                    self.AR.set("daily_status", ds)
+                    new_day(ds)
+                elif self._zdzb_info == "noquan":
+                    self.log.write_log("info", f"券不足，刷图终止，队列中还有{len(cur) - ind}个任务待完成。")
                     self.lock_home()
                     return
                 else:
-                    # 扫荡成功，记录一下~
-                    now_time += 1
-                    if m == "N":
-                        ds["normal"][f"{a}-{b}"] += 1
-                    else:
-                        ds["hard"][f"{a}-{b}"] += 1
-                    self.AR.set("daily_status", ds)
-                    new_day(ds)
+                    self.log.write_log("info", "战斗失败，刷图终止。")
+                    self.lock_home()
+                    return
             self.log.write_log("info", f"{a}-{b}刷图成功！")
         self.log.write_log("info", f"全部刷图任务已经完成。")
+        self.lock_home()
+
+    def meiriHtu(self, H_list, daily_tili, xianding, do_tuitu, var={}):
+        """
+        每日H本。
+        H_list：list["A-B"],刷什么H图
+        daily_tili：购买体力次数
+        xianding：是否买空限定商店
+        do_tuitu 是否允许推图
+        """
+        lst = []
+        for s in H_list:
+            A, B = tuple(s.split("-"))
+            lst += [f"H{A}-{B}-3"]
+        self.shuatu_daily(lst, daily_tili, xianding, do_tuitu, var=var)
+
+    def xiaohaoHtu(self, daily_tili, do_tuitu, var={}):
+        """
+        小号每日打H本。
+        一个接一个打。
+        :param daily_tili:购买体力次数
+        :param do_tuitu: 是否允许推图
+        """
+        L = []
+        for i in range(MAX_MAP):
+            for j in [1, 2, 3]:
+                L += [f"{i + 1}-{j}"]
+        self.meiriHtu(L, daily_tili, False, do_tuitu, var)
+
+    def shengjijuese(self, buy_tili=0, do_rank=True, do_shuatu=True):
+        self.lock_home()
+        self.auto_upgrade(buy_tili=buy_tili, do_rank=do_rank, do_shuatu=do_shuatu)
         self.lock_home()

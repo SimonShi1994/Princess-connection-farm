@@ -385,6 +385,32 @@ class TeamInputer(InputBoxBase):
                 return f"队号A-B中队伍B必须为1~3的整数，但{i}不满足要求"
         return ""
 
+class MeiRiHTuInputer(InputBoxBase):
+    def create(self):
+        print("输入A-B字符串，表示刷Hard A-B图。")
+        print("输入end结束。")
+        lst = []
+        while True:
+            s = input(">")
+            if s == "end":
+                break
+            else:
+                lst += [s]
+        return lst
+
+    def check(self, obj):
+        if type(obj) is not list:
+            return "参数必须为list类型"
+        for s in obj:
+            try:
+                a, b = tuple(s.split("-"))
+                A = int(a)
+                B = int(b)
+                assert 1 <= B <= 3, "图号不合法"
+                assert 1 <= A <= max(HARD_COORD), "图号不合法"
+            except Exception as e:
+                return str(e)
+        return ""
 
 VALID_TASK = ValidTask() \
     .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备") \
@@ -396,7 +422,8 @@ VALID_TASK = ValidTask() \
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h6", "dianzan", "行会点赞", "给指定人点赞",
          [TaskParam("sortflag", int, "给谁点赞", "只能为0或者1的值\n0：给副会长点赞。\n1：给战力最高者点赞。", 0)]) \
-    .add("h7", "zhiyuan", "支援设定", "按照战力排行设定支援（最高的）") \
+    .add("h7", "zhiyuan", "支援设定", "按照战力排行设定支援（最高的）",
+         [TaskParam("zhiyuanjieshu", bool, "支援结束", "是否按下支援结束按钮并收取Mana。", False)]) \
     .add("h8", "join_hanghui", "加入行会", "主动搜索并加入行会（全识图版）",
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h9", "faqijuanzeng", "发起捐赠", "自动发起装备捐赠，需要自行截装备图。",
@@ -409,9 +436,10 @@ VALID_TASK = ValidTask() \
                                               "如果两次捐赠小于8小时，且相差小于等待时间\n"
                                               "则程序进入什么都不做的等待，否则跳过。", 300)]) \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
-         [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。"),
+         [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个"),
+          TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。"),
           TaskParam("stuck_today", bool, "卡住地下城", "设置为True时，无论如何，进去地下城但是不打。\n设置为False时，为正常借人。"),
-          TaskParam("stuck_notzhandoukaishi", bool, "无法出击但不撤退", "设置为True时，如果发现无法出击，那就不撤退。\n设置为False时，则相反。")]) \
+          TaskParam("stuck_notzhandoukaishi", bool, "无法出击但不撤退", "设置为True时，如果发现无法出击，那就不撤退。\n设置为False时，则相反。"),]) \
     .add("d2", "dixiacheng", "地下城", "小号地下城借人换mana",
          [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。")]) \
     .add("d3", "dixiachengYunhai", "打云海关", "打通云海关【细节待补充】") \
@@ -443,11 +471,11 @@ VALID_TASK = ValidTask() \
     .add("r5", "shouqurenwu", "收取任务", "收取全部任务奖励。\n如果日常任务和主线任务都存在，需要收取两遍。") \
     .add("r6", "goumaitili", "购买体力", "购买一定次数的体力",
          [TaskParam("times", int, "购买次数", "购买体力的次数"),
-          TaskParam("limit_today", bool, "是否用times限制今天脚本购买体力的次数", "True/False"),]) \
+          TaskParam("limit_today", bool, "是否用times限制今天脚本购买体力的次数", "True/False", False), ]) \
     .add("r7", "goumaimana", "购买MANA", "购买指定次数的mana",
          [TaskParam("mode", int, "模式", "如果mode为0，则为购买mana的次数；\n如果mode为1，则为购买10连mana的次数。【宝石警告】", 1),
           TaskParam("times", int, "购买mana的次数", "购买mana的次数(第一次单抽不计入)"),
-          TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False"),]) \
+          TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False", False), ]) \
     .add("r8", "buyExp", "购买经验", "买空商店里的经验药水") \
     .add("r9", "tansuo", "探索", "进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
@@ -455,6 +483,11 @@ VALID_TASK = ValidTask() \
                                        "mode 1: 刷次上面的\n"
                                        "mode 2: 第一次手动过最上面的，再刷一次次上面的\n"
                                        "mode 3: 第一次手动过最上面的，再刷一次最上面的")]) \
+    .add("r9-n", "tansuo_new", "可推图探索", "进行探索活动",
+         [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
+                                       "mode 0: 刷最上关卡（适合大号） \n"
+                                       "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
+                                       "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）")]) \
     .add("t1", "rename", "重命名", "给自己换个名字",
          [TaskParam("name", str, "新名字", "你的新名字")]) \
     .add("t2", "save_box_screen", "box截图", "按照战力/等级/星数截屏前两行box",
@@ -484,7 +517,7 @@ VALID_TASK = ValidTask() \
          [TaskParam("mode", int, "刷图模式", "0：纯扫荡券\n"
                                          "1：先扫荡券，无法扫荡时手刷\n"
                                          "2：纯手刷\n", 1),
-          TaskParam("buytili", int, "体力购买次数", "消耗多少体力执行超级刷经验", 6)]) \
+          TaskParam("buytili", int, "体力购买次数", "消耗多少管体力执行超级刷经验", 6)]) \
     .add("s2", "shuatuNN", "刷N图", "使用扫荡券刷指定普通副本",
          [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",
@@ -497,4 +530,35 @@ VALID_TASK = ValidTask() \
                                                    "如果某一关没有三星过关，则强化重打。\n"
                                                    "若强化了还是打不过，则退出。\n"
                                                    "若没体力了，也退出。",
-         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3)])
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3),
+          TaskParam("auto_upgrade", int, "自动升级设置", "开启后，如果推图失败，则会进入升级逻辑"
+                                                   "如果升级之后仍然推图失败，则放弃推图"
+                                                   "0: 关闭自动升级"
+                                                   "1: 只自动强化，但是不另外打关拿装备"
+                                                   "2: 自动强化并且会补全一切装备", 1),
+          TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max")]) \
+    .add("s6-h", "zidongtuitu_hard", "自动推Hard图", "使用等级前五的角色自动推Hard图\n"
+                                                 "如果某一关没有三星过关，则强化重打。\n"
+                                                 "若强化了还是打不过，则退出。\n"
+                                                 "若没体力了，也退出。",
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3),
+          TaskParam("auto_upgrade", int, "自动升级设置", "开启后，如果推图失败，则会进入升级逻辑"
+                                                   "如果升级之后仍然推图失败，则放弃推图"
+                                                   "0: 关闭自动升级"
+                                                   "1: 只自动强化，但是不另外打关拿装备"
+                                                   "2: 自动强化并且会补全一切装备", 1),
+          TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max")]) \
+    .add("s7", "meiriHtu", "每日H图", "每天按照顺序依次扫荡H图，直到体力耗尽。\n"
+                                   "扫过的图当日不会再扫，第二天重置。",
+         [TaskParam("H_list", list, "H图列表", "H图图号", inputbox=MeiRiHTuInputer()),
+          TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+          TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True),
+          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
+    .add("s7-a", "xiaohaoHtu", "每日H图全刷", "从H1-1开始一直往后刷直到没法刷为止。",
+         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
+    .add("nothing", "do_nothing", "啥事不干", "啥事不干，调试用")\
+    .add("s8","shengjijuese","自动升级","此功能为自动升级角色功能",
+         [TaskParam("buy_tili", int, "体力次数","如果要通过刷图来获取装备，最多买体力次数"),
+          TaskParam("do_rank",bool,"是否升rank","是否自动升rank"),
+          TaskParam("do_shuatu",bool,"是否刷图","是否在装备可以获得但不够时，通过刷图来获取装备")])

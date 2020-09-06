@@ -7,8 +7,8 @@ DOC_STR = {
     "title":
         """
         +-------------------------------------------------+
-        +                用户配置文件编辑器                 +
-        +          在没有GUI的时候先将就着使用一下           +
+        +                用户配置文件编辑器                  +
+        +          在没有GUI的时候先将就着使用一下             +
         +                            By:  TheAutumnOfRice +
         +-------------------------------------------------+
         输入 help 查看帮助
@@ -20,27 +20,25 @@ DOC_STR = {
         user     创建或编辑一个新的用户信息
         task     创建或编辑一个任务列表
         group    创建或编辑一个用户组
-        batch    创建或编辑一个批策略
+        batch    创建或编辑一个批配置
+        schedule 创建或编辑一个计划配置
         """,
     "user?":
         """
         帮助: user
         user -l 列举全部用户列表
         user Account 显示某用户的所有信息
-        user -c Account Password [Task] 创建一个新用户。
-            Account: 用户名    Password: 密码   Task: 任务列表，需要从task中创建
-            如果Task留空，则表示该账号不进行脚本任务
+        user -c Account Password 创建一个新用户。
+            Account: 用户名    Password: 密码
             对已经存在的用户将覆盖原本的信息
         user -c -file Filename 从指定文件Filename创建用户
-            该文件每一行要求分隔符（空格或Tab）隔开的两到三个元素 Account Password [Task]
-            若Task为空，则表示该账号不进行脚本任务
+            该文件每一行要求分隔符（空格或Tab）隔开的两个元素 Account Password
             对已经存在的用户将覆盖原本的信息。
         user -d Account 删除指定Account的账户
         user -d -file Filename 从指定文件Filename删除用户
             该文件每一行为一个Account，表示要删除的用户
         user -d -all 删除全部用户
-        user Account [-p Password] [-t [Task]] 更改某一账户的密码或任务
-            若需要删除某一个账户的任务，则写-t后不写Task
+        user Account [-p Password] 更改某一账户的密码
         """,
     "task?":
         """
@@ -70,6 +68,15 @@ DOC_STR = {
         batch -c BatchName 创建一个名称为BatchName的批配置
         batch -e BatchName 进入BatchName的编辑模式
         batch文件默认存放于./batches中。
+        """,
+    "schedule?":
+        """
+        帮助：schedule
+        schedule -l 列举全部计划策略
+        schedule ScheduleName 显示某个计划策略的详细信息
+        schedule -c ScheduleName 创建一个名称为ScheduleName的计划策略
+        schedule -e ScheduleName 进入ScheduleName的编辑模式
+        batch文件默认存放于./schedules中。
         """
 }
 
@@ -141,13 +148,14 @@ def show_account(account):
     print(A.getuser())
 
 
-def create_account(account, password, taskfile):
+def create_account(account, password):
     A = AutomatorRecorder(account)
-    d = dict(account=account, password=password, taskfile=taskfile)
+    d = dict(account=account, password=password)
     A.setuser(d)
 
 
 def create_account_from_file(file):
+    # 此处会有以前的task参数
     pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s]*([^\\s]*)')
     with open(file, "r", encoding="utf-8") as f:
         for line in f:
@@ -156,7 +164,7 @@ def create_account_from_file(file):
                 account, password, task = result[0]
             else:
                 continue
-            create_account(account, password, task)
+            create_account(account, password)
 
 
 def del_account(account):
@@ -179,13 +187,11 @@ def del_all_account():
         del_account(acc)
 
 
-def edit_account(account, password=None, taskfile=None):
+def edit_account(account, password=None):
     A = AutomatorRecorder(account)
     d = A.getuser()
     if password is not None:
         d["password"] = password
-    if taskfile is not None:
-        d["taskfile"] = taskfile
     A.setuser(d)
 
 
@@ -328,6 +334,184 @@ def edit_batch(BatchName):
             print("输入错误！", e)
 
 
+def create_schedule(ScheduleName):
+    d = {"schedules": []}
+    AutomatorRecorder.setschedule(ScheduleName, d)
+
+
+def _show_schedule(obj):
+    for ind, i in enumerate(obj["schedules"]):
+        if i["type"] in ["asap", "wait"]:
+            if i["type"] == "asap":
+                print("ID", ind, "NAME", i["name"], "：** 立即执行 **")
+            else:
+                print("ID", ind, "NAME", i["name"], "：** 等待执行 **")
+            if "batchfile" in i:
+                print("+ 批配置: ", i["batchfile"])
+            if "batchlist" in i:
+                print("+ 批配置列表：")
+                for j in i["batchlist"]:
+                    print("+   ", j)
+            if len(i["condition"]) > 0:
+                print("+ 触发条件:")
+                con = i["condition"]
+                if "start_hour" in con and "end_hour" in con:
+                    print("+ 时间段: ", con["start_hour"], "h ~ ", con["end_hour"], "h")
+                if "can_juanzeng" in con:
+                    print("+ 当", con["can_juanzeng"], "可以捐赠")
+            if i["record"] == 1:
+                print("+ 记录设置：持久运行")
+            elif i["record"] == 2:
+                print("+ 记录设置：循环运行")
+        if i["type"] == "config":
+            print("ID", ind, "：** 配置 **")
+            if "restart" in i:
+                print("+ 清除记录：", i["restart"], 'h')
+
+
+def show_schedule(ScheduleName):
+    obj = AutomatorRecorder.getschedule(ScheduleName)
+    _show_schedule(obj)
+
+
+def _edit_asap_wait_config(typ):
+    obj = {}
+    obj["type"] = typ
+    mode = ""
+    if typ in ["asap", "wait"]:
+        while True:
+            print("-- 批配置名称 --")
+            I = input("请为这个子计划起个名字： ")
+            obj["name"] = I
+            print("-- 批配置模式 --")
+            print("0: 只包含一个批配置（适用于大多数情况）")
+            print("1: 多个批配置依次执行（适用于40to1等）")
+            I = input(">").strip()
+            if I == "0":
+                mode = "batchfile"
+                break
+            elif I == "1":
+                mode = "batchlist"
+                break
+            else:
+                print("输入错误，重新输入")
+        if mode == "batchfile":
+            print("-- 批配置文件 --")
+            I = input("请输入批配置文件：").strip()
+            obj[mode] = I
+        if mode == "batchlist":
+            print("-- 批配置列表 --")
+            print("请输入一系列批配置文件")
+            print("它们将依次执行，且两批之间不共享进度。")
+            obj[mode] = []
+            while True:
+                I = input("输入批配置文件（输入*结束）").strip()
+                if I == "*":
+                    break
+                obj[mode] += [I]
+
+        obj["condition"] = {}
+        while True:
+            print("-- 条件设置 --")
+            print("0 退出设置")
+            print("1 条件：指定时间段")
+            print("2 条件：可以捐赠")
+            I = input(">").strip()
+            if I == '0':
+                break
+            elif I == '1':
+                start = int(input("请输入起始小时： (0~23的整数）").strip())
+                end = int(input("请输入结束小时：（0~23的整数）").strip())
+                obj["condition"]["start_hour"] = start
+                obj["condition"]["end_hour"] = end
+            elif I == '2':
+                acc = input("请输入检测的账号：").strip()
+                obj["condition"]["can_juanzeng"] = acc
+            else:
+                print("输入错误!")
+        obj["record"] = 0
+        while True:
+            print("-- 记录设置 --")
+            print("0 正常运行（默认）")
+            print("1 持久运行：不受到first或restart的影响，除非使用restart schedule name单独指定。")
+            print("2 循环运行：适用于装备捐赠等条件，运行完毕后自动执行restart。")
+            I = input(">").strip()
+            if I == '0':
+                break
+            elif I == '1':
+                obj["record"] = 1
+                break
+            elif I == '2':
+                obj["record"] = 2
+                break
+            else:
+                print("输入错误!")
+        return obj
+    elif typ == "config":
+        while True:
+            print("--Schedule配置--")
+            print("0 退出设置")
+            print("1 配置：清除记录时间")
+            I = input(">").strip()
+            if I == '0':
+                break
+            elif I == '1':
+                tm = int(input("请输入小时： (0~23的整数）").strip())
+                obj["restart"] = tm
+            else:
+                print("输入错误!")
+        return obj
+
+
+def edit_schedule(ScheduleName):
+    print(f"Schedule编辑器  当前文件：  {ScheduleName}")
+    print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
+    print("什么是schedule:  what")
+    obj = AutomatorRecorder.getschedule(ScheduleName)
+    while True:
+        try:
+            cmd = input("> ")
+            cmds = cmd.split(" ")
+            order = cmds[0]
+            if order == "help":
+                print("add asap    按照提示添加一个立即执行的任务")
+                print("add wait    按照提示增加一个等待执行的任务")
+                print("add config  按照提示增加一个schedule配置")
+                print("show 显示现在的计划情况")
+                print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
+                print("什么是batch:  what")
+                print("== 一定记住：先保存，再退出！！==")
+            elif order == "what":
+                print("schedule，计划配置，为一种自动执行batch的方案")
+                print("可以设定立刻执行、等待执行两种方法，在合适的条件被触发时执行既定的batch")
+                print("schedule有三种类型： 立即执行 asap， 等待执行 wait， 计划配置 config")
+                print("当设置为asap时，如果用户设置的条件成立，所设置的一个batch或一系列batch会立刻被执行；"
+                      "若条件不成立，则该项schedule会被跳过，本次不再执行。")
+                print("当设置为wait时，如果用户设置的条件成立，效果等效于asap;"
+                      "但若用户设置的条件不成立，该计划不会被跳过，程序将一直运行直到条件成立为止。")
+                print("当设置为config时，可以设置对schedule本身的控制参数。"
+                      "如：restart参数可以控制清除记录的时间。")
+            elif order == "exit":
+                return
+            elif order == "save":
+                AutomatorRecorder.setschedule(ScheduleName, obj)
+            elif order == "load":
+                obj = AutomatorRecorder.getschedule(ScheduleName)
+            elif order == "clear":
+                obj = {"schedules": []}
+            elif order == "show":
+                _show_schedule(obj)
+            elif order == "add" and len(cmds) == 2:
+                if cmds[1] in ["asap", "wait", "config"]:
+                    obj["schedules"] += [_edit_asap_wait_config(cmds[1])]
+                else:
+                    print("add命令有误！")
+            else:
+                print("不认识的命令。")
+        except Exception as e:
+            print("输入错误！", e)
+
+
 if __name__ == "__main__":
     print(DOC_STR["title"])
     print("当前工作路径：", getcwd())
@@ -348,35 +532,23 @@ if __name__ == "__main__":
                 print(DOC_STR["group?"])
             elif order == "batch?" or cmd == "batch":
                 print(DOC_STR["batch?"])
+            elif order == "schedule?" or cmd == "schedule":
+                print(DOC_STR["schedule?"])
             elif order == "user":
                 if len(cmds) == 2 and cmds[1] == "-l":
                     list_all_users()
-                elif len(cmds) == 5 and cmds[1] == "-c":
-                    create_account(cmds[2], cmds[3], cmds[4])
                 elif len(cmds) == 4 and cmds[1] == "-c" and cmds[2] == "-file":
                     create_account_from_file(cmds[3])
                 elif len(cmds) == 4 and cmds[1] == "-c":
-                    create_account(cmds[2], cmds[3], "")
+                    create_account(cmds[2], cmds[3])
                 elif len(cmds) == 4 and cmds[1] == '-d' and cmds[2] == "-file":
                     del_account_from_file(cmds[3])
                 elif len(cmds) == 3 and cmds[1] == '-d' and cmds[2] == '-all':
                     del_all_account()
                 elif len(cmds) == 3 and cmds[1] == "-d":
                     del_account(cmds[2])
-                elif len(cmds) in [3, 4, 5, 6] and cmds[1][0] != '-':
-                    p = 2
-                    while p < len(cmds):
-                        if cmds[p] == "-p" and p + 1 < len(cmds):
-                            edit_account(cmds[1], password=cmds[p + 1])
-                            p += 2
-                        elif cmds[p] == "-t" and p + 1 < len(cmds) and cmds[p + 1] not in ["-p", "-t"]:
-                            edit_account(cmds[1], taskfile=cmds[p + 1])
-                            p += 2
-                        elif cmds[p] == "-t" and (p + 1 >= len(cmds) or cmds[p + 1] in ["-p", "-t"]):
-                            edit_account(cmds[1], taskfile="")
-                            p += 1
-                        else:
-                            print("Wrong Order!")
+                elif len(cmds) == 4 and cmds[2] == "-p":
+                    edit_account(cmds[1], cmds[3])
                 elif len(cmds) == 2 and cmds[1][0] != "-":
                     show_account(cmds[1])
                 else:
@@ -412,6 +584,17 @@ if __name__ == "__main__":
                     edit_batch(cmds[2])
                 elif len(cmds) == 2:
                     show_batch(cmds[1])
+                else:
+                    print("Wrong Order!")
+            elif order == "schedule":
+                if len(cmds) == 2 and cmds[1] == '-l':
+                    list_all_schedules()
+                elif len(cmds) == 3 and cmds[1] == "-c":
+                    create_schedule(cmds[2])
+                elif len(cmds) == 3 and cmds[1] == "-e":
+                    edit_schedule(cmds[2])
+                elif len(cmds) == 2:
+                    show_schedule(cmds[1])
                 else:
                     print("Wrong Order!")
             else:

@@ -18,6 +18,7 @@ log
 /schedules/
 /groups/
 /developutils/*.bmp
+/error_screenshot/
 
 # 测试用文件夹
 /test/

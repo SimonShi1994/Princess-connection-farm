@@ -31,7 +31,6 @@ class LoginMixin(BaseMixin):
                 self.app = self.d.session("com.bilibili.priconne")
                 self.appRunning = False
                 continue
-        self.dWidth, self.dHeight = self.d.window_size()
 
     def do_login(self, ac, pwd):  # 执行登陆逻辑
         """
@@ -39,6 +38,13 @@ class LoginMixin(BaseMixin):
         :param pwd:
         :return:
         """
+        for retry in range(30):
+            if not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
+                time.sleep(2)
+            else:
+                break
+        else:
+            raise Exception("进入登陆页面失败！")
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
         self.d.clear_text()
         self.d.send_keys(str(ac))
@@ -81,6 +87,8 @@ class LoginMixin(BaseMixin):
                     raise Exception("点了1000次右上角了，重启罢！")
                 # todo 登陆失败报错：-32002 Client error: <> data: Selector [
                 #  resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
+                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.1):
+                    return True
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").exists():
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").click()
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():

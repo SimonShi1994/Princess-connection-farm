@@ -134,8 +134,7 @@ class DXCBaseMixin(FightBaseMixin):
                     self.click_btn(DXC_ENTRANCE[dxc_id], elsedelay=1, until_appear=DXC_ELEMENT["quyuxuanzequeren_ok"])
                     self.click_btn(DXC_ELEMENT["quyuxuanzequeren_ok"],
                                    until_appear={DXC_ELEMENT["chetui"]: 1, DXC_ELEMENT["dxc_kkr"]: 2})
-            self.dxc_kkr()
-        self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5)  # 锁定撤退
+        self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5, side_check=self.dxc_kkr)  # 锁定撤退
         return True
 
     def check_dxc_level(self, dxc_id):

@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import websocket
 
 # from core.Automator import Automator
-from pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
+from core.pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
 
 lock = threading.Lock()
 
@@ -50,8 +50,8 @@ class ReceiveFromMinicap:
         # 模拟器地址
         self.address = address
         # 设置端口
-        d = adbutils.adb.device(address)
-        self.lport = d.forward_port(7912)
+        self.d = adbutils.adb.device(address)
+        self.lport = self.d.forward_port(7912)
         # 这里设置websocket
         self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
                                          # 这三个回调函数见下面
@@ -81,6 +81,7 @@ class ReceiveFromMinicap:
                     if self.ws_stop:
                         return
                     self.ws.close()
+                    self.lport = self.d.forward_port(7912)
                     self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
                                                      # 这三个回调函数见下面
                                                      on_message=self.on_message,
@@ -102,19 +103,32 @@ class ReceiveFromMinicap:
     # 接收信息回调函数，此处message为接收的信息
     def on_message(self, message):
         if message is not None:
-            if self.receive_flag == 1:
+            try:
                 # 如果不是bytes，那就是图像
                 if isinstance(message, (bytes, bytearray)) and len(message) > 100:
-                    self.receive_data.put(message)
-                    self.receive_flag = 0
+                    if self.receive_flag == 1:
+                        self.receive_data.put(message)
+                        self.receive_flag = 0
                 else:
                     if debug:
                         print(message)
+            except queue.Empty:
+                pass
 
     # 错误回调函数
     def on_error(self, error):
         if debug:
             print(error)
+        if self.ws_stop:
+            return
+        self.ws.close()
+        self.lport = self.d.forward_port(7912)
+        self.ws = websocket.WebSocketApp('ws://localhost:{}/minicap'.format(self.lport),
+                                         # 这三个回调函数见下面
+                                         on_message=self.on_message,
+                                         on_close=self.on_close,
+                                         on_error=self.on_error)
+        time.sleep(1)
 
     # 关闭ws的回调函数
     def on_close(self):
@@ -125,6 +139,7 @@ class ReceiveFromMinicap:
     def receive_img(self):
         retry = 0
         max_retry = 3
+        lock.acquire()
         while retry <= max_retry:
             self.receive_flag = 1
             try:
@@ -136,6 +151,7 @@ class ReceiveFromMinicap:
                 # 转rgb
                 data = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
                 time.sleep(fast_screencut_delay)
+                lock.release()
                 return data
             except queue.Empty:
                 # 读取超时
@@ -150,7 +166,8 @@ class ReceiveFromMinicap:
                 continue
         if debug:
             print("快速截图失败！")
-            return None
+        lock.release()
+        return None
 
 # if __name__ == '__main__':
 #     a = Automator("emulator-5554")

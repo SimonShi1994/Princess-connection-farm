@@ -173,8 +173,11 @@ class HanghuiMixin(ToolsMixin):
         self.click_btn(HANGHUI_BTN["hanghui_ok"], elsedelay=1)
         self.lock_home()
 
-    def zhiyuan(self):
+    def zhiyuan(self, zhiyuanjieshu=False):
         # Add: By TheAutumnOfRice 考虑了无法撤下支援的情况
+        """
+        :param zhiyuanjieshu: 是否尝试点击”支援结束“按钮
+        """
         self.lock_home()
         # 进入
         self.click_btn(MAIN_BTN["hanghui"], until_appear=HANGHUI_BTN["zhiyuansheding"])
@@ -199,6 +202,19 @@ class HanghuiMixin(ToolsMixin):
                     break
                 # 支援1
 
+        def shouqubaochou():
+            self.click_btn(HANGHUI_BTN["zyjsqr_ok"], until_appear=HANGHUI_BTN["sqbc"])
+            for _ in range(5):
+                self.click(40, 82)
+
+        if zhiyuanjieshu:
+            if self.click_btn(HANGHUI_BTN["zyjs_1"], until_appear=HANGHUI_BTN["zyjsqr"], elsedelay=3, retry=3,
+                              is_raise=False):
+                shouqubaochou()
+
+            if self.click_btn(HANGHUI_BTN["zyjs_2"], until_appear=HANGHUI_BTN["zyjsqr"], elsedelay=3, retry=3,
+                              is_raise=False):
+                shouqubaochou()
         if self.click_btn(HANGHUI_BTN["zhiyuan_dxc1"], until_appear=HANGHUI_BTN["zhiyuanquxiao"], elsedelay=1,
                           timeout=6, is_raise=False):
             zhiyuansheding()
@@ -225,9 +241,14 @@ class HanghuiMixin(ToolsMixin):
             return
         self.lock_home()
         # 进入行会
-        self.lock_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)), ifclick=[(230, 351), (1, 1)],
-                      elseclick=[(1, 1), (688, 432)],
-                      elsedelay=8, retry=10)
+        out = self.lock_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)),
+                            ifclick=[(230, 351), (1, 1)],
+                            elseclick=[(1, 1), (688, 432)],
+                            elsedelay=8, retry=3, is_raise=False)
+        if not out:
+            self.log.write_log("error", "无法进入行会")
+            self.lock_home()
+            return
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
         self.lock_no_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)), elseclick=[(230, 351)],
                          retry=5)
@@ -235,15 +256,22 @@ class HanghuiMixin(ToolsMixin):
             self.lock_img('img/ok.bmp', elseclick=[(720, 97)], retry=3)  # 点击排序
             self.lock_no_img('img/ok.bmp', elseclick=[(289, 303), (587, 372)],
                              elsedelay=self.change_time, retry=3)  # 按战力降序 这里可以加一步调降序
-            self.lock_img('img/dianzan.bmp', ifclick=[(818, 198), (480, 374), (826, 316), (480, 374), (826, 428)]
-                          , elseclick=[(1, 1)], ifbefore=self.change_time, elsedelay=self.change_time,
-                          ifdelay=self.change_time, retry=10)
+            if not self.lock_img('img/dianzan.bmp', ifclick=[(818, 198), (480, 374), (826, 316), (480, 374), (826, 428)]
+                    , elseclick=[(1, 1)], ifbefore=self.change_time, elsedelay=self.change_time,
+                                 ifdelay=self.change_time, retry=10, is_raise=False):
+                self.log.write_log("error", "找不到点赞按钮")
+                self.lock_home()
+                return
             # 点赞 战力降序第一/第二/第三个人
             # (480, 374) 是ok的坐标
         else:
-            self.lock_img(PCRelement(img='img/dianzan.bmp', at=(756, 184, 857, 227)),
-                          ifclick=[(829, 316), (480, 374), (826, 428)], elseclick=[(1, 1)],
-                          elsedelay=self.change_time, ifbefore=self.change_time, ifdelay=self.change_time, retry=10)
+            if not self.lock_img(PCRelement(img='img/dianzan.bmp', at=(756, 184, 857, 227)),
+                                 ifclick=[(829, 316), (480, 374), (826, 428)], elseclick=[(1, 1)],
+                                 elsedelay=self.change_time, ifbefore=self.change_time, ifdelay=self.change_time,
+                                 retry=10, is_raise=False):
+                self.log.write_log("error", "找不到点赞按钮")
+                self.lock_home()
+                return
             # 点赞 职务降序（默认） 第二/第三个人，副会长
         self.click(479, 381)
         screen_shot_ = self.getscreen()

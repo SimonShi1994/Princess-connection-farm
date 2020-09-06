@@ -13,21 +13,9 @@ from xlutils.copy import copy
 from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
-    ocr_mode, ignore_warning
+from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
+    ocr_mode
 from ._base import BaseMixin
-
-if ocr_mode != "网络" and len(ocr_mode) != 0:
-    import muggle_ocr
-
-    # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
-    sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
-
-if ignore_warning:
-    import warnings
-
-    warnings.filterwarnings('ignore')
-
 
 class ToolsMixin(BaseMixin):
     """
@@ -55,6 +43,42 @@ class ToolsMixin(BaseMixin):
             time.sleep(1.5)
             if time.time() - last > lockimg_timeout:
                 raise Exception("lock_home时出错：超时！")
+
+    def init_home(self):
+        # 2020-07-31 TheAutumnOfRice: 检查完毕
+        while True:
+            screen_shot_ = self.getscreen()
+            if self.is_exists(MAIN_BTN["liwu"], screen=screen_shot_):
+                break
+            if self.is_exists(MAIN_BTN["tiaoguo"], screen=screen_shot_):
+                self.click(893, 39, post_delay=0.5)  # 跳过
+                continue
+            if self.is_exists(MAIN_BTN["jingsaikaishi"], screen=screen_shot_):
+                self.click(786, 308, post_delay=0.2)  # 选角色
+                self.click(842, 491)  # 开始
+                continue
+            num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+            if num_of_white < 77000:
+                break
+
+            self.click(1, 1, post_delay=0.5)
+            self.click(330, 270, post_delay=1)
+            # 跳过特别庆典
+
+        self.lock_home()
+        time.sleep(0.5)
+        # 这里防一波第二天可可萝跳脸教程
+        screen_shot_ = self.getscreen()
+        num_of_white, _, _ = UIMatcher.find_gaoliang(screen_shot_)
+        if num_of_white < 50000:
+            self.lock_img('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
+            self.lock_home()
+            return
+        if UIMatcher.img_where(screen_shot_, 'img/kekeluo.bmp'):
+            self.lock_img('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
+            self.lock_home()
+        time.sleep(1)
+        self.lock_home()  # 追加检测
 
     def setting(self):
         self.lock_home()
@@ -125,8 +149,10 @@ class ToolsMixin(BaseMixin):
             part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
             part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             img_binary = cv2.imencode('.png', part)[1].tobytes()
-            local_ocr_text = sdk.predict(image_bytes=img_binary)
-            return local_ocr_text
+            files = {'file': ('tmp.png', img_binary, 'image/png')}
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/", files=files)
+            pcr_log(self.account).write_log(level='info',message='本地OCR识别结果：%s'% local_ocr_text.text)
+            return local_ocr_text.text
         except Exception as ocr_error:
             pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
             return -1
@@ -157,7 +183,7 @@ class ToolsMixin(BaseMixin):
         time.sleep(random.uniform(0.8, 1.2))
         client = AipOcr(**config)
         if screen_shot is None:
-            screen_shot = self.d.screenshot(format='opencv')
+            screen_shot = self.getscreen()
         # from numpy import rot90
         # screen_shot_ = rot90(screen_shot_)  # 旋转90°
         if baidu_ocr_img:

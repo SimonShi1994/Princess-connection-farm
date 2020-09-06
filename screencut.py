@@ -131,8 +131,8 @@ class AutomatorDebuger(Automator):
 
     @staticmethod
     def Init():
-        from initialize import connect
-        connect()
+        from core.initializer import _connect
+        _connect()
 
     def Connect(self, address=None):
         lst = adbutils.adb.device_list()
@@ -145,7 +145,7 @@ class AutomatorDebuger(Automator):
             self.init_device(address)
 
     def Account(self, account):
-        self.init_account(account)
+        self.init_account(account, "users")
         self.start_shuatu()
 
     def Shot(self, file="test.bmp", show=True):

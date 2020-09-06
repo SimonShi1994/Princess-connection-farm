@@ -1,10 +1,10 @@
 import os
 
+from _deprecated.initialize import execute
 from core.constant import USER_DEFAULT_DICT as UDD
-from core.usercentre import AutomatorRecorder, list_all_users
-from initialize import execute
 # 主程序
-from pcr_config import trace_exception_for_debug
+from core.pcr_config import trace_exception_for_debug
+from core.usercentre import AutomatorRecorder, list_all_users
 
 
 def RunFirstTime():
@@ -24,7 +24,7 @@ def CheckState():
         AR = AutomatorRecorder(acc)
         uj = AR.getuser()
         print("USER: ", acc, " TASK: ", "NONE" if uj["taskfile"] == "" else uj["taskfile"], "STATUS ", end="")
-        rs = AR.get("run_status", UDD["run_status"])
+        rs = AR.get_run_status()
         if rs["error"] is None:
             if rs["finished"]:
                 print("FINISHED.")
@@ -48,7 +48,7 @@ def CheckStateReturn():
         AR = AutomatorRecorder(acc)
         uj = AR.getuser()
         acc_task_tmpinfo = "账号:%s 任务:%s 状态:" % (acc, "NONE" if uj["taskfile"] == "" else uj["taskfile"])
-        rs = AR.get("run_status", UDD["run_status"])
+        rs = AR.get_run_status()
         if rs["error"] is None:
             if rs["finished"]:
                 acc_task_tmpinfo = acc_task_tmpinfo + "FINISHED."
@@ -68,10 +68,10 @@ def ClearError(acc):
     :param acc: 要处理的用户名字
     """
     AR = AutomatorRecorder(acc)
-    rs = AR.get("run_status", UDD["run_status"])
+    rs = AR.get_run_status()
     rs["error"] = None
     rs["finished"] = False
-    AR.set("run_status", rs)
+    AR.set_run_status(rs)
 
 
 def Restart(acc):
@@ -81,11 +81,11 @@ def Restart(acc):
     :param acc: 要处理的用户的名字
     """
     AR = AutomatorRecorder(acc)
-    rs = AR.get("run_status", UDD["run_status"])
+    rs = AR.get_run_status()
     rs["error"] = None
     rs["finished"] = False
     rs["current"] = "..."
-    AR.set("run_status", rs)
+    AR.set_run_status(rs)
     target = "rec/%s.rec" % acc
     if os.path.exists(target):
         os.remove(target)  # 删除行动记录文件
@@ -97,11 +97,11 @@ def SetFinished(acc):
     :param acc: 用户
     """
     AR = AutomatorRecorder(acc)
-    rs = AR.get("run_status", UDD["run_status"])
+    rs = AR.get_run_status()
     rs["error"] = None
     rs["finished"] = True
     rs["current"] = "..."
-    AR.set("run_status", rs)
+    AR.set_run_status(rs)
 
 
 if __name__ == '__main__':
@@ -109,6 +109,9 @@ if __name__ == '__main__':
     print("help 查看帮助                   exit 退出")
     print("By TheAutumnOfRice")
     print("----------------------------------------")
+    print("!! 警告：该控制器已经于2020-08-04停止维护，请使用最新的main_new.py享受“计划” Schedule的运行模式")
+    print("!! 旧版本可能仍然可以继续使用，但是可能存在与新版本不兼容的地方")
+    print("!! 该版本将不再支持server酱定时发送状态的功能")
     while True:
         try:
             cmd = input("> ")
@@ -151,7 +154,7 @@ if __name__ == '__main__':
                 else:
                     print("需要指定Account")
             elif order == "edit":
-                exec(open("CreateUser.py", "r", encoding="utf-8").read())
+                exec(open("_deprecated\\CreateUser.py", "r", encoding="utf-8").read())
             else:
                 print("未知的命令")
         except Exception as e:
