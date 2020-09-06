@@ -28,6 +28,9 @@ class moveerr(Exception):
         self.code = code
         self.desc = desc
 
+class UnknownMovesetException(Exception):
+    def __init__(self, *args):
+        super().__init__(args)
 
 class movevar:
     """
@@ -48,8 +51,9 @@ class movevar:
         方式：通过__self__，调用moveset.savestate
         :return:
         """
-        s = self.var["__self__"]
-        s.savestate()
+        if "__self__" in self.var:
+            s = self.var["__self__"]
+            s.savestate()
 
     def setflag(self, flagkey, flagvalue=1, save=None):
         """
@@ -848,7 +852,7 @@ class moveset:
     def _savestate(self):
         if not os.path.isdir(self.addr):
             os.makedirs(self.addr)
-        path = "%s\\%s.rec" % (self.addr, self.name)
+        path = "%s/%s.rec" % (self.addr, self.name)
         if not self.use_json:
             mode = "wb"
         else:
@@ -861,7 +865,7 @@ class moveset:
         file.close()
 
     def _loadstate(self):
-        path = "%s\\%s.rec" % (self.addr, self.name)
+        path = "%s/%s.rec" % (self.addr, self.name)
         if not os.path.exists(path):
             return
         if not self.use_json:
@@ -971,7 +975,7 @@ class moveset:
         self.var["__current__"] = None
         self.savestate()
         if cur != "__exit__":
-            raise Exception("Unknown Moveset:", cur)
+            raise UnknownMovesetException("Unknown Moveset:", cur)
         if "__parent__" in self.var:
             del self.var["__parent__"]
         del self.var["__self__"]

@@ -1,59 +1,163 @@
-from core.Automator import Automator
-from core.log_handler import pcr_log
-from initialize import execute, can_shuatu
+import os
 
-# 仅适用于zhanghao.txt里面的帐号，可以判断是农场号，还是要捐装备的号
-# 根据zhanghao.txt里边的帐号是否有标注图号（也就是第三个参数）来确定是不是捐装备的号
-# 如果是农场号就没有动作，如果是要捐装备的号就登录游戏捐装备
-account_filename = "zhanghao.txt"
-
-
-def tasks(a: Automator, account, opcode):
-    # 主功能体函数，可以在本函数中自定义需要的功能
-    try:
-        a.c_async(a, account, a.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
-        a.init_home()  # 初始化，确保进入首页
-        a.c_async(a, account, a.juqingtiaoguo(), sync=False)  # 异步剧情跳过
-        a.c_async(a, account, a.bad_connecting(), sync=False)  # 异步异常处理
-
-        a.gonghuizhijia()  # 家园一键领取
-        # a.goumaimana(1)  # 购买mana 10次
-        a.mianfeiniudan()  # 免费扭蛋
-        # a.mianfeishilian()  # 免费十连
-        a.shouqu()  # 收取所有礼物
-        a.dianzan(sortflag=1)  # 公会点赞，sortflag=1表示按战力排序
-        a.dixiacheng_ocr(skip=False)  # 地下城 skip是否开启战斗跳过
-        # a.goumaitili(3)  # 购买3次体力
-        # a.buyExp() # 买药
-        # a.doActivityHard() # 刷活动hard
-        # a.do1to3Hard() # 刷hard 4-1图, 需已开Hard 4-1
-        # a.do11to3Hard() # 刷hard 11-3图，需已开Hard 11图
-        a.shouqurenwu()  # 收取任务
-        # a.tansuo() # 刷探索,注意mana号没开探索可能会卡死
-        if can_shuatu(opcode):  # 仅当刷图被激活(即注明了刷图图号)的账号执行行会捐赠，不刷图的认为是mana号不执行行会捐赠。
-            '''
-            目前支持刷图图号，（请将需要的图号填入zhanghao.txt）
-            'h00': # h00为不刷任何hard图
-            'h01': # 刷hard 1-11图
-            'tsk': # 探索开,注意mana号没开探索可能会卡死
-            'n07': # 刷7图
-            'n08': # 刷8图
-            'n10': # 刷10图
-            'n11': # 刷11图
-            'n12': # 刷12图
-            '''
-            a.shuatu(opcode)  # 刷normal和探索图，需要再zhanghao.txt里注明，不然不会刷
-            a.shuatu_hard(opcode)  # 刷hard图，需要再zhanghao.txt里注明，不然不会刷
-            a.hanghui()  # 刷图后进行行会捐赠
-        else:  # 刷图没有被激活的可以去刷经验
-            # a.goumaitili(times=3)  # 购买times次体力
-            a.shuajingyan(map=3)  # 刷1-1经验,map为主图
-            pass
-        a.shouqurenwu()  # 二次收取任务
-    except Ellipsis as e:
-        pcr_log(account).write_log(level='error', message='main-检测出异常{}'.format(e))
-
-
+from _deprecated.initialize import execute
+from core.constant import USER_DEFAULT_DICT as UDD
 # 主程序
+from core.pcr_config import trace_exception_for_debug
+from core.usercentre import AutomatorRecorder, list_all_users
+
+
+def RunFirstTime():
+    users = list_all_users(0)
+    for acc in users:
+        Restart(acc)
+    execute(False, 3)
+
+
+def RunContinue():
+    execute(True, 3)
+
+
+def CheckState():
+    users = list_all_users(0)
+    for acc in users:
+        AR = AutomatorRecorder(acc)
+        uj = AR.getuser()
+        print("USER: ", acc, " TASK: ", "NONE" if uj["taskfile"] == "" else uj["taskfile"], "STATUS ", end="")
+        rs = AR.get_run_status()
+        if rs["error"] is None:
+            if rs["finished"]:
+                print("FINISHED.")
+            else:
+                print("CURRENT: ", rs["current"])
+        else:
+            print("ERROR: ", rs["error"])
+
+def CheckTuitu():
+    users = list_all_users(0)
+    for acc in users:
+        AR = AutomatorRecorder(acc)
+        ts = AR.get("tuitu_status", UDD["tuitu_status"])
+        if ts['max'] is not None:
+            print("USER: ", acc, " Normal: ", ts['max'])
+
+def CheckStateReturn():
+    users = list_all_users(0)
+    acc_task_info = []
+    for acc in users:
+        AR = AutomatorRecorder(acc)
+        uj = AR.getuser()
+        acc_task_tmpinfo = "账号:%s 任务:%s 状态:" % (acc, "NONE" if uj["taskfile"] == "" else uj["taskfile"])
+        rs = AR.get_run_status()
+        if rs["error"] is None:
+            if rs["finished"]:
+                acc_task_tmpinfo = acc_task_tmpinfo + "FINISHED."
+            else:
+                acc_task_tmpinfo = acc_task_tmpinfo + "CURRENT:%s" % rs["current"]
+        else:
+            acc_task_tmpinfo = acc_task_tmpinfo + "ERROR:%s" % rs["error"]
+        acc_task_info.append(acc_task_tmpinfo)
+        acc_task_info.append('\n')
+    acc_task_info = ''.join(acc_task_info).replace(',', '\n').replace("'", '')
+    return acc_task_info
+
+
+def ClearError(acc):
+    """
+    重启某用户的错误让他继续跑
+    :param acc: 要处理的用户名字
+    """
+    AR = AutomatorRecorder(acc)
+    rs = AR.get_run_status()
+    rs["error"] = None
+    rs["finished"] = False
+    AR.set_run_status(rs)
+
+
+def Restart(acc):
+    """
+    重置某一个用户，让它重头跑
+    Restart之后，再次调用RunContinue时，该用户会从头跑
+    :param acc: 要处理的用户的名字
+    """
+    AR = AutomatorRecorder(acc)
+    rs = AR.get_run_status()
+    rs["error"] = None
+    rs["finished"] = False
+    rs["current"] = "..."
+    AR.set_run_status(rs)
+    target = "rec/%s.rec" % acc
+    if os.path.exists(target):
+        os.remove(target)  # 删除行动记录文件
+
+
+def SetFinished(acc):
+    """
+    设置某一个用户的状态为已经跑完
+    :param acc: 用户
+    """
+    AR = AutomatorRecorder(acc)
+    rs = AR.get_run_status()
+    rs["error"] = None
+    rs["finished"] = True
+    rs["current"] = "..."
+    AR.set_run_status(rs)
+
+
 if __name__ == '__main__':
-    execute(account_filename, tasks)
+    print("------------- 用户脚本控制台 ------------")
+    print("help 查看帮助                   exit 退出")
+    print("By TheAutumnOfRice")
+    print("----------------------------------------")
+    print("!! 警告：该控制器已经于2020-08-04停止维护，请使用最新的main_new.py享受“计划” Schedule的运行模式")
+    print("!! 旧版本可能仍然可以继续使用，但是可能存在与新版本不兼容的地方")
+    print("!! 该版本将不再支持server酱定时发送状态的功能")
+    while True:
+        try:
+            cmd = input("> ")
+            cmds = cmd.split(" ")
+            order = cmds[0]
+            if order == "exit":
+                break
+            elif order == "help":
+                print("脚本控制帮助")
+                print("first 所有脚本全部重跑")
+                print("continue 所有脚本从上次断点开始继续跑")
+                print("state 显示所有用户的状态")
+                print("state -tuitu 显示所有用户推图的状态")
+                print("clear ACCOUNT 清除Account的错误状态让它继续跑")
+                print("restart ACCOUNT 清除Account的运行记录，让它重新开始")
+                print("finish ACCOUNT 标记Account已经刷完，不再继续刷")
+                print("edit 进入用户配置编辑模式")
+            elif order == "first":
+                RunFirstTime()
+            elif order == "continue":
+                RunContinue()
+            elif order == "state":
+                if len(cmds) == 2 and cmds[1] == "-tuitu":
+                    CheckTuitu()
+                else:
+                    CheckState()
+            elif order == "clear":
+                if len(cmds) > 1:
+                    ClearError(cmds[1])
+                else:
+                    print("需要指定Account")
+            elif order == "restart":
+                if len(cmds) > 1:
+                    Restart(cmds[1])
+                else:
+                    print("需要指定Account")
+            elif order == "finish":
+                if len(cmds) > 1:
+                    SetFinished(cmds[1])
+                else:
+                    print("需要指定Account")
+            elif order == "edit":
+                exec(open("_deprecated\\CreateUser.py", "r", encoding="utf-8").read())
+            else:
+                print("未知的命令")
+        except Exception as e:
+            print("出现错误:", e)
+            if trace_exception_for_debug:
+                raise e

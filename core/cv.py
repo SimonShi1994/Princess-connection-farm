@@ -5,12 +5,15 @@ import cv2
 import numpy as np
 
 from core.log_handler import pcr_log
-
-# 临时，等待config的创建
-from pcr_config import debug
+from core.pcr_config import debug, use_template_cache
 
 
 def cv_imread(file_path):  # 用于中文目录的imread函数
+    """
+    项目地址:https://github.com/bbpp222006/Princess-connection
+    作者：bbpp222006
+    协议：MIT License
+    """
     cv_img = cv2.imdecode(np.fromfile(file_path, dtype=np.uint8), -1)
     return cv_img
 
@@ -21,20 +24,36 @@ class UIMatcher:
 
     @staticmethod
     def RotateClockWise90(img):
+        """
+        项目地址:https://github.com/bbpp222006/Princess-connection
+        作者：bbpp222006
+        协议：MIT License
+        """
         trans_img = cv2.transpose(img)
         new_img = cv2.flip(trans_img, 0)
         return new_img
 
     @staticmethod
+    def AutoRotateClockWise90(img):
+        if img.shape[0] > img.shape[1]:
+            return UIMatcher.RotateClockWise90(img)
+        else:
+            return img
+
+    @staticmethod
     def findpic(screen, template_paths=None):
+        """
+        项目地址:https://github.com/bbpp222006/Princess-connection
+        作者：bbpp222006
+        协议：MIT License
+
         # 返回相对坐标
         # 已使用img_where代替
-        """
         检测各种按钮(头像?)
         @return: 中心坐标lists, 对应的可信度list
         """
         if template_paths is None:
-            template_paths = ['img/tiaoguo.jpg']
+            template_paths = ['img/juqing/tiaoguo_2.bmp']
         zhongxings = []
         max_vals = []
         # 增加判断screen方向
@@ -49,7 +68,7 @@ class UIMatcher:
             template = cv2.imread(template_path)
             # template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)cv_imread
             h, w = template.shape[:2]  # rows->h, cols->w
-            res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
+            res = UIMatcher.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
             min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
             x = (max_loc[0] + w // 2) / screen.shape[1]
             y = (max_loc[1] + h // 2) / screen.shape[0]
@@ -73,8 +92,95 @@ class UIMatcher:
         # plt.show()
         return zhongxings, max_vals
 
+    @staticmethod
+    def matchTemplate(screen, template, method):
+        """
+        为了使用sq这个1-SQDIRR_NORMED，没办法再封装一层吧。
+        之后可以开发更多match映射方法。
+        """
+        if method == "sq":
+            ans = cv2.matchTemplate(screen, template, cv2.TM_SQDIFF_NORMED)
+            ans = 1 - ans
+            return ans
+        else:
+            ans = cv2.matchTemplate(screen, template, method)
+            return ans
+
     @classmethod
-    def img_where(cls, screen, template_path, threshold=0.84, at=None):
+    def img_prob(cls, screen, template_path, at=None, method=cv2.TM_CCOEFF_NORMED) -> float:
+        """
+        在screen里寻找template，若找到多个，则返回第一个的匹配度。
+        :param screen:  截图图片
+        :param template_path: 文件路径
+        :param at:  缩小查找范围
+        :return: 匹配度
+        """
+        if screen.shape[0] > screen.shape[1]:
+            screen = UIMatcher.RotateClockWise90(screen)
+        if at is not None:
+            try:
+                x1, y1, x2, y2 = at
+                screen = screen[y1:y2 + 1, x1:x2 + 1]
+            except:
+                pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+                exit(-1)
+        if screen.mean() < 1:  # 纯黑色与任何图相关度为1
+            return 0
+        template = cls._get_template(template_path)
+        prob = UIMatcher.matchTemplate(screen, template, method).max()
+        return prob
+
+    @classmethod
+    def _get_template(cls, template_path):
+        if isinstance(template_path, np.ndarray):
+            return template_path
+        if not use_template_cache or template_path not in cls.template_cache:
+            template = cv2.imread(template_path)
+            cls.template_cache[template_path] = template
+        else:
+            template = cls.template_cache[template_path]
+        return template
+
+    @staticmethod
+    def img_cut(screen, at):
+        try:
+            x1, y1, x2, y2 = at
+            screen = screen[y1:y2 + 1, x1:x2 + 1]
+        except:
+            pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+            exit(-1)
+        return screen
+
+    @classmethod
+    def img_all_where(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
+        """
+        找全部匹配图
+        """
+        if isinstance(screen, str):
+            screen = cv2.imread(screen)
+        screen = cls.AutoRotateClockWise90(screen)
+        template = cls._get_template(template_path)
+        th, tw = template.shape[:2]  # rows->h, cols->w
+        if at is not None:
+            x1, y1, x2, y2 = at
+        else:
+            x1, y1, x2, y2 = 0, 0, 959, 539
+        screen = cls.img_cut(screen, (x1, y1, x2, y2))
+        res = UIMatcher.matchTemplate(screen, template, method)
+        l = []
+        for i in range(res.shape[0]):
+            for j in range(res.shape[1]):
+                if res[i, j] >= threshold:
+                    _x = x1 + j + tw // 2
+                    _y = y1 + i + th // 2
+                    _at = (x1 + j, y1 + i, x1 + j + tw - 1, y1 + i + th - 1)
+                    l += [_x, _y, _at]
+                    if debug:
+                        print(f"p({_x},{_y},img=\"{template_path}\",at={_at}), \nCCOEFF=", res[i, j])
+        return l
+
+    @classmethod
+    def img_where(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
         """
         在screen里寻找template，若找到则返回坐标，若没找到则返回False
         注：可以使用if img_where():  来判断图片是否存在
@@ -84,26 +190,24 @@ class UIMatcher:
         :param at: 缩小查找范围
         :return:
         """
+        if isinstance(screen, str):
+            screen = cv2.imread(screen)
         if screen.shape[0] > screen.shape[1]:
             screen = UIMatcher.RotateClockWise90(screen)
         if at is not None:
             try:
                 x1, y1, x2, y2 = at
-                screen = screen[y1:y2, x1:x2]
+                screen = screen[y1:y2 + 1, x1:x2 + 1]
             except:
                 pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
                 exit(-1)
         else:
             x1, y1 = 0, 0
-
         # 缓存未命中时从源文件读取
-        if template_path not in cls.template_cache:
-            template = cv2.imread(template_path)
-            cls.template_cache[template_path] = template
-        else:
-            template = cls.template_cache[template_path]
+        template = cls._get_template(template_path)
+
         th, tw = template.shape[:2]  # rows->h, cols->w
-        res = cv2.matchTemplate(screen, template, cv2.TM_CCOEFF_NORMED)
+        res = UIMatcher.matchTemplate(screen, template, method)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
         if max_val >= threshold:
             x = x1 + max_loc[0] + tw // 2
@@ -134,7 +238,7 @@ class UIMatcher:
             return False
 
     @staticmethod
-    def imgs_where(screen, template_paths, threshold=0.84):
+    def imgs_where(screen, template_paths, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
         """
         依次检测template_paths中模板是否存在，返回存在图片字典
         :param screen:
@@ -144,7 +248,7 @@ class UIMatcher:
         """
         return_dic = {}
         for template_path in template_paths:
-            pos = UIMatcher.img_where(screen, template_path, threshold)
+            pos = UIMatcher.img_where(screen, template_path, threshold, at, method)
             if pos:
                 return_dic[template_path] = pos
         return return_dic
@@ -152,6 +256,10 @@ class UIMatcher:
     @staticmethod
     def find_gaoliang(screen):
         """
+        项目地址:https://github.com/bbpp222006/Princess-connection
+        作者：bbpp222006
+        协议：MIT License
+
         检测高亮位置(忽略了上板边,防止成就栏弹出遮挡)
         @return: 高亮中心相对坐标[x,y]
         """
@@ -170,6 +278,40 @@ class UIMatcher:
         # plt.pause(0.01)
         # print('亮点个数:', len(np.argwhere(binary == 255)), '暗点个数:', len(np.argwhere(binary == 0)))
         return num_of_white, index_1[1] / screen.shape[1], (index_1[0] + 63) / screen.shape[0]
+
+    @classmethod
+    def img_similar(cls, screen_short, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
+        """
+        和上次截图匹配相似度
+        :param threshold:
+        :param screen_short:
+        :param at: 缩小查找范围
+        :return:
+        """
+        if screen_short.shape[0] > screen_short.shape[1]:
+            screen_short = UIMatcher.RotateClockWise90(screen_short)
+        if at is not None:
+            try:
+                x1, y1, x2, y2 = at
+                screen_short = screen_short[y1:y2, x1:x2]
+            except:
+                pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+                exit(-1)
+        else:
+            x1, y1 = 0, 0
+        if cls.screen_short_befor is None:
+            cls.screen_short_befor = screen_short
+            # print('填空')
+        th, tw = screen_short.shape[:2]  # rows->h, cols->w
+        res = UIMatcher.matchTemplate(cls.screen_short_befor, screen_short, method)
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+        # print(max_val)
+        if max_val >= threshold:
+            x = x1 + max_loc[0] + tw // 2
+            y = y1 + max_loc[1] + th // 2
+        cls.screen_short_befor = screen_short
+        # print(round(max_val, 3))
+        return round(max_val, 3)
 
 #
 # d = u2.connect()

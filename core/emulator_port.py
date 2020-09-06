@@ -1,0 +1,253 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import copy
+import gettext
+import json
+import os
+import platform
+import queue
+import re
+import subprocess
+import threading
+
+import psutil
+
+from core.log_handler import pcr_log
+
+emulator_ip = "127.0.0.1"
+
+domains = ['emulator_port']
+languageDir = os.path.abspath('src/locale')
+for domain in domains:
+    gettext.bindtextdomain(domain, languageDir)
+    gettext.textdomain(domain)
+_ = gettext.gettext
+
+_CONFIG_PATH = os.path.abspath(
+    os.path.join(os.path.abspath(__file__), os.path.pardir, 'emulator_config.json'))
+
+_EMULATORS = {}
+
+
+class Emulator(object):
+    def __init__(self, d):
+        self.type = d['type']
+        self.name = d['name']
+        # handle with different emulators with same process name
+        self.unique_id = d.get('unique_id')
+        self.process_name = d['process_name']
+        self.default_ports = d['default_ports']
+        self.re_port = d.get('re_port')
+        self.desc = d.get('desc')
+        # 2: never tips
+        # 1: tip when unknown emulator found
+        # 0: tip when known emulator port change and unknown emulator found
+        self.upload_tip_level = \
+            d.get('upload_tip_level') if d.get('upload_tip_level') else 0
+
+
+def get_processes(emulator):
+    return [x for x in psutil.process_iter()
+            if emulator.unique_id == get_process_unique_id(x)]
+
+
+def check_adb_connectable_by_port(port, auto_disconnect=True):
+    result = check_adb_connectable_by_ports(
+        [port], auto_disconnect=auto_disconnect)
+    return len(result) > 0 and result[0] == port
+
+
+def check_adb_connectable_by_ports(ports, auto_disconnect=True):
+    lock = threading.Lock()
+    ports_len = len(ports)
+    devices_queue = queue.Queue(ports_len)
+    ports_queue = queue.Queue(ports_len)
+    for port in ports:
+        ports_queue.put(port)
+
+    class connectPort(threading.Thread):
+        def __init__(self, ports_queue, devices_queue):
+            threading.Thread.__init__(self)
+            self.ports_queue = ports_queue
+            self.devices_queue = devices_queue
+
+        def run(self) -> None:
+            port_now = self.ports_queue.get()
+            device_now = "%s:%s" % (emulator_ip, port_now)
+            sh("adb connect %s" % device_now, timeout=1)
+            self.devices_queue.put(device_now)
+
+    connet_thread_list = []
+    for i in range(ports_len):
+        t = connectPort(ports_queue=ports_queue, devices_queue=devices_queue)
+        t.start()
+        connet_thread_list.append(t)
+
+    for i in connet_thread_list:
+        i.join()
+
+    result = check_adb_connected(devices_queue)
+    if auto_disconnect:
+        for i in range(devices_queue.qsize()):
+            device = devices_queue.get()
+            os.system("adb disconnect %s" % device)
+    ports = [int(x.split(':')[1]) for x in result]
+    return ports
+
+
+def sh(command, print_msg=True, timeout=0):
+    # print("命令为：" + command)
+    p = subprocess.Popen(
+        command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True, start_new_session=True)
+
+    format = 'utf-8'
+    if platform.system() == "Windows":
+        format = 'gbk'
+
+    try:
+        if timeout != 0:
+            (result, errs) = p.communicate(timeout=timeout)
+        else:
+            (result, errs) = p.communicate()
+        ret_code = p.poll()
+        if ret_code:
+            code = 1
+            result = "[Error]Called Error ： " + str(result.decode(format))
+        else:
+            code = 0
+            result = str(result.decode(format))
+            # print(result)
+    except subprocess.TimeoutExpired:
+        # 注意：不能只使用p.kill和p.terminate，无法杀干净所有的子进程，需要使用os.killpg
+        p.kill()
+        p.terminate()
+        # os.killpg(p.pid, signal.SIGTERM)
+        # os.kill(p.pid, signal.CTRL_C_EVENT)
+
+        # 注意：如果开启下面这两行的话，会等到执行完成才报超时错误，但是可以输出执行结果
+        # (outs, errs) = p.communicate()
+        # print(outs.decode('utf-8'))
+
+        code = 1
+        result = "[ERROR]Timeout Error : Command '" + command + "' timed out after " + str(timeout) + " seconds"
+    except Exception as e:
+        code = 1
+        result = "[ERROR]Unknown Error : " + str(e)
+
+    return result
+
+
+def check_adb_connected(devices_queue):
+    # check if device is active
+    active_result = sh("adb devices", print_msg=False)
+    connected_devices = []
+    for i in range(devices_queue.qsize()):
+        device = devices_queue.get()
+        devices_queue.put(device)
+        if re.search(r"%s\s+device" % (device), active_result):
+            connected_devices.append(device)
+    return connected_devices
+
+
+def get_ports(emulator):
+    ps = get_processes(emulator)
+    pcr_log('admin').write_log(level='debug',
+                      message=_("{name}({type}) processes:").format(
+                          name=emulator.name, type=emulator.type))
+    pcr_log('admin').write_log(level='debug', message=ps)
+    # print(
+    #     _("{name}({type}) processes:").format(
+    #         name=emulator.name, type=emulator.type))
+    # print(ps)
+    ports = []
+    if 1 <= len(ps) <= len(emulator.default_ports):
+        for default_port in emulator.default_ports:
+            # print(default_port)
+            result = check_adb_connectable_by_port(
+                default_port, auto_disconnect=False)
+            if result:
+                ports.append(default_port)
+    if ports:
+        return ports
+
+    for p in ps:
+        connections = [
+            x.laddr for x in p.connections() if x.status == psutil.CONN_LISTEN
+        ]
+        # print(connections)
+        if emulator.re_port:
+            ports += [
+                int(x.port) for x in connections
+                if re.match(emulator.re_port, str(x.port)) and x.port > 2000
+            ]
+        else:
+            ports += [int(x.port) for x in connections if x.port > 2000]
+    ports = check_adb_connectable_by_ports(ports)
+    return ports
+
+
+def read_config(src=_CONFIG_PATH):
+    with open(src, 'r', encoding='utf-8') as f:
+        config = json.load(f)
+    for e in config['emulators']:
+        _EMULATORS[e['unique_id']] = Emulator(e)
+
+
+def is_known_port_changed(emulator, new_ports):
+    if not emulator or emulator.upload_tip_level >= 1:
+        return False
+    old_ports = emulator.default_ports
+    if not old_ports:
+        old_ports = []
+    if not new_ports:
+        new_ports = []
+    if len(new_ports) > len(old_ports):
+        for port in old_ports:
+            if port not in new_ports:
+                return True
+    else:
+        for port in new_ports:
+            if port not in old_ports:
+                return True
+    return False
+
+
+def get_process_unique_id(p):
+    relative_path = None
+    try:
+        # read system process propertity may throw an exception.
+        path = os.path.dirname(p.exe())
+        path = os.path.basename(os.path.dirname(path)) + \
+               '/' + os.path.basename(path)
+        relative_path = path
+    except (PermissionError, psutil.AccessDenied):
+        pass
+    return "%s/%s" % (relative_path, p.name())
+
+
+def check_known_emulators():
+    read_config()
+    emulators = {}
+    filtered_emulator = []
+    ischanged = False
+    for p in psutil.process_iter():
+        unique_id = get_process_unique_id(p)
+        if unique_id in filtered_emulator:
+            continue
+        filtered_emulator.append(unique_id)
+        for t, e in _EMULATORS.items():
+            if e.unique_id == unique_id:
+                result = get_ports(e)
+                if result:
+                    if not emulators.get(e.unique_id):
+                        emulators[e.unique_id] = copy.deepcopy(e)
+                    emulators[e.unique_id].default_ports = result
+                if not ischanged:
+                    ischanged = is_known_port_changed(
+                        e, emulators[e.unique_id].default_ports)
+    result_ports = []
+    for i, j in emulators.items():
+        result_ports += j.default_ports
+    # return emulators
+    return result_ports

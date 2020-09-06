@@ -1,8 +1,17 @@
 import random
 import string
+import sys
+import time
+from io import StringIO
 
 
 def random_name():
+    """
+    项目地址:https://github.com/bbpp222006/Princess-connection
+    作者：bbpp222006
+    协议：MIT License
+    :return:
+    """
     # 删减部分，比较大众化姓氏
     firstName = "赵钱孙李周吴郑王冯陈褚卫蒋沈韩杨朱秦尤许何吕施张孔曹严华金魏陶姜戚谢邹喻水云苏潘葛奚范彭郎鲁韦昌马苗凤花方俞任袁柳鲍史唐费岑薛雷贺倪汤滕殷罗毕郝邬安常乐于时傅卞齐康伍余元卜顾孟平" \
                 "黄和穆萧尹姚邵湛汪祁毛禹狄米贝明臧计成戴宋茅庞熊纪舒屈项祝董粱杜阮席季麻强贾路娄危江童颜郭梅盛林刁钟徐邱骆高夏蔡田胡凌霍万柯卢莫房缪干解应宗丁宣邓郁单杭洪包诸左石崔吉" \
@@ -45,6 +54,12 @@ def random_name():
 
 
 def CreatIDnum():
+    """
+    项目地址:https://github.com/bbpp222006/Princess-connection
+    作者：bbpp222006
+    协议：MIT License
+    :return:
+    """
     jiaoyan = 10
     all_ = 0
     result = 0
@@ -81,6 +96,86 @@ def token():
         token += random.choice(s)
         token += str(random.choice(range(10)))
     return token
+
+
+def diffday(t1, t2, AM=5):
+    """
+    判断两天不同（以默认5AM为界限）
+    :param t1: 当前时间
+    :param t2: 上一时间
+    :return:
+    """
+    if (t1 - t2) > 3600 * 24:
+        return True
+    # -5小时，将一天的开始定位5:00AM
+    s1 = time.localtime(t1 - AM * 3600)
+    s2 = time.localtime(t2 - AM * 3600)
+    day1 = s1.tm_year * 366 + s1.tm_yday
+    day2 = s2.tm_year * 366 + s2.tm_yday
+    if day1 > day2:
+        return True
+    else:
+        return False
+
+
+def diff_6hour(t1, t2):
+    """
+    以0h,6h,12h,18h为界判断两个时间是否在两个区间
+    :param t1: 当前时间
+    :param t2: 上一时间
+    :return:
+    """
+    if (t1 - t2) > 3600 * 6:
+        return True
+    s1 = time.localtime(t1)
+    s2 = time.localtime(t2)
+    day1 = s1.tm_year * 366 + s1.tm_yday
+    day2 = s2.tm_year * 366 + s2.tm_yday
+    if day1 > day2:
+        return True
+    else:
+        h1 = s1.tm_hour
+        h2 = s2.tm_hour
+        span = [(0, 6), (6, 12), (12, 18), (18, 24)]
+        for l, r in span:
+            if l <= h1 < r and l <= h2 < r:
+                return False
+        return True
+
+
+def diff_5_12hour(t1, t2):
+    """
+    以5h和12h为界判断两个时间是否在两个区间
+    :param t1: 当前时间
+    :param t2: 上一时间
+    :return:
+    """
+    if (t1 - t2) > 3600 * 6:
+        return True
+    # 5h->0h, 12h->7h
+    s1 = time.localtime(t1 - 5 * 3600)
+    s2 = time.localtime(t2 - 5 * 3600)
+    day1 = s1.tm_year * 366 + s1.tm_yday
+    day2 = s2.tm_year * 366 + s2.tm_yday
+    if day1 > day2:
+        return True
+    else:
+        h1 = s1.tm_hour
+        h2 = s2.tm_hour
+        span = [(0, 7), (7, 24)]
+        for l, r in span:
+            if l <= h1 < r and l <= h2 < r:
+                return False
+        return True
+
+
+def PrintToStr(fun, *args, **kwargs):
+    old_stdout = sys.stdout
+    result = StringIO()
+    sys.stdout = result
+    fun(*args, **kwargs)
+    sys.stdout = old_stdout
+    return result.getvalue()
 
 
 if __name__ == '__main__':
