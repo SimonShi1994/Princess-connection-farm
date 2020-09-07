@@ -42,6 +42,7 @@ def _connect():  # 连接adb与uiautomator
             exit(1)
         """
         os.system(f"cd {adb_dir} & adb kill-server")
+        os.system(f"cd {adb_dir} & adb start-server")
         if os.system('python -m uiautomator2 init') != 0:
             pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
             exit(1)
