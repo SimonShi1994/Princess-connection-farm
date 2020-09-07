@@ -299,11 +299,13 @@ OCR模式介绍：
 
 将申请好后的apikey、Secret Key分别填入本项目目录下的config.ini中的**baidu_apiKey** 和 **baidu_secretKey**
 
+**baidu_QPS**填线的是QPS限制数，一般免费使用为2，付费为10。两者都享有 免费5w/天 的调用
+
 
 
 本地OCR：
 
-主程序在app.py下
+识别精度比百度OCR低，优点速度快，无其他特殊介绍
 
 ### 3.3 配置模拟器自动控制
 

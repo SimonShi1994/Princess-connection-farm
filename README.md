@@ -1,5 +1,5 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
- 
+
  # Princess connection 公主连结农场脚本v2.0
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
@@ -85,21 +85,18 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 ## 使用方式
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
-
+- 使用OCR相关的服务，请先启动**app.py**(双击/`python app.py`)
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
-
 - 出现“No module named 'XXX'，请执行`pip install -r requirements.txt`重新安装依赖
-
 - **第一次使用，完全不懂怎么办？** 
 [Schedule使用方法](docs/introduce_to_schedule.md)
-
 - 感觉还是不会使用，怎么办？
 
 更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
 
 
 ## 额外说明
-      
+
 1. 请不要用于商业用途。代码交流和bug反馈请加群加qq群 1130884619
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
@@ -123,6 +120,11 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2020/9/7By:CyiceK
+
+- 本地OCR与百度OCR并入app.py中
+- 对于百度OCR的QPS并发限制已做处理，基本成功率为100%
 
 2020/9/3 By:TheAutumnOfRice
 
