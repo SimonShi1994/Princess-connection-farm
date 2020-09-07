@@ -54,7 +54,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     dixiacheng_floor = self.ocr_center(216, 423, 259, 442, size=1.5)
                     # print(dixiacheng_floor)
                     dixiacheng_floor = int(dixiacheng_floor.split('/')[0])
-                    time.sleep(0.8)
                     dixiacheng_floor_times = self.ocr_center(668, 421, 697, 445, size=1.5)
                     # print(dixiacheng_floor_times)
                     dixiacheng_floor_times = int(dixiacheng_floor_times.split('/')[0])
