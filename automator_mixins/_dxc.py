@@ -56,6 +56,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     dixiacheng_floor = int(dixiacheng_floor.split('/')[0])
                     dixiacheng_floor_times = self.ocr_center(668, 421, 697, 445, size=1.5)
                     # print(dixiacheng_floor_times)
+
+                    # 本地OCR会把0识别成字母O。。。
+                    dixiacheng_floor_times = dixiacheng_floor_times.replace('O', '0')
+
                     dixiacheng_floor_times = int(dixiacheng_floor_times.split('/')[0])
                     tmp_cout = tmp_cout + 1
                     dixiacheng_times = dixiacheng_floor_times
@@ -90,6 +94,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/yunhai.bmp', side_check=self.juqing_kkr, retry=3)
                 if self.is_exists('img/yunhai.bmp'):
                     dixiacheng_times = self.ocr_center(879, 430, 917, 448, size=2.0)
+
+                    # 本地OCR会把0识别成字母O。。。
+                    dixiacheng_times = dixiacheng_times.replace('O', '0')
+
                     # {'log_id': ***, 'words_result_num': 1, 'words_result': [{'words': '0/1'}]}
                     # print(dixiacheng_times)
                     dixiacheng_times = int(dixiacheng_times.split('/')[0])
@@ -187,8 +195,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             else:
                 # 全部
                 self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
-                self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][1], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"],
-                               elsedelay=0.1, retry=3)  # 第一个人
+                for i in range(1, 9):
+                    self.click(DXC_ELEMENT["zhiyuan_dianren"][i])
                 self.click_btn(DXC_ELEMENT["zhandoukaishi"], until_disappear=DXC_ELEMENT["zhandoukaishi"]
                                , elsedelay=0.1)  # 战斗开始
             while True:
@@ -206,12 +214,17 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.click_btn(FIGHT_BTN["fangqi_2"], until_disappear=FIGHT_BTN["fangqi_2"])
                 time.sleep(3 + self.change_time)
                 # 这里防一波打得太快导致来不及放弃
-                if self.is_exists('img/shanghaibaogao.jpg') and self.is_exists('img/xiayibu.jpg'):
+                if self.is_exists('img/shanghaibaogao.jpg', at=(663, 6, 958, 120)) and \
+                        self.is_exists('img/xiayibu.jpg', at=(457, 421, 955, 535)):
                     self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)])
                     break
-                elif self.is_exists('img/shanghaibaogao.jpg') and self.is_exists('img/qianwangdixiacheng.jpg'):
+                elif self.is_exists('img/shanghaibaogao.jpg', at=(663, 6, 958, 120)) and \
+                        self.is_exists('img/qianwangdixiacheng.jpg', at=(457, 421, 955, 535)):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
                     break
+                else:
+                    if self.is_exists('img/dxc/chetui.bmp'):
+                        break
             else:
                 # 防止奇奇怪怪的飞到主菜单
                 if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], retry=3):

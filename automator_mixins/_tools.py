@@ -159,8 +159,6 @@ class ToolsMixin(BaseMixin):
             img_binary = cv2.imencode('.png', part)[1].tobytes()
             files = {'file': ('tmp.png', img_binary, 'image/png')}
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
-            if local_ocr_text.status_code != 200:
-                pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
             pcr_log(self.account).write_log(level='info', message='本地OCR识别结果：%s' % local_ocr_text.text)
             return local_ocr_text.text
         except Exception as ocr_error:
