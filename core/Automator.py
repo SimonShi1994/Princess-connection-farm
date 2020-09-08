@@ -67,6 +67,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                     flag = True
                 if flag:
                     self.__getattribute__(funname)(**kwargs)
+
             return fun
 
         self.log.write_log("info", f"任务列表：")
@@ -157,7 +158,6 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                     except:
                         pass
                     return False
-
 
 
 if __name__ == "__main__":

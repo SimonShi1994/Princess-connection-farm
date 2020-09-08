@@ -141,6 +141,13 @@ class ToolsMixin(BaseMixin):
     def ocr_local(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
         if screen_shot is None:
             screen_shot = self.getscreen()
+
+        try:
+            requests.get(url="http://127.0.0.1:5000/ocr/local_ocr/")
+        except:
+            pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
+            return -1
+
         try:
             if screen_shot.shape[0] > screen_shot.shape[1]:
                 if anticlockwise_rotation_times >= 1:
@@ -152,6 +159,8 @@ class ToolsMixin(BaseMixin):
             img_binary = cv2.imencode('.png', part)[1].tobytes()
             files = {'file': ('tmp.png', img_binary, 'image/png')}
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
+            if local_ocr_text.status_code != 200:
+                pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
             pcr_log(self.account).write_log(level='info', message='本地OCR识别结果：%s' % local_ocr_text.text)
             return local_ocr_text.text
         except Exception as ocr_error:
@@ -165,6 +174,12 @@ class ToolsMixin(BaseMixin):
         # 默认原图大小（1.0）
         if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
             pcr_log(self.account).write_log(level='error', message='读取SecretKey或apiKey失败！')
+            return -1
+
+        try:
+            requests.get(url="http://127.0.0.1:5000/ocr/baidu_ocr/")
+        except:
+            pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
             return -1
 
         # 强制size为1.0，避免百度无法识图
@@ -187,6 +202,7 @@ class ToolsMixin(BaseMixin):
         part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
         part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
         partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
+
         try:
             files = {'file': ('tmp.png', partbin, 'image/png')}
             result = requests.post(url="http://127.0.0.1:5000/ocr/baidu_ocr/", files=files)

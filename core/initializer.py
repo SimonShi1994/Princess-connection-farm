@@ -739,7 +739,7 @@ class PCRInitializer:
         q = self.tasks.get_attribute("queue")
         L = []
         for ind, T in enumerate(q):
-            if type(T) is not tuple or len(T) is not 6:
+            if type(T) is not tuple or len(T) != 6:
                 print("DEBUG: ", T)
                 break
             (_, acc, taskname, rec, _, _) = T
