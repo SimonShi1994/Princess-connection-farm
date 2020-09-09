@@ -14,7 +14,7 @@ class JJCMixin(ToolsMixin):
         # 进入jjc
         self.lock_home()
         self.click_btn(MAIN_BTN["maoxian"], until_appear=MAIN_BTN["zhuxian"])
-        self.click_btn(MAIN_BTN["zdjjc"], until_appear=JJC_BTN["list"])
+        self.lock_img(JJC_BTN["list"], elseclick=[MAIN_BTN["zdjjc"], (1, 290)], elsedelay=2)
         self.click_btn(JJC_BTN["shouqu"], until_appear=JJC_BTN["shouqu_ok"],
                        elsedelay=4, retry=2, side_check=self.right_kkr)
         for _ in range(5):
@@ -42,7 +42,7 @@ class JJCMixin(ToolsMixin):
     def doPJJC(self):
         self.lock_home()
         self.click_btn(MAIN_BTN["maoxian"], until_appear=MAIN_BTN["zhuxian"])
-        self.click_btn(MAIN_BTN["gzjjc"], until_appear=JJC_BTN["list"])
+        self.lock_img(JJC_BTN["list"], elseclick=[MAIN_BTN["gzjjc"], (1, 290)], elsedelay=2)
         self.click_btn(JJC_BTN["shouqu"], until_appear=JJC_BTN["shouqu_ok"],
                        elsedelay=4, retry=2, side_check=self.right_kkr)
         for _ in range(5):
