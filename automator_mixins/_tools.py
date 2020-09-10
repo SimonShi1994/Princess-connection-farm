@@ -34,7 +34,7 @@ class ToolsMixin(BaseMixin):
         last = time.time()
         while True:
             sc = self.getscreen()
-            num_of_white, x, y = UIMatcher.find_gaoliang(sc)
+            num_of_white, _, x, y = UIMatcher.find_gaoliang(sc)
             if num_of_white < 77000:
                 self.chulijiaocheng(None)  # 增加对教程的处理功能
                 last = time.time()
@@ -58,7 +58,7 @@ class ToolsMixin(BaseMixin):
                 self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
                 continue
-            num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+            num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 break
 
@@ -70,7 +70,7 @@ class ToolsMixin(BaseMixin):
         time.sleep(0.5)
         # 这里防一波第二天可可萝跳脸教程
         screen_shot_ = self.getscreen()
-        num_of_white, _, _ = UIMatcher.find_gaoliang(screen_shot_)
+        num_of_white, _, _, _ = UIMatcher.find_gaoliang(screen_shot_)
         if num_of_white < 50000:
             self.lock_img('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
             self.lock_home()
@@ -107,6 +107,13 @@ class ToolsMixin(BaseMixin):
         :return:
         """
         global ocr_text
+
+        try:
+            requests.get(url="http://127.0.0.1:5000/ocr/")
+        except:
+            pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
+            return -1
+
         if len(ocr_mode) == 0:
             return -1
         # OCR识别任务分配
@@ -143,12 +150,6 @@ class ToolsMixin(BaseMixin):
             screen_shot = self.getscreen()
 
         try:
-            requests.get(url="http://127.0.0.1:5000/ocr/local_ocr/")
-        except:
-            pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
-            return -1
-
-        try:
             if screen_shot.shape[0] > screen_shot.shape[1]:
                 if anticlockwise_rotation_times >= 1:
                     for _ in range(anticlockwise_rotation_times):
@@ -172,12 +173,6 @@ class ToolsMixin(BaseMixin):
         # 默认原图大小（1.0）
         if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
             pcr_log(self.account).write_log(level='error', message='读取SecretKey或apiKey失败！')
-            return -1
-
-        try:
-            requests.get(url="http://127.0.0.1:5000/ocr/baidu_ocr/")
-        except:
-            pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
             return -1
 
         # 强制size为1.0，避免百度无法识图

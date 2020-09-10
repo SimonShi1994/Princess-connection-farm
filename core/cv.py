@@ -180,10 +180,14 @@ class UIMatcher:
         return l
 
     @classmethod
-    def img_where(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
+    def img_where(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED,
+                  is_black=False, black_threshold=1500):
         """
         在screen里寻找template，若找到则返回坐标，若没找到则返回False
         注：可以使用if img_where():  来判断图片是否存在
+        :param black_threshold: 判断暗点的阈值
+        :param is_black: 是否判断为暗色图片（多用于检测点击按钮后颜色变暗）
+        :param method:
         :param threshold:
         :param screen:
         :param template_path:
@@ -203,6 +207,7 @@ class UIMatcher:
                 exit(-1)
         else:
             x1, y1 = 0, 0
+
         # 缓存未命中时从源文件读取
         template = cls._get_template(template_path)
 
@@ -210,6 +215,16 @@ class UIMatcher:
         res = UIMatcher.matchTemplate(screen, template, method)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
         if max_val >= threshold:
+
+            # 暗点判断
+            if is_black:
+                _, black_num, _, _ = cls.find_gaoliang(screen)
+                # print("暗点:", black_num)
+                if black_num > black_threshold:
+                    return True
+                else:
+                    return False
+
             x = x1 + max_loc[0] + tw // 2
             y = y1 + max_loc[1] + th // 2
             if debug:
@@ -268,6 +283,9 @@ class UIMatcher:
         gray = cv2.cvtColor(screen, cv2.COLOR_RGB2GRAY)
         ret, binary = cv2.threshold(gray, 130, 255, cv2.THRESH_BINARY)
         num_of_white = len(np.argwhere(binary == 255))
+        # GPL 3.0
+        num_of_black = len(np.argwhere(binary == 0))
+        #
         index_1 = np.mean(np.argwhere(binary[63:, :] == 255), axis=0).astype(int)
 
         screen = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
@@ -277,7 +295,7 @@ class UIMatcher:
         # plt.imshow(screen)
         # plt.pause(0.01)
         # print('亮点个数:', len(np.argwhere(binary == 255)), '暗点个数:', len(np.argwhere(binary == 0)))
-        return num_of_white, index_1[1] / screen.shape[1], (index_1[0] + 63) / screen.shape[0]
+        return num_of_white, num_of_black, index_1[1] / screen.shape[1], (index_1[0] + 63) / screen.shape[0]
 
     @classmethod
     def img_similar(cls, screen_short, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):

@@ -245,9 +245,13 @@ class BaseMixin:
             img = img.img
         return img, at
 
-    def is_exists(self, img, threshold=0.84, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
+    def is_exists(self, img, threshold=0.84, at=None, screen=None, is_black=False,
+                  black_threshold=1500, method=cv2.TM_CCOEFF_NORMED):
         """
         判断一个图片是否存在。
+        :param black_threshold: 判断暗点的阈值
+        :param is_black: 是否判断为暗色图片（多用于检测点击按钮后颜色变暗）灰色返回Ture,默认需要配合at，否则自行调整阈值
+        :param method:
         :param img:
             一个字符串，表示图片的地址；或者为PCRelement类型。
             当img为PCRelement时，如果at参数为None，则会使用img.at。
@@ -259,7 +263,7 @@ class BaseMixin:
         if screen is None:
             screen = self.getscreen()
         img, at = self._get_img_at(img, at)
-        return UIMatcher.img_where(screen, img, threshold, at, method) != False
+        return UIMatcher.img_where(screen, img, threshold, at, method, is_black, black_threshold) is not False
 
     def img_prob(self, img, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
         """
@@ -697,6 +701,7 @@ class BaseMixin:
                   side_check=None):
         """
         稳定的点击按钮函数，合并了等待按钮出现与等待按钮消失的动作
+        :param side_check: 检测
         :param retry: 尝试次数,少用
         :param btn: PCRelement类型，要点击的按钮
         :param elsedelay: 尝试点击按钮后等待响应的间隔
@@ -761,7 +766,7 @@ class BaseMixin:
         count = 0  # 出现主页的次数
         while True:
             screen_shot_ = self.getscreen()
-            num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+            num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 try:
                     self.click(x * self.dWidth, y * self.dHeight + 20)

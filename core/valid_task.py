@@ -466,7 +466,8 @@ VALID_TASK = ValidTask() \
                                            "若为\“a-b\",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b", inputbox=TeamInputer())]) \
     .add("j1", "doJJC", "竞技场", "竞技场白给脚本") \
     .add("j2", "doPJJC", "公主竞技场", "公主竞技场白给脚本") \
-    .add('r1', "gonghuizhijia", "家园领取", "收取公会之家的奖励") \
+    .add('r1', "gonghuizhijia", "家园领取", "收取公会之家的奖励",
+         [TaskParam("auto_update", bool, "自动升级家具", "自动升级家具，家具的位置为游戏默认位置"), ]) \
     .add("r2", "mianfeiniudan", "免费扭蛋", "抽取免费扭蛋") \
     .add("r3", "mianfeishilian", "免费10连", "抽取免费十连（如果有的话）") \
     .add("r4", "shouqu", "收取礼物", "收取全部礼物") \
