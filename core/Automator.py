@@ -18,7 +18,7 @@ from core.MoveRecord import moveset, UnknownMovesetException
 from core.log_handler import pcr_log
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
 from core.pcr_config import trace_exception_for_debug
-from core.safe_u2 import OfflineException
+from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import check_task_dict
 from core.valid_task import VALID_TASK
 
@@ -124,6 +124,9 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             except OfflineException as e:
                 pcr_log(account).write_log('error', message=f'main-检测到设备离线：{e}')
                 return False
+            except ReadTimeoutException as e:
+                pcr_log(account).write_log('error', message=f'main-检测到连接超时，{e}，尝试重新连接……')
+                self.init_device(self.address)
             except Exception as e:
                 retry += 1
                 try:

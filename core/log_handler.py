@@ -111,7 +111,10 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
 
                 }
                 url = "https://sc.ftqq.com/%s.send" % s_sckey
-                requests.get(url, params=info)
+                try:
+                    requests.get(url, params=info)
+                except Exception as e:
+                    pcr_log("__SERVER_BOT__").write_log("error", f"ServerBot发送失败：{e}")
                 # 不因为0级消息而清空消息队列
                 if s_level not in lev_dic['3']:
                     # 发送完后清空消息队列

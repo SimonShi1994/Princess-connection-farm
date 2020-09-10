@@ -18,6 +18,12 @@ class OfflineException(Exception):
         self.args = args
 
 
+class ReadTimeoutException(Exception):
+    def __init__(self, *args):
+        super().__init__()
+        self.args = args
+
+
 def safe_u2_connect(serial: str):
     last_e = None
     for retry in range(3):
@@ -27,12 +33,15 @@ def safe_u2_connect(serial: str):
             last_e = e
             if e.args[0] == "unknown host service":
                 # 重连
+                run_adb("kill-server", timeout=60)
                 run_adb("start-server", timeout=60)
         except RuntimeError as e:
             last_e = e
             if e.args[0].endswith("is offline"):
                 # 因为掉线所以无法进行
                 raise OfflineException(*e.args)
+        except requests.exceptions.ReadTimeout as e:
+            raise ReadTimeoutException(e)
     raise last_e
 
 
@@ -52,12 +61,15 @@ def safe_wraper(fun, *args, **kwargs):
             last_e = e
             if e.args[0] == "unknown host service":
                 # 重连
+                run_adb("kill-server", timeout=60)
                 run_adb("start-server", timeout=60)
         except RuntimeError as e:
             last_e = e
             if e.args[0].endswith("is offline"):
                 # 因为掉线所以无法进行
                 raise OfflineException(*e.args)
+        except requests.exceptions.ReadTimeout as e:
+            raise ReadTimeoutException(e)
     raise last_e
 
 
