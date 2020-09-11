@@ -402,7 +402,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if UIMatcher.img_where(screen_shot_, 'img/chetui.jpg'):  # 避免某些农场号刚买回来已经进了地下城
                     break
                 if UIMatcher.img_where(screen_shot_, 'img/yunhai.bmp'):
-                    self.click(250, 250)  # 云海
+                    self.click(130, 259)  # 云海
                     time.sleep(1)
                     while True:
                         screen_shot_ = self.getscreen()

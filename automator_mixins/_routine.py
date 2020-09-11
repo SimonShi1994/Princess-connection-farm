@@ -47,7 +47,7 @@ class RoutineMixin(ShuatuBaseMixin):
                     if self.is_exists(JIAYUAN_BTN["dengjitisheng"]):
                         self.click_btn(JIAYUAN_BTN["dengjitisheng"], until_disappear=JIAYUAN_BTN["dengjitisheng"],
                                        retry=2)
-                    elif self.is_exists(JIAYUAN_BTN["dengjitisheng"], is_black=True):
+                    elif self.is_exists(JIAYUAN_BTN["dengjitisheng"], is_black=True, black_threshold=800):
                         continue
                 i = i + 1
                 continue
