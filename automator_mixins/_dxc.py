@@ -217,14 +217,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/shanghaibaogao.jpg', at=(663, 6, 958, 120)) and \
                         self.is_exists('img/xiayibu.jpg', at=(457, 421, 955, 535)):
                     self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)])
-                    break
                 elif self.is_exists('img/shanghaibaogao.jpg', at=(663, 6, 958, 120)) and \
                         self.is_exists('img/qianwangdixiacheng.jpg', at=(457, 421, 955, 535)):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
-                    break
-                else:
-                    if self.is_exists('img/dxc/chetui.bmp'):
-                        break
             else:
                 # 防止奇奇怪怪的飞到主菜单
                 if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], retry=3):

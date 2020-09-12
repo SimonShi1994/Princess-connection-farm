@@ -41,6 +41,8 @@ class ToolsMixin(BaseMixin):
             if self.is_exists(MAIN_BTN["liwu"], screen=sc):
                 return
             self.click(MAIN_BTN["zhuye"])
+            # 防卡公告
+            self.click(1, 1)
             time.sleep(1.5)
             if time.time() - last > lockimg_timeout:
                 raise Exception("lock_home时出错：超时！")
