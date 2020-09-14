@@ -9,7 +9,7 @@ from core.pcr_config import adb_dir
 
 
 def run_adb(cmd: str, timeout=None):
-    subprocess.check_output(f"cd {adb_dir} & adb {cmd}", timeout=timeout)
+    subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
 
 
 class OfflineException(Exception):
