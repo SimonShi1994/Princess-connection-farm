@@ -158,8 +158,21 @@ RENWU_BTN = {
     "guanbi": p(img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),
 }
 JIAYUAN_BTN = {
+    "jiaju": {
+        "saodangquan": p(213, 243),
+        "jingyan": p(311, 272),
+        "mana": p(265, 219),
+        "tili": p(264, 294),
+    },
+    "quxiao": p(img="img/jiayuan/quxiao.bmp"),
     "quanbushouqu": p(900, 424, img="img/jiayuan/quanbushouqu.bmp", at=(872, 395, 926, 454)),
     "guanbi": p(477, 479, img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),
+    "jiayuan_shengjiok": p(img="img/jiayuan/jiayuan_shengji.bmp"),
+    "jy_dengjitisheng": p(520, 473, img="img/jiayuan/jy_dengjitisheng.bmp", at=(493, 450, 547, 504)),
+    "jy_dengjitisheng2": p(img="img/jiayuan/jy_dengjitisheng2.bmp", at=(488, 445, 552, 506)),
+    "dengjitisheng": p(589, 431, img="img/jiayuan/dengjitisheng.bmp", at=(491, 410, 682, 452)),
+    "xinxi": p(img="img/jiayuan/xinxi.bmp"),
+    "zhuye": p(img="img/jiayuan/wodezhuye.bmp", at=(47, 488, 130, 537)),
 }
 
 NIUDAN_BTN = {
@@ -410,6 +423,12 @@ DXC_ELEMENT = {
     "zhiyuan_dianren": {
         1: p(100, 173),
         2: p(213, 208),
+        3: p(324, 173),
+        4: p(427, 173),
+        5: p(533, 173),
+        6: p(640, 173),
+        7: p(746, 173),
+        8: p(855, 173),
     },
     # 勾选了支援
     # 1: p(100, 173, img="img/dxc/dxc_gouxuan.bmp", at=(158, 142, 164, 164)),

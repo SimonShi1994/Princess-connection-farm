@@ -13,6 +13,7 @@
 |          log_cache           |                       日志缓冲消息条数                       |  int   |          |        3        |
 |         baidu_apiKey         |                  baidu_apiKey为百度ocr api                   | string |          | SCU6390~94d830b |
 |       baidu_secretKey        |                 baidu_secretKey为百度ocr api                 | string |          | SCU6390~94d830b |
+| baidu_QPS | baidu_QPS为百度并发限制连接数 | int | | 2 |
 | ocr_mode | OCR模式目前有智能/本地/网络/混合 4种不同的工作方式 | string | | 混合 |
 | anticlockwise_rotation_times |      根据baidu_ocr.bmp需要逆时针旋转90°多少次截图才正向      |  int   |          |        1        |
 |    async_screenshot_freq     |                     异步截图一次休眠时间                     |  int   |          |        5        |

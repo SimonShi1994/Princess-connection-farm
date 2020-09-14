@@ -23,6 +23,7 @@ def GetLastSchedule():
         if len(lines) > 0:
             last_schedule = lines[0]
 
+
 def StartPCR():
     global PCR
     if PCR is None:
@@ -91,6 +92,7 @@ def ContinueSchedule():
     SCH = Schedule(last_schedule, PCR)
     SCH.run_continue()
     RunningInput()
+
 
 def FirstBatch(batch):
     global PCR

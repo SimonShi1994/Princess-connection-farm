@@ -1,4 +1,5 @@
 import time
+import gc
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN
 # from core.log_handler import pcr_log
@@ -95,6 +96,8 @@ class LoginMixin(BaseMixin):
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
                     break
                 else:
+                    self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
+                    self.lock_no_img('img/ok.bmp', elseclick=[(591, 369)], at=(495, 353, 687, 388))
                     self.click(945, 13)
             return self.do_login(ac, pwd)
         except Exception as e:
@@ -131,5 +134,6 @@ class LoginMixin(BaseMixin):
         self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
         self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)], at=(495, 353, 687, 388))
         self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
+        gc.collect()
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
         # pcr_log(self.account).server_bot("warning", "%s账号完成任务" % self.account)

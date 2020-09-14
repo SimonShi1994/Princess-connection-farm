@@ -14,12 +14,44 @@ class RoutineMixin(ShuatuBaseMixin):
     包含日常行动相关的脚本
     """
 
-    def gonghuizhijia(self):  # 家园领取
+    def gonghuizhijia(self, auto_update=False):  # 家园领取
         # 2020-07-31 TheAutumnOfRice: 检查完毕
+        # 2020-09-09 CyiceK: 添加升级
+        jiaju_list = ["saodangquan", "mana", "jingyan", "tili"]
         self.lock_home()
         self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], elsedelay=1)
+
+        if auto_update:
+            screen_shot = self.getscreen()
+            if self.click_img(img="img/jiayuan/jiayuan_shengji.bmp", screen=screen_shot):
+                time.sleep(10)
+
         self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
                       side_check=self.juqing_kkr, retry=5)
+
+        if auto_update:
+            i = 0
+            while i <= 3:
+                screen_shot = self.getscreen()
+                if self.click_img(img="img/jiayuan/jiayuan_shengji.bmp", screen=screen_shot):
+                    time.sleep(10)
+                # 家具坐标
+                self.lock_img(JIAYUAN_BTN["xinxi"], elseclick=JIAYUAN_BTN["jiaju"][jiaju_list[i]], elsedelay=2, retry=3)
+                time.sleep(2)
+                if self.is_exists(JIAYUAN_BTN["jy_dengjitisheng2"], is_black=True):
+                    break
+                elif not self.is_exists(JIAYUAN_BTN["zhuye"]):
+                    self.click_btn(JIAYUAN_BTN["jy_dengjitisheng"],
+                                   until_appear=JIAYUAN_BTN["quxiao"], elsedelay=2, retry=2)
+                    time.sleep(2)
+                    if self.is_exists(JIAYUAN_BTN["dengjitisheng"]):
+                        self.click_btn(JIAYUAN_BTN["dengjitisheng"], until_disappear=JIAYUAN_BTN["dengjitisheng"],
+                                       retry=2)
+                    elif self.is_exists(JIAYUAN_BTN["dengjitisheng"], is_black=True, black_threshold=800):
+                        continue
+                i = i + 1
+                continue
+
         self.lock_home()
 
     def mianfeiniudan(self):

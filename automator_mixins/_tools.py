@@ -17,12 +17,6 @@ from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticl
     ocr_mode
 from ._base import BaseMixin
 
-if ocr_mode != "网络" and len(ocr_mode) != 0:
-    import muggle_ocr
-    # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
-    sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
-
-
 
 class ToolsMixin(BaseMixin):
     """
@@ -40,13 +34,15 @@ class ToolsMixin(BaseMixin):
         last = time.time()
         while True:
             sc = self.getscreen()
-            num_of_white, x, y = UIMatcher.find_gaoliang(sc)
+            num_of_white, _, x, y = UIMatcher.find_gaoliang(sc)
             if num_of_white < 77000:
                 self.chulijiaocheng(None)  # 增加对教程的处理功能
                 last = time.time()
             if self.is_exists(MAIN_BTN["liwu"], screen=sc):
                 return
             self.click(MAIN_BTN["zhuye"])
+            # 防卡公告
+            self.click(1, 1)
             time.sleep(1.5)
             if time.time() - last > lockimg_timeout:
                 raise Exception("lock_home时出错：超时！")
@@ -64,7 +60,7 @@ class ToolsMixin(BaseMixin):
                 self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
                 continue
-            num_of_white, x, y = UIMatcher.find_gaoliang(screen_shot_)
+            num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 break
 
@@ -76,7 +72,7 @@ class ToolsMixin(BaseMixin):
         time.sleep(0.5)
         # 这里防一波第二天可可萝跳脸教程
         screen_shot_ = self.getscreen()
-        num_of_white, _, _ = UIMatcher.find_gaoliang(screen_shot_)
+        num_of_white, _, _, _ = UIMatcher.find_gaoliang(screen_shot_)
         if num_of_white < 50000:
             self.lock_img('img/renwu_1.bmp', elseclick=[(837, 433)], elsedelay=1)
             self.lock_home()
@@ -113,6 +109,13 @@ class ToolsMixin(BaseMixin):
         :return:
         """
         global ocr_text
+
+        try:
+            requests.get(url="http://127.0.0.1:5000/ocr/")
+        except:
+            pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
+            return -1
+
         if len(ocr_mode) == 0:
             return -1
         # OCR识别任务分配
@@ -147,6 +150,7 @@ class ToolsMixin(BaseMixin):
     def ocr_local(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
         if screen_shot is None:
             screen_shot = self.getscreen()
+
         try:
             if screen_shot.shape[0] > screen_shot.shape[1]:
                 if anticlockwise_rotation_times >= 1:
@@ -156,8 +160,10 @@ class ToolsMixin(BaseMixin):
             part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
             part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             img_binary = cv2.imencode('.png', part)[1].tobytes()
-            local_ocr_text = sdk.predict(image_bytes=img_binary)
-            return local_ocr_text
+            files = {'file': ('tmp.png', img_binary, 'image/png')}
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
+            pcr_log(self.account).write_log(level='info', message='本地OCR识别结果：%s' % local_ocr_text.text)
+            return local_ocr_text.text
         except Exception as ocr_error:
             pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
             return -1
@@ -167,11 +173,6 @@ class ToolsMixin(BaseMixin):
     def baidu_ocr(self, x1, y1, x2, y2, size=1.0, screen_shot=None):
         # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
         # 默认原图大小（1.0）
-        from aip import AipOcr
-        # print('初始化百度OCR识别')
-        # with open('baiduocr.txt', 'r') as faip:
-        #     fconfig = faip.read()
-        # apiKey, secretKey = fconfig.split('\t')
         if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
             pcr_log(self.account).write_log(level='error', message='读取SecretKey或apiKey失败！')
             return -1
@@ -179,14 +180,6 @@ class ToolsMixin(BaseMixin):
         # 强制size为1.0，避免百度无法识图
         size = 1.0
 
-        config = {
-            'appId': 'PCR',
-            'apiKey': baidu_apiKey,
-            'secretKey': baidu_secretKey
-        }
-        # f百度
-        time.sleep(random.uniform(0.8, 1.2))
-        client = AipOcr(**config)
         if screen_shot is None:
             screen_shot = self.getscreen()
         # from numpy import rot90
@@ -201,22 +194,15 @@ class ToolsMixin(BaseMixin):
             # cv2.imwrite('fuck_rot90_test.bmp', screen_shot_)
             # screen_shot_ = rot90(screen_shot_)  # 旋转90°
             pass
-        # cv2.imwrite('test.bmp', screen_shot_)
         part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-        # cv2.imwrite('test.bmp', part)
         part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
-        # cv2.imwrite('test2.bmp', part)
-        # cv2.imshow('part',part)
-        # cv2.waitKey(0)
         partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
+
         try:
-            # print('识别成功！')
-            # f百度
-            time.sleep(random.uniform(0.8, 1.2))
+            files = {'file': ('tmp.png', partbin, 'image/png')}
+            result = requests.post(url="http://127.0.0.1:5000/ocr/baidu_ocr/", files=files)
             # 原生输出有助于开发者
-            result = client.basicGeneral(partbin)
-            result = result.get('words_result')[0].get('words')
-            # result = requests.post(request_url, data=params, headers=headers)
+            result = result.json().get('words_result')[0].get('words')
             return result
         except:
             pcr_log(self.account).write_log(level='error', message='百度云识别失败！请检查apikey和secretkey以及截图范围返回结果'

@@ -1,3 +1,5 @@
+[TOC]
+
 # Schedule 计划 使用帮助
 
 : 2020-08-31 By TheAutumnOfRice：增加了Schedule总览部分  
@@ -18,8 +20,8 @@
   - 2.4 报错处理
   - 2.5 命令运行
 - 3 配置文件
-  - 3.1 配置Server Chan （待完善）
-  - 3.2 配置OCR （待完善）
+  - 3.1 配置Server Chan 
+  - 3.2 配置OCR 
   - 3.3 配置模拟器自动控制
   - 3.4 配置自动关机
 
@@ -264,13 +266,46 @@ schedulename的计划。也可以把first改成continue，此时从上次中断�
 
 ### 3.1 配置Server Chan
 
-待补充 @CyiceK
+Server酱 API申请地址：http://sc.ftqq.com/3.version
+
+申请好Server酱 API并且完成 **与** 微信的绑定http://sc.ftqq.com/?c=wechat&a=bind
+
+
+
+之后将 申请好的Server酱 API填入项目目录下的**config.ini**的**s_sckey**中
+
+config中，在s_sentstate这里可以自定义发送脚本运行状态的时间间隔（min）
+
+log_lev 则为日志级别，这里设定了Server酱只会接收那种类型的信息
+
+数字越小越详细`0:info, warning, error | 1:warning, error | 2:error | 3:非重要消息不发送`
+
+log_cache 则为日志缓冲条数，应用于`info, warning, error`，当达到限制的条数才会推送
 
 ### 3.2 配置OCR
 
-待补充 
-@CyiceK 关于OCR模式和baiduAPI
-@MomentDerek 关于本地OCR使用方法
+OCR模式介绍：
+
+1. 混合：百度OCR/本地OCR 每次调用随机用一种
+2. 网络：仅用百度OCR
+3. 本地：仅用本地OCR
+4. 智能：在网络稳定的情况下尽量使用百度OCR，反之使用本地OCR
+
+
+
+百度OCR：
+
+如何申请百度文字识别apikey和Secret Key:(https://blog.csdn.net/biao197/article/details/102907492 )
+
+将申请好后的apikey、Secret Key分别填入本项目目录下的config.ini中的**baidu_apiKey** 和 **baidu_secretKey**
+
+**baidu_QPS**填线的是QPS限制数，一般免费使用为2，付费为10。两者都享有 免费5w/天 的调用
+
+
+
+本地OCR：
+
+识别精度比百度OCR低，优点速度快，无其他特殊介绍
 
 ### 3.3 配置模拟器自动控制
 
@@ -351,8 +386,8 @@ ID 2：127.0.0.1:5559
 
 以下功能已经可以实现，有能力者可以先行探索解决方案，帮助会陆续更新，敬请期待。
 
-- [ ] 如何配置Server酱
-- [ ] 如何配置OCR
+- [x] 如何配置Server酱
+- [x] 如何配置OCR
 - [x] 如何配置自动启动模拟器和闲置关闭模拟器
 - [x] 如何配置运行结束后自动关机
 - [ ] 40to1的Schedule编写教程

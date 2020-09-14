@@ -26,6 +26,7 @@ s_sentstate = cfg.getint('log', 's_sentstate')
 
 baidu_apiKey = cfg.get('pcrfarm_setting', 'baidu_apiKey')
 baidu_secretKey = cfg.get('pcrfarm_setting', 'baidu_secretKey')
+baidu_QPS = cfg.getint('pcrfarm_setting', 'baidu_QPS')
 ocr_mode = cfg.get('pcrfarm_setting', 'ocr_mode')
 anticlockwise_rotation_times = cfg.getint('pcrfarm_setting', 'anticlockwise_rotation_times')
 async_screenshot_freq = cfg.getint('pcrfarm_setting', 'async_screenshot_freq')
