@@ -20,7 +20,7 @@ from core.launcher import LauncherBase, LDLauncher
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
     trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
     max_free_time, adb_dir
-from core.safe_u2 import OfflineException
+from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import AutomatorRecorder, parse_batch
 from core.utils import diffday, PrintToStr
 
@@ -499,6 +499,9 @@ class PCRInitializer:
             raise e
         except OfflineException as e:
             pcr_log(account).write_log('error', message=f'initialize-检测到设备离线：{e}')
+            return False
+        except ReadTimeoutException as e:
+            pcr_log(account).write_log('error', message=f'initialize-检测到连接超时：{e}')
             return False
         except Exception as e:
             pcr_log(account).write_log('error', message=f'initialize-检测出异常：{type(e)} {e}')
