@@ -74,6 +74,8 @@ class AsyncMixin(ToolsMixin):
                 screenshot = self.last_screen
                 if screenshot is None:
                     continue
+                if time.time() - self.last_screen_time > async_screenshot_freq:
+                    continue
                 time_start = time.time()
                 if self.is_exists(screen=screenshot, img='img/connecting.bmp', at=(748, 20, 931, 53)):
                     cumulative_time = 0.1
