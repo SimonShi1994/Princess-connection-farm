@@ -296,10 +296,18 @@ class ShuatuBaseMixin(FightBaseMixin):
                             # 不刷了，退出
                             pass
                     # 结束挑战
-                    self.click_btn(FIGHT_BTN["xiayibu2"], wait_self_before=True, side_check=tdz_sidecheck)
-                    self.wait_for_loading(delay=1)
-                    end()
-                    return 1
+                    state = self.lock_img({FIGHT_BTN["xiayibu2"]: 1, MAOXIAN_BTN["xianding"]: 2},
+                                          side_check=tdz_sidecheck)
+                    if state == 1:
+                        self.click_btn(FIGHT_BTN["xiayibu2"], wait_self_before=True, side_check=tdz_sidecheck)
+                        self.wait_for_loading(delay=1)
+                        end()
+                        return 1
+                    else:
+                        mv.save()
+                        buy(True)
+                        return 1
+
                 elif mode == 2:
                     # 前往主线关卡
                     var["cur_times"] += 1
