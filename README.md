@@ -121,6 +121,11 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 
 ## 更新历史
 
+2020/9/15 By:TheAutumnOfRice
+
+- 更新14图
+- 修复部分BUG，解决推图遇到限定商店的问题（大概
+
 2020/9/7By:CyiceK
 
 - 本地OCR与百度OCR并入app.py中
