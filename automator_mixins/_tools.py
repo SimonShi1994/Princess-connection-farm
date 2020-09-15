@@ -56,6 +56,8 @@ class ToolsMixin(BaseMixin):
             if self.is_exists(MAIN_BTN["tiaoguo"], screen=screen_shot_):
                 self.click(893, 39, post_delay=0.5)  # 跳过
                 continue
+            if self.is_exists(MAIN_BTN["xzcw"], screen=screen_shot_):
+                raise Exception("下载错误")
             if self.is_exists(MAIN_BTN["jingsaikaishi"], screen=screen_shot_):
                 self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
