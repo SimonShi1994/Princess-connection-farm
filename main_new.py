@@ -68,7 +68,7 @@ def RunningInput():
                 JoinExit()
     else:
         print("* 实时控制已经开启，可以再config.ini - running_input中进行设置。")
-        print("* Tips：如果出现了子进程长时间未响应的清空，请输入join或在配置中关闭running_input。")
+        print("* Tips：如果出现了子进程长时间未响应的情况，请输入join或在配置中关闭running_input。")
         print("* 输入help，查看实时控制帮助。")
 
 
