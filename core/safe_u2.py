@@ -1,3 +1,4 @@
+import os
 import subprocess
 import time
 
@@ -9,8 +10,12 @@ from core.pcr_config import adb_dir
 
 
 def run_adb(cmd: str, timeout=None):
-    subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
-
+    try:
+        subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
+    except Exception as e:
+        print("adb启动失败，", e, "试图修复。")
+        os.system("taskkill /im adb.exe /f")
+        subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
 
 class OfflineException(Exception):
     def __init__(self, *args):
