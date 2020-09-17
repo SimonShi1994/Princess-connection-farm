@@ -70,6 +70,10 @@ class LoginMixin(BaseMixin):
         """
         error_flag = 0
         try:
+            # 看是否跳出主菜单
+            # self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
+            # self.lock_no_img('img/ok.bmp', elseclick=[(591, 369)], at=(495, 353, 687, 388))
+
             try_count = 0
             while True:
                 try_count += 1
@@ -96,8 +100,6 @@ class LoginMixin(BaseMixin):
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
                     break
                 else:
-                    self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
-                    self.lock_no_img('img/ok.bmp', elseclick=[(591, 369)], at=(495, 353, 687, 388))
                     self.click(945, 13)
             return self.do_login(ac, pwd)
         except Exception as e:

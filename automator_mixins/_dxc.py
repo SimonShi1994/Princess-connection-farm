@@ -222,7 +222,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
             else:
                 # 防止奇奇怪怪的飞到主菜单
-                if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], retry=3):
+                if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], retry=6):
                     self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], elsedelay=0.2, retry=3)
                     self.lock_img('img/kuaijin_3.bmp', elseclick=[(913, 494)], elsedelay=0.2, retry=3)
             while skip is False:  # 结束战斗返回
