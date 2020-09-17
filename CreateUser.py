@@ -199,7 +199,11 @@ def show_task(TaskName):
     T = VALID_TASK.T
     obj = AutomatorRecorder.gettask(TaskName)
     for i in obj["tasks"]:
-        print(T[i["type"]]["title"])
+        print(T[i["type"]]["title"], end=" ")
+        if "__disable__" in i and i["__disable__"]:
+            print("(禁用)")
+        else:
+            print()
 
 
 def create_task(TaskName):

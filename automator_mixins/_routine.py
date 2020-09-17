@@ -97,11 +97,11 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_home()
         self.lock_img('img/liwu.bmp', ifclick=[(750, 510)], ifdelay=1, at=(891, 413, 930, 452))  # 点进扭蛋界面
 
-        time.sleep(1)
+        time.sleep(5)
         screen_shot_ = self.getscreen()
         if UIMatcher.img_where(screen_shot_, 'img/mianfeishilian.jpg'):  # 仅当有免费十连时抽取免费十连
             self.click(872, 355)  # 点击十连
-            time.sleep(1)
+            time.sleep(3.5)
             self.click(592, 369)  # 确认
 
         while True:

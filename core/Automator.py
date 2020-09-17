@@ -73,11 +73,15 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         self.log.write_log("info", f"任务列表：")
         # 解析任务列表
         for task in tasks["tasks"]:
+            if "__disable__" in task and task["__disable__"]:
+                continue
             typ = task["type"]
             cur = VALID_TASK.T[typ]
             kwargs = {}
             for param in task:
                 if param == "type":
+                    continue
+                if param == "__disable__":
                     continue
                 kwargs[param] = task[param]
             for v_p in cur["params"]:  # Valid Param: Default Param

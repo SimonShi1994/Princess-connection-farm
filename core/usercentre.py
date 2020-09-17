@@ -177,6 +177,8 @@ def check_task_dict(d: dict, is_raise=False) -> bool:
             for k in i:
                 if k == "type":
                     continue
+                if k == "__disable__":
+                    continue
                 assert k in v_k, f"任务 {i['type']} 含有未知的参数 {k}！"
                 ind = v_k.index(k)
                 v_p[ind].check(i[k])
