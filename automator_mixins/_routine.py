@@ -43,12 +43,14 @@ class RoutineMixin(ShuatuBaseMixin):
                 elif not self.is_exists(JIAYUAN_BTN["zhuye"]):
                     self.click_btn(JIAYUAN_BTN["jy_dengjitisheng"],
                                    until_appear=JIAYUAN_BTN["quxiao"], elsedelay=2, retry=2)
-                    time.sleep(2)
-                    if self.is_exists(JIAYUAN_BTN["dengjitisheng"]):
+                    time.sleep(3)
+                    if self.is_exists(JIAYUAN_BTN["dengjitisheng"], is_black=True, black_threshold=1300):
+                        self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(1, 1)], retry=3)
+                        i = i + 1
+                        continue
+                    elif self.is_exists(JIAYUAN_BTN["dengjitisheng"]):
                         self.click_btn(JIAYUAN_BTN["dengjitisheng"], until_disappear=JIAYUAN_BTN["dengjitisheng"],
                                        retry=2)
-                    elif self.is_exists(JIAYUAN_BTN["dengjitisheng"], is_black=True, black_threshold=800):
-                        continue
                 i = i + 1
                 continue
 

@@ -211,6 +211,11 @@ class UIMatcher:
         # 缓存未命中时从源文件读取
         template = cls._get_template(template_path)
 
+        # 全黑直接返回False
+        _, black_num, _, _ = cls.find_gaoliang(screen)
+        if black_num > 518400:
+            return False
+
         th, tw = template.shape[:2]  # rows->h, cols->w
         res = UIMatcher.matchTemplate(screen, template, method)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
@@ -219,7 +224,7 @@ class UIMatcher:
             # 暗点判断
             if is_black:
                 _, black_num, _, _ = cls.find_gaoliang(screen)
-                # print("暗点:", black_num)
+                # print("暗点:", black_num, "-img:", template_path)
                 if black_num > black_threshold:
                     return True
                 else:
