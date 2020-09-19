@@ -555,8 +555,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             set_duiwu = 0
             if state == 0:
                 # 伤亡惨重
+                # 下面几句仅供调试
+                self.log.write_log("error","不会吧不会吧，打小关也能送啊")
+                self.save_last_screen("不会吧.bmp")
+                self.lock_home()
+                """
                 self.log.write_log("info", "在地下城伤亡惨重！")
                 stop_fun()
+                """
                 return
             elif state == -2:
                 # 没有点中图，试试下一个

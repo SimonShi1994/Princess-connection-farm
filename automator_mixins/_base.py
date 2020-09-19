@@ -79,7 +79,12 @@ class BaseMixin:
         if fast_screencut:
             self.lport: Optional[int] = None
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
-
+    def save_last_screen(self,filename):
+        if self.last_screen is not None:
+            try:
+                cv2.imwrite(filename,self.last_screen)
+            except Exception as e:
+                self.log.write_log("error",f"保存最后一次截图失败：{e}")
     def do_nothing(self):
         # 啥事不干
         self.log.write_log("info", "Do nothing.")
