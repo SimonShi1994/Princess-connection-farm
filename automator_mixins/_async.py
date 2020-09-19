@@ -38,7 +38,8 @@ class AsyncMixin(ToolsMixin):
                                   retry=15)  # 菜单
                     self.lock_img('img/juqing/tiaoguo_1.bmp', ifclick=[(807, 44)], ifdelay=self.change_time,
                                   retry=15)  # 跳过
-                    self.lock_img('img/juqing/tiaoguo_2.bmp', ifclick=[(589, 367)], ifdelay=self.change_time, retry=15)  # 跳过
+                    self.lock_img('img/juqing/tiaoguo_2.bmp', ifclick=[(589, 367)], ifdelay=self.change_time,
+                                  retry=15)  # 跳过
                     cumulative_time = 0.1
                 elif self.is_exists(screen=screenshot, img='img/kekeluo.bmp', at=(181, 388, 384, 451)):
                     # 防妈骑脸
@@ -53,7 +54,8 @@ class AsyncMixin(ToolsMixin):
                     self.click(480, 505, pre_delay=0.5, post_delay=self.change_time)
                     cumulative_time = 0.1
                     if self.is_exists('img/dixiacheng.jpg', at=(837, 92, 915, 140)):
-                        self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=self.change_time, retry=10)
+                        self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=self.change_time,
+                                         retry=10)
                         raise Exception("地下城吃塔币跳过完成，重启")
                 elif cumulative_time < 20:
                     cumulative_time = cumulative_time + 1
@@ -206,6 +208,7 @@ class AsyncMixin(ToolsMixin):
         """
         # 2020-8-26 播报系统移动至core.initializer._run
         pass
+
     async def aor_purse(self):
         """
         脚本暂停函数

@@ -126,6 +126,8 @@ class ToolsMixin(BaseMixin):
             code = baidu_ocr_ping.status_code
             if code == 200:
                 ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+                if ocr_text == -1:
+                    ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
             else:
                 ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
         elif ocr_mode == "网络":
