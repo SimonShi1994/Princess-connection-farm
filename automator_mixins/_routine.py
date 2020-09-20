@@ -119,6 +119,8 @@ class RoutineMixin(ShuatuBaseMixin):
         if self.is_exists(screen=screen_shot_, img=NIUDAN_BTN["mianfeishilian"]):  # 仅当有免费十连时抽取免费十连
             self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao"])
             self.click_btn(NIUDAN_BTN["putong_ok"], until_disappear=NIUDAN_BTN["putong_ok"])
+            time.sleep(1.5)
+            self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
             # self.click(872, 355)  # 点击十连
             # time.sleep(1)
             # self.click(592, 369)  # 确认
@@ -127,7 +129,8 @@ class RoutineMixin(ShuatuBaseMixin):
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp', at=(891, 413, 930, 452)):
                 break
-            self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
+            # if self.is_exists(screen=screen_shot_, img=JIAYUAN_BTN["zhuye"]):
+            #   self.click(131, 533)
             # 首页锁定，保证回到首页
             self.lock_home()
 
@@ -210,6 +213,7 @@ class RoutineMixin(ShuatuBaseMixin):
         # 这里限制了一天只能购买mana多少次，通过OCR判断
         try:
             if limit_today:
+                time.sleep(0.5)
                 self.lock_img(MAIN_BTN["mana_title"], elseclick=MAIN_BTN["mana_plus"])
                 mana_time = self.ocr_center(422, 451, 480, 471, size=2.0).split('/')
                 mana_time = int(mana_time[0])
