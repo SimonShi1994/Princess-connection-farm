@@ -473,7 +473,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         # 完成战斗后
         self.lock_home()
 
-    def shuatuDD(self, dxc_id: int, mode: int, stop_criteria: int = 0, after_stop: int = 0, teams=None):  # 刷地下城
+    def shuatuDD(self, dxc_id: int, mode: int, stop_criteria: int = 0, after_stop: int = 0, teams=None,
+                 safety_stop=1):  # 刷地下城
         """
         2020-07-29 Add By TheAutumnOfRice
 
@@ -502,6 +503,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             若为空字符串，则表示不进行队伍更改，沿用上次队伍
             若为"zhanli"，则按照战力排序，选择前五战力为当前队伍
             若为“a-b",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b。
+        :param safety_stop: 安全措施（防止过早退出）
+            设置为0时，如果在小关触发停止条件，则不管
+            设置为1时，如果在小关触发停止条件，则跳过本脚本，不撤退，防止大号误撤退（默认）
         """
         # 2020-08-01 Fix By TheAutumnOfRice 对快速截屏的兼容性
         from core.constant import DXC_COORD
@@ -555,14 +559,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             set_duiwu = 0
             if state == 0:
                 # 伤亡惨重
-                # 下面几句仅供调试
-                self.log.write_log("error","不会吧不会吧，打小关也能送啊")
-                self.save_last_screen("不会吧.bmp")
-                self.lock_home()
-                """
-                self.log.write_log("info", "在地下城伤亡惨重！")
-                stop_fun()
-                """
+                if safety_stop:
+                    self.log.write_log("warning", "安全保护启动，可能在小关中阵亡，跳过地下城。")
+                    self.save_last_screen("安全保护Debug.bmp")
+                    self.lock_home()
+                else:
+                    self.log.write_log("warning", "在地下城伤亡惨重！")
+                    stop_fun()
                 return
             elif state == -2:
                 # 没有点中图，试试下一个
