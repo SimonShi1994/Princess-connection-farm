@@ -186,8 +186,10 @@ NIUDAN_BTN = {
     "putong_ok": p(591, 360, img="img/ui/ok_btn_1.bmp", at=(493, 347, 688, 387)),
     "niudanjieguo_ok": p(481, 443, img="img/ui/ok_btn_2.bmp", at=(383, 423, 597, 462)),
     "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(610, 320, 750, 450)),
-
+    "niudan_shilian": p(872, 355),
+    "mianfeishilian": p(img='img/niudan/mianfeishilian.bmp', at=(819, 300, 919, 319))
 }
+
 HANGHUI_BTN = {
     "juanzengqingqiu": p(367, 39),
     "juanzeng": p(644, 385),

@@ -96,26 +96,40 @@ class RoutineMixin(ShuatuBaseMixin):
 
     def mianfeishilian(self):
         # 免费十连
+        # 2020/9/20 CyiceK进行了稳定性修复
         self.lock_home()
-        self.lock_img('img/liwu.bmp', ifclick=[(750, 510)], ifdelay=1, at=(891, 413, 930, 452))  # 点进扭蛋界面
+        # self.lock_img(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
+        # 点进扭蛋界面
 
-        time.sleep(1)
+        self.click_btn(MAIN_BTN["niudan"], until_disappear=MAIN_BTN["liwu"])
+        while True:
+            # 跳过抽奖提示
+            time.sleep(4)
+            screen_shot_ = self.getscreen()
+            if UIMatcher.img_where(screen_shot_, 'img/niudan_sheding.jpg'):
+                self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
+                break
+            else:
+                time.sleep(1)
+                self.click(473, 436)  # 手动点击
+                time.sleep(2)
+                break
+
         screen_shot_ = self.getscreen()
-        if UIMatcher.img_where(screen_shot_, 'img/mianfeishilian.jpg'):  # 仅当有免费十连时抽取免费十连
-            self.click(872, 355)  # 点击十连
-            time.sleep(1)
-            self.click(592, 369)  # 确认
+        if self.is_exists(screen=screen_shot_, img=NIUDAN_BTN["mianfeishilian"]):  # 仅当有免费十连时抽取免费十连
+            self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao"])
+            self.click_btn(NIUDAN_BTN["putong_ok"], until_disappear=NIUDAN_BTN["putong_ok"])
+            # self.click(872, 355)  # 点击十连
+            # time.sleep(1)
+            # self.click(592, 369)  # 确认
 
         while True:
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp', at=(891, 413, 930, 452)):
                 break
-            self.click(900, 40)
-            time.sleep(0.5)
-            self.click(100, 505)
-            time.sleep(0.5)
-            self.click(100, 505)
-            time.sleep(1)  # 首页锁定，保证回到首页
+            self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
+            # 首页锁定，保证回到首页
+            self.lock_home()
 
     def shouqu(self):  # 收取全部礼物
         # 2020-08-06 TheAutumnOfRice: 检查完毕
