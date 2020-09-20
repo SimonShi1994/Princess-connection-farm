@@ -346,6 +346,8 @@ class AllDevices:
                       time_period_format(tm - j.time_busy), end="")
                 if j.cur_acc != "":
                     print(" 当前任务：账号", j.cur_acc, AutomatorRecorder.get_user_state(j.cur_acc, j.cur_rec), end="")
+                if j.emulator_launcher is not None:
+                    print(" [自动控制中]", end="")
                 print()
 
 
