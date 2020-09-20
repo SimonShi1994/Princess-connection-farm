@@ -475,15 +475,15 @@ class BaseMixin:
                         cv2.imwrite(filename, self.last_screen)
                     self.fastscreencut_retry = 0
                 except Exception as e:
-                    self.log.write_log("warning", f"快速截图出错 {e},采用低速截图")
-                    self.fastscreencut_retry += 1
-                    if self.fastscreencut_retry == 3:
-                        if force_fast_screencut:
-                            raise FastScreencutException(*e.args)
-                        else:
+                    if force_fast_screencut:
+                        raise FastScreencutException(*e.args)
+                    else:
+                        self.log.write_log("warning", f"快速截图出错 {e}， 使用低速截图")
+                        self.fastscreencut_retry += 1
+                        if self.fastscreencut_retry == 3:
                             self.log.write_log("error", f"快速截图连续出错3次，关闭快速截图。")
-                        self.receive_minicap.stop()
-                    self.last_screen = self.d.screenshot(filename, format="opencv")
+                            self.receive_minicap.stop()
+                        self.last_screen = self.d.screenshot(filename, format="opencv")
             else:
                 self.last_screen = self.d.screenshot(filename, format="opencv")
             self.last_screen_time = time.time()

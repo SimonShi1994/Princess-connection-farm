@@ -125,6 +125,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 raise e
             except FastScreencutException as e:
                 pcr_log(account).write_log(level='error', message=f'快速截图出现错误，{e},尝试重新连接……')
+                self.fix_reboot()
                 self.init_fastscreen()
             except OfflineException as e:
                 pcr_log(account).write_log('error', message=f'main-检测到设备离线：{e}')

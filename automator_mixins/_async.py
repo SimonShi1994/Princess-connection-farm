@@ -260,6 +260,6 @@ class AsyncMixin(ToolsMixin):
         time.sleep(8)
         self.d.app_wait("com.bilibili.priconne")
         self.start_th()
-        self.receive_minicap.start()
+        self.init_fastscreen()
         if back_home:
             self.lock_home()
