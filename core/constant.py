@@ -186,8 +186,10 @@ NIUDAN_BTN = {
     "putong_ok": p(591, 360, img="img/ui/ok_btn_1.bmp", at=(493, 347, 688, 387)),
     "niudanjieguo_ok": p(481, 443, img="img/ui/ok_btn_2.bmp", at=(383, 423, 597, 462)),
     "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(610, 320, 750, 450)),
-
+    "niudan_shilian": p(872, 355),
+    "mianfeishilian": p(img='img/niudan/mianfeishilian.bmp', at=(819, 300, 919, 319))
 }
+
 HANGHUI_BTN = {
     "juanzengqingqiu": p(367, 39),
     "juanzeng": p(644, 385),
@@ -441,6 +443,7 @@ DXC_ELEMENT = {
     "zhandoukaishi": p(833, 470, img="img/dxc/zhandoukaishi.bmp", at=(761, 430, 912, 471)),
     "zhiyuan_white": p(477, 86, img="img/dxc/zhiyuan_white.bmp", at=(433, 75, 524, 99)),
     "zhiyuan_blue": p(477, 86, img="img/dxc/zhiyuan_blue.bmp", at=(430, 73, 521, 104)),
+    "ok_btn_1": p(588, 371, img="img/ui/ok_btn_1.bmp"),
 }
 DXC_NUM = {
     # 没有OCR用此来检测层数

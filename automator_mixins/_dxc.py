@@ -244,14 +244,17 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 time.sleep(self.change_time)
                 self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
-                    self.lock_img('img/ui/ok_btn_1.bmp', ifclick=[(588, 371)], elseclick=[(808, 435)], retry=20)
+                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(808, 435)], retry=20)
+                    self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
                     break
             # 执行完后再检测一轮后跳出大循环
             self.lock_no_img('img/dxc/chetui.bmp', elseclick=[(808, 435), (588, 371)], retry=20,
                              at=(779, 421, 833, 440))
             self.lock_img('img/yunhai.bmp')
             break
-        while True:  # 首页锁定
+
+        while True:
+            # 首页锁定
             if self.is_exists('img/liwu.bmp', at=(891, 413, 930, 452)):
                 break
             self.click(131, 533, post_delay=self.change_time)  # 保证回到首页

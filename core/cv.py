@@ -213,7 +213,7 @@ class UIMatcher:
 
         # 全黑直接返回False
         _, black_num, _, _ = cls.find_gaoliang(screen)
-        if black_num > 518400:
+        if black_num >= 518400:
             return False
 
         th, tw = template.shape[:2]  # rows->h, cols->w
