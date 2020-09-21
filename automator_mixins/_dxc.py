@@ -180,12 +180,12 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 # 如果等级不足，就支援的第二个人
                 self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num + 1],
                                until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
-                               , retry=5, elsedelay=0.1)
+                               , retry=6)
                 # self.click(100, 173, post_delay=1)  # 支援的第一个人
             else:
                 time.sleep(self.change_time)
                 self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
-                               , retry=5, elsedelay=0.1)
+                               , retry=6)
             time.sleep(self.change_time)
             if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True):
                 # 逻辑顺序改变
