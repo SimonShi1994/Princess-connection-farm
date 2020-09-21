@@ -345,6 +345,9 @@ def create_schedule(ScheduleName):
 
 def _show_schedule(obj):
     for ind, i in enumerate(obj["schedules"]):
+        if "__disable__" in i and i["__disable__"]:
+            print("ID", ind, "NAME", i["name"], "已禁用")
+            continue
         if i["type"] in ["asap", "wait"]:
             if i["type"] == "asap":
                 print("ID", ind, "NAME", i["name"], "：** 立即执行 **")
