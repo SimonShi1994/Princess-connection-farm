@@ -30,12 +30,15 @@ def _async_raise(tid, exctype):
 
 
 # Timeout Error: https://stackoverflow.com/questions/21827874/timeout-a-function-windows
+class TimeoutError(Exception):
+    def __init__(self, *args):
+        super().__init__(*args)
 
 def timeout(seconds, error_info):
     def deco(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            res = [Exception('函数 [%s] 超时 [%s 秒] ！ %s' % (func.__name__, seconds, error_info))]
+            res = [TimeoutError('函数 [%s] 超时 [%s 秒] ！ %s' % (func.__name__, seconds, error_info))]
 
             def newFunc():
                 try:
@@ -53,11 +56,12 @@ def timeout(seconds, error_info):
                 raise e
             ret = res[0]
             if isinstance(ret, BaseException):
-                try:
-                    _async_raise(t.ident, SystemExit)
-                except Exception as e:
-                    print("结束线程问题：", e)
-                    pass
+                print("!!!", id(ret), type(ret), ret)
+                if isinstance(ret, TimeoutError):
+                    try:
+                        _async_raise(t.ident, SystemExit)
+                    except:
+                        pass
                 raise ret
             return ret
 
