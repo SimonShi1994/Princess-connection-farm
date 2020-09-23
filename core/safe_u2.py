@@ -1,4 +1,5 @@
 import os
+import random
 import subprocess
 import time
 
@@ -29,6 +30,10 @@ class ReadTimeoutException(Exception):
         self.args = args
 
 
+def random_sleep():
+    time.sleep(random.random())
+
+
 def safe_u2_connect(serial: str):
     last_e = None
     for retry in range(3):
@@ -38,7 +43,9 @@ def safe_u2_connect(serial: str):
             last_e = e
             if e.args[0] == "unknown host service":
                 # 重连
+                random_sleep()
                 run_adb("kill-server", timeout=60)
+                random_sleep()
                 run_adb("start-server", timeout=60)
         except RuntimeError as e:
             last_e = e
@@ -58,6 +65,7 @@ def safe_wraper(fun, *args, **kwargs):
         except ConnectionResetError as e:
             # 试者重连
             last_e = e
+            random_sleep()
             run_adb("start-server", timeout=60)
         except requests.exceptions.ConnectionError as e:
             last_e = e
@@ -66,8 +74,16 @@ def safe_wraper(fun, *args, **kwargs):
             last_e = e
             if e.args[0] == "unknown host service":
                 # 重连
+                random_sleep()
                 run_adb("kill-server", timeout=60)
+                random_sleep()
                 run_adb("start-server", timeout=60)
+        except uiautomator2.exceptions.BaseError as e:
+            last_e = e
+            random_sleep()
+            run_adb("kill-server", timeout=60)
+            random_sleep()
+            run_adb("start-server", timeout=60)
         except RuntimeError as e:
             last_e = e
             if e.args[0].endswith("is offline"):
