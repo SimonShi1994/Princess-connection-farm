@@ -1,5 +1,7 @@
+import functools
 import os
 import random
+import signal
 import subprocess
 import time
 
@@ -10,6 +12,37 @@ import uiautomator2
 from core.pcr_config import adb_dir
 
 
+# Timeout Error: https://zhuanlan.zhihu.com/p/70383448
+class TimeoutError(Exception):
+    pass
+
+
+def timeout(seconds, error_message="Timeout Error: the cmd 30s have not finished."):
+    def decorated(func):
+        result = ""
+
+        def _handle_timeout(signum, frame):
+            global result
+            result = error_message
+            raise TimeoutError(error_message)
+
+        def wrapper(*args, **kwargs):
+            global result
+            signal.signal(signal.SIGALRM, _handle_timeout)
+            signal.alarm(seconds)
+
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                signal.alarm(0)
+                return result
+            return result
+
+        return functools.wraps(func)(wrapper)
+
+    return decorated
+
+
 def run_adb(cmd: str, timeout=None):
     try:
         subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
@@ -17,6 +50,7 @@ def run_adb(cmd: str, timeout=None):
         print("adb启动失败，", e, "试图修复。")
         os.system("taskkill /im adb.exe /f")
         subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
+
 
 class OfflineException(Exception):
     def __init__(self, *args):
@@ -57,6 +91,7 @@ def safe_u2_connect(serial: str):
     raise last_e
 
 
+@timeout(300, "u2命令执行超时")
 def safe_wraper(fun, *args, **kwargs):
     last_e = None
     for retry in range(3):

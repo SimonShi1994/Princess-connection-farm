@@ -6,6 +6,7 @@ import psutil
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause
+from core.safe_u2 import timeout
 from ._base import Multithreading
 from ._tools import ToolsMixin
 
@@ -256,7 +257,8 @@ class AsyncMixin(ToolsMixin):
         # self.c_async(self, account, self.Report_Information(), sync=False)  # 异步Server酱播报系统
         pass
 
-    def fix_reboot(self, back_home=True):
+    @timeout(180, "重启超时，三分钟仍然未响应")
+    def _fix_reboot(self, back_home):
         # 重启逻辑：重启应用，重启异步线程
         self.stop_th()
         self.d.session("com.bilibili.priconne")
@@ -267,3 +269,6 @@ class AsyncMixin(ToolsMixin):
         self.start_async()
         if back_home:
             self.lock_home()
+
+    def fix_reboot(self, back_home=True):
+        self._fix_reboot(back_home)
