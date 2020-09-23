@@ -1,9 +1,11 @@
+import ctypes
 import functools
+import inspect
 import os
 import random
-import signal
 import subprocess
 import time
+from threading import Thread
 
 import adbutils
 import requests
@@ -12,36 +14,56 @@ import uiautomator2
 from core.pcr_config import adb_dir
 
 
-# Timeout Error: https://zhuanlan.zhihu.com/p/70383448
-class TimeoutError(Exception):
-    pass
+def _async_raise(tid, exctype):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
 
 
-def timeout(seconds, error_message="Timeout Error: the cmd 30s have not finished."):
-    def decorated(func):
-        result = ""
+# Timeout Error: https://stackoverflow.com/questions/21827874/timeout-a-function-windows
 
-        def _handle_timeout(signum, frame):
-            global result
-            result = error_message
-            raise TimeoutError(error_message)
-
+def timeout(seconds, error_info):
+    def deco(func):
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            global result
-            signal.signal(signal.SIGALRM, _handle_timeout)
-            signal.alarm(seconds)
+            res = [Exception('函数 [%s] 超时 [%s 秒] ！ %s' % (func.__name__, seconds, error_info))]
 
+            def newFunc():
+                try:
+                    res[0] = func(*args, **kwargs)
+                except Exception as e:
+                    res[0] = e
+
+            t = Thread(target=newFunc)
+            t.daemon = True
             try:
-                result = func(*args, **kwargs)
-            finally:
-                signal.alarm(0)
-                return result
-            return result
+                t.start()
+                t.join(seconds)
+            except Exception as e:
+                print('error starting thread')
+                raise e
+            ret = res[0]
+            if isinstance(ret, BaseException):
+                try:
+                    _async_raise(t.ident, SystemExit)
+                except Exception as e:
+                    print("结束线程问题：", e)
+                    pass
+                raise ret
+            return ret
 
-        return functools.wraps(func)(wrapper)
+        return wrapper
 
-    return decorated
-
+    return deco
 
 def run_adb(cmd: str, timeout=None):
     try:
