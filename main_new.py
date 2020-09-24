@@ -299,7 +299,7 @@ def ShowPCRPerformance():
         print("* 图像匹配超时报错已屏蔽")
     print("* Shift+P脚本暂停 enable_pause：", "已开启" if enable_pause else "未开启")
     print("* 最大重启重试次数 max_reboot：", max_reboot)
-    print("* 运行时实时控制 running_input：", "已开启" if enable_pause else "未开启")
+    print("* 运行时实时控制 running_input：", "已开启" if running_input else "未开启")
 
 
 def ShowDebugInfo():
