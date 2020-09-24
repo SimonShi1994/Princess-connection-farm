@@ -11,7 +11,7 @@ import adbutils
 import requests
 import uiautomator2
 
-from core.pcr_config import adb_dir
+from core.pcr_config import adb_dir, debug
 
 
 def _async_raise(tid, exctype):
@@ -56,7 +56,8 @@ def timeout(seconds, error_info):
                 raise e
             ret = res[0]
             if isinstance(ret, BaseException):
-                print("!!!", id(ret), type(ret), ret)
+                if debug:
+                    print("!!!", id(ret), type(ret), ret)
                 if isinstance(ret, TimeoutError):
                     try:
                         _async_raise(t.ident, SystemExit)
