@@ -59,9 +59,9 @@ class DXCBaseMixin(FightBaseMixin):
         # 点人
         state = self.lock_no_img(DXC_ELEMENT["dxc_shop_btn"], elseclick=(x, y), elsedelay=10, retry=2)
         if not state:
-            return -2
+            raise Exception("无法点中地下城关卡！")
         # 点击挑战
-        self.click_btn(FIGHT_BTN["tiaozhan"])
+        self.click_btn(FIGHT_BTN["tiaozhan"],wait_self_before=True,timeout=20)
         # 换队
         if bianzu == -1 and duiwu == -1:
             self.set_fight_team_order()

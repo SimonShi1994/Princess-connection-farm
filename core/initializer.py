@@ -19,10 +19,17 @@ from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
     trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
-    max_free_time, adb_dir
+    max_free_time, adb_dir, add_adb_to_path
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import AutomatorRecorder, parse_batch
 from core.utils import diffday, PrintToStr
+
+abs_dir = os.path.abspath(adb_dir)
+if add_adb_to_path:
+    # print("添加到环境变量：", abs_dir)
+    env = os.getenv("path")
+    env = abs_dir + ";" + env
+    os.putenv("path", env)
 
 
 def _connect():  # 连接adb与uiautomator
@@ -346,6 +353,8 @@ class AllDevices:
                       time_period_format(tm - j.time_busy), end="")
                 if j.cur_acc != "":
                     print(" 当前任务：账号", j.cur_acc, AutomatorRecorder.get_user_state(j.cur_acc, j.cur_rec), end="")
+                if j.emulator_launcher is not None:
+                    print(" [自动控制中]", end="")
                 print()
 
 
