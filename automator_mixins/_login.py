@@ -1,8 +1,9 @@
-import time
 import gc
+import time
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN
 # from core.log_handler import pcr_log
+from core.safe_u2 import timeout
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
 
@@ -13,6 +14,7 @@ class LoginMixin(BaseMixin):
     包含登录相关操作的脚本
     """
 
+    @timeout(180, "start执行超时：超过3分钟")
     def start(self):
         """
         项目地址:https://github.com/bbpp222006/Princess-connection
@@ -126,6 +128,7 @@ class LoginMixin(BaseMixin):
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
         self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
+    @timeout(180, "login_auth登录超时，超过3分钟")
     def login_auth(self, ac, pwd):
         need_auth = self.login(ac=ac, pwd=pwd)
         if need_auth:

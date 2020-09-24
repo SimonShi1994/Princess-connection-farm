@@ -823,6 +823,8 @@ class Schedule:
             if s["type"] == "config":
                 self.config.update(s)
                 continue
+            if "__disable__" in s and s["__disable__"]:
+                continue
             typ = s["type"]
             nam = s["name"]
             cond = s["condition"]

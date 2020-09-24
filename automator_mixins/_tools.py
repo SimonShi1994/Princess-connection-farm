@@ -15,6 +15,7 @@ from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
     ocr_mode
+from core.safe_u2 import timeout
 from ._base import BaseMixin
 
 
@@ -25,6 +26,7 @@ class ToolsMixin(BaseMixin):
     还有很多常用函数，比如回首页
     """
 
+    @timeout(300, "lock_home执行超时：超过5分钟")
     def lock_home(self):
         """
         锁定首页
@@ -47,6 +49,7 @@ class ToolsMixin(BaseMixin):
             if time.time() - last > lockimg_timeout:
                 raise Exception("lock_home时出错：超时！")
 
+    @timeout(300, "init_home执行超时：超过5分钟")
     def init_home(self):
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         while True:

@@ -1,5 +1,3 @@
-import ctypes
-import inspect
 import queue
 import threading
 import time
@@ -17,19 +15,6 @@ from core.pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
 lock = threading.Lock()
 
 
-def _async_raise(tid, exctype):
-    """raises the exception, performs cleanup if needed"""
-    tid = ctypes.c_long(tid)
-    if not inspect.isclass(exctype):
-        exctype = type(exctype)
-    res = ctypes.pythonapi.PyThreadStatge_SetAsyncExc(tid, ctypes.py_object(exctype))
-    if res == 0:
-        raise ValueError("invalid thread id")
-    elif res != 1:
-        # """if it returns a number greater than one, you're in trouble,
-        # and you should call it again with exc=NULL to revert the effect"""
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-        raise SystemError("PyThreadState_SetAsyncExc failed")
 
 
 # 此处引入一个结束线程的函数，用于结束快速截图的线程，避免adb爆炸

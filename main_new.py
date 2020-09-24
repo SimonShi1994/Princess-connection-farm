@@ -67,7 +67,7 @@ def RunningInput():
                 print("* 全部任务结束后，将自动退出。")
                 JoinExit()
     else:
-        print("* 实时控制已经开启，可以再config.ini - running_input中进行设置。")
+        print("* 实时控制已经开启，可以在config.ini - running_input中进行设置。")
         print("* Tips：如果出现了子进程长时间未响应的情况，请输入join或在配置中关闭running_input。")
         print("* 输入help，查看实时控制帮助。")
 
@@ -256,7 +256,8 @@ def ShowServerChan():
 
 
 def ShowAutoConsole():
-    print("* ADB文件位置 adb_dir：", adb_dir)
+    print("* ADB文件路径 adb_dir：", os.path.abspath(adb_dir))
+    print("* 自动添加至环境变量 add_adb_to_path：", "已开启" if add_adb_to_path else "未开启")
     if emulator_console != "":
         print("* 模拟器自动控制已配置！")
         print("  - 模拟器选择 selected_emulator：", selected_emulator)
@@ -363,6 +364,7 @@ if __name__ == "__main__":
             ContinueSchedule()
     else:
         print("------------- 用户脚本控制台 --------------")
+        print("Ver 2.0.20200924")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")

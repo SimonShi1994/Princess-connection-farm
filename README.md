@@ -121,6 +121,12 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 
 ## 更新历史
 
+2020/9/24 By:TheAutumnOfRice
+
+- 通过将自带adb添加到环境变量，也许修复了自启动的BUG
+- 增加timeout，全面防止彻底卡死
+- 进一步提升u2调用稳定性
+
 2020/9/15 By:TheAutumnOfRice
 
 - 更新14图
