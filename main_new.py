@@ -256,7 +256,8 @@ def ShowServerChan():
 
 
 def ShowAutoConsole():
-    print("* ADB文件位置 adb_dir：", adb_dir)
+    print("* ADB文件路径 adb_dir：", os.path.abspath(adb_dir))
+    print("* 自动添加至环境变量 add_adb_to_path：", "已开启" if add_adb_to_path else "未开启")
     if emulator_console != "":
         print("* 模拟器自动控制已配置！")
         print("  - 模拟器选择 selected_emulator：", selected_emulator)
@@ -363,6 +364,7 @@ if __name__ == "__main__":
             ContinueSchedule()
     else:
         print("------------- 用户脚本控制台 --------------")
+        print("Ver 2.0.20200924")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")
