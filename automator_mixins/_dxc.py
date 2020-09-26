@@ -187,7 +187,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
                                , retry=6)
             time.sleep(self.change_time)
-            if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True):
+            if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1300):
                 # 逻辑顺序改变
                 # 当无法选支援一二位时，将会退出地下城
                 pcr_log(self.account).write_log(level='info', message="%s无法出击!" % self.account)

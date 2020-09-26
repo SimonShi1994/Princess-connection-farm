@@ -431,3 +431,4 @@ class ToolsMixin(BaseMixin):
                 break
         t = t[left:right + 1]
         return t.sum() / len(t)
+
