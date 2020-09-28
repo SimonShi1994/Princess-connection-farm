@@ -138,7 +138,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 try:
                     os.makedirs(f"error_screenshot/{account}", exist_ok=True)
                     nowtime = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
-                    target = f"error_screenshot/{account}/{nowtime}_RT{retry + 1}.bmp"
+                    target = f"error_screenshot/{account}/{nowtime}_RT{retry}.bmp"
                     cv2.imwrite(target, self.last_screen)
                     pcr_log(account).write_log(level="error", message=f"错误截图已经保存至{target}")
                 except Exception as es:
@@ -154,7 +154,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                     self.task_error(str(last_exception))
                     self.fix_reboot(False)
                     return False
-                pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry + 1}/{max_retry}')
+                pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry}/{max_retry}')
 
                 try:
                     self.fix_reboot(before_)
