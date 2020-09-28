@@ -11,7 +11,7 @@ import adbutils
 import requests
 import uiautomator2
 
-from core.pcr_config import adb_dir, debug
+from core.pcr_config import adb_dir, debug, disable_timeout_raise
 
 
 def _async_raise(tid, exctype):
@@ -66,7 +66,10 @@ def timeout(seconds, error_info):
                 raise ret
             return ret
 
-        return wrapper
+        if not disable_timeout_raise:
+            return wrapper
+        else:
+            return func
 
     return deco
 
