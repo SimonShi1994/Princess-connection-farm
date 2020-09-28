@@ -57,7 +57,11 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
-        time.sleep(5)
+        time.sleep(10)
+        while self.d(text="请滑动阅读协议内容").exists():
+            self.d.touch.down(814, 367).sleep(1).up(814, 367)
+            self.d(text="同意").click()
+            time.sleep(10)
         if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.1):
             return 1  # 说明要进行认证
         else:

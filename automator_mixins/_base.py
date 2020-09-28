@@ -129,7 +129,7 @@ class BaseMixin:
             self.d = SafeU2Handle(self._d)
             self.init_fastscreen()
 
-    def init_account(self, account, rec_addr):
+    def init_account(self, account, rec_addr="users"):
         self.account = account
         self.log = log_handler.pcr_log(account)  # 初始化日志
         self.AR = AutomatorRecorder(account, rec_addr)
