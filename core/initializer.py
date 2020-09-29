@@ -1123,6 +1123,8 @@ class Schedule:
                     self.run_status[rec] = 1
                     self.log("info", f"计划** {nam} - {bat} **已经完成")
                     self._set_status()
+                    self.checked_status[rec] = True
+                    continue
                 # 已经处理过
                 if self.checked_status[rec] is True:
                     continue

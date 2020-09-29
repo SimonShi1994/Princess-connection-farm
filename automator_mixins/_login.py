@@ -5,6 +5,7 @@ import time
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN
 # from core.log_handler import pcr_log
+from core.pcr_config import debug
 from core.safe_u2 import timeout
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
@@ -57,11 +58,17 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
-        time.sleep(10)
+        time.sleep(20)
+        if debug:
+            print("等待认证")
         while self.d(text="请滑动阅读协议内容").exists():
+            if debug:
+                print("发现协议")
             self.d.touch.down(814, 367).sleep(1).up(814, 367)
             self.d(text="同意").click()
             time.sleep(10)
+        if debug:
+            print("认证结束")
         if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.1):
             return 1  # 说明要进行认证
         else:
