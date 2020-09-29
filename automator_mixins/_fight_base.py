@@ -79,7 +79,9 @@ class FightBaseMixin(ToolsMixin):
                     return 3
                 else:
                     self.click_btn(MAOXIAN_BTN["xianding_quxiao"])
-                    return 1
+                    retry = 0
+                    continue
+                    # return 1
             elif self.is_exists(FIGHT_BTN["shbg"], screen=sc):
                 # 出现伤害报告，战斗结束 （地下城）
                 if self.is_exists(FIGHT_BTN["qwjsyl"], screen=sc):

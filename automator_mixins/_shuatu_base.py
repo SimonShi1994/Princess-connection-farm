@@ -12,6 +12,11 @@ from core.log_handler import pcr_log
 from core.pcr_config import debug
 
 
+class XiandingPopupException(Exception):
+    def __init__(self, *args):
+        super().__init__(args)
+
+
 class ShuatuBaseMixin(FightBaseMixin):
     """
     刷图基础插片
@@ -39,7 +44,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                 screen = None
             else:
                 sc = self.getscreen()
-
+            if self.is_exists(MAOXIAN_BTN["xianding"], screen=sc):
+                raise XiandingPopupException("限定商店出现！")
             if self.click_img(img="img/ui/close_btn_1.bmp", screen=sc):
                 continue
             if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=sc):
@@ -139,7 +145,21 @@ class ShuatuBaseMixin(FightBaseMixin):
             if end_mode == 0:
                 pass
             elif end_mode == 1:
-                self.zhuxian_kkr(screen)
+                try:
+                    self.zhuxian_kkr(screen)
+                except XiandingPopupException:
+                    if buy():
+                        self.zhuxian_kkr()
+                    else:
+                        for _ in range(3):
+                            # 超级瞎点，此代码实在惨不忍睹
+                            for _ in range(2):
+                                self.click(76, 15)
+                                self.click(843, 491)  # 本不应该有这行代码，但是查不出漏洞了，只能用这个解
+                            time.sleep(0.2)
+                        self.lock_home()
+                        self.enter_zhuxian()
+
             elif end_mode == 2:
                 self.lock_home()
                 self.enter_zhuxian()
@@ -1242,6 +1262,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                     if retry_cnt == 1:
                         for _ in range(6):
                             self.click(76, 15)  # 防止奇怪对话框
+                            self.click(843, 491)  # 本不应该有这行代码，但是查不出漏洞了，只能用这个解
+                            # 决推图，Win后出现限定商店后直接暴毙的问题
                         continue
                     elif retry_cnt == 2:
                         self.lock_home()  # 发大招

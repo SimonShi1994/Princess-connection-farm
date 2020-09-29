@@ -16,14 +16,6 @@ lock = threading.Lock()
 
 
 
-
-# 此处引入一个结束线程的函数，用于结束快速截图的线程，避免adb爆炸
-# By Moment 2020.8.7
-
-def stop_thread(thread):
-    _async_raise(thread.ident, SystemExit)
-
-
 class ReceiveFromMinicap:
     def __init__(self, address):
         # 当前最后接收到的1帧数据
