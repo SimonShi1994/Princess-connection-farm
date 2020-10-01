@@ -44,7 +44,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/yunhai.bmp'):
                     break
                 # 防止一进去就是塔币教程
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, retry=3, at=(779, 421, 833, 440))
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, retry=10, at=(779, 421, 833, 440), threshold=0.97)
                 break
                 # self.dxc_kkr()
         tmp_cout = 0
@@ -176,6 +176,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                                , wait_self_before=True)
                 break
 
+            # if self.lock_no_img(DXC_ELEMENT["zhiyuan_blue"], retry=1):
+            #     pcr_log(self.account).write_log(level='info', message="%s无支援人物!" % self.account)
+            #     break
+
             if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
                 # 如果等级不足，就支援的第二个人
                 self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num + 1],
@@ -187,7 +191,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
                                , retry=6)
             time.sleep(self.change_time)
-            if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1300):
+            if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
                 # 逻辑顺序改变
                 # 当无法选支援一二位时，将会退出地下城
                 pcr_log(self.account).write_log(level='info', message="%s无法出击!" % self.account)
@@ -311,12 +315,12 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
             return
         # 防止教程
-        self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=3)
+        self.lock_img('img/chetui.jpg', side_check=self.juqing_kkr, at=(738, 420, 872, 442), retry=3, threshold=0.97)
 
         while True:
             # 防止塔币教程
             self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.dxc_kkr, at=(738, 420, 872, 442),
-                          retry=10)
+                          retry=10, threshold=0.97)
             # 锁定挑战和第一层
             time.sleep(1.5)
             self.lock_img('img/tiaozhan.bmp', elseclick=[(667, 360)], elsedelay=1, ifclick=[(833, 456)],
