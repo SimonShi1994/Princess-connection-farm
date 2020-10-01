@@ -68,7 +68,7 @@ class LoginMixin(BaseMixin):
         while self.d(text="Geetest").exists():
             self.phone_privacy()
             pcr_log(self.account).server_bot('', message='%s账号出现了验证码' % self.account)
-			return -1
+            return -1
         if debug:
             print("认证结束")
         if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.1):
