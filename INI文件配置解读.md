@@ -33,6 +33,7 @@
 |emulator_id|模拟器设备编号|list|目前只支持雷电|[0,1]|
 |quit_emulator_when_free|空闲时退出模拟器|bool||True|
 |max_free_tine|空闲多久触发推出模拟器|int|单位：秒|120|
+|captcha_skip|出现验证码是否直接跳过该账号|bool||True|
 
 ------
 

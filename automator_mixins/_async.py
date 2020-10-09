@@ -272,3 +272,4 @@ class AsyncMixin(ToolsMixin):
 
     def fix_reboot(self, back_home=True):
         self._fix_reboot(back_home)
+

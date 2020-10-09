@@ -1,5 +1,7 @@
 import asyncio
 import datetime
+import os
+import random
 import threading
 import time
 from typing import Optional, Union
@@ -946,6 +948,59 @@ class BaseMixin:
                 raise Exception("点了10次，可可罗依然没有消失！")
             screen = self.getscreen()
         return flag
+
+    def phone_privacy(self):
+        """
+        2020/7/10
+        模拟器隐私函数
+        '高'匿名 防记录(
+        By：CyiceK
+        :return:
+        """
+
+        def luhn_residue(digits):
+            return sum(sum(divmod(int(d) * (1 + i % 2), 10))
+                       for i, d in enumerate(digits[::-1])) % 10
+
+        def _get_imei(n):
+            part = ''.join(str(random.randrange(0, 9)) for _ in range(n - 1))
+            res = luhn_residue('{}{}'.format(part, 0))
+            return '{}{}'.format(part, -res % 10)
+
+        # print("》》》匿名开始《《《", self.address)
+        tmp_rand = []
+        tmp_rand = random.sample(range(1, 10), 3)
+        phone_model = {
+            1: 'LIO-AN00',
+            2: 'TAS-AN00',
+            3: 'TAS-AL00',
+            4: 'AUSU-AT00',
+            5: 'AAA-SN00',
+            6: 'GMI1910',
+            7: 'G-OXLPix',
+            8: 'AM-1000',
+            9: 'G7',
+        }
+        phone_manufacturer = {
+            1: 'HUAWEI',
+            2: 'MEIZU',
+            3: 'XIAOMI',
+            4: 'OPPO',
+            5: 'VIVO',
+            6: 'MOTO',
+            7: 'GooglePix',
+            8: 'Redmi',
+            9: 'LG',
+        }
+        os.system('cd adb & adb -s %s shell setprop ro.product.model %s' % (self.address, phone_model[tmp_rand[0]]))
+        os.system(
+            'cd adb & adb -s %s shell setprop ro.product.manufacturer %s' % (self.address, phone_manufacturer[tmp_rand[1]]))
+        os.system('cd adb & adb -s %s shell setprop phone.imei %s' % (self.address, _get_imei(15)))
+        os.system('cd adb & adb -s %s shell setprop ro.product.name %s' % (self.address, phone_model[tmp_rand[2]]))
+        os.system('cd adb & adb -s %s shell setprop phone.imsi %s' % (self.address, _get_imei(15)))
+        os.system('cd adb & adb -s %s shell setprop phone.linenum %s' % (self.address, _get_imei(11)))
+        os.system('cd adb & adb -s %s shell setprop phone.simserial %s' % (self.address, _get_imei(20)))
+        # print("》》》匿名完毕《《《")
 
 class Multithreading(threading.Thread, BaseMixin):
     """
