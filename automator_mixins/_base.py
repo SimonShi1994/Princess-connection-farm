@@ -116,7 +116,7 @@ class BaseMixin:
             else:
                 self.fastscreencut_retry = 3
                 if force_fast_screencut:
-                    raise Exception("快速截图打开失败！")
+                    raise FastScreencutException("快速截图打开失败！")
                 else:
                     print("Device:", self._d.serial, f"快速截图打开失败！使用慢速截图。")
 

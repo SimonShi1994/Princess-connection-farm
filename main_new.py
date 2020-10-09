@@ -369,6 +369,7 @@ if __name__ == "__main__":
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
+        print("* Tip：如果要使用任何OCR（包括本地和网络），请手动启动app.py！")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
         print("新的脚本控制方法更新！输入help查看帮助。")
