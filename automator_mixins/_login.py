@@ -143,7 +143,7 @@ class LoginMixin(BaseMixin):
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
         self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
-    @timeout(180, "login_auth登录超时，超过3分钟")
+    @timeout(300, "login_auth登录超时，超过5分钟")
     def login_auth(self, ac, pwd):
         need_auth = self.login(ac=ac, pwd=pwd)
         if need_auth:
