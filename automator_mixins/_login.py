@@ -146,7 +146,9 @@ class LoginMixin(BaseMixin):
     @timeout(300, "login_auth登录超时，超过5分钟")
     def login_auth(self, ac, pwd):
         need_auth = self.login(ac=ac, pwd=pwd)
-        if need_auth:
+        if need_auth == -1:  # 这里漏了一句，无法检测验证码。
+            return -1
+        if need_auth == 1:
             auth_name, auth_id = random_name(), CreatIDnum()
             self.auth(auth_name=auth_name, auth_id=auth_id)
 
