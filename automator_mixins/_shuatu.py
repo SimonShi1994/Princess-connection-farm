@@ -805,6 +805,178 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.log.write_log("info", f"全部刷图任务已经完成。")
         self.lock_home()
 
+    def shuatu_daily_new(self, tu_order: list, daily_tili=0, xianding=False, do_tuitu=False, var={}):
+        """
+        每日刷图（使用扫荡券）。每天重置一次刷图记录。
+        气死我了，本来想做通用刷图的，可全是BUG，现在看来只能刷H本了。
+            —— TheAutumnOfRice
+        !!注:为了记录刷图次数，由于暂未使用OCR，
+            刷图通过”一个一个刷“来确保计数准确。
+            所以暂时不适合用于小号的刷图（还请用shuatuXX）
+            该函数最适合大号推H图。
+        :param tu_order: 刷图顺序表。
+            tu_order为一个list，对每一个元素：
+                "A-B-T"表示刷普通图A-B共T次
+                "HA-B-T"表示刷困难图A-B共T次
+            Example:
+                tu_order=["3-4-10","H1-1-3"]
+            注意：困难图如果刷超过3次，会自动购买次数。
+            该刷图列表表示的刷图顺序为录入顺序。
+        :param daily_tili: 每日买体力次数。
+        :param xianding: 是否买空限定商店（如果出现的话）
+        :param do_tuitu: 不能扫荡时，是否手刷
+        """
+        # 每日更新
+        from core.utils import diffday
+        ds = self.AR.get("daily_status", UDD["daily_status"])
+
+        def new_day(ds):
+            t1 = time.time()
+            t2 = ds["last_time"]
+            if diffday(t1, t2):
+                # 新的一天，清空刷图记录
+                self.log.write_log("info", "已经重置刷图记录。")
+                ds["normal"] = {}
+                ds["hard"] = {}
+                ds["buy_tili"] = 0
+            ds["last_time"] = t1
+            self.AR.set("daily_status", ds)
+
+        # 图号解析
+        def parse_tu(ds):
+            # 根据已经刷的图，制定接下来剩余要刷的图号
+            def parse_str(s):
+                mode = "N"
+                if s[0] == "H":
+                    mode = "H"
+                    s = s[1:]
+                lst = s.split("-")
+                A, B, T = int(lst[0]), int(lst[1]), int(lst[2])
+                return mode, A, B, T
+
+            cur = []
+            for i in tu_order:
+                m, a, b, t = parse_str(i)
+                target = ds["normal"] if m == "N" else ds["hard"]
+                label = f"{a}-{b}"
+                target.setdefault(label, 0)
+                if target[label] < t:
+                    cur += [(m, a, b, t - target[label])]
+            return cur
+
+        # 关卡分析
+        def GetXYTD(mode, nowA, nowB):
+            if mode == "N":
+                D = NORMAL_COORD[nowA]
+                DR = D["right"]
+                DL = D["left"]
+                if nowB in DR:
+                    return DR[nowB].x, DR[nowB].y, 1, "right"
+                else:
+                    return DL[nowB].x, DL[nowB].y, 1, "left"
+            elif mode == "H":
+                D = HARD_COORD[nowA]
+                return D[nowB].x, D[nowB].y, 1, None
+
+        new_day(ds)
+        cur = parse_tu(ds)
+        var.setdefault("cur_tili", 0)
+        if len(cur) == 0:
+            self.log.write_log("info", "今天的刷图任务已经全部完成啦。")
+            return
+        if ds["buy_tili"] < daily_tili:
+            self.start_shuatu()
+        buy_tili = daily_tili - ds["buy_tili"]
+        if buy_tili < 0:
+            buy_tili = 0
+        if not self.check_shuatu():
+            return
+        self.lock_home()
+        self.enter_zhuxian()
+        last_a = -1
+        last_m = None
+        for ind, (m, a, b, t) in enumerate(cur):
+            x, y, _, d = GetXYTD(m, a, b)
+            if m != last_m or a != last_a:
+                if m == "N":
+                    self.select_normal_id(a)
+                else:
+                    self.select_hard_id(a)
+
+            now_time = 0
+            retry_cnt = 0
+            while now_time < t:
+                last_tili = var["cur_tili"]
+                self._zdzb_info = ""
+                FS = self.GetFightSteps()
+                FS.EnterMap(x, y, drag=d)
+                FS.ShowInfo()
+                s = self.zhandouzuobiao(x, y, 1, d, use_saodang=True, buy_tili=buy_tili, buy_cishu=0, xianding=xianding,
+                                        var=var)
+                if s == -2 and self._zdzb_info == "nosaodang" and do_tuitu:
+                    # 无扫荡，进推图
+                    self._zdzb_info = ""
+                    s = self.zhandouzuobiao(x, y, 1, d, use_saodang="auto", buy_tili=buy_tili, buy_cishu=0,
+                                            xianding=xianding,
+                                            end_mode=1, juqing_in_fight=True, var=var)
+                    # 坐标重新确认
+                    if m == "N":
+                        self.select_normal_id(a)
+                    else:
+                        self.select_hard_id(a)
+                new_tili = var["cur_tili"]
+                if new_tili > last_tili:
+                    # 之前的战斗中购买了体力
+                    ds["buy_tili"] += last_tili - new_tili
+                    self.AR.set("daily_status", ds)
+                if s < 0 and self._zdzb_info == "notili":
+                    # 扫荡失败了，结束吧。
+                    self.log.write_log("info", f"体力不足，刷图终止，队列中还有{len(cur) - ind}个任务待完成。")
+                    self.lock_home()
+                    return
+                elif s < 0 and self._zdzb_info == "nosaodang":
+                    self.log.write_log("info", "无法扫荡，刷图终止。")
+                    self.lock_home()
+                    return
+                elif s == -3:
+                    if retry_cnt == 0:
+                        self.log.write_log("error", f"无法进入刷图，刷图终止")
+                        self.lock_home()
+                        return
+                    retry_cnt += 1
+                    self.lock_home()
+                    self.enter_zhuxian()
+                    continue
+                elif s > 0 or self._zdzb_info == "nocishu":
+                    # 扫荡成功，记录一下~
+                    if s == 1:
+                        now_time += 1
+                    else:
+                        now_time += t
+                    if m == "N":
+                        if s == 1:
+                            ds["normal"][f"{a}-{b}"] += 1
+                        else:
+                            ds["normal"][f"{a}-{b}"] += t
+                    else:
+                        if s == 1:
+                            ds["hard"][f"{a}-{b}"] += 1
+                        else:
+                            ds["hard"][f"{a}-{b}"] += t
+                    self.AR.set("daily_status", ds)
+                    new_day(ds)
+                elif self._zdzb_info == "noquan":
+                    self.log.write_log("info", f"券不足，刷图终止，队列中还有{len(cur) - ind}个任务待完成。")
+                    self.lock_home()
+                    return
+                else:
+                    self.log.write_log("info", "战斗失败，刷图终止。")
+                    self.lock_home()
+                    return
+            self.log.write_log("info", f"{a}-{b}刷图成功！")
+        self.log.write_log("info", f"全部刷图任务已经完成。")
+        self.lock_home()
+
     def meiriHtu(self, H_list, daily_tili, xianding, do_tuitu, var={}):
         """
         每日H本。

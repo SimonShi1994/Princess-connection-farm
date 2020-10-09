@@ -611,6 +611,12 @@ MAOXIAN_BTN = {
     "sdqqr": p(img="img/maoxian/sdqqr.bmp", at=(429, 129, 527, 154)),  # 扫荡券确认
     "jsjsqr": p(img="img/maoxian/jsqsqr.bmp", at=(415, 31, 550, 52)),  # 角色解锁确认
 
+    "saodang_query": p(img="img/maoxian/saodang_query.bmp", at=(401, 206, 557, 240)),  # 扫荡券确认提示语
+    "query_box": p(at=(263, 193, 698, 315)),  # 弹出提示框的位置
+    "saodang_jieguo": p(img="img/maoxian/saodang_jieguo.bmp", at=(435, 28, 521, 56)),  # 扫荡结果：扫荡跳过界面上面的标题:
+    "duiwu_win": p(img="img/maoxian/duiwu_win.bmp", at=(897, 77, 922, 105)),  # Normal/Hard胜利时，“队伍”图标偏下
+    "duiwu_loss": p(img="img/maoxian/duiwu_loss.bmp", at=(895, 23, 924, 49)),  # Normal/Hard失败时，“队伍”图标偏上
+
 }
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(453, 74, 516, 88)),
