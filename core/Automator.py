@@ -131,7 +131,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 raise e
             except FastScreencutException as e:
                 pcr_log(account).write_log(level='error', message=f'快速截图出现错误，{e},尝试重新连接……')
-                self.fix_reboot(before_)
+                self.fix_reboot(not before_)
                 self.init_fastscreen()
             except OfflineException as e:
                 pcr_log(account).write_log('error', message=f'main-检测到设备离线：{e}')
@@ -163,7 +163,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry}/{max_retry}')
 
                 try:
-                    self.fix_reboot(before_)
+                    self.fix_reboot(not before_)
                 except Exception as e:
                     pcr_log(account).write_log(level='error', message=f'main-自动重启失败，跳过账号!{e}')
                     self.task_error(str(last_exception))
