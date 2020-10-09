@@ -631,6 +631,9 @@ class AutomatorRecorder:
             self._save(target_name, default)
 
         now = self._load(target_name)
+        if now is None:
+            self._save(target_name, default)
+            return default
         flag = False
         # 检查缺失值，用默认值填充
         for k, v in default.items():

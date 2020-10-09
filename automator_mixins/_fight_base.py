@@ -14,6 +14,16 @@ class FightBaseMixin(ToolsMixin):
     包括与战斗相关的基本操作
     """
 
+    def Drag_Right(self):
+        self.d.touch.down(600, 270).sleep(0.1).move(200, 270).sleep(0.2).up(200, 270)
+        # self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+        time.sleep(self.change_time)
+
+    def Drag_Left(self):
+        self.d.touch.down(200, 270).sleep(0.1).move(600, 270).sleep(0.2).up(600, 270)
+        # self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+        time.sleep(self.change_time)
+
     def get_fight_middle_stars(self, screen=None):
         """
         获取战斗胜利后中间的星数

@@ -488,7 +488,7 @@ DXC_COORD = {
         9: p(234, 230),
         10: p(629, 195),
     },
-    4:{
+    4: {
         1: p(694, 295),
         2: p(614, 278),
         3: p(325, 283),
@@ -496,7 +496,7 @@ DXC_COORD = {
         5: p(297, 190)
     }
 }
-MAX_MAP = 14
+MAX_MAP = 15
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -568,6 +568,11 @@ HARD_COORD = {
         2: p(480, 249),
         3: p(767, 333),
     },
+    15: {
+        1: p(210, 224),
+        2: p(477, 365),
+        3: p(765, 278),
+    }
 }
 
 SHOP_BTN = {
@@ -611,6 +616,12 @@ MAOXIAN_BTN = {
     "sdqqr": p(img="img/maoxian/sdqqr.bmp", at=(429, 129, 527, 154)),  # 扫荡券确认
     "jsjsqr": p(img="img/maoxian/jsqsqr.bmp", at=(415, 31, 550, 52)),  # 角色解锁确认
 
+    "saodang_query": p(img="img/maoxian/saodang_query.bmp", at=(401, 206, 557, 240)),  # 扫荡券确认提示语
+    "query_box": p(at=(263, 193, 698, 315)),  # 弹出提示框的位置
+    "saodang_jieguo": p(img="img/maoxian/saodang_jieguo.bmp", at=(435, 28, 521, 56)),  # 扫荡结果：扫荡跳过界面上面的标题:
+    "duiwu_win": p(img="img/maoxian/duiwu_win.bmp", at=(897, 77, 922, 105)),  # Normal/Hard胜利时，“队伍”图标偏下
+    "duiwu_loss": p(img="img/maoxian/duiwu_loss.bmp", at=(895, 23, 924, 49)),  # Normal/Hard失败时，“队伍”图标偏上
+
 }
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(453, 74, 516, 88)),
@@ -627,6 +638,7 @@ ZHUXIAN_ID = {
     12: p(img="img/zhuxian/12.bmp", at=(442, 74, 507, 88)),
     13: p(img="img/zhuxian/13.bmp", at=(443, 75, 538, 86)),
     14: p(img="img/zhuxian/14.bmp", at=(442, 74, 541, 88)),
+    15: p(img="img/zhuxian/15.bmp", at=(450, 74, 536, 90)),
 }
 
 NORMAL_COORD = {
@@ -914,6 +926,26 @@ NORMAL_COORD = {
             3: p(298, 302),
             2: p(188, 394),
             1: p(128, 267),
+        }
+    },
+    15: {
+        "right": {
+            14: p(592, 253),
+            13: p(745, 311),
+            12: p(648, 404),
+            11: p(500, 405),
+            10: p(348, 370),
+            9: p(289, 249),
+            8: p(191, 354),
+        },
+        "left": {
+            7: p(553, 407),
+            6: p(600, 248),
+            5: p(464, 280),
+            4: p(376, 404),
+            3: p(256, 337),
+            2: p(267, 199),
+            1: p(124, 229),
         }
     },
 

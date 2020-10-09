@@ -116,7 +116,7 @@ class BaseMixin:
             else:
                 self.fastscreencut_retry = 3
                 if force_fast_screencut:
-                    raise Exception("快速截图打开失败！")
+                    raise FastScreencutException("快速截图打开失败！")
                 else:
                     print("Device:", self._d.serial, f"快速截图打开失败！使用慢速截图。")
 
@@ -570,6 +570,58 @@ class BaseMixin:
             else:
                 # print('未找到所需的按钮,无动作')
                 pass
+
+    def lock_fun(self, RTFun, *args, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
+                 elsedelay=0.5, alldelay=0.5, retry=0, is_raise=False, timeout=None, elseafter=0., **kwargs):
+        """
+        任意方法锁定
+        @RTFun 锁定的函数
+            返回False，锁定失败
+            返回其它，锁定成功，返回值为函数返回值
+        """
+        if elseclick is None:
+            elseclick = []
+        if ifclick is None:
+            ifclick = []
+        if type(ifclick) is not list:
+            ifclick = [ifclick]
+        if type(elseclick) is not list:
+            elseclick = [elseclick]
+        attempt = 0
+        lasttime = time.time()
+        ec_time = 0  # else click time: 上次点elseclick的时间
+        if timeout is None:
+            timeout = lockimg_timeout
+        while True:
+            if self._move_check():
+                lasttime = time.time()
+                out = RTFun(*args, **kwargs)
+                if out:
+                    if ifclick != []:
+                        for clicks in ifclick:
+                            time.sleep(ifbefore)
+                            self.click(clicks[0], clicks[1], post_delay=elseafter)
+                            time.sleep(ifdelay)
+                    return out
+            if ec_time == 0:
+                # 第一次：必点
+                # 此后每次等待elsedelay
+                ec_time = time.time() - elsedelay
+            if time.time() - ec_time >= elsedelay:
+                if elseclick != []:
+                    for clicks in elseclick:
+                        self.click(clicks[0], clicks[1], post_delay=elseafter)
+                    attempt += 1
+                    ec_time = time.time()
+            time.sleep(alldelay)
+            if retry != 0 and attempt > retry:
+                return False
+            if timeout != 0 and time.time() - lasttime > timeout:
+                if is_raise:
+                    if disable_timeout_raise:
+                        continue
+                    raise Exception("lock_fun 超时！")
+                return False
 
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
                   elsedelay=0.5, alldelay=0.5, retry=0, side_check=None,

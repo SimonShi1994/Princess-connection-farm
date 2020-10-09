@@ -12,7 +12,7 @@ from typing import List, Tuple, Optional, Dict, Union
 import adbutils
 import keyboard
 
-from automator_mixins._base import Multithreading, ForceKillException
+from automator_mixins._base import Multithreading, ForceKillException, FastScreencutException
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
@@ -504,6 +504,8 @@ class PCRInitializer:
             if out:
                 a.change_acc()
             return out
+        except FastScreencutException as e:
+            raise e
         except ForceKillException as e:
             raise e
         except OfflineException as e:
@@ -621,6 +623,26 @@ class PCRInitializer:
                     else:
                         out_queue.put({"device": {"serial": serial, "method": "stop"}})
                         break
+                except FastScreencutException:
+                    # 快速截图错误，尝试重启
+                    if device.with_emulator():
+                        out_queue.put({"device_status": {"serial": serial, "status": "restart"}})
+                        out_queue.put({"device": {"serial": serial, "method": "offline"}})
+                        device.restart_emulator(True)
+                        # 尝试重启模拟器
+                        if device.wait_for_healthy():
+                            out_queue.put({"device_status": {"serial": serial, "status": "restart_success"}})
+                            device.start_u2()
+                            continue  # 重启成功
+                        else:
+                            out_queue.put({"device_status": {"serial": serial, "status": "restart_fail"}})
+                    # 任务失败，模拟器断开
+                    out_queue.put({"device": {"serial": serial, "method": "offline"}})
+                    out_queue.put({"task": {"status": "retry", "task": _task, "device": serial}})
+                    if device.with_emulator():
+                        device.quit_emulator()
+                    flag["exit"] = True
+                    break
                 except ForceKillException:
                     # 强制退出
                     out_queue.put({"task": {"status": "forcekill", "task": _task, "device": serial}})
