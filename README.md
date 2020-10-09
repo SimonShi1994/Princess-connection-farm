@@ -128,6 +128,7 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 - 修复文件损坏读取Nonetype时的报错
 - 修复登陆时快速截图异常导致狂点右上角的报错
 - 快速截图连接失败时，如果配置了force_fastscreen_cut以及模拟器自动控制，将自动重启模拟器
+- 修复验证码无法跳过的Bug
 
 2020/10/1 By:CyiceK
 
