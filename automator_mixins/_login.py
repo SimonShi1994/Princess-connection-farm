@@ -2,8 +2,7 @@ import gc
 import time
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN
-from core.log_handler import pcr_log
-from core.pcr_config import debug
+from core.pcr_config import debug, captcha_wait_time
 from core.safe_u2 import timeout
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
@@ -65,9 +64,18 @@ class LoginMixin(BaseMixin):
             self.d.touch.down(814, 367).sleep(1).up(814, 367)
             self.d(text="同意").click()
             time.sleep(10)
-        while self.d(text="Geetest").exists():
+        flag = False
+        if self.d(text="Geetest").exists():
+            flag = True
             self.phone_privacy()
-            pcr_log(self.account).server_bot('', message='%s账号出现了验证码' % self.account)
+            self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
+            now_time = time.time()
+            while time.time() - now_time < captcha_wait_time:
+                time.sleep(1)
+                if not self.d(text="Geetest").exists():
+                    flag = False
+                    break
+        if flag:
             return -1
         if debug:
             print("认证结束")
