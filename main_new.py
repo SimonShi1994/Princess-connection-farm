@@ -300,6 +300,8 @@ def ShowPCRPerformance():
     print("* Shift+P脚本暂停 enable_pause：", "已开启" if enable_pause else "未开启")
     print("* 最大重启重试次数 max_reboot：", max_reboot)
     print("* 运行时实时控制 running_input：", "已开启" if running_input else "未开启")
+    print("* 自动跳过验证码 captcha_skip：", "已开启" if captcha_skip else "未开启")
+    print("* 出现验证码后等待时间 captcha_wait_time：", captcha_wait_time)
 
 
 def ShowDebugInfo():
