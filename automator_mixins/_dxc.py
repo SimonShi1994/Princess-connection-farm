@@ -44,7 +44,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/yunhai.bmp'):
                     break
                 # 防止一进去就是塔币教程
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, retry=10, at=(779, 421, 833, 440), threshold=0.97)
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, retry=10, at=(779, 421, 833, 440),
+                              threshold=0.97)
                 break
                 # self.dxc_kkr()
         tmp_cout = 0
@@ -170,15 +171,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                                   side_check=self.juqing_kkr)
                     # 锁定挑战和第一层
                     break
-            while True:
-                time.sleep(self.change_time)
-                self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"], retry=3
-                               , wait_self_before=True)
-                break
-
+            time.sleep(self.change_time)
+            if self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
+                              retry=3, wait_self_before=True):
+                pass
             # if self.lock_no_img(DXC_ELEMENT["zhiyuan_blue"], retry=1):
-            #     pcr_log(self.account).write_log(level='info', message="%s无支援人物!" % self.account)
-            #     break
+            else:
+                pcr_log(self.account).write_log(level='info', message="%s无支援人物!" % self.account)
+                break
 
             if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
                 # 如果等级不足，就支援的第二个人
@@ -251,10 +251,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(808, 435)], retry=20)
                     self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
                     break
-            # 执行完后再检测一轮后跳出大循环
-            self.lock_no_img('img/dxc/chetui.bmp', elseclick=[(808, 435), (588, 371)], retry=20,
-                             at=(779, 421, 833, 440))
-            self.lock_img('img/yunhai.bmp')
+            # 执行完后再检测一轮后跳出大循环 self.lock_no_img('img/dxc/chetui.bmp', elseclick=[(808, 435), (588, 371)], retry=20,
+            # at=(779, 421, 833, 440)) self.lock_img('img/yunhai.bmp')
             break
 
         while True:
