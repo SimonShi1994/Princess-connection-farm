@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.0.20201015
+ # Princess connection 公主连结农场脚本v2.0.20201018
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -122,6 +122,12 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2020/10/18 By:TheAutumnOfRice
+
+- 通关地下城提示信息修复
+- 8-15参数缺失，进行了补充
+- 部分体力相关BUG导致无法刷图的修复
 
 2020/10/10 By:TheAutumnOfRice
 

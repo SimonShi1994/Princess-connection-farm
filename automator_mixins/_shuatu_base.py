@@ -1573,6 +1573,8 @@ class ShuatuBaseMixin(FightBaseMixin):
                     return False
 
         # 进入强化
+        if buy_tili > 0:
+            self.start_shuatu()
         self.lock_home()
         self.enter_upgrade()
         for _ in range(5):
