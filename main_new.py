@@ -366,7 +366,7 @@ if __name__ == "__main__":
             ContinueSchedule()
     else:
         print("------------- 用户脚本控制台 --------------")
-        print("Ver 2.0.20201018")
+        print("Ver 2.0.20201020")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")

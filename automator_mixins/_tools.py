@@ -11,10 +11,11 @@ import xlrd
 from xlutils.copy import copy
 
 from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN
+from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
-    ocr_mode
+    ocr_mode, debug
 from core.safe_u2 import timeout
 from ._base import BaseMixin
 
@@ -101,6 +102,54 @@ class ToolsMixin(BaseMixin):
         self.click(479, 479)
         time.sleep(1)
         self.click(95, 516)
+        self.lock_home()
+
+    def maizhuangbei(self, day_interval):
+        """
+        卖掉数量前三的装备，（如果超过1000）
+        适合小号
+        :param day_interval: 日期间隔：每过day_interval天进行一次卖出
+        """
+
+        def get_last_record():
+            ts = self.AR.get("time_status", UDD["time_status"])
+            return ts["maizhuangbei"]
+
+        def set_last_record():
+            ts = self.AR.get("time_status", UDD["time_status"])
+            ts["maizhuangbei"] = time.time()
+            self.AR.set("time_status", ts)
+
+        tm = get_last_record()
+        diff = time.time() - tm
+        if diff < day_interval * 3600 * 24:
+            self.log.write_log("info", f"离下次卖装备还有{day_interval - int(diff / 3600 / 24)}天，跳过。")
+            return
+        self.lock_home()
+        self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
+        self.click_btn(ZHUCAIDAN_BTN["daoju"], until_appear=ZHUCAIDAN_BTN["daojuyilan"])
+        self.click_btn(ZHUCAIDAN_BTN["zhuangbei"], until_appear=ZHUCAIDAN_BTN["chushou"])
+        if not self.is_exists(ZHUCAIDAN_BTN["chiyoushu"]):
+            self.click(723, 32, post_delay=3)
+            self.click(285, 228, post_delay=1)
+            self.click(587, 377, post_delay=3)
+        self.click_btn(ZHUCAIDAN_BTN["jiangxu"], until_appear=ZHUCAIDAN_BTN["jiangxu"])
+        for _ in range(3):
+            self.click_btn(ZHUCAIDAN_BTN["chushou"], until_appear=ZHUCAIDAN_BTN["chushouqueren"])
+            self.click(645, 315, post_delay=2)  # max
+            th_at = (518, 267, 530, 282)  # 千位
+            img = self.getscreen()
+            cut_img = UIMatcher.img_cut(img, th_at)
+            if debug:
+                print("VAR:", cut_img.var())
+            if cut_img.var() > 1000:
+                # 有千位，卖
+                self.click_btn(ZHUCAIDAN_BTN["chushou2"], until_appear=ZHUCAIDAN_BTN["chushouwanbi"])
+                for _ in range(5):
+                    self.click(1, 1)
+            else:
+                break
+        set_last_record()
         self.lock_home()
 
     def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
