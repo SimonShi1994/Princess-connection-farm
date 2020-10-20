@@ -124,6 +124,7 @@ MAIN_BTN = {
 
     "xzcw": p(img="img/home/xzcw.bmp", at=(438, 135, 520, 157)),  # 下载错误
 
+
 }
 JJC_BTN = {
     "list": p(img="img/jjc/list.bmp", at=(829, 80, 926, 101)),  # 列表更新
@@ -287,10 +288,18 @@ HANGHUI_BTN = {
 ZHUCAIDAN_BTN = {
     "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(493, 247, 695, 290)),
     "jianjie": p(img="img/zhucaidan/jianjie.bmp", at=(267, 241, 499, 290)),
-    "daoju": p(img="img/zhucaidan/daoju.bmp", at=(475, 112, 610, 187)),
+    "daoju": p(475, 160, img="img/zhucaidan/daoju.bmp", at=(475, 112, 610, 187)),
     "saodangquan": p(img="img/zhucaidan/saodangquan.bmp"),
     "jianjie_L": p(img="img/zhucaidan/jianjie_L.bmp", at=(59, 1, 137, 48)),
     "daojuyilan": p(img="img/zhucaidan/daojuyilan.bmp", at=(57, 3, 172, 51)),
+    "chushou": p(843, 428, img="img/zhucaidan/chushou.bmp", at=(786, 410, 901, 441)),
+    "chiyoushu": p(705, 31, img="img/zhucaidan/chiyoushu.bmp", at=(680, 20, 730, 40)),
+    "zhuangbei": p(460, 33),
+    "jiangxu": p(865, 31, img="img/zhucaidan/jiangxu.bmp", at=(849, 22, 881, 41)),
+    "chushouqueren": p(img="img/zhucaidan/chushouqueren.bmp", at=(434, 30, 521, 53)),
+    "chushouwanbi": p(img="img/zhucaidan/chushouwanbi.bmp", at=(434, 133, 522, 154)),
+    "chushou2": p(584, 483)
+
 }
 FIGHT_BTN = {
     "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(895, 404, 925, 441)),
@@ -974,6 +983,7 @@ USER_DEFAULT_DICT = {
         "buyexp": 0,  # 上次购买经验时间
         "niudan": 0,  # 上次免费扭蛋时间
         "tansuo": 0,  # 上次探索时间
+        "maizhuangbei": 0,  # 上次卖装备时间
     }
     ,
     "daily_status": {

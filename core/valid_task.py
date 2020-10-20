@@ -509,6 +509,8 @@ VALID_TASK = ValidTask() \
           TaskParam("out_xls", bool, "是否输出为表格", "是否获取账号道具基本信息（扫荡券）"),
           TaskParam("s_sent", bool, "是否用Server酱发送（暂无）", "每个账号识别结果会直接一个个推送到你手机上"),
           ]) \
+    .add("t4", "maizhuangbei", "小号卖装备", "卖出数量前三的装备（如果数量大于1000，无需OCR）",
+         [TaskParam("day_interval", int, "清理间隔", "请输入清理间隔天数", 30)]) \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",
