@@ -1,6 +1,7 @@
 # encoding=utf-8
 import configparser
 import json
+import os
 from typing import Optional
 
 cfg = configparser.ConfigParser()
@@ -45,7 +46,7 @@ captcha_wait_time = cfg.getint('pcrfarm_setting', 'captcha_wait_time')
 
 enable_auto_find_emulator = cfg.getboolean('emulator_setting', 'enable_auto_find_emulator')
 emulator_ports: Optional[list] = json.loads(cfg.get('emulator_setting', 'emulator_ports'))
-adb_dir = cfg.get('emulator_setting', 'adb_dir')
+adb_dir = os.path.abspath(cfg.get('emulator_setting', 'adb_dir'))
 add_adb_to_path = cfg.getboolean('emulator_setting', 'add_adb_to_path')
 selected_emulator = cfg.get('emulator_setting', 'selected_emulator')
 emulator_console = cfg.get('emulator_setting', 'emulator_console')
