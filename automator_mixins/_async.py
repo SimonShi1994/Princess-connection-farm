@@ -11,6 +11,7 @@ from ._base import Multithreading
 from ._tools import ToolsMixin
 
 block_sw = 0
+async_block_sw = 0
 
 
 class AsyncMixin(ToolsMixin):
@@ -217,11 +218,12 @@ class AsyncMixin(ToolsMixin):
         测试
         :return:
         """
-        global block_sw
+        global block_sw, async_block_sw
         if not enable_pause:
             return
         # print(Multithreading({}).is_stopped())
         while Multithreading({}).is_stopped():
+            async_block_sw = 1
             keyboard.wait('shift+p')
             block_sw = 1
             print("下一步，脚本暂停,按shift+p恢复")
@@ -230,6 +232,7 @@ class AsyncMixin(ToolsMixin):
             block_sw = 0
             print("恢复运行")
             time.sleep(0.8)
+        async_block_sw = 0
 
     def start_th(self):
         Multithreading({}).resume()
@@ -248,7 +251,8 @@ class AsyncMixin(ToolsMixin):
         # self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
         # self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
-        self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
+        if not async_block_sw:
+            self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
         self.c_async(self, account, self.auto_time_sleep(), sync=False)  # 异步根据CPU负载调控time sleep
 
     def program_start_async(self):
@@ -272,4 +276,3 @@ class AsyncMixin(ToolsMixin):
 
     def fix_reboot(self, back_home=True):
         self._fix_reboot(back_home)
-

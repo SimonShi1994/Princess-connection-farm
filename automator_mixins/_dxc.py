@@ -178,6 +178,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             # if self.lock_no_img(DXC_ELEMENT["zhiyuan_blue"], retry=1):
             else:
                 pcr_log(self.account).write_log(level='info', message="%s无支援人物!" % self.account)
+                self.dxc_switch = 1
                 break
 
             if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
@@ -212,6 +213,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 break
 
             if skip:  # 直接放弃战斗
+                self.lock_img(FIGHT_BTN["caidan"], elseclick=[(1, 1)], retry=12)
                 self.click_btn(FIGHT_BTN["caidan"], wait_self_before=True, until_appear=FIGHT_BTN["fangqi_1"],
                                elsedelay=0.1)
                 self.click_btn(FIGHT_BTN["fangqi_1"], until_appear=FIGHT_BTN["fangqi_2"])
@@ -245,6 +247,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
             self.click(1, 1)  # 跳过结算
             while True:  # 撤退地下城
+                if self.dxc_switch == 1:
+                    break
                 time.sleep(self.change_time)
                 self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):

@@ -34,6 +34,7 @@ class TimeoutError(Exception):
     def __init__(self, *args):
         super().__init__(*args)
 
+
 def timeout(seconds, error_info):
     def deco(func):
         @functools.wraps(func)
@@ -42,6 +43,16 @@ def timeout(seconds, error_info):
 
             def newFunc():
                 try:
+                    try:
+                        from automator_mixins._async import block_sw
+                        if block_sw == 1:
+                            # print("time_out的脚本暂停中~")
+                            while block_sw == 1:
+                                from automator_mixins._async import block_sw
+                                time.sleep(1)
+                            return deco
+                    except Exception as error:
+                        print('暂停-错误:', error)
                     res[0] = func(*args, **kwargs)
                 except Exception as e:
                     res[0] = e
@@ -55,6 +66,16 @@ def timeout(seconds, error_info):
                 print('error starting thread')
                 raise e
             ret = res[0]
+            try:
+                from automator_mixins._async import block_sw
+                if block_sw == 1:
+                    # print("time_out2的脚本暂停中~")
+                    while block_sw == 1:
+                        from automator_mixins._async import block_sw
+                        time.sleep(1)
+                    return deco
+            except Exception as error:
+                print('暂停-错误:', error)
             if isinstance(ret, BaseException):
                 if debug:
                     print("!!!", id(ret), type(ret), ret)
@@ -72,6 +93,7 @@ def timeout(seconds, error_info):
             return func
 
     return deco
+
 
 def run_adb(cmd: str, timeout=None):
     try:
