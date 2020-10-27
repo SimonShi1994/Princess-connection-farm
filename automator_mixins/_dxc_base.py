@@ -69,6 +69,7 @@ class DXCBaseMixin(FightBaseMixin):
             self.set_fight_team(bianzu, duiwu)
         # 换队结束
         # 检查存活人数
+        time.sleep(2)
         live_count = self.get_fight_current_member_count()
         if live_count < min_live:
             return 0

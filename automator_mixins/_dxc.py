@@ -491,6 +491,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             mode 0：不打Boss，用队伍1只打小关
             mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss
             mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss
+            mode 3：用只打第一小关，无论怎样都退出
         :param stop_criteria: 终止条件
             设置为0时，只要战斗中出现人员伤亡，直接结束
             设置为1时，一直战斗到当前队伍无人幸存，才结束
@@ -558,6 +559,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             min_live = 1
         while cur_layer <= max_layer - 1:
             # 刷小怪
+            if mode == 3 and cur_layer >= 2:
+                stop_fun()
+                return
             cur_x, cur_y = DXC_COORD[dxc_id][cur_layer]
             state = self.dxczuobiao(cur_x, cur_y, 1, 2, set_bianzu, set_duiwu, min_live)
             set_bianzu = 0
@@ -567,9 +571,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if safety_stop:
                     self.log.write_log("warning", "安全保护启动，可能在小关中阵亡，跳过地下城。")
                     self.save_last_screen("安全保护Debug.bmp")
+                    for _ in range(10):
+                        self.click(1, 1)
                     self.lock_home()
                 else:
                     self.log.write_log("warning", "在地下城伤亡惨重！")
+                    for _ in range(10):
+                        self.click(1, 1)
                     stop_fun()
                 return
             elif state == -2:
