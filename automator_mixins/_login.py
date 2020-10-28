@@ -2,8 +2,9 @@ import gc
 import time
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN
-from core.pcr_config import debug, captcha_wait_time
+from core.pcr_config import debug, captcha_wait_time, captcha_popup
 from core.safe_u2 import timeout
+from core.tkutils import TimeoutMsgBox
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
 
@@ -69,6 +70,8 @@ class LoginMixin(BaseMixin):
             flag = True
             self.phone_privacy()
             self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
+            if captcha_popup:
+                TimeoutMsgBox("!", f"{self.address}出现验证码\n账号：{self.account}", geo="200x80", timeout=captcha_wait_time)
             now_time = time.time()
             while time.time() - now_time < captcha_wait_time:
                 time.sleep(1)

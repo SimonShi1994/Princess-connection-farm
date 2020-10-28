@@ -1,4 +1,3 @@
-import os
 import sys
 import traceback
 
@@ -302,6 +301,7 @@ def ShowPCRPerformance():
     print("* 运行时实时控制 running_input：", "已开启" if running_input else "未开启")
     print("* 自动跳过验证码 captcha_skip：", "已开启" if captcha_skip else "未开启")
     print("* 出现验证码后等待时间 captcha_wait_time：", captcha_wait_time)
+    print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", "已开启" if captcha_popup else "未开启")
 
 
 def ShowDebugInfo():
