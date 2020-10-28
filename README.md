@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.0.20201024
+ # Princess connection 公主连结农场脚本v2.0.20201028
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -53,6 +53,7 @@
 - [x] box截图
 - [x] OCR获取账号信息
 - [x] 卖出过量装备
+- [x] 暂停手操
 
 6. 刷图
 
@@ -124,11 +125,22 @@ Server酱食用方法：（http://sc.ftqq.com/3.version）
 
 ## 更新历史
 
+2020/10/28 By:TheAutumnOfRice
+
+- 出现验证码时弹窗提醒（config - captcha_popup）
+- 增加“暂停”任务，便于手动操作账号
+- 修复通关地下城一系列误入/卡住的BUG
+
 2020/10/24 By:CyiceK
 
 - 修复异步暂停线程溢出
 - 修复timeout与暂停冲突问题
 - OCR地下城在无支援任务时，会自动退出不撤退
+
+2020/10/21 By:TheAutumnOfRice
+
+- 增加地下城1图
+- 通关地下城增加模式3：只打第一关
 
 2020/10/20 By:TheAutumnOfRice
 
