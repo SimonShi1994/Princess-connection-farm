@@ -34,7 +34,8 @@
 |quit_emulator_when_free|空闲时退出模拟器|bool||True|
 |max_free_tine|空闲多久触发推出模拟器|int|单位：秒|120|
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|
-|captcha_wait_time|出现验证码后等待用户输入的时间|int||30|
+|captcha_wait_time|出现验证码后等待用户输入的时间|int||60|
+|captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
 
 ------
 

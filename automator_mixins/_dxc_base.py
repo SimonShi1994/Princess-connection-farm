@@ -1,6 +1,6 @@
 import time
 
-from core.constant import DXC_ELEMENT, FIGHT_BTN, MAIN_BTN, DXC_ENTRANCE, DXC_NUM
+from core.constant import DXC_ELEMENT, FIGHT_BTN, MAIN_BTN, DXC_ENTRANCE, DXC_NUM, JJC_BTN
 from core.cv import UIMatcher
 from ._fight_base import FightBaseMixin
 
@@ -61,18 +61,23 @@ class DXCBaseMixin(FightBaseMixin):
         if not state:
             raise Exception("无法点中地下城关卡！")
         # 点击挑战
-        self.click_btn(FIGHT_BTN["tiaozhan"],wait_self_before=True,timeout=20)
+        # UPDATE 第二次进入BOSS时不需要这一步
+        state = self.lock_img({FIGHT_BTN["tiaozhan"]: 1, JJC_BTN["dwbz"]: 2}, timeout=20)
+        if state == 1:
+            self.click_btn(FIGHT_BTN["tiaozhan"], wait_self_before=True, timeout=20)
         # 换队
         if bianzu == -1 and duiwu == -1:
             self.set_fight_team_order()
         elif bianzu != 0 and duiwu != 0:
-            self.set_fight_team(bianzu, duiwu)
+            if not self.set_fight_team(bianzu, duiwu):
+                return 0
         # 换队结束
         # 检查存活人数
+        time.sleep(2)
         live_count = self.get_fight_current_member_count()
         if live_count < min_live:
             return 0
-        self.click_btn(FIGHT_BTN["zhandoukaishi"])
+        self.click_btn(FIGHT_BTN["zhandoukaishi"], wait_self_before=True)
         self.wait_for_loading(delay=1)
         self.set_fight_auto(auto, screen=self.last_screen)
         self.set_fight_speed(speed, max_level=2, screen=self.last_screen)
@@ -119,7 +124,7 @@ class DXCBaseMixin(FightBaseMixin):
         state = self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5,
                                until_appear={DXC_ELEMENT["dxc_choose_shop"]: 1, DXC_ELEMENT["dxc_shop_btn"]: 2})
         if state == 1:
-            self.wait_for_stable()
+            self.wait_for_stable(delay=3)
             screen_shot_ = self.getscreen()
             if self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
                 # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。
@@ -131,7 +136,7 @@ class DXCBaseMixin(FightBaseMixin):
                     return False
                 else:
                     # 没刷完，进入地下城
-                    self.click_btn(DXC_ENTRANCE[dxc_id], elsedelay=1, until_appear=DXC_ELEMENT["quyuxuanzequeren_ok"])
+                    self.click_btn(DXC_ENTRANCE[dxc_id], elsedelay=8, until_appear=DXC_ELEMENT["quyuxuanzequeren_ok"])
                     self.click_btn(DXC_ELEMENT["quyuxuanzequeren_ok"],
                                    until_appear={DXC_ELEMENT["chetui"]: 1, DXC_ELEMENT["dxc_kkr"]: 2})
         self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5, side_check=self.dxc_kkr)  # 锁定撤退

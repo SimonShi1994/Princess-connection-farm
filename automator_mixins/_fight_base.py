@@ -2,7 +2,7 @@ import time
 
 import numpy as np
 
-from core.constant import FIGHT_BTN, MAIN_BTN, MAOXIAN_BTN
+from core.constant import FIGHT_BTN, MAIN_BTN, MAOXIAN_BTN, JJC_BTN
 from core.cv import UIMatcher
 from core.pcr_config import debug
 from ._tools import ToolsMixin
@@ -292,12 +292,18 @@ class FightBaseMixin(ToolsMixin):
         要求场景：处于”队伍编组“情况下。
         :param bianzu: 编组编号1~5
         :param duiwu: 队伍编号1~3
+        :return: False - 选取编组失败
         """
         assert bianzu in [1, 2, 3, 4, 5]
         assert duiwu in [1, 2, 3]
         self.click_btn(FIGHT_BTN["my_team"], until_disappear=FIGHT_BTN["zhandoukaishi"])
         self.click(FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
         self.click(FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
+        if not self.is_exists(JJC_BTN["dwbz"]):
+            self.lock_img(JJC_BTN["dwbz"], elseclick=(1, 1), timeout=20)
+            return False
+        else:
+            return True
 
     def get_fight_current_member_count(self, screen=None):
         """

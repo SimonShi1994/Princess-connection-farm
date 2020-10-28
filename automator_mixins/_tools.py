@@ -17,6 +17,7 @@ from core.log_handler import pcr_log
 from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
     ocr_mode, debug
 from core.safe_u2 import timeout
+from core.tkutils import TimeoutMsgBox
 from ._base import BaseMixin
 
 
@@ -103,6 +104,9 @@ class ToolsMixin(BaseMixin):
         time.sleep(1)
         self.click(95, 516)
         self.lock_home()
+
+    def zanting(self):
+        TimeoutMsgBox("暂停", desc=f"{self.address}暂停中\n账号：{self.account}", join=True, geo="200x60")
 
     def maizhuangbei(self, day_interval):
         """

@@ -447,10 +447,11 @@ VALID_TASK = ValidTask() \
     .add("d3", "dixiachengYunhai", "打云海关", "打通云海关【细节待补充】") \
     .add("d4", "dixiachengDuanya", "打断崖关", "打通断崖关【细节待补充】") \
     .add("d5", "shuatuDD", "通关地下城", "通用的打通地下城函数",
-         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:3,4"),
+         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4"),
           TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
                                        "mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss\n"
-                                       "mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss"),
+                                       "mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss\n"
+                                       "mode 3：用只打第一小关，无论怎样都退出"),
           TaskParam("stop_criteria", int, "终止条件", "设置为0时，只要战斗中出现人员伤亡，直接结束\n"
                                                   "设置为1时，一直战斗到当前队伍无人幸存，才结束\n"
                                                   "注：如果在小关遇到停止条件，则直接结束\n"
@@ -509,8 +510,9 @@ VALID_TASK = ValidTask() \
           TaskParam("out_xls", bool, "是否输出为表格", "是否获取账号道具基本信息（扫荡券）"),
           TaskParam("s_sent", bool, "是否用Server酱发送（暂无）", "每个账号识别结果会直接一个个推送到你手机上"),
           ]) \
-    .add("t4", "maizhuangbei", "小号卖装备", "卖出数量前三的装备（如果数量大于1000，无需OCR）",
+    .add("t4", "maizhuangbei", "小号卖装备", "卖出数量前三的装备（如果数量大于1000)(无需OCR）",
          [TaskParam("day_interval", int, "清理间隔", "请输入清理间隔天数", 30)]) \
+    .add("t5", "zanting", "暂停", "暂停脚本，弹出弹窗，直到手动点击弹窗才结束") \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",

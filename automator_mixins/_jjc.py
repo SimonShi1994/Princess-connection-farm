@@ -1,8 +1,8 @@
-from automator_mixins._tools import ToolsMixin
+from automator_mixins._fight_base import FightBaseMixin
 from core.constant import MAIN_BTN, JJC_BTN, PCRelement
 
 
-class JJCMixin(ToolsMixin):
+class JJCMixin(FightBaseMixin):
     """
     竞技场插片
     包含日常行动相关的脚本
@@ -34,6 +34,8 @@ class JJCMixin(ToolsMixin):
             return
         self.click_btn(JJC_BTN["zdks"])
         # 803 496
+        self.wait_for_loading(delay=2)
+        self.set_fight_speed(2, 2)
         self.lock_img(JJC_BTN["xyb"], timeout=180, alldelay=1)
         self.click_btn(PCRelement(803, 496), until_disappear=JJC_BTN["xyb"])
         self.lock_home()
@@ -62,6 +64,8 @@ class JJCMixin(ToolsMixin):
             return
         for _ in range(10):
             self.click(843, 452, post_delay=0.5)
+        self.wait_for_loading(delay=2)
+        self.set_fight_speed(2, 2)
         self.lock_img(JJC_BTN["xyb"], elseclick=[(843, 452)], timeout=180 * 3, alldelay=1)
         self.click_btn(PCRelement(803, 506), until_disappear=JJC_BTN["xyb"])
         self.lock_home()
