@@ -49,6 +49,11 @@ def p(x=None, y=None, name=None, img=None, at=None, **kwargs):
     return PCRelement(x=x, y=y, name=name, img=img, at=at, **kwargs)
 
 
+# 游戏登陆界面的UI
+START_UI = {
+    "queren": p(568, 443, img="img/ui/caption_queding.bmp", at=(514, 425, 623, 464)),
+}
+
 # 主页面的按钮对象
 MAIN_BTN = {
     # 主页
@@ -123,7 +128,6 @@ MAIN_BTN = {
     "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),
 
     "xzcw": p(img="img/home/xzcw.bmp", at=(438, 135, 520, 157)),  # 下载错误
-
 
 }
 JJC_BTN = {
@@ -478,11 +482,11 @@ DXC_NUM = {
         10: p(img="img/dxc/dxc3/10.bmp", at=(189, 424, 218, 441)),
     },
     4: {
-        1:p(img="img/dxc/dxc4/1.bmp",at=(207,422,227,441)),
-        2:p(img="img/dxc/dxc4/2.bmp",at=(206,424,224,439)),
-        3:p(img="img/dxc/dxc4/3.bmp",at=(206,424,225,439)),
-        4:p(img="img/dxc/dxc4/4.bmp",at=(206,424,225,438)),
-        5:p(img="img/dxc/dxc4/5.bmp",at=(201,426,226,439)),
+        1: p(img="img/dxc/dxc4/1.bmp", at=(207, 422, 227, 441)),
+        2: p(img="img/dxc/dxc4/2.bmp", at=(206, 424, 224, 439)),
+        3: p(img="img/dxc/dxc4/3.bmp", at=(206, 424, 225, 439)),
+        4: p(img="img/dxc/dxc4/4.bmp", at=(206, 424, 225, 438)),
+        5: p(img="img/dxc/dxc4/5.bmp", at=(201, 426, 226, 439)),
     }
 }
 DXC_ENTRANCE = {

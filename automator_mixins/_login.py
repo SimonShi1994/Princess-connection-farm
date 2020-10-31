@@ -1,7 +1,7 @@
 import gc
 import time
 
-from core.constant import MAIN_BTN, ZHUCAIDAN_BTN
+from core.constant import MAIN_BTN, ZHUCAIDAN_BTN, START_UI
 from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
@@ -76,7 +76,7 @@ class LoginMixin(BaseMixin):
                 x, y = skip_caption(captcha_img=screen)
                 print("验证码坐标识别：", x, ',', y)
                 self.click(x, y, post_delay=1)
-                self.click(568, 443, post_delay=3)
+                self.click_btn(START_UI["queren"], retry=5)
                 if self.d(text="Geetest").exists():
                     self.click(451, 442)
                     time.sleep(3)
@@ -85,7 +85,7 @@ class LoginMixin(BaseMixin):
                         x, y = skip_caption(captcha_img=screen)
                         print("验证码n次坐标识别：", x, ',', y)
                         self.click(x, y, post_delay=1)
-                        self.click(568, 443, post_delay=3)
+                        self.click_btn(START_UI["queren"], retry=5)
                         if debug:
                             print("等待认证")
                         while self.d(text="请滑动阅读协议内容").exists():
@@ -94,6 +94,9 @@ class LoginMixin(BaseMixin):
                             self.d.touch.down(814, 367).sleep(1).up(814, 367)
                             self.d(text="同意").click()
                             time.sleep(6)
+                time.sleep(1)
+                if not self.d(text="Geetest").exists():
+                    flag = False
             else:
                 self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
                 if captcha_popup:

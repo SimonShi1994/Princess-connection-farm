@@ -56,7 +56,7 @@ def skip_caption(captcha_img):
     # 题号
     caption_id = requests.post(url=img_post_url, data=img_post, headers=img_hear_dict)
     error_feature = ['#']
-    if type(caption_id) in error_feature:
+    if caption_id.text in error_feature:
         pcr_log('admin').write_log(level='error', message=caption_id.text)
     # print(caption_id.text)
     img_answer_get = {
@@ -95,6 +95,7 @@ def getpoint():
         'Content-Type': 'application/x-www-form-urlencoded',
     }
     c = requests.get(url=img_getpoint, data=img_post, headers=img_hear_dict)
-    if int(c.text) > 0:
+    error_feature = ['#', '']
+    if int(c.text) > 0 and c.text not in error_feature:
         return int(c.text)
         # print("剩余题分：", int(c.text))
