@@ -57,7 +57,7 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
-        time.sleep(20)
+        time.sleep(15)
         if debug:
             print("等待认证")
         while self.d(text="请滑动阅读协议内容").exists():
@@ -65,7 +65,7 @@ class LoginMixin(BaseMixin):
                 print("发现协议")
             self.d.touch.down(814, 367).sleep(1).up(814, 367)
             self.d(text="同意").click()
-            time.sleep(10)
+            time.sleep(6)
         flag = False
         if self.d(text="Geetest").exists():
             flag = True
@@ -76,12 +76,24 @@ class LoginMixin(BaseMixin):
                 x, y = skip_caption(captcha_img=screen)
                 print("验证码坐标识别：", x, ',', y)
                 self.click(x, y, post_delay=1)
-                self.click(568, 443, post_delay=6)
+                self.click(568, 443, post_delay=3)
                 if self.d(text="Geetest").exists():
                     self.click(451, 442)
-                    x, y = skip_caption(captcha_img=screen)
-                    print("验证码2次坐标识别：", x, ',', y)
-                    self.click(x, y, post_delay=1)
+                    time.sleep(3)
+                    while self.d(text="Geetest").exists():
+                        screen = self.getscreen()
+                        x, y = skip_caption(captcha_img=screen)
+                        print("验证码n次坐标识别：", x, ',', y)
+                        self.click(x, y, post_delay=1)
+                        self.click(568, 443, post_delay=3)
+                        if debug:
+                            print("等待认证")
+                        while self.d(text="请滑动阅读协议内容").exists():
+                            if debug:
+                                print("发现协议")
+                            self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                            self.d(text="同意").click()
+                            time.sleep(6)
             else:
                 self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
                 if captcha_popup:
@@ -92,6 +104,7 @@ class LoginMixin(BaseMixin):
                     if not self.d(text="Geetest").exists():
                         flag = False
                         break
+
         if flag:
             return -1
         if debug:

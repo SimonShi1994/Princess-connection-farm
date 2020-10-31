@@ -65,9 +65,10 @@ def skip_caption(captcha_img):
     }
     while True:
         # 获取答案
+        error_feature = ['#', '']
         answer_result = requests.get(url=img_answer, data=img_answer_get, headers=img_hear_dict)
         time.sleep(2)
-        if answer_result.text != "":
+        if answer_result.text not in error_feature:
             answer_result = answer_result.text.split(',')
             return int(answer_result[0]), int(answer_result[1])
             # print(answer_result.text)565,296
