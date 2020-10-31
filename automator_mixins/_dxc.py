@@ -270,7 +270,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click_img(screen=screen_shot_, img='img/xiayibu.jpg')
             self.click_img(screen=screen_shot_, img='img/qianwangdixiacheng.jpg')
 
-            if stuck_today or stuck_notzhandoukaishi:
+            if stuck_today or stuck_notzhandoukaishi or self.dxc_switch == 1:
                 continue
 
             screen_shot = self.getscreen()

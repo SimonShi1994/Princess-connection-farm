@@ -2,11 +2,12 @@ import gc
 import time
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN
-from core.pcr_config import debug, captcha_wait_time, captcha_popup
+from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
+from ._captcha import skip_caption
 
 
 class LoginMixin(BaseMixin):
@@ -69,15 +70,28 @@ class LoginMixin(BaseMixin):
         if self.d(text="Geetest").exists():
             flag = True
             self.phone_privacy()
-            self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
-            if captcha_popup:
-                TimeoutMsgBox("!", f"{self.address}出现验证码\n账号：{self.account}", geo="200x80", timeout=captcha_wait_time)
-            now_time = time.time()
-            while time.time() - now_time < captcha_wait_time:
-                time.sleep(1)
-                if not self.d(text="Geetest").exists():
-                    flag = False
-                    break
+            if captcha_skip is False:
+                # 仅会识别两次，防止一直扣分
+                screen = self.getscreen()
+                x, y = skip_caption(captcha_img=screen)
+                print("验证码坐标识别：", x, ',', y)
+                self.click(x, y, post_delay=1)
+                self.click(568, 443, post_delay=6)
+                if self.d(text="Geetest").exists():
+                    self.click(451, 442)
+                    x, y = skip_caption(captcha_img=screen)
+                    print("验证码2次坐标识别：", x, ',', y)
+                    self.click(x, y, post_delay=1)
+            else:
+                self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
+                if captcha_popup:
+                    TimeoutMsgBox("!", f"{self.address}出现验证码\n账号：{self.account}", geo="200x80", timeout=captcha_wait_time)
+                now_time = time.time()
+                while time.time() - now_time < captcha_wait_time:
+                    time.sleep(1)
+                    if not self.d(text="Geetest").exists():
+                        flag = False
+                        break
         if flag:
             return -1
         if debug:

@@ -366,12 +366,13 @@ if __name__ == "__main__":
             ContinueSchedule()
     else:
         print("------------- 用户脚本控制台 --------------")
-        print("Ver 2.0.20201028")
+        print("Ver 2.0.20201031")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
         print("* Tip：如果要使用任何OCR（包括本地和网络），请手动启动app.py！")
+        print("* Tip：如果要自动填写验证码，请在config关闭captcha_skip")
         print("* Tip：如果某Schedule莫名无法运行，可能是存在未解决的错误，请参考introduce中错误解决相关部分！")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
