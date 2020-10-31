@@ -13,6 +13,7 @@ import adbutils
 import keyboard
 
 from automator_mixins._base import Multithreading, ForceKillException, FastScreencutException
+from automator_mixins._captcha import getpoint
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
@@ -23,6 +24,7 @@ from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import AutomatorRecorder, parse_batch
 from core.utils import diffday, PrintToStr
+
 
 abs_dir = os.path.abspath(adb_dir)
 if add_adb_to_path:
@@ -1099,6 +1101,8 @@ class Schedule:
         _time_start = time.time()  # 第一次直接输出初始状态
         if len(s_sckey) != 0 and self.name != "":
             acc_state = f"Schedule {self.name} 开始运行！\n"
+            point = getpoint()
+            acc_state += f"目前打码剩余题分为:{point} \n还可打码：{point//7}次\n"
             from CreateUser import _show_schedule
             acc_state += PrintToStr(_show_schedule, self.schedule)
             acc_state += PrintToStr(self.show_device)
@@ -1363,6 +1367,8 @@ class Schedule:
         """
         展示当前计划执行情况
         """
+        point = getpoint()
+        print(f"目前打码剩余题分为:{point} \n还可打码：{point//7}次\n")
         status = self.get_status(last_state)
         print("= 执行进度 =")
         for D in status:
