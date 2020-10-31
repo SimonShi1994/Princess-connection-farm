@@ -264,6 +264,7 @@ class AllDevices:
     def connect(self):
         _connect()
         dl = adbutils.adb.device_list()
+        self.add_from_config()
         for d in dl:
             self.add_device(d.serial)
 
