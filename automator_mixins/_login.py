@@ -100,12 +100,12 @@ class LoginMixin(BaseMixin):
                 for retry in range(3):
                     if self.d(text="Geetest").exists():
                         state = AutoCaptcha()
-                        print(state)
                         time.sleep(5)
                         if not state:
                             manual_captcha = True
                     else:
                         SkipAuth()
+                        flag = False
                         break
                 else:
                     manual_captcha = True
