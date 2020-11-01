@@ -131,6 +131,10 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 ## 更新历史
 
+2020/11/1 By:CyiceK
+
+- 接码功能完善
+
 2020/11/1 By:TheAutumnOfRice
 
 - 在模拟器开着的情况下，仍然支持自动控制了。

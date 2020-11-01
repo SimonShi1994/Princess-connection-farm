@@ -2,12 +2,12 @@ import gc
 import time
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN, START_UI
-from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip
+from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip, captcha_senderror
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
-from ._captcha import skip_caption
+from ._captcha import skip_caption, send_error
 
 
 class LoginMixin(BaseMixin):
@@ -76,12 +76,23 @@ class LoginMixin(BaseMixin):
         if self.d(text="Geetest").exists():
             flag = True
             self.phone_privacy()
+            _time = 1
 
             def AutoCaptcha():
+                nonlocal _time
                 screen = self.getscreen()
-                x, y = skip_caption(captcha_img=screen)
-                print("验证码坐标识别：", x, ',', y)
-                self.click(x, y, post_delay=2)
+                if self.d(textContains="下图").exists():
+                    print(">>>检测到图字结合题")
+                    # 结果出来为四个字的坐标
+                    answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
+                    for i in range(0, _len):
+                        self.click(answer_result[i], post_delay=1)
+                    print(">验证码坐标识别：", answer_result)
+                elif self.d(textContains="请点击").exists():
+                    print(">>>检测到图形题")
+                    answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6001")
+                    print(">验证码坐标识别：", answer_result)
+                    self.click(int(answer_result[0]), int(answer_result[1]), post_delay=1)
                 sc1 = self.getscreen()
 
                 def PopFun():
@@ -93,6 +104,13 @@ class LoginMixin(BaseMixin):
                         return False
 
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
+                if self.d(text="Geetest").exists() and _time <= 5:
+                    # 如果次数大于两次，则申诉题目
+                    if _time > 2 and captcha_senderror:
+                        send_error(_id)
+                    _time = + 1
+                    # 如果还有验证码就返回重试
+                    return AutoCaptcha()
                 return state
 
             manual_captcha = captcha_skip
