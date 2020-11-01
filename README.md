@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.1.20201031
+ # Princess connection 公主连结农场脚本v2.1.202011101
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -127,7 +127,12 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 ## 更新历史
 
-2020/10/31By:CyiceK
+2020/11/1 By:TheAutumnOfRice
+
+- 在模拟器开着的情况下，仍然支持自动控制了。
+- 优化了Login中对于验证码的处理
+
+2020/10/31 By:CyiceK
 
 - 接入打码平台实现验证码自动填写，教程在docs-如何接入打码平台.md
 

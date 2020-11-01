@@ -52,6 +52,7 @@ def p(x=None, y=None, name=None, img=None, at=None, **kwargs):
 # 游戏登陆界面的UI
 START_UI = {
     "queren": p(568, 443, img="img/ui/caption_queding.bmp", at=(514, 425, 623, 464)),
+    "imgbox": p(at=(354, 152, 613, 366)),
 }
 
 # 主页面的按钮对象

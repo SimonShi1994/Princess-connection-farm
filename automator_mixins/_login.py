@@ -58,60 +58,75 @@ class LoginMixin(BaseMixin):
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
         time.sleep(15)
-        if debug:
-            print("等待认证")
-        while self.d(text="请滑动阅读协议内容").exists():
+
+        def SkipAuth():
             if debug:
-                print("发现协议")
-            self.d.touch.down(814, 367).sleep(1).up(814, 367)
-            self.d(text="同意").click()
-            time.sleep(6)
+                print("等待认证")
+            while self.d(text="请滑动阅读协议内容").exists():
+                if debug:
+                    print("发现协议")
+                self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                self.d(text="同意").click()
+                time.sleep(6)
+            if debug:
+                print("结束认证")
+
+        SkipAuth()
         flag = False
         if self.d(text="Geetest").exists():
             flag = True
             self.phone_privacy()
-            if captcha_skip is False:
-                # 仅会识别两次，防止一直扣分
+
+            def AutoCaptcha():
                 screen = self.getscreen()
                 x, y = skip_caption(captcha_img=screen)
                 print("验证码坐标识别：", x, ',', y)
-                self.click(x, y, post_delay=1)
-                self.click_btn(START_UI["queren"], retry=5)
+                self.click(x, y, post_delay=2)
+                sc1 = self.getscreen()
+
+                def PopFun():
+                    sc2 = self.getscreen()
+                    p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
+                    if p < 0.85:
+                        return True
+                    else:
+                        return False
+
+                state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
+                return state
+
+            manual_captcha = captcha_skip
+            if captcha_skip is False:
+                for retry in range(3):
+                    if self.d(text="Geetest").exists():
+                        state = AutoCaptcha()
+                        print(state)
+                        time.sleep(5)
+                        if not state:
+                            manual_captcha = True
+                    else:
+                        SkipAuth()
+                        break
+                else:
+                    manual_captcha = True
+            if manual_captcha:
                 if self.d(text="Geetest").exists():
-                    self.click(451, 442)
-                    time.sleep(3)
-                    while self.d(text="Geetest").exists():
-                        screen = self.getscreen()
-                        x, y = skip_caption(captcha_img=screen)
-                        print("验证码n次坐标识别：", x, ',', y)
-                        self.click(x, y, post_delay=1)
-                        self.click_btn(START_UI["queren"], retry=5)
-                        if debug:
-                            print("等待认证")
-                        while self.d(text="请滑动阅读协议内容").exists():
-                            if debug:
-                                print("发现协议")
-                            self.d.touch.down(814, 367).sleep(1).up(814, 367)
-                            self.d(text="同意").click()
-                            time.sleep(6)
-                time.sleep(1)
+                    self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
+                    if captcha_popup:
+                        TimeoutMsgBox("!", f"{self.address}出现验证码\n账号：{self.account}", geo="200x80",
+                                      timeout=captcha_wait_time)
+                    now_time = time.time()
+                    while time.time() - now_time < captcha_wait_time:
+                        time.sleep(1)
+                        if not self.d(text="Geetest").exists():
+                            flag = False
+                            break
+                    time.sleep(1)
                 if not self.d(text="Geetest").exists():
                     flag = False
-            else:
-                self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
-                if captcha_popup:
-                    TimeoutMsgBox("!", f"{self.address}出现验证码\n账号：{self.account}", geo="200x80", timeout=captcha_wait_time)
-                now_time = time.time()
-                while time.time() - now_time < captcha_wait_time:
-                    time.sleep(1)
-                    if not self.d(text="Geetest").exists():
-                        flag = False
-                        break
-
+                    SkipAuth()
         if flag:
             return -1
-        if debug:
-            print("认证结束")
         if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.1):
             return 1  # 说明要进行认证
         else:
