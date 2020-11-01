@@ -320,8 +320,10 @@ class BaseMixin:
             img2 = UIMatcher.img_cut(img2, at)
         img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY) / 255
         img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY) / 255
-
-        return np.sum(np.abs(img1 - img2) < similarity) / img1.size
+        eqt = np.sum(np.abs(img1 - img2) < similarity) / img1.size
+        if debug:
+            print("EQT:", eqt)
+        return eqt
 
     def wait_for_stable(self, delay=0.5, threshold=0.2, similarity=0.001, max_retry=0, at=None, screen=None):
         """
@@ -593,16 +595,21 @@ class BaseMixin:
         if timeout is None:
             timeout = lockimg_timeout
         while True:
-            if self._move_check():
-                lasttime = time.time()
-                out = RTFun(*args, **kwargs)
-                if out:
-                    if ifclick != []:
-                        for clicks in ifclick:
-                            time.sleep(ifbefore)
-                            self.click(clicks[0], clicks[1], post_delay=elseafter)
-                            time.sleep(ifdelay)
-                    return out
+            self._move_check()
+            lasttime = time.time()
+            if debug:
+                print("FUN:", RTFun)
+                print("FUNOUT:", RTFun())
+            out = RTFun(*args, **kwargs)
+            if debug:
+                print("OUT:", out)
+            if out:
+                if ifclick != []:
+                    for clicks in ifclick:
+                        time.sleep(ifbefore)
+                        self.click(clicks[0], clicks[1], post_delay=elseafter)
+                        time.sleep(ifdelay)
+                return out
             if ec_time == 0:
                 # 第一次：必点
                 # 此后每次等待elsedelay
