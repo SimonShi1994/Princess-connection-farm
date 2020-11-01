@@ -43,7 +43,8 @@ max_reboot = cfg.getint('pcrfarm_setting', 'max_reboot')
 running_input = cfg.getboolean('pcrfarm_setting', 'running_input')
 captcha_skip = cfg.getboolean('pcrfarm_setting', 'captcha_skip')
 captcha_userstr = cfg.get('pcrfarm_setting', 'captcha_userstr')
-captcha_software_key = cfg.get('pcrfarm_setting', 'captcha_software_key')
+captcha_software_key = "5259|4A96796C70C8F0EA"
+captcha_senderror = cfg.getboolean('pcrfarm_setting', 'captcha_senderror')
 captcha_wait_time = cfg.getint('pcrfarm_setting', 'captcha_wait_time')
 captcha_popup = cfg.getboolean("pcrfarm_setting", "captcha_popup")
 
