@@ -26,3 +26,4 @@ numpy==1.19.0 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pillow -i https://pypi.douban.com/simple
 pyyaml -i https://pypi.douban.com/simple
 muggle-ocr
+protobuf==3.6.0
