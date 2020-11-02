@@ -46,6 +46,9 @@ class LoginMixin(BaseMixin):
         for retry in range(30):
             if not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
                 time.sleep(2)
+            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
+                self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
+                time.sleep(2)
             else:
                 break
         else:
