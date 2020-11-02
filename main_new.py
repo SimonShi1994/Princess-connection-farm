@@ -237,11 +237,12 @@ def JoinShutdown(nowait=False):
 
 def ShowGuide():
     print("/docs/introduce_to_schedule.md  Schedule使用帮助")
-    print("/INI文件配置解读.md               配置文件使用说明")
-    print("/AboutUpdater.md                自动更新使用说明")
-    print("/webclient/README.md            前端使用说明")
-    print("/tasks_example/                 样例任务json文件")
+    print("/docs/如何接入打码平台.md")
     print("/equip/                         自动发起捐赠所用的样例装备")
+    print("/INI文件配置解读.md               配置文件使用说明")
+    print("/AboutUpdater.md                自动更新使用说明（自动更新已经很久没更新过了，可能不能使用）")
+    print("/webclient/README.md            前端使用说明  (前端还不能用）")
+    print("/tasks_example/                 样例任务json文件")
 
 
 def ShowServerChan():
