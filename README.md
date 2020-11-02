@@ -135,6 +135,8 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 - 修复可推图探索卡在jingyan的BUG
 - 打码配置BUG修复
+- 增加模拟器过滤 ignore_serials
+- 防止“游客登陆”
 
 2020/11/1 By:CyiceK
 

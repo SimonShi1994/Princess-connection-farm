@@ -59,3 +59,4 @@ auto_emulator_address = cfg.getboolean("emulator_setting", "auto_emulator_addres
 emulator_address = json.loads(cfg.get('emulator_setting', 'emulator_address'))
 quit_emulator_when_free = cfg.getboolean('emulator_setting', 'quit_emulator_when_free')
 max_free_time = cfg.getint('emulator_setting', 'max_free_time')
+ignore_serials: Optional[list] = json.loads(cfg.get('emulator_setting', 'ignore_serials'))
