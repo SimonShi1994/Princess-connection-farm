@@ -436,11 +436,18 @@ class RoutineMixin(ShuatuBaseMixin):
                 if out:
                     c = self.get_upperright_stars(self.last_screen)
                     if c == 3:
+                        swc = self.switch
+                        self.switch = 0
                         self.zhandouzuobiao(30, 30, 2, use_saodang=True, saodang_ok2=MAIN_BTN["tansuo_saodangok2"])
+                        self.switch = swc
+                        # 这样写非常糟糕的
                         t += 2
                     else:
                         self.log.write_log("info", "最上的关卡还没有三星通关，即将进入战斗。")
-                        s = self.zhandouzuobiao(30, 30, 1, use_saodang=False)
+                        swc = self.switch
+                        self.switch = 0
+                        s = self.zhandouzuobiao(30, 30, 1, use_saodang=False, buy_tili=1)
+                        self.switch = swc
                         if s == 0:
                             self.log.write_log("warning", "探索战斗失败！")
                         elif s == 1:

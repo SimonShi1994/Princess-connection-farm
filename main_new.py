@@ -237,11 +237,12 @@ def JoinShutdown(nowait=False):
 
 def ShowGuide():
     print("/docs/introduce_to_schedule.md  Schedule使用帮助")
-    print("/INI文件配置解读.md               配置文件使用说明")
-    print("/AboutUpdater.md                自动更新使用说明")
-    print("/webclient/README.md            前端使用说明")
-    print("/tasks_example/                 样例任务json文件")
+    print("/docs/如何接入打码平台.md")
     print("/equip/                         自动发起捐赠所用的样例装备")
+    print("/INI文件配置解读.md               配置文件使用说明")
+    print("/AboutUpdater.md                自动更新使用说明（自动更新已经很久没更新过了，可能不能使用）")
+    print("/webclient/README.md            前端使用说明  (前端还不能用）")
+    print("/tasks_example/                 样例任务json文件")
 
 
 def ShowServerChan():
@@ -299,7 +300,14 @@ def ShowPCRPerformance():
     print("* Shift+P脚本暂停 enable_pause：", "已开启" if enable_pause else "未开启")
     print("* 最大重启重试次数 max_reboot：", max_reboot)
     print("* 运行时实时控制 running_input：", "已开启" if running_input else "未开启")
-    print("* 自动跳过验证码 captcha_skip：", "已开启" if captcha_skip else "未开启")
+    print("* 不使用自动打码 captcha_skip：", "已开启" if captcha_skip else "未开启")
+    if not captcha_skip:
+        print("  - 自动打码已启用！")
+        if captcha_userstr == "":
+            print("  - ！！！警告：没有输入打码平台用户名 captcha_userstr！！！")
+        else:
+            print("  - 已经接入打码平台 captcha_userstr！")
+        print("  - 错误打码时自动申诉 captcha_senderror：", "已开启" if captcha_senderror else "未开启")
     print("* 出现验证码后等待时间 captcha_wait_time：", captcha_wait_time)
     print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", "已开启" if captcha_popup else "未开启")
 
@@ -366,7 +374,7 @@ if __name__ == "__main__":
             ContinueSchedule()
     else:
         print("------------- 用户脚本控制台 --------------")
-        print("Ver 2.1.20201101")
+        print("Ver 2.1.20201102")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")
