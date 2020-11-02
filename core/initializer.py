@@ -20,7 +20,7 @@ from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
     trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
-    max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr
+    max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr, ignore_serials
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import AutomatorRecorder, parse_batch
 from core.utils import diffday, PrintToStr
@@ -240,6 +240,8 @@ class AllDevices:
         """
         添加一个设备，若该设备不存在，则添加；若该设备的状态为offline但已连接，更新状态为available
         """
+        if serial in ignore_serials:
+            return False
         if serial not in self.devices:
             self.devices[serial] = Device(serial, id, launcher)
             if self.devices[serial].is_connected():

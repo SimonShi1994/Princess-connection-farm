@@ -257,6 +257,7 @@ def ShowServerChan():
 
 def ShowAutoConsole():
     print("* ADB文件路径 adb_dir：", os.path.abspath(adb_dir))
+    print("* 忽略端口号 ignore_serials：", ignore_serials)
     print("* 自动添加至环境变量 add_adb_to_path：", "已开启" if add_adb_to_path else "未开启")
     if emulator_console != "":
         print("* 模拟器自动控制已配置！")
