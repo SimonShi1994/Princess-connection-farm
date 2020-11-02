@@ -10,11 +10,12 @@ from core.pcr_config import captcha_userstr, captcha_software_key
 from core.log_handler import pcr_log
 
 
-def skip_caption(captcha_img):
+def skip_caption(captcha_img, question_type):
     """
     2020/10/31
     关于验证码自动填写的独立出来一个py
     by:CyiceK
+    :param question_type: 题型
     :param captcha_img:
     :return: answer_result[0], answer_result[1] = x,y
     """
@@ -42,7 +43,7 @@ def skip_caption(captcha_img):
     }
     img_post = {
         'userstr': captcha_userstr,
-        'gameid': 'X6001',
+        'gameid': question_type,
         'timeout': 10,
         'rebate': captcha_software_key,
         'daiLi': 'haoi',
@@ -68,9 +69,26 @@ def skip_caption(captcha_img):
         error_feature = ['#', '']
         answer_result = requests.get(url=img_answer, data=img_answer_get, headers=img_hear_dict)
         time.sleep(2)
+        count_len = len(answer_result.text)
         if answer_result.text not in error_feature:
-            answer_result = answer_result.text.split(',')
-            return int(answer_result[0]), int(answer_result[1])
+            if count_len > 6:
+                # 466,365
+                answer_result = answer_result.text.split(',')
+                return answer_result, count_len, caption_id
+            else:
+                # 多坐标处理
+                answer_result = answer_result.text.split('|')
+                if len(answer_result) >= 4:
+                    tmp_list = []
+                    # 多坐标处理
+                    # 466,365|549,374|494,252|387,243
+                    # 转元组
+                    for i in range(0, count_len):
+                        tmp = answer_result[i]
+                        # print(tmp)
+                        tmp_list.append(tuple(map(int, tmp.split(','))))
+                        # [(466, 365), (549, 374), (494, 252), (387, 243)]
+                        return tmp_list, count_len, caption_id
             # print(answer_result.text)565,296
             # print("跳出")
 
@@ -99,3 +117,25 @@ def getpoint():
     if int(c.text) > 0 and c.text not in error_feature:
         return int(c.text)
         # print("剩余题分：", int(c.text))
+
+
+def send_error(_id):
+    if len(captcha_userstr) == 0 or len(captcha_software_key) == 0:
+        return 0
+    while True:
+        # 获取host
+        host_result = requests.get(url="http://3.haoi23.net/svlist.html").text
+        if host_result is not None:
+            host_result = str(host_result).replace("===", '').replace("+++", '')
+            host_result = host_result.split("--")
+            # print(host_result)
+            break
+    img_send_error = 'http://' + host_result[0] + '/SendError.aspx'
+    _send_error = {
+        'id': _id,
+        'r': random.randint(1000000000, 9999999999),
+    }
+    img_hear_dict = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    }
+    requests.get(url=img_send_error, data=_send_error, headers=img_hear_dict)

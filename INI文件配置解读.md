@@ -35,6 +35,7 @@
 |max_free_tine|空闲多久触发推出模拟器|int|单位：秒|120|
 |captcha_userstr|打码密码串|str||10001\|QASWC~G3A9|
 |captcha_software_key|打码的软件KEY|str||1001\|4A96~F0EA|
+|captcha_senderror|                         自动申诉题目                         |bool|成功返回分值，失败扣除双倍|True|
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|
 |captcha_wait_time|出现验证码后等待用户输入的时间|int||60|
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|

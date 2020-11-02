@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.1.202011101
+ # Princess connection 公主连结农场脚本v2.1.20201101
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -93,7 +93,11 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 - 出现“No module named 'XXX'，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
 - **第一次使用，完全不懂怎么办？** 
+
 [Schedule使用方法](docs/introduce_to_schedule.md)
+
+[如何接入打码平台](docs/如何接入打码平台.md)
+
 - 感觉还是不会使用，怎么办？
 
 更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
@@ -126,6 +130,10 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2020/11/1 By:CyiceK
+
+- 接码功能完善
 
 2020/11/1 By:TheAutumnOfRice
 
