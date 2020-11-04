@@ -6,7 +6,7 @@ import time
 import cv2
 import requests
 
-from core.pcr_config import captcha_userstr, captcha_software_key
+from core.pcr_config import captcha_userstr, captcha_software_key, captcha_level
 from core.log_handler import pcr_log
 
 
@@ -20,8 +20,14 @@ def skip_caption(captcha_img, question_type):
     :return: answer_result[0], answer_result[1] = x,y
     """
     if len(captcha_userstr) == 0 or len(captcha_software_key) == 0:
-        pcr_log('admin').write_log(level='error', message='打码-密码串或者软件KEY为空！')
+        pcr_log('admin').write_log(level='error', message='接码-密码串为空！')
         return False
+
+    if captcha_level == "小速":
+        question_type = question_type.replace('T', 'X')
+    elif captcha_level == "特速":
+        question_type = question_type.replace('X', 'T')
+
     while True:
         # 获取host
         host_result = requests.get(url="http://3.haoi23.net/svlist.html").text
@@ -74,7 +80,7 @@ def skip_caption(captcha_img, question_type):
             if count_len > 6:
                 # 466,365
                 answer_result = answer_result.text.split(',')
-                return answer_result, count_len, caption_id
+                return answer_result, count_len, caption_id.text
             else:
                 # 多坐标处理
                 answer_result = answer_result.text.split('|')
@@ -88,7 +94,7 @@ def skip_caption(captcha_img, question_type):
                         # print(tmp)
                         tmp_list.append(tuple(map(int, tmp.split(','))))
                         # [(466, 365), (549, 374), (494, 252), (387, 243)]
-                        return tmp_list, count_len, caption_id
+                        return tmp_list, count_len, caption_id.text
             # print(answer_result.text)565,296
             # print("跳出")
 

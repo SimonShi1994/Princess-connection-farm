@@ -2,7 +2,8 @@ import gc
 import time
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN, START_UI
-from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip, captcha_senderror
+from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip, captcha_senderror, \
+    captcha_senderror_times
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.utils import random_name, CreatIDnum
@@ -66,18 +67,20 @@ class LoginMixin(BaseMixin):
         def SkipAuth():
             if debug:
                 print("等待认证")
-            while self.d(text="请滑动阅读协议内容").exists():
+            while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                 if debug:
                     print("发现协议")
                 self.d.touch.down(814, 367).sleep(1).up(814, 367)
                 self.d(text="同意").click()
+                # 雷电三
+                self.d(description="同意").click()
                 time.sleep(6)
             if debug:
                 print("结束认证")
 
         SkipAuth()
         flag = False
-        if self.d(text="Geetest").exists():
+        if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
             flag = True
             self.phone_privacy()
             _time = 1
@@ -94,16 +97,16 @@ class LoginMixin(BaseMixin):
                     for i in range(0, _len):
                         if i % 2 == 0:
                             # Y轴
-                            self.click(round(answer_result[i] + 22, 2), post_delay=1)
+                            self.click(answer_result[i][1] + 22, 2, post_delay=1)
                         elif i % 2 != 0:
                             # X轴
-                            self.click(round(answer_result[i] + 254, 2), post_delay=1)
+                            self.click(round(answer_result[i][0] + 254, 2), post_delay=1)
                     print(">验证码坐标识别：", answer_result)
                 elif self.d(textContains="请点击").exists():
                     print(">>>检测到图形题")
                     answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6001")
-                    x = round(int(answer_result[0]) + 254, 2)
-                    y = round(int(answer_result[1]) + 22, 2)
+                    x = int(answer_result[0]) + 254
+                    y = int(answer_result[1]) + 22
                     print(">验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y, post_delay=1)
@@ -118,10 +121,11 @@ class LoginMixin(BaseMixin):
                         return False
 
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
-                if self.d(text="Geetest").exists() and _time <= 5:
+
+                if (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()) and _time <= 5:
                     # 如果次数大于两次，则申诉题目
-                    if _time > 2 and captcha_senderror:
-                        print("——申诉题目:", _id)
+                    if _time > captcha_senderror_times and captcha_senderror:
+                        print("—申诉题目:", _id)
                         send_error(_id)
                     _time = + 1
                     time.sleep(4)
@@ -132,7 +136,7 @@ class LoginMixin(BaseMixin):
             manual_captcha = captcha_skip
             if captcha_skip is False:
                 for retry in range(3):
-                    if self.d(text="Geetest").exists():
+                    if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                         state = AutoCaptcha()
                         time.sleep(5)
                         if not state:
@@ -144,7 +148,7 @@ class LoginMixin(BaseMixin):
                 else:
                     manual_captcha = True
             if manual_captcha:
-                if self.d(text="Geetest").exists():
+                if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
                     if captcha_popup:
                         TimeoutMsgBox("!", f"{self.address}出现验证码\n账号：{self.account}", geo="200x80",
@@ -152,11 +156,11 @@ class LoginMixin(BaseMixin):
                     now_time = time.time()
                     while time.time() - now_time < captcha_wait_time:
                         time.sleep(1)
-                        if not self.d(text="Geetest").exists():
+                        if not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                             flag = False
                             break
                     time.sleep(1)
-                if not self.d(text="Geetest").exists():
+                if not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                     flag = False
                     SkipAuth()
         if flag:

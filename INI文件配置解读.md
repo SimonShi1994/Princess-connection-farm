@@ -33,12 +33,15 @@
 |emulator_id|模拟器设备编号|list|目前只支持雷电|[0,1]|
 |quit_emulator_when_free|空闲时退出模拟器|bool||True|
 |max_free_tine|空闲多久触发推出模拟器|int|单位：秒|120|
-|captcha_userstr|打码密码串|str||10001\|QASWC~G3A9|
-|captcha_software_key|打码的软件KEY|str||1001\|4A96~F0EA|
+|captcha_level|接码平台的识别等级|str|特速双倍扣分哦|小速/特速|
+|captcha_userstr|接码密码串|str||10001\|QASWC~G3A9|
+|captcha_software_key|接码的软件KEY|str||1001\|4A96~F0EA|
 |captcha_senderror|                         自动申诉题目                         |bool|成功返回分值，失败扣除双倍|True|
+|captcha_senderror_times| 验证失败多少次后触发自动申诉题目 |int||2|
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|
 |captcha_wait_time|出现验证码后等待用户输入的时间|int||60|
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
+|ignore_serials|不连接的模拟器|str||["emulator-5554"]|
 
 ------
 
