@@ -61,7 +61,7 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
-        time.sleep(15)
+        time.sleep(13)
 
         def SkipAuth():
             if debug:
@@ -85,18 +85,28 @@ class LoginMixin(BaseMixin):
             def AutoCaptcha():
                 nonlocal _time
                 screen = self.getscreen()
+                screen = screen[22:512, 254:711]
+                # 456, 489
                 if self.d(textContains="下图").exists():
                     print(">>>检测到图字结合题")
                     # 结果出来为四个字的坐标
                     answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
                     for i in range(0, _len):
-                        self.click(answer_result[i], post_delay=1)
+                        if i % 2 == 0:
+                            # Y轴
+                            self.click(round(answer_result[i] / 0.905, 2), post_delay=1)
+                        elif i % 2 != 0:
+                            # X轴
+                            self.click(round(answer_result[i] / 0.475, 2), post_delay=1)
                     print(">验证码坐标识别：", answer_result)
                 elif self.d(textContains="请点击").exists():
                     print(">>>检测到图形题")
                     answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6001")
-                    print(">验证码坐标识别：", answer_result)
-                    self.click(int(answer_result[0]), int(answer_result[1]), post_delay=1)
+                    x = round(int(answer_result[0]) / 0.475, 2)
+                    y = round(int(answer_result[1]) / 0.905, 2)
+                    print(">验证码坐标识别：", x, ',', y)
+                    print(type(x))
+                    self.click(x, y, post_delay=1)
                 sc1 = self.getscreen()
 
                 def PopFun():
@@ -111,8 +121,10 @@ class LoginMixin(BaseMixin):
                 if self.d(text="Geetest").exists() and _time <= 5:
                     # 如果次数大于两次，则申诉题目
                     if _time > 2 and captcha_senderror:
+                        print("——申诉题目:", _id)
                         send_error(_id)
                     _time = + 1
+                    time.sleep(4)
                     # 如果还有验证码就返回重试
                     return AutoCaptcha()
                 return state
@@ -197,6 +209,10 @@ class LoginMixin(BaseMixin):
                     continue
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
+                    break
+                if self.d(text="Geetest").exists():
+                    self.click(667, 65, post_delay=3)
+                    # 防止卡验证码
                     break
                 else:
                     self.click(945, 13)
