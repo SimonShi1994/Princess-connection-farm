@@ -94,18 +94,18 @@ class LoginMixin(BaseMixin):
                     for i in range(0, _len):
                         if i % 2 == 0:
                             # Y轴
-                            self.click(round(answer_result[i] / 0.905, 2), post_delay=1)
+                            self.click(round(answer_result[i] + 22, 2), post_delay=1)
                         elif i % 2 != 0:
                             # X轴
-                            self.click(round(answer_result[i] / 0.475, 2), post_delay=1)
+                            self.click(round(answer_result[i] + 254, 2), post_delay=1)
                     print(">验证码坐标识别：", answer_result)
                 elif self.d(textContains="请点击").exists():
                     print(">>>检测到图形题")
                     answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6001")
-                    x = round(int(answer_result[0]) / 0.475, 2)
-                    y = round(int(answer_result[1]) / 0.905, 2)
+                    x = round(int(answer_result[0]) + 254, 2)
+                    y = round(int(answer_result[1]) + 22, 2)
                     print(">验证码坐标识别：", x, ',', y)
-                    print(type(x))
+                    # print(type(x))
                     self.click(x, y, post_delay=1)
                 sc1 = self.getscreen()
 
