@@ -65,18 +65,20 @@ class LoginMixin(BaseMixin):
         time.sleep(13)
 
         def SkipAuth():
-            if debug:
-                print("等待认证")
-            while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+            for _ in range(2):
+                # 有两个协议需要同意
                 if debug:
-                    print("发现协议")
-                self.d.touch.down(814, 367).sleep(1).up(814, 367)
-                self.d(text="同意").click()
-                # 雷电三
-                self.d(description="同意").click()
-                time.sleep(6)
-            if debug:
-                print("结束认证")
+                    print("等待认证")
+                while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                    if debug:
+                        print("发现协议")
+                    self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                    self.d(text="同意").click()
+                    # 雷电三
+                    self.d(description="同意").click()
+                    time.sleep(6)
+                if debug:
+                    print("结束认证")
 
         SkipAuth()
         flag = False
@@ -214,7 +216,7 @@ class LoginMixin(BaseMixin):
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
                     break
-                if self.d(text="Geetest").exists():
+                if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     self.click(667, 65, post_delay=3)
                     # 防止卡验证码
                     break
