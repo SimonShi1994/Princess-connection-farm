@@ -484,3 +484,49 @@ class RoutineMixin(ShuatuBaseMixin):
         ts["tansuo"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
+    def shengji(self, mode=0, times=5):
+        """
+            mode = 0 刷1+2（适合大号）
+            mode = 1 只刷1（适合小号日常）
+            mode = 2 只刷2（适合活动关）
+        """
+        def tryfun_shengji():
+            def sj1():
+                self.click(541, 260)
+                time.sleep(3)
+                swc = self.switch
+                self.switch = 0
+                self.zhandouzuobiao(30, 30, times, use_saodang=True)
+                self.switch = swc
+                time.sleep(0.5)
+                
+            def sj2():
+                self.click(539, 146)
+                time.sleep(3)
+                swc = self.switch
+                self.switch = 0
+                self.zhandouzuobiao(30, 30, times, use_saodang=True)
+                self.switch = swc
+                time.sleep(0.5)       
+     
+            if mode == 0:
+                sj1()
+                sj2()
+            elif mode == 1:
+                sj1()
+            else:
+                sj2()
+				
+        ts = self.AR.get("time_status", UDD["time_status"])
+        if not diffday(time.time(), ts["shengji"]):
+            self.log.write_log("info", "今天已经圣迹调查过了！")
+            return
+        
+        self.lock_home()
+        self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
+        self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
+        tryfun_shengji()
+        ts["shengji"] = time.time()
+        self.AR.set("time_status", ts)
+        self.lock_home()
+                               
