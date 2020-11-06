@@ -493,6 +493,12 @@ VALID_TASK = ValidTask() \
                                        "mode 0: 刷最上关卡（适合大号） \n"
                                        "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
                                        "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）")]) \
+    .add("r10", "shengji", "圣迹调查", "进行圣迹调查",
+         [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
+                                       "mode 0: 刷1+2\n"
+                                       "mode 1: 只刷1\n"
+                                       "mode 2: 只刷2"),
+          TaskParam("times", int, "次数", "只能为1~5的整数")]) \
     .add("t1", "rename", "重命名", "给自己换个名字",
          [TaskParam("name", str, "新名字", "你的新名字")]) \
     .add("t2", "save_box_screen", "box截图", "按照战力/等级/星数截屏前两行box",
