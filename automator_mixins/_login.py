@@ -62,7 +62,17 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
-        time.sleep(13)
+        while True:
+            # 快速响应
+            time.sleep(1)
+            sc = self.getscreen()
+            if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                break
+            elif self.is_exists(MAIN_BTN["liwu"], screen=sc):
+                break
+            elif self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
+                break
+            self.click(MAIN_BTN["zhuye"])
 
         def SkipAuth():
             for _ in range(2):
@@ -73,9 +83,11 @@ class LoginMixin(BaseMixin):
                     if debug:
                         print("发现协议")
                     self.d.touch.down(814, 367).sleep(1).up(814, 367)
-                    self.d(text="同意").click()
-                    # 雷电三
-                    self.d(description="同意").click()
+                    if self.d(text="请滑动阅读协议内容").exists():
+                        self.d(text="同意").click()
+                    if self.d(description="请滑动阅读协议内容").exists():
+                        # 雷电三
+                        self.d(description="同意").click()
                     time.sleep(6)
                 if debug:
                     print("结束认证")
