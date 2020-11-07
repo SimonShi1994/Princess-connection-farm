@@ -125,6 +125,10 @@ MAIN_BTN = {
     "zdjjc": p(578, 402),
     "gzjjc": p(820, 395),
 
+    # 圣迹调查
+    "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)), #圣迹调查
+    "shengji": p(736, 267, img="img/shengji/shengjidiaocha.bmp", at=(700, 225, 777, 302)),
+    
     # 右侧的kkr
     "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),
 
@@ -1007,6 +1011,7 @@ USER_DEFAULT_DICT = {
         "niudan": 0,  # 上次免费扭蛋时间
         "tansuo": 0,  # 上次探索时间
         "maizhuangbei": 0,  # 上次卖装备时间
+        "shengji": 0,   #上次圣迹调查时间
     }
     ,
     "daily_status": {
