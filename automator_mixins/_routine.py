@@ -484,6 +484,7 @@ class RoutineMixin(ShuatuBaseMixin):
         ts["tansuo"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
+        
     def shengji(self, mode=0, times=5, tili=False):
         """
             mode = 0 刷1+2（适合大号）
@@ -510,7 +511,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 sj1()
             else:
                 sj2()
-				
+                
         ts = self.AR.get("time_status", UDD["time_status"])
         if not diffday(time.time(), ts["shengji"]):
             self.log.write_log("info", "今天已经圣迹调查过了！")
@@ -519,6 +520,10 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_home()
         self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
         self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
+        if tili:
+            self.start_shuatu
+        if not self.check_shuatu:
+            return
         tryfun_shengji()
         ts["shengji"] = time.time()
         self.AR.set("time_status", ts)
