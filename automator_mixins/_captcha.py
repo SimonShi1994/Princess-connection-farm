@@ -8,8 +8,10 @@ import requests
 
 from core.pcr_config import captcha_userstr, captcha_software_key, captcha_level
 from core.log_handler import pcr_log
+from core.safe_u2 import timeout
 
 
+@timeout(15, "验证码验证超时：超过15秒")
 def skip_caption(captcha_img, question_type):
     """
     2020/10/31
@@ -74,7 +76,7 @@ def skip_caption(captcha_img, question_type):
         # 获取答案
         error_feature = ['#', '']
         answer_result = requests.get(url=img_answer, data=img_answer_get, headers=img_hear_dict)
-        time.sleep(2)
+        time.sleep(1)
         count_len = len(answer_result.text)
         if answer_result.text not in error_feature:
             if count_len > 6:

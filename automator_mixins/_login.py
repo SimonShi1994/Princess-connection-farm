@@ -101,20 +101,19 @@ class LoginMixin(BaseMixin):
 
             def AutoCaptcha():
                 nonlocal _time
+                time.sleep(5)
                 screen = self.getscreen()
                 screen = screen[22:512, 254:711]
                 # 456, 489
-                if self.d(textContains="下图").exists():
-                    print(">>>检测到图字结合题")
+                if self.d(textContains="在下图").exists():
+                    print(">>>检测到图字结合题!")
                     # 结果出来为四个字的坐标
                     answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
                     for i in range(0, _len):
-                        if i % 2 == 0:
-                            # Y轴
-                            self.click(answer_result[i][1] + 22, 2, post_delay=1)
-                        elif i % 2 != 0:
-                            # X轴
-                            self.click(round(answer_result[i][0] + 254, 2), post_delay=1)
+                        # Y轴
+                        self.click(answer_result[i][1] + 22, post_delay=1)
+                        # X轴
+                        self.click(answer_result[i][0] + 254, post_delay=1)
                     print(">验证码坐标识别：", answer_result)
                 elif self.d(textContains="请点击").exists():
                     print(">>>检测到图形题")
@@ -136,9 +135,14 @@ class LoginMixin(BaseMixin):
 
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
 
-                if (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()) and _time <= 5:
+                if (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
+                    if _time <= 5:
+                        print("重试次数太多啦，休息15s")
+                        time.sleep(15)
+                        _time = 0
+                        return AutoCaptcha()
                     # 如果次数大于两次，则申诉题目
-                    if _time > captcha_senderror_times and captcha_senderror:
+                    elif _time > captcha_senderror_times and captcha_senderror:
                         print("—申诉题目:", _id)
                         send_error(_id)
                     _time = + 1
