@@ -135,6 +135,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 2020/11/7 By:Monkey
 
 - 新增日常圣迹调查的扫荡
+- 新增run.bat，一键启动脚本
 
 2020/11/4 By:CyiceK
 
