@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.1.20201106
+ # Princess connection 公主连结农场脚本v2.1.20201107
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -93,6 +93,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 - 使用OCR相关的服务，请先启动**app.py**(双击/`python app.py`)
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 - 出现“No module named 'XXX'，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
+- 第一次正常运行后，就可以通过**run.bat**来一键启动
 - **第一次使用，完全不懂怎么办？** 
 
 [Schedule使用方法](docs/introduce_to_schedule.md)
