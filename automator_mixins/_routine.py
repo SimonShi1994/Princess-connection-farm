@@ -484,7 +484,7 @@ class RoutineMixin(ShuatuBaseMixin):
         ts["tansuo"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
-    def shengji(self, mode=0, times=5):
+    def shengji(self, mode=0, times=5, tili=False):
         """
             mode = 0 刷1+2（适合大号）
             mode = 1 只刷1（适合小号日常）
@@ -494,19 +494,13 @@ class RoutineMixin(ShuatuBaseMixin):
             def sj1():
                 self.click(541, 260)
                 time.sleep(3)
-                swc = self.switch
-                self.switch = 0
-                self.zhandouzuobiao(30, 30, times, use_saodang=True)
-                self.switch = swc
+                self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
                 time.sleep(0.5)
                 
             def sj2():
                 self.click(539, 146)
                 time.sleep(3)
-                swc = self.switch
-                self.switch = 0
-                self.zhandouzuobiao(30, 30, times, use_saodang=True)
-                self.switch = swc
+                self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
                 time.sleep(0.5)       
      
             if mode == 0:

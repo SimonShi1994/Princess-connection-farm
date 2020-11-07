@@ -498,7 +498,8 @@ VALID_TASK = ValidTask() \
                                        "mode 0: 刷1+2\n"
                                        "mode 1: 只刷1\n"
                                        "mode 2: 只刷2"),
-          TaskParam("times", int, "次数", "只能为1~5的整数")]) \
+          TaskParam("times", int, "次数", "只能为1~5的整数"),
+          TaskParam("tili", bool, "体力不足时是否购买体力")]) \
     .add("t1", "rename", "重命名", "给自己换个名字",
          [TaskParam("name", str, "新名字", "你的新名字")]) \
     .add("t2", "save_box_screen", "box截图", "按照战力/等级/星数截屏前两行box",
