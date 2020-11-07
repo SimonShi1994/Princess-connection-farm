@@ -521,8 +521,8 @@ class RoutineMixin(ShuatuBaseMixin):
         self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
         self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
         if tili:
-            self.start_shuatu
-        if not self.check_shuatu:
+            self.start_shuatu()
+        if not self.check_shuatu():
             return
         tryfun_shengji()
         ts["shengji"] = time.time()
