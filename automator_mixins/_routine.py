@@ -516,14 +516,15 @@ class RoutineMixin(ShuatuBaseMixin):
         if not diffday(time.time(), ts["shengji"]):
             self.log.write_log("info", "今天已经圣迹调查过了！")
             return
-        
-        self.lock_home()
-        self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
-        self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
+
         if tili:
             self.start_shuatu()
         if not self.check_shuatu():
             return
+		
+        self.lock_home()
+        self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
+        self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
         tryfun_shengji()
         ts["shengji"] = time.time()
         self.AR.set("time_status", ts)
