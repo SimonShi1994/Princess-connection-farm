@@ -62,17 +62,7 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
-        while True:
-            # 快速响应
-            time.sleep(1)
-            sc = self.getscreen()
-            if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
-                break
-            elif self.is_exists(MAIN_BTN["liwu"], screen=sc):
-                break
-            elif self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
-                break
-            self.click(MAIN_BTN["zhuye"])
+        time.sleep(12)
 
         def SkipAuth():
             for _ in range(2):
@@ -98,24 +88,28 @@ class LoginMixin(BaseMixin):
             flag = True
             self.phone_privacy()
             _time = 1
+            _id = 0
 
             def AutoCaptcha():
                 nonlocal _time
+                nonlocal _id
                 time.sleep(5)
                 screen = self.getscreen()
                 screen = screen[22:512, 254:711]
                 # 456, 489
-                if self.d(textContains="在下图").exists():
+                if self.d(textContains="请在下图依次").exists():
                     print(">>>检测到图字结合题!")
+                    # 当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！
+
                     # 结果出来为四个字的坐标
-                    answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
-                    for i in range(0, _len):
-                        # Y轴
-                        self.click(answer_result[i][1] + 22, post_delay=1)
-                        # X轴
-                        self.click(answer_result[i][0] + 254, post_delay=1)
-                    print(">验证码坐标识别：", answer_result)
-                elif self.d(textContains="请点击").exists():
+                    # answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
+                    # for i in range(0, _len):
+                    #     # Y轴
+                    #     self.click(answer_result[i][1] + 22, post_delay=1)
+                    #     # X轴
+                    #     self.click(answer_result[i][0] + 254, post_delay=1)
+                    # print(">验证码坐标识别：", answer_result)
+                if self.d(textContains="请点击").exists():
                     print(">>>检测到图形题")
                     answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6001")
                     x = int(answer_result[0]) + 254
@@ -134,6 +128,11 @@ class LoginMixin(BaseMixin):
                         return False
 
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
+
+                if _id == 0:
+                    time.sleep(4)
+                    # 检测到题目id为0就重新验证
+                    return AutoCaptcha()
 
                 if (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                     if _time <= 5:

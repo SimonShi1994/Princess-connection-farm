@@ -11,7 +11,7 @@ from core.log_handler import pcr_log
 from core.safe_u2 import timeout
 
 
-@timeout(15, "验证码验证超时：超过15秒")
+@timeout(60, "验证码验证超时：超过60秒")
 def skip_caption(captcha_img, question_type):
     """
     2020/10/31
@@ -72,13 +72,19 @@ def skip_caption(captcha_img, question_type):
         'id': caption_id,
         'r': random.randint(1000000000, 9999999999),
     }
+
+    # 原始计数器
+    _count_times = 0
+
     while True:
         # 获取答案
         error_feature = ['#', '']
         answer_result = requests.get(url=img_answer, data=img_answer_get, headers=img_hear_dict)
-        time.sleep(1)
+        time.sleep(2)
+        _count_times += 1
         count_len = len(answer_result.text)
         if answer_result.text not in error_feature:
+            print("开始处理")
             if count_len > 6:
                 # 466,365
                 answer_result = answer_result.text.split(',')
@@ -97,8 +103,15 @@ def skip_caption(captcha_img, question_type):
                         tmp_list.append(tuple(map(int, tmp.split(','))))
                         # [(466, 365), (549, 374), (494, 252), (387, 243)]
                         return tmp_list, count_len, caption_id.text
-            # print(answer_result.text)565,296
-            # print("跳出")
+        if answer_result.text is "#答案不确定" or _count_times >= 15:
+            print("答案不确定")
+            # 刷新验证码
+            answer_result = [162, 420]
+            # answer_result = tmp_list.split(',')
+            return answer_result, count_len, 0
+        # print(answer_result.text)
+        # 565,296
+        # print("跳出")
 
 
 def getpoint():
