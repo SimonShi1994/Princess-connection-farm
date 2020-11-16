@@ -11,6 +11,14 @@ from core.log_handler import pcr_log
 from core.safe_u2 import timeout
 
 
+# class Caption_Skip():
+#     def __init__(self):
+#         self.host_result = ''
+#         self._count_times = 0
+#         self.img = None
+#         self.question_type = 0
+
+
 @timeout(60, "验证码验证超时：超过60秒")
 def skip_caption(captcha_img, question_type):
     """
@@ -30,6 +38,8 @@ def skip_caption(captcha_img, question_type):
     elif captcha_level == "特速":
         question_type = question_type.replace('X', 'T')
 
+    # 这里存放有效的host的序号
+    effective_host = 0
     while True:
         # 获取host
         host_result = requests.get(url="http://3.haoi23.net/svlist.html").text
@@ -37,10 +47,19 @@ def skip_caption(captcha_img, question_type):
             host_result = str(host_result).replace("===", '').replace("+++", '')
             host_result = host_result.split("--")
             # print(host_result)
-            break
+            if requests.get(('http://' + host_result[0])).status_code == 200:
+                # print("host_result[0] 200")
+                host_result = host_result[effective_host]
+                break
+            elif requests.get(('http://' + host_result[1])).status_code == 200:
+                # print("host_result[1] 200")
+                break
+            else:
+                # print("无结果", host_result)
+                continue
 
-    img_post_url = 'http://' + host_result[0] + '/UploadBase64.aspx'
-    img_answer = 'http://' + host_result[0] + '/GetAnswer.aspx'
+    img_post_url = 'http://' + host_result + '/UploadBase64.aspx'
+    img_answer = 'http://' + host_result + '/GetAnswer.aspx'
     # 发送图片
     # img = cv2.imread('yanzhengma.png')
     img = captcha_img
@@ -78,13 +97,13 @@ def skip_caption(captcha_img, question_type):
 
     while True:
         # 获取答案
-        error_feature = ['#', '']
+        error_feature = ['#', '', ' ']
         answer_result = requests.get(url=img_answer, data=img_answer_get, headers=img_hear_dict)
-        time.sleep(2)
+        time.sleep(random.uniform(1.0, 2.88))
         _count_times += 1
         count_len = len(answer_result.text)
         if answer_result.text not in error_feature:
-            print("开始处理")
+            # print("开始处理")
             if count_len > 6:
                 # 466,365
                 answer_result = answer_result.text.split(',')
@@ -103,13 +122,13 @@ def skip_caption(captcha_img, question_type):
                         tmp_list.append(tuple(map(int, tmp.split(','))))
                         # [(466, 365), (549, 374), (494, 252), (387, 243)]
                         return tmp_list, count_len, caption_id.text
-        if answer_result.text is "#答案不确定" or _count_times >= 15:
-            print("答案不确定")
+        elif answer_result.text is "#答案不确定" or _count_times >= 7:
+            # print("答案不确定")
             # 刷新验证码
             answer_result = [162, 420]
             # answer_result = tmp_list.split(',')
             return answer_result, count_len, 0
-        # print(answer_result.text)
+        # print(answer_result, '', answer_result.text, '', _count_times)
         # 565,296
         # print("跳出")
 

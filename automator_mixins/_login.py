@@ -127,15 +127,15 @@ class LoginMixin(BaseMixin):
                     else:
                         return False
 
-                state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
-
                 if _id == 0:
                     time.sleep(4)
                     # 检测到题目id为0就重新验证
                     return AutoCaptcha()
 
+                state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
+
                 if (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
-                    if _time <= 5:
+                    if _time >= 5:
                         print("重试次数太多啦，休息15s")
                         time.sleep(15)
                         _time = 0
