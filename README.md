@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.1.20201116
+ # Princess connection 公主连结农场脚本v2.1.20201125
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -39,7 +39,7 @@
 
 4. 日常任务
 
-- [x] 家园领取
+- [x] 家园领取/升级
 - [x] 免费扭蛋
 - [x] 免费十连
 - [x] 收取礼物
@@ -67,15 +67,17 @@
 
 ## 环境
 
-需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
+- 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
-需要执行指令安装依赖:
+- 先cd进项目目录下
 
-```
-pip install -r requirements.txt
-```
+- 需要执行指令安装依赖（可能需要到`换源/科学上网`）:
 
-若使用模拟器，则可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试。
+  ```
+  pip install -r requirements.txt
+  ```
+
+~~若使用模拟器，则可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试。~~可能不需要到（
 
 建议使用雷电模拟器4，本项目中均以雷电模拟器4为示例。
 
@@ -90,7 +92,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 ## 使用方式
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
-- 使用OCR相关的服务，请先启动**app.py**(双击/`python app.py`)
+- 使用OCR相关的服务，请先启动**app.py**(双击app.py/`python app.py`)
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 - 出现“No module named 'XXX'，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
 - 第一次正常运行后，就可以通过**run.bat**来一键启动

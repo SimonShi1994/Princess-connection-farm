@@ -8,7 +8,7 @@ from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
-from ._captcha import skip_caption, send_error
+from ._captcha import CaptionSkip
 
 
 class LoginMixin(BaseMixin):
@@ -44,6 +44,7 @@ class LoginMixin(BaseMixin):
         :param pwd:
         :return:
         """
+
         for retry in range(30):
             if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
                 self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
@@ -91,6 +92,10 @@ class LoginMixin(BaseMixin):
             _id = 0
 
             def AutoCaptcha():
+
+                # 初始化接码
+                cs = CaptionSkip()
+
                 nonlocal _time
                 nonlocal _id
                 time.sleep(5)
@@ -98,8 +103,8 @@ class LoginMixin(BaseMixin):
                 screen = screen[22:512, 254:711]
                 # 456, 489
                 if self.d(textContains="请在下图依次").exists():
-                    print(">>>检测到图字结合题!")
-                    # 当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！
+                    print(f">>>{self.account}-检测到图字结合题!")
+                    print("当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
 
                     # 结果出来为四个字的坐标
                     # answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
@@ -109,14 +114,16 @@ class LoginMixin(BaseMixin):
                     #     # X轴
                     #     self.click(answer_result[i][0] + 254, post_delay=1)
                     # print(">验证码坐标识别：", answer_result)
-                if self.d(textContains="请点击").exists():
-                    print(">>>检测到图形题")
-                    answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6001")
+                elif self.d(textContains="请点击").exists():
+                    print(f">>>{self.account}-检测到图形题")
+                    answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
                     x = int(answer_result[0]) + 254
                     y = int(answer_result[1]) + 22
-                    print(">验证码坐标识别：", x, ',', y)
+                    print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y, post_delay=1)
+                else:
+                    print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），请加群带图联系开发者")
                 sc1 = self.getscreen()
 
                 def PopFun():
@@ -143,7 +150,7 @@ class LoginMixin(BaseMixin):
                     # 如果次数大于两次，则申诉题目
                     elif _time > captcha_senderror_times and captcha_senderror:
                         print("—申诉题目:", _id)
-                        send_error(_id)
+                        cs.send_error(_id)
                     _time = + 1
                     time.sleep(4)
                     # 如果还有验证码就返回重试
