@@ -207,13 +207,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             while True:
                 if self.is_exists(FIGHT_BTN["caidan"]):
                     break
-                self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(833, 470)], ifbefore=self.change_time,
+                self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(833, 470)], ifbefore=self.change_time+1,
                               ifdelay=self.change_time, retry=3)
                 self.lock_no_img('img/ui/ok_btn_1.bmp', elseclick=[(588, 480)])
                 break
 
             if skip:  # 直接放弃战斗
-                self.lock_img(FIGHT_BTN["caidan"], elseclick=[(1, 1)], retry=12)
+                self.lock_img(FIGHT_BTN["caidan"], elseclick=[(1, 1)], retry=10)
                 self.click_btn(FIGHT_BTN["caidan"], wait_self_before=True, until_appear=FIGHT_BTN["fangqi_1"],
                                elsedelay=0.1)
                 self.click_btn(FIGHT_BTN["fangqi_1"], until_appear=FIGHT_BTN["fangqi_2"])

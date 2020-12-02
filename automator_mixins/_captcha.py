@@ -30,7 +30,7 @@ class CaptionSkip:
         self.img_send_error = 'http://' + self.host_result + '/SendError.aspx'
         self.img_getpoint = 'http://' + self.host_result + '/GetPoint.aspx'
         self.error_feature = ['#', '', ' ']
-        self.no_result = ["#答案不确定", "超时", "不扣分"]
+        self.no_result = ["#答案不确定", "超时", "不扣分", "#"]
         self.img_hear_dict = {
             'Content-Type': 'application/x-www-form-urlencoded',
         }
@@ -118,7 +118,7 @@ class CaptionSkip:
         # print(img_post_url)
         # 题号
         caption_id = self.conversation.post(url=self.img_post_url, data=img_post, headers=self.img_hear_dict)
-        print(">图片发送了~")
+        print(">图片发送了……")
         if caption_id.text in self.error_feature:
             pcr_log('admin').write_log(level='error', message=caption_id.text)
         # print(caption_id.text)
