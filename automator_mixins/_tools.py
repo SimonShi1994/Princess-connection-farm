@@ -38,6 +38,8 @@ class ToolsMixin(BaseMixin):
         last = time.time()
         while True:
             sc = self.getscreen()
+            if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
+                self.click(MAIN_BTN["xiazai"])
             num_of_white, _, x, y = UIMatcher.find_gaoliang(sc)
             if num_of_white < 77000:
                 self.chulijiaocheng(None)  # 增加对教程的处理功能
@@ -58,6 +60,8 @@ class ToolsMixin(BaseMixin):
             screen_shot_ = self.getscreen()
             if self.is_exists(MAIN_BTN["liwu"], screen=screen_shot_):
                 break
+            if self.is_exists(MAIN_BTN["xiazai"], screen=screen_shot_):
+                self.click(MAIN_BTN["xiazai"])
             if self.is_exists(MAIN_BTN["tiaoguo"], screen=screen_shot_):
                 self.click(893, 39, post_delay=0.5)  # 跳过
                 continue

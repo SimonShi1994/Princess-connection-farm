@@ -135,6 +135,13 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 ## 更新历史
 
+2020/12/2 By:TheAutumnOfRice
+
+- 增加17图
+- 增加自动点击“下载”（更新数据）的功能
+- 如果没有来得及更新图导致检测失败，则向左点三次图
+- Config中fastscreen_timeout的默认值从10改为3
+
 2020/11/11 By:TheAutumnOfRice
 
 - 增加16图

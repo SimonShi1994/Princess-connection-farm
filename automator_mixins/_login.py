@@ -44,7 +44,12 @@ class LoginMixin(BaseMixin):
         :param pwd:
         :return:
         """
-
+        # 也许你已经注意到，这个整个登陆函数已经成了屎山了，
+        # 每次只要出现登陆部分的BUG都要改半天
+        # 你永远不知道你程序当前运行在哪个函数里,auth?login_auth?login?do_login?init_home?lock_home?
+        # 如果你想知道，建议在config中把disable_timeout_raise给开启，
+        # 然后在程序运行时按Ctrl+C，如果你运气好，你会看到你程序卡在哪里。
+        # 我放弃了。  新增自动点击“下载”，自动下载新增数据功能， 2020-11-23 By TheAutumnOfRice
         for retry in range(30):
             if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
                 self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
@@ -64,6 +69,19 @@ class LoginMixin(BaseMixin):
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
         time.sleep(12)
+        while True:
+            # 快速响应
+            time.sleep(1)
+            sc = self.getscreen()
+            if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
+                self.click(MAIN_BTN["xiazai"])
+            if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                break
+            elif self.is_exists(MAIN_BTN["liwu"], screen=sc):
+                break
+            elif self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
+                break
+            self.click(MAIN_BTN["zhuye"])
 
         def SkipAuth():
             for _ in range(2):
@@ -206,7 +224,7 @@ class LoginMixin(BaseMixin):
         error_flag = 0
         try:
             # 看是否跳出主菜单
-            self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
+            self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369), (678, 377)])
             self.lock_no_img('img/ok.bmp', elseclick=[(591, 369)], at=(495, 353, 687, 388))
 
             try_count = 0
@@ -244,6 +262,7 @@ class LoginMixin(BaseMixin):
                     break
                 else:
                     self.click(945, 13)
+                    self.click(678, 377)  # 下载
             return self.do_login(ac, pwd)
         except Exception as e:
             if error_flag:
