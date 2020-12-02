@@ -849,6 +849,8 @@ class BaseMixin:
                 continue
             elif UIMatcher.img_where(screen_shot_, 'img/jiaruhanghui.jpg'):
                 break
+            elif self.is_exists(MAIN_BTN["xiazai"], screen=screen_shot_):
+                self.click(MAIN_BTN["xiazai"])
             elif self.click_img(screen_shot_, 'img/xiayibu.jpg'):
                 time.sleep(2)
             elif self.click_img(screen_shot_, 'img/niudan_jiasu.jpg', at=(700, 0, 960, 100)):

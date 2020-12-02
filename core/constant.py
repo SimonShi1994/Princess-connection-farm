@@ -57,6 +57,8 @@ START_UI = {
 
 # 主页面的按钮对象
 MAIN_BTN = {
+    # 下载
+    "xiazai": p(584, 369, img="img/home/xiazai.bmp", at=(564, 356, 615, 382)),
     # 主页
     "zhuye": p(131, 533, name="我的主页"),
     # 行会按钮 
