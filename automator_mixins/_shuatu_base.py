@@ -1834,8 +1834,14 @@ class ShuatuBaseMixin(FightBaseMixin):
                             # 决推图，Win后出现限定商店后直接暴毙的问题
                         continue
                     elif retry_cnt == 2:
+                        for _ in range(3):
+                            self.goLeft()  # 可能没更新新图？
+                        continue
+                    elif retry_cnt == 3:
                         self.lock_home()  # 发大招
                         self.enter_normal()
+                        for _ in range(3):
+                            self.goLeft()  # 可能没更新新图？
                         continue
                     else:
                         raise Exception("Normal 图号识别失败！")
@@ -1879,8 +1885,14 @@ class ShuatuBaseMixin(FightBaseMixin):
                             self.click(76, 15)  # 防止奇怪对话框
                         continue
                     elif retry_cnt == 2:
+                        for _ in range(3):
+                            self.goLeft()  # 可能没更新新图？
+                        continue
+                    elif retry_cnt == 3:
                         self.lock_home()  # 发大招
                         self.enter_hard()
+                        for _ in range(3):
+                            self.goLeft()  # 可能没更新新图？
                         continue
                     else:
                         raise Exception("Hard 图号识别失败！")
