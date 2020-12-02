@@ -13,7 +13,7 @@ import adbutils
 import keyboard
 
 from automator_mixins._base import Multithreading, ForceKillException, FastScreencutException
-from automator_mixins._captcha import getpoint
+from automator_mixins._captcha import CaptionSkip
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
@@ -1367,6 +1367,7 @@ class Schedule:
         """
         展示当前计划执行情况
         """
+
         status = self.get_status(last_state)
         print("= 执行进度 =")
         for D in status:
@@ -1406,7 +1407,8 @@ class Schedule:
                             print("+ ", _acc, ":", _err)
 
         if not captcha_skip and captcha_userstr != "":
-            point = getpoint()
+            cs = CaptionSkip()
+            point = cs.getpoint()
             print(f"`目前打码剩余题分为:{point} `\n`还可打码：{point // 7}次`\n")
 
     def show_queue(self):

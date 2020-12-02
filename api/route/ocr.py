@@ -1,4 +1,5 @@
 import queue
+import time
 from flask import Blueprint, jsonify, request
 
 from aip import AipOcr
@@ -45,6 +46,7 @@ def baidu_ocr():
     }
     client = AipOcr(**config)
     if img:
+        time.sleep(0.8)
         part = queue.get()
         result = client.basicGeneral(part)
         return result

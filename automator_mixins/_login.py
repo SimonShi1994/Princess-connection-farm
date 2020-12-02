@@ -8,7 +8,7 @@ from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
-from ._captcha import skip_caption, send_error
+from ._captcha import CaptionSkip
 
 
 class LoginMixin(BaseMixin):
@@ -68,6 +68,7 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
+        time.sleep(12)
         while True:
             # 快速响应
             time.sleep(1)
@@ -106,31 +107,41 @@ class LoginMixin(BaseMixin):
             flag = True
             self.phone_privacy()
             _time = 1
+            _id = 0
 
             def AutoCaptcha():
+
+                # 初始化接码
+                cs = CaptionSkip()
+
                 nonlocal _time
+                nonlocal _id
                 time.sleep(5)
                 screen = self.getscreen()
                 screen = screen[22:512, 254:711]
                 # 456, 489
-                if self.d(textContains="在下图").exists():
-                    print(">>>检测到图字结合题!")
+                if self.d(textContains="请在下图依次").exists():
+                    print(f">>>{self.account}-检测到图字结合题!")
+                    print("当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
+
                     # 结果出来为四个字的坐标
-                    answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
-                    for i in range(0, _len):
-                        # Y轴
-                        self.click(answer_result[i][1] + 22, post_delay=1)
-                        # X轴
-                        self.click(answer_result[i][0] + 254, post_delay=1)
-                    print(">验证码坐标识别：", answer_result)
+                    # answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
+                    # for i in range(0, _len):
+                    #     # Y轴
+                    #     self.click(answer_result[i][1] + 22, post_delay=1)
+                    #     # X轴
+                    #     self.click(answer_result[i][0] + 254, post_delay=1)
+                    # print(">验证码坐标识别：", answer_result)
                 elif self.d(textContains="请点击").exists():
-                    print(">>>检测到图形题")
-                    answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6001")
+                    print(f">>>{self.account}-检测到图形题")
+                    answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
                     x = int(answer_result[0]) + 254
                     y = int(answer_result[1]) + 22
-                    print(">验证码坐标识别：", x, ',', y)
+                    print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y, post_delay=1)
+                else:
+                    print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），请加群带图联系开发者")
                 sc1 = self.getscreen()
 
                 def PopFun():
@@ -141,10 +152,15 @@ class LoginMixin(BaseMixin):
                     else:
                         return False
 
+                if _id == 0:
+                    time.sleep(4)
+                    # 检测到题目id为0就重新验证
+                    return AutoCaptcha()
+
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
 
                 if (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
-                    if _time <= 5:
+                    if _time >= 5:
                         print("重试次数太多啦，休息15s")
                         time.sleep(15)
                         _time = 0
@@ -152,7 +168,7 @@ class LoginMixin(BaseMixin):
                     # 如果次数大于两次，则申诉题目
                     elif _time > captcha_senderror_times and captcha_senderror:
                         print("—申诉题目:", _id)
-                        send_error(_id)
+                        cs.send_error(_id)
                     _time = + 1
                     time.sleep(4)
                     # 如果还有验证码就返回重试

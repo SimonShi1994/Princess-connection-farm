@@ -81,12 +81,14 @@ class BaseMixin:
         if fast_screencut:
             self.lport: Optional[int] = None
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
-    def save_last_screen(self,filename):
+
+    def save_last_screen(self, filename):
         if self.last_screen is not None:
             try:
-                cv2.imwrite(filename,self.last_screen)
+                cv2.imwrite(filename, self.last_screen)
             except Exception as e:
-                self.log.write_log("error",f"保存最后一次截图失败：{e}")
+                self.log.write_log("error", f"保存最后一次截图失败：{e}")
+
     def do_nothing(self):
         # 啥事不干
         self.log.write_log("info", "Do nothing.")
@@ -1003,13 +1005,15 @@ class BaseMixin:
         }
         os.system('cd adb & adb -s %s shell setprop ro.product.model %s' % (self.address, phone_model[tmp_rand[0]]))
         os.system(
-            'cd adb & adb -s %s shell setprop ro.product.manufacturer %s' % (self.address, phone_manufacturer[tmp_rand[1]]))
+            'cd adb & adb -s %s shell setprop ro.product.manufacturer %s' % (
+            self.address, phone_manufacturer[tmp_rand[1]]))
         os.system('cd adb & adb -s %s shell setprop phone.imei %s' % (self.address, _get_imei(15)))
         os.system('cd adb & adb -s %s shell setprop ro.product.name %s' % (self.address, phone_model[tmp_rand[2]]))
         os.system('cd adb & adb -s %s shell setprop phone.imsi %s' % (self.address, _get_imei(15)))
         os.system('cd adb & adb -s %s shell setprop phone.linenum %s' % (self.address, _get_imei(11)))
         os.system('cd adb & adb -s %s shell setprop phone.simserial %s' % (self.address, _get_imei(20)))
         # print("》》》匿名完毕《《《")
+
 
 class Multithreading(threading.Thread, BaseMixin):
     """
