@@ -534,7 +534,7 @@ DXC_COORD = {
         5: p(297, 190)
     }
 }
-MAX_MAP = 15
+MAX_MAP = 17
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -689,6 +689,7 @@ ZHUXIAN_ID = {
     14: p(img="img/zhuxian/14.bmp", at=(442, 74, 541, 88)),
     15: p(img="img/zhuxian/15.bmp", at=(450, 74, 536, 90)),
     16: p(img="img/zhuxian/16.bmp", at=(450, 74, 534, 87)),
+    17: p(img="img/zhuxian/17.bmp", at=(448, 71, 539, 90)),
 }
 
 NORMAL_COORD = {
