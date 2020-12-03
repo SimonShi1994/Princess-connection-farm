@@ -77,7 +77,13 @@
   pip install -r requirements.txt
   ```
 
-~~若使用模拟器，则可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试。~~可能不需要到（
+- 如果上面的指令执行后感觉比较慢的话，可以试一下:
+
+  ```
+  pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+  ```
+
+~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。（建议先试一下不设置的情况
 
 建议使用雷电模拟器4，本项目中均以雷电模拟器4为示例。
 
