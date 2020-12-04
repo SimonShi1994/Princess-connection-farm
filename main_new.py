@@ -1,5 +1,7 @@
 import sys
 import traceback
+import requests
+from requests.adapters import HTTPAdapter
 
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.initializer import PCRInitializer, Schedule
@@ -374,8 +376,20 @@ if __name__ == "__main__":
             BindSchedule(argv[2])
             ContinueSchedule()
     else:
+        try:
+            s = requests.Session()
+            s.mount('http://', HTTPAdapter(max_retries=3))
+            s.mount('https://', HTTPAdapter(max_retries=3))
+            api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm"
+            all_info = s.get(api_url).json()
+            new_time = all_info["updated_at"]
+            update_info = f"最新版本为 {new_time}"
+        except:
+            update_info = "最新版本为 {当前无法连接到github！}"
+
         print("------------- 用户脚本控制台 --------------")
-        print("Ver 2.1.20201204")
+        print("当前版本为 Ver 2.1.20201204")
+        print(update_info)
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")

@@ -5,6 +5,7 @@ import time
 
 import cv2
 import requests
+from requests.adapters import HTTPAdapter
 
 from core.pcr_config import captcha_userstr, captcha_software_key, captcha_level
 from core.log_handler import pcr_log
@@ -25,6 +26,8 @@ class CaptionSkip:
         self.question_type = 0
         self.conversation = requests.Session()
         self.conversation.keep_alive = False
+        s.mount('http://', HTTPAdapter(max_retries=3))
+        s.mount('https://', HTTPAdapter(max_retries=3))
         self.img_post_url = 'http://' + self.host_result + '/UploadBase64.aspx'
         self.img_answer = 'http://' + self.host_result + '/GetAnswer.aspx'
         self.img_send_error = 'http://' + self.host_result + '/SendError.aspx'
