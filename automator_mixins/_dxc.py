@@ -208,7 +208,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists(FIGHT_BTN["caidan"]):
                     break
                 self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(833, 470)], ifbefore=self.change_time+1,
-                              ifdelay=self.change_time, retry=3)
+                              ifdelay=self.change_time, retry=10)
                 self.lock_no_img('img/ui/ok_btn_1.bmp', elseclick=[(588, 480)])
                 break
 

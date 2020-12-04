@@ -176,18 +176,17 @@ class RoutineMixin(ShuatuBaseMixin):
             var.setdefault("cur", 0)
         self.lock_home()
         while var["cur"] < times:
-            self.lock_img(img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394), elseclick=MAIN_BTN["tili_plus"],
-                          elsedelay=2, retry=3)
-
-            # 这里限制了一天只能够购买多少次体力
-            try:
-                if limit_today:
-                    tili_time = self.ocr_center(530, 313, 583, 338, size=1.2).split('/')
-                    tili_time = int(tili_time[1]) - int(tili_time[0])
-                    if tili_time >= times:
-                        return False
-            except:
-                pass
+            if self.lock_img(img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394), elseclick=MAIN_BTN["tili_plus"],
+                             elsedelay=2, retry=3):
+                # 这里限制了一天只能够购买多少次体力
+                try:
+                    if limit_today:
+                        tili_time = self.ocr_center(530, 313, 583, 338, size=1.2).split('/')
+                        tili_time = int(tili_time[1]) - int(tili_time[0])
+                        if tili_time >= times:
+                            return False
+                except:
+                    pass
 
             state = self.lock_img(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_plus"], elsedelay=2, retry=3)
             if not state:
@@ -484,26 +483,27 @@ class RoutineMixin(ShuatuBaseMixin):
         ts["tansuo"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
-        
+
     def shengji(self, mode=0, times=5, tili=False):
         """
             mode = 0 刷1+2（适合大号）
             mode = 1 只刷1（适合小号日常）
             mode = 2 只刷2（适合活动关）
         """
+
         def tryfun_shengji():
             def sj1():
                 self.click(541, 260)
                 time.sleep(3)
                 self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
                 time.sleep(0.5)
-                
+
             def sj2():
                 self.click(539, 146)
                 time.sleep(3)
                 self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
-                time.sleep(0.5)       
-     
+                time.sleep(0.5)
+
             if mode == 0:
                 sj1()
                 sj2()
@@ -511,7 +511,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 sj1()
             else:
                 sj2()
-                
+
         ts = self.AR.get("time_status", UDD["time_status"])
         if not diffday(time.time(), ts["shengji"]):
             self.log.write_log("info", "今天已经圣迹调查过了！")
@@ -521,7 +521,7 @@ class RoutineMixin(ShuatuBaseMixin):
             self.start_shuatu()
         if not self.check_shuatu():
             return
-		
+
         self.lock_home()
         self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
         self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
@@ -529,4 +529,3 @@ class RoutineMixin(ShuatuBaseMixin):
         ts["shengji"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
-                               

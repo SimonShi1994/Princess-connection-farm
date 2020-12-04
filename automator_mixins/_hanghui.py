@@ -18,7 +18,8 @@ class HanghuiMixin(ToolsMixin):
         行会自动捐赠装备
         2020/8/6 By:CyiceK 检查完毕
         """
-        self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time, at=(891, 413, 930, 452))  # 回首页
+        self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time,
+                      at=(891, 413, 930, 452))  # 回首页
         # self.d.click(693, 436)
         self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=2)  # 锁定进入行会
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5, side_check=self.juqing_kkr)
@@ -66,7 +67,8 @@ class HanghuiMixin(ToolsMixin):
         # 进入
         self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["hanghui_title"])
         # 管理界面
-        self.click_btn(HANGHUI_BTN["chengyuanxinxi"], elsedelay=1, until_appear=HANGHUI_BTN["shaixuantiaojian_chengyuan"])
+        self.click_btn(HANGHUI_BTN["chengyuanxinxi"], elsedelay=1,
+                       until_appear=HANGHUI_BTN["shaixuantiaojian_chengyuan"])
         # 筛选全角色战力
         self.click_btn(HANGHUI_BTN["shaixuantiaojian_chengyuan"], elsedelay=1, until_appear=HANGHUI_BTN["fenlei"])
         self.click_btn(HANGHUI_BTN["zhanli_chengyuan"], elsedelay=1, until_appear=HANGHUI_BTN["zhanli_chengyuan"])

@@ -68,7 +68,6 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
-        time.sleep(12)
         while True:
             # 快速响应
             time.sleep(1)
@@ -159,7 +158,7 @@ class LoginMixin(BaseMixin):
 
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
 
-                if (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
+                if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     if _time >= 5:
                         print("重试次数太多啦，休息15s")
                         time.sleep(15)

@@ -116,7 +116,7 @@ class AsyncMixin(ToolsMixin):
                     # 数据错误
                     raise Exception("数据错误，重启。")
 
-                elif cumulative_time < 10:
+                elif cumulative_time < 8:
                     cumulative_time = cumulative_time + 1
 
                 time.sleep(bad_connecting_time + cumulative_time)
