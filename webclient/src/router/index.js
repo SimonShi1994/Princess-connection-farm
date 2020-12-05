@@ -1,5 +1,6 @@
 import React from 'react'
 import { Route, Switch } from 'react-router'
+import { Link } from 'react-router-dom'
 import routerconfig from '../config/routerconfig'
 import Container from '../components/container'
 
@@ -9,9 +10,10 @@ const Router = () => (
             <Switch>
                 {routerconfig.map(
                     route => (
-                        <Route key={route.path} path={route.path}>
-                            {route.component}
-                        </Route>
+                        <Route key={route.path} path={route.path} render={props => (
+                            // pass the sub-routes down to keep nesting
+                            <route.component {...props} />
+                          )} />
                     )
                 )}
             </Switch>

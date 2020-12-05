@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import Router from "./router";
 import 'antd/dist/antd.css';
 import './index.css';
@@ -17,13 +17,12 @@ if (module.hot) {
   });
 }
  
- 
 function renderWithHotReload(Router) {
   ReactDOM.render(
     <AppContainer>
-      <BrowserRouter>
+      <HashRouter>
         <Router />
-      </BrowserRouter>
+      </HashRouter>
     </AppContainer>,
     document.getElementById("app")
   );

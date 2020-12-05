@@ -11,7 +11,7 @@ module.exports = {
         // 输出目录
         path: path.join(__dirname, "dist"),
         // 文件名称
-        filename: "bundle.js"
+        filename: "bundle.js",
     },
     resolve: {
         alias: {
@@ -26,10 +26,9 @@ module.exports = {
         host: "0.0.0.0", // 可以使用手机访问
         port: 8080,
         historyApiFallback: true, // 该选项的作用所有的404都连接到index.html
-        hot: true,
         proxy: {
             // 代理到后端的服务地址，会拦截所有以api开头的请求地址
-            "/api": "http://localhost:5000"
+            "/api": "http://127.0.0.1:5000/api"
         }
     },
     module: {
@@ -68,8 +67,9 @@ module.exports = {
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             filename: 'index.html', // 最终创建的文件名
-            template: path.join(__dirname, 'src/index.html') // 指定模板路径
+            template: path.join(__dirname, 'index.html') // 指定模板路径
         }),
+        new webpack.HotModuleReplacementPlugin()
     ],
 
     devServer: {}
