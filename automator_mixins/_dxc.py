@@ -177,11 +177,16 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 pass
             # if self.lock_no_img(DXC_ELEMENT["zhiyuan_blue"], retry=1):
             else:
-                pcr_log(self.account).write_log(level='info', message="%s无支援人物!" % self.account)
+                pcr_log(self.account).write_log(level='info', message="%s 无支援人物!" % self.account)
                 self.dxc_switch = 1
                 break
 
             if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
+                # 如果第二个也等级不足就退出
+                if self.is_exists('img/dengjixianzhi.jpg', at=(160, 126, 270, 232)):
+                    pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)
+                    self.dxc_switch = 1
+                    break
                 # 如果等级不足，就支援的第二个人
                 self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num + 1],
                                until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
@@ -213,7 +218,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 break
 
             if skip:  # 直接放弃战斗
-                self.lock_img(FIGHT_BTN["caidan"], elseclick=[(1, 1)], retry=10)
+                self.lock_img(FIGHT_BTN["caidan"], elseclick=[(1, 1)], retry=5)
                 self.click_btn(FIGHT_BTN["caidan"], wait_self_before=True, until_appear=FIGHT_BTN["fangqi_1"],
                                elsedelay=0.1)
                 self.click_btn(FIGHT_BTN["fangqi_1"], until_appear=FIGHT_BTN["fangqi_2"])

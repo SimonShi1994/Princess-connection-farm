@@ -26,8 +26,8 @@ class CaptionSkip:
         self.question_type = 0
         self.conversation = requests.Session()
         self.conversation.keep_alive = False
-        self.conversation.mount('http://', HTTPAdapter(max_retries=3))
-        self.conversation.mount('https://', HTTPAdapter(max_retries=3))
+        self.conversation.mount('http://', HTTPAdapter(max_retries=5))
+        self.conversation.mount('https://', HTTPAdapter(max_retries=5))
         self.img_post_url = 'http://' + self.host_result + '/UploadBase64.aspx'
         self.img_answer = 'http://' + self.host_result + '/GetAnswer.aspx'
         self.img_send_error = 'http://' + self.host_result + '/SendError.aspx'
