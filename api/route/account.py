@@ -121,21 +121,24 @@ def create_account():
         description: 参数有误等
     """
     body = request.form or request.get_json()
-    print(body)
     if body is None:
         return BadRequestError(f'参数不合法')
     username = body.get('username', '')
     password = body.get('password', '')
-    taskname = body.get('taskname', '')
+    # taskname = body.get('taskname', '')
     # taskname已经被废弃不再需要
-    if username == '':
-        return BadRequestError(f'参数 username 不为空')
-    if password == '':
-        return BadRequestError(f'参数 password 不为空')
+    try:
+        if username == '':
+            return BadRequestError(f'参数 username 不为空')
+        if password == '':
+            return BadRequestError(f'参数 password 不为空')
 
-    service_create_account(account=username, password=password)
+        service_create_account(account=username, password=password)
 
-    return Reply({'username': username, 'password': password})
+        return Reply({'username': username, 'password': password})
+    
+    except Exception as e:
+        return NotFoundError(f"添加用户 {username} 失败, {e}")
 
 
 @account_api.route('/account/<username>', methods=['PUT'])

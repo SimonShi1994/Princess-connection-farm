@@ -9,6 +9,7 @@
   },
   "author": "zzq <jsyzzzq@outlook.com>",
   "dependencies": {
+    "@ant-design/pro-form": "^1.7.5",
     "@babel/polyfill": "^7.12.1",
     "@babel/runtime": "^7.12.5",
     "antd": "^4.9.1",
@@ -28,6 +29,8 @@
     "css-loader": "^5.0.1",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.0",
+    "less": "^3.12.2",
+    "less-loader": "^7.1.0",
     "node-sass": "^5.0.0",
     "postcss-loader": "^4.1.0",
     "react-hot-loader": "^4.13.0",

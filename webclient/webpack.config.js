@@ -34,6 +34,23 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.less$/,
+                use:[
+                    {
+                        loader: "style-loader"
+                    }, {
+                        loader: "css-loader"
+                    }, {
+                        loader: "less-loader",
+                        options: {
+                            lessOptions: {
+                                javascriptEnabled: true
+                              }
+                        }
+                    }
+                ]
+            },
+            {
                 test: /\.(css|scss)/,
                 use: [
                     "style-loader", // 创建style标签，并将css添加进去
