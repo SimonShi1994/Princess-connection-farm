@@ -181,10 +181,10 @@ def update_account(username):
     if body is None:
         return BadRequestError(f'参数不合法')
     password = body.get('password', None)
-    taskname = body.get('taskname', None)
+    # taskname = body.get('taskname', None)
 
-    edit_account(account=username, password=password, taskfile=taskname)
-    return Reply({'username': username, 'password': password, 'taskname': taskname})
+    edit_account(account=username, password=password)
+    return Reply({'username': username, 'password': password})
 
 
 @account_api.route('/account/<username>', methods=['DELETE'])

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Input, InputNumber, message, Popconfirm, Form } from 'antd';
+import { Table, Input, InputNumber, message, Popconfirm, Form, Divider } from 'antd';
 import AddAccount from '../components/AddAccount'
 import request from '../request'
 
@@ -9,34 +9,50 @@ export default () => {
     const isEditing = (record) => record.key === editingKey;
     const [editingKey, setEditingKey] = React.useState('');
     const edit = (record) => {
-        form.setFieldsValue({ name: '', age: '', address: '', ...record });
+        form.setFieldsValue(record);
         setEditingKey(record.key);
     };
-
+    const getData = async () => {
+        const { data } = await request('/account')
+        setData(data.map(i => {
+            return {
+                ...i,
+                key: i.username
+            }
+        }));
+    }
     const cancel = () => {
         setEditingKey('');
     };
+    const deleteAccount = async (record) => {
+        const result = await request(`/account/${record.username}`, {
+            method: 'DELETE',
+        })
+        if (result.msg === "") {
+            message.success(`删除账号${record.username}成功`)
+        }
+        getData()
+
+    }
     const save = async (key) => {
         try {
             const row = await form.validateFields();
 
             const newData = [...data];
             const index = newData.findIndex(item => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                setData(newData);
-                setEditingKey('');
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey('');
+            const result = await request(`/account/${newData[index].username}`,{
+                method:"put",
+                data:{
+                    password:row.password
+                }
+            })
+            if (result.msg === "") {
+                message.success(`修改账号${newData[index].username}成功`)
             }
+            await getData()
+            setEditingKey('');
         } catch (errInfo) {
-            console.log('Validate Failed:', errInfo);
+            console.log('验证失败:', errInfo);
         }
     };
     const columns = [
@@ -67,9 +83,16 @@ export default () => {
                         </Popconfirm>
                     </span>
                 ) : (
-                        <a disabled={editingKey !== ''} onClick={() => edit(record)}>
-                            编辑
+                        <span>
+
+                            <a disabled={editingKey !== ''} onClick={() => edit(record)}>
+                                修改密码
                         </a>
+                            <Divider type="vertical" />
+                            <Popconfirm title="确认删除？" onConfirm={() => deleteAccount(record)}>
+                                <a>删除</a>
+                            </Popconfirm>
+                        </span>
                     );
             },
         },
@@ -95,7 +118,7 @@ export default () => {
                         rules={[
                             {
                                 required: true,
-                                message: `Please Input ${title}!`,
+                                message: `请输入${title}!`,
                             },
                         ]}
                     >
@@ -112,9 +135,10 @@ export default () => {
             method: 'post',
             data: value
         })
-        if(result.msg===""){
+        if (result.msg === "") {
             message.success(`添加账号${value.username}成功`)
         }
+        getData()
         return true
     }
     React.useEffect(() => {
