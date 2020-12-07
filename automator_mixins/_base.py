@@ -1006,7 +1006,7 @@ class BaseMixin:
         os.system('cd adb & adb -s %s shell setprop ro.product.model %s' % (self.address, phone_model[tmp_rand[0]]))
         os.system(
             'cd adb & adb -s %s shell setprop ro.product.manufacturer %s' % (
-            self.address, phone_manufacturer[tmp_rand[1]]))
+                self.address, phone_manufacturer[tmp_rand[1]]))
         os.system('cd adb & adb -s %s shell setprop phone.imei %s' % (self.address, _get_imei(15)))
         os.system('cd adb & adb -s %s shell setprop ro.product.name %s' % (self.address, phone_model[tmp_rand[2]]))
         os.system('cd adb & adb -s %s shell setprop phone.imsi %s' % (self.address, _get_imei(15)))
