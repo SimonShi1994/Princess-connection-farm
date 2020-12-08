@@ -2,6 +2,7 @@ import sys
 import traceback
 import requests
 from requests.adapters import HTTPAdapter
+import io
 
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.initializer import PCRInitializer, Schedule
@@ -380,15 +381,23 @@ if __name__ == "__main__":
             s = requests.Session()
             s.mount('http://', HTTPAdapter(max_retries=5))
             s.mount('https://', HTTPAdapter(max_retries=5))
-            api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm"
-            all_info = s.get(api_url).json()
-            new_time = all_info["updated_at"]
-            update_info = f"最新版本为 {new_time}"
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
+            api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/master"
+            all_info = s.get(api_url)
+            if all_info.status_code == 403:
+                update_info = "最新版本为 {请求频繁，当前无法连接到github！请休息2分钟后再试}"
+            elif all_info.status_code == 200:
+                all_info = all_info.json()
+                new_time = all_info["commit"].get("committer").get("date")
+                new_messages = all_info["commit"].get("message")
+                update_info = f"最新版本为 {new_time} -> 更新内容为 {new_messages}"
+            else:
+                update_info = "最新版本为 {当前无法连接到github！}"
         except:
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.20201205")
+        print("当前版本为 Ver 2.1.20201208")
         print(update_info)
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
