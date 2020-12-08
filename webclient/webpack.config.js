@@ -35,7 +35,7 @@ module.exports = {
         rules: [
             {
                 test: /\.less$/,
-                use:[
+                use: [
                     {
                         loader: "style-loader"
                     }, {
@@ -45,7 +45,7 @@ module.exports = {
                         options: {
                             lessOptions: {
                                 javascriptEnabled: true
-                              }
+                            }
                         }
                     }
                 ]
@@ -70,7 +70,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.(js|jsx)/,
+                test: /(.js|.jsx)$/,
                 exclude: /node_modules/,
                 use: [
                     {

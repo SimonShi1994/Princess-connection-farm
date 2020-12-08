@@ -1,0 +1,46 @@
+{
+    "schedules": [
+        {
+            "type": "wait",
+            "name": "juan",
+            "batchlist": [
+                "juan",
+                "zhuangbei"
+            ],
+            "condition": {
+                "start_hour": 0,
+                "end_hour": 1
+            },
+            "record": 2
+        },
+        {
+            "type": "wait",
+            "name": "2",
+            "batchlist": [
+                "juan",
+                "zhuangbei"
+            ],
+            "condition": {
+                "start_hour": 8,
+                "end_hour": 9
+            },
+            "record": 2
+        },
+        {
+            "type": "wait",
+            "name": "2",
+            "batchlist": [
+                "juan",
+                "zhuangbei"
+            ],
+            "condition": {
+                "start_hour": 17,
+                "end_hour": 18
+            },
+            "record": 2
+        },
+        {
+            "type": "config"
+        }
+    ]
+}
