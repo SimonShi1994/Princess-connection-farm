@@ -2,7 +2,6 @@ import sys
 import traceback
 import requests
 from requests.adapters import HTTPAdapter
-import io
 
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.initializer import PCRInitializer, Schedule
@@ -381,7 +380,7 @@ if __name__ == "__main__":
             s = requests.Session()
             s.mount('http://', HTTPAdapter(max_retries=5))
             s.mount('https://', HTTPAdapter(max_retries=5))
-            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
+            # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
             api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/master"
             all_info = s.get(api_url)
             if all_info.status_code == 403:
@@ -397,7 +396,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.20201208")
+        print("当前版本为 Ver 2.1.202012011")
         print(update_info)
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
