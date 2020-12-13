@@ -396,7 +396,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.202012011")
+        print("当前版本为 Ver 2.1.202012013")
         print(update_info)
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")

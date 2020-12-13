@@ -391,7 +391,7 @@ class BaseMixin:
         last_time = time.time()
         while True:
             self._move_check()
-            if self.is_exists(img='img/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
+            if self.is_exists(img='img/error/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
                 time.sleep(delay)
                 sc = self.getscreen()
                 continue
