@@ -49,11 +49,8 @@ def _connect():  # 连接adb与uiautomator
             pcr_log('admin').write_log(level='error', message="连接模拟器失败")
             exit(1)
         """
-        os.system(f"cd {adb_dir} & adb kill-server")
+        # os.system(f"cd {adb_dir} & adb kill-server")
         os.system(f"cd {adb_dir} & adb start-server")
-        if os.system('python -m uiautomator2 init') != 0:
-            pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
-            exit(1)
     except Exception as e:
         pcr_log('admin').write_log(level='error', message='连接失败, 原因: {}'.format(e))
         exit(1)
@@ -156,7 +153,7 @@ class Device:
             return False
         return True
 
-    def wait_for_healthy(self, timeout=30):
+    def wait_for_healthy(self, timeout=60):
         last = time.time()
         while time.time() - last < timeout:
             if self.is_connected():
