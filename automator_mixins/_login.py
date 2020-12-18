@@ -50,6 +50,8 @@ class LoginMixin(BaseMixin):
         # 如果你想知道，建议在config中把disable_timeout_raise给开启，
         # 然后在程序运行时按Ctrl+C，如果你运气好，你会看到你程序卡在哪里。
         # 我放弃了。  新增自动点击“下载”，自动下载新增数据功能， 2020-11-23 By TheAutumnOfRice
+
+        # 结构梳理下为：auth -> login_auth(是否需要实名认证<->login<->do_login[验证码处理]) -> init_home(lock_home)
         for retry in range(30):
             if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
                 self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()

@@ -26,5 +26,5 @@ muggle-ocr
 numpy==1.19.0 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pillow -i https://pypi.douban.com/simple
 pyyaml -i https://pypi.douban.com/simple
-# 低于python3.8版本的可能需要protobuf==3.6.0，大于就随便3.14.0
+# 浣庝簬python3.8鐗堟湰鐨勫彲鑳介渶瑕乸rotobuf==3.6.0锛屽ぇ浜庡氨闅忎究3.14.0
 protobuf

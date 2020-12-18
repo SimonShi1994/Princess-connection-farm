@@ -391,7 +391,7 @@ class BaseMixin:
         last_time = time.time()
         while True:
             self._move_check()
-            if self.is_exists(img='img/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
+            if self.is_exists(img='img/error/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
                 time.sleep(delay)
                 sc = self.getscreen()
                 continue
@@ -1006,7 +1006,7 @@ class BaseMixin:
         os.system('cd adb & adb -s %s shell setprop ro.product.model %s' % (self.address, phone_model[tmp_rand[0]]))
         os.system(
             'cd adb & adb -s %s shell setprop ro.product.manufacturer %s' % (
-            self.address, phone_manufacturer[tmp_rand[1]]))
+                self.address, phone_manufacturer[tmp_rand[1]]))
         os.system('cd adb & adb -s %s shell setprop phone.imei %s' % (self.address, _get_imei(15)))
         os.system('cd adb & adb -s %s shell setprop ro.product.name %s' % (self.address, phone_model[tmp_rand[2]]))
         os.system('cd adb & adb -s %s shell setprop phone.imsi %s' % (self.address, _get_imei(15)))

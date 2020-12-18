@@ -29,6 +29,7 @@ def StartPCR():
     global PCR
     if PCR is None:
         print("控制器正在连接中……")
+        os.system(f"cd {adb_dir} & adb kill-server")
         PCR = PCRInitializer()
         PCR.connect()
     PCR.devices.add_from_config()
@@ -380,16 +381,26 @@ if __name__ == "__main__":
             s = requests.Session()
             s.mount('http://', HTTPAdapter(max_retries=5))
             s.mount('https://', HTTPAdapter(max_retries=5))
-            api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm"
-            all_info = s.get(api_url).json()
-            new_time = all_info["updated_at"]
-            update_info = f"最新版本为 {new_time}"
+            # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
+            api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/master"
+            all_info = s.get(api_url)
+            if all_info.status_code == 403:
+                update_info = "最新版本为 {请求频繁，当前无法连接到github！请休息2分钟后再试}"
+            elif all_info.status_code == 200:
+                all_info = all_info.json()
+                new_time = all_info["commit"].get("committer").get("date")
+                new_messages = all_info["commit"].get("message")
+                update_info = f"最新版本为 {new_time} -> 更新内容为 {new_messages}"
+            else:
+                update_info = "最新版本为 {当前无法连接到github！}"
         except:
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.20201205")
+        print("当前版本为 Ver 2.1.202012017")
         print(update_info)
+        print("----------------------------------------")
+        print("init 初始化模拟器环境                   ")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")
@@ -411,6 +422,15 @@ if __name__ == "__main__":
                 ShowGuide()
             elif order == "break":
                 break
+            elif order == "init":
+                os.system(f"cd {adb_dir} & adb start-server")
+                if os.system('python -m uiautomator2 init') != 0:
+                    # pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
+                    print("初始化 uiautomator2 失败,请检查是否有模拟器没有安装上ATX")
+                    exit(1)
+                else:
+                    print("初始化 uiautomator2 成功")
+                    os.system(f"cd {adb_dir} & adb kill-server")
             elif order == "help":
                 if SCH is None:
                     print("脚本控制帮助 ()内的为需要填写的参数，[]内的参数可以不填写（使用默认参数）")

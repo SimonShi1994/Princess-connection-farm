@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.1.20201205
+ # Princess connection 公主连结农场脚本v2.1.20201217
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -102,6 +102,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 - 出现“No module named 'XXX'，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
 - 第一次正常运行后，就可以通过**run.bat**来一键启动
+- 如果模拟器没有安装 ATX ，请在打开模拟器后，在控控制台里输入init进行初始化模拟器环境
 - **第一次使用，完全不懂怎么办？** 
 
 [Schedule使用方法](docs/introduce_to_schedule.md)
@@ -125,6 +126,10 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 4. 您的一点支持会是我们完善本项目的强大动力！(*/ω＼*)
 
+   **STAR近来统计图**
+
+   [![Stargazers over time](https://starchart.cc/SimonShi1994/Princess-connection-farm.svg)](https://starchart.cc/SimonShi1994/Princess-connection-farm)
+
 ## 更新计划
 
 - [x] 模拟器自启动控制
@@ -140,6 +145,10 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2020/12/17 By:CyiceK
+
+- 尝试修复模拟器自启动bug
 
 2020/12/4 By:CyiceK
 

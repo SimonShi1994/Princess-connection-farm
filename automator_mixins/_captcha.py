@@ -95,7 +95,7 @@ class CaptionSkip:
         if captcha_level == "小速":
             question_type = question_type.replace('T', 'X')
         elif captcha_level == "特速":
-            question_type = question_type.replace('X', 'T')
+             question_type = question_type.replace('X', 'T')
 
         print("!验证码识别模块开始运行!")
         self.get_host()
@@ -109,7 +109,7 @@ class CaptionSkip:
         img_post = {
             'userstr': captcha_userstr,
             'gameid': question_type,
-            'timeout': 10,
+            'timeout': 30,
             'rebate': captcha_software_key,
             'daiLi': 'haoi',
             'kou': 0,
@@ -133,8 +133,8 @@ class CaptionSkip:
         print(">>等待验证码识别返回值")
         while True:
             # 获取答案
-            answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
             time.sleep(random.uniform(0.5, 2.88))
+            answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
             self._count_times += 1
             count_len = len(answer_result.text)
             if answer_result.text not in self.error_feature:
