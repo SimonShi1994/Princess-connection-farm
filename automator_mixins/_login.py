@@ -121,10 +121,10 @@ class LoginMixin(BaseMixin):
                 screen = self.getscreen()
                 screen = screen[22:512, 254:711]
                 # 456, 489
-                if self.d(textContains="请在下图依次").exists():
+                if self.d(textContains="请在下图依次").exists() or self.d(descriptionContains="请在下图依次").exists():
                     print(f">>>{self.account}-检测到图字结合题!")
                     print("当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
-
+                    self.click(667, 65, post_delay=3)
                     # 结果出来为四个字的坐标
                     # answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
                     # for i in range(0, _len):
