@@ -123,18 +123,23 @@ class LoginMixin(BaseMixin):
                 screen = self.getscreen()
                 screen = screen[22:512, 254:711]
                 # 456, 489
-                if self.d(textContains="请在下图依次").exists() or self.d(descriptionContains="请在下图依次").exists():
-                    print(f">>>{self.account}-检测到图字结合题!")
+                if self.d(textContains="请点击此处重试").exists():
+                    print(f">>>{self.account}-请点击此处重试")
+                    # 点重试
+                    self.click(482, 315, post_delay=3)
+
+                elif self.d(textContains="请在下图依次").exists():
+                    print(f">>>{self.account}-检测到图字结合题")
                     print("当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
-                    self.click(667, 65, post_delay=3)
+                    # 这是关闭验证码 self.click(667, 65, post_delay=3)
                     # 结果出来为四个字的坐标
-                    # answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
-                    # for i in range(0, _len):
-                    #     # Y轴
-                    #     self.click(answer_result[i][1] + 22, post_delay=1)
-                    #     # X轴
-                    #     self.click(answer_result[i][0] + 254, post_delay=1)
-                    # print(">验证码坐标识别：", answer_result)
+                    answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6004")
+                    for i in range(0, _len+1):
+                        x = int(answer_result[i].split(',')[0]) + 254
+                        y = int(answer_result[i].split(',')[1]) + 22
+                        print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
+                        self.click(x, y, post_delay=1)
+
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
@@ -143,6 +148,17 @@ class LoginMixin(BaseMixin):
                     print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y, post_delay=1)
+
+                elif self.d(textContains="拖动滑块").exists():
+                    print(f">>>{self.account}-检测到滑块题")
+                    answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X8006")
+                    x = int(answer_result[0]) + 254
+                    y = int(answer_result[1]) + 22
+                    print(f">{self.account}-滑块坐标识别：", x, y)
+                    # print(type(x))
+                    # 从322,388 滑动到 x,y
+                    self.d.drag_to(322, 388, x, y, 1.2)
+
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
                     return False

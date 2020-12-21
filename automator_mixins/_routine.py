@@ -217,6 +217,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 mana_time = self.ocr_center(422, 451, 480, 471, size=2.0).split('/')
                 mana_time = int(mana_time[0])
                 if mana_time >= times:
+                    self.lock_home()
                     return False
         except:
             pass
