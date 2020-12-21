@@ -145,10 +145,7 @@ class LoginMixin(BaseMixin):
                     self.click(x, y, post_delay=1)
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
-                    if not _pop:
-                        _pop = True
-                    else:
-                        return False
+                    return False
 
                 sc1 = self.getscreen()
 
@@ -191,6 +188,7 @@ class LoginMixin(BaseMixin):
                         time.sleep(5)
                         if not state:
                             manual_captcha = True
+                            break
                     else:
                         SkipAuth()
                         flag = False
