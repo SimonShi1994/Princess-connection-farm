@@ -1,5 +1,6 @@
 import sys
 import traceback
+
 import requests
 from requests.adapters import HTTPAdapter
 
@@ -364,6 +365,7 @@ def ShowInfo():
     CheckConstantImgs()
 
 
+
 if __name__ == "__main__":
     GetLastSchedule()
     argv = sys.argv
@@ -397,7 +399,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.20201219")
+        print("当前版本为 Ver 2.1.20201221")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境                   ")
