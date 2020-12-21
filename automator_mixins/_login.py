@@ -109,7 +109,7 @@ class LoginMixin(BaseMixin):
             self.phone_privacy()
             _time = 1
             _id = 0
-
+            _pop = False
             def AutoCaptcha():
 
                 # 初始化接码
@@ -117,6 +117,8 @@ class LoginMixin(BaseMixin):
 
                 nonlocal _time
                 nonlocal _id
+                nonlocal _pop
+
                 time.sleep(5)
                 screen = self.getscreen()
                 screen = screen[22:512, 254:711]
@@ -143,6 +145,11 @@ class LoginMixin(BaseMixin):
                     self.click(x, y, post_delay=1)
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
+                    if not _pop:
+                        _pop = True
+                    else:
+                        return False
+
                 sc1 = self.getscreen()
 
                 def PopFun():
