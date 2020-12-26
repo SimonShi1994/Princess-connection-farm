@@ -1406,7 +1406,10 @@ class Schedule:
         if not captcha_skip and captcha_userstr != "":
             cs = CaptionSkip()
             point = cs.getpoint()
-            print(f"`目前打码剩余题分为:{point} `\n`还可打码：{point // 7}次`\n")
+            if type(point) is int:
+                print(f"`目前打码剩余题分为:{point} `\n`还可打码：{point // 7}次`\n")
+            else:
+                print(f"`查询返回结果为:{point} `")
 
     def show_queue(self):
         """

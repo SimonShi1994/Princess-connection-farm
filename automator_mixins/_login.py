@@ -323,7 +323,11 @@ class LoginMixin(BaseMixin):
         self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
         self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)], at=(495, 353, 687, 388))
         self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
+        # 设备匿名
         self.phone_privacy()
+        self.d.session("com.bilibili.priconne")
+        time.sleep(4)
+        self.d.app_wait("com.bilibili.priconne")
         gc.collect()
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
         # pcr_log(self.account).server_bot("warning", "%s账号完成任务" % self.account)
