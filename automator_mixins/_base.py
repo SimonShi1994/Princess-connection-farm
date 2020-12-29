@@ -16,7 +16,7 @@ from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
-    force_fast_screencut, adb_dir
+    force_fast_screencut, adb_dir, clear_traces_and_cache
 from core.safe_u2 import SafeU2Handle, safe_u2_connect
 from core.usercentre import AutomatorRecorder
 
@@ -1016,18 +1016,23 @@ class BaseMixin:
         os.system('cd %s & adb -s %s shell setprop phone.linenum %s' % (adb_dir, self.address, _get_imei(11)))
         os.system('cd %s & adb -s %s shell setprop phone.simserial %s' % (adb_dir, self.address, _get_imei(20)))
         # print("》》》匿名完毕《《《")
-        # 清除痕迹和缓存
-        os.system(f'cd {adb_dir} && adb -s {self.address} shell "cd /storage/emulated/0/bilibili_data && rm -rf * && '
-                  f'exit"')
-        os.system(f'cd {adb_dir} && adb -s {self.address} shell "cd /storage/emulated/0/bilibili_time && rm -rf * && '
-                  f'exit"')
-        os.system(f'cd {adb_dir} && adb -s {self.address} shell "cd /data/data/com.bilibili.priconne/files/ && rm -rf '
-                  f'data_* && exit"')
-        os.system(f'cd {adb_dir} && adb -s {self.address} shell "cd data/data/com.bilibili.priconne/files/ && rm -rf '
-                  f'time_* && exit"')
-        os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
-        os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
-        # print("》》》匿名完毕《《《")
+        if clear_traces_and_cache:
+            # 清除痕迹和缓存
+            os.system(
+                f'cd {adb_dir} && adb -s {self.address} shell "cd /storage/emulated/0/bilibili_data && rm -rf * && '
+                f'exit"')
+            os.system(
+                f'cd {adb_dir} && adb -s {self.address} shell "cd /storage/emulated/0/bilibili_time && rm -rf * && '
+                f'exit"')
+            os.system(
+                f'cd {adb_dir} && adb -s {self.address} shell "cd /data/data/com.bilibili.priconne/files/ && rm -rf '
+                f'data_* && exit"')
+            os.system(
+                f'cd {adb_dir} && adb -s {self.address} shell "cd data/data/com.bilibili.priconne/files/ && rm -rf '
+                f'time_* && exit"')
+            os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
+            os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
+            # print("》》》匿名完毕《《《")
 
 
 class Multithreading(threading.Thread, BaseMixin):

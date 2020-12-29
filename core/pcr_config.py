@@ -49,6 +49,7 @@ captcha_senderror_times = cfg.getint('pcrfarm_setting', 'captcha_senderror_times
 captcha_level = cfg.get('pcrfarm_setting', 'captcha_level')
 captcha_wait_time = cfg.getint('pcrfarm_setting', 'captcha_wait_time')
 captcha_popup = cfg.getboolean("pcrfarm_setting", "captcha_popup")
+clear_traces_and_cache = cfg.getboolean("pcrfarm_setting", "clear_traces_and_cache")
 
 enable_auto_find_emulator = cfg.getboolean('emulator_setting', 'enable_auto_find_emulator')
 emulator_ports: Optional[list] = json.loads(cfg.get('emulator_setting', 'emulator_ports'))
@@ -61,4 +62,5 @@ auto_emulator_address = cfg.getboolean("emulator_setting", "auto_emulator_addres
 emulator_address = json.loads(cfg.get('emulator_setting', 'emulator_address'))
 quit_emulator_when_free = cfg.getboolean('emulator_setting', 'quit_emulator_when_free')
 max_free_time = cfg.getint('emulator_setting', 'max_free_time')
+wait_for_launch_time = cfg.getint('emulator_setting', 'wait_for_launch_time')
 ignore_serials: Optional[list] = json.loads(cfg.get('emulator_setting', 'ignore_serials'))

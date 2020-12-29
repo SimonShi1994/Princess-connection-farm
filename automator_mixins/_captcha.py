@@ -202,7 +202,10 @@ class CaptionSkip:
         }
         c = self.conversation.get(url=self.img_getpoint, data=img_post, headers=self.img_hear_dict)
         if c.text not in self.no_result:
-            return c.text
+            try:
+                return int(c.text)
+            except:
+                return c.text
             # print("剩余题分：", int(c.text))
 
     def send_error(self, _id):

@@ -40,7 +40,9 @@
 |captcha_senderror_times| 验证失败多少次后触发自动申诉题目 |int||2|
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|
 |captcha_wait_time|出现验证码后等待用户输入的时间|int||60|
+|clear_traces_and_cache|是否清除PCR产生的缓存|bool||True|
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
+|wait_for_launch_time|自启动模拟器最大忍耐超时时间|int||600|
 |ignore_serials|不连接的模拟器|str||["emulator-5554"]|
 
 ------
