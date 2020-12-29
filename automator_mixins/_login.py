@@ -70,10 +70,10 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
+        toast_message = self.d.toast.get_message()
         while True:
             # 快速响应
             time.sleep(1)
-            toast_message = self.d.toast.get_message()
             sc = self.getscreen()
             if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
                 self.click(MAIN_BTN["xiazai"])
@@ -184,6 +184,11 @@ class LoginMixin(BaseMixin):
                     return AutoCaptcha()
 
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
+
+                # 这里是获取toast，看是否输错密码
+                toast_message = self.d.toast.get_message()
+                if toast_message is "密码错误":
+                    raise Exception("密码错误！")
 
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     if _time >= 5:

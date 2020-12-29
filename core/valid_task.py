@@ -415,7 +415,8 @@ class MeiRiHTuInputer(InputBoxBase):
 
 
 VALID_TASK = ValidTask() \
-    .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备") \
+    .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备",
+         [TaskParam("once_times", int, "单账号捐赠的次数", "一个账号轮询捐赠多少次，多次可以提高容错率但会增加脚本执行时间", 2)]) \
     .add("h2", "tichuhanghui", "踢出行会", "将战力排名第一人踢出行会") \
     .add("h3", "yaoqinghanghui", "邀请行会", "邀请指定成员进入行会",
          [TaskParam("inviteUID", str, "UID", "被邀请者的UID号")]) \
