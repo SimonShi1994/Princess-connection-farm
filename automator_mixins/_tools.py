@@ -440,11 +440,14 @@ class ToolsMixin(BaseMixin):
         else:
             return int(ret['words_result'][1]['words'].split('/')[0])
 
-    def rename(self, name):  # 重命名
-        # 2020/12/4 CyiceK对代码进行了维护
+    def rename(self, name, auto_id):  # 重命名
+        # 2021/1/4 CyiceK对代码进行了维护
         name = name.split(' ')
         name_len = len(name)
-        name = name[random.randint(0, name_len - 1)] + str(random.randint(0, 1000))
+        if auto_id:
+            name = name[random.randint(0, name_len-1)]+str(random.randint(0, 1000))
+        else:
+            name = name[random.randint(0, name_len-1)]
         self.click(871, 513)  # 主菜单
         self.lock_img('img/zhucaidan/bangzhu.bmp', ifclick=[(370, 270)])  # 锁定帮助 点击简介
         self.lock_img('img/bianji.bmp', ifclick=[(900, 140)])  # 锁定 点击铅笔修改按钮
