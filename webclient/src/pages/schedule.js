@@ -1,21 +1,24 @@
 import example from '../example/schedule.json'
 import React from 'react'
 import Schedulelist from '../components/Schedulelist/index'
-import { List } from 'antd';
+import { Collapse, List } from 'antd';
 
+const { Panel } = Collapse;
 export default () => {
-    const { schedules } = example
-    console.log(schedules)
     return (
         <div>
-            <List
-                size="large"
-                // header={<div>头</div>}
-                // footer={<div>尾</div>}
-                bordered
-                dataSource={schedules}
-                renderItem={item => <Schedulelist {...item} />}
-            />
+            <Collapse>
+                {example.map((s, i) => (
+                    <Panel header="This is panel header 1" key={i}>
+                        <List
+                            size="large"
+                            bordered
+                            dataSource={s.schedules}
+                            renderItem={(item, index) => <Schedulelist {...item} index={[i,index]} />}
+                        />
+                    </Panel>
+                ))}
+            </Collapse>
         </div>
     )
 }

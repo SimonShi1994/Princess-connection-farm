@@ -1,66 +1,65 @@
-{
-    "schedules": [
-     {
-      "__disable__":false,
-      "type": "wait",
-      "name": "juanzeng",
-      "batchfile": "juanzeng",
-      "condition": {
-       "can_juanzeng": "18015879305"
-      },
-      "record": 2
-     },
-     {
-      "type": "wait",
-      "name": "5AM",
-      "batchfile": "5AM",
-      "condition": {
-       "start_hour": 5,
-       "end_hour": 11
-      },
-      "record": 0
-     },
-     {
-      "type": "wait",
-      "name": "xhtuitu",
-      "batchfile": "xhtuitu",
-      "condition": {},
-      "record": 1
-     },
-     {
-      "type": "wait",
-      "name": "xhdaily",
-      "batchfile": "xhdaily",
-      "condition": {
-       "start_hour": 5,
-       "end_hour": 4
-      },
-      "record": 0
-     },
-     {
-      "type": "wait",
-      "name": "6PM",
-      "batchfile": "6PM",
-      "condition": {
-       "start_hour": 18,
-       "end_hour": 4
-      },
-      "record": 0
-     },
-     {
-      "type": "config",
-      "restart": 5
-     },
-     {
-      "__disable__":false,
-      "type": "wait",
-      "name": "NOON",
-      "batchfile": "NOON",
-      "condition": {
-       "start_hour": 12,
-       "end_hour": 5
-      },
-      "record": 0
-     }
+[{
+    "schedules": [{
+            "__disable__": false,
+            "type": "wait",
+            "name": "juanzeng",
+            "batchfile": "juanzeng",
+            "condition": {
+                "can_juanzeng": "18015879305"
+            },
+            "record": 2
+        },
+        {
+            "type": "wait",
+            "name": "5AM",
+            "batchfile": "5AM",
+            "condition": {
+                "start_hour": 5,
+                "end_hour": 11
+            },
+            "record": 0
+        },
+        {
+            "type": "wait",
+            "name": "xhtuitu",
+            "batchfile": "xhtuitu",
+            "condition": {},
+            "record": 1
+        },
+        {
+            "type": "wait",
+            "name": "xhdaily",
+            "batchfile": "xhdaily",
+            "condition": {
+                "start_hour": 5,
+                "end_hour": 4
+            },
+            "record": 0
+        },
+        {
+            "type": "wait",
+            "name": "6PM",
+            "batchfile": "6PM",
+            "condition": {
+                "start_hour": 18,
+                "end_hour": 4
+            },
+            "record": 0
+        },
+        {
+            "type": "config",
+            "restart": 5
+        },
+        {
+            "__disable__": false,
+            "type": "wait",
+            "name": "NOON",
+            "batchfile": "NOON",
+            "condition": {
+                "start_hour": 12,
+                "end_hour": 5
+            },
+            "record": 0
+        }
     ]
-   }
+}]

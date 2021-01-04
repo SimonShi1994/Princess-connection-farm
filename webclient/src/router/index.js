@@ -10,7 +10,7 @@ const Router = () => (
             <Switch>
                 {routerconfig.map(
                     route => (
-                        <Route key={route.path} path={route.path} render={props => (
+                        <Route key={route.path} path={route.path} exact render={props => (
                             // pass the sub-routes down to keep nesting
                             <route.component {...props} />
                           )} />
