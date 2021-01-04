@@ -82,6 +82,8 @@ def FirstSchedule():
         StartPCR()
     if SCH is not None:
         raise Exception("Schedule已经运行，请先关闭！")
+    if auto_start_app:
+        Start_App()
     SCH = Schedule(last_schedule, PCR)
     SCH.run_first_time()
     RunningInput()
@@ -93,6 +95,8 @@ def ContinueSchedule():
         StartPCR()
     if SCH is not None:
         raise Exception("Schedule已经运行，请先关闭！")
+    if auto_start_app:
+        Start_App()
     SCH = Schedule(last_schedule, PCR)
     SCH.run_continue()
     RunningInput()
@@ -376,8 +380,6 @@ if __name__ == "__main__":
     GetLastSchedule()
     argv = sys.argv
     # 自启动app
-    if auto_start_app:
-        Start_App()
     if len(argv) >= 2:
         if argv[1] == "first":
             assert len(argv) >= 3
