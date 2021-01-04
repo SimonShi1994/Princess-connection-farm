@@ -138,6 +138,8 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 - [ ] WebGUI界面
 - [ ] 提高刷图效率
 - [ ] 刷活动本
+- [ ] 女神祭
+- [ ] 跳过18图切图动画
 
 ## 免责声明
 
@@ -146,6 +148,13 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2021/1/4 By:TheAutumnOfRice
+
+- 修复rename的BUG （修完发现已经被CyiceK修复了）
+- 新增18图（但尚不能跳过切图动画）
+- 修复不能购买超级经验药水的BUG
+- 增加app.py启动和自启动（默认不开启`auto_start_app`）
 
 2020/12/29 By:CyiceK
 
