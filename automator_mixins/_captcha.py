@@ -95,7 +95,7 @@ class CaptionSkip:
         if captcha_level == "小速":
             question_type = question_type.replace('T', 'X')
         elif captcha_level == "特速":
-             question_type = question_type.replace('X', 'T')
+            question_type = question_type.replace('X', 'T')
 
         print("!验证码识别模块开始运行!")
         self.get_host()
@@ -133,7 +133,7 @@ class CaptionSkip:
         print(">>等待验证码识别返回值")
         while True:
             # 获取答案
-            time.sleep(random.uniform(0.5, 2.88))
+            time.sleep(random.uniform(0.8, 2.88))
             answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
             self._count_times += 1
             count_len = len(answer_result.text)
@@ -142,6 +142,13 @@ class CaptionSkip:
                 if count_len > 6:
                     # 466,365
                     answer_result = answer_result.text.split(',')
+                    if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
+                        # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
+                        self.send_error(caption_id.text)
+                        print(">刷新验证码")
+                        # 刷新验证码
+                        answer_result = [162, 420]
+                        return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
                 else:
                     # 废弃，无实际作用！
