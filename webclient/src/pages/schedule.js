@@ -10,8 +10,8 @@ export default () => {
         <div>
             <List
                 size="large"
-                header={<div>Header</div>}
-                footer={<div>Footer</div>}
+                // header={<div>头</div>}
+                // footer={<div>尾</div>}
                 bordered
                 dataSource={schedules}
                 renderItem={item => <Schedulelist {...item} />}
