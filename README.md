@@ -151,9 +151,10 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 2021/1/4 By:TheAutumnOfRice
 
-- 修复rename的BUG
+- 修复rename的BUG （修完发现已经被CyiceK修复了）
 - 新增18图（但尚不能跳过切图动画）
 - 修复不能购买超级经验药水的BUG
+- 增加app.py启动和自启动（默认不开启`auto_start_app`）
 
 2020/12/29 By:CyiceK
 
