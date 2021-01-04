@@ -284,7 +284,8 @@ class RoutineMixin(ShuatuBaseMixin):
             screen_shot_ = self.getscreen()
             if self.is_exists("img/exp.jpg", screen=screen_shot_) \
                     or self.is_exists("img/exp2.jpg", screen=screen_shot_) \
-                    or self.is_exists("img/exp3.bmp", screen=screen_shot_):
+                    or self.is_exists("img/exp3.bmp", screen=screen_shot_) \
+                    or self.is_exists("img/exp4.bmp", screen=screen_shot_):
                 break
             count += 1
             time.sleep(1)

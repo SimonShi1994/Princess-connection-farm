@@ -50,6 +50,7 @@ captcha_level = cfg.get('pcrfarm_setting', 'captcha_level')
 captcha_wait_time = cfg.getint('pcrfarm_setting', 'captcha_wait_time')
 captcha_popup = cfg.getboolean("pcrfarm_setting", "captcha_popup")
 clear_traces_and_cache = cfg.getboolean("pcrfarm_setting", "clear_traces_and_cache")
+auto_start_app = cfg.getboolean("pcrfarm_setting", "auto_start_app")
 
 enable_auto_find_emulator = cfg.getboolean('emulator_setting', 'enable_auto_find_emulator')
 emulator_ports: Optional[list] = json.loads(cfg.get('emulator_setting', 'emulator_ports'))
