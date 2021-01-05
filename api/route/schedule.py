@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint, jsonify, request
 
 from api.constants.errors import NotFoundError, BadRequestError
@@ -136,7 +138,7 @@ def create_schedule():
         service_create_schedule(schedule=username, password=password)
 
         return Reply({'username': username, 'password': password})
-    
+
     except Exception as e:
         return NotFoundError(f"添加用户 {username} 失败, {e}")
 
@@ -214,3 +216,55 @@ def delete_schedule(username):
     del_schedule(username)
 
     return Reply({'username': username})
+
+
+@schedule_api.route('/batches', methods=['GET'])
+def list_all_batches(verbose=0):
+    def check_valid_batch(batch: dict, is_raise=True) -> bool:
+        try:
+            assert "batch" in batch
+            B = batch["batch"]
+            assert type(B) is list
+            for i in B:
+                f1 = "account" in i
+                f2 = "group" in i
+                if f1 + f2 == 0:
+                    return BadRequestError(f"必须至少含有account,group中的一个！")
+                if f1 + f2 == 2:
+                    return BadRequestError(f"account和group键只能出现其中一个！")
+                assert "taskfile" in i
+                assert type("taskfile") is str
+                assert "priority" in i
+
+        except Exception as e:
+            if is_raise:
+                raise e
+            else:
+                return False
+        return True
+    batch_addr = "batches"  # 存放批任务的文件夹
+    if not os.path.exists(batch_addr):
+        os.makedirs(batch_addr)
+    ld = os.listdir(batch_addr)
+    batches = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".txt"):
+            nam = ""
+            try:
+                nam = i[:-4]
+                batch = AutomatorRecorder.getbatch(nam)
+                check_valid_batch(batch)
+                batches += [nam]
+                if verbose:
+                    pass
+                    # print("批配置", nam, "加载成功！")
+                count += 1
+            except Exception as e:
+                if verbose:
+                    pass
+                    # print("打开批配置", nam, "失败！", e)
+    if verbose:
+        pass
+        # print("加载完成，一共加载成功", count, "个批配置。")
+    return ListReply(batches, count)

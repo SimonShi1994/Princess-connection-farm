@@ -1,23 +1,38 @@
-import React from 'react'
-import { Route, Switch } from 'react-router'
-import { Link } from 'react-router-dom'
-import routerconfig from '../config/routerconfig'
-import Container from '../components/container'
+import Vue from 'vue'
+import Router from 'vue-router'
+import TaskConfig from '@/pages/TaskConfig'
+import Dashboard from '@/pages/Dashboard'
+import AccountConfig from '@/pages/AccountConfig'
+import ClanConfig from '@/pages/ClanConfig'
 
-const Router = () => (
-    <Route path="/">
-        <Container>
-            <Switch>
-                {routerconfig.map(
-                    route => (
-                        <Route key={route.path} path={route.path} render={props => (
-                            // pass the sub-routes down to keep nesting
-                            <route.component {...props} />
-                          )} />
-                    )
-                )}
-            </Switch>
-        </Container>
-    </Route>
-)
-export default Router
+Vue.use(Router)
+
+export default new Router({
+  mode: 'history',
+  routes: [
+    {
+      path: '/',
+      redirect: '/account_config'
+    },
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
+      component: Dashboard
+    },
+    {
+      path: '/task_config',
+      name: 'TaskConfig',
+      component: TaskConfig
+    },
+    {
+      path: '/account_config',
+      name: 'AccountConfig',
+      component: AccountConfig
+    },
+    {
+      path: '/clan_config',
+      name: 'ClanConfig',
+      component: ClanConfig
+    }
+  ]
+})
