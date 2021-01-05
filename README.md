@@ -132,7 +132,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 ## 更新计划
 
-- [ ] 滑动验证码问题
+- [x] 滑动验证码问题
 - [x] 模拟器自启动控制
 - [x] 简化Schedule操作模式
 - [ ] WebGUI界面
@@ -146,6 +146,10 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2020/12/21 By:CyiceK
+
+- 对验证码进行了处理（
 
 2020/12/21 By:TheAutumnOfRice
 

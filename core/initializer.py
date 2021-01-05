@@ -153,7 +153,7 @@ class Device:
             return False
         return True
 
-    def wait_for_healthy(self, timeout=60):
+    def wait_for_healthy(self, timeout=360):
         last = time.time()
         while time.time() - last < timeout:
             if self.is_connected():

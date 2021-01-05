@@ -139,7 +139,7 @@ class CaptionSkip:
             count_len = len(answer_result.text)
             if answer_result.text not in self.error_feature:
                 # print("开始处理")
-                if count_len > 6:
+                if question_type is "X6001" or question_type is "T6001":
                     # 466,365
                     answer_result = answer_result.text.split(',')
                     if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
@@ -150,22 +150,30 @@ class CaptionSkip:
                         answer_result = [162, 420]
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
-                else:
-                    # 废弃，无实际作用！
-
+                elif question_type is "X8006" or question_type is "T8006":
+                    # 滑块
+                    answer_result = answer_result.text.split(',')
+                    if not (266 < int(answer_result[0]) < 696) and not (338 < int(answer_result[1]) < 434):
+                        # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
+                        self.send_error(caption_id.text)
+                        print(">刷新验证码")
+                        # 刷新验证码
+                        answer_result = [162, 420]
+                        return answer_result, count_len, 0
+                    return answer_result, count_len, caption_id.text
+                elif question_type is "X6004" or question_type is "T6004":
                     # 多坐标处理
+                    # 464,364|551,376|506,271|390,233
                     answer_result = answer_result.text.split('|')
-                    if len(answer_result) >= 4:
-                        tmp_list = []
-                        # 多坐标处理
-                        # 466,365|549,374|494,252|387,243
-                        # 转元组
-                        for i in range(0, count_len):
-                            tmp = answer_result[i]
-                            # print(tmp)
-                            tmp_list.append(tuple(map(int, tmp.split(','))))
-                            # [(466, 365), (549, 374), (494, 252), (387, 243)]
-                            return tmp_list, count_len, caption_id.text
+                    count_len = len(answer_result)
+                    if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
+                        # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
+                        self.send_error(caption_id.text)
+                        print(">刷新验证码")
+                        # 刷新验证码
+                        answer_result = [162, 420]
+                        return answer_result, count_len, 0
+                    return answer_result, count_len, caption_id.text
 
             elif answer_result.text in self.no_result or self._count_times >= 7:
                 # 答案不确定(不扣分)
