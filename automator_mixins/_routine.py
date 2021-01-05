@@ -217,6 +217,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 mana_time = self.ocr_center(422, 451, 480, 471, size=2.0).split('/')
                 mana_time = int(mana_time[0])
                 if mana_time >= times:
+                    self.lock_home()
                     return False
         except:
             pass
@@ -283,7 +284,8 @@ class RoutineMixin(ShuatuBaseMixin):
             screen_shot_ = self.getscreen()
             if self.is_exists("img/exp.jpg", screen=screen_shot_) \
                     or self.is_exists("img/exp2.jpg", screen=screen_shot_) \
-                    or self.is_exists("img/exp3.bmp", screen=screen_shot_):
+                    or self.is_exists("img/exp3.bmp", screen=screen_shot_) \
+                    or self.is_exists("img/exp4.bmp", screen=screen_shot_):
                 break
             count += 1
             time.sleep(1)

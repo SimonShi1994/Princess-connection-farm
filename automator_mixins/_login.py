@@ -50,6 +50,8 @@ class LoginMixin(BaseMixin):
         # 如果你想知道，建议在config中把disable_timeout_raise给开启，
         # 然后在程序运行时按Ctrl+C，如果你运气好，你会看到你程序卡在哪里。
         # 我放弃了。  新增自动点击“下载”，自动下载新增数据功能， 2020-11-23 By TheAutumnOfRice
+
+        # 结构梳理下为：auth -> login_auth(是否需要实名认证<->login<->do_login[验证码处理]) -> init_home(lock_home)
         for retry in range(30):
             if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
                 self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
@@ -68,6 +70,7 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
+        toast_message = self.d.toast.get_message()
         while True:
             # 快速响应
             time.sleep(1)
@@ -80,6 +83,10 @@ class LoginMixin(BaseMixin):
                 break
             elif self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                 break
+            elif toast_message is "密码错误":
+                raise Exception("密码错误！")
+            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists():
+                continue
             self.click(MAIN_BTN["zhuye"])
 
         def SkipAuth():
@@ -107,7 +114,7 @@ class LoginMixin(BaseMixin):
             self.phone_privacy()
             _time = 1
             _id = 0
-
+            _pop = False
             def AutoCaptcha():
 
                 # 初始化接码
@@ -115,22 +122,29 @@ class LoginMixin(BaseMixin):
 
                 nonlocal _time
                 nonlocal _id
+                nonlocal _pop
+
                 time.sleep(5)
                 screen = self.getscreen()
                 screen = screen[22:512, 254:711]
                 # 456, 489
-                if self.d(textContains="请在下图依次").exists():
-                    print(f">>>{self.account}-检测到图字结合题!")
-                    print("当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
+                if self.d(textContains="请点击此处重试").exists():
+                    print(f">>>{self.account}-请点击此处重试")
+                    # 点重试
+                    self.click(482, 315, post_delay=3)
 
+                elif self.d(textContains="请在下图依次").exists():
+                    print(f">>>{self.account}-检测到图字结合题")
+                    print("当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
+                    # 这是关闭验证码 self.click(667, 65, post_delay=3)
                     # 结果出来为四个字的坐标
-                    # answer_result, _len, _id = skip_caption(captcha_img=screen, question_type="X6004")
-                    # for i in range(0, _len):
-                    #     # Y轴
-                    #     self.click(answer_result[i][1] + 22, post_delay=1)
-                    #     # X轴
-                    #     self.click(answer_result[i][0] + 254, post_delay=1)
-                    # print(">验证码坐标识别：", answer_result)
+                    answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6004")
+                    for i in range(0, _len+1):
+                        x = int(answer_result[i].split(',')[0]) + 254
+                        y = int(answer_result[i].split(',')[1]) + 22
+                        print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
+                        self.click(x, y, post_delay=1)
+
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
@@ -139,8 +153,21 @@ class LoginMixin(BaseMixin):
                     print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y, post_delay=1)
+
+                elif self.d(textContains="拖动滑块").exists():
+                    print(f">>>{self.account}-检测到滑块题")
+                    answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X8006")
+                    x = int(answer_result[0]) + 254
+                    y = int(answer_result[1]) + 22
+                    print(f">{self.account}-滑块坐标识别：", x, 386)
+                    # print(type(x))
+                    # 从322,388 滑动到 x,y
+                    self.d.drag_to(322, 388, x, 386, 1.2)
+
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
+                    return False
+
                 sc1 = self.getscreen()
 
                 def PopFun():
@@ -157,6 +184,11 @@ class LoginMixin(BaseMixin):
                     return AutoCaptcha()
 
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
+
+                # 这里是获取toast，看是否输错密码
+                toast_message = self.d.toast.get_message()
+                if toast_message is "密码错误":
+                    raise Exception("密码错误！")
 
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     if _time >= 5:
@@ -182,6 +214,7 @@ class LoginMixin(BaseMixin):
                         time.sleep(5)
                         if not state:
                             manual_captcha = True
+                            break
                     else:
                         SkipAuth()
                         flag = False
@@ -287,6 +320,7 @@ class LoginMixin(BaseMixin):
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
         self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
+
     @timeout(300, "login_auth登录超时，超过5分钟")
     def login_auth(self, ac, pwd):
         need_auth = self.login(ac=ac, pwd=pwd)
@@ -300,6 +334,7 @@ class LoginMixin(BaseMixin):
         self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
         self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)], at=(495, 353, 687, 388))
         self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
+        # 设备匿名
         self.phone_privacy()
         gc.collect()
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)

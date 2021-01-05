@@ -342,6 +342,10 @@ def create_schedule(ScheduleName):
     d = {"schedules": []}
     AutomatorRecorder.setschedule(ScheduleName, d)
 
+def del_schedule(ScheduleName):
+    target = "%s/%s.txt" % (schedule_addr, ScheduleName)
+    if os.path.exists(target):
+        os.remove(target)
 
 def _show_schedule(obj):
     for ind, i in enumerate(obj["schedules"]):

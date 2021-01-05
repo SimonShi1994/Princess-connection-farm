@@ -1,5 +1,7 @@
+import subprocess
 import sys
 import traceback
+
 import requests
 from requests.adapters import HTTPAdapter
 
@@ -29,6 +31,7 @@ def StartPCR():
     global PCR
     if PCR is None:
         print("控制器正在连接中……")
+        os.system(f"cd {adb_dir} & adb kill-server")
         PCR = PCRInitializer()
         PCR.connect()
     PCR.devices.add_from_config()
@@ -79,6 +82,8 @@ def FirstSchedule():
         StartPCR()
     if SCH is not None:
         raise Exception("Schedule已经运行，请先关闭！")
+    if auto_start_app:
+        Start_App()
     SCH = Schedule(last_schedule, PCR)
     SCH.run_first_time()
     RunningInput()
@@ -90,6 +95,8 @@ def ContinueSchedule():
         StartPCR()
     if SCH is not None:
         raise Exception("Schedule已经运行，请先关闭！")
+    if auto_start_app:
+        Start_App()
     SCH = Schedule(last_schedule, PCR)
     SCH.run_continue()
     RunningInput()
@@ -278,6 +285,7 @@ def ShowAutoConsole():
             print("  !! 错误，不支持的模拟器。当前仅支持：雷电")
     else:
         print("* 模拟器自动控制未配置，前往config.ini - emulator_console进行配置")
+    print("* 自动启动app.py auto_start_app：", "已开启" if auto_start_app else "未开启")
 
 
 def ShowOCR():
@@ -313,7 +321,7 @@ def ShowPCRPerformance():
         print("  - 错误打码时自动申诉 captcha_senderror：", "已开启" if captcha_senderror else "未开启")
     print("* 出现验证码后等待时间 captcha_wait_time：", captcha_wait_time)
     print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", "已开启" if captcha_popup else "未开启")
-
+    print("* 缓存清理 clear_traces_and_cache：", "已开启" if clear_traces_and_cache else "未开启")
 
 def ShowDebugInfo():
     print("* 输出Debug信息 debug：", "已开启" if debug else "未开启")
@@ -363,9 +371,15 @@ def ShowInfo():
     CheckConstantImgs()
 
 
+
+def Start_App():
+    subprocess.Popen([sys.executable, "app.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+
+
 if __name__ == "__main__":
     GetLastSchedule()
     argv = sys.argv
+    # 自启动app
     if len(argv) >= 2:
         if argv[1] == "first":
             assert len(argv) >= 3
@@ -380,16 +394,27 @@ if __name__ == "__main__":
             s = requests.Session()
             s.mount('http://', HTTPAdapter(max_retries=5))
             s.mount('https://', HTTPAdapter(max_retries=5))
-            api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm"
-            all_info = s.get(api_url).json()
-            new_time = all_info["updated_at"]
-            update_info = f"最新版本为 {new_time}"
+            # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
+            api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/master"
+            all_info = s.get(api_url)
+            if all_info.status_code == 403:
+                update_info = "最新版本为 {请求频繁，当前无法连接到github！请休息2分钟后再试}"
+            elif all_info.status_code == 200:
+                all_info = all_info.json()
+                new_time = all_info["commit"].get("committer").get("date")
+                new_messages = all_info["commit"].get("message")
+                update_info = f"最新版本为 {new_time} -> 更新内容为 {new_messages}"
+            else:
+                update_info = "最新版本为 {当前无法连接到github！}"
         except:
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.20201205")
+        print("当前版本为 Ver 2.1.20210104")
         print(update_info)
+        print("----------------------------------------")
+        print("init 初始化模拟器环境                   ")
+        print("app 启动app.py [自启动：", "已开启" if auto_start_app else "未开启", "]")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")
@@ -397,6 +422,7 @@ if __name__ == "__main__":
         print("* Tip：如果要使用任何OCR（包括本地和网络），请手动启动app.py！")
         print("* Tip：如果要自动填写验证码，请在config关闭captcha_skip")
         print("* Tip：如果某Schedule莫名无法运行，可能是存在未解决的错误，请参考introduce中错误解决相关部分！")
+        print("* Happy 2021 Year!")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
         print("新的脚本控制方法更新！输入help查看帮助。")
@@ -411,6 +437,17 @@ if __name__ == "__main__":
                 ShowGuide()
             elif order == "break":
                 break
+            elif order == "init":
+                os.system(f"cd {adb_dir} & adb start-server")
+                if os.system('python -m uiautomator2 init') != 0:
+                    # pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
+                    print("初始化 uiautomator2 失败,请检查是否有模拟器没有安装上ATX")
+                    exit(1)
+                else:
+                    print("初始化 uiautomator2 成功")
+                    os.system(f"cd {adb_dir} & adb kill-server")
+            elif order == "app":
+                Start_App()
             elif order == "help":
                 if SCH is None:
                     print("脚本控制帮助 ()内的为需要填写的参数，[]内的参数可以不填写（使用默认参数）")

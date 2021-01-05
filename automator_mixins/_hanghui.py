@@ -13,7 +13,7 @@ class HanghuiMixin(ToolsMixin):
     包含行会相关的脚本。
     """
 
-    def hanghui(self):
+    def hanghui(self, once_times):
         """
         行会自动捐赠装备
         2020/8/6 By:CyiceK 检查完毕
@@ -27,7 +27,7 @@ class HanghuiMixin(ToolsMixin):
             if self.is_exists('img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
-                for _ in range(2):
+                for _ in range(once_times):
                     time.sleep(0.8)
                     if self.is_exists('img/juanzeng.jpg', threshold=0.865):
                         screen_shot = self.getscreen()
@@ -246,7 +246,7 @@ class HanghuiMixin(ToolsMixin):
         out = self.lock_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)),
                             ifclick=[(230, 351), (1, 1)],
                             elseclick=[(1, 1), (688, 432)],
-                            elsedelay=8, retry=3, is_raise=False)
+                            elsedelay=8, retry=6, is_raise=False)
         if not out:
             self.log.write_log("error", "无法进入行会")
             self.lock_home()
