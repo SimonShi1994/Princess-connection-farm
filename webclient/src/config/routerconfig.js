@@ -5,6 +5,10 @@ import ScheduleEdit from 'pages/schedule/edit'
  
 export default [
     {
+        path:"/",
+        component: Account
+    },
+    {
         path:"/account",
         component: Account
     },
