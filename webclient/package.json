@@ -4,7 +4,7 @@
   "description": "A web client for Princess-connection-farm",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve",
+    "start": "webpack serve --host 0.0.0.0",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "zzq <jsyzzzq@outlook.com>",
