@@ -15,6 +15,7 @@ from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
+from core.pcr_checker import ExceptionSet, ElementChecker, Checker, ReturnValue
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
     force_fast_screencut, adb_dir, clear_traces_and_cache
 from core.safe_u2 import SafeU2Handle, safe_u2_connect
@@ -81,6 +82,8 @@ class BaseMixin:
         if fast_screencut:
             self.lport: Optional[int] = None
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
+
+        self.ES=ExceptionSet(self)
 
     def save_last_screen(self, filename):
         if self.last_screen is not None:
@@ -195,6 +198,17 @@ class BaseMixin:
         if self._move_method == "forcekill":
             self._move_method = ""
             raise ForceKillException()
+        return False
+
+    def getFC(self):
+        """
+        获得包含自身实例及异常集的FunctionChecker
+        """
+        FC=ElementChecker(self)
+        FC.add(Checker(self._move_check,name="_move_check"),clear=True)
+        FC.bind_ES(self.ES,name="ExceptionSet")
+        return FC
+
 
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0., method=cv2.TM_CCOEFF_NORMED):
         """
@@ -576,7 +590,7 @@ class BaseMixin:
                 pass
 
     def lock_fun(self, RTFun, *args, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
-                 elsedelay=0.5, alldelay=0.5, retry=0, is_raise=False, timeout=None, elseafter=0., **kwargs):
+                 elsedelay=0.5, alldelay=0.5, retry=None, is_raise=False, timeout=None, elseafter=0., **kwargs):
         """
         任意方法锁定
         @RTFun 锁定的函数
@@ -591,49 +605,29 @@ class BaseMixin:
             ifclick = [ifclick]
         if type(elseclick) is not list:
             elseclick = [elseclick]
-        attempt = 0
-        lasttime = time.time()
-        ec_time = 0  # else click time: 上次点elseclick的时间
+        FC=self.getFC()
         if timeout is None:
             timeout = lockimg_timeout
-        while True:
-            self._move_check()
-            lasttime = time.time()
-            if debug:
-                print("FUN:", RTFun)
-                print("FUNOUT:", RTFun())
-            out = RTFun(*args, **kwargs)
-            if debug:
-                print("OUT:", out)
-            if out:
-                if ifclick != []:
-                    for clicks in ifclick:
-                        time.sleep(ifbefore)
-                        self.click(clicks[0], clicks[1], post_delay=elseafter)
-                        time.sleep(ifdelay)
-                return out
-            if ec_time == 0:
-                # 第一次：必点
-                # 此后每次等待elsedelay
-                ec_time = time.time() - elsedelay
-            if time.time() - ec_time >= elsedelay:
-                if elseclick != []:
-                    for clicks in elseclick:
-                        self.click(clicks[0], clicks[1], post_delay=elseafter)
-                    attempt += 1
-                    ec_time = time.time()
-            time.sleep(alldelay)
-            if retry != 0 and attempt > retry:
+        def f():
+            rv=RTFun(*args,**kwargs)
+            if rv is False:
                 return False
-            if timeout != 0 and time.time() - lasttime > timeout:
-                if is_raise:
-                    if disable_timeout_raise:
-                        continue
-                    raise Exception("lock_fun 超时！")
-                return False
+            else:
+                for clicks in ifclick:
+                    time.sleep(ifbefore)
+                    self.click(clicks[0], clicks[1], post_delay=elseafter)
+                    time.sleep(ifdelay)
+                raise ReturnValue(rv)
+        def f2():
+            for clicks in elseclick:
+                self.click(clicks[0], clicks[1], post_delay=elseafter)
+
+        FC.add(Checker(f,name="lock_fun - RTFun"))
+        FC.add_intervalprocess(f2,retry,elsedelay,name="lock_fun - elseclick")
+        FC.lock(alldelay,timeout,is_raise=False if disable_timeout_raise else is_raise)
 
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
-                  elsedelay=0.5, alldelay=0.5, retry=0, side_check=None,
+                  elsedelay=0.5, alldelay=0.5, retry=None, side_check=None,
                   at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84,
                   elseafter=0.):
         """
@@ -674,6 +668,7 @@ class BaseMixin:
         # 2020-08-01 Add: 增加了局部timeout参数
         # 2020-08-06 Add: img可以传入list了
         # 2020-8-19 Add:暂停+方法调用
+        # 2021-1-10 大改，采用新框架FC
         if elseclick is None:
             elseclick = []
         if ifclick is None:
@@ -689,54 +684,37 @@ class BaseMixin:
                 img[i] = True
         if not isinstance(img, dict):
             img = {(img, at): True}
-        attempt = 0
-        lasttime = time.time()
-        ec_time = 0  # else click time: 上次点elseclick的时间
         if timeout is None:
             timeout = lockimg_timeout
-        while True:
-            screen_shot = self.getscreen()
-            # 方法配对，如有需要可以加个验证side_check是否合法
-            if side_check is not None:
-                # 感谢Sisphyus大佬分享的文章
-                # side_check理论支持调用_base的所有子类方法
-                # _method = getattr(self, side_check)
-                determine = side_check(screen_shot)
-                if determine:
-                    lasttime = time.time()
-            if self._move_check():
-                lasttime = time.time()
-            for i, j in img.items():
-                if not isinstance(i, PCRelement):
-                    _img, _at = self._get_img_at(i[0], i[1])
-                else:
-                    _img, _at = self._get_img_at(i, None)
-                if self.is_exists(_img, at=_at, screen=screen_shot, method=method, threshold=threshold) is not lock_no:
-                    if ifclick != []:
-                        for clicks in ifclick:
-                            time.sleep(ifbefore)
-                            self.click(clicks[0], clicks[1], post_delay=elseafter)
-                            time.sleep(ifdelay)
-                    return j
-            if ec_time == 0:
-                # 第一次：必点
-                # 此后每次等待elsedelay
-                ec_time = time.time() - elsedelay
-            if time.time() - ec_time >= elsedelay:
-                if elseclick != []:
-                    for clicks in elseclick:
-                        self.click(clicks[0], clicks[1], post_delay=elseafter)
-                    attempt += 1
-                    ec_time = time.time()
-            time.sleep(alldelay)
-            if retry != 0 and attempt > retry:
-                return False
-            if timeout != 0 and time.time() - lasttime > timeout:
-                if is_raise:
-                    if disable_timeout_raise:
-                        continue
-                    raise Exception("%s——lock_img 超时！" % img)
-                return False
+        FC=self.getFC()
+        FC.getscreen()
+        if side_check is not None:
+            def f(screen):
+                return side_check(screen)
+            FC.add(Checker(f,funvar=["screen"],name="lock_img - side_check"),clear=True)
+
+        def f2():
+            for clicks in ifclick:
+                time.sleep(ifbefore)
+                self.click(clicks[0], clicks[1], post_delay=elseafter)
+                time.sleep(ifdelay)
+        for i, j in img.items():
+            if not isinstance(i, PCRelement):
+                _img, _at = self._get_img_at(i[0], i[1])
+            else:
+                _img, _at = self._get_img_at(i, None)
+            if lock_no:
+                fun=FC.not_exist
+            else:
+                fun=FC.exist
+            fun(PCRelement(img=_img,at=_at),dofunction=f2,rv=j,method=method,threshold=threshold)
+
+        def f3():
+            for clicks in elseclick:
+                self.click(clicks[0], clicks[1], post_delay=elseafter)
+
+        FC.add_intervalprocess(f3,retry,elsedelay,name="lock_img - elseclick")
+        return FC.lock(alldelay, timeout, is_raise=False if disable_timeout_raise else is_raise)
 
     def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
                  at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84, side_check=None,
@@ -831,9 +809,11 @@ class BaseMixin:
             None: 不返回任何页面
         :return:
         """
-        count = 0  # 出现主页的次数
-        while True:
-            screen_shot_ = self.getscreen()
+        # 2021-1-10 FC改写
+        count=[0]
+        FC=self.getFC().getscreen()
+        def f(screen):
+            screen_shot_ = screen
             num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 try:
@@ -841,16 +821,16 @@ class BaseMixin:
                 except:
                     pass
                 time.sleep(1)
-                continue
+                raise ReturnValue("continue")
 
             if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp', at=(891, 413, 930, 452)):
-                count += 1
-                if count > 2:
-                    break
+                count[0] += 1
+                if count[0] > 2:
+                    raise ReturnValue("break")
                 time.sleep(1)
-                continue
+                raise ReturnValue("continue")
             elif UIMatcher.img_where(screen_shot_, 'img/jiaruhanghui.jpg'):
-                break
+                raise ReturnValue("break")
             elif self.is_exists(MAIN_BTN["xiazai"], screen=screen_shot_):
                 self.click(MAIN_BTN["xiazai"])
             elif self.click_img(screen_shot_, 'img/xiayibu.jpg'):
@@ -875,27 +855,31 @@ class BaseMixin:
                     time.sleep(1)
             else:
                 self.click(1, 100)
-            count = 0
-            time.sleep(1)
+            count[0] = 0
+
+        FC.add(Checker(f))
+        FC.lock(delay=1,until="break")
         if turnback == "shuatu":
             # 返回冒险
             self.click(480, 505)
             time.sleep(2)
             self.lock_img('img/zhuxianguanqia.jpg', elseclick=[(480, 513), (390, 369)], elsedelay=0.5)
-            while True:
-                screen_shot_ = self.getscreen()
+            def f2(screen):
+                screen_shot_ = screen
                 if UIMatcher.img_where(screen_shot_, 'img/zhuxianguanqia.jpg', at=(511, 286, 614, 314)):
                     self.click(562, 253)
                     time.sleep(0.5)
                 else:
-                    break
+                    raise ReturnValue("break")
+            self.getFC().getscreen().add(Checker(f2)).lock(timeout=lockimg_timeout,until="break")
             time.sleep(3)
-            while True:
-                screen_shot_ = self.getscreen()
+            def f3(screen):
+                screen_shot_ = screen
                 if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
-                    break
+                    raise ReturnValue("break")
                 self.click(704, 84)
                 time.sleep(0.5)
+            self.getFC().getscreen().add(Checker(f3)).lock(timeout=lockimg_timeout,until="break")
 
     def task_start(self):
         # 标记这个用户开始重新刷图了
