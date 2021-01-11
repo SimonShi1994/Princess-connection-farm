@@ -200,13 +200,17 @@ class BaseMixin:
             raise ForceKillException()
         return False
 
-    def getFC(self):
+    def getFC(self,header=True):
         """
         获得包含自身实例及异常集的FunctionChecker
         """
         FC=ElementChecker(self)
-        FC.add(Checker(self._move_check,name="_move_check"),clear=True)
-        FC.bind_ES(self.ES,name="ExceptionSet")
+        if header:
+            FC.header=True
+            FC.add(Checker(self._move_check,name="_move_check"),clear=True)
+            FC.bind_ES(self.ES,name="ExceptionSet")
+        else:
+            FC.header=False
         return FC
 
 

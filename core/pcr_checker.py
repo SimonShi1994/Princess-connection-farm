@@ -139,27 +139,6 @@ FC与Automator绑定，一个FC中必然含有参数_a，表示绑定的Automato
     with self.ES(FunctionChecker,group=None):
         pass
 
-4. 场景类
-场景类PCRScene是一个集合了该场景全部可交互信息的手段，把相关参数和场景交互方法封装在一个类中，
-使得程序可读性更高。
-PCRScene的每一个交互的返回值均为一个PCRScene类，表示经过该交互后场景的变化。
-PCRSceneBase类是全部场景的基类，由于需要对Automator进行操控，PCRSceneBase含有参数_a，表示对应Automator。
-    生成场景时，必须要提供_a参数。
-PCRSceneBase类也会提供Automator中的常用方法，如click, lock_img等等，只是相当于简化了self._a.click -> self.click。
-一个成功的场景切换一般包括两个步骤：
-（在特殊ES不触发时）
-    当前场景的特征消失
-    下一场景的特征出现
-因此，为了保证切换的顺利，每个PCRSceneBase类都含有特殊的特征函数：
-    PCRSceneBase.feature
-    返回值为True时，说明检测到了该场景的特征。
-在场景切换中，首先锁定直到该场景特征消失，再锁定直到后一场景特征出现。当然
-同时考虑到每个场景刚进入后都可能需要ES，所以每个PCRSceneBase类还提供了一个initFC：
-    PCRSceneBase.initFC
-    在场景刚进入时会挂载init_FC到特定Group中，直到一次有效的场景交互被成功执行，或手动调用
-        PCRSceneBase.clear_initFC()
-
-大致就是这些。
 """
 import inspect
 import random
@@ -169,108 +148,117 @@ import collections
 from typing import Callable, Any, Dict, Optional, Union
 
 from core.constant import PCRelement
+from core.pcr_config import disable_timeout_raise, lockimg_timeout
 
 
 class Checker:
-    def __init__(self,fun:Callable[[Any],bool],vardict:Optional[Dict[str,Any]]=None,funvar=None,name=None):
-        self.name=name
+    def __init__(self, fun: Callable[[Any], bool], vardict: Optional[Dict[str, Any]] = None, funvar=None, name=None):
+        self.name = name
         if vardict is None:
-            vardict={}
-        self._fun=getattr(fun,"__call__",fun)
-        self._v=vardict
+            vardict = {}
+        self._fun = getattr(fun, "__call__", fun)
+        self._v = vardict
         if funvar is not None:
-            self._funvar=funvar
+            self._funvar = funvar
             self._default = [inspect.Parameter.empty] * len(self._funvar)
         else:
             try:
-                pars=inspect.signature(fun).parameters
-                self._funvar=[]
-                self._default=[]
-                for i,j in pars.items():
-                    if j.kind in [1,3]:
+                pars = inspect.signature(fun).parameters
+                self._funvar = []
+                self._default = []
+                for i, j in pars.items():
+                    if j.kind in [1, 3]:
                         # 非args kwargs
-                        self._funvar+=[i]
-                        self._default+=[j.default]
+                        self._funvar += [i]
+                        self._default += [j.default]
             except Exception as e:
                 assert funvar is not None, f"inspect检查失败，必须指定funvar！{e}"
-                self._funvar=funvar
-                self._default=[inspect.Parameter.empty]*len(self._funvar)
+                self._funvar = funvar
+                self._default = [inspect.Parameter.empty] * len(self._funvar)
+
     def __repr__(self):
         return f"<Checker name={self.name} funvar={self._funvar}>"
 
-    def _check_exist(self,more):
+    def _check_exist(self, more):
         # 确保环境中存在所需的变量
-        v=self._v
+        v = self._v
         v.update(more)
-        p={}
-        for i,j in zip(self._funvar,self._default):
+        p = {}
+        for i, j in zip(self._funvar, self._default):
             if i not in v:
                 if j is not inspect.Parameter.empty:
-                    p[i]=j
+                    p[i] = j
                 else:
-                    raise AttributeError("vardict中不存在Checker所需的变量：",i)
+                    raise AttributeError("vardict中不存在Checker所需的变量：", i)
             else:
-                p[i]=v[i]
+                p[i] = v[i]
         return p
 
-    def _run(self,vardict:Optional[Dict]=None)->bool:
+    def _run(self, vardict: Optional[Dict] = None) -> bool:
         if vardict is None:
-            vardict={}
-        p=self._check_exist(vardict)
+            vardict = {}
+        p = self._check_exist(vardict)
         return self._fun(**p)
 
-    def __call__(self,vardict:Optional[Dict]=None)->bool:
+    def __call__(self, vardict: Optional[Dict] = None) -> bool:
         return self._run(vardict)
 
     @staticmethod
     def true(name=None):
-        def f(*args,**kwargs):
+        def f(*args, **kwargs):
             return True
-        return Checker(f,funvar=[],name=name)
+
+        return Checker(f, funvar=[], name=name)
+
 
 class ReturnValue(Exception):
-    def __init__(self,value):
+    def __init__(self, value):
         super().__init__()
-        self.value=value
+        self.value = value
 
     def __repr__(self):
         return f"<Return Value>: {self.value}"
 
+
 class LockError(Exception):
-    def __init__(self,*args):
+    def __init__(self, *args):
         super().__init__(*args)
+
 
 class LockTimeoutError(LockError):
-    def __init__(self,*args):
+    def __init__(self, *args):
         super().__init__(*args)
+
 
 class LockMaxRetryError(LockError):
-    def __init__(self,*args):
+    def __init__(self, *args):
         super().__init__(*args)
-
 
 
 class FunctionChecker:
     def __init__(self):
-        self.vardict={}  # 公共存储空间
-        self.checkers=[]  # Checkers序列
-        self.last_time=0  # 起始时间戳
-        self.target_flag=True  # 需要Chechker为真
+        self.vardict = {}  # 公共存储空间
+        self.checkers = []  # Checkers序列
+        self.last_time = 0  # 起始时间戳
+        self.target_flag = True  # 需要Chechker为真
 
-    def set_target(self,target):
-        self.target_flag=target
+    def set_target(self, target):
+        self.target_flag = target
         return self
 
-    def update_var(self,fun,varname,name="update_var",*args,**kwargs):
+    def update_var(self, fun, varname, name="update_var", *args, **kwargs):
         # 用fun的返回值更新vardict
         def f():
-            self.vardict[varname]=fun(*args,**kwargs)
-        self.checkers+=[(Checker.true(name),f)]
+            self.vardict[varname] = fun(*args, **kwargs)
+
+        self.checkers += [(Checker.true(name), f)]
         return self
 
-    def add(self,checker:Union[Checker,bool],dofunction:Optional[Callable]=None,rv=None,raise_=None,clear=False):
+    def add(self, checker: Union[Checker, bool], dofunction: Optional[Callable] = None, rv=None, raise_=None,
+            clear=False):
         # 增加一个checker-dofunction
         assert rv is None or raise_ is None, "返回值和弹出异常只能存在一个！"
+
         def f():
             if dofunction is not None:
                 dofunction()
@@ -279,67 +267,71 @@ class FunctionChecker:
             if raise_ is not None:
                 raise raise_
             if clear:
-                self.last_time=time.time()
-                self.retry_times=0
+                self.last_time = time.time()
+                self.retry_times = 0
 
-        self.checkers+=[(checker,f)]
+        self.checkers += [(checker, f)]
         return self
 
-    def add_process(self,dofunction:Callable,name="process"):
-        self.checkers+=[(Checker.true(name),dofunction)]
+    def add_process(self, dofunction: Callable, name="process"):
+        self.checkers += [(Checker.true(name), dofunction)]
         return self
 
-    def add_intervalprocess(self,dofunction:Callable,retry=None,interval=1,name="interval_process"):
+    def add_intervalprocess(self, dofunction: Callable, retry=None, interval=1, name="interval_process"):
         # 每隔interval执行一次的process，第一次不需等待
         # 重复执行次数（包括第一次）达到retry后，弹出错误
         # retry=0等价于retry=None （历史遗留原因）。
         if "__retry__" not in self.vardict:
-            self.vardict["__retry__"]=collections.OrderedDict()
+            self.vardict["__retry__"] = collections.OrderedDict()
         if "__last_time__" not in self.vardict:
-            self.vardict["__last_time__"]=collections.OrderedDict()
-        ID_R=len(self.vardict["__retry__"])
-        ID_I=len(self.vardict["__last_time__"])
-        if retry==0:
+            self.vardict["__last_time__"] = collections.OrderedDict()
+        ID_R = len(self.vardict["__retry__"])
+        ID_I = len(self.vardict["__last_time__"])
+        if retry == 0:
             retry = None
         if retry is not None:
             retry -= 1  # 兼容历史
-            self.vardict["__retry__"][ID_R]=0
-        self.vardict["__last_time__"][ID_I]=0
-        def f(__last_time__,__retry__):
-            if time.time()-__last_time__[ID_I]>interval:
-                __last_time__[ID_I]=time.time()
+            self.vardict["__retry__"][ID_R] = 0
+        self.vardict["__last_time__"][ID_I] = 0
+
+        def f(__last_time__, __retry__):
+            if time.time() - __last_time__[ID_I] > interval:
+                __last_time__[ID_I] = time.time()
                 if retry is not None:
-                    if __retry__[ID_R]>retry:
+                    if __retry__[ID_R] > retry:
                         raise LockMaxRetryError("重试次数超过", retry, "次！")
                 dofunction()
                 if retry is not None:
-                    __retry__[ID_R]+=1
-        self.add(Checker(f,funvar=["__last_time__","__retry__"],name=name))
+                    __retry__[ID_R] += 1
+
+        self.add(Checker(f, funvar=["__last_time__", "__retry__"], name=name))
 
     def run(self):
         # 跑Checker
         try:
-            for c,f in self.checkers:
+            for c, f in self.checkers:
                 if c is True:
                     flag = self.target_flag
                 else:
-                    flag=c(self.vardict)
-                if flag==self.target_flag:
+                    flag = c(self.vardict)
+                if flag == self.target_flag:
                     if f is not None:
                         f()
         except ReturnValue as rv:
             return rv.value
         return None
 
-    def lock(self,delay=0,timeout=None,until=None,is_raise=True):
+    def lock(self, delay=0, timeout=None, until=None, is_raise=True):
         # 锁Checker
-        self.last_time=time.time()
-        self.retry_times=0
-        if timeout==0:
-            timeout=None
+        self.last_time = time.time()
+        self.retry_times = 0
+        if timeout is None:
+            timeout = lockimg_timeout
+        if timeout == 0:
+            timeout = None
         while True:
             try:
-                rv=self.run()
+                rv = self.run()
             except LockMaxRetryError as e:
                 if is_raise:
                     raise e
@@ -347,29 +339,30 @@ class FunctionChecker:
                     return None
             if until is None and rv is not None:
                 return rv
-            elif isinstance(until,collections.Iterable) and rv in until:
+            elif isinstance(until, collections.Iterable) and rv in until:
                 return rv
-            elif isinstance(until,collections.Callable) and until(rv):
+            elif isinstance(until, collections.Callable) and until(rv):
                 return rv
-            elif until is not None and rv==until:
+            elif until is not None and rv == until:
                 return rv
-            self.retry_times+=1
-            if timeout is not None and time.time()-self.last_time>timeout:
+            self.retry_times += 1
+            if timeout is not None and time.time() - self.last_time > timeout:
                 if is_raise:
-                    raise LockTimeoutError("锁定时间超过",timeout,"秒！")
+                    raise LockTimeoutError("锁定时间超过", timeout, "秒！")
                 else:
                     return None
             time.sleep(delay)
 
+
 class ExceptionSet:
-    def __init__(self,a:"BaseMixin"):
-        self._a=a
-        self.FCs= collections.OrderedDict()
+    def __init__(self, a: "BaseMixin"):
+        self._a = a
+        self.FCs = collections.OrderedDict()
 
-    def register(self,fc:FunctionChecker,group="_default"):
-        self.FCs[group]=fc
+    def register(self, fc: FunctionChecker, group="_default"):
+        self.FCs[group] = fc
 
-    def clear(self,group="_default"):
+    def clear(self, group="_default"):
         if group in self.FCs:
             del self.FCs[group]
 
@@ -377,84 +370,98 @@ class ExceptionSet:
         for FC in self.FCs.keys():
             FC.run()
 
-    def __call__(self,fc:FunctionChecker,group=None):
+    def __call__(self, fc: FunctionChecker, group=None):
         if group is None:
-            group=str(random.random())
-        ES=self
+            group = str(random.random())
+        ES = self
+
         class es_with:
             def __enter__(self):
-                ES.register(fc,group)
-            def __exit__(self):
+                ES.register(fc, group)
+
+            def __exit__(self, *args, **kwargs):
                 ES.clear(group)
-        return es_with
+
+        return es_with()
 
 
 class ElementChecker(FunctionChecker):
-    def __init__(self,a:"BaseMixin"):
+    def __init__(self, a: "BaseMixin"):
         super().__init__()
-        self._a=a
-        self._have_getscreen=False
+        self._a = a
+        self._have_getscreen = False
+        self.header = False
 
-    def getscreen(self,force=False):
+    def getscreen(self, force=False):
         # 使用add_exist族函数前必须使用
         # 否则将每次拍摄新的截图，浪费时间
         # 向公共空间中增加一个截图参数screen
         # force=False时，只有第一个getscreen起作用
         if force or self._have_getscreen is False:
-            self.update_var(self._a.getscreen,"screen","getscreen")
-            self._have_getscreen=True
+            self.update_var(self._a.getscreen, "screen", "getscreen")
+            self._have_getscreen = True
         return self
 
-    def exist(self,img:PCRelement,dofunction:Optional[Callable]=None,rv=True,raise_=None,clear=False,**kwargs):
-        def f(screen=None)->bool:
-            return self._a.is_exists(img,screen=screen,**kwargs)
+    def exist(self, img: Union[PCRelement,str], dofunction: Optional[Callable] = None, rv=True, raise_=None, clear=False,
+              **kwargs):
+        def f(screen=None) -> bool:
+            return self._a.is_exists(img, screen=screen, **kwargs)
 
-        self.add(Checker(f,self.vardict,name=f"Exist[{img}] -> {rv}",),dofunction=dofunction,rv=rv,raise_=raise_,clear=clear)
+        self.add(Checker(f, self.vardict, name=f"Exist[{img}] -> {rv}", ), dofunction=dofunction, rv=rv, raise_=raise_,
+                 clear=clear)
         return self
 
-    def not_exist(self,img:PCRelement,dofunction:Optional[Callable]=None,rv=True,raise_=None,clear=False,**kwargs):
-        def f(screen=None)->bool:
-            return not self._a.is_exists(img,screen=screen,**kwargs)
+    def not_exist(self, img: Union[PCRelement,str], dofunction: Optional[Callable] = None, rv=True, raise_=None, clear=False,
+                  **kwargs):
+        def f(screen=None) -> bool:
+            return not self._a.is_exists(img, screen=screen, **kwargs)
 
-        self.add(Checker(f,self.vardict,name=f"NotExist[{img}] -> {rv}"),dofunction=dofunction,rv=rv,raise_=raise_,clear=clear)
+        self.add(Checker(f, self.vardict, name=f"NotExist[{img}] -> {rv}"), dofunction=dofunction, rv=rv, raise_=raise_,
+                 clear=clear)
         return self
 
-    def click(self,*args,pre_delay=0.,post_delay=0.,interval=0,retry=None,**kwargs):
+    def click(self, *args, pre_delay=0., post_delay=0., interval=0, retry=None, **kwargs):
         def f():
-            self._a.click(*args,pre_delay=pre_delay,post_delay=post_delay,**kwargs)
-        if interval==0:
-            self.add_process(f,f"click {args}")
+            self._a.click(*args, pre_delay=pre_delay, post_delay=post_delay, **kwargs)
+
+        if interval == 0:
+            self.add_process(f, f"click {args}")
         else:
-            self.add_intervalprocess(f,retry,interval,f"click {args} interval={interval} maxretry={retry}")
+            self.add_intervalprocess(f, retry, interval, f"click {args} interval={interval} maxretry={retry}")
         return self
 
-    def sleep(self,sec):
+    def sleep(self, sec):
         def f():
             time.sleep(sec)
-        self.add_process(f,name=f"sleep {sec} s")
+
+        self.add_process(f, name=f"sleep {sec} s")
         return self
 
-    def bind_ES(self,es:ExceptionSet,name="ExceptionSet"):
-        self.add_process(es.run,name=name)
+    def bind_ES(self, es: ExceptionSet, name="ExceptionSet"):
+        for i in es.FCs.values():
+            assert i.header is False, "绑定的异常集中不能含有header,请设置getFC(false)！"
+        self.add_process(es.run, name=name)
         return self
+
 
 class RetryNow(Exception):
-    def __init__(self,name=None):
+    def __init__(self, name=None):
         super().__init__()
-        self.name=name
+        self.name = name
 
 
 class PCRRetry:
-    def __init__(self,name=None):
-        self.name=name
-    def __call__(self,fun):
+    def __init__(self, name=None):
+        self.name = name
+
+    def __call__(self, fun):
         def f():
             while True:
                 try:
                     fun()
                 except RetryNow as r:
-                    if r.name==self.name:
+                    if r.name == self.name:
                         continue
                 break
-        return f
 
+        return f
