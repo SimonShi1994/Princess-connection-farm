@@ -16,43 +16,28 @@ const options = [
 ];
 export default (props) => {
     const { id } = props.match.params
-    const { schedules } = example[id]
-    console.log(schedules)
+    const [schedules, updateschedules] = React.useState(example[id].schedules)
+    const handlechange = (index, value) => {
+        const temp = [...schedules]
+        console.log(value)
+        temp[index] = value
+        updateschedules(temp)
+    }
     return (
         <div>
             {schedules.map((schedule, index) => {
                 switch (schedule.type) {
                     case 'asap':
                         return (
-                            <Form
-                                {...layout}
-                                name={schedule.name}
-                                key={schedule.name}
-                                initialValues={{ remember: true }}
-                            >
-                                <Form.Item
-                                    label="batchfile"
-                                    name="batchfile"
-                                    rules={[{ required: true, message: 'Please input your batchfile!' }]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                                <Form.Item
-                                    label="Password"
-                                    name="password"
-                                    rules={[{ required: true, message: 'Please input your password!' }]}
-                                >
-                                    <Input.Password />
-                                </Form.Item>
-                            </Form>
+                            <Asapform updateschedules={handlechange} key={index} index={index} {...schedule} />
                         );
                     case 'config':
                         return (
-                            <Configform key={index} index={index} {...schedule} />
+                            <Configform updateschedules={handlechange} key={index} index={index} {...schedule} />
                         )
                     case 'wait':
                         return (
-                            <Waitconfig key={index} index={index} {...schedule} />
+                            <Waitconfig updateschedules={handlechange} key={index} index={index} {...schedule} />
                         )
                     default:
                         return;
@@ -98,17 +83,66 @@ export default (props) => {
 
 const Asapform = (props) => {
 
+    const { updateschedules, index } = props
+    const handlechange = (_, values) => {
+        updateschedules(index, values)
+    }
+    return (
+        <Form
+            {...layout}
+            name={props.name}
+            key={props.name}
+            initialValues={props}
+            onValuesChange={handlechange}
+        >
+            <Row><Col offset={4} span={8}>{props.name}</Col></Row>
+            <Form.Item
+                label="计划名"
+                name="name"
+                rules={[{ required: true, message: '请输入计划名' }]}
+            >
+                <Input />
+            </Form.Item>
+            <Form.Item
+                label="batchfile"
+                name="batchfile"
+                rules={[{ required: true, message: 'Please input your batchfile!' }]}
+            >
+                <Input />
+            </Form.Item>
+            <Form.Item
+                label="condition"
+                name="condition"
+            >
+                <ConditionComponent />
+            </Form.Item>
+            <Form.Item
+                label="类型"
+                name="type"
+                rules={[{ required: true, message: 'Please input your batchfile!' }]}
+            >
+                <Radio.Group
+                    options={options}
+                    optionType="button"
+                    buttonStyle="solid"
+                />
+            </Form.Item>
+        </Form>
+    )
 }
 
 const Configform = (props) => {
-    const { index, restart } = props
-    console.log(props)
+    const { index, updateschedules } = props
+    const handlechange = (_, values) => {
+        updateschedules(index, values)
+    }
     return (
         <Form
             {...layout}
             name={`config${index}`}
             key={`config${index}`}
             initialValues={props}
+            onValuesChange={handlechange}
         >
             <Row><Col offset={4} span={8}>Config</Col></Row>
             <Form.Item
@@ -148,10 +182,9 @@ const Configform = (props) => {
 //     "record":int
 // }
 const Waitconfig = (props) => {
-    console.log(props)
-    const handlechange=(e)=>{
-        console.log(e.target)
-        console.log(props)
+    const { updateschedules, index } = props
+    const handlechange = (_, values) => {
+        updateschedules(index, values)
     }
     return (
         <Form
@@ -159,7 +192,7 @@ const Waitconfig = (props) => {
             name={props.name}
             key={props.name}
             initialValues={props}
-            onChange={handlechange}
+            onValuesChange={handlechange}
         >
             <Row><Col offset={4} span={8}>{props.name}</Col></Row>
             <Form.Item
