@@ -5,7 +5,7 @@ import subprocess
 import time
 from abc import abstractmethod, ABCMeta
 
-from core.pcr_config import emulator_console, emulator_id, emulator_address, auto_emulator_address
+from core.pcr_config import emulator_console, emulator_id, emulator_address, auto_emulator_address, wait_for_launch_time
 
 
 class LauncherBase(metaclass=ABCMeta):
@@ -47,7 +47,7 @@ class LauncherBase(metaclass=ABCMeta):
         time.sleep(3)
         self.launch(id, block)
 
-    def wait_for_launch(self, id: int, timeout=60):
+    def wait_for_launch(self, id: int, timeout=wait_for_launch_time):
         last_time = time.time()
         while not self.is_running(id):
             time.sleep(1)
@@ -117,15 +117,23 @@ class LDLauncher(LauncherBase):
         else:
             return emulator_address[id]
 
-    def launch(self, id: int, block: bool = False) -> None:
+    def launch(self, id: int, block: bool = True) -> None:
         cmd = f"{self.console_str} globalsetting --audio 0 --fastplay 1 --cleanmode 1"
         subprocess.check_call(cmd)
         cmd = f"{self.console_str} launch --index {id}"
         subprocess.check_call(cmd)
+        cmd = f"{self.console_str} downcpu --index {id} --rate 50"
+        subprocess.check_call(cmd)
+
+        if len(emulator_id) == 0:
+            block = False
+
         if block:
             last_time = time.time()
-            while not self.is_running(id) and time.time() - last_time < 120:
-                time.sleep(1)
+            for i in emulator_id:
+                # 遍历emulator_id，只是为了全部模拟器启动成功，防止adb互相杀害
+                while not self.is_running(i) and time.time() - last_time < wait_for_launch_time:
+                    time.sleep(1)
 
     def quit(self, id: int) -> None:
         cmd = f"{self.console_str} quit --index {id}"

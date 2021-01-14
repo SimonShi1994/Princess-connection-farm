@@ -415,7 +415,8 @@ class MeiRiHTuInputer(InputBoxBase):
 
 
 VALID_TASK = ValidTask() \
-    .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备") \
+    .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备",
+         [TaskParam("once_times", int, "单账号捐赠的次数", "一个账号轮询捐赠多少次，多次可以提高容错率但会增加脚本执行时间", 2)]) \
     .add("h2", "tichuhanghui", "踢出行会", "将战力排名第一人踢出行会") \
     .add("h3", "yaoqinghanghui", "邀请行会", "邀请指定成员进入行会",
          [TaskParam("inviteUID", str, "UID", "被邀请者的UID号")]) \
@@ -501,7 +502,8 @@ VALID_TASK = ValidTask() \
           TaskParam("times", int, "次数", "只能为1~5的整数"),
           TaskParam("tili", bool, "体力不足时是否购买体力")]) \
     .add("t1", "rename", "批量重命名", "随机+批量给自己换个名字，建议配合OCR识别信息更佳",
-         [TaskParam("name", str, "新名字", "你的量产新名字，以空格为间隔")]) \
+         [TaskParam("name", str, "新名字", "你的量产新名字，以空格为间隔"),
+          TaskParam("auto_id", bool, "自动生成随机位数id", "生成一个随机数0-1000在名字后面", False)]) \
     .add("t2", "save_box_screen", "box截图", "按照战力/等级/星数截屏前两行box",
          [TaskParam("dir", str, "box存放位置", "填写box存放文件夹", "box_pic"),
           TaskParam("sort", str, "排序方式", "只能填写下列三个字符串中的一个：\n"

@@ -70,6 +70,7 @@ class LoginMixin(BaseMixin):
         self.d.clear_text()
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
+        toast_message = self.d.toast.get_message()
         while True:
             # 快速响应
             time.sleep(1)
@@ -82,6 +83,10 @@ class LoginMixin(BaseMixin):
                 break
             elif self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                 break
+            elif toast_message is "密码错误":
+                raise Exception("密码错误！")
+            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists():
+                continue
             self.click(MAIN_BTN["zhuye"])
 
         def SkipAuth():
@@ -154,10 +159,10 @@ class LoginMixin(BaseMixin):
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X8006")
                     x = int(answer_result[0]) + 254
                     y = int(answer_result[1]) + 22
-                    print(f">{self.account}-滑块坐标识别：", x, y)
+                    print(f">{self.account}-滑块坐标识别：", x, 386)
                     # print(type(x))
                     # 从322,388 滑动到 x,y
-                    self.d.drag_to(322, 388, x, y, 1.2)
+                    self.d.drag_to(322, 388, x, 386, 1.2)
 
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
@@ -179,6 +184,11 @@ class LoginMixin(BaseMixin):
                     return AutoCaptcha()
 
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
+
+                # 这里是获取toast，看是否输错密码
+                toast_message = self.d.toast.get_message()
+                if toast_message is "密码错误":
+                    raise Exception("密码错误！")
 
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     if _time >= 5:
@@ -310,6 +320,7 @@ class LoginMixin(BaseMixin):
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
         self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
+
     @timeout(300, "login_auth登录超时，超过5分钟")
     def login_auth(self, ac, pwd):
         need_auth = self.login(ac=ac, pwd=pwd)
@@ -323,6 +334,7 @@ class LoginMixin(BaseMixin):
         self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
         self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)], at=(495, 353, 687, 388))
         self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
+        # 设备匿名
         self.phone_privacy()
         gc.collect()
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
