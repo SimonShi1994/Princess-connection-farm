@@ -1,38 +1,29 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import TaskConfig from '@/pages/TaskConfig'
-import Dashboard from '@/pages/Dashboard'
-import AccountConfig from '@/pages/AccountConfig'
-import ClanConfig from '@/pages/ClanConfig'
+import React from "react";
+import ReactDOM from "react-dom";
+import { AppContainer } from "react-hot-loader";
+import { HashRouter } from "react-router-dom";
+import Router from "./router";
+import 'antd/dist/antd.css';
+import './index.css';
 
-Vue.use(Router)
-
-export default new Router({
-  mode: 'history',
-  routes: [
-    {
-      path: '/',
-      redirect: '/account_config'
-    },
-    {
-      path: '/dashboard',
-      name: 'Dashboard',
-      component: Dashboard
-    },
-    {
-      path: '/task_config',
-      name: 'TaskConfig',
-      component: TaskConfig
-    },
-    {
-      path: '/account_config',
-      name: 'AccountConfig',
-      component: AccountConfig
-    },
-    {
-      path: '/clan_config',
-      name: 'ClanConfig',
-      component: ClanConfig
-    }
-  ]
-})
+/*初始化*/
+renderWithHotReload(Router);
+ 
+/*热更新*/
+if (module.hot) {
+  module.hot.accept("./router/index.js", () => {
+    const Router = ()=>import("./router/index.js");
+    renderWithHotReload(Router);
+  });
+}
+ 
+function renderWithHotReload(Router) {
+  ReactDOM.render(
+    <AppContainer>
+      <HashRouter>
+        <Router />
+      </HashRouter>
+    </AppContainer>,
+    document.getElementById("app")
+  );
+}
