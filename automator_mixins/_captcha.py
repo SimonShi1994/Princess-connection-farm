@@ -188,7 +188,7 @@ class CaptionSkip:
 
     def getpoint(self):
 
-        print("3s后发起查询题分！")
+        # print("3s后发起查询题分！")
         time.sleep(3)
 
         self.get_host()
@@ -201,8 +201,11 @@ class CaptionSkip:
             'r': random.randint(1000000000, 9999999999),
         }
         c = self.conversation.get(url=self.img_getpoint, data=img_post, headers=self.img_hear_dict)
-        if int(c.text) > 0 and c.text not in self.error_feature:
-            return int(c.text)
+        if c.text not in self.no_result:
+            try:
+                return int(c.text)
+            except:
+                return c.text
             # print("剩余题分：", int(c.text))
 
     def send_error(self, _id):
