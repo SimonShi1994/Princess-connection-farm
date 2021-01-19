@@ -410,10 +410,10 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.20210104")
+        print("当前版本为 Ver 2.1.20210119")
         print(update_info)
         print("----------------------------------------")
-        print("init 初始化模拟器环境                   ")
+        print("init 初始化模拟器环境&转化txt为json      ")
         print("app 启动app.py [自启动：", "已开启" if auto_start_app else "未开启", "]")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
@@ -439,6 +439,11 @@ if __name__ == "__main__":
                 break
             elif order == "init":
                 os.system(f"cd {adb_dir} & adb start-server")
+                os.system(f"cd batches & ren *.txt *.json")
+                os.system(f"cd groups & ren *.txt *.json")
+                os.system(f"cd schedules & ren *.txt *.json")
+                os.system(f"cd tasks & ren *.txt *.json")
+                os.system(f'cd users & for /r %a in (*.txt) do ren "%a" "%~na.json"')
                 if os.system('python -m uiautomator2 init') != 0:
                     # pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
                     print("初始化 uiautomator2 失败,请检查是否有模拟器没有安装上ATX")

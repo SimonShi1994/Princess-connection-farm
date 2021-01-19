@@ -117,7 +117,7 @@ class LDLauncher(LauncherBase):
         else:
             return emulator_address[id]
 
-    def launch(self, id: int, block: bool = True) -> None:
+    def launch(self, id: int, block: bool = False) -> None:
         cmd = f"{self.console_str} globalsetting --audio 0 --fastplay 1 --cleanmode 1"
         subprocess.check_call(cmd)
         cmd = f"{self.console_str} launch --index {id}"
@@ -130,10 +130,8 @@ class LDLauncher(LauncherBase):
 
         if block:
             last_time = time.time()
-            for i in emulator_id:
-                # 遍历emulator_id，只是为了全部模拟器启动成功，防止adb互相杀害
-                while not self.is_running(i) and time.time() - last_time < wait_for_launch_time:
-                    time.sleep(1)
+            while not self.is_running(id) and time.time() - last_time < wait_for_launch_time:
+                time.sleep(1)
 
     def quit(self, id: int) -> None:
         cmd = f"{self.console_str} quit --index {id}"

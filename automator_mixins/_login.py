@@ -73,6 +73,7 @@ class LoginMixin(BaseMixin):
         toast_message = self.d.toast.get_message()
         while True:
             # 快速响应
+            # 很容易在这里卡住
             time.sleep(1)
             sc = self.getscreen()
             if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
@@ -85,9 +86,8 @@ class LoginMixin(BaseMixin):
                 break
             elif toast_message is "密码错误":
                 raise Exception("密码错误！")
-            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists():
-                continue
-            self.click(MAIN_BTN["zhuye"])
+            elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists():
+                break
 
         def SkipAuth():
             for _ in range(2):
@@ -111,10 +111,10 @@ class LoginMixin(BaseMixin):
         flag = False
         if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
             flag = True
-            self.phone_privacy()
             _time = 1
             _id = 0
             _pop = False
+
             def AutoCaptcha():
 
                 # 初始化接码
@@ -126,8 +126,9 @@ class LoginMixin(BaseMixin):
 
                 time.sleep(5)
                 screen = self.getscreen()
-                screen = screen[22:512, 254:711]
-                # 456, 489
+                screen = screen[1:575, 157:793]
+                # 原来的 456, 489
+                # 不要了，这是新的分辨率，需要包含游戏一部分截图 631,542
                 if self.d(textContains="请点击此处重试").exists():
                     print(f">>>{self.account}-请点击此处重试")
                     # 点重试
@@ -139,17 +140,17 @@ class LoginMixin(BaseMixin):
                     # 这是关闭验证码 self.click(667, 65, post_delay=3)
                     # 结果出来为四个字的坐标
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6004")
-                    for i in range(0, _len+1):
-                        x = int(answer_result[i].split(',')[0]) + 254
-                        y = int(answer_result[i].split(',')[1]) + 22
+                    for i in range(0, _len + 1):
+                        x = int(answer_result[i].split(',')[0]) + 162
+                        y = int(answer_result[i].split(',')[1]) + 33
                         print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
                         self.click(x, y, post_delay=1)
 
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
-                    x = int(answer_result[0]) + 254
-                    y = int(answer_result[1]) + 22
+                    x = int(answer_result[0]) + 162
+                    y = int(answer_result[1]) + 33
                     print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y, post_delay=1)
@@ -157,12 +158,17 @@ class LoginMixin(BaseMixin):
                 elif self.d(textContains="拖动滑块").exists():
                     print(f">>>{self.account}-检测到滑块题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X8006")
-                    x = int(answer_result[0]) + 254
-                    y = int(answer_result[1]) + 22
+                    x = int(answer_result[0]) + 162
+                    y = int(answer_result[1]) + 33
                     print(f">{self.account}-滑块坐标识别：", x, 386)
                     # print(type(x))
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 1.2)
+
+                elif self.d(textContains="异常").exists():
+                    print(f">>>{self.account}-网络异常，刷新验证码")
+                    self.click(476, 262)
+                    self.d(text="返回").click()
 
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
@@ -292,6 +298,16 @@ class LoginMixin(BaseMixin):
                     self.click(667, 65, post_delay=3)
                     # 防止卡验证码
                     break
+                if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                    if debug:
+                        print("发现协议")
+                    self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                    if self.d(text="请滑动阅读协议内容").exists():
+                        self.d(text="同意").click()
+                    if self.d(description="请滑动阅读协议内容").exists():
+                        # 雷电三
+                        self.d(description="同意").click()
+                    time.sleep(6)
                 else:
                     self.click(945, 13)
                     self.click(678, 377)  # 下载
@@ -319,7 +335,6 @@ class LoginMixin(BaseMixin):
         self.d.send_keys(str(auth_id))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
         self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
-
 
     @timeout(300, "login_auth登录超时，超过5分钟")
     def login_auth(self, ac, pwd):

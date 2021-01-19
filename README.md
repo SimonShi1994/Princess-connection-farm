@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.1.20210104
+ # Princess connection 公主连结农场脚本v2.1.20210119
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -148,6 +148,12 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2021/1/19 By:CyiceK
+
+- 注意，使用自动填写验证码的请务必在2.1前更新到此版本！！！
+- 将后缀txt转为json，为前端铺路（直接在控制台init就可以一键懒人转化啦0.0）
+- 修复无法跳过抽签的问题
 
 2021/1/4 By:TheAutumnOfRice
 

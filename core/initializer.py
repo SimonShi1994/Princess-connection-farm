@@ -72,6 +72,7 @@ def _get_manager():
     m.start()
     return m
 
+
 def time_period_format(tm) -> str:
     tm = int(tm)
     if tm < 60:
@@ -82,6 +83,8 @@ def time_period_format(tm) -> str:
         return f"{tm // 3600}h {(tm % 3600) // 60}m {tm % 60}s"
     else:
         return f"{tm // (3600 * 24)}d {(tm % (3600 * 24)) // 3600}h {(tm % 3600) // 60}m {tm % 60}s"
+
+
 class Device:
     """
     设备类，存储设备状态等。
@@ -195,6 +198,7 @@ class Device:
 
     def out_process(self):
         self._in_process = False
+
 
 class AllDevices:
     """
