@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 
 from api.constants.errors import NotFoundError, BadRequestError
 from api.constants.reply import Reply, ListReply
-from core.usercentre import list_all_users, AutomatorRecorder
+from core.usercentre import list_all_users, AutomatorRecorder, list_all_schedules
 from CreateUser import create_schedule as service_create_schedule, edit_schedule, del_schedule
 
 schedule_api = Blueprint('schedule', __name__)
@@ -218,53 +218,17 @@ def delete_schedule(username):
     return Reply({'username': username})
 
 
-@schedule_api.route('/batches', methods=['GET'])
-def list_all_batches(verbose=0):
-    def check_valid_batch(batch: dict, is_raise=True) -> bool:
-        try:
-            assert "batch" in batch
-            B = batch["batch"]
-            assert type(B) is list
-            for i in B:
-                f1 = "account" in i
-                f2 = "group" in i
-                if f1 + f2 == 0:
-                    return BadRequestError(f"必须至少含有account,group中的一个！")
-                if f1 + f2 == 2:
-                    return BadRequestError(f"account和group键只能出现其中一个！")
-                assert "taskfile" in i
-                assert type("taskfile") is str
-                assert "priority" in i
+@schedule_api.route('/schedules', methods=['GET'])
+def get_list_all_schedules():
+    schedules = list_all_schedules()
+    count = len(schedules)
+    if schedules and count != 0:
+        return ListReply(schedules, count)
+    else:
+        return NotFoundError(f"读取总数为{count}的日程表配置文件夹失败")
 
-        except Exception as e:
-            if is_raise:
-                raise e
-            else:
-                return False
-        return True
-    batch_addr = "batches"  # 存放批任务的文件夹
-    if not os.path.exists(batch_addr):
-        os.makedirs(batch_addr)
-    ld = os.listdir(batch_addr)
-    batches = []
-    count = 0
-    for i in ld:
-        if not os.path.isdir(i) and i.endswith(".txt"):
-            nam = ""
-            try:
-                nam = i[:-4]
-                batch = AutomatorRecorder.getbatch(nam)
-                check_valid_batch(batch)
-                batches += [nam]
-                if verbose:
-                    pass
-                    # print("批配置", nam, "加载成功！")
-                count += 1
-            except Exception as e:
-                if verbose:
-                    pass
-                    # print("打开批配置", nam, "失败！", e)
-    if verbose:
-        pass
-        # print("加载完成，一共加载成功", count, "个批配置。")
-    return ListReply(batches, count)
+
+@schedule_api.route('/schedules_save', methods=['POST'])
+def save_schedules():
+    schedules = request.get_data()
+    AutomatorRecorder.setschedule(ScheduleName, obj)
