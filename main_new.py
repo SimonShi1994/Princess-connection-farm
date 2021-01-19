@@ -410,7 +410,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.20210104")
+        print("当前版本为 Ver 2.1.20210119")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -441,6 +441,7 @@ if __name__ == "__main__":
                 os.system(f"cd {adb_dir} & adb start-server")
                 os.system(f"cd batches & ren *.txt *.json")
                 os.system(f"cd groups & ren *.txt *.json")
+                os.system(f"cd schedules & ren *.txt *.json")
                 os.system(f"cd tasks & ren *.txt *.json")
                 os.system(f'cd users & for /r %a in (*.txt) do ren "%a" "%~na.json"')
                 if os.system('python -m uiautomator2 init') != 0:
