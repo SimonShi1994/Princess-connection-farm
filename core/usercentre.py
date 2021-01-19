@@ -35,7 +35,7 @@ from core.valid_task import VALID_TASK
 组说明：
 默认路径：/groups
 存储格式：txt
-组名：.txt文件的文件名
+组名：.json文件的文件名
 每个组包含的成员：
     txt文件每行一个account，表示这个account包含于该组中。
 
@@ -192,7 +192,7 @@ def check_task_dict(d: dict, is_raise=False) -> bool:
 
 def list_all_users(verbose=1) -> List[str]:
     """
-    列出user_addr文件夹下所有的.txt用户配置
+    列出user_addr文件夹下所有的.json用户配置
     :param verbose: 0:不显示print 1:显示print
     :return: 列表，包含全部合法的用户配置文件
     """
@@ -202,7 +202,7 @@ def list_all_users(verbose=1) -> List[str]:
     users = []
     count = 0
     for i in ld:
-        if not os.path.isdir(i) and i.endswith(".txt"):
+        if not os.path.isdir(i) and i.endswith(".json"):
             try:
                 # 检查是否能打开文件，以及是否含有必要的参数
                 target_name = "%s/%s" % (user_addr, i)
@@ -210,7 +210,7 @@ def list_all_users(verbose=1) -> List[str]:
                 d = json.load(f)
                 check_user_dict(d, True)
                 f.close()
-                users += [i[:-4]]
+                users += [i[:-5]]
                 if verbose:
                     print("用户配置", i, "加载成功！")
                 count += 1
@@ -224,7 +224,7 @@ def list_all_users(verbose=1) -> List[str]:
 
 def list_all_tasks(verbose=1) -> List[str]:
     """
-    列出task_addr文件夹下所有.txt的任务配置
+    列出task_addr文件夹下所有.json的任务配置
     :param verbose: 0:不显示print 1:显示print
     :return: 列表，包含全部任务配置文件
     """
@@ -234,7 +234,7 @@ def list_all_tasks(verbose=1) -> List[str]:
     tasks = []
     count = 0
     for i in ld:
-        if not os.path.isdir(i) and i.endswith(".txt"):
+        if not os.path.isdir(i) and i.endswith(".json"):
             try:
                 # 检查是否能打开文件，以及是否含有必要的参数
                 target_name = "%s/%s" % (task_addr, i)
@@ -242,7 +242,7 @@ def list_all_tasks(verbose=1) -> List[str]:
                 d = json.load(f)
                 check_task_dict(d, True)
                 f.close()
-                tasks += [i[:-4]]
+                tasks += [i[:-5]]
                 if verbose:
                     print("任务配置", i, "加载成功！")
                 count += 1
@@ -272,9 +272,9 @@ def list_all_groups(verbose=1) -> List[str]:
     groups = []
     count = 0
     for i in ld:
-        if not os.path.isdir(i) and i.endswith(".txt"):
+        if not os.path.isdir(i) and i.endswith(".json"):
             try:
-                users = AutomatorRecorder.getgroup(i[:-4])
+                users = AutomatorRecorder.getgroup(i[:-5])
                 check_users_exists(users)
                 if verbose:
                     print("组配置", i, "加载成功！")
@@ -318,10 +318,10 @@ def list_all_batches(verbose=1) -> List[str]:
     batches = []
     count = 0
     for i in ld:
-        if not os.path.isdir(i) and i.endswith(".txt"):
+        if not os.path.isdir(i) and i.endswith(".json"):
             nam = ""
             try:
-                nam = i[:-4]
+                nam = i[:-5]
                 batch = AutomatorRecorder.getbatch(nam)
                 check_valid_batch(batch)
                 batches += [nam]
@@ -375,10 +375,10 @@ def list_all_schedules(verbose=1) -> List[str]:
     schedules = []
     count = 0
     for i in ld:
-        if not os.path.isdir(i) and i.endswith(".txt"):
+        if not os.path.isdir(i) and i.endswith(".json"):
             nam = ""
             try:
-                nam = i[:-4]
+                nam = i[:-5]
                 schedule = AutomatorRecorder.getschedule(nam)
                 check_valid_schedule(schedule)
                 schedules += [nam]
@@ -400,7 +400,7 @@ def init_user(account: str, password: str) -> bool:
     :param password: 密码
     :return: 是否成功创建
     """
-    target_name = "%s/%s.txt" % (user_addr, account)
+    target_name = "%s/%s.json" % (user_addr, account)
     if os.path.exists(target_name):
         print("配置", account, "已经存在。")
         return False
@@ -440,7 +440,7 @@ class AutomatorRecorder:
     在Automator中提供静态存储空间
     含有多个分区，名称为XXX的分区将在user_addr内创建一个名称为XXX的文件夹
         注：分区user在user_addr根目录下
-    每一个分区内，创建一条%account%.txt的记录文件，均为json格式
+    每一个分区内，创建一条%account%.json的记录文件，均为json格式
     """
 
     def __init__(self, account, rec_addr="users/run_status"):
@@ -488,21 +488,21 @@ class AutomatorRecorder:
             return False
 
     def getuser(self) -> dict:
-        target_name = "%s/%s.txt" % (user_addr, self.account)
+        target_name = "%s/%s.json" % (user_addr, self.account)
         d = self._load(target_name)
         check_user_dict(d, True)
         return d
 
     @staticmethod
     def gettask(taskfile) -> dict:
-        target_name = "%s/%s.txt" % (task_addr, taskfile)
+        target_name = "%s/%s.json" % (task_addr, taskfile)
         d = AutomatorRecorder._load(target_name)
         check_task_dict(d, True)
         return d
 
     @staticmethod
     def getgroup(groupfile) -> list:
-        target_name = "%s/%s.txt" % (group_addr, groupfile)
+        target_name = "%s/%s.json" % (group_addr, groupfile)
         users = []
         with open(target_name, "r", encoding="utf-8") as f:
             for j in f:
@@ -517,20 +517,20 @@ class AutomatorRecorder:
 
     @staticmethod
     def getbatch(batchfile) -> dict:
-        target_name = "%s/%s.txt" % (batch_addr, batchfile)
+        target_name = "%s/%s.json" % (batch_addr, batchfile)
         d = AutomatorRecorder._load(target_name)
         check_valid_batch(d)
         return d
 
     @staticmethod
     def getschedule(schedulefile):
-        target_name = "%s/%s.txt" % (schedule_addr, schedulefile)
+        target_name = "%s/%s.json" % (schedule_addr, schedulefile)
         d = AutomatorRecorder._load(target_name)
         check_valid_schedule(d)
         return d
 
     def setuser(self, userobj: dict):
-        target_name = "%s/%s.txt" % (user_addr, self.account)
+        target_name = "%s/%s.json" % (user_addr, self.account)
         if check_user_dict(userobj, is_raise=False):
             AutomatorRecorder._save(target_name, userobj)
         else:
@@ -538,7 +538,7 @@ class AutomatorRecorder:
 
     @staticmethod
     def settask(taskfile, taskobj: dict):
-        target_name = "%s/%s.txt" % (task_addr, taskfile)
+        target_name = "%s/%s.json" % (task_addr, taskfile)
         if check_task_dict(taskobj, is_raise=False):
             AutomatorRecorder._save(target_name, taskobj)
         else:
@@ -546,7 +546,7 @@ class AutomatorRecorder:
 
     @staticmethod
     def setbatch(batchfile, batchobj: dict):
-        target_name = "%s/%s.txt" % (batch_addr, batchfile)
+        target_name = "%s/%s.json" % (batch_addr, batchfile)
         if check_valid_batch(batchobj, is_raise=False):
             AutomatorRecorder._save(target_name, batchobj)
         else:
@@ -554,7 +554,7 @@ class AutomatorRecorder:
 
     @staticmethod
     def setschedule(schedulefile, scheduleobj: dict):
-        target_name = "%s/%s.txt" % (schedule_addr, schedulefile)
+        target_name = "%s/%s.json" % (schedule_addr, schedulefile)
         if check_valid_schedule(scheduleobj, is_raise=False):
             AutomatorRecorder._save(target_name, scheduleobj)
         else:
@@ -625,7 +625,7 @@ class AutomatorRecorder:
         :param default: 默认值，如果获取的记录不存在，则以default创建该记录
         :return: 该分区的dict
         """
-        target_name = "%s/%s/%s.txt" % (user_addr, key, self.account)
+        target_name = "%s/%s/%s.json" % (user_addr, key, self.account)
         dir = os.path.dirname(target_name)
         if default is not None and (not os.path.isdir(dir) or not os.path.exists(target_name)):
             self._save(target_name, default)
@@ -651,7 +651,7 @@ class AutomatorRecorder:
         :param obj: 要保存的dict
         :return: 是否保存成功
         """
-        target_name = "%s/%s/%s.txt" % (user_addr, key, self.account)
+        target_name = "%s/%s/%s.json" % (user_addr, key, self.account)
         return self._save(target_name, obj)
 
     def get_run_status(self):
@@ -659,7 +659,7 @@ class AutomatorRecorder:
         获取运行时状态
         :return: run_status
         """
-        target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.txt")
+        target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.json")
         dir = os.path.dirname(target_name)
         default = UDD["run_status"]
         if not os.path.isdir(dir) or not os.path.exists(target_name):
@@ -679,5 +679,5 @@ class AutomatorRecorder:
         """
         设置运行时状态
         """
-        target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.txt")
+        target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.json")
         return self._save(target_name, rs)

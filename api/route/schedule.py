@@ -1,15 +1,17 @@
+import os
+
 from flask import Blueprint, jsonify, request
 
 from api.constants.errors import NotFoundError, BadRequestError
 from api.constants.reply import Reply, ListReply
-from core.usercentre import list_all_users, AutomatorRecorder
-from CreateUser import create_account as service_create_account, edit_account, del_account
+from core.usercentre import list_all_users, AutomatorRecorder, list_all_schedules
+from CreateUser import create_schedule as service_create_schedule, edit_schedule, del_schedule
 
-account_api = Blueprint('account', __name__)
+schedule_api = Blueprint('schedule', __name__)
 
 
-@account_api.route('/account', methods=['GET'])
-def list_account():
+@schedule_api.route('/schedule', methods=['GET'])
+def list_schedule():
     """
     获取账号列表
     ---
@@ -36,7 +38,7 @@ def list_account():
             return NotFoundError(e)
         if user is not None:
             data.append({
-                'username': user.get('account'),
+                'username': user.get('schedule'),
                 'password': '********',
                 'tags': '-'
             })
@@ -44,8 +46,8 @@ def list_account():
     return ListReply(data, count)
 
 
-@account_api.route('/account/<username>', methods=['GET'])
-def retrieve_account(username):
+@schedule_api.route('/schedule/<username>', methods=['GET'])
+def retrieve_schedule(username):
     """
     获取单条账号
     ---
@@ -78,7 +80,7 @@ def retrieve_account(username):
     try:
         user = AutomatorRecorder(username).getuser()
         if user is not None:
-            data['username'] = user.get('account')
+            data['username'] = user.get('schedule')
             data['taskname'] = user.get('taskfile')
         return Reply(data)
 
@@ -86,8 +88,8 @@ def retrieve_account(username):
         return NotFoundError(f"获取用户 {username} 失败, {e}")
 
 
-@account_api.route('/account', methods=['POST'])
-def create_account():
+@schedule_api.route('/schedule', methods=['POST'])
+def create_schedule():
     """
     添加账号
     ---
@@ -133,16 +135,16 @@ def create_account():
         if password == '':
             return BadRequestError(f'参数 password 不为空')
 
-        service_create_account(account=username, password=password)
+        service_create_schedule(schedule=username, password=password)
 
         return Reply({'username': username, 'password': password})
-    
+
     except Exception as e:
         return NotFoundError(f"添加用户 {username} 失败, {e}")
 
 
-@account_api.route('/account/<username>', methods=['PUT'])
-def update_account(username):
+@schedule_api.route('/schedule/<username>', methods=['PUT'])
+def update_schedule(username):
     """
     更新账号
     ---
@@ -183,12 +185,12 @@ def update_account(username):
     password = body.get('password', None)
     # taskname = body.get('taskname', None)
 
-    edit_account(account=username, password=password)
+    edit_schedule(schedule=username, password=password)
     return Reply({'username': username, 'password': password})
 
 
-@account_api.route('/account/<username>', methods=['DELETE'])
-def delete_account(username):
+@schedule_api.route('/schedule/<username>', methods=['DELETE'])
+def delete_schedule(username):
     """
     删除账号
     ---
@@ -211,6 +213,22 @@ def delete_account(username):
     if username == '':
         return BadRequestError(f'参数 username 不为空')
 
-    del_account(username)
+    del_schedule(username)
 
     return Reply({'username': username})
+
+
+@schedule_api.route('/schedules', methods=['GET'])
+def get_list_all_schedules():
+    schedules = list_all_schedules()
+    count = len(schedules)
+    if schedules and count != 0:
+        return ListReply(schedules, count)
+    else:
+        return NotFoundError(f"读取总数为{count}的日程表配置文件夹失败")
+
+
+@schedule_api.route('/schedules_save', methods=['POST'])
+def save_schedules():
+    schedules = request.get_data()
+    AutomatorRecorder.setschedule(ScheduleName, obj)
