@@ -128,7 +128,7 @@ class LoginMixin(BaseMixin):
                 screen = self.getscreen()
                 screen = screen[1:575, 157:793]
                 # 原来的 456, 489
-                # 不要了，这是新的分辨率，需要包含游戏一部分截图 631,542
+                # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
                 if self.d(textContains="请点击此处重试").exists():
                     print(f">>>{self.account}-请点击此处重试")
                     # 点重试
@@ -141,16 +141,16 @@ class LoginMixin(BaseMixin):
                     # 结果出来为四个字的坐标
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6004")
                     for i in range(0, _len + 1):
-                        x = int(answer_result[i].split(',')[0]) + 162
-                        y = int(answer_result[i].split(',')[1]) + 33
+                        x = int(answer_result[i].split(',')[0]) + 157
+                        y = int(answer_result[i].split(',')[1]) + 1
                         print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
                         self.click(x, y, post_delay=1)
 
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
-                    x = int(answer_result[0]) + 162
-                    y = int(answer_result[1]) + 33
+                    x = int(answer_result[0]) + 157
+                    y = int(answer_result[1]) + 1
                     print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y, post_delay=1)
@@ -158,8 +158,8 @@ class LoginMixin(BaseMixin):
                 elif self.d(textContains="拖动滑块").exists():
                     print(f">>>{self.account}-检测到滑块题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X8006")
-                    x = int(answer_result[0]) + 162
-                    y = int(answer_result[1]) + 33
+                    x = int(answer_result[0]) + 157
+                    y = int(answer_result[1]) + 1
                     print(f">{self.account}-滑块坐标识别：", x, 386)
                     # print(type(x))
                     # 从322,388 滑动到 x,y
