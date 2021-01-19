@@ -1,29 +1,23 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { AppContainer } from "react-hot-loader";
-import { HashRouter } from "react-router-dom";
-import Router from "./router";
-import 'antd/dist/antd.css';
-import './index.css';
+import React from 'react'
+import { Route, Switch } from 'react-router'
+import { Link } from 'react-router-dom'
+import routerconfig from '../config/routerconfig'
+import Container from '../components/container'
 
-/*初始化*/
-renderWithHotReload(Router);
- 
-/*热更新*/
-if (module.hot) {
-  module.hot.accept("./router/index.js", () => {
-    const Router = ()=>import("./router/index.js");
-    renderWithHotReload(Router);
-  });
-}
- 
-function renderWithHotReload(Router) {
-  ReactDOM.render(
-    <AppContainer>
-      <HashRouter>
-        <Router />
-      </HashRouter>
-    </AppContainer>,
-    document.getElementById("app")
-  );
-}
+const Router = () => (
+    <Route path="/">
+        <Container>
+            <Switch>
+                {routerconfig.map(
+                    route => (
+                        <Route key={route.path} path={route.path} exact render={props => (
+                            // pass the sub-routes down to keep nesting
+                            <route.component {...props} />
+                          )} />
+                    )
+                )}
+            </Switch>
+        </Container>
+    </Route>
+)
+export default Router
