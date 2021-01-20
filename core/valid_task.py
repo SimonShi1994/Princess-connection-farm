@@ -1,4 +1,5 @@
 import abc
+from math import inf
 from typing import List, Type, Any, Optional, Union
 
 from core.constant import NORMAL_COORD, HARD_COORD
@@ -16,15 +17,40 @@ class InputBoxBase(metaclass=abc.ABCMeta):
         """
         pass
 
+    def edit(self, obj):
+        """
+        默认编辑=重新写一个
+        """
+        return self.create()
+
+
+def RangeStr(min, max):
+    if min == -inf and max == inf:
+        return ""
+    elif min == -inf:
+        return f"( <={max} )"
+    elif max == inf:
+        return f"( >={min} )"
+    else:
+        return f"( {min}~{max} )"
+
 
 class IntInputer(InputBoxBase):
+    def __init__(self, min=-inf, max=inf, ):
+        self.min = min
+        self.max = max
+
     def create(self) -> int:
         while True:
-            a = input("请输入一个整数 ")
-            if a.isnumeric():
-                return int(a)
-            else:
-                print("输入错误，请重新输入")
+            a = input("请输入一个整数" + RangeStr(self.min, self.max))
+            try:
+                a = int(a)
+                if self.min <= int(a) <= self.max:
+                    return int(a)
+                else:
+                    print("输入错误，请重新输入")
+            except:
+                print("输入错误，清重新输入")
 
     def check(self, obj):
         if not isinstance(obj, int):
@@ -158,21 +184,28 @@ class ValidTask:
         """
         if params is None:
             params = []
+        param_dict = {}
+        for par in params:
+            param_dict[par.key] = par
         self.T[abbr] = {
             "funname": funname,
             "title": title,
             "desc": desc,
-            "params": params
+            "params": params,
+            "param_dict": param_dict
         }
         return self
 
 
-def ShuatuToTuple(lst: list) -> list:
+def ShuatuToTuple(lst: list, NEED_T=True) -> list:
     l = []
     for i in lst:
         try:
             ss = i.strip().split("-")
-            l += [(int(ss[0]), int(ss[1]), int(ss[2]))]
+            if NEED_T:
+                l += [(int(ss[0]), int(ss[1]), int(ss[2]))]
+            else:
+                l += [(int(ss[0]), int(ss[1]))]
 
         except:
             pass
@@ -182,13 +215,32 @@ def ShuatuToTuple(lst: list) -> list:
 
 class ShuatuBaseBox(InputBoxBase):
     def __init__(self):
+        self.NEED_T = True
         self.tu_dict = {}
 
     def transform(self):
         d = []
-        for (A, B), T in self.tu_dict.items():
-            d += [f"{A}-{B}-{T}"]
+        if self.NEED_T:
+            for (A, B), T in self.tu_dict.items():
+                d += [f"{A}-{B}-{T}"]
+        else:
+            for (A, B), T in self.tu_dict.items():
+                d += [f"{A}-{B}"]
         return d
+
+    def inversetransform(self, d):
+        for i in d:
+            if self.NEED_T:
+                A, B, T = i.split("-")
+                A = int(A)
+                B = int(B)
+                T = int(T)
+            else:
+                A, B = i.split("-")
+                A = int(A)
+                B = int(B)
+                T = 1
+            self.tu_dict[(A, B)] = T
 
     def Help(self):
         print("帮助（命令用空格隔开）：")
@@ -228,8 +280,9 @@ class ShuatuBaseBox(InputBoxBase):
     def del_(self, A, B, T):
         pass
 
-    def create(self) -> list:
-        self.tu_dict = {}
+    def create(self, clear=True) -> list:
+        if clear:
+            self.tu_dict = {}
         print("输入图号 (help 查看帮助)")
         while True:
             try:
@@ -239,12 +292,22 @@ class ShuatuBaseBox(InputBoxBase):
                 if order == "clear":
                     self.tu_dict = {}
                 elif order == "add":
-                    self.add(cmds[1], cmds[2], cmds[3])
+                    if self.NEED_T:
+                        self.add(cmds[1], cmds[2], cmds[3])
+                    else:
+                        self.add(cmds[1], cmds[2], "1")
                 elif order == "del":
-                    self.del_(cmds[1], cmds[2], cmds[3])
+                    if self.NEED_T:
+                        self.del_(cmds[1], cmds[2], cmds[3])
+                    else:
+                        self.del_(cmds[1], cmds[2], "1")
                 elif order == "show":
-                    for A, B, T in ShuatuToTuple(self.transform()):
-                        print(f"{A}-{B} {T} 次")
+                    if self.NEED_T:
+                        for A, B, T in ShuatuToTuple(self.transform()):
+                            print(f"{A}-{B} {T} 次")
+                    else:
+                        for A, B in ShuatuToTuple(self.transform(), NEED_T=False):
+                            print(f"{A}-{B}")
                 elif order == "end":
                     return self.transform()
                 elif order == "help":
@@ -253,11 +316,18 @@ class ShuatuBaseBox(InputBoxBase):
                     with open(cmds[1], "r", encoding="utf-8") as f:
                         for line in f:
                             l = line.strip().split(" ")
-                            self.add(l[0], l[1], l[2])
+                            if self.NEED_T:
+                                self.add(l[0], l[1], l[2])
+                            else:
+                                self.add(l[0], l[1], "1")
                 else:
                     print("未知的命令")
             except:
                 print("命令输入错误，请重新输入")
+
+    def edit(self, obj):
+        self.inversetransform(obj)
+        return self.create(clear=False)
 
 
 class ShuatuNNBox(ShuatuBaseBox):
@@ -321,7 +391,7 @@ class ShuatuHHBox(ShuatuBaseBox):
 
     def del_(self, A, B, T):
         A = int(A)
-        if A not in NORMAL_COORD:
+        if A not in HARD_COORD:
             print(f"图号 {A} 未录入")
             return
         B = int(B)
@@ -386,6 +456,61 @@ class TeamInputer(InputBoxBase):
         return ""
 
 
+"""
+class MeiRiHTuInputer(ShuatuBaseBox):
+    def __init__(self):
+        super().__init__()
+        self.NEED_T=False
+
+    def Help(self):
+        print("输入图号")
+        print("帮助（命令用空格隔开）：")
+        print("add (A) (B): 增加刷图：H A-B")
+        print("del (A) (B): 减少刷图：H A-B")
+        print("file (FileAddress): 从文件导入")
+        print("   该文件由多行组成，每行两个整数A,B，表示刷H A-B")
+        print("clear: 清空记录")
+        print("show: 显示当前记录")
+        print("end: 保存并退出编辑")
+
+    def add(self, A, B, T):
+        A = int(A)
+        if A not in HARD_COORD:
+            print(f"图号 {A} 未录入")
+            return
+        B = int(B)
+        if B not in HARD_COORD[A]:
+            print(f"图号H{A} - {B} 未录入")
+            return
+        self.tu_dict.setdefault((A, B), 0)
+        self.tu_dict[(A, B)] = 1
+
+    def del_(self, A, B, T):
+        A = int(A)
+        if A not in HARD_COORD:
+            print(f"图号 {A} 未录入")
+            return
+        B = int(B)
+        if (A, B) in self.tu_dict:
+            del self.tu_dict[(A, B)]
+
+
+    def check(self, obj):
+        if type(obj) is not list:
+            return "参数必须为list类型"
+        for s in obj:
+            try:
+                a, b = tuple(s.split("-"))
+                A = int(a)
+                B = int(b)
+                assert 1 <= B <= 3, "图号不合法"
+                assert 1 <= A <= max(HARD_COORD), "图号不合法"
+            except Exception as e:
+                return str(e)
+        return ""
+
+"""
+
 class MeiRiHTuInputer(InputBoxBase):
     def create(self):
         print("输入A-B字符串，表示刷Hard A-B图。")
@@ -412,7 +537,6 @@ class MeiRiHTuInputer(InputBoxBase):
             except Exception as e:
                 return str(e)
         return ""
-
 
 VALID_TASK = ValidTask() \
     .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备",
