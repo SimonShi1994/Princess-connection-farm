@@ -11,12 +11,13 @@ schedule_api = Blueprint('schedules', __name__)
 
 @schedule_api.route('/schedules', methods=['GET'])
 def get_list_all_schedules():
-    schedules = list_all_schedules()
-    count = len(schedules)
-    if schedules and count != 0:
+    try:
+        count = 0
+        schedules = list_all_schedules()
+        count = len(schedules)
         return ListReply(schedules, count)
-    else:
-        return NotFoundError(f"读取总数为{count}的日程表配置文件夹失败")
+    except Exception as e:
+        return 500
 
 
 @schedule_api.route('/schedules_save', methods=['POST'])
