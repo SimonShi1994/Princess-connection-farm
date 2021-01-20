@@ -34,7 +34,7 @@ from core.valid_task import VALID_TASK
 
 组说明：
 默认路径：/groups
-存储格式：txt
+存储格式：json
 组名：.json文件的文件名
 每个组包含的成员：
     txt文件每行一个account，表示这个account包含于该组中。
@@ -468,7 +468,7 @@ class AutomatorRecorder:
             return None
 
     @staticmethod
-    def _save(jsonaddr, obj) -> bool:
+    def json_save(jsonaddr, obj) -> bool:
         """
         将obj保存进jsonaddr
         :param jsonaddr: json地址
@@ -532,7 +532,7 @@ class AutomatorRecorder:
     def setuser(self, userobj: dict):
         target_name = "%s/%s.json" % (user_addr, self.account)
         if check_user_dict(userobj, is_raise=False):
-            AutomatorRecorder._save(target_name, userobj)
+            AutomatorRecorder.json_save(target_name, userobj)
         else:
             print("用户文件不合法，保存失败")
 
@@ -540,7 +540,7 @@ class AutomatorRecorder:
     def settask(taskfile, taskobj: dict):
         target_name = "%s/%s.json" % (task_addr, taskfile)
         if check_task_dict(taskobj, is_raise=False):
-            AutomatorRecorder._save(target_name, taskobj)
+            AutomatorRecorder.json_save(target_name, taskobj)
         else:
             print("任务文件不合法，保存失败")
 
@@ -548,7 +548,7 @@ class AutomatorRecorder:
     def setbatch(batchfile, batchobj: dict):
         target_name = "%s/%s.json" % (batch_addr, batchfile)
         if check_valid_batch(batchobj, is_raise=False):
-            AutomatorRecorder._save(target_name, batchobj)
+            AutomatorRecorder.json_save(target_name, batchobj)
         else:
             print("批配置不合法，保存失败")
 
@@ -556,7 +556,7 @@ class AutomatorRecorder:
     def setschedule(schedulefile, scheduleobj: dict):
         target_name = "%s/%s.json" % (schedule_addr, schedulefile)
         if check_valid_schedule(scheduleobj, is_raise=False):
-            AutomatorRecorder._save(target_name, scheduleobj)
+            AutomatorRecorder.json_save(target_name, scheduleobj)
         else:
             print("计划配置不合法，保存失败")
 
@@ -628,11 +628,11 @@ class AutomatorRecorder:
         target_name = "%s/%s/%s.json" % (user_addr, key, self.account)
         dir = os.path.dirname(target_name)
         if default is not None and (not os.path.isdir(dir) or not os.path.exists(target_name)):
-            self._save(target_name, default)
+            self.json_save(target_name, default)
 
         now = self._load(target_name)
         if now is None:
-            self._save(target_name, default)
+            self.json_save(target_name, default)
             return default
         flag = False
         # 检查缺失值，用默认值填充
@@ -641,7 +641,7 @@ class AutomatorRecorder:
                 now[k] = v
                 flag = True
         if flag:
-            self._save(target_name, now)
+            self.json_save(target_name, now)
         return now
 
     def set(self, key: str, obj: dict) -> bool:
@@ -652,7 +652,7 @@ class AutomatorRecorder:
         :return: 是否保存成功
         """
         target_name = "%s/%s/%s.json" % (user_addr, key, self.account)
-        return self._save(target_name, obj)
+        return self.json_save(target_name, obj)
 
     def get_run_status(self):
         """
@@ -663,7 +663,7 @@ class AutomatorRecorder:
         dir = os.path.dirname(target_name)
         default = UDD["run_status"]
         if not os.path.isdir(dir) or not os.path.exists(target_name):
-            self._save(target_name, default)
+            self.json_save(target_name, default)
         now = self._load(target_name)
         flag = False
         # 检查缺失值，用默认值填充
@@ -672,7 +672,7 @@ class AutomatorRecorder:
                 now[k] = v
                 flag = True
         if flag:
-            self._save(target_name, now)
+            self.json_save(target_name, now)
         return now
 
     def set_run_status(self, rs):
@@ -680,4 +680,4 @@ class AutomatorRecorder:
         设置运行时状态
         """
         target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.json")
-        return self._save(target_name, rs)
+        return self.json_save(target_name, rs)
