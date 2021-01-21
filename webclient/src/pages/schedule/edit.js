@@ -1,5 +1,5 @@
 import React from 'react'
-import example from '../../example/schedule.json'
+import request from '../../request'
 import ConditionComponent from '@/components/Formcomponents/CondtionComponent'
 import { Form, Input, Button, Checkbox, InputNumber, Row, Col, Radio } from 'antd';
 
@@ -16,7 +16,15 @@ const options = [
 ];
 export default (props) => {
     const { id } = props.match.params
-    const [schedules, updateschedules] = React.useState(example[id].schedules)
+    const [schedules, updateschedules] = React.useState([])
+    React.useEffect(() => {
+        async function temp() {
+            const { data } = await request(`/get_schedules/${id}`)
+            console.log(data)
+            updateschedules(data.schedules)
+        }
+        temp();
+    }, [])
     const handlechange = (index, value) => {
         const temp = [...schedules]
         console.log(value)
