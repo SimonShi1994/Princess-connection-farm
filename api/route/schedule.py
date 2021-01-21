@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 
 from api.constants.errors import NotFoundError, BadRequestError
 from api.constants.reply import Reply, ListReply
-from core.usercentre import list_all_users, AutomatorRecorder, list_all_schedules
+from core.usercentre import AutomatorRecorder, list_all_schedules
 from CreateUser import create_schedule as service_create_schedule, edit_schedule, del_schedule
 
 schedule_api = Blueprint('schedules', __name__)
