@@ -20,6 +20,15 @@ def get_list_all_schedules():
         return 500
 
 
+@schedule_api.route('/get_schedules/<filename>', methods=['GET'])
+def get_schedules_info(filename):
+    try:
+        r = AutomatorRecorder.getschedule(filename)
+        return ListReply(r, 0)
+    except Exception as e:
+        return 500
+
+
 @schedule_api.route('/schedules_save', methods=['POST'])
 def save_schedules():
     schedules = request.get_data()
