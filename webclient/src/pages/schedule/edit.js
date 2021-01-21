@@ -1,6 +1,7 @@
 import React from 'react'
 import request from '../../request'
 import ConditionComponent from '@/components/Formcomponents/CondtionComponent'
+import Batchlist from '@/components/Formcomponents/Batchlist'
 import { Form, Input, Button, Checkbox, InputNumber, Row, Col, Radio } from 'antd';
 
 const layout = {
@@ -20,7 +21,6 @@ export default (props) => {
     React.useEffect(() => {
         async function temp() {
             const { data } = await request(`/get_schedules/${id}`)
-            console.log(data)
             updateschedules(data.schedules)
         }
         temp();
@@ -109,14 +109,14 @@ const Asapform = (props) => {
                 name="name"
                 rules={[{ required: true, message: '请输入计划名' }]}
             >
-                <Input />
+            <Input />
             </Form.Item>
             <Form.Item
                 label="batchfile"
                 name="batchfile"
                 rules={[{ required: true, message: 'Please input your batchfile!' }]}
             >
-                <Input />
+            <Batchlist />
             </Form.Item>
             <Form.Item
                 label="condition"
@@ -215,7 +215,7 @@ const Waitconfig = (props) => {
                 name="batchfile"
                 rules={[{ required: true, message: 'Please input your batchfile!' }]}
             >
-                <Input />
+            <Batchlist />
             </Form.Item>
             <Form.Item
                 label="record"
