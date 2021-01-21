@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.1.20210119
+ # Princess connection 公主连结农场脚本v2.2.20210120
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -17,6 +17,8 @@
 **支持40to1mana农场**
 
 **支持每日自动三捐**
+
+**支持开关一键修改配置**
 
 ## 详细功能
 
@@ -109,6 +111,8 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 [如何接入打码平台](docs/如何接入打码平台.md)
 
+开关用法正在绝赞编写中！
+
 - 感觉还是不会使用，怎么办？
 
 更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
@@ -148,6 +152,12 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2021/1/20 By:TheAutumnOfRice
+
+- 开关（Switch)模块上线！
+- 为task和schedule增加了enable/disable/flag命令
+- task现在支持编辑、移动、显示详细信息了。
 
 2021/1/19 By:CyiceK
 

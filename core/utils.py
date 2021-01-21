@@ -178,6 +178,15 @@ def PrintToStr(fun, *args, **kwargs):
     return result.getvalue()
 
 
+def PrettyEnter(s, before="", firstbefore=None):
+    ss = s.split("\n")
+    if firstbefore is None:
+        firstbefore = before
+    for ind, i in enumerate(ss):
+        print(before if ind > 0 else firstbefore, end="")
+        print(i)
+
+
 if __name__ == '__main__':
     for i in range(100):
         print(token())
