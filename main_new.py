@@ -410,7 +410,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.20210119")
+        print("当前版本为 Ver 2.2.20210120")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -425,7 +425,7 @@ if __name__ == "__main__":
         print("* Happy 2021 Year!")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
-        print("新的脚本控制方法更新！输入help查看帮助。")
+        print("* 开关（Switch）模块上线！进入edit看看吧！（虽然还没来得及写教程）")
     while True:
         try:
             cmd = input("> ")

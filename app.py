@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 from flask_cors import CORS
 from flasgger import Swagger
 from api.route.account import account_api
-# from api.route.schedule import schedule_api
+from api.route.schedule import schedule_api
 from api.route.clan import clan_api
 from api.route.task import task_api
 from api.route.subtask import subtask_api
@@ -31,7 +31,7 @@ def create_app():
         return render_template("index.html")
 
     app.register_blueprint(account_api, url_prefix='/api')
-    # app.register_blueprint(schedule_api, url_prefix='/api')
+    app.register_blueprint(schedule_api, url_prefix='/api')
     app.register_blueprint(clan_api, url_prefix='/api')
     app.register_blueprint(task_api, url_prefix='/api')
     app.register_blueprint(subtask_api, url_prefix='/api')

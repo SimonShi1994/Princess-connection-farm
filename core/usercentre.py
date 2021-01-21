@@ -1,6 +1,6 @@
 import json
 import os
-from typing import List, Optional
+from typing import List, Optional, Union, Tuple
 
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.valid_task import VALID_TASK
@@ -34,7 +34,7 @@ from core.valid_task import VALID_TASK
 
 组说明：
 默认路径：/groups
-存储格式：txt
+存储格式：json
 组名：.json文件的文件名
 每个组包含的成员：
     txt文件每行一个account，表示这个account包含于该组中。
@@ -121,13 +121,56 @@ from core.valid_task import VALID_TASK
 ]
 }
 
+开关文件说明：
+在开关文件夹内有若干个开关配置，每个开关配置可以选择启用或者禁用，
+每个开关配置中会有若干个flag，将被task、schedule等检测到。
+对task：
+    如果对某一个子task中设置了：
+        "__disable__":true,
+        则该项task将处于禁用状态，并且显示 XXX（禁用），该task将在加入时被替换为nothing任务
+    如果设置了：
+        "__disable__":false,
+        或者并未设置"__disable__",则该task将被正常导入。
+    如果设置了：
+        "__disable__":"flag"
+        则当flag处于激活状态时，该任务被禁用，并显示 XXX（禁用当：flag）
 
+对schedule：
+    同task，当某一个子schedule的__disable__被激活，
+    该schedule将处于禁用状态，不会被检测。
+
+{
+"enable":True,  # 开关配置处于启动状态
+"order":0,  # 开关文件被读取的优先级
+"switches":[
+    {
+        "flags":["flagname1","flagname2",...] 受到同一配置的多个flag的名称字符串
+        "default":true  # 该flag的默认启动状态
+        "user":{"username":false, "username2":true, ...}  # 针对用户的特殊设置
+        "group":{"groupname":false, ...}  # 针对用户组的特殊设置
+        "special":{}  # 预留的特殊判断
+    },
+]}
+注：
+1.  在某一开关文件中，如果default设置为true，且不进行其它设置，则该flag将被设置为激活状态。
+2.  如果default设置为true，但是针对用户设置了username:false，
+    则在导入task时，如果该task设置了disable flag，但执行用户为username，则依然会被导入。
+3.  如果default设置为true，但是针对用户组设置了groupname:false，
+    则在导入task时，如果该task设置了disable flag，但执行用户所属用户组groupname，则依然会被导入。
+4.  user优先级大于group。如果同时设置了group的false和user的true，且user处于group中，则对该用户而言其flag处于激活状态。
+5.  如果default设置为false，且不进行其它设置，则该flag将被设置为未激活状态。
+6.  如果default设置为false，但是针对用户设置了username:true，则仅对该用户禁用任务。
+7.  如果default设置为false，但是针对用户组设置了groupname:true，则仅对该用户组中用户禁用任务。
+8.  对于多个启动的开关文件中含有相同flag时，按照优先级顺序决定。order越大的开关配置将被优先读取，order相同时按照文件名排序。
+    对于高优先级的开关文件，确定了某一个flag处于激活或非激活状态后，将无视后来低优先级开关文件对次flag状态的更改。
+9.  如果同一组配置中包含了针对某一用户的矛盾的两个组，则按照名称顺序以第一个组为判断结果。
 """
 user_addr = "users"  # 存放用户配置的文件夹
 task_addr = "tasks"  # 存放任务配置的文件夹
 group_addr = "groups"  # 存放用户组的文件夹
 batch_addr = "batches"  # 存放批任务的文件夹
 schedule_addr = "schedules"  # 存放计划的文件夹
+switch_addr = "switches"  # 存放开关的文件夹
 
 
 def check_user_dict(d: dict, is_raise=False) -> bool:
@@ -352,13 +395,41 @@ def check_valid_schedule(schedule: dict, is_raise=True) -> bool:
                     assert type(i["batchfile"]) is str
                 if "batchlist" in i:
                     assert type(i["batchlist"]) is list
+                    if len(i["batchlist"]) == 1:
+                        i["batchfile"] = i["batchlist"][0]  # 如果长度为1，转化为batchfile
+                        del i["batchlist"]
                 assert "condition" in i
                 assert type(i["condition"]) is dict
                 if "record" not in i:
                     i["record"] = 0
                 assert "record" in i
                 assert type(i["record"]) is int
-                
+
+
+    except Exception as e:
+        if is_raise:
+            raise e
+        else:
+            return False
+    return True
+
+
+def check_valid_switch(switch: dict, is_raise=True) -> bool:
+    try:
+        assert "enable" in switch and type(switch["enable"]) is bool
+        assert "order" in switch and type(switch["order"]) in [int, float]
+        assert "switches" in switch and type(switch["switches"]) is list
+        S = switch["switches"]
+        for i in S:
+            assert "flags" in i and type(i["flags"]) is list
+            for flag in i["flags"]:
+                assert type(flag) is str
+            assert "default" in i and type(i["default"]) is bool
+            for check_item in ["user", "group", "special"]:
+                if check_item in i:
+                    assert type(i[check_item]) is dict
+                    for v in i[check_item].values():
+                        assert type(v) is bool
 
     except Exception as e:
         if is_raise:
@@ -391,6 +462,74 @@ def list_all_schedules(verbose=1) -> List[str]:
     if verbose:
         print("加载完成，一共加载成功", count, "个计划配置。")
     return schedules
+
+
+def list_all_switches(verbose=1, get_detail=False) -> Union[List[str], List[Tuple[str, dict]]]:
+    if not os.path.exists(switch_addr):
+        os.makedirs(switch_addr)
+    ld = os.listdir(switch_addr)
+    switches = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".json"):
+            nam = ""
+            try:
+                nam = i[:-5]
+                switch = AutomatorRecorder.getswitch(nam)
+                switch.setdefault("user", {})
+                switch.setdefault("group", {})
+                switch.setdefault("special", {})
+                check_valid_switch(switch)
+                switches += [nam]
+                if verbose:
+                    print("开关配置", nam, "加载成功！")
+                count += 1
+            except Exception as e:
+                if verbose:
+                    print("打开开关配置", nam, "失败！", e)
+    if verbose:
+        print("加载完成，一共加载成功", count, "个开关配置。")
+
+    detailed_switches = [(AutomatorRecorder.getswitch(nam), nam) for nam in switches]
+    # 按照优先级排序
+    sorted_switches = [(-detail["order"], nam, detail) for detail, nam in detailed_switches]
+    sorted_switches.sort()
+    if get_detail:
+        switches = [(nam[1], nam[2]) for nam in sorted_switches]
+    else:
+        switches = [nam[1] for nam in sorted_switches]
+    return switches
+
+
+def list_all_flags(skip_disable=True) -> Union[dict, Tuple[dict, list]]:
+    switches = list_all_switches(0, True)
+    disabled = {}
+    flags = {}
+    for nam, detail in switches:
+        if detail["enable"] is False:
+            if not skip_disable:
+                for switch in detail["switches"]:
+                    for flag in switch["flags"]:
+                        if flag not in flags:
+                            disabled[flag] = False
+            continue
+        for switch in detail["switches"]:
+            for flag in switch["flags"]:
+                if not skip_disable:
+                    if flag in disabled:
+                        del disabled[flag]
+                if flag in flags:
+                    continue
+                flags[flag] = {
+                    "default": switch["default"],
+                    "user": switch["user"],
+                    "group": switch["group"],
+                    "special": switch["special"],
+                }
+    if skip_disable:
+        return flags
+    else:
+        return flags, list(disabled.keys())
 
 
 def init_user(account: str, password: str) -> bool:
@@ -435,6 +574,12 @@ def parse_batch(batch: dict):
     L.sort(reverse=True)
     return L
 
+
+def is_in_group(acc, group):
+    GP = AutomatorRecorder.getgroup(group)
+    return acc in group
+
+
 class AutomatorRecorder:
     """
     在Automator中提供静态存储空间
@@ -468,7 +613,7 @@ class AutomatorRecorder:
             return None
 
     @staticmethod
-    def _save(jsonaddr, obj) -> bool:
+    def json_save(jsonaddr, obj) -> bool:
         """
         将obj保存进jsonaddr
         :param jsonaddr: json地址
@@ -529,10 +674,17 @@ class AutomatorRecorder:
         check_valid_schedule(d)
         return d
 
+    @staticmethod
+    def getswitch(switchfile):
+        target_name = "%s/%s.json" % (switch_addr, switchfile)
+        d = AutomatorRecorder._load(target_name)
+        check_valid_switch(d)
+        return d
+
     def setuser(self, userobj: dict):
         target_name = "%s/%s.json" % (user_addr, self.account)
         if check_user_dict(userobj, is_raise=False):
-            AutomatorRecorder._save(target_name, userobj)
+            AutomatorRecorder.json_save(target_name, userobj)
         else:
             print("用户文件不合法，保存失败")
 
@@ -540,7 +692,7 @@ class AutomatorRecorder:
     def settask(taskfile, taskobj: dict):
         target_name = "%s/%s.json" % (task_addr, taskfile)
         if check_task_dict(taskobj, is_raise=False):
-            AutomatorRecorder._save(target_name, taskobj)
+            AutomatorRecorder.json_save(target_name, taskobj)
         else:
             print("任务文件不合法，保存失败")
 
@@ -548,7 +700,7 @@ class AutomatorRecorder:
     def setbatch(batchfile, batchobj: dict):
         target_name = "%s/%s.json" % (batch_addr, batchfile)
         if check_valid_batch(batchobj, is_raise=False):
-            AutomatorRecorder._save(target_name, batchobj)
+            AutomatorRecorder.json_save(target_name, batchobj)
         else:
             print("批配置不合法，保存失败")
 
@@ -556,9 +708,17 @@ class AutomatorRecorder:
     def setschedule(schedulefile, scheduleobj: dict):
         target_name = "%s/%s.json" % (schedule_addr, schedulefile)
         if check_valid_schedule(scheduleobj, is_raise=False):
-            AutomatorRecorder._save(target_name, scheduleobj)
+            AutomatorRecorder.json_save(target_name, scheduleobj)
         else:
             print("计划配置不合法，保存失败")
+
+    @staticmethod
+    def setswitch(switchfile, switchobj: dict):
+        target_name = "%s/%s.json" % (switch_addr, switchfile)
+        if check_valid_switch(switchobj, is_raise=False):
+            AutomatorRecorder.json_save(target_name, switchobj)
+        else:
+            print("开关配置不合法，保存失败")
 
     @staticmethod
     def get_user_state(acc, rec_addr):
@@ -628,11 +788,11 @@ class AutomatorRecorder:
         target_name = "%s/%s/%s.json" % (user_addr, key, self.account)
         dir = os.path.dirname(target_name)
         if default is not None and (not os.path.isdir(dir) or not os.path.exists(target_name)):
-            self._save(target_name, default)
+            self.json_save(target_name, default)
 
         now = self._load(target_name)
         if now is None:
-            self._save(target_name, default)
+            self.json_save(target_name, default)
             return default
         flag = False
         # 检查缺失值，用默认值填充
@@ -641,7 +801,7 @@ class AutomatorRecorder:
                 now[k] = v
                 flag = True
         if flag:
-            self._save(target_name, now)
+            self.json_save(target_name, now)
         return now
 
     def set(self, key: str, obj: dict) -> bool:
@@ -652,7 +812,7 @@ class AutomatorRecorder:
         :return: 是否保存成功
         """
         target_name = "%s/%s/%s.json" % (user_addr, key, self.account)
-        return self._save(target_name, obj)
+        return self.json_save(target_name, obj)
 
     def get_run_status(self):
         """
@@ -663,7 +823,7 @@ class AutomatorRecorder:
         dir = os.path.dirname(target_name)
         default = UDD["run_status"]
         if not os.path.isdir(dir) or not os.path.exists(target_name):
-            self._save(target_name, default)
+            self.json_save(target_name, default)
         now = self._load(target_name)
         flag = False
         # 检查缺失值，用默认值填充
@@ -672,7 +832,7 @@ class AutomatorRecorder:
                 now[k] = v
                 flag = True
         if flag:
-            self._save(target_name, now)
+            self.json_save(target_name, now)
         return now
 
     def set_run_status(self, rs):
@@ -680,4 +840,4 @@ class AutomatorRecorder:
         设置运行时状态
         """
         target_name = os.path.join(self.rec_addr, "run_status", f"{self.account}.json")
-        return self._save(target_name, rs)
+        return self.json_save(target_name, rs)

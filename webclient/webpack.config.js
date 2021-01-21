@@ -2,7 +2,7 @@ const webpack = require("webpack")
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require("path")
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
     mode: "development",
@@ -11,7 +11,7 @@ module.exports = {
         // 输出目录
         path: path.join(__dirname, "dist"),
         // 文件名称
-        filename: "bundle.js",
+        filename: "static/bundle.js",
     },
     resolve: {
         alias: {
@@ -86,7 +86,12 @@ module.exports = {
             filename: 'index.html', // 最终创建的文件名
             template: path.join(__dirname, 'index.html') // 指定模板路径
         }),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new CopyPlugin({
+            patterns: [
+                { from: "static", to: "static" },
+            ],
+        }),
     ],
 
     devServer: {}
