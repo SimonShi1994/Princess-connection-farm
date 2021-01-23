@@ -1,5 +1,6 @@
 import json
 import os
+from random import random
 from typing import List, Optional, Union, Tuple
 
 from core.constant import USER_DEFAULT_DICT as UDD
@@ -24,6 +25,7 @@ from core.valid_task import VALID_TASK
 [
         {
             "type":"..."  # 任务代号缩写
+            ”__disable__" # 见switch
             "param1":...  # 参数1的key与value
             "param2":...  # 参数2的key与value
             ...
@@ -51,6 +53,7 @@ from core.valid_task import VALID_TASK
             "taskfile":"..."   # 所用任务文件
             "priority":int     # 整数，优先级。 
                 # 注：同优先级任务同批次执行，优先级高优先执行（但若有模拟器空余，仍然和其它任务同时执行）
+            "random":bool      # 20210123更新：随机批，在原有优先级上±0.5浮动
         },
         {...},...
 ]
@@ -72,6 +75,7 @@ from core.valid_task import VALID_TASK
         # 若晚上执行，第一个计划contidion不满足，不执行，第二个满足，执行。
         {
             "type":"asap"  # As soon as possible
+            ”__disable__" # 见switch
             "name":"..."
             "batchfile":"..."  # batch文件所在位置
             "batchlist":[
@@ -104,6 +108,7 @@ from core.valid_task import VALID_TASK
         # 当到达指定时间段后，自动将该batch加入任务队列。
         {
             "type":"wait"
+            ”__disable__"
             "name":"..."
             "batchfile":"..."
             "batchlist":["...","...",...]
@@ -115,6 +120,7 @@ from core.valid_task import VALID_TASK
         # 如果要实现24小时自动，那么必须每天5:00清除schedule的记录。
         {
             "type":"config"
+            ”__disable__" # 见switch
             "restart":int  # 整数，表示每天清理记录的时间
             # 其它有关控制的任务都可以放在这里
         }
@@ -336,6 +342,8 @@ def check_valid_batch(batch: dict, is_raise=True) -> bool:
         B = batch["batch"]
         assert type(B) is list
         for i in B:
+            if "random" in i:
+                assert type(i["random"]) is bool
             f1 = "account" in i
             f2 = "group" in i
             if f1 + f2 == 0:
@@ -565,19 +573,22 @@ def parse_batch(batch: dict):
     L = []
     for cur in B:
         task = AutomatorRecorder.gettask(cur["taskfile"])
+        randmode = False
+        if "random" in cur and cur["random"] is True:
+            randmode = True
         if "account" in cur:
-            L += [(cur["priority"], cur["account"], cur["taskfile"], task)]
+            L += [(cur["priority"] + randmode * (random() / 2 - 1), cur["account"], cur["taskfile"], task)]
         elif "group" in cur:
             G = AutomatorRecorder.getgroup(cur["group"])
             for mem in G:
-                L += [(cur["priority"], mem, cur["taskfile"], task)]
+                L += [(cur["priority"] + randmode * (random() / 2 - 1), mem, cur["taskfile"], task)]
     L.sort(reverse=True)
     return L
 
 
 def is_in_group(acc, group):
     GP = AutomatorRecorder.getgroup(group)
-    return acc in group
+    return acc in GP
 
 
 class AutomatorRecorder:
