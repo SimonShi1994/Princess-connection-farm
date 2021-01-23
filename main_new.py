@@ -1,8 +1,5 @@
-import os
 import subprocess
 import traceback
-from typing import Optional
-import sys
 
 import requests
 from requests.adapters import HTTPAdapter

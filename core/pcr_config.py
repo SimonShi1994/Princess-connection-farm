@@ -82,7 +82,7 @@ class GlobalConfig:
 
     def __getattr__(self, name):
         if name == "__all__":
-            return list(self.config.keys())
+            return list(self.config.keys()) + ["sys", "os", "json", "configparser", "Optional"]
         elif name in self.config:
             return self.config[name]
         elif name in self.module_info:
