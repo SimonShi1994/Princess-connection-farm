@@ -4,6 +4,8 @@ import sys
 import time
 from io import StringIO
 
+import requests
+
 
 def random_name():
     """
@@ -187,6 +189,12 @@ def PrettyEnter(s, before="", firstbefore=None):
         print(i)
 
 
+def is_ocr_running():
+    try:
+        requests.get(url="http://127.0.0.1:5000/ocr/", timeout=1)
+        return True
+    except:
+        return False
 if __name__ == '__main__':
     for i in range(100):
         print(token())

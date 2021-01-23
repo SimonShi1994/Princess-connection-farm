@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.2.20210120
+ # Princess connection 公主连结农场脚本v2.2.20210123
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -100,10 +100,10 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 ## 使用方式
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
-- 使用OCR相关的服务，请先启动**app.py**(双击app.py/`python app.py`)
+- 使用OCR相关的服务，必须启动app。使用2021-01-23后的版本程序默认自动启动app。
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 - 出现“No module named 'XXX'，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
-- 第一次正常运行后，就可以通过**run.bat**来一键启动
+- 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
 - 如果模拟器没有安装 ATX ，请在打开模拟器后，在控控制台里输入init进行初始化模拟器环境
 - **第一次使用，完全不懂怎么办？** 
 
@@ -152,6 +152,13 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2021/1/23 By:TheAutumnOfRice
+
+- pcr_config结构变动：现在允许动态增删改查以及自动补全缺失了
+- 增加app的内部模式`inline_app`，优化app启动体验，防止app过量启动
+- batch支持随机优先级了（见edit-batch-random）
+- 修复了开关相关的BUG
 
 2021/1/20 By:TheAutumnOfRice
 

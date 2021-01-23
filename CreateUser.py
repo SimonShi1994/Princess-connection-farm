@@ -357,13 +357,21 @@ def create_batch(BatchName):
     AutomatorRecorder.setbatch(BatchName, d)
 
 
+def print_batch(obj):
+    for ind, i in enumerate(obj["batch"]):
+        if "group" in i:
+            print("ID: ", ind, "组", i["group"], "任务：", i["taskfile"], "优先级：", i["priority"], end=" ")
+        elif "account" in i:
+            print("ID: ", ind, "用户", i["account"], "任务：", i["taskfile"], "优先级：", i["priority"], end=" ")
+        if "random" in i and i["random"] is True:
+            print(" [随机模式]")
+        else:
+            print()
+
+
 def show_batch(BatchName):
     obj = AutomatorRecorder.getbatch(BatchName)
-    for i in obj["batch"]:
-        if "group" in i:
-            print("组", i["group"], "任务：", i["taskfile"], "优先级：", i["priority"])
-        elif "account" in i:
-            print("用户", i["account"], "任务：", i["taskfile"], "优先级：", i["priority"])
+    print_batch(obj)
 
 
 def edit_batch(BatchName):
@@ -386,6 +394,7 @@ def edit_batch(BatchName):
                 print("    该文件由若干行组成，每一行应填入四个空格隔开的元素：")
                 print("    若添加单独任务，则第一列写字母A，后面三个空依次填入account,task,priority。")
                 print("    若添加组任务，则第一列写字母G，后面三个空依次填入group,task,priority")
+                print("random enable/disable (ID)  随机编号为ID的batch的优先级（优先级将±0.5浮动）")
                 print("show 显示现在的任务情况")
                 print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
                 print("什么是batch:  what")
@@ -410,11 +419,18 @@ def edit_batch(BatchName):
             elif order == "clear":
                 obj = {"batch": []}
             elif order == "show":
-                for i in obj["batch"]:
-                    if "group" in i:
-                        print("组", i["group"], "任务：", i["taskfile"], "优先级：", i["priority"])
-                    elif "account" in i:
-                        print("用户", i["account"], "任务：", i["taskfile"], "优先级：", i["priority"])
+                print_batch(obj)
+            elif order == "random":
+                if len(cmds) >= 3:
+                    ind = int(cmds[2])
+                    if cmds[1] == "enable":
+                        obj["batch"][ind]["random"] = True
+                    elif cmds[1] == "disable":
+                        obj["batch"][ind]["random"] = False
+                    else:
+                        print("只能输入enable或者disable！")
+                else:
+                    print("random命令有误！")
             elif order == "add":
                 if len(cmds) in [4, 5] and cmds[1] == '-g':
                     group = cmds[2]
