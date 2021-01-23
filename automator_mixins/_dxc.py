@@ -44,14 +44,18 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/yunhai.bmp'):
                     break
                 # 防止一进去就是塔币教程
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, retry=10, at=(779, 421, 833, 440),
-                              threshold=0.97)
+                if self.is_exists('img/dxc/chetui.bmp'):
+                    time.sleep(1.2)
+                    self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                                  threshold=0.97)
                 break
                 # self.dxc_kkr()
         tmp_cout = 0
         while tmp_cout <= 2:
             try:
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
+                    self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                                  threshold=0.97)
                     dixiacheng_floor = self.ocr_center(216, 423, 259, 442, size=1.5)
                     # print(dixiacheng_floor)
                     dixiacheng_floor = int(dixiacheng_floor.split('/')[0])
@@ -165,6 +169,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259), (592, 369)], threshold=0.97)
             while True:
                 time.sleep(0.5)
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440), threshold=0.97)
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(779, 421, 833, 440))
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
                     self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
@@ -212,7 +217,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             while True:
                 if self.is_exists(FIGHT_BTN["caidan"]):
                     break
-                self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(833, 470)], ifbefore=self.change_time+1,
+                self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(833, 470)], ifbefore=self.change_time + 1,
                               ifdelay=self.change_time, retry=10)
                 self.lock_no_img('img/ui/ok_btn_1.bmp', elseclick=[(588, 480)])
                 break

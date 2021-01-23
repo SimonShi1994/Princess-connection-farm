@@ -111,7 +111,8 @@ class Pcr_Downloader:
             self.abortion()
 
     def move_user_option(self):
-        opt = ['users', 'tasks', 'batches', 'xls', 'log', 'error_screenshot', 'config.ini']
+        opt = ['users', 'tasks', 'batches', 'xls', 'log', 'error_screenshot', 'schedules', 'groups', 'config.ini',
+               'rec', 'switches']
         # 用户所的配置文件
         if not os.path.exists('config.ini'):
             print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
@@ -134,7 +135,7 @@ class Pcr_Downloader:
                         print('>>>config由于特殊性，请自行对比更新目录下config_old，自行替换更新')
                         shutil.copy('config.ini', dst + '/config_old.ini')
                     else:
-                        shutil.copytree(fn, dst+'/'+fn)
+                        shutil.copytree(fn, dst + '/' + fn)
                 except Exception as e:
                     print(e, '在迁移当前文件的过程中发生了意外的错误，程序终止！')
                     self.abortion()
