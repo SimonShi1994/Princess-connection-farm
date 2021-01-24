@@ -144,8 +144,9 @@ import inspect
 import random
 import time
 import collections
+from math import inf
 
-from typing import Callable, Any, Dict, Optional, Union
+from typing import Callable, Any, Dict, Optional, Union, List, Type
 
 from core.constant import PCRelement
 from core.pcr_config import disable_timeout_raise, lockimg_timeout
@@ -305,6 +306,7 @@ class FunctionChecker:
                     __retry__[ID_R] += 1
 
         self.add(Checker(f, funvar=["__last_time__", "__retry__"], name=name))
+        return self
 
     def run(self):
         # 跑Checker
@@ -367,7 +369,7 @@ class ExceptionSet:
             del self.FCs[group]
 
     def run(self):
-        for FC in self.FCs.keys():
+        for FC in self.FCs.values():
             FC.run()
 
     def __call__(self, fc: FunctionChecker, group=None):
@@ -402,7 +404,8 @@ class ElementChecker(FunctionChecker):
             self._have_getscreen = True
         return self
 
-    def exist(self, img: Union[PCRelement,str], dofunction: Optional[Callable] = None, rv=True, raise_=None, clear=False,
+    def exist(self, img: Union[PCRelement, str], dofunction: Optional[Callable] = None, rv=True, raise_=None,
+              clear=False,
               **kwargs):
         def f(screen=None) -> bool:
             return self._a.is_exists(img, screen=screen, **kwargs)
@@ -411,7 +414,8 @@ class ElementChecker(FunctionChecker):
                  clear=clear)
         return self
 
-    def not_exist(self, img: Union[PCRelement,str], dofunction: Optional[Callable] = None, rv=True, raise_=None, clear=False,
+    def not_exist(self, img: Union[PCRelement, str], dofunction: Optional[Callable] = None, rv=True, raise_=None,
+                  clear=False,
                   **kwargs):
         def f(screen=None) -> bool:
             return not self._a.is_exists(img, screen=screen, **kwargs)
@@ -450,18 +454,81 @@ class RetryNow(Exception):
         self.name = name
 
 
+class TooMuchRetry(Exception):
+    pass
+
+
 class PCRRetry:
-    def __init__(self, name=None):
+    def __init__(self,
+                 name=None,
+                 max_retry=inf,
+                 delay=0,
+                 include_errors: Optional[Union[List, bool]] = None,
+                 record_list=False,
+                 ):
         self.name = name
+        self.max_retry = max_retry
+        self.delay=delay  # 失败延迟
+        self.include_errors = include_errors  # None或False时，只检测RetryNow，其它不拦截；List时，还包括List中指定的错误, True全包括
+        self.record_list = record_list  # 是否记录全部产生得错误
 
     def __call__(self, fun):
         def f():
+            count = 0
+            output_error = None
+            output_errors = []
             while True:
                 try:
-                    fun()
+                    out = fun()
+                    return out
                 except RetryNow as r:
                     if r.name == self.name:
+                        count += 1
+                        if count > self.max_retry:
+                            output_error = TooMuchRetry(f"尝试次数过多{'' if self.name is None else f'Name {self.name}'}")
+                            break
+                        time.sleep(self.delay)
                         continue
+                except Exception as e:
+                    if self.include_errors in [None, False]:
+                        raise e
+                    if self.include_errors is True or type(e) in self.include_errors:
+                        count += 1
+                        if self.record_list:
+                            output_errors += [e]
+                        if count > self.max_retry:
+                            if self.record_list:
+                                output_error = TooMuchRetry(
+                                    f"尝试次数过多{'' if self.name is None else f'Name {self.name}'}\n" +
+                                    " 异常列表：\n" + '\n'.join([str(o) for o in output_errors]))
+                            else:
+                                output_error = TooMuchRetry(
+                                    f"尝试次数过多{'' if self.name is None else f'Name {self.name}'}\n" +
+                                    " 最后一次异常：" + str(e))
+                            break
+                        time.sleep(self.delay)
+                        continue
+                    raise e
                 break
+            if output_error is not None:
+                raise output_error
 
         return f
+
+    def run(self, fun):
+        return self.__call__(fun)()
+
+
+def retry_run(fun, max_retry=inf, raise_error: Optional[Type[Exception]] = None, delay=0, **kwargs):
+    kwargs.setdefault("max_retry", max_retry)
+    kwargs.setdefault("include_errors", True)
+    kwargs.setdefault("record_list", False)
+    kwargs.setdefault("delay",delay)
+    try:
+        out = PCRRetry(**kwargs).run(fun)
+        return out
+    except TooMuchRetry as e:
+        if raise_error is None:
+            raise e
+        else:
+            raise raise_error()

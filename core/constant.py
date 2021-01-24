@@ -386,6 +386,8 @@ FIGHT_BTN = {
     "caidan": p(902, 33, img="img/fight/menu.bmp", at=(856, 14, 942, 35)),
     "fangqi_1": p(625, 376, img="img/fight/fangqi_1.bmp", at=(558, 346, 690, 392)),
     "fangqi_2": p(625, 376, img="img/fight/fangqi_2.bmp", at=(491, 346, 686, 392)),
+    "tgdw": p(img="img/fight/tgdw.bmp",at=(805,82,900,105)),
+    "infinity":p(img="img/fight/infinity.bmp",at=(897,407,920,420)),
 }
 
 JUESE_BTN = {

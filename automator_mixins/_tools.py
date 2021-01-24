@@ -3,10 +3,9 @@ import os
 import random
 import time
 
-import cv2
+
 import numpy as np
 import pandas as pd
-import requests
 import xlrd
 from xlutils.copy import copy
 
@@ -52,6 +51,14 @@ class ToolsMixin(BaseMixin):
             time.sleep(1.5)
             if time.time() - last > lockimg_timeout:
                 raise Exception("lock_home时出错：超时！")
+
+    def enter_home_scene(self):
+        """
+        锁定主页后
+        返回主页Scene
+        """
+        from scenes.root.wodezhuye import WoDeZhuYe
+        return WoDeZhuYe(self).enter()
 
     @timeout(300, "init_home执行超时：超过5分钟")
     def init_home(self):
@@ -160,118 +167,6 @@ class ToolsMixin(BaseMixin):
         set_last_record()
         self.lock_home()
 
-    def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
-        """
-        :param size: 放大的大小
-        :param x1: 左上坐标
-        :param y1: 左上坐标
-        :param x2: 右下坐标
-        :param y2: 右下坐标
-        :param screen_shot: 截图
-        :return:
-        """
-        global ocr_text
-
-        try:
-            requests.get(url="http://127.0.0.1:5000/ocr/")
-        except:
-            pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
-            return -1
-
-        if len(ocr_mode) == 0:
-            return -1
-        # OCR识别任务分配
-        if ocr_mode == "智能":
-            baidu_ocr_ping = requests.get(url="https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic")
-            code = baidu_ocr_ping.status_code
-            if code == 200:
-                ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-                if ocr_text == -1:
-                    ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-            else:
-                ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-        elif ocr_mode == "网络":
-            ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-        elif ocr_mode == "本地":
-            ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-        elif ocr_mode == "混合":
-            # 机器伪随机
-            ocr_way = random.randint(1, 2)
-            if ocr_way == 1:
-                ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-            elif ocr_way == 2:
-                ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-
-        # OCR返回的数据 纠错
-        try:
-            if ocr_text:
-                return str(ocr_text)
-            else:
-                return -1
-        except:
-            raise Exception("ocr-error", "OCR识别错误。")
-
-    def ocr_local(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
-        if screen_shot is None:
-            screen_shot = self.getscreen()
-
-        try:
-            if screen_shot.shape[0] > screen_shot.shape[1]:
-                if anticlockwise_rotation_times >= 1:
-                    for _ in range(anticlockwise_rotation_times):
-                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
-            img_binary = cv2.imencode('.png', part)[1].tobytes()
-            files = {'file': ('tmp.png', img_binary, 'image/png')}
-            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
-            pcr_log(self.account).write_log(level='info', message='本地OCR识别结果：%s' % local_ocr_text.text)
-            return local_ocr_text.text
-        except Exception as ocr_error:
-            pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
-            return -1
-
-    # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
-    # 使用Baidu OCR接口
-    def baidu_ocr(self, x1, y1, x2, y2, size=1.0, screen_shot=None):
-        # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
-        # 默认原图大小（1.0）
-        if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
-            pcr_log(self.account).write_log(level='error', message='读取SecretKey或apiKey失败！')
-            return -1
-
-        # 强制size为1.0，避免百度无法识图
-        size = 1.0
-
-        if screen_shot is None:
-            screen_shot = self.getscreen()
-        # from numpy import rot90
-        # screen_shot_ = rot90(screen_shot_)  # 旋转90°
-        if baidu_ocr_img:
-            cv2.imwrite('baidu_ocr.bmp', screen_shot)
-        if screen_shot.shape[0] > screen_shot.shape[1]:
-            if anticlockwise_rotation_times >= 1:
-                for _ in range(anticlockwise_rotation_times):
-                    screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            # cv2.imwrite('fuck_rot90_test.bmp', screen_shot_)
-            # screen_shot_ = rot90(screen_shot_)  # 旋转90°
-            pass
-        part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-        part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
-        partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
-
-        try:
-            files = {'file': ('tmp.png', partbin, 'image/png')}
-            result = requests.post(url="http://127.0.0.1:5000/ocr/baidu_ocr/", files=files)
-            # 原生输出有助于开发者
-            result = result.json().get('words_result')[0].get('words')
-            return result
-        except:
-            pcr_log(self.account).write_log(level='error', message='百度云识别失败！请检查apikey和secretkey以及截图范围返回结果'
-                                                                   '是否有误！')
-            return -1
 
     def get_base_info(self, base_info=False, introduction_info=False, props_info=False, out_xls=False, s_sent=False,
                       acc_nature=0):

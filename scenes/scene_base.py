@@ -32,6 +32,8 @@ class PCRSceneBase:
         self.scene_name = "BaseScene"
         self.initFC = None
         self.feature = None  # screen -> True/False
+        self._raise=self._a._raise
+        self.check_ocr_running = self._a.check_ocr_running
         self.click=self._a.click
         self.click_img=self._a.click_img
         self.lock_img=self._a.lock_img
@@ -48,6 +50,15 @@ class PCRSceneBase:
         self.getscreen=self._a.getscreen
         self.lock_fun=self._a.lock_fun
         self.chulijiaocheng=self._a.chulijiaocheng
+        self.check_dict_id=self._a.check_dict_id
+        self.ocr_center = self._a.ocr_center
+        self.ocr_with_check = self._a.ocr_with_check
+        self.ocr_int=self._a.ocr_int
+        self.ocr_A_B=self._a.ocr_A_B
+
+    @property
+    def last_screen(self):
+        return self._a.last_screen
 
     def goto(self,scene:Type["PCRSceneBase"],gotofun,timeout=None,interval=8,retry=None):
         def featureout(screen):
@@ -57,8 +68,7 @@ class PCRSceneBase:
                 add(Checker(featureout,name=f"{self.scene_name} - Feature Out"),rv=True).\
                 add_intervalprocess(gotofun,retry=retry,interval=interval,name="gotofun").lock(timeout=timeout)
         self.clear_initFC()
-        scene.enter(timeout)
-        return scene(self._a)
+        return scene(self._a).enter()
 
     def enter(self,timeout=None):
         def featurein(screen):
@@ -68,14 +78,23 @@ class PCRSceneBase:
         if self.feature is not None:
             self._a.getFC().getscreen(). \
                 add(Checker(featurein, name=f"{self.scene_name} - Feature In"), rv=True).lock(timeout=timeout)
+        return self
 
     def clear_initFC(self):
         self._a.ES.clear(self.scene_name)
+        return self
 
     def set_initFC(self):
         self._a.ES.register(self.initFC)
+        return self
 
     def no_initFC(self):
+        """
+        with self.no_initFC():
+            XXX
+
+        该部分的内容不会受到InitFC的影响
+        """
         obj=self
         class _no_initFC:
             def __init__(self):
