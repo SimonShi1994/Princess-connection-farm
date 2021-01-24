@@ -38,6 +38,7 @@ def _CGet(method, section, option, default=None):
             print("设为默认值", value, '!')
         else:
             print()
+        return getattr(cfg, method)(section=section, option=option)
 
 
 def CGetBool(section, option, default=None) -> bool:
@@ -78,7 +79,7 @@ class GlobalConfig:
         search every PCR modules and change there values
         """
         self._set(option, value)
-        setattr(globals(), option, value)
+        globals()[option] = value
         if find_global:
             mypath = str(pathlib.Path().absolute())
             for name, module in sys.modules.items():
