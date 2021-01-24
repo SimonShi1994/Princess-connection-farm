@@ -2,6 +2,7 @@
 import configparser
 import json
 import os
+import pathlib
 import sys
 from typing import Optional
 
@@ -37,6 +38,7 @@ def _CGet(method, section, option, default=None):
             print("设为默认值", value, '!')
         else:
             print()
+        return getattr(cfg, method)(section=section, option=option)
 
 
 def CGetBool(section, option, default=None) -> bool:
@@ -54,7 +56,6 @@ def CGetFloat(section, option, default=None) -> float:
 def CGet(section, option, default=None) -> str:
     return _CGet("get", section, option, default)
 
-
 class GlobalConfig:
     """
     全局配置类
@@ -63,30 +64,40 @@ class GlobalConfig:
 
     def __init__(self):
         self.config = {}
-        self.module_info = {}
 
     def _set(self, option, value):
+        """
+        Set: For Own Use
+        Will only change the value here but not in other files.
+        """
         self.config[option] = value
 
-    def _get(self, option, default=None):
+    def set(self, option, value, find_global=True):
+        """
+        NB Set Here:
+        Not only change the value here, but also
+        search every PCR modules and change there values
+        """
+        self._set(option, value)
+        globals()[option] = value
+        if find_global:
+            mypath = str(pathlib.Path().absolute())
+            for name, module in sys.modules.items():
+                if getattr(module, "__file__", "").startswith(mypath) or getattr(module.__spec__, "origin",
+                                                                                 "").startswith(mypath):
+                    # Is PCR modules
+                    if hasattr(module, option):
+                        # If Pre-Loaded, Change it.
+                        setattr(module, option, value)
+
+    def get(self, option, default=None):
         return self.config.get(option, default)
-
-    def _del(self, option):
-        if option not in self.config:
-            return
-        del self.config[option]
-
-    def _bind_module(self, module_dict):
-        for key, item in module_dict.__dict__.items():
-            self.module_info[key] = item
 
     def __getattr__(self, name):
         if name == "__all__":
-            return list(self.config.keys()) + ["sys", "os", "json", "configparser", "Optional"]
+            return list(self.config.keys())
         elif name in self.config:
             return self.config[name]
-        elif name in self.module_info:
-            return self.module_info[name]
         else:
             raise AttributeError("No Config:", name)
 
@@ -193,8 +204,6 @@ wait_for_launch_time = GC.add_int('emulator_setting', 'wait_for_launch_time', 60
 ignore_serials: Optional[list] = (GC.add_list('emulator_setting', 'ignore_serials', []))
 
 GC.config_update()
-GC._bind_module(sys.modules[__name__])
-sys.modules[__name__] = GC  # Hack Modules!
 
 """ BackUp
 debug = cfg.getboolean('debug', 'debug')

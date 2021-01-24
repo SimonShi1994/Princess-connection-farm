@@ -386,7 +386,7 @@ def Start_App():
     if not inline_app:
         subprocess.Popen([sys.executable, "app.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
     else:
-        subprocess.Popen([sys.executable, "app.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.Popen([sys.executable, "app.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     print("正在等待app启动完毕……")
     import time
     start_time = time.time()
@@ -431,7 +431,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.2.20210123")
+        print("当前版本为 Ver 2.2.20210124")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
