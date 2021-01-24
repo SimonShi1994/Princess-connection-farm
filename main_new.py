@@ -1,5 +1,4 @@
 import subprocess
-import sys
 import traceback
 
 import requests
@@ -10,6 +9,7 @@ from core.initializer import PCRInitializer, Schedule
 from core.launcher import EMULATOR_DICT
 from core.pcr_config import *
 from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
+from core.utils import is_ocr_running
 
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
@@ -286,6 +286,7 @@ def ShowAutoConsole():
     else:
         print("* 模拟器自动控制未配置，前往config.ini - emulator_console进行配置")
     print("* 自动启动app.py auto_start_app：", "已开启" if auto_start_app else "未开启")
+    print("* 内部方式启动app：", "已开启" if inline_app else "未开启")
 
 
 def ShowOCR():
@@ -294,6 +295,11 @@ def ShowOCR():
         print("* BaiduAPI 已配置！")
     else:
         print("* BaiduAPI 未配置，前往config.ini - baidu_apiKey进行配置")
+    print("* 本地OCR状态：", end="")
+    if is_ocr_running():
+        print("运行中")
+    else:
+        print("未运行")
 
 
 def ShowPCRPerformance():
@@ -372,8 +378,23 @@ def ShowInfo():
 
 
 
+
 def Start_App():
-    subprocess.Popen([sys.executable, "app.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    if is_ocr_running():
+        print("app 已经启动！")
+        return
+    if not inline_app:
+        subprocess.Popen([sys.executable, "app.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    else:
+        subprocess.Popen([sys.executable, "app.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print("正在等待app启动完毕……")
+    import time
+    start_time = time.time()
+    while time.time() - start_time <= 60:
+        if is_ocr_running():
+            print("app启动完毕！")
+            return
+    print("app可能启动失败。")
 
 
 if __name__ == "__main__":
@@ -410,22 +431,25 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.1.20210104")
+        print("当前版本为 Ver 2.2.20210123")
         print(update_info)
         print("----------------------------------------")
-        print("init 初始化模拟器环境                   ")
-        print("app 启动app.py [自启动：", "已开启" if auto_start_app else "未开启", "]")
+        print("init 初始化模拟器环境&转化txt为json      ")
+        print("app 启动app.py", end=" ")
+        print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
+        print("[内部模式：", "已开启" if inline_app else "未开启", "]")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
+        print("* New! 在info中可以查看当前app启动状况了")
         print("* Tip：如果要使用任何OCR（包括本地和网络），请手动启动app.py！")
         print("* Tip：如果要自动填写验证码，请在config关闭captcha_skip")
         print("* Tip：如果某Schedule莫名无法运行，可能是存在未解决的错误，请参考introduce中错误解决相关部分！")
         print("* Happy 2021 Year!")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
-        print("新的脚本控制方法更新！输入help查看帮助。")
+        print("* 开关（Switch）模块上线！进入edit看看吧！（虽然还没来得及写教程）")
     while True:
         try:
             cmd = input("> ")
@@ -439,6 +463,11 @@ if __name__ == "__main__":
                 break
             elif order == "init":
                 os.system(f"cd {adb_dir} & adb start-server")
+                os.system(f"cd batches & ren *.txt *.json")
+                os.system(f"cd groups & ren *.txt *.json")
+                os.system(f"cd schedules & ren *.txt *.json")
+                os.system(f"cd tasks & ren *.txt *.json")
+                os.system(f'cd users & for /r %a in (*.txt) do ren "%a" "%~na.json"')
                 if os.system('python -m uiautomator2 init') != 0:
                     # pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
                     print("初始化 uiautomator2 失败,请检查是否有模拟器没有安装上ATX")

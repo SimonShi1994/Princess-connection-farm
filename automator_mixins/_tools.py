@@ -82,9 +82,12 @@ class ToolsMixin(BaseMixin):
             if num_of_white < 77000:
                 break
 
+            # 跳过特别庆典
             self.click(1, 1, post_delay=0.5)
             self.click(330, 270, post_delay=1)
-            # 跳过特别庆典
+            # 跳过抽签（备用）
+            self.d.touch.down(470, 30).sleep(0.1).move(470, 500).sleep(0.2).up(470, 500)
+
 
         self.lock_home()
         time.sleep(0.5)

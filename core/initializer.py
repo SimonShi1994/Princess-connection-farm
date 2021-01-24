@@ -7,6 +7,7 @@ import traceback
 from multiprocessing import Process
 from multiprocessing.managers import SyncManager
 from queue import PriorityQueue
+from random import random
 from typing import List, Tuple, Optional, Dict, Union
 
 import adbutils
@@ -18,11 +19,12 @@ from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
+from core.pcr_config import GC
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
     trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
     max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr, ignore_serials
 from core.safe_u2 import OfflineException, ReadTimeoutException
-from core.usercentre import AutomatorRecorder, parse_batch
+from core.usercentre import AutomatorRecorder, parse_batch, list_all_flags
 from core.utils import diffday, PrintToStr
 
 abs_dir = os.path.abspath(adb_dir)
@@ -72,6 +74,7 @@ def _get_manager():
     m.start()
     return m
 
+
 def time_period_format(tm) -> str:
     tm = int(tm)
     if tm < 60:
@@ -82,6 +85,8 @@ def time_period_format(tm) -> str:
         return f"{tm // 3600}h {(tm % 3600) // 60}m {tm % 60}s"
     else:
         return f"{tm // (3600 * 24)}d {(tm % (3600 * 24)) // 3600}h {(tm % 3600) // 60}m {tm % 60}s"
+
+
 class Device:
     """
     设备类，存储设备状态等。
@@ -195,6 +200,7 @@ class Device:
 
     def out_process(self):
         self._in_process = False
+
 
 class AllDevices:
     """
@@ -447,24 +453,29 @@ class PCRInitializer:
             except Exception as e:
                 pass
 
-    def add_task(self, task: Union[Tuple[int, str, str, dict], Tuple[int, str, str]], continue_, rec_addr):
+    def add_task(self, task: Union[Tuple[int, str, str, dict], Tuple[int, str, str]], continue_, rec_addr,
+                 rand_pri=False):
         """
         向优先级队列中增加一个task
         该task为六元组，(priority, account, taskname,rec_addr, task, continue_)
         """
         if len(task) == 3:
-            task = (0 - task[0], task[1], task[2], rec_addr, AutomatorRecorder.gettask(task[2]), continue_)
+            task = (
+            0 - task[0] - rand_pri * (random() / 2 - 1), task[1], task[2], rec_addr, AutomatorRecorder.gettask(task[2]),
+            continue_)
         else:
-            task = (0 - task[0], task[1], task[2], rec_addr, task[3], continue_)  # 最大优先队列
+            task = (
+            0 - task[0] - rand_pri * (random() / 2 - 1), task[1], task[2], rec_addr, task[3], continue_)  # 最大优先队列
         self._add_task(task)
 
-    def add_tasks(self, tasks: list, continue_, rec_addr):
+    def add_tasks(self, tasks: list, continue_, rec_addr, rand_pri=False):
         """
         向优先级队列中增加一系列tasks
         该task为六元组，(priority, account, taskname,rec_addr, task, continue_)
+        rand_pri:随机增加一个0~0.5的优先级
         """
         for task in tasks:
-            self.add_task(task, continue_, rec_addr)
+            self.add_task(task, continue_, rec_addr, rand_pri)
 
     def pause_tasks(self):
         """
@@ -556,6 +567,11 @@ class PCRInitializer:
                     if device.a is not None:
                         device.a.force_kill()
                     break
+                if type(msg) is dict and "method" in msg:
+                    if msg["method"] == "config":
+                        # 修改配置
+                        GC.set(msg["option"], msg["value"])
+
                 time.sleep(1)
 
         serial = device.serial
@@ -736,17 +752,24 @@ class PCRInitializer:
                         kwargs=dict(device=d, task_queue=self.tasks, in_queue=self.in_queue[d],
                                     out_queue=self.out_queue), daemon=True).start()
 
-    def send_message(self, device: Device, msg):
+    def send_message(self, device: Optional[Device] = None, msg=None):
+        if device is None:
+            # BoardCast
+            for d in self.in_queue:
+                self.send_message(d, msg)
         if device not in self.in_queue:
             return
         target = self.in_queue[device]
         target.put(msg)
 
-    def stop_device(self, device: Device):
+    def stop_device(self, device):
         self.send_message(device, "quit")
 
-    def forcekill_device(self, device: Device):
+    def forcekill_device(self, device):
         self.send_message(device, "forcekill")
+
+    def change_config(self, option, value, device):
+        self.send_message(device, {"method": "config", "option": option, "value": value})
 
     def stop(self, join=False, clear=False, force=False):
         if clear:
@@ -842,11 +865,23 @@ class Schedule:
              or "name":[("batch1","rec_addr1"),("batch2","rec_addr2"),...]
         }
         """
+        FLAGS = list_all_flags()
         for s in self.schedule["schedules"]:
+            if "__disable__" in s:
+                if s["__disable__"] is True:
+                    continue
+                elif s["__disable__"] is not False:
+                    detail = None
+                    for flag, details in FLAGS.items():
+                        if s["__disable__"] == flag:
+                            detail = details
+                            break
+                    if detail is not None:
+                        if detail["default"] is True:
+                            continue
+
             if s["type"] == "config":
                 self.config.update(s)
-                continue
-            if "__disable__" in s and s["__disable__"]:
                 continue
             typ = s["type"]
             nam = s["name"]
