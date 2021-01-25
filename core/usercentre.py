@@ -323,10 +323,11 @@ def list_all_groups(verbose=1) -> List[str]:
     for i in ld:
         if not os.path.isdir(i) and i.endswith(".json"):
             try:
-                users = AutomatorRecorder.getgroup(i[:-5])
-                check_users_exists(users)
+                group = AutomatorRecorder.getgroup(i[:-5])
+                check_users_exists(group)
                 if verbose:
                     print("组配置", i, "加载成功！")
+                groups += [i[:-5]]
                 count += 1
             except Exception as e:
                 if verbose:
@@ -590,6 +591,11 @@ def is_in_group(acc, group):
     GP = AutomatorRecorder.getgroup(group)
     return acc in GP
 
+
+def get_all_group(acc):
+    groups = list_all_groups(0)
+    exist_group = [g for g in groups if is_in_group(acc, g)]
+    return exist_group
 
 class AutomatorRecorder:
     """

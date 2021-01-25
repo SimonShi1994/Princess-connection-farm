@@ -18,6 +18,7 @@ from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticl
     ocr_mode, debug
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
+from core.usercentre import get_all_group
 from ._base import BaseMixin
 
 
@@ -309,6 +310,7 @@ class ToolsMixin(BaseMixin):
             "jianjie_hanghui": 'None',
             "jianjie_id": 'None',
             "zhanghao": self.account,
+            "group": ','.join(get_all_group(self.account)),
             "saodangquan": 'None',
             "date": date,
         }
@@ -361,7 +363,7 @@ class ToolsMixin(BaseMixin):
                 pf = pd.DataFrame(list(acc_info_list))
                 # 指定字段顺序
                 order = ['dengji', 'jianjie_name', 'tili', 'mana', 'baoshi', 'jianjie_zhanli',
-                         'jianjie_hanghui', 'jianjie_id', 'zhanghao', 'saodangquan', 'date']
+                         'jianjie_hanghui', 'jianjie_id', 'zhanghao', 'group', 'saodangquan', 'date']
                 pf = pf[order]
                 # 将列名替换为中文
                 columns_map = {
@@ -374,6 +376,7 @@ class ToolsMixin(BaseMixin):
                     'jianjie_hanghui': '所属行会',
                     'jianjie_id': '玩家ID',
                     'zhanghao': '账号',
+                    'group': '所在组',
                     'saodangquan': '所拥有的扫荡券',
                     'date': '录入日期',
                 }
