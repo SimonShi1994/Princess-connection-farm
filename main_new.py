@@ -253,6 +253,7 @@ def ShowGuide():
     print("/AboutUpdater.md                自动更新使用说明（自动更新已经很久没更新过了，可能不能使用）")
     print("/webclient/README.md            前端使用说明  (前端还不能用）")
     print("/tasks_example/                 样例任务json文件")
+    print("/example_customtask/            样例自定义任务文件")
 
 
 def ShowServerChan():
@@ -432,7 +433,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.2.20210126")
+        print("当前版本为 Ver 2.3.20210126")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -449,6 +450,7 @@ if __name__ == "__main__":
         print("* 开关（Switch）模块上线！进入edit看看吧！（教程已出）")
         print("* 任务（Task）和计划（Schedule）模块支持enable, disable, flag操作了！")
         print("* 组（Group）模块支持add，del，move，user操作了！")
+        print("* 新增自定义任务(CustomTask)模块，梦回masterV1.0。")
     while True:
         try:
             cmd = input("> ")

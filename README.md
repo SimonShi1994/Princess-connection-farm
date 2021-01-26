@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.2.20210126
+ # Princess connection 公主连结农场脚本v2.3.20210126
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -19,6 +19,8 @@
 **支持每日自动三捐**
 
 **支持开关一键修改配置**
+
+**支持自定义任务（如果你会python）**
 
 ## 详细功能
 
@@ -159,6 +161,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 - 增加了便捷的组管理命令
 - 给ocr信息获取增加了“所在组”
 - 增加了开关的使用说明
+- 增加自定义模块 `customtask`
 
 2021/1/24 By:TheAutumnOfRice
 
