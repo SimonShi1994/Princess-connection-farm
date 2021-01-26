@@ -33,6 +33,18 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         DXCMixin.__init__(self)
         self.init_device(address)
 
+    def run_custom_task(self, pymodule: str, funcname: str, var=None, **kwargs):
+        import importlib
+        func = None
+        try:
+            print("导入模块中……")
+            py = importlib.import_module(pymodule)
+            func = getattr(py, funcname)
+            print("导入成功！")
+        except Exception as e:
+            print("自定义脚本导入失败！", e)
+        func(self=self, var=var, **kwargs)
+
     def RunTasks(self, tasks: dict, continue_=True, max_retry=3,
                  first_init_home=True, rec_addr="rec"):
         """

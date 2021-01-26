@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.2.20210124
+ # Princess connection 公主连结农场脚本v2.2.20210126
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -111,7 +111,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 [如何接入打码平台](docs/如何接入打码平台.md)
 
-开关用法正在绝赞编写中！
+[如何使用开关模块](docs/switch_guide.md)
 
 - 感觉还是不会使用，怎么办？
 
@@ -152,6 +152,13 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2021/1/26 By:TheAutumnOfRice
+
+- 修复了list_all_groups的一些BUG
+- 增加了便捷的组管理命令
+- 给ocr信息获取增加了“所在组”
+- 增加了开关的使用说明
 
 2021/1/24 By:TheAutumnOfRice
 
