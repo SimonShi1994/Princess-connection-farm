@@ -770,6 +770,3 @@ def list_all_customtasks(verbose=1) -> List[str]:
         print("加载完成，一共加载成功", count, "个模块。")
     return tasks
 
-
-for module in list_all_customtasks(0):
-    VALID_TASK.add_custom(customtask_addr + "." + module)

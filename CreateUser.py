@@ -119,10 +119,6 @@ DOC_STR = {
         switch文件默认存放于./switches中。
         """
 }
-for custom in list_all_customtasks(0):
-    VALID_TASK.add_custom(customtask_addr + "." + custom)
-T = VALID_TASK.T
-
 def show_task_simple(ind, i):
     print(ind, ":", T[i["type"]]["title"], end="  ")
     if "__disable__" in i:
