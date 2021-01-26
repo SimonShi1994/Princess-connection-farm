@@ -4,7 +4,7 @@ from random import random
 from typing import List, Optional, Union, Tuple
 
 from core.constant import USER_DEFAULT_DICT as UDD
-from core.valid_task import VALID_TASK
+from core.valid_task import VALID_TASK, getcustomtask as _getcustomtask, list_all_customtasks as _list_all_customtasks
 
 """
 用户文件存储说明：
@@ -33,6 +33,9 @@ from core.valid_task import VALID_TASK
         {...},...
 ]
 }
+
+自定义任务文件存储说明：
+默认路径： /customtask
 
 组说明：
 默认路径：/groups
@@ -173,11 +176,11 @@ from core.valid_task import VALID_TASK
 """
 user_addr = "users"  # 存放用户配置的文件夹
 task_addr = "tasks"  # 存放任务配置的文件夹
+# customtask_addr = "customtask"  # 存放自定义任务的文件夹 # 必须用.而不是/
 group_addr = "groups"  # 存放用户组的文件夹
 batch_addr = "batches"  # 存放批任务的文件夹
 schedule_addr = "schedules"  # 存放计划的文件夹
 switch_addr = "switches"  # 存放开关的文件夹
-
 
 def check_user_dict(d: dict, is_raise=False) -> bool:
     """
@@ -323,10 +326,11 @@ def list_all_groups(verbose=1) -> List[str]:
     for i in ld:
         if not os.path.isdir(i) and i.endswith(".json"):
             try:
-                users = AutomatorRecorder.getgroup(i[:-5])
-                check_users_exists(users)
+                group = AutomatorRecorder.getgroup(i[:-5])
+                check_users_exists(group)
                 if verbose:
                     print("组配置", i, "加载成功！")
+                groups += [i[:-5]]
                 count += 1
             except Exception as e:
                 if verbose:
@@ -335,6 +339,9 @@ def list_all_groups(verbose=1) -> List[str]:
         print("加载完成，一共加载成功", count, "个组配置。")
     return groups
 
+
+def list_all_customtasks(verbose=1) -> List[str]:
+    return _list_all_customtasks(verbose)
 
 def check_valid_batch(batch: dict, is_raise=True) -> bool:
     try:
@@ -586,10 +593,21 @@ def parse_batch(batch: dict):
     return L
 
 
-def is_in_group(acc, group):
-    GP = AutomatorRecorder.getgroup(group)
+def is_in_group(acc, group, is_detailed=False):
+    if is_detailed:
+        GP = group
+    else:
+        GP = AutomatorRecorder.getgroup(group)
     return acc in GP
 
+
+def get_all_group(acc, detailed_group: Optional[dict] = None):
+    if detailed_group is None:
+        groups = list_all_groups(0)
+        exist_group = [g for g in groups if is_in_group(acc, g)]
+    else:
+        exist_group = [g for g in detailed_group if is_in_group(acc, detailed_group[g], is_detailed=True)]
+    return exist_group
 
 class AutomatorRecorder:
     """
@@ -657,8 +675,14 @@ class AutomatorRecorder:
         return d
 
     @staticmethod
-    def getgroup(groupfile) -> list:
+    def getcustomtask(modulefile) -> list:
+        return _getcustomtask(modulefile)
+
+    @staticmethod
+    def getgroup(groupfile, is_raise=True) -> list:
         target_name = "%s/%s.json" % (group_addr, groupfile)
+        if not os.path.exists(target_name):  # 不存在的组返回空
+            return []
         users = []
         with open(target_name, "r", encoding="utf-8") as f:
             for j in f:
@@ -668,7 +692,7 @@ class AutomatorRecorder:
                 if line[0] == "#":
                     continue
                 users += [line]
-        check_users_exists(users)
+        check_users_exists(users, is_raise)
         return users
 
     @staticmethod
@@ -706,6 +730,16 @@ class AutomatorRecorder:
             AutomatorRecorder.json_save(target_name, taskobj)
         else:
             print("任务文件不合法，保存失败")
+
+    @staticmethod
+    def setgroup(groupfile, acclist: list):
+        target_name = "%s/%s.json" % (group_addr, groupfile)
+        if len(acclist) == 0:
+            if os.path.exists(target_name):
+                os.remove(target_name)
+                return
+        with open(target_name, "w", encoding="utf-8") as f:
+            f.write("\n".join(acclist))
 
     @staticmethod
     def setbatch(batchfile, batchobj: dict):

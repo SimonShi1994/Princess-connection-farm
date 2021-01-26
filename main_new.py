@@ -246,12 +246,14 @@ def JoinShutdown(nowait=False):
 
 def ShowGuide():
     print("/docs/introduce_to_schedule.md  Schedule使用帮助")
+    print("/docs/switch_guide              开关使用说明 [<New!]")
     print("/docs/如何接入打码平台.md")
     print("/equip/                         自动发起捐赠所用的样例装备")
     print("/INI文件配置解读.md               配置文件使用说明")
     print("/AboutUpdater.md                自动更新使用说明（自动更新已经很久没更新过了，可能不能使用）")
     print("/webclient/README.md            前端使用说明  (前端还不能用）")
     print("/tasks_example/                 样例任务json文件")
+    print("/example_customtask/            样例自定义任务文件")
 
 
 def ShowServerChan():
@@ -431,7 +433,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.2.20210124")
+        print("当前版本为 Ver 2.3.20210126")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -439,17 +441,16 @@ if __name__ == "__main__":
         print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
         print("[内部模式：", "已开启" if inline_app else "未开启", "]")
         print("help 查看帮助                   exit 退出")
-        print("info 查看配置信息               guide 教程")
+        print("info 查看配置信息               guide 教程 [<New!]")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
-        print("* New! 在info中可以查看当前app启动状况了")
-        print("* Tip：如果要使用任何OCR（包括本地和网络），请手动启动app.py！")
-        print("* Tip：如果要自动填写验证码，请在config关闭captcha_skip")
-        print("* Tip：如果某Schedule莫名无法运行，可能是存在未解决的错误，请参考introduce中错误解决相关部分！")
         print("* Happy 2021 Year!")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
-        print("* 开关（Switch）模块上线！进入edit看看吧！（虽然还没来得及写教程）")
+        print("* 开关（Switch）模块上线！进入edit看看吧！（教程已出）")
+        print("* 任务（Task）和计划（Schedule）模块支持enable, disable, flag操作了！")
+        print("* 组（Group）模块支持add，del，move，user操作了！")
+        print("* 新增自定义任务(CustomTask)模块，梦回masterV1.0。")
     while True:
         try:
             cmd = input("> ")
