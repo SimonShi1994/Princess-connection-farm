@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.3.20210126
+ # Princess connection 公主连结农场脚本v2.3.20210127
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -61,6 +61,7 @@
 - [x] OCR获取账号信息
 - [x] 卖出过量装备
 - [x] 暂停手操
+- [x] 库存识别 （仅限装备）
 
 6. 刷图
 
@@ -154,6 +155,12 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2021/1/27 By:TheAutumnOfRice
+
+- 修复一些BUG
+- OCR信息获取体验更佳
+- 增加
 
 2021/1/26 By:TheAutumnOfRice
 

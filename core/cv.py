@@ -180,6 +180,34 @@ class UIMatcher:
         return l
 
     @classmethod
+    def img_all_prob(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
+        """
+        找全部匹配和概率，返回一个列表[(prob,x,y,(at))]
+        """
+        if isinstance(screen, str):
+            screen = cv2.imread(screen)
+        screen = cls.AutoRotateClockWise90(screen)
+        template = cls._get_template(template_path)
+        th, tw = template.shape[:2]  # rows->h, cols->w
+        if at is not None:
+            x1, y1, x2, y2 = at
+        else:
+            x1, y1, x2, y2 = 0, 0, 959, 539
+        screen = cls.img_cut(screen, (x1, y1, x2, y2))
+        res = UIMatcher.matchTemplate(screen, template, method)
+        l = []
+        for i in range(res.shape[0]):
+            for j in range(res.shape[1]):
+                if res[i, j] >= threshold:
+                    _x = x1 + j + tw // 2
+                    _y = y1 + i + th // 2
+                    _at = (x1 + j, y1 + i, x1 + j + tw - 1, y1 + i + th - 1)
+                    l += [(res[i, j], _x, _y, _at)]
+                    if debug:
+                        print(f"p({_x},{_y},img=\"{template_path}\",at={_at}), \nCCOEFF=", res[i, j])
+        return sorted(l, reverse=True)
+
+    @classmethod
     def img_where(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED,
                   is_black=False, black_threshold=1500):
         """

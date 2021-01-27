@@ -56,8 +56,11 @@ class movevar:
             s = self.var["__self__"]
             s.savestate()
 
-    def regflag(self, flagkey):
+    def regflag(self, flagkey, default=None):
+        if flagkey not in self.var:
+            self.var[flagkey] = default
         self.reg += [flagkey]
+        return self.var[flagkey]
 
     def setflag(self, flagkey, flagvalue=1, save=None):
         """

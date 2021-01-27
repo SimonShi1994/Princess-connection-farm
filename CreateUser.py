@@ -119,6 +119,10 @@ DOC_STR = {
         switch文件默认存放于./switches中。
         """
 }
+
+T = VALID_TASK.T
+
+
 def show_task_simple(ind, i):
     print(ind, ":", T[i["type"]]["title"], end="  ")
     if "__disable__" in i:

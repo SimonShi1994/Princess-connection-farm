@@ -309,7 +309,10 @@ ZHUCAIDAN_BTN = {
     "jiangxu": p(865, 31, img="img/zhucaidan/jiangxu.bmp", at=(849, 22, 881, 41)),
     "chushouqueren": p(img="img/zhucaidan/chushouqueren.bmp", at=(434, 30, 521, 53)),
     "chushouwanbi": p(img="img/zhucaidan/chushouwanbi.bmp", at=(434, 133, 522, 154)),
-    "chushou2": p(584, 483)
+    "chushou2": p(584, 483),
+    "sortico": p(img="img/zhucaidan/sortico.bmp", at=(800, 21, 824, 41)),
+    "sale_short": p(846, 428, img="img/zhucaidan/sale_short.bmp", at=(820, 419, 871, 436)),
+    "sale_long": p(771, 428, img="img/zhucaidan/sale_short.bmp", at=(745, 419, 796, 436))
 
 }
 FIGHT_BTN = {
@@ -1091,7 +1094,7 @@ USER_DEFAULT_DICT = {
         "niudan": 0,  # 上次免费扭蛋时间
         "tansuo": 0,  # 上次探索时间
         "maizhuangbei": 0,  # 上次卖装备时间
-        "shengji": 0,   #上次圣迹调查时间
+        "shengji": 0,  # 上次圣迹调查时间
     }
     ,
     "daily_status": {
@@ -1100,7 +1103,12 @@ USER_DEFAULT_DICT = {
         "normal": {},  # normal图刷图记录
         "hard": {},  # hard图刷图记录
         "last_time": 0,  # 上一次刷图时间
-    }
+    },
+    "zhuangbei_kucun": {
+        # 装备库存状态
+        # Key: 装备名称
+        # Value:(装备数量,更新时间)
+    },
 
 }
 
