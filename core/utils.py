@@ -1,7 +1,9 @@
 import random
+import re
 import string
 import sys
 import time
+import unicodedata
 from io import StringIO
 
 import requests
@@ -195,6 +197,64 @@ def is_ocr_running():
         return True
     except:
         return False
+
+
+def slugify(value, allow_unicode=False):
+    """
+    Taken from https://github.com/django/django/blob/master/django/utils/text.py
+    Convert to ASCII if 'allow_unicode' is False. Convert spaces or repeated
+    dashes to single dashes. Remove characters that aren't alphanumerics,
+    underscores, or hyphens. Convert to lowercase. Also strip leading and
+    trailing whitespace, dashes, and underscores.
+    """
+    value = str(value)
+    if allow_unicode:
+        value = unicodedata.normalize('NFKC', value)
+    else:
+        value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
+    value = re.sub(r'[^\w\s-]', '', value.lower())
+    return re.sub(r'[-\s]+', '-', value).strip('-_')
+
+
+def make_it_as_number_as_possible(out: str):
+    trans_table = {
+        'l': '1',
+        'i': '1',
+        'o': '0',
+        'O': '0',
+        'q': '9',
+        'I': '1',
+        's': '5',
+        'S': '5',
+        'b': '6',
+        'g': '9',
+        'z': '2',
+        'Z': '2',
+        'C': '0',
+        'c': '0',
+        '|': '1',
+        '!': '1',
+        '了': '7',
+    }
+    new_out = []
+    for c in out:
+        if c in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+            new_out += [c]
+        elif c in trans_table:
+            new_out += [trans_table[c]]
+        else:
+            pass  # Delete it
+    return "".join(new_out)
+
+
+def make_it_as_zhuangbei_as_possible(title: str):
+    title = title.replace("《", "(")
+    title = title.replace("》", ")")
+    title = title.replace("（", "(")
+    title = title.replace("）", ")")
+    return title
+
+
 if __name__ == '__main__':
     for i in range(100):
         print(token())
