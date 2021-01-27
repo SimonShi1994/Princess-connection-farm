@@ -17,7 +17,7 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
-    ocr_mode, debug
+    ocr_mode, debug, fast_screencut
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import get_all_group
@@ -690,7 +690,8 @@ class ToolsMixin(BaseMixin):
                 while var["zb_r"] < 3:
                     count = 0
                     while var["zb_c"] < 5:
-                        if count >= 50:
+                        if count >= 25 or (count >= 5 and not fast_screencut) or (
+                                count >= 10 and mv.flag("zb_last_page")):
                             self.log.write_log("warning", "不反映了，可能结束了。")
                             var["zb_c"] = 999
                             var["zb_r"] = 999
