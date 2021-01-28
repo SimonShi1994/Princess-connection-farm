@@ -156,7 +156,7 @@ export default () => {
     return (
         <div>
             <Form form={form} component={false}>
-                <div>账号列表 <AddAccount onFinish={addAccount}>新增账号</AddAccount></div>
+                <div>账号列表 共{data.length}个帐号 <AddAccount onFinish={addAccount}>新增账号</AddAccount></div>
                 <Table
                     pagination={{
                         pageSize: 20

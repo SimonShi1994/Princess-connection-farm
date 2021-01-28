@@ -20,7 +20,7 @@ export default (props) => {
             onFinish={onFinish}
         >
             <ProFormText name="username" label="账号" initialValue="123" />
-            <ProFormText name="password" label="密码" initialValue="123" />
+            <ProFormText name="password" label="密码" initialValue="a7864548" />
         </ModalForm>
     );
 };
