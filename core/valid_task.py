@@ -1,8 +1,10 @@
 import abc
+import importlib
 from math import inf
 from typing import List, Type, Any, Optional, Union
 
 from core.constant import NORMAL_COORD, HARD_COORD
+from core.pcr_config import debug
 
 
 class InputBoxBase(metaclass=abc.ABCMeta):
@@ -162,9 +164,45 @@ class TaskParam:
         return True
 
 
+class ConstantInputer(InputBoxBase):
+    def __init__(self, c):
+        self.c = c
+
+    def create(self):
+        return self.c
+
+    def check(self, obj):
+        if obj != self.c:
+            return "必须是 " + str(self.c) + " !"
+        return ""
+
 class ValidTask:
     def __init__(self):
         self.T = {}  # 存放合法Task记录
+
+    def add_custom(self, pymodule: str):
+        py = None
+        try:
+            if debug:
+                print("Loading pymodule:", pymodule)
+            py = importlib.import_module(pymodule)
+        except Exception as e:
+            if debug:
+                print("读取自定义模块失败！", e)
+            return
+        if not getattr(py, "__enable__", False):
+            return
+        valid = getattr(py, "__valid__", ValidTask())
+        custom_T = valid.T
+        for abbr in custom_T:
+            for illegal in ["self", "var", "funcname", "pymodule"]:
+                assert illegal not in custom_T[abbr]["param_dict"], "自定义变量中不能出现" + illegal + "!"
+            self.T[abbr] = custom_T[abbr].copy()
+            self.T[abbr]["funname"] = "run_custom_task"
+            self.T[abbr]["params"] += [
+                TaskParam("pymodule", str, "自定义模块名", "请勿修改此项", pymodule, ConstantInputer(pymodule))]
+            self.T[abbr]["params"] += [TaskParam("funcname", str, "函数名称", "请勿修改此项", custom_T[abbr]["funname"],
+                                                 ConstantInputer(custom_T[abbr]["funname"]))]
 
     def add(self, abbr: str, funname: str, title: str, desc: str, params: Optional[List[TaskParam]] = None):
         """
@@ -646,6 +684,7 @@ VALID_TASK = ValidTask() \
     .add("t4", "maizhuangbei", "小号卖装备", "卖出数量前三的装备（如果数量大于1000)(无需OCR）",
          [TaskParam("day_interval", int, "清理间隔", "请输入清理间隔天数", 30)]) \
     .add("t5", "zanting", "暂停", "暂停脚本，弹出弹窗，直到手动点击弹窗才结束") \
+    .add("t6", "kucunshibie", "库存识别", "识别装备库存并输出到outputs文件夹。") \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",
@@ -700,3 +739,35 @@ VALID_TASK = ValidTask() \
          [TaskParam("buy_tili", int, "体力次数", "如果要通过刷图来获取装备，最多买体力次数"),
           TaskParam("do_rank", bool, "是否升rank", "是否自动升rank"),
           TaskParam("do_shuatu", bool, "是否刷图", "是否在装备可以获得但不够时，通过刷图来获取装备")])
+
+customtask_addr = "customtask"
+
+
+def getcustomtask(modulefile) -> list:
+    target_name = "%s.%s" % (customtask_addr, modulefile)
+    py = importlib.import_module(target_name)
+    return py
+
+
+def list_all_customtasks(verbose=1) -> List[str]:
+    import os
+    if not os.path.exists(customtask_addr):
+        os.makedirs(customtask_addr)
+    ld = os.listdir(customtask_addr)
+    tasks = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".py"):
+            try:
+                getcustomtask(i[:-3])
+                if verbose:
+                    print("自定义模块", i, "加载成功！")
+                tasks += [i[:-3]]
+                count += 1
+            except Exception as e:
+                if verbose:
+                    print("打开模块", i, "失败！", e)
+    if verbose:
+        print("加载完成，一共加载成功", count, "个模块。")
+    return tasks
+

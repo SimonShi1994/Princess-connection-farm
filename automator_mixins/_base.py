@@ -306,6 +306,22 @@ class BaseMixin:
         img, at = self._get_img_at(img, at)
         return UIMatcher.img_all_where(screen, img, threshold, at, method)
 
+    def img_where_all_prob(self, img, threshold=0.9, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
+        """
+        返回一个图片所有的位置和prob
+        :param img:
+            一个字符串，表示图片的地址；或者为PCRelement类型。
+            当img为PCRelement时，如果at参数为None，则会使用img.at。
+        :param threshold: 阈值
+        :param at: 搜素范围
+        :param screen: 若设置为None，则重新截图；否则使用screen为截图
+        :return: list[(prob,x,y,at)]
+        """
+        if screen is None:
+            screen = self.getscreen()
+        img, at = self._get_img_at(img, at)
+        return UIMatcher.img_all_prob(screen, img, threshold, at, method)
+
     def img_equal(self, img1, img2, at=None, similarity=0.01) -> float:
         """
         输出两张图片对应像素相似程度

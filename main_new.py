@@ -1,5 +1,4 @@
 import subprocess
-import sys
 import traceback
 
 import requests
@@ -10,6 +9,7 @@ from core.initializer import PCRInitializer, Schedule
 from core.launcher import EMULATOR_DICT
 from core.pcr_config import *
 from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
+from core.utils import is_ocr_running
 
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
@@ -246,12 +246,14 @@ def JoinShutdown(nowait=False):
 
 def ShowGuide():
     print("/docs/introduce_to_schedule.md  Schedule使用帮助")
+    print("/docs/switch_guide              开关使用说明 [<New!]")
     print("/docs/如何接入打码平台.md")
     print("/equip/                         自动发起捐赠所用的样例装备")
     print("/INI文件配置解读.md               配置文件使用说明")
     print("/AboutUpdater.md                自动更新使用说明（自动更新已经很久没更新过了，可能不能使用）")
     print("/webclient/README.md            前端使用说明  (前端还不能用）")
     print("/tasks_example/                 样例任务json文件")
+    print("/example_customtask/            样例自定义任务文件")
 
 
 def ShowServerChan():
@@ -286,6 +288,7 @@ def ShowAutoConsole():
     else:
         print("* 模拟器自动控制未配置，前往config.ini - emulator_console进行配置")
     print("* 自动启动app.py auto_start_app：", "已开启" if auto_start_app else "未开启")
+    print("* 内部方式启动app：", "已开启" if inline_app else "未开启")
 
 
 def ShowOCR():
@@ -294,6 +297,11 @@ def ShowOCR():
         print("* BaiduAPI 已配置！")
     else:
         print("* BaiduAPI 未配置，前往config.ini - baidu_apiKey进行配置")
+    print("* 本地OCR状态：", end="")
+    if is_ocr_running():
+        print("运行中")
+    else:
+        print("未运行")
 
 
 def ShowPCRPerformance():
@@ -372,8 +380,23 @@ def ShowInfo():
 
 
 
+
 def Start_App():
-    subprocess.Popen([sys.executable, "app.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    if is_ocr_running():
+        print("app 已经启动！")
+        return
+    if not inline_app:
+        subprocess.Popen([sys.executable, "app.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    else:
+        subprocess.Popen([sys.executable, "app.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print("正在等待app启动完毕……")
+    import time
+    start_time = time.time()
+    while time.time() - start_time <= 60:
+        if is_ocr_running():
+            print("app启动完毕！")
+            return
+    print("app可能启动失败。")
 
 
 if __name__ == "__main__":
@@ -410,22 +433,24 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.2.20210120")
+        print("当前版本为 Ver 2.3.20210127")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
-        print("app 启动app.py [自启动：", "已开启" if auto_start_app else "未开启", "]")
+        print("app 启动app.py", end=" ")
+        print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
+        print("[内部模式：", "已开启" if inline_app else "未开启", "]")
         print("help 查看帮助                   exit 退出")
-        print("info 查看配置信息               guide 教程")
+        print("info 查看配置信息               guide 教程 [<New!]")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
-        print("* Tip：如果要使用任何OCR（包括本地和网络），请手动启动app.py！")
-        print("* Tip：如果要自动填写验证码，请在config关闭captcha_skip")
-        print("* Tip：如果某Schedule莫名无法运行，可能是存在未解决的错误，请参考introduce中错误解决相关部分！")
         print("* Happy 2021 Year!")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
-        print("* 开关（Switch）模块上线！进入edit看看吧！（虽然还没来得及写教程）")
+        print("* 开关（Switch）模块上线！进入edit看看吧！（教程已出）")
+        print("* 任务（Task）和计划（Schedule）模块支持enable, disable, flag操作了！")
+        print("* 组（Group）模块支持add，del，move，user操作了！")
+        print("* 新增自定义任务(CustomTask)模块，梦回masterV1.0。")
     while True:
         try:
             cmd = input("> ")

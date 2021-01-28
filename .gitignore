@@ -25,3 +25,9 @@ log
 /test/
 /developutils/
 /users_bak/
+
+# 配置文件g
+config.ini
+
+# 自定义脚本
+/customtask
