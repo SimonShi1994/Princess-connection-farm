@@ -1,3 +1,4 @@
+import datetime
 import random
 import re
 import string
@@ -247,11 +248,26 @@ def make_it_as_number_as_possible(out: str):
     return "".join(new_out)
 
 
+def get_time_str(cur):
+    s = datetime.datetime.fromtimestamp(cur).strftime("%Y-%m-%d %H:%M:%S")
+    return s
+
+
 def make_it_as_zhuangbei_as_possible(title: str):
     title = title.replace("《", "(")
     title = title.replace("》", ")")
     title = title.replace("（", "(")
     title = title.replace("）", ")")
+    return title
+
+
+def make_it_as_juese_as_possible(title: str):
+    title = title.replace("《", "(")
+    title = title.replace("》", ")")
+    title = title.replace("（", "(")
+    title = title.replace("）", ")")
+    title = title.replace(" ", "")
+    title = title.rstrip("的记忆碎片")
     return title
 
 
