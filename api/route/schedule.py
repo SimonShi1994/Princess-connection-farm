@@ -15,7 +15,10 @@ def get_list_all_schedules():
         count = 0
         schedules = list_all_schedules()
         count = len(schedules)
-        return ListReply(schedules, count)
+        if schedules:
+            return ListReply(schedules, count)
+        else:
+            return 500
     except Exception as e:
         return 500
 
@@ -24,7 +27,10 @@ def get_list_all_schedules():
 def get_schedules_info(filename):
     try:
         r = AutomatorRecorder.getschedule(filename)
-        return ListReply(r, 0)
+        if r:
+            return ListReply(r, 0)
+        else:
+            return 500
     except Exception as e:
         return 500
 
