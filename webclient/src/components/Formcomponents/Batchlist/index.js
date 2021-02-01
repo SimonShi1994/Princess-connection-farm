@@ -14,16 +14,14 @@ export default ({ value = {}, onChange }) => {
             }))
         }
         getoptions()
-        if (typeof value === "string") {
-            setBatch(value)
-        }
         // 防止切换类型过来是{}的情况
-        else if (JSON.stringify(value) === "{}"){
+        if (JSON.stringify(value) === "{}"){
             setBatch([])
         }
-        else{
-            setBatch(value.split(','))
+        else {
+            setBatch(value)
         }
+         
     }, [])
     const triggerChange = (changedValue) => {
         setBatch(changedValue)

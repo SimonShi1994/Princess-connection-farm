@@ -20,6 +20,7 @@ export default () => {
         copy[index] = data.schedules
         setdata(copy)
     }
+    console.log(list)
     return (
         <div>
             <Collapse onChange={getdata} accordion>
@@ -29,7 +30,7 @@ export default () => {
                             size="large"
                             bordered
                             dataSource={listdata[i] || []}
-                            renderItem={(item, index) => <Schedulelist {...item} schedulename={s} index={[i, index]} />}
+                            renderItem={(item, index) => <Schedulelist {...item} schedulename={s} />}
                         />
                     </Panel>
                 ))}

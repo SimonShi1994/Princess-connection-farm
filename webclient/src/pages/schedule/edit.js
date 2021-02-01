@@ -27,7 +27,6 @@ export default (props) => {
     }, [])
     const handlechange = (index, value) => {
         const temp = [...schedules]
-        console.log(value)
         temp[index] = value
         updateschedules(temp)
     }
@@ -112,9 +111,9 @@ const Asapform = (props) => {
             <Input />
             </Form.Item>
             <Form.Item
-                label="batchfile"
-                name="batchfile"
-                rules={[{ required: true, message: 'Please input your batchfile!' }]}
+                label="batchlist"
+                name="batchlist"
+                rules={[{ required: true, message: 'Please input your batchlist!' }]}
             >
             <Batchlist />
             </Form.Item>
@@ -127,7 +126,7 @@ const Asapform = (props) => {
             <Form.Item
                 label="类型"
                 name="type"
-                rules={[{ required: true, message: 'Please input your batchfile!' }]}
+                rules={[{ required: true, message: 'Please input your type!' }]}
             >
                 <Radio.Group
                     options={options}
@@ -211,9 +210,9 @@ const Waitconfig = (props) => {
                 <Input />
             </Form.Item>
             <Form.Item
-                label="batchfile"
-                name="batchfile"
-                rules={[{ required: true, message: 'Please input your batchfile!' }]}
+                label="batchlist"
+                name="batchlist"
+                rules={[{ required: true, message: 'Please input your batchlist!' }]}
             >
             <Batchlist />
             </Form.Item>

@@ -1,6 +1,7 @@
 import React from 'react'
-import { TimePicker, Input } from 'antd';
+import { TimePicker, Input, Select } from 'antd';
 import moment from 'moment';
+const { Option } = Select;
 
 const { RangePicker } = TimePicker;
 
@@ -14,8 +15,8 @@ export default ({ value = {}, onChange }) => {
                 start_hour: changedValue[0].hour(),
                 end_hour: changedValue[1].hour()
             }
-            setTime(val.start_hour,val.end_hour)
-        }else{
+            setTime(val.start_hour, val.end_hour)
+        } else {
             setCan(changedValue)
         }
         if (onChange) {
@@ -28,6 +29,12 @@ export default ({ value = {}, onChange }) => {
         )
     }
     return (
-        <div><RangePicker format="HH" value={[moment().hour(value.start_hour || time[0]), moment().hour(value.end_hour || time[1])]} order={false} onChange={triggerChange} /></div>
+        <div>
+            <Select>
+            <Option value="1">指定时间段</Option>
+            <Option value="2">可以捐赠</Option>
+            </Select>
+            
+            <RangePicker format="HH" value={[moment().hour(value.start_hour || time[0]), moment().hour(value.end_hour || time[1])]} order={false} onChange={triggerChange} /></div>
     )
 }
