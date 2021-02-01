@@ -264,19 +264,46 @@ schedulename的计划。也可以把first改成continue，此时从上次中断�
 在根目录下，有一个config.ini的配置文件，通过修改配置文件可以获得更多的拓展功能，从而得到更好的使用体验。在控制台中输入info可以查看
 当前全部的配置情况。
 
-### 3.1 配置Server Chan
+### 3.1 配置Server Bot
+
+- Wechat:
 
 Server酱 API申请地址：http://sc.ftqq.com/3.version
 
 申请好Server酱 API并且完成 **与** 微信的绑定http://sc.ftqq.com/?c=wechat&a=bind
 
-
-
 之后将 申请好的Server酱 API填入项目目录下的**config.ini**的**s_sckey**中
+
+
+
+- QQ:
+
+Qmsg酱 API申请地址：https://qmsg.zendee.cn/index.html
+
+CoolPush API申请地址：https://cp.xuthus.cc/
+
+从上面任选一家，在qqbot_select填入选择的名字[Qmsgnike/CoolPush]
+
+```ini
+# qqbot私人消息开关，用于发送私人消息 0关 1开
+qqbot_private_send_switch = 0
+# qqbot群组消息开关，用于发送群组消息 0关 1开
+qqbot_group_send_switch = 0
+```
+
+API填入qqbot_key中
+
+qq:指定接收消息的QQ号或者QQ群号,可以添加多个,以英文逗号分割。如:1244453393,24345821
+
+
+
+Wechat/QQ 这两个API可以两个都填，那就两个一起发送
+
+
 
 config中，在s_sentstate这里可以自定义发送脚本运行状态的时间间隔（min）
 
-log_lev 则为日志级别，这里设定了Server酱只会接收那种类型的信息
+log_lev 则为日志级别，这里设定了pushbot只会接收那种类型的信息
 
 数字越小越详细`0:info, warning, error | 1:warning, error | 2:error | 3:非重要消息不发送`
 

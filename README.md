@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.3.20210127
+ # Princess connection 公主连结农场脚本v2.3.20210131
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -9,6 +9,8 @@
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
 **支持模拟器多开**
+
+**支持Wechat/QQ部分 通知推送**
 
 **支持自动填写验证码**
 
@@ -156,11 +158,17 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 ## 更新历史
 
+2021/1/31 By:CyiceK
+
+- 优化推送机器人的代码结构
+- 上线QQbot，已知问题是QQbot推送有字数限制，有几率触发无法推送
+- 快速截图默认关闭，若有脚本问题 卡住等，需要速率的再自行开启
+
 2021/1/27 By:TheAutumnOfRice
 
 - 修复一些BUG
 - OCR信息获取体验更佳
-- 增加
+- 增加库存识别 `t6`
 
 2021/1/26 By:TheAutumnOfRice
 
