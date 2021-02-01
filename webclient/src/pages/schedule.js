@@ -29,7 +29,7 @@ export default () => {
                             size="large"
                             bordered
                             dataSource={listdata[i] || []}
-                            renderItem={(item, index) => <Schedulelist {...item} index={[i, index]} />}
+                            renderItem={(item, index) => <Schedulelist {...item} schedulename={s} index={[i, index]} />}
                         />
                     </Panel>
                 ))}
