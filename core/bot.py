@@ -49,8 +49,8 @@ class Bot:
             'Qmsgnike_group_url': f"https://qmsg.zendee.cn/group/{qqbot_key}"
         }
 
-        self.qqbot_url1 = self.private_url[f"{self.qqbot_select}_private_url"]
-        self.qqbot_url2 = self.group_url[f"{self.qqbot_select}_group_url"]
+        self.qqbot_url1 = self.private_url.get(f"{self.qqbot_select}_private_url", "")
+        self.qqbot_url2 = self.group_url.get(f"{self.qqbot_select}_group_url", "")
 
     def server_bot(self, s_level, message='', acc_state=''):
         # 兼容老接口
