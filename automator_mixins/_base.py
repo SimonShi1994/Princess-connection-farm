@@ -511,7 +511,11 @@ class BaseMixin:
                             self.receive_minicap.stop()
                         self.last_screen = self.d.screenshot(filename, format="opencv")
             else:
-                self.last_screen = self.d.screenshot(filename, format="opencv")
+                if filename is None:
+                    self.last_screen = self.d.screenshot(filename, format="opencv")
+                else:
+                    self.d.screenshot(filename, format="opencv")
+                    self.last_screen = cv2.imread(filename)
             self.last_screen_time = time.time()
             return UIMatcher.AutoRotateClockWise90(self.last_screen)
         else:
