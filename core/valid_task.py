@@ -685,6 +685,7 @@ VALID_TASK = ValidTask() \
          [TaskParam("day_interval", int, "清理间隔", "请输入清理间隔天数", 30)]) \
     .add("t5", "zanting", "暂停", "暂停脚本，弹出弹窗，直到手动点击弹窗才结束") \
     .add("t6", "kucunshibie", "库存识别", "识别装备库存并输出到outputs文件夹。") \
+    .add("t7", "jueseshibie", "角色识别", "识别角色信息并输出到outputs文件夹。") \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",

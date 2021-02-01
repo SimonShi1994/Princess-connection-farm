@@ -1,5 +1,6 @@
 # import matplotlib.pylab as plt
 import os
+import pathlib
 
 import cv2
 import numpy as np
@@ -363,6 +364,29 @@ class UIMatcher:
         cls.screen_short_befor = screen_short
         # print(round(max_val, 3))
         return round(max_val, 3)
+
+    @classmethod
+    def pic_compare_with_filename(cls, pic, dir):
+        """
+        text为OCR后的某个值，但是它可能不对。
+        则比对dir路径下所有.bmp的图片文件
+        如果出现与pic相同的
+        那么就返回它的文件名。
+        :param dir:
+        :return:
+        """
+        if not os.path.isdir(dir):
+            os.makedirs(dir)
+        cur = pathlib.Path(dir)
+        for item in cur.iterdir():
+            if item.suffix == ".bmp":
+                prob = cls.img_prob(pic, item)
+                if prob > 0.98:
+                    return item.stem
+        return None
+
+
+1
 
 #
 # d = u2.connect()

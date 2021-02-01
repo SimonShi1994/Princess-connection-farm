@@ -441,7 +441,10 @@ if __name__ == "__main__":
         print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
         print("[内部模式：", "已开启" if inline_app else "未开启", "]")
         print("help 查看帮助                   exit 退出")
-        print("info 查看配置信息               guide 教程 [<New!]")
+        print("info 查看配置信息               guide 教程")
+        print("edit 进入编辑模式")
+        print("data 进入数据中心")
+        print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
         print("* Happy 2021 Year!")
@@ -493,8 +496,6 @@ if __name__ == "__main__":
                         print("unbind", "解除与计划", last_schedule, "的绑定。")
 
                     print("state -tuitu 显示所有用户推图的状态")
-                    print("edit 进入用户配置编辑模式")
-                    print("screencut 进入截图小工具")
                 else:
                     print("实时控制帮助")
                     print("stop [-f] 停止当前的Schedule，-f表示强制停止")
@@ -591,7 +592,9 @@ if __name__ == "__main__":
             elif order == "edit":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("CreateUser.py", "r", encoding="utf-8").read())
-
+            elif order == "data":
+                assert SCH is None, "必须先停止正在运行的Schedule"
+                exec(open("DataCenter.py", "r", encoding="utf-8").read())
             elif order == "screencut":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("screencut.py", "r", encoding="utf-8").read())

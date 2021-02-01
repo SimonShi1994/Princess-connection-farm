@@ -1125,9 +1125,13 @@ USER_DEFAULT_DICT = {
         # 角色信息
         # Key：角色名称
         # Value:{
-        # rank: rank
-        # level: level
-        #
+        # haogan
+        # dengji
+        # rank
+        # zb [bool]*6
+        # star
+        # last_update
+        # }
     }
 
 }

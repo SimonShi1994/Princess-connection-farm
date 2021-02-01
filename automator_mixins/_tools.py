@@ -1,5 +1,6 @@
 import datetime
 import os
+import pathlib
 import random
 import time
 from typing import Optional
@@ -22,7 +23,7 @@ from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import get_all_group
 from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, make_it_as_juese_as_possible, \
-    get_time_str
+    get_time_str, checkNameValid
 from ._base import BaseMixin
 
 
@@ -702,7 +703,11 @@ class ToolsMixin(BaseMixin):
                             count += 1
                             continue
                         title = self.ocr_center(*title_at, screen_shot=sc)
+                        if title == -1:
+                            count += 1
+                            continue
                         title = make_it_as_zhuangbei_as_possible(title)
+                        title = self._check_img_in_list_or_dir(title, (616, 76, 884, 194), "ocrfix/zb", "EQU_ID", sc)
                         out, original_out = self.get_daoju_number(sc, True)
                         comment = ""
                         if out is None:
@@ -741,6 +746,7 @@ class ToolsMixin(BaseMixin):
             # Output
             output_dict(rec)
         mv.clearflags()
+        self.lock_home()
 
     def count_stars(self, star_dict=None, screen=None):
         """
@@ -763,6 +769,46 @@ class ToolsMixin(BaseMixin):
         tb = np.sqrt(((c - bc) ** 2)).sum(axis=1)
         t = tf < tb
         return np.sum(t)
+
+    def _load_data_cache(self):
+        if hasattr(self, "data_cache"):
+            data = getattr(self, "data_cache")
+        else:
+            from DataCenter import LoadPCRData
+            data = LoadPCRData()
+            if data is not None:
+                setattr(self, "data_cache", data)
+        return data
+
+    def _check_img_in_list_or_dir(self, target_txt, target_pic_at, target_dir, target_list_name, screen):
+
+        data = self._load_data_cache()
+        if data is None:
+            return target_txt  # No Dataset, Do Nothing.
+        target_list = getattr(data, target_list_name)
+        if target_txt in target_list:
+            return target_txt  # Good
+        if not os.path.isdir(target_dir):
+            os.makedirs(target_dir)
+        P = pathlib.Path(target_dir)
+        if target_pic_at is not None:
+            screen = UIMatcher.img_cut(screen, target_pic_at)
+        for p in P.iterdir():
+            if p.suffix == ".bmp":
+                bmp2 = cv2.imdecode(np.fromfile(str(p), dtype=np.uint8), -1)
+                if self.img_equal(screen, bmp2, similarity=0.5) > 0.98:
+                    if debug:
+                        print("找到相似图片：", p)
+                    if p.stem in target_list:
+                        return p.stem
+
+        # 失败
+        target_name = checkNameValid(target_txt)
+        save_target = os.path.join(target_dir, target_name + ".bmp")
+        save_target = str(pathlib.Path(save_target))
+        cv2.imencode('.bmp', screen)[1].tofile(save_target)
+        self.log.write_log("warning", f"文字{target_txt}可能识别有误！请修改{save_target}的文件名为正确的值！")
+        return target_txt
 
     def jueseshibie(self, var: Optional[dict] = None):
         mv = movevar(var)
@@ -791,8 +837,21 @@ class ToolsMixin(BaseMixin):
             return make_it_as_number_as_possible(self.ocr_center(*at, screen))
 
         def get_name(screen=None):
+            data = self._load_data_cache()
             at = (483, 119, 760, 141)
-            return make_it_as_juese_as_possible(self.ocr_center(*at, screen))
+            ori_out = self.ocr_center(*at, screen)
+            while True:
+                if make_it_as_zhuangbei_as_possible(ori_out) in getattr(data, "EQU_ID") or "?" in ori_out.replace("？",
+                                                                                                                  "?"):
+                    # 是装备!
+                    screen = self.getscreen()
+                    ori_out = self.ocr_center(*at, screen)
+                else:
+                    break
+
+            out = make_it_as_juese_as_possible(ori_out)
+            out = self._check_img_in_list_or_dir(out, (482, 114, 750, 261), "ocrfix/juese", "C_ID", screen)
+            return out
 
         def get_rank(screen=None):
             if screen is None:
@@ -909,7 +968,7 @@ class ToolsMixin(BaseMixin):
             Click_CaiNeng(sc)
             sc = self.last_screen
             NAME = get_name(sc)
-            if NAME == FIRST_NAME:
+            if NAME == FIRST_NAME and var["count"] != 0:
                 break
             D["star"] = get_stars(sc)
             D["last_update"] = time.time()
