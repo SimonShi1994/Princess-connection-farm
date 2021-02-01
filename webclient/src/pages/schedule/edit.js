@@ -30,27 +30,31 @@ export default (props) => {
         temp[index] = value
         updateschedules(temp)
     }
+    const onFinish = async (values) => {
+        await request(`/schedules_save`, { method: 'post', data: values })
+    }
     return (
         <div>
             {schedules.map((schedule, index) => {
                 switch (schedule.type) {
                     case 'asap':
                         return (
-                            <Asapform updateschedules={handlechange} key={index} index={index} {...schedule} />
+                            <Asapform updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
                         );
                     case 'config':
                         return (
-                            <Configform updateschedules={handlechange} key={index} index={index} {...schedule} />
+                            <Configform updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
                         )
                     case 'wait':
                         return (
-                            <Waitconfig updateschedules={handlechange} key={index} index={index} {...schedule} />
+                            <Waitconfig updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
                         )
                     default:
                         return;
                 }
             }
             )}
+
 
         </div>
     )
@@ -90,7 +94,7 @@ export default (props) => {
 
 const Asapform = (props) => {
 
-    const { updateschedules, index } = props
+    const { updateschedules, index, onFinish } = props
     const handlechange = (_, values) => {
         updateschedules(index, values)
     }
@@ -100,6 +104,7 @@ const Asapform = (props) => {
             name={props.name}
             key={props.name}
             initialValues={props}
+            onFinish={onFinish}
             onValuesChange={handlechange}
         >
             <Row><Col offset={4} span={8}>{props.name}</Col></Row>
@@ -108,14 +113,14 @@ const Asapform = (props) => {
                 name="name"
                 rules={[{ required: true, message: '请输入计划名' }]}
             >
-            <Input />
+                <Input />
             </Form.Item>
             <Form.Item
                 label="batchlist"
                 name="batchlist"
                 rules={[{ required: true, message: 'Please input your batchlist!' }]}
             >
-            <Batchlist />
+                <Batchlist />
             </Form.Item>
             <Form.Item
                 label="condition"
@@ -134,12 +139,20 @@ const Asapform = (props) => {
                     buttonStyle="solid"
                 />
             </Form.Item>
+            
+            <Row>
+                <Col offset={7} span={8}>
+                    <Button type="primary" htmlType="submit">
+                        保存
+                     </Button>
+                </Col>
+            </Row>
         </Form>
     )
 }
 
 const Configform = (props) => {
-    const { index, updateschedules } = props
+    const { index, updateschedules, onFinish } = props
     const handlechange = (_, values) => {
         updateschedules(index, values)
     }
@@ -149,6 +162,7 @@ const Configform = (props) => {
             name={`config${index}`}
             key={`config${index}`}
             initialValues={props}
+            onFinish={onFinish}
             onValuesChange={handlechange}
         >
             <Row><Col offset={4} span={8}>Config</Col></Row>
@@ -170,6 +184,14 @@ const Configform = (props) => {
                     buttonStyle="solid"
                 />
             </Form.Item>
+            
+            <Row>
+                <Col offset={7} span={8}>
+                    <Button type="primary" htmlType="submit">
+                        保存
+                     </Button>
+                </Col>
+            </Row>
         </Form>)
 }
 // # 等待执行计划
@@ -189,7 +211,7 @@ const Configform = (props) => {
 //     "record":int
 // }
 const Waitconfig = (props) => {
-    const { updateschedules, index } = props
+    const { updateschedules, index, onFinish } = props
     const handlechange = (_, values) => {
         updateschedules(index, values)
     }
@@ -199,6 +221,7 @@ const Waitconfig = (props) => {
             name={props.name}
             key={props.name}
             initialValues={props}
+            onFinish={onFinish}
             onValuesChange={handlechange}
         >
             <Row><Col offset={4} span={8}>{props.name}</Col></Row>
@@ -214,7 +237,7 @@ const Waitconfig = (props) => {
                 name="batchlist"
                 rules={[{ required: true, message: 'Please input your batchlist!' }]}
             >
-            <Batchlist />
+                <Batchlist />
             </Form.Item>
             <Form.Item
                 label="record"
@@ -240,6 +263,14 @@ const Waitconfig = (props) => {
                     buttonStyle="solid"
                 />
             </Form.Item>
+            
+            <Row>
+                <Col offset={7} span={8}>
+                    <Button type="primary" htmlType="submit">
+                        保存
+                     </Button>
+                </Col>
+            </Row>
         </Form>
     )
 }

@@ -26,7 +26,7 @@ export default ({ value = {}, onChange }) => {
     const triggerChange = (changedValue) => {
         setBatch(changedValue)
         if (onChange) {
-            onChange(changedValue.join(','));
+            onChange(changedValue);
         }
     };
     return (
