@@ -444,7 +444,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.3.20210201")
+        print("当前版本为 Ver 2.4.20210202")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -454,17 +454,13 @@ if __name__ == "__main__":
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("edit 进入编辑模式")
-        print("data 进入数据中心")
+        print("data 进入数据中心  <- NEW！")
         print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
         print("* Happy 2021 Year!")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
-        print("* 开关（Switch）模块上线！进入edit看看吧！（教程已出）")
-        print("* 任务（Task）和计划（Schedule）模块支持enable, disable, flag操作了！")
-        print("* 组（Group）模块支持add，del，move，user操作了！")
-        print("* 新增自定义任务(CustomTask)模块，梦回masterV1.0。")
     while True:
         try:
             cmd = input("> ")

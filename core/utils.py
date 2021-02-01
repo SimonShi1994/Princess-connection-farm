@@ -252,6 +252,7 @@ def make_it_as_number_as_possible(out: str):
         '|': '1',
         '!': '1',
         '了': '7',
+        'G': '6',
     }
     new_out = []
     for c in out:
@@ -276,6 +277,8 @@ def make_it_as_zhuangbei_as_possible(title: str):
     title = title.replace(")", "）")
     title = title.replace("骑土", "骑士")
     title = title.replace("隐土", "隐士")
+    title = title.replace("干禧", "千禧")
+    title = title.replace("苍辉之错", "苍辉之铠")
     return title
 
 
@@ -289,7 +292,7 @@ def make_it_as_juese_as_possible(title: str):
     title = title.replace("美联", "美咲")
     title = title.replace("綦", "栞")
     title = title.replace("桀", "栞")
-    title = title.replace("美唉", "美咲")
+    title = title.replace("唉", "咲")
     title = title.rstrip("的记忆碎片")
     return title
 
