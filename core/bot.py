@@ -1,16 +1,22 @@
+import time
+
 import psutil
 import requests
 
-# 临时，等待config的创建
 from core.pcr_config import s_sckey, log_lev, log_cache, qqbot_key, qqbot_select, qq, qqbot_private_send_switch, \
     qqbot_group_send_switch
 
 
 class Bot:
+    """
+    公有推送机器人的简单封装
+    消息缓存不在区分账号，而是以类型分类（info/warning等）
+    By:CyiceK 2021/2/1
+    """
     def __init__(self):
         self.qq = qq
         self.qqbot_select = qqbot_select
-        self.server_nike_url = "https://sc.ftqq.com/%s.send" % s_sckey
+        self.server_nike_url = f"https://sc.ftqq.com/{s_sckey}.send"
         self.lev_0 = ['info', 'warning', 'error', 'STATE', '']
         self.lev_1 = ['warning', 'error', 'STATE', '']
         self.lev_2 = ['error', 'STATE', '']
@@ -132,39 +138,86 @@ class Bot:
                 memory_info = "内存使用：%0.2fG||使用率%0.1f%%||剩余内存：%0.2fG" % (used_memory, memory_percent, free_memory)
                 # print(memory_info)
 
-                CoolPush_info = {
+                # 临时方案，以后会改进
+                CoolPush_info1 = {
                     'c': f'>>>公主连结农场脚本【{s_level}】<<<\n'
                          f'@face=63@@face=63@@face=63@@at=1583442415@欢迎您使用~@face=63@@face=63@@face=63@\n'
                          f'#### 当前系统运行信息 ####\n- {cpu_info}\n- {memory_info}\n——————————————————\n'
-                         f'目前农场信息：\n@face=72@@face=72@@face=72@'
-                         f'\n{message}\n{acc_state}\n'
-                         f'@face=72@@face=72@@face=72@\n '
-                         '@face=185@来自GITHUB一款开源脚本 (// . //): '
-                         'https://github.com/SimonShi1994/Princess-connection-farm\n '
+                }
+                CoolPush_info2 = {
+                    'c': f'目前农场信息：\n@face=72@@face=72@@face=72@'
+                         f'\n{message}\n'
+                }
+                CoolPush_info3 = {
+                    'c': f'目前状态信息：\n@face=72@@face=72@@face=72@'
+                         f'\n{acc_state}\n'
+                }
+                CoolPush_info4 = {
+                    'c': f'@face=72@@face=72@@face=72@\n '
+                         f'@face=185@来自GITHUB一款开源脚本 (// . //): '
+                         'ht【删】tps://gith【删】ub.【删】com/SimonShi1994/【删】Princess-connection-farm\n '
                 }
 
-                Qmsgnike_info = {
+                Qmsgnike_info1 = {
                     'msg': f'>>>公主连结农场脚本【{s_level}】<<<\n'
                            f'@face=63@@face=63@@face=63@@at=1583442415@欢迎您使用~@face=63@@face=63@@face=63@\n'
-                           f'#### 当前系统运行信息 ####\n- {cpu_info}\n- {memory_info}\n——————————————————\n'
-                           f'目前农场信息：\n@face=72@@face=72@@face=72@'
-                           f'\n{message}\n{acc_state}\n'
-                           f'@face=72@@face=72@@face=72@\n '
-                           '@face=185@来自GITHUB一款开源脚本 (// . //): '
-                           'https://github.com/SimonShi1994/Princess-connection-farm\n ',
+                           f'#### 当前系统运行信息 ####\n- {cpu_info}\n- {memory_info}\n——————————————————\n',
                     'qq': self.qq
                 }
+                Qmsgnike_info2 = {
+                    'msg': f'目前农场信息：\n@face=72@@face=72@@face=72@'
+                           f'\n{message}\n',
+                    'qq': self.qq
+                }
+                Qmsgnike_info3 = {
+                    'msg': f'目前状态信息：\n@face=72@@face=72@@face=72@'
+                           f'\n{acc_state}\n',
+                    'qq': self.qq
+                }
+                Qmsgnike_info4 = {
+                    'msg': f'@face=72@@face=72@@face=72@\n '
+                           f'@face=185@来自GITHUB一款开源脚本 (// . //): '
+                           'ht【删】tps://gith【删】ub.【删】com/SimonShi1994/【删】Princess-connection-farm\n ',
+                    'qq': self.qq
+                }
+
+                # 一个遍历表
+                CoolPush_info = [CoolPush_info1, CoolPush_info2, CoolPush_info3, CoolPush_info4]
+                Qmsgnike_info = [Qmsgnike_info1, Qmsgnike_info2, Qmsgnike_info3, Qmsgnike_info4]
+
                 try:
                     if self.qqbot_select == 'CoolPush':
                         if qqbot_private_send_switch == 1:
-                            requests.post(self.qqbot_url1, params=CoolPush_info)
+                            for i in CoolPush_info:
+                                # 这一步是检测c/msg的字数是否达到40以上，否则不发送
+                                if len(list(i.values())[0]) < 40:
+                                    continue
+                                # print(i, ' ', len(list(i.values())[0]))
+                                requests.post(self.qqbot_url1, params=i)
+                                time.sleep(0.8)
                         if qqbot_group_send_switch == 1:
-                            requests.post(self.qqbot_url2, params=CoolPush_info)
+                            for i in CoolPush_info:
+                                # 这一步是检测c/msg的字数是否达到40以上，否则不发送
+                                if len(list(i.values())[0]) < 40:
+                                    continue
+                                # print(i, ' ', len(list(i.values())[0]))
+                                requests.post(self.qqbot_url2, params=i)
+                                time.sleep(0.8)
                     elif self.qqbot_select == 'Qmsgnike':
                         if qqbot_private_send_switch == 1:
-                            requests.post(self.qqbot_url1, params=Qmsgnike_info)
+                            for i in Qmsgnike_info:
+                                # 这一步是检测c/msg的字数是否达到40以上，否则不发送
+                                if len(list(i.values())[0]) < 40:
+                                    continue
+                                requests.post(self.qqbot_url1, params=i)
+                                time.sleep(0.8)
                         if qqbot_group_send_switch == 1:
-                            requests.post(self.qqbot_url2, params=Qmsgnike_info)
+                            for i in Qmsgnike_info:
+                                # 这一步是检测c/msg的字数是否达到40以上，否则不发送
+                                if len(list(i.values())[0]) < 40:
+                                    continue
+                                requests.post(self.qqbot_url2, params=i)
+                                time.sleep(0.8)
                 except Exception as e:
                     pass
                     # pcr_log("__SERVER_BOT__").write_log("error", f"ServerBot发送失败：{e}")
