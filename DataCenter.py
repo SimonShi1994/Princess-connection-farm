@@ -578,6 +578,7 @@ def ZB_ST_ADVICE(args):
         max_tu = int(max_tu)
     min_rare = int(get_arg(args, "--min-rare", "0"))
     max_rare = int(get_arg(args, "--max-rare", "6"))
+    num_w = float(get_arg(args, "--num-w", "0.1"))
     need_equip = {}
     js_need = {}
     zb_js = {}
@@ -621,8 +622,15 @@ def ZB_ST_ADVICE(args):
             mid = f"{A}-{B}"
             map_js.setdefault(mid, {})
             data.dict_plus(map_js[mid], v, False)
+    out_map = None
+    try:
+        out_map, result_int = data.make_map_advice(lack, prob_map, num_w)
+    except Exception as e:
+        print(e)
+        if num_w > 0:
+            print("可能是混合整数搜索失败！你可能需要安装cvxopt依赖")
+            out_map, result_int = data.make_map_advice(lack, prob_map, 0)
 
-    out_map, result_int = data.make_map_advice(lack, prob_map)
     mul = int(get_arg(args, "--n", "1"))
     if mul > 1:
         result_int = 0
@@ -764,6 +772,9 @@ if __name__ == "__main__":
                 print("    --max-tu=...   限制最高图数")
                 print("    --js           显示角色详细信息")
                 print("    --zb           显示装备详细信息")
+                print("    --n=...        设置倍率")
+                print("    --num-w=...    懒人权重（>=0实数），"
+                      "越高则给出的刷图选项越少，默认0.1")
             elif order == "zb" and len(cmds) >= 2 and cmds[1] == 'st':
                 if len(cmds) >= 3 and cmds[2] == 'lack':
                     ZB_ST_LACK(cmds[3:])

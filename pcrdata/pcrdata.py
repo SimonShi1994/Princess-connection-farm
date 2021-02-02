@@ -450,7 +450,7 @@ class PCRData:
         return zb_dict
 
     @staticmethod
-    def make_map_advice(lack_equip: dict, prob_map: dict):
+    def make_map_advice(lack_equip: dict, prob_map: dict, num_w=0):
         # 整数规划问题
         import cvxpy as cp
         can_maps = defaultdict(list)
@@ -461,7 +461,8 @@ class PCRData:
         map_id = {}
         for ind, k in enumerate(can_maps):
             map_id[ind] = k
-        x = cp.Variable(len(map_id))
+        x = cp.Variable(len(map_id), name="x")
+        xflag = cp.Variable(len(map_id), name="xflag", boolean=True)
         cons = [x >= 0]
         equ_x = defaultdict(list)
         for mid in map_id:
@@ -470,7 +471,11 @@ class PCRData:
                 equ_x[equ] += [x[mid] * (prob / 100)]
         for c, exps in equ_x.items():
             cons += [cp.sum(exps) >= lack_equip[c]]
-        obj = cp.Minimize(cp.sum(x))
+        if num_w > 0:
+            cons += [x <= xflag * 100000]
+            obj = cp.Minimize(cp.sum(x) + cp.sum(xflag) * num_w)
+        else:
+            obj = cp.Minimize(cp.sum(x))
         prob = cp.Problem(obj, cons)
         result = prob.solve(verbose=True)
         out_map = {}
