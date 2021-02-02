@@ -972,7 +972,8 @@ class ToolsMixin(BaseMixin):
                 break
             D["star"] = get_stars(sc)
             D["last_update"] = time.time()
-            data[NAME] = D
+            cur = {NAME: D}
+            data.update(cur)
             self.AR.set("juese_info", data)
             var["count"] += 1
             mv.save()

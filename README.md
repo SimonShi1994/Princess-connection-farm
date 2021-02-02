@@ -168,6 +168,8 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
   - 增加刷图规划
   - 支持兰德索尔图书馆数据交互
 - 增加角色识别，修复一些识别BUG
+- 修复QQBot不启用时报错的BUG
+- 增加19图
 
 2021/1/31 By:CyiceK
 

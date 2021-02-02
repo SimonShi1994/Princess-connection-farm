@@ -252,6 +252,7 @@ def FromLibrary(all=False):
     for cur in js_info:
         uid = int(cur['u'], 16) * 100 + 1
         key = data.ID_C[uid]
+        js.setdefault(key, {})
         if all:
             equ = [i == '1' for i in cur['e']]
             rank = cur['p']
@@ -261,8 +262,31 @@ def FromLibrary(all=False):
             js[key]['star'] = star
         track = cur['t']
         js[key]['track'] = track
+        if track not in ["false", "true"]:
+            if '.' in track:
+                A, B = track.split(".")
+                A = int(A)
+                B = int(B)
+                ZBLABLE = {
+                    3: [False, True, False, True, False, True],
+                    4: [False, True, False, True, True, True],
+                    5: [False, True, True, True, True, True]
+                }
+                js[key]['track_rank'] = A
+                js[key]['track_zb'] = ZBLABLE[B]
+            else:
+                A = int(track)
+                js[key]["track_rank"] = A
+                js[key]["track_zb"] = [True] * 6
+        elif track == "false":
+            if "track_rank" in js[key]:
+                del js[key]["track_rank"]
+            if "track_zb" in js[key]:
+                del js[key]["track_zb"]
+
         special = cur['q']
         js[key]['special'] = special
+    AR.set("juese_info", js)
     # zb
     zb = AR.get("zhuangbei_kucun", UDD["zhuangbei_kucun"])
     if all:
@@ -276,6 +300,7 @@ def FromLibrary(all=False):
             update_time = time.time()
             num = int(cur['c'])
             zb[key] = (num, update_time, comment)
+        AR.set("zhuangbei_kucun", zb)
 
 
 def SearchJSName(name: str) -> int:
@@ -737,7 +762,7 @@ if __name__ == "__main__":
                 print("    --no-store     不计算库存")
                 print("    --max-tu=...   限制最高图数")
                 print("    --js           显示角色详细信息")
-                print("    --zb=...       显示装备详细信息")
+                print("    --zb           显示装备详细信息")
             elif order == "zb" and len(cmds) >= 2 and cmds[1] == 'st':
                 if len(cmds) >= 3 and cmds[2] == 'lack':
                     ZB_ST_LACK(cmds[3:])
