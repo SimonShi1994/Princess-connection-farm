@@ -739,7 +739,7 @@ if __name__ == "__main__":
                 print("zb st 查看装备刷图建议相关帮助")
             elif cmd == "zb kc":
                 print("帮助 装备 库存---------------------")
-                print("zb kc clear 清空之前记录")
+                print("zb kc clear 清空之前记录 （删库警告！）")
                 print("zb kc fix 修复因为ocr失误引起的错误库存")
                 # print("zb kc last_update 最近一次更新时间")
             elif order == "zb" and len(cmds) > 2 and cmds[1] == "kc":
@@ -749,6 +749,7 @@ if __name__ == "__main__":
                     ZB_KC_FIX()
             elif cmd == "zb st":
                 print("帮助 装备 刷图---------------------")
+                print("注：必须为角色设置了追踪后才可以使用刷图帮助功能！")
                 print("zb st lack [--options] 查询装备缺口")
                 print("    --min-rare=... 最低等级（至少为1）")
                 print("    --max-rare=... 最高等级（至多为6 <-红）")
@@ -771,7 +772,7 @@ if __name__ == "__main__":
             elif cmd == "js":
                 print("帮助 角色-------------------------")
                 print("js namehelp 查看缩写查询帮助")
-                print("js clear 清空之前记录")
+                print("js clear 清空之前记录 (删库警告！)")
                 print("js fix 修复因为ocr失误引起的角色名称错误")
                 print("js (name) 或 js (name) show 查看某一个角色的信息")
                 print("js (name) track 查看角色追踪帮助")
