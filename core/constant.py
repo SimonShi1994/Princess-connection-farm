@@ -537,7 +537,7 @@ DXC_COORD = {
         5: p(297, 190)
     }
 }
-MAX_MAP = 18
+MAX_MAP = 19
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -629,6 +629,12 @@ HARD_COORD = {
         2: p(481, 361),
         3: p(762, 287),
     },
+    19: {
+        1: p(224, 324),
+        2: p(473, 262),
+        3: p(764, 317),
+    },
+
 }
 
 SHOP_BTN = {
@@ -698,6 +704,7 @@ ZHUXIAN_ID = {
     16: p(img="img/zhuxian/16.bmp", at=(450, 74, 534, 87)),
     17: p(img="img/zhuxian/17.bmp", at=(448, 71, 539, 90)),
     18: p(img="img/zhuxian/18.bmp", at=(399, 75, 506, 87)),
+    19: p(img="img/zhuxian/19.bmp", at=(401, 74, 561, 87)),
 }
 
 NORMAL_COORD = {
@@ -1069,8 +1076,41 @@ NORMAL_COORD = {
             1: p(160, 224),
         }
     },
+    19: {
+        "right": {
+            14: p(754, 237),
+            13: p(607, 252),
+            12: p(685, 383),
+            11: p(526, 397),
+            10: p(460, 282),
+            9: p(322, 230),
+        },
+        "left": {
+            8: p(727, 224),
+            7: p(735, 373),
+            6: p(585, 387),
+            5: p(547, 239),
+            4: p(460, 337),
+            3: p(350, 430),
+            2: p(198, 378),
+            1: p(347, 310),
+        }
+    }
 }
-
+RANKS_DICT = {
+    1: p(img="img/ranks/1.bmp", at=(204, 110, 287, 136)),
+    2: p(img="img/ranks/2.bmp", at=(205, 111, 287, 134)),
+    3: p(img="img/ranks/3.bmp", at=(203, 111, 289, 138)),
+    4: p(img="img/ranks/4.bmp", at=(204, 110, 289, 137)),
+    5: p(img="img/ranks/5.bmp", at=(205, 112, 288, 135)),
+    6: p(img="img/ranks/6.bmp", at=(204, 112, 288, 137)),
+    7: p(img="img/ranks/7.bmp", at=(204, 110, 287, 136)),
+    8: p(img="img/ranks/8.bmp", at=(204, 109, 287, 138)),
+    9: p(img="img/ranks/9.bmp", at=(203, 110, 289, 136)),
+    10: p(img="img/ranks/10.bmp", at=(202, 113, 293, 134)),
+    11: p(img="img/ranks/11.bmp", at=(202, 110, 291, 135)),
+    12: p(img="img/ranks/12.bmp", at=(201, 112, 290, 134)),
+}
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
     "run_status": {
@@ -1107,8 +1147,20 @@ USER_DEFAULT_DICT = {
     "zhuangbei_kucun": {
         # 装备库存状态
         # Key: 装备名称
-        # Value:(装备数量,更新时间)
+        # Value:(装备数量,更新时间,备注)
     },
+    "juese_info": {
+        # 角色信息
+        # Key：角色名称
+        # Value:{
+        # haogan
+        # dengji
+        # rank
+        # zb [bool]*6
+        # star
+        # last_update
+        # }
+    }
 
 }
 
