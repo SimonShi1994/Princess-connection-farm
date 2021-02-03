@@ -587,7 +587,7 @@ def ZB_ST_ADVICE(args):
         if k in data.C_ID and "track_rank" in v and "track_zb" in v \
                 and "rank" in v and "zb" in v:
             ne = data.calc_rankup_equip(data.C_ID[k], v["rank"], v["zb"], v["track_rank"], v["track_zb"])
-            for n in ne:
+            for n in list(ne.keys()):
                 lv = data.EInfo[n]['plevel']
                 if lv < min_rare or lv > max_rare:
                     ne.pop(n)
@@ -773,8 +773,9 @@ if __name__ == "__main__":
                 print("    --js           显示角色详细信息")
                 print("    --zb           显示装备详细信息")
                 print("    --n=...        设置倍率")
-                print("    --num-w=...    懒人权重（>=0实数），"
-                      "越高则给出的刷图选项越少，默认0.1")
+                print("    --num-w=...    懒人权重（>=0实数）\n"
+                      "\t\t\t越高则给出的刷图选项越少，默认0.1\n"
+                      "\t\t\t大于0时使用混合规划，越大越慢。")
             elif order == "zb" and len(cmds) >= 2 and cmds[1] == 'st':
                 if len(cmds) >= 3 and cmds[2] == 'lack':
                     ZB_ST_LACK(cmds[3:])
