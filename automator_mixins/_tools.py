@@ -844,6 +844,7 @@ class ToolsMixin(BaseMixin):
                 if make_it_as_zhuangbei_as_possible(ori_out) in getattr(data, "EQU_ID") or "?" in ori_out.replace("？",
                                                                                                                   "?"):
                     # 是装备!
+                    self.click(782, 76, post_delay=0.5)
                     screen = self.getscreen()
                     ori_out = self.ocr_center(*at, screen)
                 else:
