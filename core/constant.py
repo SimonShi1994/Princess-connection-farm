@@ -703,8 +703,16 @@ ZHUXIAN_ID = {
     15: p(img="img/zhuxian/15.bmp", at=(450, 74, 536, 90)),
     16: p(img="img/zhuxian/16.bmp", at=(450, 74, 534, 87)),
     17: p(img="img/zhuxian/17.bmp", at=(448, 71, 539, 90)),
-    18: p(img="img/zhuxian/18.bmp", at=(399, 75, 506, 87)),
-    19: p(img="img/zhuxian/19.bmp", at=(401, 74, 561, 87)),
+    18: p(img="img/zhuxian/18L.bmp", at=(424, 75, 508, 88)),
+    19: p(img="img/zhuxian/19L.bmp", at=(422, 76, 507, 88)),
+}
+ZHUXIAN_XXXYY_ID = {
+    # 小行星原野你长得太像了，无奈增加二级分类
+    18: p(img="img/zhuxian/18R.bmp", at=(532, 73, 561, 88)),
+    19: p(img="img/zhuxian/19R.bmp", at=(530, 73, 562, 89)),
+}
+ZHUXIAN_SECOND_ID = {
+    (18, 19): ZHUXIAN_XXXYY_ID,
 }
 
 NORMAL_COORD = {
