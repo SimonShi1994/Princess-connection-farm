@@ -167,6 +167,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 - 修复角色识别中OCR爆炸的BUG
 - 增加刷图规划的体验
 - 优化requirements文件
+- 修复19图刷图识别问题
 
 2021/2/2 By:TheAutumnOfRice
 
