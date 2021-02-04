@@ -411,6 +411,7 @@ def Start_App():
 
 
 if __name__ == "__main__":
+    CheckConstantImgs()
     GetLastSchedule()
     argv = sys.argv
     # 自启动app
