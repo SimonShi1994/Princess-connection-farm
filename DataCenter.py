@@ -502,7 +502,7 @@ def JS_TRACKINFO():
         OG = ROrderGrid(2)
         OG.add(RLRProgress(before_sum - after_sum, before_sum, RValue("R%2d" % v['rank']),
                            RValue("R%2d" % v['track_rank']), width=20, percent=False))
-        OG.add(RComment(''.join(['■' if p else '□' for p in v['track_zb']])))
+        OG.add(RComment(''.join(['O' if p else '_' for p in v['track_zb']])))
         OG.finish()
         R += [OG]
         cur_rank -= 1
