@@ -432,19 +432,29 @@ class PCRData:
 
         old_zb = fun(old_zb)
         new_zb = fun(new_zb)
-        for i in range(6):
-            if not old_zb[i]:
-                need_zb += [ranks[old_rank][i]]
+        if new_rank < old_rank:
+            return {}
+        if old_rank == new_rank:
+            for i in range(6):
+                if not old_zb[i] and new_zb[i]:
+                    need_zb += [ranks[old_rank][i]]
+        else:
+            for i in range(6):
+                if not old_zb[i]:
+                    need_zb += [ranks[old_rank][i]]
+
         if new_rank > old_rank:
             for i in range(6):
-                if not new_zb[i]:
+                if new_zb[i]:
                     need_zb += [ranks[new_rank][i]]
+
         for now_rank in range(old_rank + 1, new_rank):
             for i in range(6):
                 need_zb += [ranks[now_rank][i]]
         zb_dict = {}
+
         for zb in need_zb:
-            if zb != 999999:
+            if zb != 999999:  # ???
                 zb_dict.setdefault(zb, 0)
                 zb_dict[zb] += 1
         return zb_dict

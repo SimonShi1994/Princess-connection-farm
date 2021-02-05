@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from pcrdata.pcrdata import PCRData
     from core.utils import WowSearch
 import rich.box as rbox
-from core.richutils import RText, ROrderGrid, ROneTable, RValue
+from core.richutils import RText, ROrderGrid, ROneTable, RValue, RComment, RLRProgress
 
 JSNameWow: Optional[WowSearch] = None
 ZBNameWow: Optional[WowSearch] = None
@@ -442,6 +442,76 @@ def JS_TRACK(name, rank=0, zb_str="", track_str=None):
     JS_SHOW(name)
 
 
+def has_arg(args, key):
+    for k in args:
+        if k == key:
+            return True
+    return False
+
+
+def get_arg(args, key, default):
+    for k in args:
+        if k.startswith(key):
+            return k[k.find("=") + 1:]
+    return default
+
+
+def JS_TRACKINFO():
+    from rich import print
+    obj = AR.get("juese_info", UDD["juese_info"])
+    zb = AR.get("zhuangbei_kucun", UDD["zhuangbei_kucun"])
+    store = {}
+    for k, v in zb.items():
+        num, _, _ = v
+        if k in data.EQU_ID:
+            store[data.EQU_ID[k]] = num
+    table = RTable(title="练度追踪", caption="*当前可满：以目前的库存最高能满装Rank。\n"
+                                         "*下一RANK：要在下一RANK上满装还需要的碎片。", caption_justify="left")
+    table.add_column("角色", justify='center')
+    table.add_column("进度", justify='center')
+    table.add_column("当前可满", justify='center')
+    table.add_column("下一RANK", justify='center')
+    for k, v in obj.items():
+        if not ('track_rank' in v and 'track_zb' in v and 'zb' in v and 'rank' in v):
+            continue
+        if k not in data.C_ID:
+            continue
+        cid = data.C_ID[k]
+        need_equip_before = data.calc_rankup_equip(cid, v['rank'], [False] * 6, v['track_rank'], v['track_zb'])
+        before_store = data.calc_equips_decompose(need_equip_before)
+        need_equip_after = data.calc_rankup_equip(cid, v['rank'], v['zb'], v['track_rank'], v['track_zb'])
+        after_store = data.calc_equips_decompose(need_equip_after, store=store)
+        before_sum = sum(before_store.values())
+        after_sum = sum(after_store.values())
+        if before_sum == 0:
+            continue
+        if after_sum == 0:
+            continue
+        cur_rank = v['rank']
+        cur_after_sum = 0
+        while cur_rank <= v['track_rank']:
+            cur_zb = [True] * 6 if cur_rank < v['track_rank'] else v['track_zb']
+            cur_need = data.calc_rankup_equip(cid, v['rank'], v['zb'], cur_rank, cur_zb)
+            cur_after = data.calc_equips_decompose(cur_need, store=store)
+            cur_after_sum = sum(cur_after.values())
+            if cur_after_sum > 0:
+                break
+            cur_rank += 1
+        R = []
+        R += [k]
+        OG = ROrderGrid(2)
+        OG.add(RLRProgress(before_sum - after_sum, before_sum, RValue("R%2d" % v['rank']),
+                           RValue("R%2d" % v['track_rank']), width=20, percent=False))
+        OG.add(RComment(''.join(['■' if p else '□' for p in v['track_zb']])))
+        OG.finish()
+        R += [OG]
+        cur_rank -= 1
+        R += ["Rank " + str(cur_rank)]
+        R += ["x" + str(cur_after_sum)]
+        table.add_row(*R)
+    print(table)
+
+
 def JS_SET(name, item, value):
     ID = SearchJSName(name)
     if ID == -1:
@@ -493,19 +563,6 @@ def JS_DEL(name):
     del obj[name]
     AR.set("juese_info", obj)
 
-
-def has_arg(args, key):
-    for k in args:
-        if k == key:
-            return True
-    return False
-
-
-def get_arg(args, key, default):
-    for k in args:
-        if k.startswith(key):
-            return k[k.find("=") + 1:]
-    return default
 
 
 def ZB_ST_LACK(args):
@@ -786,6 +843,7 @@ if __name__ == "__main__":
                 print("js namehelp 查看缩写查询帮助")
                 print("js clear 清空之前记录 (删库警告！)")
                 print("js fix 修复因为ocr失误引起的角色名称错误")
+                print("js trackinfo 显示角色的养成（跟踪）状态")
                 print("js (name) 或 js (name) show 查看某一个角色的信息")
                 print("js (name) track 查看角色追踪帮助")
                 print("js (name) set 查看修改信息帮助")
@@ -794,6 +852,8 @@ if __name__ == "__main__":
                     AR.set("juese_info", UDD["juese_info"])
                 elif len(cmds) == 2 and cmds[1] == "fix":
                     JS_FIX()
+                elif len(cmds) == 2 and cmds[1] == "trackinfo":
+                    JS_TRACKINFO()
                 elif len(cmds) == 2 and cmds[1] == "namehelp":
                     print("帮助 角色 缩写助手-------------------")
                     print("在查询某一个角色时，有以下查询方式：")
