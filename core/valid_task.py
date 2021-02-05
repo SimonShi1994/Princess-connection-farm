@@ -176,6 +176,7 @@ class ConstantInputer(InputBoxBase):
             return "必须是 " + str(self.c) + " !"
         return ""
 
+
 class ValidTask:
     def __init__(self):
         self.T = {}  # 存放合法Task记录
@@ -549,6 +550,7 @@ class MeiRiHTuInputer(ShuatuBaseBox):
 
 """
 
+
 class MeiRiHTuInputer(InputBoxBase):
     def create(self):
         print("输入A-B字符串，表示刷Hard A-B图。")
@@ -576,6 +578,7 @@ class MeiRiHTuInputer(InputBoxBase):
                 return str(e)
         return ""
 
+
 VALID_TASK = ValidTask() \
     .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备",
          [TaskParam("once_times", int, "单账号捐赠的次数", "一个账号轮询捐赠多少次，多次可以提高容错率但会增加脚本执行时间", 2)]) \
@@ -600,6 +603,7 @@ VALID_TASK = ValidTask() \
                                               "程序自动记录上一次成功发起的时间.\n"
                                               "如果两次捐赠小于8小时，且相差小于等待时间\n"
                                               "则程序进入什么都不做的等待，否则跳过。", 300)]) \
+    .add("h10", "tuanduizhan", "自动摸会战", "农场号自动出甜心刀,请自己确保执行到该任务时已经有挑战次数。目前还在bate，不排除有问题") \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
          [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个", 1),
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False),
@@ -771,4 +775,3 @@ def list_all_customtasks(verbose=1) -> List[str]:
     if verbose:
         print("加载完成，一共加载成功", count, "个模块。")
     return tasks
-

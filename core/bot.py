@@ -116,7 +116,7 @@ class Bot:
         :return: 切割的字符串 切割后的字符串
         """
         if len(msg) > _max:
-            return msg[:1500], msg[1500:]
+            return msg[:_max], msg[_max:]
         else:
             return None, msg
 

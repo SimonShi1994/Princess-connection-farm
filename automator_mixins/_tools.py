@@ -87,7 +87,6 @@ class ToolsMixin(BaseMixin):
             # 跳过抽签（备用）
             self.d.touch.down(470, 30).sleep(0.1).move(470, 500).sleep(0.2).up(470, 500)
 
-
         self.lock_home()
         time.sleep(0.5)
         # 这里防一波第二天可可萝跳脸教程
@@ -335,11 +334,11 @@ class ToolsMixin(BaseMixin):
                 # mana
                 acc_info_dict["mana"] = make_it_as_number_as_possible(
                     self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot, size=2.0) \
-                    .replace(',', '').replace('.', ''))
+                        .replace(',', '').replace('.', ''))
                 # 宝石
                 acc_info_dict["baoshi"] = make_it_as_number_as_possible(
                     self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, size=2.0) \
-                    .replace(',', '').replace('.', ''))
+                        .replace(',', '').replace('.', ''))
             if introduction_info:
                 self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
                 # 去简介
@@ -461,9 +460,9 @@ class ToolsMixin(BaseMixin):
         name = name.split(' ')
         name_len = len(name)
         if auto_id:
-            name = name[random.randint(0, name_len-1)]+str(random.randint(0, 1000))
+            name = name[random.randint(0, name_len - 1)] + str(random.randint(0, 1000))
         else:
-            name = name[random.randint(0, name_len-1)]
+            name = name[random.randint(0, name_len - 1)]
         self.click(871, 513)  # 主菜单
         self.lock_img('img/zhucaidan/bangzhu.bmp', ifclick=[(370, 270)])  # 锁定帮助 点击简介
         self.lock_img('img/bianji.bmp', ifclick=[(900, 140)])  # 锁定 点击铅笔修改按钮
@@ -575,8 +574,6 @@ class ToolsMixin(BaseMixin):
         # 去道具
         self.lock_no_img(ZHUCAIDAN_BTN["daoju"], elseclick=[(536, 159)])
         self.lock_img(ZHUCAIDAN_BTN["daojuyilan"], elseclick=[(536, 159)])  # 锁定道具一览
-
-
 
         LAST_PAGE = False
 
@@ -984,3 +981,4 @@ class ToolsMixin(BaseMixin):
         mv.clearflags()
         output_dict(self.AR.get("juese_info", UDD["juese_info"]))
         self.lock_home()
+

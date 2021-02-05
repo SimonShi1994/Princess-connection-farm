@@ -128,9 +128,9 @@ MAIN_BTN = {
     "gzjjc": p(820, 395),
 
     # 圣迹调查
-    "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)), #圣迹调查
+    "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)),  # 圣迹调查
     "shengji": p(736, 267, img="img/shengji/shengjidiaocha.bmp", at=(700, 225, 777, 302)),
-    
+
     # 右侧的kkr
     "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),
 
@@ -295,6 +295,13 @@ HANGHUI_BTN = {
     # 收取报酬
     "sqbc": p(img="img/hanghui/sqbc.bmp", at=(439, 32, 521, 52)),
 
+}
+TUANDUIZHAN_BTN = {
+    "tuanduizhan": p(img="img/hanghui/tuanduizhan.bmp", at=(805, 204, 950, 346)),
+    "shangbiao": p(img="img/hanghui/shangbiao.bmp"),
+    "taofaxinxi": p(img="img/hanghui/taofaxinxi.bmp", at=(248, 412, 356, 454)),
+    "tiaozhan": p(833, 462, img="img/hanghui/tiaozhan.bmp", at=(739, 427, 924, 493)),
+    "zhandou": p(587, 374, img="img/hanghui/zhandou.bmp", at=(473, 334, 696, 400)),
 }
 ZHUCAIDAN_BTN = {
     "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(493, 247, 695, 290)),

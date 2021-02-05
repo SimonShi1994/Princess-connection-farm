@@ -1,8 +1,9 @@
 import time
 
-from core.constant import MAIN_BTN, HANGHUI_BTN, PCRelement
+from core.constant import MAIN_BTN, HANGHUI_BTN, PCRelement, TUANDUIZHAN_BTN, DXC_ELEMENT
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
+from core.log_handler import pcr_log
 from core.utils import diffday
 from ._tools import ToolsMixin
 
@@ -399,3 +400,46 @@ class HanghuiMixin(ToolsMixin):
             self.click_btn(HANGHUI_BTN["jzqq_ok"])
             set_last_record()
         self.lock_home()
+
+    def tuanduizhan(self):
+        """
+        自动摸会战 By：CyiceK
+        2021/2/5
+        :return:
+        """
+        self.lock_home()
+        if not self.lock_img(img=TUANDUIZHAN_BTN["tuanduizhan"], ifclick=(875, 272),
+                             elseclick=(478, 519), side_check=self.juqing_kkr, retry=7):
+            pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战哦")
+            return 0
+        self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr)
+
+        screen = self.getscreen()
+        r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
+
+        self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
+                      side_check=self.juqing_kkr)
+
+        if not self.lock_no_img(TUANDUIZHAN_BTN["tiaozhan"], elseclick=(833, 462), retry=6):
+            pcr_log(self.account).write_log("info", f"{self.account}该用户没次数")
+            self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr)
+            return 0
+
+        for i in range(1, 9):
+            self.click(DXC_ELEMENT["zhiyuan_dianren"][i])
+
+        # 战斗开始
+        self.click_btn(DXC_ELEMENT["zhandoukaishi"], until_disappear=DXC_ELEMENT["zhandoukaishi"], elsedelay=0.1)
+        if self.lock_img(TUANDUIZHAN_BTN["zhandou"], retry=5):
+            # 战斗
+            self.lock_no_img(TUANDUIZHAN_BTN["zhandou"], elseclick=(587, 374), retry=6)
+
+        if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], retry=6):
+            self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], elsedelay=0.2, retry=3)
+            self.lock_img('img/kuaijin_2.bmp', elseclick=[(913, 494)], elsedelay=0.2, retry=3)
+        time.sleep(3)
+        while True:
+            if self.is_exists('img/shanghaibaogao.jpg', at=(767, 18, 948, 65)) and \
+                    self.is_exists('img/xiayibu.jpg', at=(694, 474, 920, 535)):
+                self.lock_no_img('img/xiayibu.jpg', elseclick=[(806, 508)])
+                break
