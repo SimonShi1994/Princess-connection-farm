@@ -264,13 +264,12 @@ def ShowServerChan():
         print("  - 记录最大累积条数 log_cache：", log_cache)
     else:
         print("* Server酱未配置，前往config.ini - s_sckey进行设置")
-    print("--------------------------")
     if qqbot_key != "":
         print("* QQbot已配置！")
-        print("选择的QQbot提供商", qqbot_select)
-        print("QQbot私聊你的开关", qqbot_private_send_switch)
-        print("QQbot群聊的开关", qqbot_group_send_switch)
-        print("设置发送的QQ号/群号", qq)
+        print("选择的QQbot提供商 qqbot_select：", qqbot_select)
+        print("QQbot私聊你的开关 qqbot_private_send_switch：", qqbot_private_send_switch)
+        print("QQbot群聊的开关 qqbot_group_send_switch：", qqbot_group_send_switch)
+        print("设置发送的QQ号/群号 qq：", qq)
         print("  - 运行状态消息发送间隔(s) s_sentstate schedule：", s_sentstate)
         print("  - 记录过滤等级 log_lev：", log_lev)
         print("  - 记录最大累积条数 log_cache：", log_cache)
@@ -445,7 +444,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.4.20210203")
+        print("当前版本为 Ver 2.4.20210204")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
