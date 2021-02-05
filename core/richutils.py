@@ -29,6 +29,9 @@ class RValue(RText):
     def sty(self):
         self.stylize(Style(color="yellow", italic=True))
 
+class RComment(RText):
+    def sty(self):
+        self.stylize(Style(color="magenta"))
 
 class ROneTable(Table):
     def __init__(self, *args):
@@ -60,3 +63,33 @@ class ROrderGrid(Table):
         if len(self.cache_c) >= 0:
             self.add_row(*(self.cache_c + [] * (self.c - len(self.cache_c))))
             self.cache_c = []
+
+
+class RProgress(ROrderGrid):
+    def __init__(self, complete, total, width=15, percent=True):
+        super().__init__(2)
+        num = int(round(width * complete / total))
+        bar_str = ['✦'] * num
+        empty_str = ['·'] * (width - num)
+        bar_str = ''.join(bar_str)
+        empty_str = ''.join(empty_str)
+        self.add(RSubTitle(bar_str) + RText(empty_str))
+        if percent:
+            self.add(RValue("%.0f%%" % (complete / total * 100)))
+        self.finish()
+
+
+class RLRProgress(ROrderGrid):
+    def __init__(self, complete, total, L, R, width=15, percent=True):
+        super().__init__(4)
+        num = int(round(width * complete / total))
+        bar_str = ['✦'] * num
+        empty_str = ['·'] * (width - num)
+        bar_str = ''.join(bar_str)
+        empty_str = ''.join(empty_str)
+        self.add(L)
+        self.add(RSubTitle(bar_str) + RText(empty_str))
+        if percent:
+            self.add(RValue("%.0f%%" % (complete / total * 100)))
+        self.add(R)
+        self.finish()

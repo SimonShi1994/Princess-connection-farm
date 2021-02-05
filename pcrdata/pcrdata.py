@@ -432,6 +432,8 @@ class PCRData:
 
         old_zb = fun(old_zb)
         new_zb = fun(new_zb)
+        if new_rank < old_rank:
+            return {}
         if old_rank == new_rank:
             for i in range(6):
                 if not old_zb[i] and new_zb[i]:
@@ -443,7 +445,7 @@ class PCRData:
 
         if new_rank > old_rank:
             for i in range(6):
-                if not new_zb[i]:
+                if new_zb[i]:
                     need_zb += [ranks[new_rank][i]]
 
         for now_rank in range(old_rank + 1, new_rank):
