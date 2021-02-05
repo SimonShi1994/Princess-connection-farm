@@ -69,8 +69,8 @@ class RProgress(ROrderGrid):
     def __init__(self, complete, total, width=15, percent=True):
         super().__init__(2)
         num = int(round(width * complete / total))
-        bar_str = ['✦'] * num
-        empty_str = ['·'] * (width - num)
+        bar_str = ['-'] * num
+        empty_str = ['.'] * (width - num)
         bar_str = ''.join(bar_str)
         empty_str = ''.join(empty_str)
         self.add(RSubTitle(bar_str) + RText(empty_str))
@@ -83,8 +83,8 @@ class RLRProgress(ROrderGrid):
     def __init__(self, complete, total, L, R, width=15, percent=True):
         super().__init__(4)
         num = int(round(width * complete / total))
-        bar_str = ['✦'] * num
-        empty_str = ['·'] * (width - num)
+        bar_str = ['='] * num
+        empty_str = ['-'] * (width - num)
         bar_str = ''.join(bar_str)
         empty_str = ''.join(empty_str)
         self.add(L)
