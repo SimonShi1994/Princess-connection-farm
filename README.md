@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.4.20210205
+ # Princess connection 公主连结农场脚本v2.4.20210208
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -164,7 +164,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 2021/2/5 By:CyiceK
 
-- 公会战自动摸`h10`，目前该功能函数还在稳定性测试
+- 上线公会战自动摸`h10`
 
 2021/2/5 By:TheAutumnOfRice
 

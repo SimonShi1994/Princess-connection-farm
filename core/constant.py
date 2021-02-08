@@ -300,7 +300,7 @@ TUANDUIZHAN_BTN = {
     "tuanduizhan": p(img="img/hanghui/tuanduizhan.bmp", at=(805, 204, 950, 346)),
     "shangbiao": p(img="img/hanghui/shangbiao.bmp"),
     "taofaxinxi": p(img="img/hanghui/taofaxinxi.bmp", at=(248, 412, 356, 454)),
-    "tiaozhan": p(833, 462, img="img/hanghui/tiaozhan.bmp", at=(739, 427, 924, 493)),
+    "tiaozhan": p(833, 462, img="img/hanghui/tiaozhan.bmp", at=(738, 422, 924, 497)),
     "zhandou": p(587, 374, img="img/hanghui/zhandou.bmp", at=(473, 334, 696, 400)),
 }
 ZHUCAIDAN_BTN = {
