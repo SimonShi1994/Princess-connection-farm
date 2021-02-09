@@ -407,23 +407,20 @@ class HanghuiMixin(ToolsMixin):
         2021/2/5
         :return:
         """
-        retry_count = 0
         self.lock_home()
         if not self.lock_img(img=TUANDUIZHAN_BTN["tuanduizhan"], ifclick=(875, 272),
                              elseclick=(478, 519), side_check=self.juqing_kkr, retry=7):
             pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战哦")
             return 0
-        while retry_count <= 6:
+        while True:
             self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr)
             screen = self.getscreen()
             r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
             if self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
                              side_check=self.juqing_kkr):
-                retry_count += 1
                 if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
                     break
             else:
-                retry_count += 1
                 continue
 
         self.lock_no_img(TUANDUIZHAN_BTN["tiaozhan"], elseclick=(833, 462), retry=5)
