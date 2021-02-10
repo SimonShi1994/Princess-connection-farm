@@ -172,8 +172,8 @@ class ConstantInputer(InputBoxBase):
         return self.c
 
     def check(self, obj):
-        if obj != self.c:
-            return "必须是 " + str(self.c) + " !"
+        # if obj != self.c:
+        #     return "必须是 " + str(self.c) + " !"
         return ""
 
 
@@ -186,7 +186,7 @@ class ValidTask:
         try:
             if debug:
                 print("Loading pymodule:", pymodule)
-            py = importlib.import_module(pymodule)
+            py = getcustomtask(pymodule)
         except Exception as e:
             if debug:
                 print("读取自定义模块失败！", e)
@@ -196,13 +196,15 @@ class ValidTask:
         valid = getattr(py, "__valid__", ValidTask())
         custom_T = valid.T
         for abbr in custom_T:
+            if debug:
+                print("添加自定义：", abbr)
             for illegal in ["self", "var", "funcname", "pymodule"]:
                 assert illegal not in custom_T[abbr]["param_dict"], "自定义变量中不能出现" + illegal + "!"
             self.T[abbr] = custom_T[abbr].copy()
             self.T[abbr]["funname"] = "run_custom_task"
             self.T[abbr]["params"] += [
-                TaskParam("pymodule", str, "自定义模块名", "请勿修改此项", pymodule, ConstantInputer(pymodule))]
-            self.T[abbr]["params"] += [TaskParam("funcname", str, "函数名称", "请勿修改此项", custom_T[abbr]["funname"],
+                TaskParam("pymodule", str, "自定义模块名", "自动生成", pymodule, ConstantInputer(pymodule))]
+            self.T[abbr]["params"] += [TaskParam("funcname", str, "函数名称", "自动生成", custom_T[abbr]["funname"],
                                                  ConstantInputer(custom_T[abbr]["funname"]))]
 
     def add(self, abbr: str, funname: str, title: str, desc: str, params: Optional[List[TaskParam]] = None):
@@ -775,3 +777,7 @@ def list_all_customtasks(verbose=1) -> List[str]:
     if verbose:
         print("加载完成，一共加载成功", count, "个模块。")
     return tasks
+
+
+for l in list_all_customtasks(0):
+    VALID_TASK.add_custom(l)
