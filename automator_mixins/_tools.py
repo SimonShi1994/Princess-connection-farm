@@ -5,7 +5,7 @@ import random
 import time
 from typing import Optional
 
-
+import cv2
 import numpy as np
 import pandas as pd
 import xlrd
@@ -16,8 +16,8 @@ from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
-    ocr_mode, debug, fast_screencut
+from core.pcr_config import lockimg_timeout, \
+    debug, fast_screencut
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import get_all_group
