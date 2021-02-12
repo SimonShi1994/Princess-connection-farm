@@ -77,9 +77,10 @@ class ToolsMixin(BaseMixin):
                 self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
                 continue
-            num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
-            if num_of_white < 77000:
-                break
+            # num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
+            # print(num_of_white)
+            # if num_of_white < 77000:
+            #     break
 
             # 跳过特别庆典
             self.click(1, 1, post_delay=0.5)

@@ -47,7 +47,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/dxc/chetui.bmp'):
                     time.sleep(1.2)
                     self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
-                                  threshold=0.97)
+                                  threshold=0.98)
                 break
                 # self.dxc_kkr()
         tmp_cout = 0
@@ -55,7 +55,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             try:
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
                     self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
-                                  threshold=0.97)
+                                  threshold=0.98)
                     dixiacheng_floor = self.ocr_center(216, 423, 259, 442, size=1.5)
                     # print(dixiacheng_floor)
                     dixiacheng_floor = int(dixiacheng_floor.split('/')[0])

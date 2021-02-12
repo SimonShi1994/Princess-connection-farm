@@ -411,15 +411,19 @@ class HanghuiMixin(ToolsMixin):
         if not self.lock_img(img=TUANDUIZHAN_BTN["tuanduizhan"], ifclick=(875, 272),
                              elseclick=(478, 519), side_check=self.juqing_kkr, retry=7):
             pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战哦")
-            return 0
+            return
         while True:
             self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr)
-            screen = self.getscreen()
-            r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
-            if self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
-                             side_check=self.juqing_kkr):
-                if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
-                    break
+            try:
+                screen = self.getscreen()
+                r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
+                if self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
+                                 side_check=self.juqing_kkr):
+                    if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
+                        break
+            except Exception as e:
+                pcr_log(self.account).write_log("info", f"识别不到boss信息，已退出本任务")
+                return
             else:
                 continue
 
@@ -427,7 +431,7 @@ class HanghuiMixin(ToolsMixin):
         if not self.is_exists(DXC_ELEMENT["quanbu_blue"]):
             pcr_log(self.account).write_log("info", f"{self.account}该用户没次数")
             self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr)
-            return 0
+            return
 
         if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
             # 全部
@@ -438,7 +442,7 @@ class HanghuiMixin(ToolsMixin):
             if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
                 pcr_log(self.account).write_log(level='info', message="%s没有合适的人物打公会战!" % self.account)
                 self.lock_home()
-                return 0
+                return
 
         while True:
             # 战斗开始
