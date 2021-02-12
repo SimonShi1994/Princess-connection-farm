@@ -79,7 +79,7 @@ class GlobalConfig:
         search every PCR modules and change there values
         """
         self._set(option, value)
-        globals()[option]=value
+        globals()[option] = value
         if find_global:
             mypath = str(pathlib.Path().absolute())
             for name, module in sys.modules.items():
@@ -156,6 +156,11 @@ use_template_cache = GC.add_bool('debug', 'use_template_cache', True)
 baidu_ocr_img = GC.add_bool('debug', 'baidu_ocr_img', False)
 disable_timeout_raise = GC.add_bool('debug', 'disable_timeout_raise', False)
 
+qqbot_key = GC.add_str('log', 'qqbot_key')
+qqbot_select = GC.add_str('log', 'qqbot_select')
+qqbot_private_send_switch = GC.add_int('log', 'qqbot_private_send_switch', 0)
+qqbot_group_send_switch = GC.add_int('log', 'qqbot_group_send_switch', 0)
+qq = GC.add_str('log', 'qq')
 s_sckey = GC.add_str('log', 's_sckey')
 log_lev = GC.add_str('log', 'log_lev', "1")
 log_cache = GC.add_int('log', 'log_cache', 3)

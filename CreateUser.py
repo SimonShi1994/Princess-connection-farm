@@ -21,6 +21,7 @@ DOC_STR = {
         帮助手册    在命令后输入?查看具体使用方法
         user       创建或编辑一个新的用户信息
         task       创建或编辑一个任务列表
+        customtask 生成自定义任务文件
         group      创建或编辑一个用户组
         batch      创建或编辑一个批配置
         schedule   创建或编辑一个计划配置
@@ -56,15 +57,38 @@ DOC_STR = {
         task -d TaskName 删除某一Task
         task -d -all 删除全部Task
         """,
+    "customtask?":
+        """
+        帮助：customtask
+        默认任务的力量是有极限的，
+            我要超越默认任务！！！！！！！
+        customtask -l 列举全部自定义任务程序文件
+        在sample_customtask中有很多模板任务
+        可以查看sample_customtask/sample_task.py中详细的自定义任务说明
+        在/customtask中的.py文件会被自动识别并加入CreateUser（重启程序有效）
+        可以复制相关的sample到其中并自己编写相关代码。        
+        """,
     "group?":
         """
         帮助：group
         group -l 列举全部组列表
-        group GroupName 显示某个组的全部成员
+        group GroupName [-g] 显示某个组的全部成员，输入-g后还会显示其成员全部所在组
         group的创建：非常简单，不写方法了。
         Step 1. 前往./groups 文件夹
-        Step 2. 创建一个.txt文件，文件名为组名
-        Step 3. 在该txt文件内每行一个用户名，表示该组的成员
+        Step 2. 创建一个.json文件，文件名为组名
+        Step 3. 在该json文件内每行一个用户名，表示该组的成员  <- 由于某些原因，它其实以txt结尾最好，毕竟一行一个明显不是json吧……
+        [新增方法] 以下方法中如果组不存在将被自动创建
+        group add (GroupName) (UserName1) [(UserNameN) ...]
+            将UserName或一系列空格隔开的UserNames添加到组GroupName
+        group add (GroupName) *TargetGroup
+            将TargetGroup中的用户添加到组GroupName，注：*TargetGroup表示在名称前加*号，如*xiaohao。
+        group del (GroupName) (UserName1) [(UserNameN) ...] 从组GroupName中移除一个或多个空格隔开的UserName
+        group del (GroupName) * 删除GroupName中全部组成员
+        group del (GroupName) *TargetGroup 删除GroupName中全部TargetGroup中的组成员
+        group move (GroupName1) (GroupName2) (UserName1) [(UserNameN) ...] 将一个或多个用户从组GroupName1移动到GroupName2
+        group move (GroupName1) (GroupName2) * 将GroupName1中组成员全部移动至GroupName2
+        group move (GroupName1) (GroupName2) *TargetGroup 将GroupName1中TargetGroup中的组成员全部移动至GroupName2
+        group user (UserName) 显示某一个用户所在的全部组
         """,
     "batch?":
         """
@@ -95,6 +119,7 @@ DOC_STR = {
         switch文件默认存放于./switches中。
         """
 }
+
 T = VALID_TASK.T
 
 
@@ -115,6 +140,8 @@ def show_task_detail(ind, i, more=False):
     show_task_simple(ind, i)
     for k, v in i.items():
         if k in ["type", "__disable__"]:
+            continue
+        if k not in T[i["type"]]["param_dict"]:
             continue
         print("  -", T[i["type"]]["param_dict"][k].title, ":", v)
         if more:
@@ -269,7 +296,6 @@ def TaskEditor(taskname):
         except Exception as e:
             print("输入错误！", e)
 
-
 def show_account(account):
     A = AutomatorRecorder(account)
     print(A.getuser())
@@ -342,14 +368,79 @@ def del_all_task():
         del_task(t)
 
 
-def show_group(GroupName):
-    gp = AutomatorRecorder.getgroup(GroupName)
+def show_group(GroupName, all_group=False):
+    gp = AutomatorRecorder.getgroup(GroupName, False)
     users = list_all_users(0)
+    if all_group:
+        groups = list_all_groups(0)
+        detailed_group = {}
+        for g in groups:
+            detailed_group[g] = AutomatorRecorder.getgroup(g)
     for i in gp:
         if i in users:
-            print(i)
+            print(i, end=" ")
+            if all_group:
+                print("所在组：", get_all_group(i, detailed_group))
+            else:
+                print()
         else:
             print(i, " 【未找到】")
+
+
+def show_group_user(UserName):
+    gps = get_all_group(UserName)
+    print(gps)
+
+
+def group_add(GroupName, UserNames: List[str]):
+    gp = AutomatorRecorder.getgroup(GroupName, False)
+    for acc in UserNames:
+        if acc not in gp:
+            gp += [acc]
+        else:
+            print("用户", acc, "已经存在在", GroupName, "中，不再重复添加！")
+    AutomatorRecorder.setgroup(GroupName, gp)
+
+
+def group_add_group(GroupName, TargetGroup):
+    group_add(GroupName, AutomatorRecorder.getgroup(TargetGroup, False))
+
+
+def group_del(GroupName, UserNames: List[str]):
+    gp = AutomatorRecorder.getgroup(GroupName, False)
+    for acc in UserNames:
+        if acc in gp:
+            gp.remove(acc)
+        else:
+            print("用户", acc, "不存在于", GroupName, "中。")
+    AutomatorRecorder.setgroup(GroupName, gp)
+
+
+def group_del_group(GroupName, TargetGroup):
+    group_del(GroupName, AutomatorRecorder.getgroup(TargetGroup, False))
+
+
+def group_del_all(GroupName):
+    AutomatorRecorder.setgroup(GroupName, [])
+
+
+def group_move(GroupName1, GroupName2, UserNames: List[str]):
+    assert GroupName1 != GroupName2, "两个组不能相同！"
+    group_add(GroupName2, UserNames)
+    group_del(GroupName1, UserNames)
+
+
+def group_move_group(GroupName1, GroupName2, TargetGroup):
+    assert GroupName1 != GroupName2, "两个组不能相同！"
+    UserNames = AutomatorRecorder.getgroup(TargetGroup, False)
+    group_add(GroupName2, UserNames)
+    group_del(GroupName1, UserNames)
+
+
+def group_move_all(GroupName1, GroupName2):
+    assert GroupName1 != GroupName2, "两个组不能相同！"
+    group_add(GroupName2, AutomatorRecorder.getgroup(GroupName1, False))
+    group_del_all(GroupName1)
 
 
 def create_batch(BatchName):
@@ -905,6 +996,8 @@ if __name__ == "__main__":
                 print(DOC_STR["user?"])
             elif order == "task?" or cmd == "task":
                 print(DOC_STR["task?"])
+            elif order == "customtask?" or cmd == "customtask":
+                print(DOC_STR["customtask?"])
             elif order == "group?" or cmd == "group":
                 print(DOC_STR["group?"])
             elif order == "batch?" or cmd == "batch":
@@ -951,11 +1044,53 @@ if __name__ == "__main__":
                     del_all_task()
                 else:
                     print("Wrong Order!")
+            elif order == "customtask":
+                if len(cmds) == 2 and cmds[1] == "-l":
+                    list_all_customtasks()
+                else:
+                    print("Wrong Order!")
             elif order == "group":
                 if len(cmds) == 2 and cmds[1] == "-l":
                     list_all_groups()
+                elif len(cmds) == 4 and cmds[1] == "add" and cmds[3].startswith("*") and cmds[3] != "*":
+                    TargetGroup = cmds[3][1:]
+                    GroupName = cmds[2]
+                    group_add_group(GroupName, TargetGroup)
+                elif len(cmds) >= 4 and cmds[1] == "add":
+                    UserNames = cmds[3:]
+                    GroupName = cmds[2]
+                    group_add(GroupName, UserNames)
+                elif len(cmds) == 4 and cmds[1] == "del" and cmds[3] == "*":
+                    GroupName = cmds[2]
+                    group_del_all(GroupName)
+                elif len(cmds) == 4 and cmds[1] == "del" and cmds[3].startswith("*"):
+                    GroupName = cmds[2]
+                    TargetGroup = cmds[3][1:]
+                    group_del_group(GroupName, TargetGroup)
+                elif len(cmds) >= 4 and cmds[1] == "del":
+                    UserNames = cmds[3:]
+                    GroupName = cmds[2]
+                    group_del(GroupName, UserNames)
+                elif len(cmds) == 5 and cmds[1] == "move" and cmds[4] == "*":
+                    GroupName1 = cmds[2]
+                    GroupName2 = cmds[3]
+                    group_move_all(GroupName1, GroupName2)
+                elif len(cmds) == 5 and cmds[1] == "move" and cmds[4].startswith("*"):
+                    GroupName1 = cmds[2]
+                    GroupName2 = cmds[3]
+                    TargetGroup = cmds[4][1:]
+                    group_move_group(GroupName1, GroupName2, TargetGroup)
+                elif len(cmds) >= 5 and cmds[1] == "move":
+                    UserNames = cmds[4:]
+                    GroupName1 = cmds[2]
+                    GroupName2 = cmds[3]
+                    group_move(GroupName1, GroupName2, UserNames)
+                elif len(cmds) == 3 and cmds[1] == "user":
+                    show_group_user(cmds[2])
+                elif len(cmds) == 3 and cmds[2] == "-g":
+                    show_group(cmds[1], True)
                 elif len(cmds) == 2:
-                    show_group(cmds[1])
+                    show_group(cmds[1], False)
                 else:
                     print("Wrong Order!")
             elif order == "batch":

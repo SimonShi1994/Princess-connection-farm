@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.2.20210123
+ # Princess connection 公主连结农场脚本v2.4.20210212
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -9,6 +9,8 @@
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
 **支持模拟器多开**
+
+**支持Wechat/QQ部分 通知推送**
 
 **支持自动填写验证码**
 
@@ -20,6 +22,10 @@
 
 **支持开关一键修改配置**
 
+**支持自定义任务（如果你会python）**
+
+**支持数据中心（库存、角色、刷图规划）**
+
 ## 详细功能
 
 1. 行会
@@ -28,6 +34,7 @@
 - [x] 支援助战
 - [x] 行会捐赠
 - [x] 行会点赞
+- [x] 公会战自动出甜心刀
 
 2. 地下城
 
@@ -59,6 +66,8 @@
 - [x] OCR获取账号信息
 - [x] 卖出过量装备
 - [x] 暂停手操
+- [x] 库存识别 （仅限装备）
+- [x] 角色识别
 
 6. 刷图
 
@@ -111,7 +120,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 [如何接入打码平台](docs/如何接入打码平台.md)
 
-开关用法正在绝赞编写中！
+[如何使用开关模块](docs/switch_guide.md)
 
 - 感觉还是不会使用，怎么办？
 
@@ -152,6 +161,70 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2021/2/10 By:TheAutumnOfRice
+
+- 修复自定义任务无法导入的BUG
+
+2021/2/9 By:TheAutumnOfRice
+
+- 修复19图图号错乱
+
+2021/2/5 By:CyiceK
+
+- 上线公会战自动摸`h10`
+
+2021/2/5 By:TheAutumnOfRice
+
+- 数据中心新增角色养成状态总览 `js trackinfo`
+- 修复一个计算Rank所需装备的BUG
+
+2021/2/4 By:CyiceK
+
+- 修复QQBot推送的些许bug，彻底解决了因推送内容字数过多导致发不出去的问题
+
+2021/2/3 By:TheAutumnOfRice
+
+- 修复角色识别覆盖追踪信息的BUG
+- 修复角色识别中OCR爆炸的BUG
+- 增加刷图规划的体验
+- 优化requirements文件
+- 修复19图刷图识别问题
+
+2021/2/2 By:TheAutumnOfRice
+
+- 上线数据中心（DataCenter)，可于主界面data启动
+  - 增加干炸里脊数据库支持
+  - 增加刷图规划
+  - 支持兰德索尔图书馆数据交互
+- 增加角色识别，修复一些识别BUG
+- 修复QQBot不启用时报错的BUG
+- 增加19图
+
+2021/1/31 By:CyiceK
+
+- 优化推送机器人的代码结构
+- 上线QQbot，已知问题是QQbot推送有字数限制，有几率触发无法推送
+- 快速截图默认关闭，若有脚本问题 卡住等，需要速率的再自行开启
+
+2021/1/27 By:TheAutumnOfRice
+
+- 修复一些BUG
+- OCR信息获取体验更佳
+- 增加库存识别 `t6`
+
+2021/1/26 By:TheAutumnOfRice
+
+- 修复了list_all_groups的一些BUG
+- 增加了便捷的组管理命令
+- 给ocr信息获取增加了“所在组”
+- 增加了开关的使用说明
+- 增加自定义模块 `customtask`
+
+2021/1/24 By:TheAutumnOfRice
+
+- 修复inline_app, pcr_config.py的一些BUG
+- 将config.ini加入.gitignore
 
 2021/1/23 By:TheAutumnOfRice
 

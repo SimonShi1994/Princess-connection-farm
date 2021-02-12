@@ -337,6 +337,22 @@ class BaseMixin:
         img, at = self._get_img_at(img, at)
         return UIMatcher.img_all_where(screen, img, threshold, at, method)
 
+    def img_where_all_prob(self, img, threshold=0.9, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
+        """
+        返回一个图片所有的位置和prob
+        :param img:
+            一个字符串，表示图片的地址；或者为PCRelement类型。
+            当img为PCRelement时，如果at参数为None，则会使用img.at。
+        :param threshold: 阈值
+        :param at: 搜素范围
+        :param screen: 若设置为None，则重新截图；否则使用screen为截图
+        :return: list[(prob,x,y,at)]
+        """
+        if screen is None:
+            screen = self.getscreen()
+        img, at = self._get_img_at(img, at)
+        return UIMatcher.img_all_prob(screen, img, threshold, at, method)
+
     def img_equal(self, img1, img2, at=None, similarity=0.01) -> float:
         """
         输出两张图片对应像素相似程度
@@ -434,7 +450,7 @@ class BaseMixin:
             time.sleep(delay)
             sc = self.getscreen()
 
-    def check_dict_id(self, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05):
+    def check_dict_id(self, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05, max_retry=3):
         """
         识别不同图的编号，比较其概率
         :param id_dict: 字典，{key:PCRElement}，表示{编号:图片}
@@ -445,19 +461,23 @@ class BaseMixin:
             None: 识别失败
             Else: 识别的key
         """
-        sc = self.getscreen() if screen is None else screen
-        pdict = {}
-        for i, j in id_dict.items():
-            pdict[i] = self.img_prob(j, screen=sc)
-        tu = max(pdict, key=lambda x: pdict[x])
-        l = sorted(pdict.values(), reverse=True)
-        if debug:
-            print(tu)
-            print(l)
-        if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
-            return None
-        else:
-            return tu
+        for retry in range(max_retry):
+            sc = self.getscreen() if screen is None else screen
+            screen = None
+            pdict = {}
+            for i, j in id_dict.items():
+                pdict[i] = self.img_prob(j, screen=sc)
+            tu = max(pdict, key=lambda x: pdict[x])
+            l = sorted(pdict.values(), reverse=True)
+            if debug:
+                print(tu)
+                print(l)
+            if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
+                time.sleep(0.5)
+                continue
+            else:
+                return tu
+        return None
 
     def run_func(self, th_name, a, fun, async_sexitflag=False):
         if async_sexitflag:
@@ -522,7 +542,11 @@ class BaseMixin:
                             self.receive_minicap.stop()
                         self.last_screen = self.d.screenshot(filename, format="opencv")
             else:
-                self.last_screen = self.d.screenshot(filename, format="opencv")
+                if filename is None:
+                    self.last_screen = self.d.screenshot(filename, format="opencv")
+                else:
+                    self.d.screenshot(filename, format="opencv")
+                    self.last_screen = cv2.imread(filename)
             self.last_screen_time = time.time()
             return UIMatcher.AutoRotateClockWise90(self.last_screen)
         else:

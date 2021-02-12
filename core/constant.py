@@ -128,9 +128,9 @@ MAIN_BTN = {
     "gzjjc": p(820, 395),
 
     # 圣迹调查
-    "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)), #圣迹调查
+    "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)),  # 圣迹调查
     "shengji": p(736, 267, img="img/shengji/shengjidiaocha.bmp", at=(700, 225, 777, 302)),
-    
+
     # 右侧的kkr
     "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),
 
@@ -298,6 +298,13 @@ HANGHUI_BTN = {
     "sqbc": p(img="img/hanghui/sqbc.bmp", at=(439, 32, 521, 52)),
 
 }
+TUANDUIZHAN_BTN = {
+    "tuanduizhan": p(img="img/hanghui/tuanduizhan.bmp", at=(805, 204, 950, 346)),
+    "shangbiao": p(img="img/hanghui/shangbiao.bmp"),
+    "taofaxinxi": p(img="img/hanghui/taofaxinxi.bmp", at=(248, 412, 356, 454)),
+    "tiaozhan": p(833, 462, img="img/hanghui/tiaozhan.bmp", at=(738, 422, 924, 497)),
+    "zhandou": p(587, 374, img="img/hanghui/zhandou.bmp", at=(473, 334, 696, 400)),
+}
 ZHUCAIDAN_BTN = {
     "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(493, 247, 695, 290)),
     "jianjie": p(img="img/zhucaidan/jianjie.bmp", at=(267, 241, 499, 290)),
@@ -311,7 +318,10 @@ ZHUCAIDAN_BTN = {
     "jiangxu": p(865, 31, img="img/zhucaidan/jiangxu.bmp", at=(849, 22, 881, 41)),
     "chushouqueren": p(img="img/zhucaidan/chushouqueren.bmp", at=(434, 30, 521, 53)),
     "chushouwanbi": p(img="img/zhucaidan/chushouwanbi.bmp", at=(434, 133, 522, 154)),
-    "chushou2": p(584, 483)
+    "chushou2": p(584, 483),
+    "sortico": p(img="img/zhucaidan/sortico.bmp", at=(800, 21, 824, 41)),
+    "sale_short": p(846, 428, img="img/zhucaidan/sale_short.bmp", at=(820, 419, 871, 436)),
+    "sale_long": p(771, 428, img="img/zhucaidan/sale_short.bmp", at=(745, 419, 796, 436))
 
 }
 FIGHT_BTN = {
@@ -538,7 +548,7 @@ DXC_COORD = {
         5: p(297, 190)
     }
 }
-MAX_MAP = 18
+MAX_MAP = 19
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -630,6 +640,12 @@ HARD_COORD = {
         2: p(481, 361),
         3: p(762, 287),
     },
+    19: {
+        1: p(224, 324),
+        2: p(473, 262),
+        3: p(764, 317),
+    },
+
 }
 
 SHOP_BTN = {
@@ -698,7 +714,16 @@ ZHUXIAN_ID = {
     15: p(img="img/zhuxian/15.bmp", at=(450, 74, 536, 90)),
     16: p(img="img/zhuxian/16.bmp", at=(450, 74, 534, 87)),
     17: p(img="img/zhuxian/17.bmp", at=(448, 71, 539, 90)),
-    18: p(img="img/zhuxian/18.bmp", at=(399, 75, 506, 87)),
+    18: p(img="img/zhuxian/18L.bmp", at=(424, 75, 508, 88)),
+    19: p(img="img/zhuxian/19L.bmp", at=(422, 76, 507, 88)),
+}
+ZHUXIAN_XXXYY_ID = {
+    # 小行星原野你长得太像了，无奈增加二级分类
+    18: p(img="img/zhuxian/18R.bmp", at=(532, 73, 561, 88)),
+    19: p(img="img/zhuxian/19R.bmp", at=(530, 73, 562, 89)),
+}
+ZHUXIAN_SECOND_ID = {
+    (18, 19): ZHUXIAN_XXXYY_ID,
 }
 
 NORMAL_COORD = {
@@ -1070,8 +1095,41 @@ NORMAL_COORD = {
             1: p(160, 224),
         }
     },
+    19: {
+        "right": {
+            14: p(754, 237),
+            13: p(607, 252),
+            12: p(685, 383),
+            11: p(526, 397),
+            10: p(460, 282),
+            9: p(322, 230),
+        },
+        "left": {
+            8: p(737, 371),
+            7: p(580, 394),
+            6: p(546, 252),
+            5: p(464, 347),
+            4: p(347, 432),
+            3: p(203, 375),
+            2: p(345, 312),
+            1: p(245, 248),
+        }
+    }
 }
-
+RANKS_DICT = {
+    1: p(img="img/ranks/1.bmp", at=(204, 110, 287, 136)),
+    2: p(img="img/ranks/2.bmp", at=(205, 111, 287, 134)),
+    3: p(img="img/ranks/3.bmp", at=(203, 111, 289, 138)),
+    4: p(img="img/ranks/4.bmp", at=(204, 110, 289, 137)),
+    5: p(img="img/ranks/5.bmp", at=(205, 112, 288, 135)),
+    6: p(img="img/ranks/6.bmp", at=(204, 112, 288, 137)),
+    7: p(img="img/ranks/7.bmp", at=(204, 110, 287, 136)),
+    8: p(img="img/ranks/8.bmp", at=(204, 109, 287, 138)),
+    9: p(img="img/ranks/9.bmp", at=(203, 110, 289, 136)),
+    10: p(img="img/ranks/10.bmp", at=(202, 113, 293, 134)),
+    11: p(img="img/ranks/11.bmp", at=(202, 110, 291, 135)),
+    12: p(img="img/ranks/12.bmp", at=(201, 112, 290, 134)),
+}
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
     "run_status": {
@@ -1095,7 +1153,7 @@ USER_DEFAULT_DICT = {
         "niudan": 0,  # 上次免费扭蛋时间
         "tansuo": 0,  # 上次探索时间
         "maizhuangbei": 0,  # 上次卖装备时间
-        "shengji": 0,   #上次圣迹调查时间
+        "shengji": 0,  # 上次圣迹调查时间
     }
     ,
     "daily_status": {
@@ -1104,6 +1162,23 @@ USER_DEFAULT_DICT = {
         "normal": {},  # normal图刷图记录
         "hard": {},  # hard图刷图记录
         "last_time": 0,  # 上一次刷图时间
+    },
+    "zhuangbei_kucun": {
+        # 装备库存状态
+        # Key: 装备名称
+        # Value:(装备数量,更新时间,备注)
+    },
+    "juese_info": {
+        # 角色信息
+        # Key：角色名称
+        # Value:{
+        # haogan
+        # dengji
+        # rank
+        # zb [bool]*6
+        # star
+        # last_update
+        # }
     }
 
 }

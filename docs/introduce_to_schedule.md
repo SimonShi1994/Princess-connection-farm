@@ -75,7 +75,7 @@ user -c -file zhanghao.txt
 
 我们希望可以输入`全部装备号 做 捐装备`类似的命令方式，就可以实现上面的效果。因此，我们需要把这种号全部编组。
 
-首先，我们在根目录下（与main_new.py同一目录）创建一个文件夹`/groups`，在其中新建一个文本文件，文件名为`zhuangbei.txt`。
+首先，我们在根目录下（与main_new.py同一目录）创建一个文件夹`/groups`，在其中新建一个文本文件，文件名为`zhuangbei.json`。
 虽然理论上支持中文，不过为了保险起见，尽量全部使用字母吧。创建完成后，我们在其中写五行，每行一个账号名：
 
 ```
@@ -85,6 +85,7 @@ zhuangbei3
 zhuangbei4
 zhuangbei5
 ```
+> 明明是json后缀名却一行一个可太奇怪了？习惯就好……
 
 这样，我们就建了一个名叫`zhuangbei`的组，在配置控制台中，输入`group -l`，将会查看到刚刚创建的组的信息。
 还可以通过`group zhuangbei`命令，查看zhuangbei组内的成员。如果没有产生错误，说明这个组已经建立成功啦。
@@ -113,7 +114,7 @@ zhuangbei5
 
 用同样的方法，把剩下两个子任务依次添加进mana中。然后，`save`,`exit`，至此一个mana号的任务就创建完毕了。
 
-任务文件被保存在`/tasks`文件夹下，我们将找到之前定义的`mana.txt`文件，点进查看。该任务通过json的方式存储，其中用
+任务文件被保存在`/tasks`文件夹下，我们将找到之前定义的`mana.json`文件，点进查看。该任务通过json的方式存储，其中用
 `type`关键字表示该任务的缩写，而其余的均为该任务的参数。目前的控制台不能很好地做到任务的编辑，如果需要编辑任务的参数，
 可以手动打开task文件，然后调换顺序，修改参数等。修改结束后，建议先在控制台中输入`task mana`命令查看该任务的详情，检查
 编辑情况，若弹出错误，则说明该任务文件非法，按照提示修改即可。
@@ -237,7 +238,7 @@ emulator-5556   device
 名为zhuangbei的Schedule为例，首先，输入`bind zhuangbei`命令，将该计划与控制台绑定。
 
 绑定之后，输入help查看帮助，会发现在原来的基础上，增加了很多其它的选项。输入first或者continue，即可执行该计划。
-绑定的Schedule会存放在`/bind_schedule.txt`中，因此绑定一次后，每次重新打开控制台都无需再次绑定。
+绑定的Schedule会存放在`/bind_schedule.json`中，因此绑定一次后，每次重新打开控制台都无需再次绑定。
 
 在config.ini中，有一个名为running_input的选项，默认设置的是False，表示在运行时不允许用户输入指令。事实上，
 在运行的命令行中追加输入指令是不妥的做法，且有小概率导致子进程卡死。在没有绑定schedule时，实时控制是必要的，因此
@@ -264,19 +265,46 @@ schedulename的计划。也可以把first改成continue，此时从上次中断�
 在根目录下，有一个config.ini的配置文件，通过修改配置文件可以获得更多的拓展功能，从而得到更好的使用体验。在控制台中输入info可以查看
 当前全部的配置情况。
 
-### 3.1 配置Server Chan
+### 3.1 配置Server Bot
+
+- Wechat:
 
 Server酱 API申请地址：http://sc.ftqq.com/3.version
 
 申请好Server酱 API并且完成 **与** 微信的绑定http://sc.ftqq.com/?c=wechat&a=bind
 
-
-
 之后将 申请好的Server酱 API填入项目目录下的**config.ini**的**s_sckey**中
+
+
+
+- QQ:
+
+Qmsg酱 API申请地址：https://qmsg.zendee.cn/index.html
+
+CoolPush API申请地址：https://cp.xuthus.cc/
+
+从上面任选一家，在qqbot_select填入选择的名字[Qmsgnike/CoolPush]
+
+```ini
+# qqbot私人消息开关，用于发送私人消息 0关 1开
+qqbot_private_send_switch = 0
+# qqbot群组消息开关，用于发送群组消息 0关 1开
+qqbot_group_send_switch = 0
+```
+
+API填入qqbot_key中
+
+qq:指定接收消息的QQ号或者QQ群号,可以添加多个,以英文逗号分割。如:1244453393,24345821
+
+
+
+Wechat/QQ 这两个API可以两个都填，那就两个一起发送
+
+
 
 config中，在s_sentstate这里可以自定义发送脚本运行状态的时间间隔（min）
 
-log_lev 则为日志级别，这里设定了Server酱只会接收那种类型的信息
+log_lev 则为日志级别，这里设定了pushbot只会接收那种类型的信息
 
 数字越小越详细`0:info, warning, error | 1:warning, error | 2:error | 3:非重要消息不发送`
 

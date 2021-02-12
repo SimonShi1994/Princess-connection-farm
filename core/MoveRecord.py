@@ -44,6 +44,7 @@ class movevar:
 
         self.var = var
         self.autosave = autosave
+        self.reg = []
 
     def save(self):
         """
@@ -54,6 +55,12 @@ class movevar:
         if "__self__" in self.var:
             s = self.var["__self__"]
             s.savestate()
+
+    def regflag(self, flagkey, default=None):
+        if flagkey not in self.var:
+            self.var[flagkey] = default
+        self.reg += [flagkey]
+        return self.var[flagkey]
 
     def setflag(self, flagkey, flagvalue=1, save=None):
         """
@@ -83,6 +90,9 @@ class movevar:
             save = self.autosave
         if "__flag__" in self.var:
             del self.var["__flag__"]
+        for flag in self.reg:
+            if flag in self.var:
+                del self.var[flag]
         if save:
             self.save()
 

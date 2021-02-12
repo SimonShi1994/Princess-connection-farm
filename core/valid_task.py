@@ -1,8 +1,10 @@
 import abc
+import importlib
 from math import inf
 from typing import List, Type, Any, Optional, Union
 
 from core.constant import NORMAL_COORD, HARD_COORD
+from core.pcr_config import debug
 
 
 class InputBoxBase(metaclass=abc.ABCMeta):
@@ -162,9 +164,48 @@ class TaskParam:
         return True
 
 
+class ConstantInputer(InputBoxBase):
+    def __init__(self, c):
+        self.c = c
+
+    def create(self):
+        return self.c
+
+    def check(self, obj):
+        # if obj != self.c:
+        #     return "必须是 " + str(self.c) + " !"
+        return ""
+
+
 class ValidTask:
     def __init__(self):
         self.T = {}  # 存放合法Task记录
+
+    def add_custom(self, pymodule: str):
+        py = None
+        try:
+            if debug:
+                print("Loading pymodule:", pymodule)
+            py = getcustomtask(pymodule)
+        except Exception as e:
+            if debug:
+                print("读取自定义模块失败！", e)
+            return
+        if not getattr(py, "__enable__", False):
+            return
+        valid = getattr(py, "__valid__", ValidTask())
+        custom_T = valid.T
+        for abbr in custom_T:
+            if debug:
+                print("添加自定义：", abbr)
+            for illegal in ["self", "var", "funcname", "pymodule"]:
+                assert illegal not in custom_T[abbr]["param_dict"], "自定义变量中不能出现" + illegal + "!"
+            self.T[abbr] = custom_T[abbr].copy()
+            self.T[abbr]["funname"] = "run_custom_task"
+            self.T[abbr]["params"] += [
+                TaskParam("pymodule", str, "自定义模块名", "自动生成", pymodule, ConstantInputer(pymodule))]
+            self.T[abbr]["params"] += [TaskParam("funcname", str, "函数名称", "自动生成", custom_T[abbr]["funname"],
+                                                 ConstantInputer(custom_T[abbr]["funname"]))]
 
     def add(self, abbr: str, funname: str, title: str, desc: str, params: Optional[List[TaskParam]] = None):
         """
@@ -511,6 +552,7 @@ class MeiRiHTuInputer(ShuatuBaseBox):
 
 """
 
+
 class MeiRiHTuInputer(InputBoxBase):
     def create(self):
         print("输入A-B字符串，表示刷Hard A-B图。")
@@ -538,6 +580,7 @@ class MeiRiHTuInputer(InputBoxBase):
                 return str(e)
         return ""
 
+
 VALID_TASK = ValidTask() \
     .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备",
          [TaskParam("once_times", int, "单账号捐赠的次数", "一个账号轮询捐赠多少次，多次可以提高容错率但会增加脚本执行时间", 2)]) \
@@ -562,6 +605,7 @@ VALID_TASK = ValidTask() \
                                               "程序自动记录上一次成功发起的时间.\n"
                                               "如果两次捐赠小于8小时，且相差小于等待时间\n"
                                               "则程序进入什么都不做的等待，否则跳过。", 300)]) \
+    .add("h10", "tuanduizhan", "自动摸会战", "农场号自动出甜心刀,请自己确保执行到该任务时已经有挑战次数。目前还在bate，不排除有问题") \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
          [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个", 1),
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False),
@@ -646,6 +690,8 @@ VALID_TASK = ValidTask() \
     .add("t4", "maizhuangbei", "小号卖装备", "卖出数量前三的装备（如果数量大于1000)(无需OCR）",
          [TaskParam("day_interval", int, "清理间隔", "请输入清理间隔天数", 30)]) \
     .add("t5", "zanting", "暂停", "暂停脚本，弹出弹窗，直到手动点击弹窗才结束") \
+    .add("t6", "kucunshibie", "库存识别", "识别装备库存并输出到outputs文件夹。") \
+    .add("t7", "jueseshibie", "角色识别", "识别角色信息并输出到outputs文件夹。") \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",
@@ -700,3 +746,38 @@ VALID_TASK = ValidTask() \
          [TaskParam("buy_tili", int, "体力次数", "如果要通过刷图来获取装备，最多买体力次数"),
           TaskParam("do_rank", bool, "是否升rank", "是否自动升rank"),
           TaskParam("do_shuatu", bool, "是否刷图", "是否在装备可以获得但不够时，通过刷图来获取装备")])
+
+customtask_addr = "customtask"
+
+
+def getcustomtask(modulefile) -> list:
+    target_name = "%s.%s" % (customtask_addr, modulefile)
+    py = importlib.import_module(target_name)
+    return py
+
+
+def list_all_customtasks(verbose=1) -> List[str]:
+    import os
+    if not os.path.exists(customtask_addr):
+        os.makedirs(customtask_addr)
+    ld = os.listdir(customtask_addr)
+    tasks = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".py"):
+            try:
+                getcustomtask(i[:-3])
+                if verbose:
+                    print("自定义模块", i, "加载成功！")
+                tasks += [i[:-3]]
+                count += 1
+            except Exception as e:
+                if verbose:
+                    print("打开模块", i, "失败！", e)
+    if verbose:
+        print("加载完成，一共加载成功", count, "个模块。")
+    return tasks
+
+
+for l in list_all_customtasks(0):
+    VALID_TASK.add_custom(l)
