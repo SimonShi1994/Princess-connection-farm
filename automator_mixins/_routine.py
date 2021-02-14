@@ -27,7 +27,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 time.sleep(10)
 
         self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
-                      side_check=self.juqing_kkr, retry=5)
+                      side_check=self.juqing_kkr, retry=5, is_raise=False)
 
         if auto_update:
             i = 0

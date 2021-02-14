@@ -140,12 +140,11 @@ FC与Automator绑定，一个FC中必然含有参数_a，表示绑定的Automato
         pass
 
 """
+import collections
 import inspect
 import random
 import time
-import collections
 from math import inf
-
 from typing import Callable, Any, Dict, Optional, Union, List, Type
 
 from core.constant import PCRelement
@@ -331,6 +330,8 @@ class FunctionChecker:
             timeout = lockimg_timeout
         if timeout == 0:
             timeout = None
+        if isinstance(until, str):
+            until = [until]
         while True:
             try:
                 rv = self.run()
