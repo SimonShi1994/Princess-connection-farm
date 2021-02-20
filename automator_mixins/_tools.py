@@ -58,7 +58,7 @@ class ToolsMixin(BaseMixin):
             if time.time() - last > lockimg_timeout:
                 raise Exception("lock_home时出错：超时！")
 
-    def enter_home_scene(self):
+    def get_zhuye(self):
         """
         锁定主页后
         返回主页Scene

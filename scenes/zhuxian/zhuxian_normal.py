@@ -1,21 +1,18 @@
-import time
-
-from core.constant import MAIN_BTN, JUESE_BTN, DXC_ELEMENT, MAOXIAN_BTN, FIGHT_BTN
-from core.cv import UIMatcher
-from core.pcr_checker import Checker, RetryNow, PCRRetry
+from core.constant import MAOXIAN_BTN
+from core.pcr_checker import RetryNow, PCRRetry
 from scenes.errors import ZhuxianIDRecognizeError
 from scenes.zhuxian.zhuxian_base import ZhuXianBase
 
 
 class ZhuXianNormal(ZhuXianBase):
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
-        self.scene_name="ZhuXianNormal"
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "ZhuXianNormal"
 
         def feature(screen):
             if not self.is_exists(MAOXIAN_BTN["ditu"],screen=screen):
                 return False
-            state=self.check_maoxian_screen(screen)
+            state = self.check_maoxian_screen(screen, is_raise=False)
             return state==1
 
         self.feature=feature

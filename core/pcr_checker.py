@@ -148,7 +148,7 @@ from math import inf
 from typing import Callable, Any, Dict, Optional, Union, List, Type
 
 from core.constant import PCRelement
-from core.pcr_config import disable_timeout_raise, lockimg_timeout
+from core.pcr_config import lockimg_timeout
 
 
 class Checker:
@@ -449,6 +449,11 @@ class ElementChecker(FunctionChecker):
         return self
 
 
+class GotoException(Exception):
+    def __init__(self, ident):
+        super().__init__()
+        self.ident = ident
+
 class RetryNow(Exception):
     def __init__(self, name=None):
         super().__init__()
@@ -474,13 +479,13 @@ class PCRRetry:
         self.record_list = record_list  # 是否记录全部产生得错误
 
     def __call__(self, fun):
-        def f():
+        def f(*args, **kwargs):
             count = 0
             output_error = None
             output_errors = []
             while True:
                 try:
-                    out = fun()
+                    out = fun(*args, **kwargs)
                     return out
                 except RetryNow as r:
                     if r.name == self.name:

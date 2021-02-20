@@ -4,15 +4,11 @@ import os
 import random
 import threading
 import time
-from typing import Optional, Union, Type, overload
+from typing import Optional, Union, Type
+
 import cv2
-
-import requests
-
-from core.log_handler import pcr_log
-from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, lockimg_timeout, \
-    ocr_mode, debug
 import numpy as np
+import requests
 import uiautomator2 as u2
 
 from core import log_handler
@@ -20,11 +16,14 @@ from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
+from core.log_handler import pcr_log
 from core.pcr_checker import ExceptionSet, ElementChecker, Checker, ReturnValue
+from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, ocr_mode
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
     force_fast_screencut, adb_dir, clear_traces_and_cache
 from core.safe_u2 import SafeU2Handle, safe_u2_connect
 from core.usercentre import AutomatorRecorder
+from core.utils import make_it_as_number_as_possible
 from scenes.errors import PCRError
 
 lock = threading.Lock()
@@ -1172,48 +1171,35 @@ class BaseMixin:
                                                                    '是否有误！')
             return -1
 
-    def ocr_with_check(self,x1,y1,x2,y2,change_fun,screen_shot=None,init_size:float=1.0,max_retry=5):
-        """
-        如果changefun报错了，则改大size再试一次
-        如果changefun没报错，其返回值为输出值
-        超过max_retry，弹出错误OCRRecognizeError
-        """
-        size=init_size
-        retry = 0
-        while True:
-            out = self.ocr_center(x1,y1,x2,y2,screen_shot,size=size)
-            try:
-                out= change_fun(out)
-                return out
-            except Exception as e:
-                retry+=1
-                if retry>max_retry:
-                    raise OCRRecognizeError(*e.args,outstr=out)
-                size=size+1
+    def ocr_int(self, x1, y1, x2, y2, screen_shot=None):
+        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot)
+        if out == -1:
+            raise OCRRecognizeError("整数OCR失败了！", outstr=str(out))
+        out = make_it_as_number_as_possible(out)
+        return int(out)
 
-    def ocr_int(self,x1,y1,x2,y2,screen_shot=None,init_size=1.0,max_retry=5):
-        def intfun(s):
-            o=int(s)
-            assert o!=-1, "什么都没有检测到"
-        return self.ocr_with_check(x1,y1,x2,y2,intfun,screen_shot=screen_shot,init_size=init_size,max_retry=max_retry)
-
-    def ocr_A_B(self, x1, y1, x2, y2, screen_shot=None, init_size=1.0, max_retry=5):
+    def ocr_A_B(self, x1, y1, x2, y2, screen_shot=None):
         def ABfun(s):
             assert s != "-1", "什么都没有检测到"
-            assert "/" in s,"字符串中应该有/"
-            l=s.split("/")
-            assert len(l)==2,"字符串中有且只有一个/！"
-            a,b=l
-            a=int(a)
-            b=int(b)
-            return a,b
-        return self.ocr_with_check(x1, y1, x2, y2, ABfun, screen_shot=screen_shot, init_size=init_size,
-                                   max_retry=max_retry)
+            assert "/" in s, "字符串中应该有/"
+            l = s.split("/")
+            assert len(l) == 2, "字符串中有且只有一个/！"
+            a, b = l
+            return a, b
+
+        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot)
+        try:
+            a, b = ABfun(out)
+            a = make_it_as_number_as_possible(a)
+            b = make_it_as_number_as_possible(b)
+            return int(a), int(b)
+        except Exception as e:
+            raise OCRRecognizeError("OCR失败了！", e, outstr=out)
 
 
 class OCRRecognizeError(Exception):
-    def __init__(self,*args,outstr):
-        self.outstr=outstr
+    def __init__(self, *args, outstr):
+        self.outstr = outstr
         super().__init__(*args)
 
 

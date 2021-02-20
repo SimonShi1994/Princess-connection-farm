@@ -1,5 +1,7 @@
-from core.pcr_checker import Checker,FunctionChecker
 from typing import Type
+
+from core.pcr_checker import Checker
+
 """
 
 4. 场景类
@@ -52,7 +54,6 @@ class PCRSceneBase:
         self.chulijiaocheng=self._a.chulijiaocheng
         self.check_dict_id=self._a.check_dict_id
         self.ocr_center = self._a.ocr_center
-        self.ocr_with_check = self._a.ocr_with_check
         self.ocr_int=self._a.ocr_int
         self.ocr_A_B=self._a.ocr_A_B
 
@@ -60,14 +61,18 @@ class PCRSceneBase:
     def last_screen(self):
         return self._a.last_screen
 
-    def goto(self,scene:Type["PCRSceneBase"],gotofun,timeout=None,interval=8,retry=None):
+    def goto(self, scene: Type["PCRSceneBase"], gotofun, before_clear=True, timeout=None, interval=8, retry=None):
         def featureout(screen):
             return True if not self.feature(screen) else False
+
+        if before_clear:
+            self.clear_initFC()
         if self.feature is not None:
-            self._a.getFC().getscreen().\
-                add(Checker(featureout,name=f"{self.scene_name} - Feature Out"),rv=True).\
-                add_intervalprocess(gotofun,retry=retry,interval=interval,name="gotofun").lock(timeout=timeout)
-        self.clear_initFC()
+            self._a.getFC().getscreen(). \
+                add(Checker(featureout, name=f"{self.scene_name} - Feature Out"), rv=True). \
+                add_intervalprocess(gotofun, retry=retry, interval=interval, name="gotofun").lock(timeout=timeout)
+        if not before_clear:
+            self.clear_initFC()
         return scene(self._a).enter()
 
     def enter(self,timeout=None):
@@ -99,12 +104,21 @@ class PCRSceneBase:
         class _no_initFC:
             def __init__(self):
                 self._flag=True
+
             def __enter__(self):
                 if obj.scene_name not in obj._a.ES.FCs:
-                    self._flag=False
+                    self._flag = False
                 else:
                     obj.clear_initFC()
-            def __exit__(self,*args,**kwargs):
+
+            def __exit__(self, *args, **kwargs):
                 if self._flag:
                     obj.set_initFC()
+
         return _no_initFC()
+
+
+class PCRMsgBoxBase(PCRSceneBase):
+    def __init__(self, a):
+        super().__init__(a)
+        self.scene_name = "PCRMsgBox"

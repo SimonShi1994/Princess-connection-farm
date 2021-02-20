@@ -1,13 +1,16 @@
 from math import inf
 
-from core.constant import FIGHT_BTN
-from scenes.fight.fightinfo_base import FightInfoBase
 import numpy as np
 
+from core.constant import FIGHT_BTN
+from scenes.fight.fightinfo_base import FightInfoBase
+
+
 class FightInfoZhuXian(FightInfoBase):
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
-        self.scene_name="FightInfoZhuXian"
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "FightInfoZhuXian"
+
         def feature(screen):
             return self.is_exists(FIGHT_BTN["tgdw"],screen=screen)
 
@@ -70,9 +73,16 @@ class FightInfoZhuXian(FightInfoBase):
             screen = self.getscreen()
         if self.is_exists(FIGHT_BTN["infinity"]):
             return inf
-        at=(860,403,920,424)
-        A,B = self.ocr_A_B(*at, screen_shot=screen)
+        at = (860, 403, 920, 424)
+        A, B = self.ocr_A_B(*at, screen_shot=screen)
         if get_B:
-            return A,B
+            return A, B
         else:
             return A
+
+    def is_new_map(self, screen=None):
+        # 判断是不是还没打过的图
+        return self.get_upperright_stars(screen) == 0
+
+    def goto_saodang(self):
+        pass
