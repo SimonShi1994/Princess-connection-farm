@@ -1,3 +1,8 @@
+"""
+如果pip -r requirements.txt并不给力，
+那你可以试试这个偏方 （
+"""
+
 import importlib
 import subprocess
 import sys
