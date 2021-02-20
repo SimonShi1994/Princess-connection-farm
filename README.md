@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.4.20210212
+ # Princess connection 公主连结农场脚本v2.4.20210220
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -91,7 +91,7 @@
 - 如果上面的指令执行后感觉比较慢的话，可以试一下:
 
   ```
-  pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+  pip install -r requirements.txt -i https://pypi.douban.com/simple
   ```
 
 ~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。（建议先试一下不设置的情况

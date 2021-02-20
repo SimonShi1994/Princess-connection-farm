@@ -255,16 +255,23 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     if self.is_exists('img/dxc/chetui.bmp'):
                         break
 
+                # 这里尝试过一遍，防止卡住结算
+                self.lock_no_img('img/xiayibu.jpg', elseclick=[(870, 503)])
+                self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
+
             self.click(1, 1)  # 跳过结算
             while True:  # 撤退地下城
                 if self.dxc_switch == 1:
                     break
-                time.sleep(self.change_time)
-                self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
+                # time.sleep(self.change_time)
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
                     self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(808, 435)], retry=20)
                     self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
+                    continue
+                elif self.is_exists('img/yunhai.bmp', threshold=0.975):
                     break
+                else:
+                    self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
             # 执行完后再检测一轮后跳出大循环 self.lock_no_img('img/dxc/chetui.bmp', elseclick=[(808, 435), (588, 371)], retry=20,
             # at=(779, 421, 833, 440)) self.lock_img('img/yunhai.bmp')
             break

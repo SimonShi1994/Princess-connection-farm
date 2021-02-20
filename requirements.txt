@@ -27,9 +27,9 @@ flasgger==0.9.5 -i https://pypi.douban.com/simple
 
 
 #OCR
-tensorflow -i https://pypi.douban.com/simple
+tensorflow == 2.4.0 -i https://pypi.douban.com/simple
 muggle-ocr
-numpy==1.19.0 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+numpy==1.19.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pillow -i https://pypi.douban.com/simple
 pyyaml -i https://pypi.douban.com/simple
 # 低于python3.8版本的可能需要protobuf==3.6.0，大于就随便3.14.0
