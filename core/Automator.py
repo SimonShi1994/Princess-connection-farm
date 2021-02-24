@@ -20,7 +20,7 @@ from core.log_handler import pcr_log
 from core.pcr_config import trace_exception_for_debug, captcha_skip
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import check_task_dict, list_all_flags, is_in_group
-from core.valid_task import VALID_TASK
+from core.valid_task import VALID_TASK, getcustomtask
 
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
@@ -34,16 +34,16 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         self.init_device(address)
 
     def run_custom_task(self, pymodule: str, funcname: str, var=None, **kwargs):
-        import importlib
         func = None
         try:
             print("导入模块中……")
-            py = importlib.import_module(pymodule)
+            py = getcustomtask(pymodule)
             func = getattr(py, funcname)
             print("导入成功！")
         except Exception as e:
-            print("自定义脚本导入失败！", e)
-        func(self=self, var=var, **kwargs)
+            self.log.write_log("error", f"自定义脚本导入失败！{e}")
+        if func is not None:
+            func(self=self, var=var, **kwargs)
 
     def RunTasks(self, tasks: dict, continue_=True, max_retry=3,
                  first_init_home=True, rec_addr="rec"):
