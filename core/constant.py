@@ -135,6 +135,9 @@ MAIN_BTN = {
     "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),
 
     "xzcw": p(img="img/home/xzcw.bmp", at=(438, 135, 520, 157)),  # 下载错误
+    # 女神祭
+    "nsj": p(541, 430),
+    "wanfa": p(img="img/home/wanfa.bmp", at=(234, 6, 275, 64)),  # 玩法
 
 }
 JJC_BTN = {
