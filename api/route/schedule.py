@@ -27,6 +27,26 @@ def get_list_all_schedules():
 def get_schedules_info(filename):
     try:
         r = AutomatorRecorder.getschedule(filename)
+        if len(r['schedules']) > 1:
+            count = 0
+            for i in r['schedules']:
+                x = list(i.values())
+                y = list(i.keys())
+                x[2] = [x[2]]
+                y[2] = 'batchlist'
+                r['schedules'][count] = [dict(zip(y, x))]
+                if count < len(r['schedules']):
+                    count = count + 1
+        elif len(r['schedules']) == 1:
+            x = list(r.values())
+            y = list(x[0][0].keys())
+            z = list(x[0][0].values())
+            for i in range(len(y)):
+                if y[i] == 'batchfile':
+                    y[i] = 'batchlist'
+                    # if not type(z[i]) is list:
+                    z[i] = [z[i]]
+                r['schedules'] = [dict(zip(y, z))]
         if r:
             return ListReply(r, 0)
         else:
