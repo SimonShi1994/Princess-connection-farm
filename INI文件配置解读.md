@@ -7,6 +7,10 @@
 |      use_template_cache      |                 在开发工具使用时可以将其关闭                 |  bool  |          |      True       |
 |        baidu_ocr_img         |      是否输出名为 baidu_ocr.bmp的图片，该图片为原生截图      |  bool  |          |      False      |
 |        disable_timeout_raise         |      如果lock_img报错，是否禁用错误      |  bool  |          |      False      |
+|u2_record_size|U2指令记录列表大小|int||20
+|u2_record_filter|U2指令过滤列表|list|列表中的指令不会被记录|[]
+|debug_record_size|Automator指令记录列表大小|int||50
+|debug_record_filter|Automator指令过滤列表|list|列表中的指令不会被记录|['_lock_img','_move_check']
 | qqbot_select | qqbot的选择api服务商 | str | CoolPush/Qmsgnike | CoolPush |
 | qqbot_private_send_switch | qqbot私聊开关 | int | 0关 1开 | 0 |
 | qqbot_group_send_switch | qqbot群聊开关 | int | 0关 1开 | 0 |

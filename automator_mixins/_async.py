@@ -3,6 +3,7 @@ import time
 import keyboard
 import psutil
 
+from automator_mixins._base import DEBUG_RECORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause
@@ -273,11 +274,13 @@ class AsyncMixin(ToolsMixin):
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
         self.d.app_wait("com.bilibili.priconne")
-        self.start_th()
-        self.init_fastscreen()
-        self.start_async()
         if back_home:
+            self.start_th()
+            self.init_fastscreen()
+            self.start_async()
             self.lock_home()
 
+    @DEBUG_RECORD
     def fix_reboot(self, back_home=True):
         self._fix_reboot(back_home)
+
