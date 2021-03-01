@@ -2,7 +2,7 @@ import React from 'react'
 import request from '../../request'
 import ConditionComponent from '@/components/Formcomponents/CondtionComponent'
 import Batchlist from '@/components/Formcomponents/Batchlist'
-import { Form, Input, Button, Checkbox, InputNumber, Row, Col, Radio } from 'antd';
+import { Form, Input, Button, Card, InputNumber, Row, Col, Radio } from 'antd';
 
 const layout = {
     labelCol: { span: 8 },
@@ -31,30 +31,37 @@ export default (props) => {
         updateschedules(temp)
     }
     const onFinish = async (values) => {
-        await request(`/schedules_save`, { method: 'post', data: values })
+        await request(`/schedules_save`, {
+            method: 'post', data: {
+                ...values,
+                "filename": id,
+            }
+        })
     }
+    console.log(schedules)
     return (
         <div>
-            {schedules.map((schedule, index) => {
-                switch (schedule.type) {
-                    case 'asap':
-                        return (
-                            <Asapform updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
-                        );
-                    case 'config':
-                        return (
-                            <Configform updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
-                        )
-                    case 'wait':
-                        return (
-                            <Waitconfig updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
-                        )
-                    default:
-                        return;
+            <Card title={id}>
+                {schedules.map((schedule, index) => {
+                    switch (schedule.type) {
+                        case 'asap':
+                            return (
+                                <Asapform updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
+                            );
+                        case 'config':
+                            return (
+                                <Configform updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
+                            )
+                        case 'wait':
+                            return (
+                                <Waitconfig updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
+                            )
+                        default:
+                            return;
+                    }
                 }
-            }
-            )}
-
+                )}
+            </Card>
 
         </div>
     )
@@ -107,7 +114,6 @@ const Asapform = (props) => {
             onFinish={onFinish}
             onValuesChange={handlechange}
         >
-            <Row><Col offset={4} span={8}>{props.name}</Col></Row>
             <Form.Item
                 label="计划名"
                 name="name"
@@ -139,7 +145,7 @@ const Asapform = (props) => {
                     buttonStyle="solid"
                 />
             </Form.Item>
-            
+
             <Row>
                 <Col offset={7} span={8}>
                     <Button type="primary" htmlType="submit">
@@ -184,7 +190,7 @@ const Configform = (props) => {
                     buttonStyle="solid"
                 />
             </Form.Item>
-            
+
             <Row>
                 <Col offset={7} span={8}>
                     <Button type="primary" htmlType="submit">
@@ -224,7 +230,6 @@ const Waitconfig = (props) => {
             onFinish={onFinish}
             onValuesChange={handlechange}
         >
-            <Row><Col offset={4} span={8}>{props.name}</Col></Row>
             <Form.Item
                 label="计划名"
                 name="name"
@@ -263,7 +268,7 @@ const Waitconfig = (props) => {
                     buttonStyle="solid"
                 />
             </Form.Item>
-            
+
             <Row>
                 <Col offset={7} span={8}>
                     <Button type="primary" htmlType="submit">

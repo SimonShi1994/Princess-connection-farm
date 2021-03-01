@@ -20,7 +20,6 @@ export default () => {
         copy[index] = data.schedules
         setdata(copy)
     }
-    console.log(list)
     return (
         <div>
             <Collapse onChange={getdata} accordion>
