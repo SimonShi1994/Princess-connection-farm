@@ -485,8 +485,14 @@ def JS_TRACKINFO():
         after_sum = sum(after_store.values())
         if before_sum == 0:
             continue
-        if after_sum == 0:
-            continue
+        if v['track_rank'] == v['rank']:
+            fg = True
+            for t1, t2 in zip(v['track_zb'], v['zb']):
+                if t1 and (not t2):
+                    fg = False
+                    break
+            if fg:
+                continue
         cur_rank = v['rank']
         cur_after_sum = 0
         while cur_rank <= v['track_rank']:
