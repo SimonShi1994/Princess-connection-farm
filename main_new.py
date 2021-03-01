@@ -444,7 +444,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.4.20210224")
+        print("当前版本为 Ver 2.4.20210301")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -458,7 +458,6 @@ if __name__ == "__main__":
         print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
-        print("* Happy 2021 Year!")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
     while True:
