@@ -186,9 +186,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.dxc_switch = 1
                 break
 
-            if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
+            time.sleep(self.change_time + 1)
+            if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=8000,at=(45, 144, 163, 252)):
                 # 如果第二个也等级不足就退出
-                if self.is_exists('img/dengjixianzhi.jpg', at=(160, 126, 270, 232)):
+                if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=8000,at=(160, 126, 270, 232)):
                     pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)
                     self.dxc_switch = 1
                     break
@@ -252,7 +253,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
                     break
                 else:
-                    if self.is_exists('img/shanghaibaogao.jpg', at=(663, 6, 958, 120)):
+                    if self.is_exists('img/shanghaibaogao.jpg', threshold=0.8, at=(663, 6, 958, 120)):
                         self.click(870, 503)
                     if self.is_exists('img/dxc/chetui.bmp'):
                         break

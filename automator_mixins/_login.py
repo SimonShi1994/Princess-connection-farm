@@ -134,6 +134,11 @@ class LoginMixin(BaseMixin):
                     # 点重试
                     self.click(482, 315, post_delay=3)
 
+                elif self.d(textContains="异常").exists() or self.d(textContains="返回").exists():
+                    print(f">>>{self.account}-网络异常，刷新验证码")
+                    self.click(476, 262)
+                    self.d(text="返回").click()
+
                 elif self.d(textContains="请在下图依次").exists():
                     print(f">>>{self.account}-检测到图字结合题")
                     print("当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
@@ -164,11 +169,6 @@ class LoginMixin(BaseMixin):
                     # print(type(x))
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 1.2)
-
-                elif self.d(textContains="异常").exists():
-                    print(f">>>{self.account}-网络异常，刷新验证码")
-                    self.click(476, 262)
-                    self.d(text="返回").click()
 
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
