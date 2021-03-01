@@ -305,7 +305,7 @@ class HanghuiMixin(ToolsMixin):
             for r in range(3):
                 for c in range(5):
                     at = get_equ_at(r, c)
-                    print(at)
+                    # print(at)
                     if self.is_exists(img=equip_img, at=at, screen=sc):
                         return (at[0] + 37, at[1] + 37)
             return None

@@ -12,6 +12,7 @@ import requests
 import xlrd
 from xlutils.copy import copy
 
+from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
 from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
@@ -35,6 +36,7 @@ class ToolsMixin(BaseMixin):
     """
 
     @timeout(300, "lock_home执行超时：超过5分钟")
+    @DEBUG_RECORD
     def lock_home(self):
         """
         锁定首页
@@ -60,6 +62,7 @@ class ToolsMixin(BaseMixin):
                 raise Exception("lock_home时出错：超时！")
 
     @timeout(300, "init_home执行超时：超过5分钟")
+    @DEBUG_RECORD
     def init_home(self):
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         while True:
@@ -169,6 +172,7 @@ class ToolsMixin(BaseMixin):
         set_last_record()
         self.lock_home()
 
+    @DEBUG_RECORD
     def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
         """
         :param size: 放大的大小
@@ -235,7 +239,8 @@ class ToolsMixin(BaseMixin):
             img_binary = cv2.imencode('.png', part)[1].tobytes()
             files = {'file': ('tmp.png', img_binary, 'image/png')}
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
-            pcr_log(self.account).write_log(level='info', message='本地OCR识别结果：%s' % local_ocr_text.text)
+            if debug:
+                print('本地OCR识别结果：%s' % local_ocr_text.text)
             return local_ocr_text.text
         except Exception as ocr_error:
             pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)

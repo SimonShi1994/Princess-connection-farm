@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.4.20210301
+ # Princess connection 公主连结农场脚本v2.5.20210302
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -162,6 +162,17 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## 更新历史
+
+2021/3/2 By:TheAutumnOfRice
+
+- 新增舒爽的流程控制
+  - 新增暂停继续指令 `pause`/`resume`
+  - 新增任务查看与跳转 `task`/`skip`
+  - 
+- 新增强大的调试工具
+  - 单独开关指定debug `debug`
+  - 记录Automator和u2的操作信息 `rec`/`u2rec`
+  - 支持命令调试 `exec`
 
 2021/3/1 By:TheAutumnOfRice
 

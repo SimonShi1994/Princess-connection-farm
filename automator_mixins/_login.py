@@ -8,6 +8,7 @@ from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
+from ._base import DEBUG_RECORD
 from ._captcha import CaptionSkip
 
 
@@ -18,6 +19,7 @@ class LoginMixin(BaseMixin):
     """
 
     @timeout(180, "start执行超时：超过3分钟")
+    @DEBUG_RECORD
     def start(self):
         """
         项目地址:https://github.com/bbpp222006/Princess-connection
@@ -38,6 +40,7 @@ class LoginMixin(BaseMixin):
                 self.appRunning = False
                 continue
 
+    @DEBUG_RECORD
     def do_login(self, ac, pwd):  # 执行登陆逻辑
         """
         :param ac:
@@ -53,6 +56,7 @@ class LoginMixin(BaseMixin):
 
         # 结构梳理下为：auth -> login_auth(是否需要实名认证<->login<->do_login[验证码处理]) -> init_home(lock_home)
         for retry in range(30):
+            self._move_check()
             if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
                 self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
                 time.sleep(2)
@@ -97,6 +101,7 @@ class LoginMixin(BaseMixin):
                 while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                     if debug:
                         print("发现协议")
+                    self._move_check()
                     self.d.touch.down(814, 367).sleep(1).up(814, 367)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
@@ -235,6 +240,7 @@ class LoginMixin(BaseMixin):
                                       timeout=captcha_wait_time)
                     now_time = time.time()
                     while time.time() - now_time < captcha_wait_time:
+                        self._move_check()
                         time.sleep(1)
                         if not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                             flag = False
@@ -250,6 +256,7 @@ class LoginMixin(BaseMixin):
         else:
             return 0  # 正常
 
+    @DEBUG_RECORD
     def login(self, ac, pwd):
         """
         项目地址:https://github.com/bbpp222006/Princess-connection
@@ -267,6 +274,7 @@ class LoginMixin(BaseMixin):
 
             try_count = 0
             while True:
+                self._move_check()
                 try_count += 1
                 if try_count % 10 == 0 and try_count > 500:
                     # 看一下会不会一直点右上角？
@@ -318,6 +326,7 @@ class LoginMixin(BaseMixin):
             # 异常重试登陆逻辑
             return self.do_login(ac, pwd)
 
+    @DEBUG_RECORD
     def auth(self, auth_name, auth_id):
         """
         项目地址:https://github.com/bbpp222006/Princess-connection
@@ -327,16 +336,25 @@ class LoginMixin(BaseMixin):
         :param auth_id:
         :return:
         """
+        self._move_check()
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
+        self._move_check()
         self.d.clear_text()
+        self._move_check()
         self.d.send_keys(str(auth_name))
+        self._move_check()
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_id_number").click()
+        self._move_check()
         self.d.clear_text()
+        self._move_check()
         self.d.send_keys(str(auth_id))
+        self._move_check()
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
+        self._move_check()
         self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
     @timeout(300, "login_auth登录超时，超过5分钟")
+    @DEBUG_RECORD
     def login_auth(self, ac, pwd):
         need_auth = self.login(ac=ac, pwd=pwd)
         if need_auth == -1:  # 这里漏了一句，无法检测验证码。
@@ -345,6 +363,7 @@ class LoginMixin(BaseMixin):
             auth_name, auth_id = random_name(), CreatIDnum()
             self.auth(auth_name=auth_name, auth_id=auth_id)
 
+    @DEBUG_RECORD
     def change_acc(self):  # 切换账号
         self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
         self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)], at=(495, 353, 687, 388))
