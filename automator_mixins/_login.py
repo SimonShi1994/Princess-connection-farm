@@ -206,7 +206,7 @@ class LoginMixin(BaseMixin):
                         print("重试次数太多啦，休息15s")
                         time.sleep(15)
                         _time = 0
-                        return AutoCaptcha()
+                        AutoCaptcha()
                     # 如果次数大于两次，则申诉题目
                     elif _time > captcha_senderror_times and captcha_senderror:
                         print("—申诉题目:", _id)
@@ -214,7 +214,7 @@ class LoginMixin(BaseMixin):
                     _time = + 1
                     time.sleep(4)
                     # 如果还有验证码就返回重试
-                    return AutoCaptcha()
+                    AutoCaptcha()
                 return state
 
             manual_captcha = captcha_skip
