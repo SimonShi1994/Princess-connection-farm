@@ -1,10 +1,10 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.1.20201205
+ # Princess connection 公主连结农场脚本v2.5.20210302
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
-## 简介
+## :bookmark_tabs:简介
 
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
@@ -18,7 +18,13 @@
 
 **支持每日自动三捐**
 
-## 详细功能
+**支持开关一键修改配置**
+
+**支持自定义任务（如果你会python）**
+
+**支持数据中心（库存、角色、刷图规划）**
+
+## :books:详细功能
 
 1. 行会
 
@@ -26,6 +32,7 @@
 - [x] 支援助战
 - [x] 行会捐赠
 - [x] 行会点赞
+- [x] 公会战自动出甜心刀
 
 2. 地下城
 
@@ -49,6 +56,7 @@
 - [x] 购买经验
 - [x] 探索
 - [x] 圣迹调查
+- [x] 收取女神祭
 
 5. 工具
 
@@ -57,6 +65,8 @@
 - [x] OCR获取账号信息
 - [x] 卖出过量装备
 - [x] 暂停手操
+- [x] 库存识别 （仅限装备）
+- [x] 角色识别
 
 6. 刷图
 
@@ -65,7 +75,7 @@
 - [x] 初始化
 - [x] 自动推图
 
-## 环境
+## :globe_with_meridians:环境
 
 - 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
@@ -80,7 +90,7 @@
 - 如果上面的指令执行后感觉比较慢的话，可以试一下:
 
   ```
-  pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+  pip install -r requirements.txt -i https://pypi.douban.com/simple
   ```
 
 ~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。（建议先试一下不设置的情况
@@ -93,27 +103,40 @@
 
 如何申请百度文字识别apikey和Secret Key:(https://blog.csdn.net/biao197/article/details/102907492 )
 
-Server酱食用方法：(http://sc.ftqq.com/3.version)
+## :loudspeaker:推送
 
-## 使用方式
+|          支持推送的API          | 是否可以交互 | 是否支持图片发送   | 支持‘不受限制’的文字发送 | 使用第三方服务API  | 衍生支持                                              |
+| :-----------------------------: | ------------ | ------------------ | ------------------------ | ------------------ | ----------------------------------------------------- |
+|      QQpush QQ:cold_sweat:      | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
+|      Wechat 微信（:hand:）      | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
+|         Wework 企业微信         | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | APP Bark_IOS Wework群机器人 钉钉群机器人 飞书群机器人 |
+|         TG 电报（:+1:）         | :x:          | :heavy_check_mark: | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
+| **还在开发ing**【看群投票决定】 |              |                    |                          |                    |                                                       |
+
+Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
+
+## :taxi:使用方式
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
-- 使用OCR相关的服务，请先启动**app.py**(双击app.py/`python app.py`)
+- 使用OCR相关的服务，必须启动app。使用2021-01-23后的版本程序默认自动启动app。
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 - 出现“No module named 'XXX'，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
-- 第一次正常运行后，就可以通过**run.bat**来一键启动
+- 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
+- 如果模拟器没有安装 ATX ，请在打开模拟器后，在控控制台里输入init进行初始化模拟器环境
 - **第一次使用，完全不懂怎么办？** 
 
 [Schedule使用方法](docs/introduce_to_schedule.md)
 
 [如何接入打码平台](docs/如何接入打码平台.md)
 
+[如何使用开关模块](docs/switch_guide.md)
+
 - 感觉还是不会使用，怎么办？
 
 更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
 
 
-## 额外说明
+## :warning:额外说明
 
 1. 请不要用于商业用途。代码交流和bug反馈请加群加qq群 1130884619
 
@@ -125,21 +148,168 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 4. 您的一点支持会是我们完善本项目的强大动力！(*/ω＼*)
 
-## 更新计划
+   **STAR近来统计图**
 
+   [![Stargazers over time](https://starchart.cc/SimonShi1994/Princess-connection-farm.svg)](https://starchart.cc/SimonShi1994/Princess-connection-farm)
+
+## :date:更新计划
+
+- [x] 滑动验证码问题
 - [x] 模拟器自启动控制
 - [x] 简化Schedule操作模式
 - [ ] WebGUI界面
 - [ ] 提高刷图效率
 - [ ] 刷活动本
+- [x] 女神祭
+- [ ] 跳过18图切图动画
 
-## 免责声明
+## :mute:免责声明
 
 当你**下载或使用**本项目，将默许
 
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
-## 更新历史
+## :hammer:更新历史:wrench:
+
+2021/3/2 By:Klarkxy
+
+- 编辑界面增加友好提示，方便编辑时使用。
+
+2021/3/2 By:CyiceK
+
+- 新增TGbot推送，去本地化设计，本地无需科学上网即可食用（因此也失去了脚本交互功能）
+
+2021/3/2 By:TheAutumnOfRice
+
+- 新增舒爽的流程控制
+  - 新增暂停继续指令 `pause`/`resume`
+  - 新增任务查看与跳转 `task`/`skip`
+  - 
+- 新增强大的调试工具
+  - 单独开关指定debug `debug`
+  - 记录Automator和u2的操作信息 `rec`/`u2rec`
+  - 支持命令调试 `exec`
+- 增加Bot的代理设置 （proxy_http,proxy_https)
+
+2021/3/1 By:TheAutumnOfRice
+
+- 新增20图
+- 修复data > js trackinfo中部分角色不显示的BUG
+
+2021/2/24 By:TheAutumnOfRice
+
+- 新增女神祭`r11`
+
+2021/2/10 By:TheAutumnOfRice
+
+- 修复自定义任务无法导入的BUG
+
+2021/2/9 By:TheAutumnOfRice
+
+- 修复19图图号错乱
+
+2021/2/5 By:CyiceK
+
+- 上线公会战自动摸`h10`
+
+2021/2/5 By:TheAutumnOfRice
+
+- 数据中心新增角色养成状态总览 `js trackinfo`
+- 修复一个计算Rank所需装备的BUG
+
+2021/2/4 By:CyiceK
+
+- 修复QQBot推送的些许bug，彻底解决了因推送内容字数过多导致发不出去的问题
+
+2021/2/3 By:TheAutumnOfRice
+
+- 修复角色识别覆盖追踪信息的BUG
+- 修复角色识别中OCR爆炸的BUG
+- 增加刷图规划的体验
+- 优化requirements文件
+- 修复19图刷图识别问题
+
+2021/2/2 By:TheAutumnOfRice
+
+- 上线数据中心（DataCenter)，可于主界面data启动
+  - 增加干炸里脊数据库支持
+  - 增加刷图规划
+  - 支持兰德索尔图书馆数据交互
+- 增加角色识别，修复一些识别BUG
+- 修复QQBot不启用时报错的BUG
+- 增加19图
+
+2021/1/31 By:CyiceK
+
+- 优化推送机器人的代码结构
+- 上线QQbot，已知问题是QQbot推送有字数限制，有几率触发无法推送
+- 快速截图默认关闭，若有脚本问题 卡住等，需要速率的再自行开启
+
+2021/1/27 By:TheAutumnOfRice
+
+- 修复一些BUG
+- OCR信息获取体验更佳
+- 增加库存识别 `t6`
+
+2021/1/26 By:TheAutumnOfRice
+
+- 修复了list_all_groups的一些BUG
+- 增加了便捷的组管理命令
+- 给ocr信息获取增加了“所在组”
+- 增加了开关的使用说明
+- 增加自定义模块 `customtask`
+
+2021/1/24 By:TheAutumnOfRice
+
+- 修复inline_app, pcr_config.py的一些BUG
+- 将config.ini加入.gitignore
+
+2021/1/23 By:TheAutumnOfRice
+
+- pcr_config结构变动：现在允许动态增删改查以及自动补全缺失了
+- 增加app的内部模式`inline_app`，优化app启动体验，防止app过量启动
+- batch支持随机优先级了（见edit-batch-random）
+- 修复了开关相关的BUG
+
+2021/1/20 By:TheAutumnOfRice
+
+- 开关（Switch)模块上线！
+- 为task和schedule增加了enable/disable/flag命令
+- task现在支持编辑、移动、显示详细信息了。
+
+2021/1/19 By:CyiceK
+
+- 注意，使用自动填写验证码的请务必在2.1前更新到此版本！！！
+- 将后缀txt转为json，为前端铺路（直接在控制台init就可以一键懒人转化啦0.0）
+- 修复无法跳过抽签的问题
+
+2021/1/4 By:TheAutumnOfRice
+
+- 修复rename的BUG （修完发现已经被CyiceK修复了）
+- 新增18图（但尚不能跳过切图动画）
+- 修复不能购买超级经验药水的BUG
+- 增加app.py启动和自启动（默认不开启`auto_start_app`）
+
+2020/12/29 By:CyiceK
+
+- 支持单账号自定义捐赠次数
+- 支持自动清空PCR产生的缓存垃圾，尝试用雷电的downcpu降低模拟器本身cpu占用
+
+2020/12/26 By:CyiceK
+
+- 修复自启动模拟器，因掉队产生的“自杀”行为，修复一些bug
+
+2020/12/21 By:CyiceK
+
+- 对验证码进行了处理（
+
+2020/12/21 By:TheAutumnOfRice
+
+- 出现未知类型验证码时转手动
+
+2020/12/17 By:CyiceK
+
+- 尝试修复模拟器自启动bug
 
 2020/12/4 By:CyiceK
 

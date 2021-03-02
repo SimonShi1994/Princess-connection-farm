@@ -1,8 +1,9 @@
 import time
 
-from core.constant import MAIN_BTN, HANGHUI_BTN, PCRelement
+from core.constant import MAIN_BTN, HANGHUI_BTN, PCRelement, TUANDUIZHAN_BTN, DXC_ELEMENT
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
+from core.log_handler import pcr_log
 from core.utils import diffday
 from ._tools import ToolsMixin
 
@@ -13,7 +14,7 @@ class HanghuiMixin(ToolsMixin):
     包含行会相关的脚本。
     """
 
-    def hanghui(self):
+    def hanghui(self, once_times):
         """
         行会自动捐赠装备
         2020/8/6 By:CyiceK 检查完毕
@@ -27,7 +28,7 @@ class HanghuiMixin(ToolsMixin):
             if self.is_exists('img/zhiyuansheding.bmp'):
                 time.sleep(3)  # 加载行会聊天界面会有延迟
                 self.lock_no_img('img/juanzengqingqiu.jpg', elseclick=[(367, 39)], retry=1)
-                for _ in range(2):
+                for _ in range(once_times):
                     time.sleep(0.8)
                     if self.is_exists('img/juanzeng.jpg', threshold=0.865):
                         screen_shot = self.getscreen()
@@ -246,7 +247,7 @@ class HanghuiMixin(ToolsMixin):
         out = self.lock_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)),
                             ifclick=[(230, 351), (1, 1)],
                             elseclick=[(1, 1), (688, 432)],
-                            elsedelay=8, retry=3, is_raise=False)
+                            elsedelay=8, retry=6, is_raise=False)
         if not out:
             self.log.write_log("error", "无法进入行会")
             self.lock_home()
@@ -304,7 +305,7 @@ class HanghuiMixin(ToolsMixin):
             for r in range(3):
                 for c in range(5):
                     at = get_equ_at(r, c)
-                    print(at)
+                    # print(at)
                     if self.is_exists(img=equip_img, at=at, screen=sc):
                         return (at[0] + 37, at[1] + 37)
             return None
@@ -399,3 +400,67 @@ class HanghuiMixin(ToolsMixin):
             self.click_btn(HANGHUI_BTN["jzqq_ok"])
             set_last_record()
         self.lock_home()
+
+    def tuanduizhan(self):
+        """
+        自动摸会战 By：CyiceK
+        2021/2/5
+        :return:
+        """
+        self.lock_home()
+        if not self.lock_img(img=TUANDUIZHAN_BTN["tuanduizhan"], ifclick=(875, 272),
+                             elseclick=(478, 519), side_check=self.juqing_kkr, retry=7):
+            pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战哦")
+            return
+        while True:
+            self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr)
+            try:
+                screen = self.getscreen()
+                r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
+                if self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
+                                 side_check=self.juqing_kkr):
+                    if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
+                        break
+            except Exception as e:
+                pcr_log(self.account).write_log("info", f"识别不到boss信息，已退出本任务")
+                return
+            else:
+                continue
+
+        self.lock_no_img(TUANDUIZHAN_BTN["tiaozhan"], elseclick=(833, 462), retry=5)
+        if not self.is_exists(DXC_ELEMENT["quanbu_blue"]):
+            pcr_log(self.account).write_log("info", f"{self.account}该用户没次数")
+            self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr)
+            return
+
+        if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
+            # 全部
+            self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
+            for i in range(1, 9):
+                self.click(DXC_ELEMENT["zhiyuan_dianren"][i])
+            # 点完人后确认一遍
+            if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
+                pcr_log(self.account).write_log(level='info', message="%s没有合适的人物打公会战!" % self.account)
+                self.lock_home()
+                return
+
+        while True:
+            # 战斗开始
+            self.click_btn(DXC_ELEMENT["zhandoukaishi"], until_disappear=DXC_ELEMENT["zhandoukaishi"], elsedelay=0.1)
+
+            if self.lock_img(TUANDUIZHAN_BTN["zhandou"], retry=7):
+                # 战斗
+                self.lock_no_img(TUANDUIZHAN_BTN["zhandou"], elseclick=(587, 374))
+                break
+            if self.is_exists('img/caidan.jpg'):
+                break
+
+        if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], retry=6):
+            self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], elsedelay=0.2, retry=3)
+            self.lock_img('img/kuaijin_2.bmp', elseclick=[(913, 494)], elsedelay=0.2, retry=3)
+        time.sleep(3)
+        while True:
+            if self.is_exists('img/shanghaibaogao.jpg', at=(767, 18, 948, 65)) and \
+                    self.is_exists('img/xiayibu.jpg', at=(694, 474, 920, 535)):
+                self.lock_no_img('img/xiayibu.jpg', elseclick=[(806, 508)])
+                break

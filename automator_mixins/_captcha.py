@@ -109,7 +109,7 @@ class CaptionSkip:
         img_post = {
             'userstr': captcha_userstr,
             'gameid': question_type,
-            'timeout': 10,
+            'timeout': 30,
             'rebate': captcha_software_key,
             'daiLi': 'haoi',
             'kou': 0,
@@ -133,32 +133,47 @@ class CaptionSkip:
         print(">>等待验证码识别返回值")
         while True:
             # 获取答案
+            time.sleep(random.uniform(0.8, 2.88))
             answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
-            time.sleep(random.uniform(0.5, 2.88))
             self._count_times += 1
             count_len = len(answer_result.text)
             if answer_result.text not in self.error_feature:
                 # print("开始处理")
-                if count_len > 6:
+                if question_type is "X6001" or question_type is "T6001":
                     # 466,365
                     answer_result = answer_result.text.split(',')
+                    if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
+                        # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
+                        self.send_error(caption_id.text)
+                        print(">刷新验证码")
+                        # 刷新验证码
+                        answer_result = [162, 420]
+                        return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
-                else:
-                    # 废弃，无实际作用！
-
+                elif question_type is "X8006" or question_type is "T8006":
+                    # 滑块
+                    answer_result = answer_result.text.split(',')
+                    if not (266 < int(answer_result[0]) < 696) and not (338 < int(answer_result[1]) < 434):
+                        # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
+                        self.send_error(caption_id.text)
+                        print(">刷新验证码")
+                        # 刷新验证码
+                        answer_result = [162, 420]
+                        return answer_result, count_len, 0
+                    return answer_result, count_len, caption_id.text
+                elif question_type is "X6004" or question_type is "T6004":
                     # 多坐标处理
+                    # 464,364|551,376|506,271|390,233
                     answer_result = answer_result.text.split('|')
-                    if len(answer_result) >= 4:
-                        tmp_list = []
-                        # 多坐标处理
-                        # 466,365|549,374|494,252|387,243
-                        # 转元组
-                        for i in range(0, count_len):
-                            tmp = answer_result[i]
-                            # print(tmp)
-                            tmp_list.append(tuple(map(int, tmp.split(','))))
-                            # [(466, 365), (549, 374), (494, 252), (387, 243)]
-                            return tmp_list, count_len, caption_id.text
+                    count_len = len(answer_result)
+                    if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
+                        # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
+                        self.send_error(caption_id.text)
+                        print(">刷新验证码")
+                        # 刷新验证码
+                        answer_result = [162, 420]
+                        return answer_result, count_len, 0
+                    return answer_result, count_len, caption_id.text
 
             elif answer_result.text in self.no_result or self._count_times >= 7:
                 # 答案不确定(不扣分)
@@ -173,7 +188,7 @@ class CaptionSkip:
 
     def getpoint(self):
 
-        print("3s后发起查询题分！")
+        # print("3s后发起查询题分！")
         time.sleep(3)
 
         self.get_host()
@@ -186,8 +201,11 @@ class CaptionSkip:
             'r': random.randint(1000000000, 9999999999),
         }
         c = self.conversation.get(url=self.img_getpoint, data=img_post, headers=self.img_hear_dict)
-        if int(c.text) > 0 and c.text not in self.error_feature:
-            return int(c.text)
+        if c.text not in self.no_result:
+            try:
+                return int(c.text)
+            except:
+                return c.text
             # print("剩余题分：", int(c.text))
 
     def send_error(self, _id):

@@ -217,6 +217,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 mana_time = self.ocr_center(422, 451, 480, 471, size=2.0).split('/')
                 mana_time = int(mana_time[0])
                 if mana_time >= times:
+                    self.lock_home()
                     return False
         except:
             pass
@@ -283,7 +284,8 @@ class RoutineMixin(ShuatuBaseMixin):
             screen_shot_ = self.getscreen()
             if self.is_exists("img/exp.jpg", screen=screen_shot_) \
                     or self.is_exists("img/exp2.jpg", screen=screen_shot_) \
-                    or self.is_exists("img/exp3.bmp", screen=screen_shot_):
+                    or self.is_exists("img/exp3.bmp", screen=screen_shot_) \
+                    or self.is_exists("img/exp4.bmp", screen=screen_shot_):
                 break
             count += 1
             time.sleep(1)
@@ -528,4 +530,14 @@ class RoutineMixin(ShuatuBaseMixin):
         tryfun_shengji()
         ts["shengji"] = time.time()
         self.AR.set("time_status", ts)
+        self.lock_home()
+
+    def shouqunvshenji(self):
+        """
+        收取女神祭
+        """
+        self.lock_home()
+        self.click_btn(MAIN_BTN["nsj"], until_appear=MAIN_BTN["wanfa"], side_check=self.right_kkr)
+        for _ in range(10):
+            self.click(833, 437)  # 收取！
         self.lock_home()

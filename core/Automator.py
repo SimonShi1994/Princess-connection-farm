@@ -19,8 +19,9 @@ from core.log_handler import pcr_log
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
 from core.pcr_config import trace_exception_for_debug, captcha_skip
 from core.safe_u2 import OfflineException, ReadTimeoutException
-from core.usercentre import check_task_dict
-from core.valid_task import VALID_TASK
+from core.usercentre import check_task_dict, list_all_flags, is_in_group
+from core.valid_task import VALID_TASK, getcustomtask
+from core.bot import Bot
 
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
@@ -32,6 +33,21 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         ShuatuMixin.__init__(self)
         DXCMixin.__init__(self)
         self.init_device(address)
+
+    def run_custom_task(self, pymodule: str, funcname: str, var=None, **kwargs):
+        func = None
+        try:
+            print("导入模块中……")
+            py = getcustomtask(pymodule)
+            func = getattr(py, funcname)
+            print("导入成功！")
+        except Exception as e:
+            self.log.write_log("error", f"自定义脚本导入失败！{e}")
+        if func is not None:
+            func(self=self, var=var, **kwargs)
+
+    def SkipTask(self, to_id=None):
+        self.send_move_method("skip", to_id)
 
     def RunTasks(self, tasks: dict, continue_=True, max_retry=3,
                  first_init_home=True, rec_addr="rec"):
@@ -72,26 +88,63 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
 
         self.log.write_log("info", f"任务列表：")
         # 解析任务列表
+        self._task_index = {}
         for task in tasks["tasks"]:
-            if "__disable__" in task and task["__disable__"]:
-                continue
             typ = task["type"]
+
+            if "__disable__" in task:
+                # 存在禁用配置
+                if task["__disable__"] is True:
+                    typ = "nothing"  # 直接禁用
+                elif task["__disable__"] is not False:
+                    # 有开关
+                    FLAGS = list_all_flags()
+                    detail = None
+                    for flag, details in FLAGS.items():
+                        if task["__disable__"] == flag:
+                            detail = details
+                            break
+                    if detail is not None:
+                        use_default = True
+                        if self.account in detail["user"] and detail["user"][self.account] is True:
+                            typ = "nothing"  # 针对用户特殊：直接禁用
+                            use_default = False
+                        elif self.account in detail["user"] and detail["user"][self.account] is False:
+                            use_default = False
+                        else:
+                            # 针对组特殊：
+                            for group, set in detail["group"].items():
+                                if is_in_group(self.account, group):
+                                    if set is False:
+                                        use_default = False
+                                    else:
+                                        typ = "nothing"
+                                        use_default = False
+                                    break
+                        if use_default:
+                            # 使用默认设置
+                            if detail["default"] is True:
+                                typ = "nothing"
+
             cur = VALID_TASK.T[typ]
             kwargs = {}
-            for param in task:
-                if param == "type":
-                    continue
-                if param == "__disable__":
-                    continue
-                kwargs[param] = task[param]
+            if typ != "nothing":  # 未禁用
+                for param in task:
+                    if param == "type":
+                        continue
+                    if param == "__disable__":
+                        continue
+                    kwargs[param] = task[param]
             for v_p in cur["params"]:  # Valid Param: Default Param
                 if v_p.default is not None and v_p.key not in kwargs:
                     kwargs[v_p.key] = v_p.default
 
-            self.ms.nextwv(funwarper(cur["funname"], cur['title'], kwargs))  # 自动创建序列
-            self.log.write_log("info", f"  +任务 {cur['title']}")  # 打印该任务
-            for key in kwargs:
-                self.log.write_log("info", f"    参数 {key} ： {kwargs[key]}")
+            idx = self.ms.nextwv(funwarper(cur["funname"], cur['title'], kwargs))  # 自动创建序列
+            if typ != "nothing":
+                self.log.write_log("info", f"  +任务 {cur['title']}")  # 打印该任务
+                for key in kwargs:
+                    self.log.write_log("info", f"    参数 {key} ： {kwargs[key]}")
+                self._task_index[idx] = cur['title']
         self.ms.exitw(None)  # 结束自动序列创建
         # 未知异常：仍然是重启哒！万能的重启万岁！
         last_exception = None
@@ -144,9 +197,11 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 try:
                     os.makedirs(f"error_screenshot/{account}", exist_ok=True)
                     nowtime = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
-                    target = f"error_screenshot/{account}/{nowtime}_RT{retry}.bmp"
+                    target = f"error_screenshot/{account}/{nowtime}_RT{retry}.jpg"
                     cv2.imwrite(target, self.last_screen)
                     pcr_log(account).write_log(level="error", message=f"错误截图已经保存至{target}")
+                    # 错误截图日志为0级消息，后面可能会改成warning级别或者error
+                    Bot().server_bot('', '', '', self.last_screen, f"模拟器{self.address}||{self.account}的运行错误重启截图")
                 except Exception as es:
                     pcr_log(account).write_log(level="error", message=f"错误截图保存失败：{es}")
                 if trace_exception_for_debug:

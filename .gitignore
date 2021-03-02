@@ -20,8 +20,15 @@ log
 /groups/
 /developutils/*.bmp
 /error_screenshot/
+outputs/
 
 # 测试用文件夹
 /test/
 /developutils/
 /users_bak/
+
+# 配置文件g
+config.ini
+
+# 自定义脚本
+/customtask

@@ -12,6 +12,11 @@ IDFun = Union[Callable[..., IDType], IDType]
 FunTuple = Tuple[AnyFun, IDType, Tuple, Dict, Dict, bool, bool, Any]
 ErrTuple = Tuple[Any, bool]
 
+class MoveSkipException(Exception):
+    def __init__(self, skipinfo=None):
+        super().__init__()
+        self.skipinfo = skipinfo
+
 
 class moveerr(Exception):
     """
@@ -44,6 +49,7 @@ class movevar:
 
         self.var = var
         self.autosave = autosave
+        self.reg = []
 
     def save(self):
         """
@@ -54,6 +60,12 @@ class movevar:
         if "__self__" in self.var:
             s = self.var["__self__"]
             s.savestate()
+
+    def regflag(self, flagkey, default=None):
+        if flagkey not in self.var:
+            self.var[flagkey] = default
+        self.reg += [flagkey]
+        return self.var[flagkey]
 
     def setflag(self, flagkey, flagvalue=1, save=None):
         """
@@ -83,6 +95,9 @@ class movevar:
             save = self.autosave
         if "__flag__" in self.var:
             del self.var["__flag__"]
+        for flag in self.reg:
+            if flag in self.var:
+                del self.var[flag]
         if save:
             self.save()
 
@@ -139,6 +154,7 @@ class moveset:
         self.use_json = use_json  # 警告：json类型只能支持数字和字符串变量！
         self.last_move = None  # 自动创建序列时记录上一次的创建参数
         self.tmp = {}  # 临时存放空间
+        self.current_id = None  # 记录当前id
 
     @staticmethod
     def str2fun(fun):
@@ -952,7 +968,14 @@ class moveset:
             self.var["__current__"] = cur
             self.savestate()
             try:
+                self.current_id = cur
                 cur = self.moves[cur](self.var)
+            except MoveSkipException as e:
+                if e.skipinfo is None:
+                    # 跳到下一个任务
+                    cur += 1
+                else:
+                    cur = e.skipinfo
             except moveerr as me:
                 if me.code in self.catch:
                     # 暂存当前cur并跳转
@@ -971,7 +994,7 @@ class moveset:
                     raise moveerr(self.errcode, desc=self.name)
                 else:
                     raise e
-
+        self.current_id = None
         self.var["__current__"] = None
         self.savestate()
         if cur != "__exit__":

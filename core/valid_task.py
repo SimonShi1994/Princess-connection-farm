@@ -1,7 +1,10 @@
 import abc
+import importlib
+from math import inf
 from typing import List, Type, Any, Optional, Union
 
 from core.constant import NORMAL_COORD, HARD_COORD
+from core.pcr_config import debug
 
 
 class InputBoxBase(metaclass=abc.ABCMeta):
@@ -16,15 +19,40 @@ class InputBoxBase(metaclass=abc.ABCMeta):
         """
         pass
 
+    def edit(self, obj):
+        """
+        默认编辑=重新写一个
+        """
+        return self.create()
+
+
+def RangeStr(min, max):
+    if min == -inf and max == inf:
+        return ""
+    elif min == -inf:
+        return f"( <={max} )"
+    elif max == inf:
+        return f"( >={min} )"
+    else:
+        return f"( {min}~{max} )"
+
 
 class IntInputer(InputBoxBase):
+    def __init__(self, min=-inf, max=inf, ):
+        self.min = min
+        self.max = max
+
     def create(self) -> int:
         while True:
-            a = input("请输入一个整数 ")
-            if a.isnumeric():
-                return int(a)
-            else:
-                print("输入错误，请重新输入")
+            a = input("请输入一个整数" + RangeStr(self.min, self.max))
+            try:
+                a = int(a)
+                if self.min <= int(a) <= self.max:
+                    return int(a)
+                else:
+                    print("输入错误，请重新输入")
+            except:
+                print("输入错误，清重新输入")
 
     def check(self, obj):
         if not isinstance(obj, int):
@@ -136,9 +164,48 @@ class TaskParam:
         return True
 
 
+class ConstantInputer(InputBoxBase):
+    def __init__(self, c):
+        self.c = c
+
+    def create(self):
+        return self.c
+
+    def check(self, obj):
+        # if obj != self.c:
+        #     return "必须是 " + str(self.c) + " !"
+        return ""
+
+
 class ValidTask:
     def __init__(self):
         self.T = {}  # 存放合法Task记录
+
+    def add_custom(self, pymodule: str):
+        py = None
+        try:
+            if debug:
+                print("Loading pymodule:", pymodule)
+            py = getcustomtask(pymodule)
+        except Exception as e:
+            if debug:
+                print("读取自定义模块失败！", e)
+            return
+        if not getattr(py, "__enable__", False):
+            return
+        valid = getattr(py, "__valid__", ValidTask())
+        custom_T = valid.T
+        for abbr in custom_T:
+            if debug:
+                print("添加自定义：", abbr)
+            for illegal in ["self", "var", "funcname", "pymodule"]:
+                assert illegal not in custom_T[abbr]["param_dict"], "自定义变量中不能出现" + illegal + "!"
+            self.T[abbr] = custom_T[abbr].copy()
+            self.T[abbr]["funname"] = "run_custom_task"
+            self.T[abbr]["params"] += [
+                TaskParam("pymodule", str, "自定义模块名", "自动生成", pymodule, ConstantInputer(pymodule))]
+            self.T[abbr]["params"] += [TaskParam("funcname", str, "函数名称", "自动生成", custom_T[abbr]["funname"],
+                                                 ConstantInputer(custom_T[abbr]["funname"]))]
 
     def add(self, abbr: str, funname: str, title: str, desc: str, params: Optional[List[TaskParam]] = None):
         """
@@ -158,21 +225,28 @@ class ValidTask:
         """
         if params is None:
             params = []
+        param_dict = {}
+        for par in params:
+            param_dict[par.key] = par
         self.T[abbr] = {
             "funname": funname,
             "title": title,
             "desc": desc,
-            "params": params
+            "params": params,
+            "param_dict": param_dict
         }
         return self
 
 
-def ShuatuToTuple(lst: list) -> list:
+def ShuatuToTuple(lst: list, NEED_T=True) -> list:
     l = []
     for i in lst:
         try:
             ss = i.strip().split("-")
-            l += [(int(ss[0]), int(ss[1]), int(ss[2]))]
+            if NEED_T:
+                l += [(int(ss[0]), int(ss[1]), int(ss[2]))]
+            else:
+                l += [(int(ss[0]), int(ss[1]))]
 
         except:
             pass
@@ -182,13 +256,32 @@ def ShuatuToTuple(lst: list) -> list:
 
 class ShuatuBaseBox(InputBoxBase):
     def __init__(self):
+        self.NEED_T = True
         self.tu_dict = {}
 
     def transform(self):
         d = []
-        for (A, B), T in self.tu_dict.items():
-            d += [f"{A}-{B}-{T}"]
+        if self.NEED_T:
+            for (A, B), T in self.tu_dict.items():
+                d += [f"{A}-{B}-{T}"]
+        else:
+            for (A, B), T in self.tu_dict.items():
+                d += [f"{A}-{B}"]
         return d
+
+    def inversetransform(self, d):
+        for i in d:
+            if self.NEED_T:
+                A, B, T = i.split("-")
+                A = int(A)
+                B = int(B)
+                T = int(T)
+            else:
+                A, B = i.split("-")
+                A = int(A)
+                B = int(B)
+                T = 1
+            self.tu_dict[(A, B)] = T
 
     def Help(self):
         print("帮助（命令用空格隔开）：")
@@ -228,8 +321,9 @@ class ShuatuBaseBox(InputBoxBase):
     def del_(self, A, B, T):
         pass
 
-    def create(self) -> list:
-        self.tu_dict = {}
+    def create(self, clear=True) -> list:
+        if clear:
+            self.tu_dict = {}
         print("输入图号 (help 查看帮助)")
         while True:
             try:
@@ -239,12 +333,22 @@ class ShuatuBaseBox(InputBoxBase):
                 if order == "clear":
                     self.tu_dict = {}
                 elif order == "add":
-                    self.add(cmds[1], cmds[2], cmds[3])
+                    if self.NEED_T:
+                        self.add(cmds[1], cmds[2], cmds[3])
+                    else:
+                        self.add(cmds[1], cmds[2], "1")
                 elif order == "del":
-                    self.del_(cmds[1], cmds[2], cmds[3])
+                    if self.NEED_T:
+                        self.del_(cmds[1], cmds[2], cmds[3])
+                    else:
+                        self.del_(cmds[1], cmds[2], "1")
                 elif order == "show":
-                    for A, B, T in ShuatuToTuple(self.transform()):
-                        print(f"{A}-{B} {T} 次")
+                    if self.NEED_T:
+                        for A, B, T in ShuatuToTuple(self.transform()):
+                            print(f"{A}-{B} {T} 次")
+                    else:
+                        for A, B in ShuatuToTuple(self.transform(), NEED_T=False):
+                            print(f"{A}-{B}")
                 elif order == "end":
                     return self.transform()
                 elif order == "help":
@@ -253,11 +357,18 @@ class ShuatuBaseBox(InputBoxBase):
                     with open(cmds[1], "r", encoding="utf-8") as f:
                         for line in f:
                             l = line.strip().split(" ")
-                            self.add(l[0], l[1], l[2])
+                            if self.NEED_T:
+                                self.add(l[0], l[1], l[2])
+                            else:
+                                self.add(l[0], l[1], "1")
                 else:
                     print("未知的命令")
             except:
                 print("命令输入错误，请重新输入")
+
+    def edit(self, obj):
+        self.inversetransform(obj)
+        return self.create(clear=False)
 
 
 class ShuatuNNBox(ShuatuBaseBox):
@@ -321,7 +432,7 @@ class ShuatuHHBox(ShuatuBaseBox):
 
     def del_(self, A, B, T):
         A = int(A)
-        if A not in NORMAL_COORD:
+        if A not in HARD_COORD:
             print(f"图号 {A} 未录入")
             return
         B = int(B)
@@ -386,6 +497,62 @@ class TeamInputer(InputBoxBase):
         return ""
 
 
+"""
+class MeiRiHTuInputer(ShuatuBaseBox):
+    def __init__(self):
+        super().__init__()
+        self.NEED_T=False
+
+    def Help(self):
+        print("输入图号")
+        print("帮助（命令用空格隔开）：")
+        print("add (A) (B): 增加刷图：H A-B")
+        print("del (A) (B): 减少刷图：H A-B")
+        print("file (FileAddress): 从文件导入")
+        print("   该文件由多行组成，每行两个整数A,B，表示刷H A-B")
+        print("clear: 清空记录")
+        print("show: 显示当前记录")
+        print("end: 保存并退出编辑")
+
+    def add(self, A, B, T):
+        A = int(A)
+        if A not in HARD_COORD:
+            print(f"图号 {A} 未录入")
+            return
+        B = int(B)
+        if B not in HARD_COORD[A]:
+            print(f"图号H{A} - {B} 未录入")
+            return
+        self.tu_dict.setdefault((A, B), 0)
+        self.tu_dict[(A, B)] = 1
+
+    def del_(self, A, B, T):
+        A = int(A)
+        if A not in HARD_COORD:
+            print(f"图号 {A} 未录入")
+            return
+        B = int(B)
+        if (A, B) in self.tu_dict:
+            del self.tu_dict[(A, B)]
+
+
+    def check(self, obj):
+        if type(obj) is not list:
+            return "参数必须为list类型"
+        for s in obj:
+            try:
+                a, b = tuple(s.split("-"))
+                A = int(a)
+                B = int(b)
+                assert 1 <= B <= 3, "图号不合法"
+                assert 1 <= A <= max(HARD_COORD), "图号不合法"
+            except Exception as e:
+                return str(e)
+        return ""
+
+"""
+
+
 class MeiRiHTuInputer(InputBoxBase):
     def create(self):
         print("输入A-B字符串，表示刷Hard A-B图。")
@@ -415,7 +582,8 @@ class MeiRiHTuInputer(InputBoxBase):
 
 
 VALID_TASK = ValidTask() \
-    .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备") \
+    .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备",
+         [TaskParam("once_times", int, "单账号捐赠的次数", "一个账号轮询捐赠多少次，多次可以提高容错率但会增加脚本执行时间", 2)]) \
     .add("h2", "tichuhanghui", "踢出行会", "将战力排名第一人踢出行会") \
     .add("h3", "yaoqinghanghui", "邀请行会", "邀请指定成员进入行会",
          [TaskParam("inviteUID", str, "UID", "被邀请者的UID号")]) \
@@ -437,6 +605,7 @@ VALID_TASK = ValidTask() \
                                               "程序自动记录上一次成功发起的时间.\n"
                                               "如果两次捐赠小于8小时，且相差小于等待时间\n"
                                               "则程序进入什么都不做的等待，否则跳过。", 300)]) \
+    .add("h10", "tuanduizhan", "自动摸会战", "农场号自动出甜心刀,请自己确保执行到该任务时已经有挑战次数。目前还在bate，不排除有问题") \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
          [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个", 1),
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False),
@@ -500,8 +669,10 @@ VALID_TASK = ValidTask() \
                                        "mode 2: 只刷2"),
           TaskParam("times", int, "次数", "只能为1~5的整数"),
           TaskParam("tili", bool, "体力不足时是否购买体力")]) \
+    .add("r11", "shouqunvshenji", "收取女神祭", "收取女神祭") \
     .add("t1", "rename", "批量重命名", "随机+批量给自己换个名字，建议配合OCR识别信息更佳",
-         [TaskParam("name", str, "新名字", "你的量产新名字，以空格为间隔")]) \
+         [TaskParam("name", str, "新名字", "你的量产新名字，以空格为间隔"),
+          TaskParam("auto_id", bool, "自动生成随机位数id", "生成一个随机数0-1000在名字后面", False)]) \
     .add("t2", "save_box_screen", "box截图", "按照战力/等级/星数截屏前两行box",
          [TaskParam("dir", str, "box存放位置", "填写box存放文件夹", "box_pic"),
           TaskParam("sort", str, "排序方式", "只能填写下列三个字符串中的一个：\n"
@@ -520,6 +691,8 @@ VALID_TASK = ValidTask() \
     .add("t4", "maizhuangbei", "小号卖装备", "卖出数量前三的装备（如果数量大于1000)(无需OCR）",
          [TaskParam("day_interval", int, "清理间隔", "请输入清理间隔天数", 30)]) \
     .add("t5", "zanting", "暂停", "暂停脚本，弹出弹窗，直到手动点击弹窗才结束") \
+    .add("t6", "kucunshibie", "库存识别", "识别装备库存并输出到outputs文件夹。") \
+    .add("t7", "jueseshibie", "角色识别", "识别角色信息并输出到outputs文件夹。") \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",
@@ -574,3 +747,38 @@ VALID_TASK = ValidTask() \
          [TaskParam("buy_tili", int, "体力次数", "如果要通过刷图来获取装备，最多买体力次数"),
           TaskParam("do_rank", bool, "是否升rank", "是否自动升rank"),
           TaskParam("do_shuatu", bool, "是否刷图", "是否在装备可以获得但不够时，通过刷图来获取装备")])
+
+customtask_addr = "customtask"
+
+
+def getcustomtask(modulefile) -> list:
+    target_name = "%s.%s" % (customtask_addr, modulefile)
+    py = importlib.import_module(target_name)
+    return py
+
+
+def list_all_customtasks(verbose=1) -> List[str]:
+    import os
+    if not os.path.exists(customtask_addr):
+        os.makedirs(customtask_addr)
+    ld = os.listdir(customtask_addr)
+    tasks = []
+    count = 0
+    for i in ld:
+        if not os.path.isdir(i) and i.endswith(".py"):
+            try:
+                getcustomtask(i[:-3])
+                if verbose:
+                    print("自定义模块", i, "加载成功！")
+                tasks += [i[:-3]]
+                count += 1
+            except Exception as e:
+                if verbose:
+                    print("打开模块", i, "失败！", e)
+    if verbose:
+        print("加载完成，一共加载成功", count, "个模块。")
+    return tasks
+
+
+for l in list_all_customtasks(0):
+    VALID_TASK.add_custom(l)

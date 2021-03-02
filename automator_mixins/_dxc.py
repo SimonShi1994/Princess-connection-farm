@@ -44,14 +44,18 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/yunhai.bmp'):
                     break
                 # 防止一进去就是塔币教程
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, retry=10, at=(779, 421, 833, 440),
-                              threshold=0.97)
+                if self.is_exists('img/dxc/chetui.bmp'):
+                    time.sleep(1.2)
+                    self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                                  threshold=0.98)
                 break
                 # self.dxc_kkr()
         tmp_cout = 0
         while tmp_cout <= 2:
             try:
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
+                    self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                                  threshold=0.98)
                     dixiacheng_floor = self.ocr_center(216, 423, 259, 442, size=1.5)
                     # print(dixiacheng_floor)
                     dixiacheng_floor = int(dixiacheng_floor.split('/')[0])
@@ -165,6 +169,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259), (592, 369)], threshold=0.97)
             while True:
                 time.sleep(0.5)
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440), threshold=0.97)
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(779, 421, 833, 440))
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
                     self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
@@ -181,21 +186,32 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.dxc_switch = 1
                 break
 
-            if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
-                # 如果第二个也等级不足就退出
-                if self.is_exists('img/dengjixianzhi.jpg', at=(160, 126, 270, 232)):
-                    pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)
-                    self.dxc_switch = 1
-                    break
-                # 如果等级不足，就支援的第二个人
-                self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num + 1],
-                               until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
-                               , retry=6)
-                # self.click(100, 173, post_delay=1)  # 支援的第一个人
+            # time.sleep(self.change_time + 1)
+            # if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,at=(45, 144, 163, 252)):
+            #     # 如果第二个也等级不足就退出
+            #     if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,at=(160, 126, 270, 232)):
+            #         pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)
+            #         self.dxc_switch = 1
+            #         break
+            #     # 如果等级不足，就支援的第二个人
+            #     self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num + 1],
+            #                    until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
+            #                    , retry=6)
+            #     # self.click(100, 173, post_delay=1)  # 支援的第一个人
+            # else:
+            #     time.sleep(self.change_time)
+            #     self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
+            #                    , retry=6)
+
+            if self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"], retry=4):
+                pass
+            elif self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num + 1], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"] , retry=4):
+                pass
             else:
-                time.sleep(self.change_time)
-                self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
-                               , retry=6)
+                pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)
+                self.dxc_switch = 1
+                break
+
             time.sleep(self.change_time)
             if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
                 # 逻辑顺序改变
@@ -212,7 +228,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             while True:
                 if self.is_exists(FIGHT_BTN["caidan"]):
                     break
-                self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(833, 470)], ifbefore=self.change_time+1,
+                self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(833, 470)], ifbefore=self.change_time + 1,
                               ifdelay=self.change_time, retry=10)
                 self.lock_no_img('img/ui/ok_btn_1.bmp', elseclick=[(588, 480)])
                 break
@@ -247,19 +263,25 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
                     break
                 else:
+                    self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
+                    if self.is_exists('img/shanghaibaogao.jpg', threshold=0.8, at=(663, 6, 958, 120)):
+                        self.click(870, 503)
                     if self.is_exists('img/dxc/chetui.bmp'):
                         break
 
-            self.click(1, 1)  # 跳过结算
             while True:  # 撤退地下城
                 if self.dxc_switch == 1:
                     break
                 time.sleep(self.change_time)
-                self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
+                self.click(1, 1)  # 跳过结算
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
-                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(808, 435)], retry=20)
+                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(808, 435)])
                     self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
+                    continue
+                elif self.is_exists('img/yunhai.bmp', threshold=0.975):
                     break
+                else:
+                    self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
             # 执行完后再检测一轮后跳出大循环 self.lock_no_img('img/dxc/chetui.bmp', elseclick=[(808, 435), (588, 371)], retry=20,
             # at=(779, 421, 833, 440)) self.lock_img('img/yunhai.bmp')
             break

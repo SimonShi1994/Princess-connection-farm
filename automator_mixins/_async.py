@@ -3,6 +3,7 @@ import time
 import keyboard
 import psutil
 
+from automator_mixins._base import DEBUG_RECORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause
@@ -81,7 +82,7 @@ class AsyncMixin(ToolsMixin):
                 if time.time() - self.last_screen_time > async_screenshot_freq:
                     continue
                 time_start = time.time()
-                if self.is_exists(screen=screenshot, img='img/connecting.bmp', at=(748, 20, 931, 53)):
+                if self.is_exists(screen=screenshot, img='img/error/connecting.bmp', at=(748, 20, 931, 53)):
                     cumulative_time = 0.1
                     # 卡连接
                     time.sleep(1)
@@ -92,7 +93,7 @@ class AsyncMixin(ToolsMixin):
                         _time = 0
                         # LOG().Account_bad_connecting(self.account)
                         raise Exception("connecting时间过长")
-                elif self.is_exists(screen=screenshot, img='img/loading.bmp', threshold=0.8):
+                elif self.is_exists(screen=screenshot, img='img/error/loading.bmp', threshold=0.8):
                     # 卡加载
                     # 不知道为什么，at 无法在这里使用
                     cumulative_time = 0.1
@@ -106,15 +107,20 @@ class AsyncMixin(ToolsMixin):
                         _time = 0
                         raise Exception("loading时间过长")
 
-                elif self.is_exists(screen=screenshot, img='img/fanhuibiaoti.bmp', at=(377, 346, 581, 395)):
+                elif self.is_exists(screen=screenshot, img='img/error/fanhuibiaoti.bmp', at=(377, 346, 581, 395)):
                     cumulative_time = 0.1
                     # 返回标题
                     raise Exception("reboot", "网络错误，重启。")
 
-                elif self.is_exists(screen=screenshot, img='img/shujucuowu.bmp', at=(407, 132, 559, 297)):
+                elif self.is_exists(screen=screenshot, img='img/error/shujucuowu.bmp', at=(407, 132, 559, 297)):
                     cumulative_time = 0.1
                     # 数据错误
                     raise Exception("数据错误，重启。")
+
+                elif self.is_exists(screen=screenshot, img='img/error/lianjiechaoshi.bmp', at=(245, 132, 713, 408)):
+                    cumulative_time = 0.1
+                    # 连接超时
+                    self.lock_no_img(img='img/error/chongshi.bmp', elseclick=[(587, 373)], elseafter=1, retry=5)
 
                 elif cumulative_time < 8:
                     cumulative_time = cumulative_time + 1
@@ -188,7 +194,7 @@ class AsyncMixin(ToolsMixin):
             # print(psutil.cpu_times())
             # 我休眠我自己
             time.sleep(self.change_time)
-            self.cpu_occupy = psutil.cpu_percent(interval=5, percpu=False)
+            self.cpu_occupy = psutil.cpu_percent(interval=30, percpu=False)
             # print(self.cpu_occupy)
             # 游戏拿不了fps
             # 最大忍受5s
@@ -268,11 +274,13 @@ class AsyncMixin(ToolsMixin):
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
         self.d.app_wait("com.bilibili.priconne")
-        self.start_th()
-        self.init_fastscreen()
-        self.start_async()
         if back_home:
+            self.start_th()
+            self.init_fastscreen()
+            self.start_async()
             self.lock_home()
 
+    @DEBUG_RECORD
     def fix_reboot(self, back_home=True):
         self._fix_reboot(back_home)
+

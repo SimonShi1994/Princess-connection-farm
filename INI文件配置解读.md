@@ -7,9 +7,22 @@
 |      use_template_cache      |                 在开发工具使用时可以将其关闭                 |  bool  |          |      True       |
 |        baidu_ocr_img         |      是否输出名为 baidu_ocr.bmp的图片，该图片为原生截图      |  bool  |          |      False      |
 |        disable_timeout_raise         |      如果lock_img报错，是否禁用错误      |  bool  |          |      False      |
+|u2_record_size|U2指令记录列表大小|int|20      ||
+|u2_record_filter|U2指令过滤列表|list|列表中的指令不会被记录|[]      |
+|debug_record_size|Automator指令记录列表大小|int|50      ||
+|debug_record_filter|Automator指令过滤列表|list|列表中的指令不会被记录|['_lock_img','_move_check']      |
+| qqbot_select | qqbot的选择api服务商 | str | CoolPush/Qmsgnike | CoolPush |
+| qqbot_private_send_switch | qqbot私聊开关 | int | 0关 1开 | 0 |
+| qqbot_group_send_switch | qqbot群聊开关 | int | 0关 1开 | 0 |
+| qqbot_key | qqbot的apikey | str | | SCU6390~94d830b |
+| qq | 指定接收消息的QQ号或者QQ群号，可以添加多个，以英文逗号分割。如：1244453393,2952937634（指定的QQ号或QQ群号必须在您的QQ号列表中） | str | 这个Qmsgnike才会用到 | 1244453393,2952937634 |
+| tg_token | 电报的token | str | 具体看说明文件 | SCU6390~94d830b |
+| tg_mute | 电报推送是否静音 | bool |  | Flase |
+| proxy_http|推送使用的代理|str|||
+| proxy_https|推送使用的代理|str|||
 |           s_sckey            |                     s_sckey为Server酱API                     | string |          | SCU6390~94d830b |
-|         s_sentstate          |                 Server酱播定时报脚本任务状态                 |  int   | 单位分钟 |        5        |
-|           log_lev            | log_levServer酱的日志等级，微信日志等级 仅有0/1/2/3，越小越详细，注意每天接口调用有上限！ |  int   |          |        1        |
+|         sentstate          |                 全体BOT播定时报脚本任务状态                 |  int   | 单位分钟 |        5        |
+|           log_lev            | log_levBOT的日志等级，微信日志等级 仅有0/1/2/3，越小越详细，注意每天接口调用有上限！ |  int   |          |        1        |
 |          log_cache           |                       日志缓冲消息条数                       |  int   |          |        3        |
 |         baidu_apiKey         |                  baidu_apiKey为百度ocr api                   | string |          | SCU6390~94d830b |
 |       baidu_secretKey        |                 baidu_secretKey为百度ocr api                 | string |          | SCU6390~94d830b |
@@ -40,7 +53,11 @@
 |captcha_senderror_times| 验证失败多少次后触发自动申诉题目 |int||2|
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|
 |captcha_wait_time|出现验证码后等待用户输入的时间|int||60|
+|clear_traces_and_cache|是否清除PCR产生的缓存|bool||True|
+|auto_start_app|执行first/continue后是否自动打开app.py|bool||True|
+|inline_app|是否采用内部方式打开app（无窗口，无输出）|bool||True|
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
+|wait_for_launch_time|自启动模拟器最大忍耐超时时间|int||600|
 |ignore_serials|不连接的模拟器|str||["emulator-5554"]|
 
 ------

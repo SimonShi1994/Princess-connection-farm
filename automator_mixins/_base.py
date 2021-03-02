@@ -1,6 +1,7 @@
 import asyncio
 import datetime
 import os
+import queue
 import random
 import threading
 import time
@@ -11,12 +12,13 @@ import numpy as np
 import uiautomator2 as u2
 
 from core import log_handler
+from core.MoveRecord import MoveSkipException
 from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
-    force_fast_screencut
+    force_fast_screencut, adb_dir, clear_traces_and_cache, debug_record_size, debug_record_filter
 from core.safe_u2 import SafeU2Handle, safe_u2_connect
 from core.usercentre import AutomatorRecorder
 
@@ -45,6 +47,68 @@ class FastScreencutException(Exception):
         self.args = args
 
 
+class DebugRecord:
+    def __init__(self, record_size):
+        self.Q = queue.Queue(record_size)
+
+    def gettime(self):
+        cur_time = time.time()
+        time_str = datetime.datetime.fromtimestamp(cur_time).strftime("%H%M%S")
+        return time_str
+
+    def cutstr(self, s, length=30):
+        s = str(s)
+        s = s.replace("\n", "")
+        if len(s) > length:
+            s = s[:length] + "..."
+        return s
+
+    def getitemstr(self, item):
+        if type(item) in [int, float, str, bool]:
+            return self.cutstr(str(item), 100)
+        elif isinstance(item, np.ndarray):
+            return f"<array:{'x'.join([str(s) for s in item.shape])}>"
+        else:
+            return self.cutstr(str(item), 60)
+
+    def add(self, item="()", *args, **kwargs):
+        new_args = []
+        for arg in args:
+            new_args += [self.getitemstr(arg)]
+        new_kwargs = {}
+        for kw in kwargs:
+            new_kwargs[kw] = self.getitemstr(kwargs[kw])
+        str_args = ','.join(new_args)
+        str_kwargs = ','.join(["%s:%s" % (str(k), str(v)) for k, v in new_kwargs.items()])
+        cur = {"cmd": f"{item} -- {str_args} -- {str_kwargs}", "start": self.gettime(), "end": None}
+        if item not in debug_record_filter:
+            if self.Q.full():
+                self.Q.get()
+            self.Q.put(cur)
+        return cur
+
+    def get(self):
+        L = self.Q.queue
+        out = []
+        for l in L:
+            if l['end'] is None:
+                out += [f"{l['start']} ~ Running: {l['cmd']}"]
+            else:
+                out += [f"{l['start']} ~ {l['end']} : {l['cmd']}"]
+        return out
+
+
+def DEBUG_RECORD(fun):
+    def new_fun(self, *args, **kwargs):
+        rd = self.debug_record
+        cur = rd.add(fun.__name__, *args, **kwargs)
+        out = fun(self, *args, **kwargs)
+        cur['end'] = rd.gettime()
+        return out
+
+    return new_fun
+
+
 class BaseMixin:
     """
     基础插片：包含设备信息(u2)，账户信息(account)
@@ -56,6 +120,9 @@ class BaseMixin:
     def __init__(self):
 
         self.appRunning = False
+        self.freeze = False  # 是否处于暂停状态（被_move_check检测） 由于与shift+P冲突，在enable_pause关闭时，该项才会生效
+        self._task_index = {}  # 记录每个任务的index便于跳转
+        self.debug_record = DebugRecord(debug_record_size)
         self.account = "debug"
         self._d: Optional[u2.Device] = None
         self.d: Optional[SafeU2Handle] = None
@@ -94,6 +161,7 @@ class BaseMixin:
         self.log.write_log("info", "Do nothing.")
         pass
 
+    @DEBUG_RECORD
     def init_fastscreen(self):
         if fast_screencut and Multithreading({}).program_is_stopped():
             from core.get_screen import ReceiveFromMinicap
@@ -122,6 +190,7 @@ class BaseMixin:
                 else:
                     print("Device:", self._d.serial, f"快速截图打开失败！使用慢速截图。")
 
+    @DEBUG_RECORD
     def init_device(self, address):
         """
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
@@ -133,11 +202,13 @@ class BaseMixin:
             self.d = SafeU2Handle(self._d)
             self.init_fastscreen()
 
+    @DEBUG_RECORD
     def init_account(self, account, rec_addr="users"):
         self.account = account
         self.log = log_handler.pcr_log(account)  # 初始化日志
         self.AR = AutomatorRecorder(account, rec_addr)
 
+    @DEBUG_RECORD
     def init(self, address, account, rec_addr="users"):
         # 兼容
         self.init_device(address)
@@ -158,6 +229,7 @@ class BaseMixin:
         else:
             return at
 
+    @DEBUG_RECORD
     def send_move_method(self, method, msg):
         """
         给主线程发送一条消息
@@ -173,29 +245,67 @@ class BaseMixin:
         while self._move_method != "":
             pass
 
+    @DEBUG_RECORD
     def _move_check(self):
         """
         作为最小执行单元，接收暂停、退出等信息
         :return: False：无影响 True：造成影响
         """
+
+        def _ck():
+            if self._move_method == "restart":
+                print(self.address, "- 重启")
+                self._move_method = ""
+                raise Exception(self._move_msg)
+            if self._move_method == "forcekill":
+                print(self.address, "- 强制停止")
+                self._move_method = ""
+                raise ForceKillException()
+            if self._move_method == "skip":
+                if self._move_msg is None:
+
+                    next_id = self.ms.current_id + 1
+                    if next_id in self._task_index:
+                        print(self.address, "- 跳过当前任务")
+                    else:
+                        print(self.address, "- 已经是最后一个任务了！")
+                else:
+                    if str(self._move_msg).isnumeric():
+                        next_id = int(self._move_msg)
+                    else:
+                        next_id = "asduasiudhsaiuheuifhBUNENGTIAO"
+                    if next_id in self._task_index:
+                        print(self.address, "- 跳转至：", self._move_msg)
+                    else:
+                        print(self.address, "- 不存在的任务，无法跳转！")
+                self._move_method = ""
+                raise MoveSkipException(self._move_msg)
+
         try:
-            from automator_mixins._async import block_sw
-            if block_sw == 1:
-                print("脚本暂停中~")
-                while block_sw == 1:
-                    from automator_mixins._async import block_sw
-                    time.sleep(1)
-                return True
+            from automator_mixins._async import block_sw, enable_pause
+            if enable_pause:
+                if block_sw == 1:
+                    print(self.address, "- 脚本暂停中~")
+                    while block_sw == 1:
+                        from automator_mixins._async import block_sw
+                        time.sleep(1)
+                        _ck()
+                    print(self.address, "- 脚本恢复~")
+                    return True
+            else:
+                if self.freeze:
+                    print(self.address, "- 脚本暂停中~")
+                    while self.freeze:
+                        time.sleep(1)
+                        _ck()
+                    print(self.address, "- 脚本恢复~")
+                    return True
         except Exception as error:
             print('暂停-错误:', error)
             return True
-        if self._move_method == "restart":
-            self._move_method = ""
-            raise Exception(self._move_msg)
-        if self._move_method == "forcekill":
-            self._move_method = ""
-            raise ForceKillException()
+        _ck()
 
+    @DEBUG_RECORD
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0., method=cv2.TM_CCOEFF_NORMED):
         """
         try to click the img
@@ -213,6 +323,7 @@ class BaseMixin:
         else:
             return False
 
+    @DEBUG_RECORD
     def click(self, *args, pre_delay=0., post_delay=0., **kwargs):
         """
         点击函数
@@ -254,6 +365,7 @@ class BaseMixin:
             img = img.img
         return img, at
 
+    @DEBUG_RECORD
     def is_exists(self, img, threshold=0.84, at=None, screen=None, is_black=False,
                   black_threshold=1500, method=cv2.TM_CCOEFF_NORMED):
         """
@@ -274,6 +386,7 @@ class BaseMixin:
         img, at = self._get_img_at(img, at)
         return UIMatcher.img_where(screen, img, threshold, at, method, is_black, black_threshold) is not False
 
+    @DEBUG_RECORD
     def img_prob(self, img, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
         """
         返回一个图片存在的阈值
@@ -290,6 +403,7 @@ class BaseMixin:
         img, at = self._get_img_at(img, at)
         return UIMatcher.img_prob(screen, img, at, method)
 
+    @DEBUG_RECORD
     def img_where_all(self, img, threshold=0.9, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
         """
         返回一个图片所有的位置
@@ -306,6 +420,24 @@ class BaseMixin:
         img, at = self._get_img_at(img, at)
         return UIMatcher.img_all_where(screen, img, threshold, at, method)
 
+    @DEBUG_RECORD
+    def img_where_all_prob(self, img, threshold=0.9, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
+        """
+        返回一个图片所有的位置和prob
+        :param img:
+            一个字符串，表示图片的地址；或者为PCRelement类型。
+            当img为PCRelement时，如果at参数为None，则会使用img.at。
+        :param threshold: 阈值
+        :param at: 搜素范围
+        :param screen: 若设置为None，则重新截图；否则使用screen为截图
+        :return: list[(prob,x,y,at)]
+        """
+        if screen is None:
+            screen = self.getscreen()
+        img, at = self._get_img_at(img, at)
+        return UIMatcher.img_all_prob(screen, img, threshold, at, method)
+
+    @DEBUG_RECORD
     def img_equal(self, img1, img2, at=None, similarity=0.01) -> float:
         """
         输出两张图片对应像素相似程度
@@ -327,6 +459,7 @@ class BaseMixin:
             print("EQT:", eqt)
         return eqt
 
+    @DEBUG_RECORD
     def wait_for_stable(self, delay=0.5, threshold=0.2, similarity=0.001, max_retry=0, at=None, screen=None):
         """
         等待动画结束,画面稳定。此时相邻两帧的相似度大于threshold
@@ -353,6 +486,7 @@ class BaseMixin:
             sc = sc2
         return False
 
+    @DEBUG_RECORD
     def wait_for_change(self, delay=0.5, threshold=0.10, similarity=0.01, max_retry=0, at=None, screen=None):
         """
         等待画面跳转变化，此时尾帧与头帧的相似度小于threshold
@@ -378,6 +512,7 @@ class BaseMixin:
                 return True
         return False
 
+    @DEBUG_RECORD
     def wait_for_loading(self, screen=None, delay=0.5, timeout=30):
         """
         等待黑屏loading结束
@@ -391,7 +526,7 @@ class BaseMixin:
         last_time = time.time()
         while True:
             self._move_check()
-            if self.is_exists(img='img/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
+            if self.is_exists(img='img/error/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
                 time.sleep(delay)
                 sc = self.getscreen()
                 continue
@@ -403,7 +538,8 @@ class BaseMixin:
             time.sleep(delay)
             sc = self.getscreen()
 
-    def check_dict_id(self, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05):
+    @DEBUG_RECORD
+    def check_dict_id(self, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05, max_retry=3):
         """
         识别不同图的编号，比较其概率
         :param id_dict: 字典，{key:PCRElement}，表示{编号:图片}
@@ -414,19 +550,23 @@ class BaseMixin:
             None: 识别失败
             Else: 识别的key
         """
-        sc = self.getscreen() if screen is None else screen
-        pdict = {}
-        for i, j in id_dict.items():
-            pdict[i] = self.img_prob(j, screen=sc)
-        tu = max(pdict, key=lambda x: pdict[x])
-        l = sorted(pdict.values(), reverse=True)
-        if debug:
-            print(tu)
-            print(l)
-        if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
-            return None
-        else:
-            return tu
+        for retry in range(max_retry):
+            sc = self.getscreen() if screen is None else screen
+            screen = None
+            pdict = {}
+            for i, j in id_dict.items():
+                pdict[i] = self.img_prob(j, screen=sc)
+            tu = max(pdict, key=lambda x: pdict[x])
+            l = sorted(pdict.values(), reverse=True)
+            if debug:
+                print(tu)
+                print(l)
+            if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
+                time.sleep(0.5)
+                continue
+            else:
+                return tu
+        return None
 
     def run_func(self, th_name, a, fun, async_sexitflag=False):
         if async_sexitflag:
@@ -460,6 +600,7 @@ class BaseMixin:
             pass
         pass
 
+    @DEBUG_RECORD
     def getscreen(self, filename=None):
         """
         包装了self.d.screenshot
@@ -491,7 +632,11 @@ class BaseMixin:
                             self.receive_minicap.stop()
                         self.last_screen = self.d.screenshot(filename, format="opencv")
             else:
-                self.last_screen = self.d.screenshot(filename, format="opencv")
+                if filename is None:
+                    self.last_screen = self.d.screenshot(filename, format="opencv")
+                else:
+                    self.d.screenshot(filename, format="opencv")
+                    self.last_screen = cv2.imread(filename)
             self.last_screen_time = time.time()
             return UIMatcher.AutoRotateClockWise90(self.last_screen)
         else:
@@ -500,6 +645,7 @@ class BaseMixin:
             else:
                 return self.debug_screen
 
+    @DEBUG_RECORD
     def find_img(self, img, at=None, alldelay=0.5,
                  ifclick=None, ifbefore=0.5, ifdelay=1,
                  elseclick=None, elsedelay=0.5, retry=0):
@@ -549,6 +695,7 @@ class BaseMixin:
             attempt += 1
         return True if inf_attempt or attempt < retry else False
 
+    @DEBUG_RECORD
     def guochang(self, screen_shot, template_paths, suiji=1):
         # suji标号置1, 表示未找到时将点击左上角, 置0则不点击
         # 输入截图, 模板list, 得到下一次操作
@@ -575,6 +722,7 @@ class BaseMixin:
                 # print('未找到所需的按钮,无动作')
                 pass
 
+    @DEBUG_RECORD
     def lock_fun(self, RTFun, *args, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
                  elsedelay=0.5, alldelay=0.5, retry=0, is_raise=False, timeout=None, elseafter=0., **kwargs):
         """
@@ -632,6 +780,7 @@ class BaseMixin:
                     raise Exception("lock_fun 超时！")
                 return False
 
+    @DEBUG_RECORD
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
                   elsedelay=0.5, alldelay=0.5, retry=0, side_check=None,
                   at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84,
@@ -738,6 +887,7 @@ class BaseMixin:
                     raise Exception("%s——lock_img 超时！" % img)
                 return False
 
+    @DEBUG_RECORD
     def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
                  at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84, side_check=None,
                  elseafter=0.):
@@ -750,6 +900,7 @@ class BaseMixin:
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout,
                               method=method, threshold=threshold, side_check=side_check, elseafter=elseafter)
 
+    @DEBUG_RECORD
     def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5,
                     retry=0, at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED,
                     threshold=0.84, side_check=None, elseafter=0.):  # 锁定指定图像
@@ -762,6 +913,7 @@ class BaseMixin:
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout,
                               method=method, threshold=threshold, side_check=side_check, elseafter=elseafter)
 
+    @DEBUG_RECORD
     def click_btn(self, btn: PCRelement, elsedelay=8., timeout=30., wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
                   until_disappear: Optional[Union[str, PCRelement, dict, list]] = "self",
@@ -815,6 +967,7 @@ class BaseMixin:
                                      elseafter=0 if elseafter is None else elseafter, side_check=side_check)
         return r
 
+    @DEBUG_RECORD
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
         """
         这个处理教程函数是给chushihua.py用的
@@ -923,6 +1076,7 @@ class BaseMixin:
         d["error"] = error
         self.AR.set_run_status(d)
 
+    @DEBUG_RECORD
     def juqing_kkr(self, screen_shot=None):
         """
         处理剧情+剧情版的可可萝
@@ -941,6 +1095,7 @@ class BaseMixin:
             return True
         return False
 
+    @DEBUG_RECORD
     def right_kkr(self, screen=None):
         """
         处理提示kkr。一般在右边。
@@ -960,6 +1115,7 @@ class BaseMixin:
             screen = self.getscreen()
         return flag
 
+    @DEBUG_RECORD
     def phone_privacy(self):
         """
         2020/7/10
@@ -979,7 +1135,7 @@ class BaseMixin:
             return '{}{}'.format(part, -res % 10)
 
         # print("》》》匿名开始《《《", self.address)
-        tmp_rand = []
+        # tmp_rand = []
         tmp_rand = random.sample(range(1, 10), 3)
         phone_model = {
             1: 'LIO-AN00',
@@ -1003,16 +1159,39 @@ class BaseMixin:
             8: 'Redmi',
             9: 'LG',
         }
-        os.system('cd adb & adb -s %s shell setprop ro.product.model %s' % (self.address, phone_model[tmp_rand[0]]))
         os.system(
-            'cd adb & adb -s %s shell setprop ro.product.manufacturer %s' % (
-            self.address, phone_manufacturer[tmp_rand[1]]))
-        os.system('cd adb & adb -s %s shell setprop phone.imei %s' % (self.address, _get_imei(15)))
-        os.system('cd adb & adb -s %s shell setprop ro.product.name %s' % (self.address, phone_model[tmp_rand[2]]))
-        os.system('cd adb & adb -s %s shell setprop phone.imsi %s' % (self.address, _get_imei(15)))
-        os.system('cd adb & adb -s %s shell setprop phone.linenum %s' % (self.address, _get_imei(11)))
-        os.system('cd adb & adb -s %s shell setprop phone.simserial %s' % (self.address, _get_imei(20)))
+            'cd %s & adb -s %s shell setprop ro.product.model %s' % (adb_dir, self.address, phone_model[tmp_rand[0]]))
+        os.system(
+            'cd %s & adb -s %s shell setprop ro.product.manufacturer %s' % (adb_dir,
+                                                                            self.address,
+                                                                            phone_manufacturer[tmp_rand[1]]))
+        os.system('cd %s & adb -s %s shell setprop phone.imei %s' % (adb_dir, self.address, _get_imei(15)))
+        os.system(
+            'cd %s & adb -s %s shell setprop ro.product.name %s' % (adb_dir, self.address, phone_model[tmp_rand[2]]))
+        os.system('cd %s & adb -s %s shell setprop phone.imsi %s' % (adb_dir, self.address, _get_imei(15)))
+        os.system('cd %s & adb -s %s shell setprop phone.linenum %s' % (adb_dir, self.address, _get_imei(11)))
+        os.system('cd %s & adb -s %s shell setprop phone.simserial %s' % (adb_dir, self.address, _get_imei(20)))
         # print("》》》匿名完毕《《《")
+        if clear_traces_and_cache:
+            # 清除痕迹和缓存
+            os.system(
+                f'cd {adb_dir} && adb -s {self.address} shell "cd /storage/emulated/0/bilibili_data && rm -rf * && '
+                f'exit"')
+            os.system(
+                f'cd {adb_dir} && adb -s {self.address} shell "cd /storage/emulated/0/bilibili_time && rm -rf * && '
+                f'exit"')
+            os.system(
+                f'cd {adb_dir} && adb -s {self.address} shell "cd /data/data/com.bilibili.priconne/files/ && rm -rf '
+                f'data_* && exit"')
+            os.system(
+                f'cd {adb_dir} && adb -s {self.address} shell "cd data/data/com.bilibili.priconne/files/ && rm -rf '
+                f'time_* && exit"')
+            os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
+            os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
+            # print("》》》匿名完毕《《《")
+
+    def output_debug_info(self):
+        return self.debug_record.get()
 
 
 class Multithreading(threading.Thread, BaseMixin):

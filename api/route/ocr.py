@@ -1,4 +1,5 @@
 import queue
+import random
 import time
 from flask import Blueprint, jsonify, request
 
@@ -18,6 +19,13 @@ if ocr_mode != "网络" and len(ocr_mode) != 0:
 
     # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
     sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
+
+config = {
+    'appId': 'PCR',
+    'apiKey': baidu_apiKey,
+    'secretKey': baidu_secretKey
+}
+client = AipOcr(**config)
 
 ocr_api = Blueprint('ocr', __name__)
 
@@ -39,14 +47,8 @@ def baidu_ocr():
     # 接收图片
     img = request.files.get('file')
     queue.put((img.read()))
-    config = {
-        'appId': 'PCR',
-        'apiKey': baidu_apiKey,
-        'secretKey': baidu_secretKey
-    }
-    client = AipOcr(**config)
     if img:
-        time.sleep(0.8)
+        time.sleep(random.uniform(1.5, 2.05))
         part = queue.get()
         result = client.basicGeneral(part)
         return result

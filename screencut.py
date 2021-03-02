@@ -10,6 +10,13 @@ from core.Automator import Automator
 
 
 def WindowMode(frame=None):
+    try:
+        from IPython import get_ipython
+        ip = get_ipython()
+        ip.run_line_magic("matplotlib", "qt")
+        return
+    except:
+        pass
     if frame is None:
         try:
             matplotlib.use("Qt5Agg")

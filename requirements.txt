@@ -12,6 +12,12 @@ uiautomator2==2.10.0 -i https://mirrors.aliyun.com/pypi/simple/
 opencv-contrib-python==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 keyboard==0.13.5 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
+# For datacenter
+pypinyin
+rich
+cvxpy
+cvxopt
+brotli
 
 # web api server
 flask==1.1.2 -i https://pypi.douban.com/simple
@@ -21,10 +27,11 @@ flasgger==0.9.5 -i https://pypi.douban.com/simple
 
 
 #OCR
-tensorflow -i https://pypi.douban.com/simple
+tensorflow == 2.4.0 -i https://pypi.douban.com/simple
 muggle-ocr
-numpy==1.19.0 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+numpy==1.19.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pillow -i https://pypi.douban.com/simple
 pyyaml -i https://pypi.douban.com/simple
-# 低于python3.8版本的可能需要protobuf==3.6.0，大于就随便3.14.0
+# 浣庝簬python3.8鐗堟湰鐨勫彲鑳介渶瑕乸rotobuf==3.6.0锛屽ぇ浜庡氨闅忎究3.14.0
 protobuf
+
