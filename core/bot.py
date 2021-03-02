@@ -5,7 +5,12 @@ import psutil
 import requests
 
 from core.pcr_config import s_sckey, log_lev, log_cache, qqbot_key, qqbot_select, qq, qqbot_private_send_switch, \
-    qqbot_group_send_switch, tg_token, tg_mute, debug
+    qqbot_group_send_switch, tg_token, tg_mute, debug, proxy_http, proxy_https
+
+BOT_PROXY = {
+    "http": proxy_http if len(proxy_http) > 0 else None,
+    "https": proxy_https if len(proxy_https) > 0 else None
+}
 
 
 class Bot:
@@ -108,7 +113,7 @@ class Bot:
 
         }
         try:
-            requests.post(self.server_nike_url, params=info)
+            requests.post(self.server_nike_url, proxies=BOT_PROXY, params=info)
         except Exception as e:
             pass
             # pcr_log("__SERVER_BOT__").write_log("error", f"ServerBot发送失败：{e}")
@@ -170,41 +175,41 @@ class Bot:
                     send, sent = self.info_cutting(CoolPush_info['c'])
                     while send is None:
                         tmp_dict = {'c': send}
-                        requests.post(self.qqbot_url1, params=tmp_dict)
+                        requests.post(self.qqbot_url1, proxies=BOT_PROXY, params=tmp_dict)
                         send, sent = self.info_cutting(sent)
                         time.sleep(0.3)
                     tmp_dict = {'c': sent}
-                    requests.post(self.qqbot_url1, params=tmp_dict)
+                    requests.post(self.qqbot_url1, proxies=BOT_PROXY, params=tmp_dict)
 
                 if qqbot_group_send_switch == 1:
                     send, sent = self.info_cutting(CoolPush_info['c'])
                     while send is not None:
                         tmp_dict = {'c': send}
-                        requests.post(self.qqbot_url2, params=tmp_dict)
+                        requests.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
                         send, sent = self.info_cutting(sent)
                         time.sleep(0.3)
                     tmp_dict = {'c': sent}
-                    requests.post(self.qqbot_url2, params=tmp_dict)
+                    requests.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
 
             elif self.qqbot_select == 'Qmsgnike':
                 if qqbot_private_send_switch == 1:
                     send, sent = self.info_cutting(Qmsgnike_info['msg'])
                     while send is None:
                         tmp_dict = {'msg': send, qq: self.qq}
-                        requests.post(self.qqbot_url1, params=tmp_dict)
+                        requests.post(self.qqbot_url1, proxies=BOT_PROXY, params=tmp_dict)
                         send, sent = self.info_cutting(sent)
                         time.sleep(0.3)
                     tmp_dict = {'msg': sent, qq: self.qq}
-                    requests.post(self.qqbot_url1, params=tmp_dict)
+                    requests.post(self.qqbot_url1, proxies=BOT_PROXY, params=tmp_dict)
                 if qqbot_group_send_switch == 1:
                     send, sent = self.info_cutting(Qmsgnike_info['msg'])
                     while send is None:
                         tmp_dict = {'msg': send, qq: self.qq}
-                        requests.post(self.qqbot_url2, params=tmp_dict)
+                        requests.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
                         send, sent = self.info_cutting(sent)
                         time.sleep(0.3)
                     tmp_dict = {'msg': sent, qq: self.qq}
-                    requests.post(self.qqbot_url2, params=tmp_dict)
+                    requests.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
         except Exception as e:
             pass
 
@@ -245,7 +250,7 @@ class Bot:
 
                 requests.post('https://tgmessage-cyicek.vercel.app/api', headers=img_h, data=tg_imginfo)
                 time.sleep(1)
-                requests.get(url=img_delete, headers=h)
+                requests.get(url=img_delete, proxies=BOT_PROXY, headers=h)
             else:
                 tg_textinfo = {
                     'token': tg_token,
@@ -264,7 +269,7 @@ class Bot:
                     print("TG Ready to Send!")
                     print("DATA:")
                     print(tg_textinfo)
-                r = requests.post('https://tgmessage-cyicek.vercel.app/api', data=tg_textinfo)
+                r = requests.post('https://tgmessage-cyicek.vercel.app/api', proxies=BOT_PROXY, data=tg_textinfo)
                 if debug:
                     print("Get:", r)
 
