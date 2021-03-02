@@ -7,7 +7,6 @@ import requests
 from core.pcr_config import s_sckey, log_lev, log_cache, qqbot_key, qqbot_select, qq, qqbot_private_send_switch, \
     qqbot_group_send_switch, tg_token, tg_mute, debug
 
-debug = True
 
 class Bot:
     """
@@ -88,10 +87,9 @@ class Bot:
                     self.qq_bot(s_level, message=message, acc_state=acc_state)
                 if len(tg_token) != 0:
                     self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
-
                 if s_level not in self.lev_dic['3']:
                     # 发送完后清空消息队列
-                    self.acc_message = {}
+                    self.acc_message[s_level] = []
 
     def wechat_bot(self, s_level, message='', acc_state=''):
         """
@@ -216,6 +214,8 @@ class Bot:
         if debug:
             print("Now TG BOT!")
         try:
+            # To escape characters '_', '*', '`', '[' outside of an entity, prepend the characters '\' before them.
+            message = message.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
             if img is not None:
                 up_img = cv2.imencode('.jpg', img)[1].tobytes()
                 f = {"smfile": up_img}
