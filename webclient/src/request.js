@@ -1,5 +1,5 @@
 import axios from "axios"
-const host=``
+const host=`` 
 export default (url, config = {}) => {
     return axios({
         ...config,
