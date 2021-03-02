@@ -473,7 +473,7 @@ if __name__ == "__main__":
             print("当前绑定计划：", last_schedule)
     while True:
         try:
-            cmd = input("> ")
+            cmd = input("Main[{last_schedule}]> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "info":
@@ -755,6 +755,8 @@ if __name__ == "__main__":
                     JoinShutdown(True)
                 else:
                     JoinShutdown(False)
+            elif order == "exit":
+                break
             else:
                 print("未知的命令")
         except Exception as e:
