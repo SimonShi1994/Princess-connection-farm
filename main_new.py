@@ -473,7 +473,7 @@ if __name__ == "__main__":
             print("当前绑定计划：", last_schedule)
     while True:
         try:
-            cmd = input("Main[{last_schedule}]> ")
+            cmd = input(f"Main[{last_schedule}]> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "info":

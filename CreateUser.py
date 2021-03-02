@@ -757,7 +757,7 @@ def edit_schedule(ScheduleName):
     is_edited = ''
     while True:
         try:
-            cmd = input("Schedule[{ScheduleName}]{is_edited}> ")
+            cmd = input(f"Schedule[{ScheduleName}]{is_edited}> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "help":
