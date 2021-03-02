@@ -23,7 +23,7 @@ from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
 from core.pcr_config import GC, enable_pause
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
-    trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
+    trace_exception_for_debug, s_sckey, sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
     max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr, ignore_serials
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import AutomatorRecorder, parse_batch, list_all_flags
@@ -1248,7 +1248,7 @@ class Schedule:
     def _run(self):
         # self._get_status()
         _time_start = time.time()  # 第一次直接输出初始状态
-        if len(s_sckey) != 0 and self.name != "":
+        if sentstate != 0 and self.name != "":
             acc_state = f"Schedule {self.name} 开始运行！\n"
             from CreateUser import _show_schedule
             acc_state += PrintToStr(_show_schedule, self.schedule)
@@ -1265,10 +1265,10 @@ class Schedule:
                 self.log("info", p)
 
             # Report Information
-            if not self.is_free() and len(s_sckey) != 0:
+            if not self.is_free() and sentstate != 0:
                 _time_end = time.time()
                 _time = int(_time_end - _time_start) / 60
-                if _time >= s_sentstate:
+                if _time >= sentstate:
                     self.log("info", "server_bot 播报当前状态")
                     pcr_log("admin").server_bot("STATE", acc_state=PrintToStr(self.show_everything))
                     _time_start = time.time()

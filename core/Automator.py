@@ -21,6 +21,7 @@ from core.pcr_config import trace_exception_for_debug, captcha_skip
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import check_task_dict, list_all_flags, is_in_group
 from core.valid_task import VALID_TASK, getcustomtask
+from core.bot import Bot
 
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
@@ -196,9 +197,12 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 try:
                     os.makedirs(f"error_screenshot/{account}", exist_ok=True)
                     nowtime = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
-                    target = f"error_screenshot/{account}/{nowtime}_RT{retry}.bmp"
+                    target = f"error_screenshot/{account}/{nowtime}_RT{retry}.jpg"
                     cv2.imwrite(target, self.last_screen)
                     pcr_log(account).write_log(level="error", message=f"错误截图已经保存至{target}")
+                    # 错误截图日志为0级消息，后面可能会改成warning级别或者error
+                    Bot().server_bot('', '', '', self.last_screen, f"模拟器{self.address}-{self.account}的运行错误重启截图")
+                    print('go')
                 except Exception as es:
                     pcr_log(account).write_log(level="error", message=f"错误截图保存失败：{es}")
                 if trace_exception_for_debug:
