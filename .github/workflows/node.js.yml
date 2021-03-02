@@ -25,7 +25,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: | 
         cd webclient
-        npm i webpack -g
+        npm i webpack@5.10.0 -g
+        npm i webpack-cli@4.2.0 -g
         npm run build
     - name: Release
       uses: fnkr/github-action-ghr@v1
