@@ -216,6 +216,7 @@ class Bot:
         try:
             # To escape characters '_', '*', '`', '[' outside of an entity, prepend the characters '\' before them.
             message = message.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
+            acc_state = acc_state.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
             if img is not None:
                 up_img = cv2.imencode('.jpg', img)[1].tobytes()
                 f = {"smfile": up_img}
