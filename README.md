@@ -1,16 +1,14 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.4.20210224
+ # Princess connection 公主连结农场脚本v2.5.20210302
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
-## 简介
+## :bookmark_tabs:简介
 
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
 **支持模拟器多开**
-
-**支持Wechat/QQ部分 通知推送**
 
 **支持自动填写验证码**
 
@@ -26,7 +24,7 @@
 
 **支持数据中心（库存、角色、刷图规划）**
 
-## 详细功能
+## :books:详细功能
 
 1. 行会
 
@@ -58,6 +56,7 @@
 - [x] 购买经验
 - [x] 探索
 - [x] 圣迹调查
+- [x] 收取女神祭
 
 5. 工具
 
@@ -76,7 +75,7 @@
 - [x] 初始化
 - [x] 自动推图
 
-## 环境
+## :globe_with_meridians:环境
 
 - 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
@@ -104,9 +103,19 @@
 
 如何申请百度文字识别apikey和Secret Key:(https://blog.csdn.net/biao197/article/details/102907492 )
 
-Server酱食用方法：(http://sc.ftqq.com/3.version)
+## :loudspeaker:推送
 
-## 使用方式
+|          支持推送的API          | 是否可以交互 | 是否支持图片发送   | 支持‘不受限制’的文字发送 | 使用第三方服务API  | 衍生支持                                              |
+| :-----------------------------: | ------------ | ------------------ | ------------------------ | ------------------ | ----------------------------------------------------- |
+|      QQpush QQ:cold_sweat:      | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
+|      Wechat 微信（:hand:）      | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
+|         Wework 企业微信         | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | APP Bark_IOS Wework群机器人 钉钉群机器人 飞书群机器人 |
+|         TG 电报（:+1:）         | :x:          | :heavy_check_mark: | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
+| **还在开发ing**【看群投票决定】 |              |                    |                          |                    |                                                       |
+
+Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
+
+## :taxi:使用方式
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
 - 使用OCR相关的服务，必须启动app。使用2021-01-23后的版本程序默认自动启动app。
@@ -127,7 +136,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
 
 
-## 额外说明
+## :warning:额外说明
 
 1. 请不要用于商业用途。代码交流和bug反馈请加群加qq群 1130884619
 
@@ -143,7 +152,7 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
    [![Stargazers over time](https://starchart.cc/SimonShi1994/Princess-connection-farm.svg)](https://starchart.cc/SimonShi1994/Princess-connection-farm)
 
-## 更新计划
+## :date:更新计划
 
 - [x] 滑动验证码问题
 - [x] 模拟器自启动控制
@@ -151,16 +160,45 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 - [ ] WebGUI界面
 - [ ] 提高刷图效率
 - [ ] 刷活动本
-- [ ] 女神祭
+- [x] 女神祭
 - [ ] 跳过18图切图动画
 
-## 免责声明
+## :mute:免责声明
 
 当你**下载或使用**本项目，将默许
 
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
-## 更新历史
+## :hammer:更新历史:wrench:
+
+2021/3/2 By:Klarkxy
+
+- 编辑界面增加友好提示，方便编辑时使用。
+
+2021/3/2 By:CyiceK
+
+- 新增TGbot推送，去本地化设计，本地无需科学上网即可食用（因此也失去了脚本交互功能）
+
+2021/3/2 By:TheAutumnOfRice
+
+- 新增舒爽的流程控制
+  - 新增暂停继续指令 `pause`/`resume`
+  - 新增任务查看与跳转 `task`/`skip`
+  - 
+- 新增强大的调试工具
+  - 单独开关指定debug `debug`
+  - 记录Automator和u2的操作信息 `rec`/`u2rec`
+  - 支持命令调试 `exec`
+- 增加Bot的代理设置 （proxy_http,proxy_https)
+
+2021/3/1 By:TheAutumnOfRice
+
+- 新增20图
+- 修复data > js trackinfo中部分角色不显示的BUG
+
+2021/2/24 By:TheAutumnOfRice
+
+- 新增女神祭`r11`
 
 2021/2/10 By:TheAutumnOfRice
 

@@ -259,7 +259,7 @@ def ShowGuide():
 def ShowServerChan():
     if s_sckey != "":
         print("* Server酱已配置！")
-        print("  - 运行状态消息发送间隔(s) s_sentstate schedule：", s_sentstate)
+        print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
         print("  - 记录过滤等级 log_lev：", log_lev)
         print("  - 记录最大累积条数 log_cache：", log_cache)
     else:
@@ -270,7 +270,7 @@ def ShowServerChan():
         print("QQbot私聊你的开关 qqbot_private_send_switch：", qqbot_private_send_switch)
         print("QQbot群聊的开关 qqbot_group_send_switch：", qqbot_group_send_switch)
         print("设置发送的QQ号/群号 qq：", qq)
-        print("  - 运行状态消息发送间隔(s) s_sentstate schedule：", s_sentstate)
+        print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
         print("  - 记录过滤等级 log_lev：", log_lev)
         print("  - 记录最大累积条数 log_cache：", log_cache)
     else:
@@ -349,6 +349,10 @@ def ShowDebugInfo():
     print("* 保存错误堆栈 trace_exception_for_debug:", "已开启" if trace_exception_for_debug else "未开启")
     print("* 保存baiduocr的图片 baidu_ocr_img：", "已开启" if baidu_ocr_img else "未开启")
     print("* 屏蔽图像匹配超时报错 disable_timeout_raise：", "已开启" if disable_timeout_raise else "未开启")
+    print("* U2指令记录队列大小 u2_record_size：", u2_record_size)
+    print("* U2指令过滤列表 u2_record_filter:", u2_record_filter)
+    print("* Automator指令记录队列大小 debug_record_size: ", debug_record_size)
+    print("* Automator指令过滤列表 debug_record_filter: ", debug_record_filter)
 
 
 def CheckConstantImgs():
@@ -409,6 +413,13 @@ def Start_App():
     print("app可能启动失败。")
 
 
+def get_arg(argv, key, default):
+    for ind, a in enumerate(argv):
+        if a == key:
+            return argv[ind + 1]
+    return default
+
+
 if __name__ == "__main__":
     CheckConstantImgs()
     GetLastSchedule()
@@ -444,7 +455,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.4.20210224")
+        print("当前版本为 Ver 2.5.20210302")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -458,12 +469,11 @@ if __name__ == "__main__":
         print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
-        print("* Happy 2021 Year!")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Main[{last_schedule}]> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "info":
@@ -517,6 +527,118 @@ if __name__ == "__main__":
                     print("join [-nowait] 一直运行至队列为空，设备全部闲置后退出，设置-nowait后将忽略等待执行的任务")
                     print("join-shutdown [-nowait] 一直运行至队列为空、设备全部闲置时，关机，设置-nowait后将忽略等待执行的任务")
                     print("reconnect 重新搜索模拟器")
+                    print("以下device_id若不指定，默认将信息发给全部Device。device_id可通过device命令查看，为整数。")
+                    if enable_pause:
+                        print("<Shift+P> 暂停/继续 (关闭enable_pause，可以使用命令暂停/继续某一个指定device）")
+                    else:
+                        print("pause/resume [-d (device_id)] 暂停/继续 （开启enable_pause，可以用热键暂停device）")
+                    print("task [-d (device_id)] 查看某个device当前的task列表")
+                    print("skip [-d (device_id)] [-t (task_id)] 跳过当前任务；若指定-t，则跳转到指定任务（通过task查看ID）")
+                    print("!!!________FOR DEBUG________!!!")
+                    print("u2rec [-d (device_id)] 查看某个device的u2运行记录")
+                    print("rec [-d (device_id)] 查看某个device的Automator运行记录")
+                    print("debug (on/off) [-d (device_id)] [-m (module_name)] 打开/关闭某个设备的调试显示，-m可指定某一个模块，默认为全部模块。")
+                    print("debug show [-d (device_id)] 显示某一个设备的每个模块的调试启动状况。")
+                    print("exec [-d (device_id)] [-f (script_file)] 进入python命令调试模式，若指定-f，则执行某一文件。")
+            elif order == "task":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.show_task_index(device)
+            elif order == "u2rec":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.show_u2_record(device)
+            elif order == "rec":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.show_debug_record(device)
+            elif order == "skip":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                to_id = get_arg(argv, "-t", None)
+                if to_id is not None:
+                    to_id = int(to_id)
+                SCH.pcr.skip_task(to_id, device)
+            elif order == "pause":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.set_freeze(True, device)
+            elif order == "resume":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.set_freeze(False, device)
+
+            elif order == "debug":
+                assert SCH is not None, "当前无运行的Schedule！"
+                assert len(cmds) >= 2, "输入错误！"
+                argv = cmds[2:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                if cmds[1] == "on":
+                    module_name = get_arg(argv, "-m", "__all__")
+                    SCH.pcr.start_debug(True, module_name, device)
+                elif cmds[1] == "off":
+                    module_name = get_arg(argv, "-m", "__all__")
+                    SCH.pcr.start_debug(False, module_name, device)
+                elif cmds[1] == "show":
+                    SCH.pcr.show_all_module_debug(device)
+            elif order == "exec":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                script_file = get_arg(argv, "-f", None)
+                if script_file is not None:
+                    SCH.pcr.exec_script(script_file, device)
+                else:
+                    print("--------- EXEC调试模式 ----------")
+                    print("直接输入 回车 : 退出调试模式")
+                    print("输入其它： 会像指定的设备发送exec指令")
+                    print("绑定设备：", "全部" if device is None else device)
+                    print("--------------------------------")
+                    while True:
+                        cmd = input("")
+                        if cmd == "":
+                            break
+                        else:
+                            SCH.pcr.exec_command(cmd, device)
+
             elif order == "bind":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 assert len(cmds) == 2, "必须输入计划名称"
@@ -633,6 +755,8 @@ if __name__ == "__main__":
                     JoinShutdown(True)
                 else:
                     JoinShutdown(False)
+            elif order == "exit":
+                break
             else:
                 print("未知的命令")
         except Exception as e:

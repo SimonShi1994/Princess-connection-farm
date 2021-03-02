@@ -187,9 +187,10 @@ def TaskEditor(taskname):
     print(f"Task编辑器  当前文件：  {taskname}")
     print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
     obj = AutomatorRecorder.gettask(taskname)
+    is_edited = ''
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Task[{taskname}]{is_edited}> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "help":
@@ -215,10 +216,13 @@ def TaskEditor(taskname):
                 return
             elif order == "save":
                 AutomatorRecorder.settask(taskname, obj)
+                is_edited = ''
             elif order == "load":
                 obj = AutomatorRecorder.gettask(taskname)
+                is_edited = ''
             elif order == "clear":
                 obj = {"tasks": []}
+                is_edited = '*'
             elif order == "list":
                 if len(cmds) > 1:
                     tag = cmds[1].lstrip("-")
@@ -233,12 +237,15 @@ def TaskEditor(taskname):
             elif order == "enable" and len(cmds) == 2:
                 ind = int(cmds[1])
                 obj["tasks"][ind]["__disable__"] = False
+                is_edited = '*'
             elif order == "disable" and len(cmds) == 2:
                 ind = int(cmds[1])
                 obj["tasks"][ind]["__disable__"] = True
+                is_edited = '*'
             elif order == "flag" and len(cmds) == 3:
                 ind = int(cmds[2])
                 obj["tasks"][ind]["__disable__"] = cmds[1]
+                is_edited = '*'
             elif order == "add":
                 if len(cmds) == 1:
                     print("需要指定Type！")
@@ -254,12 +261,14 @@ def TaskEditor(taskname):
                     print(i.desc)
                     cur[i.key] = i.inputbox.create()
                 obj['tasks'] += [cur]
+                is_edited = '*'
             elif order == "del":
                 if len(cmds) == 1:
                     print("需要指定ID！")
                     continue
                 ID = int(cmds[1])
                 del obj["tasks"][ID]
+                is_edited = '*'
             elif order == "move":
                 if len(cmds) <= 2:
                     print("需要指定ID1和ID2！")
@@ -276,6 +285,7 @@ def TaskEditor(taskname):
                         tmp = obj["tasks"][ID1]
                         obj["tasks"].insert(ID2 + 1, tmp)
                         del obj["tasks"][ID1]
+                    is_edited = '*'
             elif order == "detail":
                 if len(cmds) == 1:
                     show_tasks_detail(obj)
@@ -470,9 +480,10 @@ def edit_batch(BatchName):
     print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
     print("什么是batch:  what")
     obj = AutomatorRecorder.getbatch(BatchName)
+    is_edited = ''
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Batch[{BatchName}]{is_edited}> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "help":
@@ -505,10 +516,13 @@ def edit_batch(BatchName):
                 return
             elif order == "save":
                 AutomatorRecorder.setbatch(BatchName, obj)
+                is_edited = ''
             elif order == "load":
                 obj = AutomatorRecorder.getbatch(BatchName)
+                is_edited = ''
             elif order == "clear":
                 obj = {"batch": []}
+                is_edited = '*'
             elif order == "show":
                 print_batch(obj)
             elif order == "random":
@@ -516,8 +530,10 @@ def edit_batch(BatchName):
                     ind = int(cmds[2])
                     if cmds[1] == "enable":
                         obj["batch"][ind]["random"] = True
+                        is_edited = '*'
                     elif cmds[1] == "disable":
                         obj["batch"][ind]["random"] = False
+                        is_edited = '*'
                     else:
                         print("只能输入enable或者disable！")
                 else:
@@ -531,6 +547,7 @@ def edit_batch(BatchName):
                     else:
                         priority = 0
                     obj["batch"] += [dict(group=group, taskfile=task, priority=priority)]
+                    is_edited = '*'
                 elif len(cmds) == 3 and cmds[1] == "-file":
                     with open(cmds[2], "r", encoding="utf-8") as f:
                         for line in f:
@@ -549,6 +566,7 @@ def edit_batch(BatchName):
                                 d['group'] = curs[1]
                             d['taskfile'] = curs[2]
                             obj["batch"] += d
+                    is_edited = '*'
                 elif len(cmds) in [3, 4]:
                     account = cmds[1]
                     task = cmds[2]
@@ -557,6 +575,7 @@ def edit_batch(BatchName):
                     else:
                         priority = 0
                     obj["batch"] += [dict(account=account, taskfile=task, priority=priority)]
+                    is_edited = '*'
                 else:
                     print("add命令有误！")
             else:
@@ -735,9 +754,10 @@ def edit_schedule(ScheduleName):
     print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
     print("什么是schedule:  what")
     obj = AutomatorRecorder.getschedule(ScheduleName)
+    is_edited = ''
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Schedule[{ScheduleName}]{is_edited}> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "help":
@@ -765,15 +785,19 @@ def edit_schedule(ScheduleName):
                 return
             elif order == "save":
                 AutomatorRecorder.setschedule(ScheduleName, obj)
+                is_edited = ''
             elif order == "load":
                 obj = AutomatorRecorder.getschedule(ScheduleName)
+                is_edited = ''
             elif order == "clear":
                 obj = {"schedules": []}
+                is_edited = '*'
             elif order == "show":
                 _show_schedule(obj)
             elif order == "add" and len(cmds) == 2:
                 if cmds[1] in ["asap", "wait", "config"]:
                     obj["schedules"] += [_edit_asap_wait_config(cmds[1])]
+                    is_edited = '*'
                 else:
                     print("add命令有误！")
             elif order == "enable" and len(cmds) == 2:
@@ -782,18 +806,21 @@ def edit_schedule(ScheduleName):
                     print("未找到", cmds[1])
                 else:
                     obj["schedules"][ind]["__disable__"] = False
+                    is_edited = '*'
             elif order == "disable" and len(cmds) == 2:
                 ind = _get_subschedule_id(obj, cmds[1])
                 if ind == -1:
                     print("未找到", cmds[1])
                 else:
                     obj["schedules"][ind]["__disable__"] = True
+                    is_edited = '*'
             elif order == "flag" and len(cmds) == 3:
                 ind = _get_subschedule_id(obj, cmds[2])
                 if ind == -1:
                     print("未找到", cmds[2])
                 else:
                     obj["schedules"][ind]["__disable__"] = cmds[1]
+                    is_edited = '*'
             else:
                 print("不认识的命令。")
         except Exception as e:
@@ -901,9 +928,10 @@ def edit_switch(SwitchName):
     print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
     print("什么是switch:  what")
     obj = AutomatorRecorder.getswitch(SwitchName)
+    is_saved = ''
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Switch[{SwitchName}]{is_saved}> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "help":
@@ -960,20 +988,27 @@ def edit_switch(SwitchName):
                 return
             elif order == "save":
                 AutomatorRecorder.setswitch(SwitchName, obj)
+                is_saved = ''
             elif order == "load":
                 obj = AutomatorRecorder.getswitch(SwitchName)
+                is_edited = ''
             elif order == "clear":
                 obj["switches"] = []
+                is_saved = '*'
             elif order == "show":
                 show_switch(obj)
             elif order == "order":
                 obj["order"] = IntInputer().create()
+                is_saved = '*'
             elif order == "enable":
                 obj["enable"] = True
+                is_saved = '*'
             elif order == "disable":
                 obj["enable"] = False
+                is_saved = '*'
             elif order == "add":
                 obj["switches"] += [_add_switch()]
+                is_saved = '*'
             else:
                 print("不认识的命令。")
         except Exception as e:
@@ -985,7 +1020,7 @@ if __name__ == "__main__":
     print("当前工作路径：", getcwd())
     while True:
         try:
-            cmd = input("> ")
+            cmd = input("Edit> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "exit":

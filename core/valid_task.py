@@ -669,6 +669,7 @@ VALID_TASK = ValidTask() \
                                        "mode 2: 只刷2"),
           TaskParam("times", int, "次数", "只能为1~5的整数"),
           TaskParam("tili", bool, "体力不足时是否购买体力")]) \
+    .add("r11", "shouqunvshenji", "收取女神祭", "收取女神祭") \
     .add("t1", "rename", "批量重命名", "随机+批量给自己换个名字，建议配合OCR识别信息更佳",
          [TaskParam("name", str, "新名字", "你的量产新名字，以空格为间隔"),
           TaskParam("auto_id", bool, "自动生成随机位数id", "生成一个随机数0-1000在名字后面", False)]) \

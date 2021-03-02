@@ -2,6 +2,7 @@ import logging
 import os
 import time
 from sys import stdout
+
 from core.bot import Bot
 
 # 各项需要累积的初始化
@@ -16,7 +17,8 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
 
     def __init__(self, acc):  # acc为账户名
         # 此处为兼容连接
-        self.server_bot = Bot().server_bot
+        self._bot = Bot()
+        self.server_bot = self._bot.server_bot
         os.makedirs("log", exist_ok=True)
         self.acc_name = acc  # 账户名
         # self.acc_message[self.acc_name] = []
@@ -48,14 +50,14 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             self.norm_log.debug(message)
         elif lev == 'info':
             self.norm_log.info(message)
-            self.server_bot(lev, message)
+            self.server_bot(s_level=lev, message=message)
         elif lev == 'warning':
             self.norm_log.warning(message)
-            self.server_bot(lev, message)
+            self.server_bot(s_level=lev, message=message)
         elif lev == 'error':
             self.norm_log.error(message)
             pcr_log("__ERROR_LOG__").write_log("info", f"账号 {self.acc_name} ： {message}")
-            self.server_bot(lev, message)
+            self.server_bot(s_level=lev, message=message)
         else:
             self.norm_log.critical(message)
 

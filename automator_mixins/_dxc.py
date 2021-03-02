@@ -186,21 +186,32 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.dxc_switch = 1
                 break
 
-            if self.is_exists('img/dengjixianzhi.jpg', at=(45, 144, 163, 252)):
-                # 如果第二个也等级不足就退出
-                if self.is_exists('img/dengjixianzhi.jpg', at=(160, 126, 270, 232)):
-                    pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)
-                    self.dxc_switch = 1
-                    break
-                # 如果等级不足，就支援的第二个人
-                self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num + 1],
-                               until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
-                               , retry=6)
-                # self.click(100, 173, post_delay=1)  # 支援的第一个人
+            # time.sleep(self.change_time + 1)
+            # if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,at=(45, 144, 163, 252)):
+            #     # 如果第二个也等级不足就退出
+            #     if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,at=(160, 126, 270, 232)):
+            #         pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)
+            #         self.dxc_switch = 1
+            #         break
+            #     # 如果等级不足，就支援的第二个人
+            #     self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num + 1],
+            #                    until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
+            #                    , retry=6)
+            #     # self.click(100, 173, post_delay=1)  # 支援的第一个人
+            # else:
+            #     time.sleep(self.change_time)
+            #     self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
+            #                    , retry=6)
+
+            if self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"], retry=4):
+                pass
+            elif self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num + 1], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"] , retry=4):
+                pass
             else:
-                time.sleep(self.change_time)
-                self.click_btn(DXC_ELEMENT["zhiyuan_dianren"][assist_num], until_appear=DXC_ELEMENT["zhiyuan_gouxuan"]
-                               , retry=6)
+                pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)
+                self.dxc_switch = 1
+                break
+
             time.sleep(self.change_time)
             if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
                 # 逻辑顺序改变
@@ -252,7 +263,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
                     break
                 else:
-                    if self.is_exists('img/shanghaibaogao.jpg', at=(663, 6, 958, 120)):
+                    self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
+                    if self.is_exists('img/shanghaibaogao.jpg', threshold=0.8, at=(663, 6, 958, 120)):
                         self.click(870, 503)
                     if self.is_exists('img/dxc/chetui.bmp'):
                         break

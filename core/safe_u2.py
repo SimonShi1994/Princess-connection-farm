@@ -1,7 +1,9 @@
 import ctypes
+import datetime
 import functools
 import inspect
 import os
+import queue
 import random
 import subprocess
 import time
@@ -11,7 +13,7 @@ import adbutils
 import requests
 import uiautomator2
 
-from core.pcr_config import adb_dir, debug, disable_timeout_raise
+from core.pcr_config import adb_dir, debug, disable_timeout_raise, u2_record_size, u2_record_filter
 
 
 def _async_raise(tid, exctype):
@@ -181,25 +183,56 @@ def safe_wraper(fun, *args, **kwargs):
     raise last_e
 
 
+class U2Record:
+    def __init__(self, record_size):
+        self.Q = queue.Queue(record_size)
+
+    def gettime(self):
+        cur_time = time.time()
+        time_str = datetime.datetime.fromtimestamp(cur_time).strftime("%H%M%S")
+        return time_str
+
+    def add(self, item="()", *args, **kwargs):
+        cur = {"cmd": f"{item} -- {args} -- {kwargs}", "start": self.gettime(), "end": None}
+        if not item in u2_record_filter:
+            if self.Q.full():
+                self.Q.get()
+            self.Q.put(cur)
+        return cur
+
+    def get(self):
+        L = self.Q.queue
+        out = []
+        for l in L:
+            if l['end'] is None:
+                out += [f"{l['start']} : {l['cmd']}"]
+            else:
+                out += [f"{l['start']} ~ {l['end']} : {l['cmd']}"]
+        return out
+
 class SafeU2HandleBase:
     def __init__(self, obj, safe_items=[], safe_subobjs={}):
+        self.R = U2Record(u2_record_size)
         self.obj = obj
         self.safe_items = safe_items
         self.safe_subobjs = safe_subobjs
 
-    def __getattribute__(self, item):
-        if item in super(SafeU2HandleBase, self).__getattribute__("safe_items"):
+    def __getattr__(self, item):
+        if item in self.safe_items:
             def fun(*args, **kwargs):
-                return safe_wraper(super(SafeU2HandleBase, self).__getattribute__("obj").__getattribute__(item), *args,
-                                   **kwargs)
+                cur = self.R.add(item, *args, **kwargs)
+                output = safe_wraper(getattr(self.obj, item), *args,
+                                     **kwargs)
+                cur['end'] = self.R.gettime()
+                return output
 
             return fun
-        elif item in super(SafeU2HandleBase, self).__getattribute__("safe_subobjs"):
-            return super(SafeU2HandleBase, self).__getattribute__("safe_subobjs")[item](
-                super(SafeU2HandleBase, self).__getattribute__("obj").__getattribute__(item)
+        elif item in self.safe_subobjs:
+            return self.safe_subobjs[item](
+                getattr(self.obj, item)
             )
         else:
-            return super(SafeU2HandleBase, self).__getattribute__("obj").__getattribute__(item)
+            return getattr(self.obj, item)
 
 
 class SafeU2Object(SafeU2HandleBase):
@@ -211,7 +244,6 @@ class SafeU2Touch(SafeU2HandleBase):
     def __init__(self, obj):
         super().__init__(obj, ['down', 'move', 'up', 'sleep'])
 
-
 class SafeU2Handle(SafeU2HandleBase):
     def __init__(self, obj: uiautomator2.Device):
         super().__init__(obj,
@@ -220,6 +252,7 @@ class SafeU2Handle(SafeU2HandleBase):
                          {'touch': SafeU2Touch})
 
     def __call__(self, *args, **kwargs):
+        self.R.add(item="()", *args, **kwargs)
         # next_obj=safe_wraper(super(SafeU2HandleBase,self).__getattribute__("obj").__call__,*args,**kwargs)
-        next_obj = super(SafeU2HandleBase, self).__getattribute__("obj").__call__(*args, **kwargs)
+        next_obj = self.obj(*args, **kwargs)
         return SafeU2Object(next_obj)
