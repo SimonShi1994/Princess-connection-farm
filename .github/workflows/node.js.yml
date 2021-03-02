@@ -32,4 +32,4 @@ jobs:
         env:
           GHR_COMPRESS: xz
           GHR_PATH: /webclient/dist
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}    
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}    
