@@ -30,6 +30,7 @@ jobs:
         npm install
         npm run build
         zip dist.zip dist
+        echo $(ls)
     - name: Create Release
       id: create_release
       uses: monkeyWie/create-release@master
