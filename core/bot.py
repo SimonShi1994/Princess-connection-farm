@@ -58,7 +58,7 @@ class Bot:
         self.qqbot_url2 = self.group_url.get(f"{self.qqbot_select}_group_url", "")
 
     def server_bot(self, s_level, message='', acc_state='', img=None, img_title=None):
-        if len(s_sckey) != 0 or len(qqbot_key) != 0 or len(qqbot_key) != 0:
+        if len(s_sckey) != 0 or len(qqbot_key) != 0 or len(tg_token) != 0:
             message = ''.join(message).replace('\n', '')
             if s_level in self.lev_dic[log_lev]:
                 # self.acc_message.setdefault(s_level, [])
