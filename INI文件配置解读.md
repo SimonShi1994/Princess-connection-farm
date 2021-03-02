@@ -18,6 +18,8 @@
 | qq | 指定接收消息的QQ号或者QQ群号，可以添加多个，以英文逗号分割。如：1244453393,2952937634（指定的QQ号或QQ群号必须在您的QQ号列表中） | str | 这个Qmsgnike才会用到 | 1244453393,2952937634 |
 | tg_token | 电报的token | str | 具体看说明文件 | SCU6390~94d830b |
 | tg_mute | 电报推送是否静音 | bool |  | Flase |
+| proxy_http|推送使用的代理|str|||
+| proxy_https|推送使用的代理|str|||
 |           s_sckey            |                     s_sckey为Server酱API                     | string |          | SCU6390~94d830b |
 |         sentstate          |                 全体BOT播定时报脚本任务状态                 |  int   | 单位分钟 |        5        |
 |           log_lev            | log_levBOT的日志等级，微信日志等级 仅有0/1/2/3，越小越详细，注意每天接口调用有上限！ |  int   |          |        1        |

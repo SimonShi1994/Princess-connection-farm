@@ -185,6 +185,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
   - 单独开关指定debug `debug`
   - 记录Automator和u2的操作信息 `rec`/`u2rec`
   - 支持命令调试 `exec`
+- 增加Bot的代理设置 （proxy_http,proxy_https)
 
 2021/3/1 By:TheAutumnOfRice
 

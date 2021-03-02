@@ -23,7 +23,7 @@ from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
 from core.pcr_config import GC, enable_pause
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
-    trace_exception_for_debug, s_sckey, sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
+    trace_exception_for_debug, sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
     max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr, ignore_serials
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import AutomatorRecorder, parse_batch, list_all_flags
@@ -582,11 +582,18 @@ class PCRInitializer:
                             print(device.serial, "设置", msg["option"], "属性为", msg["value"])
                         elif msg["method"] == "exec":
                             # 执行语句
+                            flagg = 0
                             try:
                                 out = eval(msg['command'])
                                 print(out)
                             except:
-                                exec(msg["command"])
+                                flagg = 1
+                            if flagg:
+                                try:
+                                    exec(msg["command"])
+                                except Exception as e:
+                                    print("执行语句产生错误：", e)
+                                    traceback.print_exc()
                         elif msg["method"] == "debug":
                             # 开关debug
                             if msg["target"] == "__all__":

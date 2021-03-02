@@ -5,7 +5,12 @@ import psutil
 import requests
 
 from core.pcr_config import s_sckey, log_lev, log_cache, qqbot_key, qqbot_select, qq, qqbot_private_send_switch, \
-    qqbot_group_send_switch, tg_token, tg_mute
+    qqbot_group_send_switch, tg_token, tg_mute, debug, proxy_http, proxy_https
+
+BOT_PROXY = {
+    "http": proxy_http if len(proxy_http) > 0 else None,
+    "https": proxy_https if len(proxy_https) > 0 else None
+}
 
 
 class Bot:
@@ -58,7 +63,7 @@ class Bot:
         self.qqbot_url2 = self.group_url.get(f"{self.qqbot_select}_group_url", "")
 
     def server_bot(self, s_level, message='', acc_state='', img=None, img_title=None):
-        if len(s_sckey) != 0 or len(qqbot_key) != 0 or len(qqbot_key) != 0:
+        if len(s_sckey) != 0 or len(qqbot_key) != 0 or len(tg_token) != 0:
             message = ''.join(message).replace('\n', '')
             if s_level in self.lev_dic[log_lev]:
                 # self.acc_message.setdefault(s_level, [])
@@ -108,7 +113,7 @@ class Bot:
 
         }
         try:
-            requests.post(self.server_nike_url, params=info)
+            requests.post(self.server_nike_url, proxies=BOT_PROXY, params=info)
         except Exception as e:
             pass
             # pcr_log("__SERVER_BOT__").write_log("error", f"ServerBot发送失败：{e}")
@@ -170,50 +175,53 @@ class Bot:
                     send, sent = self.info_cutting(CoolPush_info['c'])
                     while send is None:
                         tmp_dict = {'c': send}
-                        requests.post(self.qqbot_url1, params=tmp_dict)
+                        requests.post(self.qqbot_url1, proxies=BOT_PROXY, params=tmp_dict)
                         send, sent = self.info_cutting(sent)
                         time.sleep(0.3)
                     tmp_dict = {'c': sent}
-                    requests.post(self.qqbot_url1, params=tmp_dict)
+                    requests.post(self.qqbot_url1, proxies=BOT_PROXY, params=tmp_dict)
 
                 if qqbot_group_send_switch == 1:
                     send, sent = self.info_cutting(CoolPush_info['c'])
                     while send is not None:
                         tmp_dict = {'c': send}
-                        requests.post(self.qqbot_url2, params=tmp_dict)
+                        requests.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
                         send, sent = self.info_cutting(sent)
                         time.sleep(0.3)
                     tmp_dict = {'c': sent}
-                    requests.post(self.qqbot_url2, params=tmp_dict)
+                    requests.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
 
             elif self.qqbot_select == 'Qmsgnike':
                 if qqbot_private_send_switch == 1:
                     send, sent = self.info_cutting(Qmsgnike_info['msg'])
                     while send is None:
                         tmp_dict = {'msg': send, qq: self.qq}
-                        requests.post(self.qqbot_url1, params=tmp_dict)
+                        requests.post(self.qqbot_url1, proxies=BOT_PROXY, params=tmp_dict)
                         send, sent = self.info_cutting(sent)
                         time.sleep(0.3)
                     tmp_dict = {'msg': sent, qq: self.qq}
-                    requests.post(self.qqbot_url1, params=tmp_dict)
+                    requests.post(self.qqbot_url1, proxies=BOT_PROXY, params=tmp_dict)
                 if qqbot_group_send_switch == 1:
                     send, sent = self.info_cutting(Qmsgnike_info['msg'])
                     while send is None:
                         tmp_dict = {'msg': send, qq: self.qq}
-                        requests.post(self.qqbot_url2, params=tmp_dict)
+                        requests.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
                         send, sent = self.info_cutting(sent)
                         time.sleep(0.3)
                     tmp_dict = {'msg': sent, qq: self.qq}
-                    requests.post(self.qqbot_url2, params=tmp_dict)
+                    requests.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
         except Exception as e:
             pass
 
     def tg_bot(self, s_level, message='', acc_state='', img=None, img_title=None):
         # TG推送机器人 By:CyiceK
         # img传进来的是cv2格式
+        if debug:
+            print("Now TG BOT!")
         try:
             # To escape characters '_', '*', '`', '[' outside of an entity, prepend the characters '\' before them.
             message = message.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
+            acc_state = acc_state.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
             if img is not None:
                 up_img = cv2.imencode('.jpg', img)[1].tobytes()
                 f = {"smfile": up_img}
@@ -242,7 +250,7 @@ class Bot:
 
                 requests.post('https://tgmessage-cyicek.vercel.app/api', headers=img_h, data=tg_imginfo)
                 time.sleep(1)
-                requests.get(url=img_delete, headers=h)
+                requests.get(url=img_delete, proxies=BOT_PROXY, headers=h)
             else:
                 tg_textinfo = {
                     'token': tg_token,
@@ -257,6 +265,13 @@ class Bot:
                     'parse_mode': 'Markdown',
                     'disable_notification': tg_mute,
                 }
-                r = requests.post('https://tgmessage-cyicek.vercel.app/api', data=tg_textinfo)
+                if debug:
+                    print("TG Ready to Send!")
+                    print("DATA:")
+                    print(tg_textinfo)
+                r = requests.post('https://tgmessage-cyicek.vercel.app/api', proxies=BOT_PROXY, data=tg_textinfo)
+                if debug:
+                    print("Get:", r)
+
         except Exception as e:
             print('TG推送服务器错误', e)

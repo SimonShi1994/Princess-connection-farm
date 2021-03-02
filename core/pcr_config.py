@@ -179,6 +179,8 @@ s_sckey = GC.add_str('log', 's_sckey')
 log_lev = GC.add_str('log', 'log_lev', "1")
 log_cache = GC.add_int('log', 'log_cache', 3)
 sentstate = GC.add_int('log', 'sentstate', 30)
+proxy_http = GC.add_str('log', 'proxy_http')
+proxy_https = GC.add_str('log', 'proxy_https')
 
 baidu_apiKey = GC.add_str('pcrfarm_setting', 'baidu_apiKey')
 baidu_secretKey = GC.add_str('pcrfarm_setting', 'baidu_secretKey')
