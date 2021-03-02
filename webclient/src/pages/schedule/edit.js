@@ -34,7 +34,7 @@ export default (props) => {
         await request(`/schedules_save`, {
             method: 'post', data: {
                 ...values,
-                "filename": id,
+                "filename": 'test1',
             }
         })
     }

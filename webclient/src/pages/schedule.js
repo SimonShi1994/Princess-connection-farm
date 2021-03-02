@@ -1,6 +1,6 @@
 import React from 'react'
 import Schedulelist from '../components/Schedulelist/index'
-import { Collapse, List } from 'antd';
+import { Button, Collapse, List } from 'antd';
 import request from '../request'
 
 const { Panel } = Collapse;
@@ -34,6 +34,7 @@ export default () => {
                     </Panel>
                 ))}
             </Collapse>
+            <Button type="primary" style={{ marginTop: 20 }}>新增Schedule</Button>
         </div>
     )
 }
