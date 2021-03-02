@@ -1,6 +1,6 @@
 import axios from "axios"
-const host=``
-export default (url, config = {}) => {
+const host=`114.221.197.11`
+export default (url, config = {method: 'get'}) => {
     return axios({
         ...config,
         url: `http://${host||'127.0.0.1'}:5000/api${url}`,
