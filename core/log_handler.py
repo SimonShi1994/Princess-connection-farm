@@ -48,14 +48,14 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             self.norm_log.debug(message)
         elif lev == 'info':
             self.norm_log.info(message)
-            self.server_bot(lev, message)
+            self.server_bot(s_level=lev, message=message)
         elif lev == 'warning':
             self.norm_log.warning(message)
-            self.server_bot(lev, message)
+            self.server_bot(s_level=lev, message=message)
         elif lev == 'error':
             self.norm_log.error(message)
             pcr_log("__ERROR_LOG__").write_log("info", f"账号 {self.acc_name} ： {message}")
-            self.server_bot(lev, message)
+            self.server_bot(s_level=lev, message=message)
         else:
             self.norm_log.critical(message)
 

@@ -90,7 +90,7 @@ class Bot:
 
             if s_level not in self.lev_dic['3']:
                 # 发送完后清空消息队列
-                self.acc_message = {}
+                self.acc_message[s_level] = []
 
     def wechat_bot(self, s_level, message='', acc_state=''):
         """

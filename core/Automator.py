@@ -201,8 +201,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                     cv2.imwrite(target, self.last_screen)
                     pcr_log(account).write_log(level="error", message=f"错误截图已经保存至{target}")
                     # 错误截图日志为0级消息，后面可能会改成warning级别或者error
-                    Bot().server_bot('', '', '', self.last_screen, f"模拟器{self.address}-{self.account}的运行错误重启截图")
-                    print('go')
+                    Bot().server_bot('', '', '', self.last_screen, f"模拟器{self.address}||{self.account}的运行错误重启截图")
                 except Exception as es:
                     pcr_log(account).write_log(level="error", message=f"错误截图保存失败：{es}")
                 if trace_exception_for_debug:
