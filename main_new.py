@@ -264,6 +264,17 @@ def ShowServerChan():
         print("  - 记录最大累积条数 log_cache：", log_cache)
     else:
         print("* Server酱未配置，前往config.ini - s_sckey进行设置")
+    if qqbot_key != "":
+        print("* QQbot已配置！")
+        print("选择的QQbot提供商 qqbot_select：", qqbot_select)
+        print("QQbot私聊你的开关 qqbot_private_send_switch：", qqbot_private_send_switch)
+        print("QQbot群聊的开关 qqbot_group_send_switch：", qqbot_group_send_switch)
+        print("设置发送的QQ号/群号 qq：", qq)
+        print("  - 运行状态消息发送间隔(s) s_sentstate schedule：", s_sentstate)
+        print("  - 记录过滤等级 log_lev：", log_lev)
+        print("  - 记录最大累积条数 log_cache：", log_cache)
+    else:
+        print("* QQbot已未配置，前往config.ini - qqbot_key进行设置")
 
 
 def ShowAutoConsole():
@@ -331,6 +342,7 @@ def ShowPCRPerformance():
     print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", "已开启" if captcha_popup else "未开启")
     print("* 缓存清理 clear_traces_and_cache：", "已开启" if clear_traces_and_cache else "未开启")
 
+
 def ShowDebugInfo():
     print("* 输出Debug信息 debug：", "已开启" if debug else "未开启")
     print("* 忽略警告信息 ignore_warning：", "已开启" if ignore_warning else "未开启")
@@ -379,8 +391,6 @@ def ShowInfo():
     CheckConstantImgs()
 
 
-
-
 def Start_App():
     if is_ocr_running():
         print("app 已经启动！")
@@ -400,6 +410,7 @@ def Start_App():
 
 
 if __name__ == "__main__":
+    CheckConstantImgs()
     GetLastSchedule()
     argv = sys.argv
     # 自启动app
@@ -433,7 +444,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.3.20210127")
+        print("当前版本为 Ver 2.4.20210224")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -441,16 +452,15 @@ if __name__ == "__main__":
         print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
         print("[内部模式：", "已开启" if inline_app else "未开启", "]")
         print("help 查看帮助                   exit 退出")
-        print("info 查看配置信息               guide 教程 [<New!]")
+        print("info 查看配置信息               guide 教程")
+        print("edit 进入编辑模式")
+        print("data 进入数据中心  <- NEW！")
+        print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
         print("* Happy 2021 Year!")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
-        print("* 开关（Switch）模块上线！进入edit看看吧！（教程已出）")
-        print("* 任务（Task）和计划（Schedule）模块支持enable, disable, flag操作了！")
-        print("* 组（Group）模块支持add，del，move，user操作了！")
-        print("* 新增自定义任务(CustomTask)模块，梦回masterV1.0。")
     while True:
         try:
             cmd = input("> ")
@@ -493,8 +503,6 @@ if __name__ == "__main__":
                         print("unbind", "解除与计划", last_schedule, "的绑定。")
 
                     print("state -tuitu 显示所有用户推图的状态")
-                    print("edit 进入用户配置编辑模式")
-                    print("screencut 进入截图小工具")
                 else:
                     print("实时控制帮助")
                     print("stop [-f] 停止当前的Schedule，-f表示强制停止")
@@ -591,7 +599,9 @@ if __name__ == "__main__":
             elif order == "edit":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("CreateUser.py", "r", encoding="utf-8").read())
-
+            elif order == "data":
+                assert SCH is None, "必须先停止正在运行的Schedule"
+                exec(open("DataCenter.py", "r", encoding="utf-8").read())
             elif order == "screencut":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("screencut.py", "r", encoding="utf-8").read())

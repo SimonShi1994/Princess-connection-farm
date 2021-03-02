@@ -6,7 +6,7 @@ import numpy as np
 from automator_mixins._fight_base import FightBaseMixin
 from core.MoveRecord import movevar
 from core.constant import MAOXIAN_BTN, MAIN_BTN, PCRelement, FIGHT_BTN, DXC_ELEMENT, SHOP_BTN, \
-    ZHUXIAN_ID, JUESE_BTN, NORMAL_COORD, HARD_COORD
+    ZHUXIAN_ID, JUESE_BTN, NORMAL_COORD, HARD_COORD, ZHUXIAN_SECOND_ID
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import debug, disable_timeout_raise
@@ -1329,7 +1329,11 @@ class ShuatuBaseMixin(FightBaseMixin):
         """
         # self.Drag_Left()  # 保证截图区域一致
         for retry in range(max_retry):
-            id = self.check_dict_id(ZHUXIAN_ID, screen)
+            id = self.check_dict_id(ZHUXIAN_ID, screen, diff_threshold=0)
+            for second in ZHUXIAN_SECOND_ID:
+                if id in second:
+                    id = self.check_dict_id(ZHUXIAN_SECOND_ID[second], screen, diff_threshold=0.1)
+                    break
             if id is None:
                 time.sleep(1)
             else:

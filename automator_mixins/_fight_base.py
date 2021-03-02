@@ -366,18 +366,4 @@ class FightBaseMixin(ToolsMixin):
         :param screen: 设置为None时，不另外截屏
         :return: 0~3
         """
-        if screen is None:
-            screen = self.getscreen()
-        fc = np.array([98, 228, 245])  # G B R:金色
-        bc = np.array([212, 171, 139])  # G B R:灰色
-        c = []
-        us = FIGHT_BTN["upperright_stars"]
-        for i in range(1, 4):
-            x = us[i].x
-            y = us[i].y
-            c += [screen[y, x]]
-        c = np.array(c)
-        tf = np.sqrt(((c - fc) ** 2)).sum(axis=1)
-        tb = np.sqrt(((c - bc) ** 2)).sum(axis=1)
-        t = tf < tb
-        return np.sum(t)
+        return self.count_stars(FIGHT_BTN["upperright_stars"], screen)
