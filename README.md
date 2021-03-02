@@ -171,6 +171,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 ## :hammer:更新历史:wrench:
 
+2021/3/2 By:Klarkxy
+
+- 编辑界面增加友好提示，方便编辑时使用。
+
 2021/3/2 By:CyiceK
 
 - 新增TGbot推送，去本地化设计，本地无需科学上网即可食用（因此也失去了脚本交互功能）
