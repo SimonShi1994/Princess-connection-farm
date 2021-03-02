@@ -5,8 +5,9 @@ import psutil
 import requests
 
 from core.pcr_config import s_sckey, log_lev, log_cache, qqbot_key, qqbot_select, qq, qqbot_private_send_switch, \
-    qqbot_group_send_switch, tg_token, tg_mute
+    qqbot_group_send_switch, tg_token, tg_mute, debug
 
+debug = True
 
 class Bot:
     """
@@ -88,9 +89,9 @@ class Bot:
                 if len(tg_token) != 0:
                     self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
 
-            if s_level not in self.lev_dic['3']:
-                # 发送完后清空消息队列
-                self.acc_message = {}
+                if s_level not in self.lev_dic['3']:
+                    # 发送完后清空消息队列
+                    self.acc_message = {}
 
     def wechat_bot(self, s_level, message='', acc_state=''):
         """
@@ -212,6 +213,8 @@ class Bot:
     def tg_bot(self, s_level, message='', acc_state='', img=None, img_title=None):
         # TG推送机器人 By:CyiceK
         # img传进来的是cv2格式
+        if debug:
+            print("Now TG BOT!")
         try:
             if img is not None:
                 up_img = cv2.imencode('.jpg', img)[1].tobytes()
@@ -256,6 +259,13 @@ class Bot:
                     'parse_mode': 'Markdown',
                     'disable_notification': tg_mute,
                 }
+                if debug:
+                    print("TG Ready to Send!")
+                    print("DATA:")
+                    print(tg_textinfo)
                 r = requests.post('https://tgmessage-cyicek.vercel.app/api', data=tg_textinfo)
+                if debug:
+                    print("Get:", r)
+
         except Exception as e:
             print('TG推送服务器错误', e)
