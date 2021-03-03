@@ -253,7 +253,7 @@ class Bot:
                     "expiration": '60',
                     "image": base64_str,
                 }
-                r = self.req_post.post('https://api.imgbb.com/1/upload', data=data, hearder=img_h).json()
+                r = self.req_post.post('https://api.imgbb.com/1/upload', data=data, headers=img_h).json()
                 if r['status'] == "200":
                     data = r.get("data")
                     img_url = data["url"]
