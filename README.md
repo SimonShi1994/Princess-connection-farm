@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.5.20210302
+ # Princess connection 公主连结农场脚本v2.5.20210303
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -78,6 +78,8 @@
 ## :globe_with_meridians:环境
 
 - 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
+
+- OCR 需求 `VS C++ Build Tool`
 
 - 先cd进项目目录下
 
