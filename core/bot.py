@@ -26,6 +26,7 @@ class Bot:
         self.qq = qq
         self.cpu_info = None
         self.memory_info = None
+        self.img_url = None
         self.qqbot_select = qqbot_select
         self.req_post = requests.Session()
         self.req_post.mount('http://', HTTPAdapter(max_retries=5))
@@ -86,7 +87,7 @@ class Bot:
                 # print(self.acc_message[s_level])
                 # print(len(self.acc_message[self.acc_name]))
                 # print(len(self.acc_message[s_level])//2, self.acc_message[s_level])
-            if s_level in self.lev_dic['3'] or (
+            if s_level in self.lev_3 or (
                     s_level in self.lev_dic[log_lev] and len(self.acc_message[s_level]) // 2 >= log_cache):
                 message = ''.join(self.acc_message[s_level]).replace(',', '\n').replace("'", '')
                 # print(message)
@@ -234,6 +235,7 @@ class Bot:
             print("Now TG BOT!")
         try:
             # To escape characters '_', '*', '`', '[' outside of an entity, prepend the characters '\' before them.
+
             message = message.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
             acc_state = acc_state.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
 
@@ -254,26 +256,23 @@ class Bot:
                     "image": base64_str,
                 }
                 r = self.req_post.post('https://api.imgbb.com/1/upload', data=data, headers=img_h).json()
-                if r['status'] == "200":
+                if r['status'] == 200:
                     data = r.get("data")
-                    img_url = data["url"]
+                    self.img_url = data["url"]
                     # img_delete = data["delete_url"]
                 else:
                     # 方案二：sm.ms
                     f = {"smfile": up_img}
                     h = {
-                        "Authorization": "cPNUy9taJaKvLFJwC4hwirT2c5XOxp9Q",
-                        "Connection": "keep-alive",
-                        "Content-Type": "application/x-www-form-urlencoded",
+                        "Authorization": "cPNUy9taJaKvLFJwC4hwirT2c5XOxp9Q"
                     }
                     r = self.req_post.post('https://sm.ms/api/v2/upload', headers=h, files=f).json()
                     if r["code"] == "success":
                         data = r.get("data")
-                        img_url = data["url"]
+                        self.img_url = data["url"]
                         img_delete = data["delete"]
                     else:
                         pass
-
                 img_h = {
                     "Connection": "keep-alive",
                     "Content-Type": "application/x-www-form-urlencoded",
@@ -282,7 +281,7 @@ class Bot:
                     'fun': 'sendPhoto',
                     'token': tg_token,
                     'caption': img_title,
-                    'photo': img_url,
+                    'photo': self.img_url,
                     'disable_notification': tg_mute,
                 }
 
