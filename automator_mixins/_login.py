@@ -276,7 +276,7 @@ class LoginMixin(BaseMixin):
             while True:
                 self._move_check()
                 try_count += 1
-                if try_count % 10 == 0 and try_count > 500:
+                if try_count % 5 == 0 and try_count > 10:
                     # 看一下会不会一直点右上角？
                     if self.last_screen is not None:
                         if self.is_exists(MAIN_BTN["liwu"], screen=self.last_screen):
@@ -285,10 +285,10 @@ class LoginMixin(BaseMixin):
                             self.log.write_log("error", "可能出现了狂点右上角错误，换号")
                             self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
                             self.change_acc()
-                if try_count > 1000:
+                if try_count > 100:
                     # 点了1000次了，重启吧
                     error_flag = 1
-                    raise Exception("点了1000次右上角了，重启罢！")
+                    raise Exception("点了100次右上角了，重启罢！")
                 # todo 登陆失败报错：-32002 Client error: <> data: Selector [
                 #  resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.1):
