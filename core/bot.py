@@ -236,7 +236,9 @@ class Bot:
             # To escape characters '_', '*', '`', '[' outside of an entity, prepend the characters '\' before them.
             message = message.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
             acc_state = acc_state.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
+
             if img is not None:
+
                 img_delete = ''
                 up_img = cv2.imencode('.jpg', img)[1].tobytes()
 
@@ -255,7 +257,7 @@ class Bot:
                 if r['status'] == "200":
                     data = r.get("data")
                     img_url = data["url"]
-                    img_delete = data["delete_url"]
+                    # img_delete = data["delete_url"]
                 else:
                     # 方案二：sm.ms
                     f = {"smfile": up_img}
@@ -285,8 +287,10 @@ class Bot:
                 }
 
                 self.req_post.post('https://tgmessage-cyicek.vercel.app/api', headers=img_h, data=tg_imginfo)
-                time.sleep(0.5)
-                self.req_post.get(url=img_delete, proxies=BOT_PROXY, headers=h)
+
+                if img_delete != '':
+                    time.sleep(0.8)
+                    self.req_post.get(url=img_delete, proxies=BOT_PROXY, headers=h)
             else:
                 tg_textinfo = {
                     'token': tg_token,
