@@ -258,7 +258,7 @@ class Bot:
                 }
 
                 requests.post('https://tgmessage-cyicek.vercel.app/api', headers=img_h, data=tg_imginfo)
-                time.sleep(0.5)
+                time.sleep(0.8)
                 requests.get(url=img_delete, proxies=BOT_PROXY, headers=h)
             else:
                 tg_textinfo = {
