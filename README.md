@@ -173,6 +173,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 ## :hammer:更新历史:wrench:
 
+2021/3/3 By;TheAutumnOfRice
+
+- 增加更多调试句柄
+- 修复进入Hard图的问题
+
 2021/3/2 By:Klarkxy
 
 - 编辑界面增加友好提示，方便编辑时使用。
