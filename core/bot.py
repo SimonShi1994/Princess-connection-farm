@@ -63,6 +63,15 @@ class Bot:
         self.qqbot_url2 = self.group_url.get(f"{self.qqbot_select}_group_url", "")
 
     def server_bot(self, s_level, message='', acc_state='', img=None, img_title=None):
+        """
+        消息推送
+        :param s_level:
+        :param message:
+        :param acc_state:
+        :param img: 必须为cv2格式，然后转为base64或者二进制流再post出去
+        :param img_title:
+        :return:
+        """
         if len(s_sckey) != 0 or len(qqbot_key) != 0 or len(tg_token) != 0:
             message = ''.join(message).replace('\n', '')
             if s_level in self.lev_dic[log_lev]:
@@ -249,7 +258,7 @@ class Bot:
                 }
 
                 requests.post('https://tgmessage-cyicek.vercel.app/api', headers=img_h, data=tg_imginfo)
-                time.sleep(1)
+                time.sleep(0.8)
                 requests.get(url=img_delete, proxies=BOT_PROXY, headers=h)
             else:
                 tg_textinfo = {

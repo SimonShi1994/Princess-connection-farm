@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.5.20210302
+ # Princess connection 公主连结农场脚本v2.5.20210303
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -78,6 +78,8 @@
 ## :globe_with_meridians:环境
 
 - 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
+
+- OCR 需求 `VS C++ Build Tool`
 
 - 先cd进项目目录下
 
@@ -170,6 +172,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## :hammer:更新历史:wrench:
+
+2021/3/3 By;TheAutumnOfRice
+
+- 增加更多调试句柄
+- 修复进入Hard图的问题
 
 2021/3/2 By:Klarkxy
 

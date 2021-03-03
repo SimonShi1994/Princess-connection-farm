@@ -36,6 +36,7 @@ if add_adb_to_path:
     env = abs_dir + ";" + env
     os.putenv("path", env)
 
+
 def _connect():  # 连接adb与uiautomator
     global FIRST_CONNECT
     try:
@@ -468,11 +469,12 @@ class PCRInitializer:
         """
         if len(task) == 3:
             task = (
-            0 - task[0] - rand_pri * (random() / 2 - 1), task[1], task[2], rec_addr, AutomatorRecorder.gettask(task[2]),
-            continue_)
+                0 - task[0] - rand_pri * (random() / 2 - 1), task[1], task[2], rec_addr,
+                AutomatorRecorder.gettask(task[2]),
+                continue_)
         else:
             task = (
-            0 - task[0] - rand_pri * (random() / 2 - 1), task[1], task[2], rec_addr, task[3], continue_)  # 最大优先队列
+                0 - task[0] - rand_pri * (random() / 2 - 1), task[1], task[2], rec_addr, task[3], continue_)  # 最大优先队列
         self._add_task(task)
 
     def add_tasks(self, tasks: list, continue_, rec_addr, rand_pri=False):

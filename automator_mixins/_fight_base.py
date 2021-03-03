@@ -2,6 +2,7 @@ import time
 
 import numpy as np
 
+from automator_mixins._base import DEBUG_RECORD
 from core.constant import FIGHT_BTN, MAIN_BTN, MAOXIAN_BTN, JJC_BTN
 from core.cv import UIMatcher
 from core.pcr_config import debug
@@ -14,16 +15,19 @@ class FightBaseMixin(ToolsMixin):
     包括与战斗相关的基本操作
     """
 
+    @DEBUG_RECORD
     def Drag_Right(self):
         self.d.touch.down(600, 120).sleep(0.1).move(200, 120).sleep(0.2).up(200, 120)
         # self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
         time.sleep(self.change_time)
 
+    @DEBUG_RECORD
     def Drag_Left(self):
         self.d.touch.down(200, 120).sleep(0.1).move(600, 120).sleep(0.2).up(600, 120)
         # self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(self.change_time)
 
+    @DEBUG_RECORD
     def get_fight_middle_stars(self, screen=None):
         """
         获取战斗胜利后中间的星数
@@ -50,6 +54,7 @@ class FightBaseMixin(ToolsMixin):
         t = tf < tb
         return np.sum(t)
 
+    @DEBUG_RECORD
     def get_fight_state(self, screen=None, max_retry=10, delay=1,
                         check_hat=False, check_xd=True, go_xd=False,
                         check_jq=False, check_ghz=True, check_star=False) -> int:
@@ -139,6 +144,7 @@ class FightBaseMixin(ToolsMixin):
                 continue
         return -1
 
+    @DEBUG_RECORD
     def get_fight_speed(self, screen=None, max_retry=3) -> int:
         """
         获取速度等级
@@ -172,6 +178,7 @@ class FightBaseMixin(ToolsMixin):
                 return probs.argmax()
         return -1
 
+    @DEBUG_RECORD
     def set_fight_speed(self, level, max_level=1, screen=None, max_retry=3) -> bool:
         """
         调节速度等级
@@ -215,6 +222,7 @@ class FightBaseMixin(ToolsMixin):
         # 超过最大尝试次数
         return False
 
+    @DEBUG_RECORD
     def get_fight_auto(self, screen=None, max_retry=3) -> int:
         """
         获取当前是否开着自动
@@ -247,6 +255,7 @@ class FightBaseMixin(ToolsMixin):
                 return probs.argmax()
         return -1
 
+    @DEBUG_RECORD
     def set_fight_auto(self, auto, screen=None, max_retry=3) -> bool:
         """
         调节auto开关
@@ -286,6 +295,7 @@ class FightBaseMixin(ToolsMixin):
         # 超过最大尝试次数
         return False
 
+    @DEBUG_RECORD
     def set_fight_team(self, bianzu, duiwu):
         """
         设置战斗队伍
@@ -305,6 +315,7 @@ class FightBaseMixin(ToolsMixin):
         else:
             return True
 
+    @DEBUG_RECORD
     def get_fight_current_member_count(self, screen=None):
         """
         获取”当前的成员"的数量
@@ -324,6 +335,7 @@ class FightBaseMixin(ToolsMixin):
                 count_live -= 1
         return count_live
 
+    @DEBUG_RECORD
     def set_fight_team_order(self, order="zhanli", change=2):
         """
         按照战力顺序设置战斗队伍
@@ -360,6 +372,7 @@ class FightBaseMixin(ToolsMixin):
             for i in range(5):
                 self.click(FIGHT_BTN["first_five"][i + 1], post_delay=0.5)
 
+    @DEBUG_RECORD
     def get_upperright_stars(self, screen=None):
         """
         获取右上角当前关卡的星星数

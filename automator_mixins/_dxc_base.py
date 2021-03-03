@@ -1,5 +1,6 @@
 import time
 
+from automator_mixins._base import DEBUG_RECORD
 from core.constant import DXC_ELEMENT, FIGHT_BTN, MAIN_BTN, DXC_ENTRANCE, DXC_NUM, JJC_BTN
 from core.cv import UIMatcher
 from ._fight_base import FightBaseMixin
@@ -16,6 +17,7 @@ class DXCBaseMixin(FightBaseMixin):
         self.dxc_switch = 0  # 0开，1锁
         self.is_dixiacheng_end = 0  # 地下城是否结束，0未结束，1结束
 
+    @DEBUG_RECORD
     def dxc_kkr(self, screen_shot=None):
         """
         处理跳脸
@@ -38,6 +40,7 @@ class DXCBaseMixin(FightBaseMixin):
             return True
         return False
 
+    @DEBUG_RECORD
     def dxczuobiao(self, x, y, auto, speed, bianzu=0, duiwu=0, min_live=5):
         """
         新的地下城刷图函数
@@ -100,6 +103,7 @@ class DXCBaseMixin(FightBaseMixin):
             self.click(DXC_ELEMENT["qianwangdixiacheng"], post_delay=3)
             return 2
 
+    @DEBUG_RECORD
     def dxc_chetui(self):
         """
         地下城界面点击撤退，回到选城页面
@@ -109,6 +113,7 @@ class DXCBaseMixin(FightBaseMixin):
         self.lock_img(DXC_ELEMENT["chetui_ok"], elseclick=DXC_ELEMENT["chetui"], elsedelay=8, timeout=30)
         self.click_btn(DXC_ELEMENT["chetui_ok"])
 
+    @DEBUG_RECORD
     def enter_dxc(self, dxc_id):
         """
         进入地下城
@@ -142,6 +147,7 @@ class DXCBaseMixin(FightBaseMixin):
         self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5, side_check=self.dxc_kkr)  # 锁定撤退
         return True
 
+    @DEBUG_RECORD
     def check_dxc_level(self, dxc_id):
         """
         人力OCR
@@ -166,6 +172,7 @@ class DXCBaseMixin(FightBaseMixin):
         else:
             return best
 
+    @DEBUG_RECORD
     def dixiachengzuobiao(self, x, y, auto, team=0):
         # 完整刷完地下城函数
         # 参数：

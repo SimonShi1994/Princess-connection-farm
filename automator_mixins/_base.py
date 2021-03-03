@@ -638,7 +638,13 @@ class BaseMixin:
                     self.d.screenshot(filename, format="opencv")
                     self.last_screen = cv2.imread(filename)
             self.last_screen_time = time.time()
-            return UIMatcher.AutoRotateClockWise90(self.last_screen)
+            output_screen = UIMatcher.AutoRotateClockWise90(self.last_screen)
+            if debug:
+                if output_screen is None:
+                    print("ERROR！截图为空！")
+            if output_screen is not None and output_screen.shape != (540, 960, 3):
+                print("Warning: 截屏大小为", output_screen.shape, "应为 (540,960,3)， 可能模拟器分辨率没有被正确设置！")
+            return output_screen
         else:
             if isinstance(self.debug_screen, str):
                 return cv2.imread(self.debug_screen)

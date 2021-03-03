@@ -3,6 +3,7 @@ from typing import Union, Optional, Tuple
 
 import numpy as np
 
+from automator_mixins._base import DEBUG_RECORD
 from automator_mixins._fight_base import FightBaseMixin
 from core.MoveRecord import movevar
 from core.constant import MAOXIAN_BTN, MAIN_BTN, PCRelement, FIGHT_BTN, DXC_ELEMENT, SHOP_BTN, \
@@ -639,6 +640,7 @@ class ShuatuBaseMixin(FightBaseMixin):
     def check_shuatu(self):
         return self.switch == 0
 
+    @DEBUG_RECORD
     def zhandouzuobiao(self, x, y, times, drag=None, use_saodang: Union[bool, str] = "auto", buy_tili=0, buy_cishu=0,
                        xianding=False,
                        bianzu=0, duiwu=0, auto=1, speed=1, fastmode=True, fail_retry=False,
@@ -1110,6 +1112,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             self._zdzb_info = "nosaodang"
             return -2
 
+    @DEBUG_RECORD
     def shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数
         if self.switch == 0:
             tmp_cout = 0
@@ -1171,6 +1174,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             if UIMatcher.img_where(screen_shot_, 'img/hard.jpg'):
                 break
 
+    @DEBUG_RECORD
     def enter_zhuxian(self):
         # Fix: 2020-08-09 By TheAutumnOfRice: 未解锁地下城也可以使用了。
         # 进入主线
@@ -1179,30 +1183,31 @@ class ShuatuBaseMixin(FightBaseMixin):
         # 进入地图
         self.click_btn(MAIN_BTN["zhuxian"], wait_self_before=True, until_appear=MAOXIAN_BTN["ditu"])
 
+    @DEBUG_RECORD
     def enter_hard(self, max_retry=3):
-        self.enter_zhuxian()
         for retry in range(max_retry):
-            time.sleep(1)
-            state = self.check_maoxian_screen()
-            if state == -1:
-                raise Exception("进入冒险失败！")
-            elif state == 0:
-                self.enter_zhuxian()
-            elif state == 1:
-                self.click(MAOXIAN_BTN["hard_on"])
-            elif state == 2:
-                return
+            self.enter_zhuxian()
+            for retry_2 in range(3):
+                time.sleep(1)
+                self.wait_for_loading()
+                state = self.check_maoxian_screen()
+                if state == 1:
+                    self.click(MAOXIAN_BTN["hard_on"])
+                elif state == 2:
+                    return
         raise Exception("进入困难图超过最大尝试次数！")
 
     # 左移动
+    @DEBUG_RECORD
     def goLeft(self):
         self.click(35, 275, post_delay=3)
 
     # 右移动
-
+    @DEBUG_RECORD
     def goRight(self):
         self.click(925, 275, post_delay=3)
 
+    @DEBUG_RECORD
     def check_maoxian_screen(self, screen=None):
         """
         获得冒险界面屏幕状态
@@ -1224,6 +1229,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         else:
             return -1
 
+    @DEBUG_RECORD
     def hard_shuatuzuobiao(self, x, y, times):  # 刷图函数，xy为该图的坐标，times为刷图次数,防止占用shuatuzuobiao用的
         if self.switch == 0:
             tmp_cout = 0
@@ -1289,11 +1295,13 @@ class ShuatuBaseMixin(FightBaseMixin):
                 break
 
     # 继续执行函数
+    @DEBUG_RECORD
     def continueDo9(self, x, y):
         self.switch = 0
         self.shuatuzuobiao(x, y, self.times)  # 3-3
 
     # 识别7村断崖
+    @DEBUG_RECORD
     def duanyazuobiao(self):
         """
         识别断崖的坐标
@@ -1316,6 +1324,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                 tag += 1
                 time.sleep(1.5)
 
+    @DEBUG_RECORD
     def check_zhuxian_id(self, screen=None, max_retry=2):
         """
         识别主线图的图号
@@ -1346,6 +1355,7 @@ class ShuatuBaseMixin(FightBaseMixin):
     def check_hard_id(self, screen=None):
         return self.check_zhuxian_id(screen)
 
+    @DEBUG_RECORD
     def shoushuazuobiao(self, x, y, jiaocheng=0, lockpic='img/zhuxian.jpg', screencut=None):
         """
         不使用挑战券挑战，xy为该图坐标
@@ -1403,6 +1413,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                 if UIMatcher.img_where(screen_shot_, lockpic, at=screencut):
                     break
 
+    @DEBUG_RECORD
     def upgrade_kkr(self, screen_shot=None):
         if screen_shot is None:
             screen_shot = self.getscreen()
@@ -1417,6 +1428,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             return True
         return False
 
+    @DEBUG_RECORD
     def enter_upgrade(self):
         self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
 
@@ -1451,6 +1463,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             if mode == 1:
                 break
 
+    @DEBUG_RECORD
     def get_tuijian_stars(self, screen=None):
         """
         获取推荐强化菜单中第一个关卡的星星数
@@ -1473,6 +1486,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         t = tf < tb
         return np.sum(t)
 
+    @DEBUG_RECORD
     def auto_upgrade(self, buy_tili=0, do_rank=True, do_shuatu=True, var={}):
         """
         :param buy_tili: 如果要通过刷图来获取装备，最多买体力次数
@@ -1588,6 +1602,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             _next()
         self.lock_home()
 
+    @DEBUG_RECORD
     def select_most_right(self):
         """
         移动到最右关卡
@@ -1606,6 +1621,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         if self.is_exists(MAOXIAN_BTN["lock"], screen=screen, at=at):
             return True
 
+    @DEBUG_RECORD
     def get_next_normal_id(self):
         tu = self.select_most_right()
         D = NORMAL_COORD[tu]
@@ -1656,6 +1672,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                 left = right
         return (tu, left)
 
+    @DEBUG_RECORD
     def get_next_hard_id(self):
         def count_lock(tu):
             sc = self.getscreen()
@@ -1687,6 +1704,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             last_tu = tu
             last_cnt = cnt
 
+    @DEBUG_RECORD
     def qianghua(self):
         # 此处逻辑极为复杂，代码不好理解
         time.sleep(3)
@@ -1789,6 +1807,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         self.click(923, 272)
         time.sleep(3)
 
+    @DEBUG_RECORD
     def enter_normal(self, max_retry=3):
         """
         进入normal图
@@ -1797,17 +1816,15 @@ class ShuatuBaseMixin(FightBaseMixin):
             self.enter_zhuxian()
             for retry_2 in range(3):
                 time.sleep(1)
+                self.wait_for_loading()
                 state = self.check_maoxian_screen()
-                if state == -1:
-                    self.lock_home()
-                elif state == 0:
-                    self.enter_zhuxian()
-                elif state == 2:
+                if state == 2:
                     self.click(MAOXIAN_BTN["normal_on"])
                 elif state == 1:
                     return
         raise Exception("进入普通图超过最大尝试次数！")
 
+    @DEBUG_RECORD
     def select_normal_id(self, id):
         """
         走到normal的几图
@@ -1861,6 +1878,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             all_cnt += 1
         raise Exception("可能不存在的图号！")
 
+    @DEBUG_RECORD
     def select_hard_id(self, id):
         """
         走到hard的几图
