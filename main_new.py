@@ -257,13 +257,13 @@ def ShowGuide():
 
 
 def ShowServerChan():
+    print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
+    print("  - 日志记录过滤等级 log_lev：", log_lev)
+    print("  - 日志记录最大累积条数 log_cache：", log_cache)
     if s_sckey != "":
         print("* Server酱已配置！")
-        print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
-        print("  - 记录过滤等级 log_lev：", log_lev)
-        print("  - 记录最大累积条数 log_cache：", log_cache)
     else:
-        print("* Server酱未配置，前往config.ini - s_sckey进行设置")
+        print("* Server酱未配置，可前往config.ini - s_sckey进行设置")
     if qqbot_key != "":
         print("* QQbot已配置！")
         print("选择的QQbot提供商 qqbot_select：", qqbot_select)
@@ -274,7 +274,12 @@ def ShowServerChan():
         print("  - 记录过滤等级 log_lev：", log_lev)
         print("  - 记录最大累积条数 log_cache：", log_cache)
     else:
-        print("* QQbot已未配置，前往config.ini - qqbot_key进行设置")
+        print("* QQbot未配置，可前往config.ini - qqbot_key进行设置")
+    if tg_token != "":
+        print("* TGbot已配置！")
+        print("是否消息铃声静音 tg_mute：", tg_mute)
+    else:
+        print("* TGbot未配置，可前往config.ini - tg_token进行设置")
 
 
 def ShowAutoConsole():
