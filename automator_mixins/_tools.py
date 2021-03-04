@@ -895,7 +895,7 @@ class ToolsMixin(BaseMixin):
 
         def _next():
             sc = self.getscreen()
-            name_at = (37, 390, 104, 445)
+            name_at = (40, 393, 104, 441)
             self.click(929, 269)
             # TODO 这里会卡，原因不明
             for _ in range(10):
