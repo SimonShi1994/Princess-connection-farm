@@ -171,7 +171,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
-## :hammer:更新历史:wrench:
+## :hammer:更新历史:wrench:   
+
+2021/3/5 By:Klarkxy
+
+- "r8购买经验" 新增参数"qianghuashi"，用来进行额外购买强化石。
 
 2021/3/4 By:TheAutumnOfRice
 
