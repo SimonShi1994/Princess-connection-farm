@@ -598,7 +598,7 @@ class ShuatuBaseMixin(FightBaseMixin):
 
     def sw_init(self):
         self.switch = 0
-
+    @DEBUG_RECORD
     def zhuxian_kkr(self, screen=None):
         """
         处理跳脸
