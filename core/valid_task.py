@@ -588,7 +588,7 @@ VALID_TASK = ValidTask() \
     .add("h3", "yaoqinghanghui", "邀请行会", "邀请指定成员进入行会",
          [TaskParam("inviteUID", str, "UID", "被邀请者的UID号")]) \
     .add("h4", "jieshouhanghui", "接受行会", "接受行会的邀请信息") \
-    .add("h5", "joinhanghui", "加入行会", "主动搜索并加入行会",
+    .add("h5", "joinhanghui", "加入行会", "[久未维护，可能不能用]\n主动搜索并加入行会",
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h6", "dianzan", "行会点赞", "给指定人点赞",
          [TaskParam("sortflag", int, "给谁点赞", "只能为0或者1的值\n0：给副会长点赞。\n1：给战力最高者点赞。", 0)]) \
@@ -613,8 +613,8 @@ VALID_TASK = ValidTask() \
           TaskParam("stuck_notzhandoukaishi", bool, "无法出击但不撤退", "设置为True时，如果发现无法出击，那就不撤退。\n设置为False时，则相反。", False), ]) \
     .add("d2", "dixiacheng", "地下城", "小号地下城借人换mana",
          [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False)]) \
-    .add("d3", "dixiachengYunhai", "打云海关", "打通云海关【细节待补充】") \
-    .add("d4", "dixiachengDuanya", "打断崖关", "打通断崖关【细节待补充】") \
+    .add("d3", "dixiachengYunhai", "打云海关", "[久未维护，可能不能用]\n打通云海关【细节待补充】") \
+    .add("d4", "dixiachengDuanya", "打断崖关", "[久未维护，可能不能用]\n打通断崖关【细节待补充】") \
     .add("d5", "shuatuDD", "通关地下城", "通用的打通地下城函数",
          [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4"),
           TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
@@ -650,8 +650,8 @@ VALID_TASK = ValidTask() \
          [TaskParam("mode", int, "模式", "如果mode为0，则为购买mana的次数；\n如果mode为1，则为购买10连mana的次数。【宝石警告】", 1),
           TaskParam("times", int, "购买mana的次数", "购买mana的次数(第一次单抽不计入)"),
           TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False", False), ]) \
-    .add("r8", "buyExp", "购买经验", "买空商店里的经验药水",
-        [TaskParam("qianghuashi", bool, "是否同时购买强化石", "True/False", False)]) \
+    .add("r8", "buyExp", "购买经验/强化石", "买空商店里的经验药水/强化石",
+         [TaskParam("qianghuashi", bool, "是否同时购买强化石", "True/False", False)]) \
     .add("r9", "tansuo", "探索", "进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
                                        "mode 0: 刷最上面的\n"
@@ -692,8 +692,8 @@ VALID_TASK = ValidTask() \
     .add("t4", "maizhuangbei", "小号卖装备", "卖出数量前三的装备（如果数量大于1000)(无需OCR）",
          [TaskParam("day_interval", int, "清理间隔", "请输入清理间隔天数", 30)]) \
     .add("t5", "zanting", "暂停", "暂停脚本，弹出弹窗，直到手动点击弹窗才结束") \
-    .add("t6", "kucunshibie", "库存识别", "识别装备库存并输出到outputs文件夹。") \
-    .add("t7", "jueseshibie", "角色识别", "识别角色信息并输出到outputs文件夹。") \
+    .add("t6", "kucunshibie", "库存识别", "【刷图规划用】识别装备库存并输出到outputs文件夹。") \
+    .add("t7", "jueseshibie", "角色识别", "【刷图规划用】识别角色信息并输出到outputs文件夹。") \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",
@@ -708,7 +708,7 @@ VALID_TASK = ValidTask() \
          [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",
          [TaskParam("tu_dict", list, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox())]) \
-    .add("s4", "doActivityHard", "刷活动图", "使用扫荡券刷活动副本（慎用，因为每次活动坐标都不同）") \
+    .add("s4", "doActivityHard", "刷活动图", "[久未维护，可能不能用]\n使用扫荡券刷活动副本（慎用，因为每次活动坐标都不同）") \
     .add("s5", "chushihua", "初始化", "从1-3自动推到3-1，已经推过的部分不会再推。") \
     .add("s5-2", "chushihua2", "快速初始化", "从1-3自动推到3-1，已经推过的部分不会再推。\n"
                                         "先刷经验后推图，效率更高，但是会刷很多次1-1.") \

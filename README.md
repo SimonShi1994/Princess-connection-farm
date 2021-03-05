@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.5.20210304
+ # Princess connection 公主连结农场脚本v2.6.20210305
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -53,7 +53,7 @@
 - [x] 收取任务
 - [x] 购买体力
 - [x] 购买mana
-- [x] 购买经验
+- [x] 购买经验/强化石
 - [x] 探索
 - [x] 圣迹调查
 - [x] 收取女神祭
@@ -172,6 +172,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## :hammer:更新历史:wrench:   
+
+2021/3/5 By:TheAutumnOfRice
+
+- 合并了S佬的魔改atx-agent
+- minicap支持更改参数了(见config）
 
 2021/3/5 By:Klarkxy
 
