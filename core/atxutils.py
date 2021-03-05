@@ -3,8 +3,7 @@ import time
 import adbutils
 import uiautomator2 as u2
 
-from core.pcr_config import debug
-
+from core.get_screen import ReceiveFromMinicap, debug
 
 class AtxClient:
     def __init__(self, device: adbutils.AdbDevice = None):
@@ -42,8 +41,12 @@ class AtxClient:
 
 if __name__ == '__main__':
     d = adbutils.adb.device("emulator-5554")
+    s = ReceiveFromMinicap("emulator-5554")
     atx = AtxClient(d)
-    atx.push_binary()
-    atx.restart_agent()
-    u2.connect()
-    print(atx.refresh_minicap())
+    # atx.push_binary()
+    # atx.restart_agent()
+    # u2.connect()
+    print(atx.refresh_minicap(1.0))
+    s.start()
+    time.sleep(60)
+    print(atx.refresh_minicap(1.0))

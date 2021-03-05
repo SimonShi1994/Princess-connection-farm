@@ -3,12 +3,12 @@ import threading
 import time
 from io import BytesIO
 from typing import Optional
+from datetime import datetime
 
 import adbutils
 import cv2
 import matplotlib.pyplot as plt
 import websocket
-
 # from core.Automator import Automator
 from core.pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
 
@@ -83,9 +83,10 @@ class ReceiveFromMinicap:
             try:
                 # 如果不是bytes，那就是图像
                 if isinstance(message, (bytes, bytearray)) and len(message) > 100:
-                    if self.receive_flag == 1:
-                        self.receive_data.put(message)
-                        self.receive_flag = 0
+                    # if self.receive_flag == 1:
+                    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f'))
+                    self.receive_data.put(message)
+                        # self.receive_flag = 0
                 else:
                     if debug:
                         print(message)

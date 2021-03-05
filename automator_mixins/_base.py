@@ -174,9 +174,9 @@ class BaseMixin:
 
     @DEBUG_RECORD
     def init_fastscreen(self):
-        if fast_screencut and Multithreading({}).program_is_stopped():
+        if True:
             print("Device:", self._d.serial, "正在初始化minicap参数……")
-            output = self.ATX.refresh_minicap(minicap_rate, minicap_rotation, minicap_quality)
+            output = self.ATX.refresh_minicap(5.0, minicap_rotation, minicap_quality)
             if not output:
                 if force_fast_screencut:
                     raise FastScreencutException("minicap参数初始化失败！")
@@ -187,6 +187,7 @@ class BaseMixin:
             self.receive_minicap = ReceiveFromMinicap(self.address)
             self.receive_minicap.start()
             print("Device:", self._d.serial, "快速截图已打开，测试中……")
+            time.sleep(60)
             for retry in range(3):
                 try:
                     data = self.receive_minicap.receive_img()
