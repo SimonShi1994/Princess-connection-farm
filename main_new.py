@@ -424,7 +424,11 @@ def get_arg(argv, key, default):
             return argv[ind + 1]
     return default
 
-
+def has_arg(argv, key, default):
+    for ind, a in enumerate(argv):
+        if a == key:
+            return True
+    return default
 if __name__ == "__main__":
     CheckConstantImgs()
     GetLastSchedule()
@@ -541,7 +545,7 @@ if __name__ == "__main__":
                     print("skip [-d (device_id)] [-t (task_id)] 跳过当前任务；若指定-t，则跳转到指定任务（通过task查看ID）")
                     print("!!!________FOR DEBUG________!!!")
                     print("u2rec [-d (device_id)] 查看某个device的u2运行记录")
-                    print("rec [-d (device_id)] 查看某个device的Automator运行记录")
+                    print("rec [-d (device_id)] [-r] 查看某个device的Automator运行记录,-r只查看running的记录。")
                     print("debug (on/off) [-d (device_id)] [-m (module_name)] 打开/关闭某个设备的调试显示，-m可指定某一个模块，默认为全部模块。")
                     print("debug show [-d (device_id)] 显示某一个设备的每个模块的调试启动状况。")
                     print("exec [-d (device_id)] [-f (script_file)] 进入python命令调试模式，若指定-f，则执行某一文件。")
@@ -567,11 +571,12 @@ if __name__ == "__main__":
                 assert SCH is not None, "当前无运行的Schedule！"
                 argv = cmds[1:]
                 device_id = get_arg(argv, "-d", None)
+                running_mode = has_arg(argv, "-r", False)
                 if device_id is not None:
                     device = SCH.pcr.devices.get_device_by_id(device_id)
                 else:
                     device = None
-                SCH.pcr.show_debug_record(device)
+                SCH.pcr.show_debug_record(running_mode, device)
             elif order == "skip":
                 assert SCH is not None, "当前无运行的Schedule！"
                 argv = cmds[1:]
