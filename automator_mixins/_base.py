@@ -217,10 +217,12 @@ class BaseMixin:
         self.appRunning = False
         self.address = address
         if address != "debug":
-            self._d = safe_u2_connect(address)
-            self.d = SafeU2Handle(self._d)
             self.device = adbutils.adb.device(address)
             self.ATX = AtxClient(self.device)
+            self.ATX.push_binary()
+            self.ATX.restart_agent()
+            self._d = safe_u2_connect(address)
+            self.d = SafeU2Handle(self._d)
             self.init_fastscreen()
 
     @DEBUG_RECORD
