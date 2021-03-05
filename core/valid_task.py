@@ -650,7 +650,8 @@ VALID_TASK = ValidTask() \
          [TaskParam("mode", int, "模式", "如果mode为0，则为购买mana的次数；\n如果mode为1，则为购买10连mana的次数。【宝石警告】", 1),
           TaskParam("times", int, "购买mana的次数", "购买mana的次数(第一次单抽不计入)"),
           TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False", False), ]) \
-    .add("r8", "buyExp", "购买经验", "买空商店里的经验药水") \
+    .add("r8", "buyExp", "购买经验", "买空商店里的经验药水",
+        [TaskParam("qianghuashi", bool, "是否同时购买强化石", "True/False", False)]) \
     .add("r9", "tansuo", "探索", "进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
                                        "mode 0: 刷最上面的\n"
@@ -669,6 +670,7 @@ VALID_TASK = ValidTask() \
                                        "mode 2: 只刷2"),
           TaskParam("times", int, "次数", "只能为1~5的整数"),
           TaskParam("tili", bool, "体力不足时是否购买体力")]) \
+    .add("r11", "shouqunvshenji", "收取女神祭", "收取女神祭") \
     .add("t1", "rename", "批量重命名", "随机+批量给自己换个名字，建议配合OCR识别信息更佳",
          [TaskParam("name", str, "新名字", "你的量产新名字，以空格为间隔"),
           TaskParam("auto_id", bool, "自动生成随机位数id", "生成一个随机数0-1000在名字后面", False)]) \

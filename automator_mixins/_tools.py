@@ -11,6 +11,7 @@ import pandas as pd
 import xlrd
 from xlutils.copy import copy
 
+from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
 from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
@@ -34,6 +35,7 @@ class ToolsMixin(BaseMixin):
     """
 
     @timeout(300, "lock_home执行超时：超过5分钟")
+    @DEBUG_RECORD
     def lock_home(self):
         """
         锁定首页
@@ -67,6 +69,7 @@ class ToolsMixin(BaseMixin):
         return WoDeZhuYe(self).enter()
 
     @timeout(300, "init_home执行超时：超过5分钟")
+    @DEBUG_RECORD
     def init_home(self):
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         while True:
@@ -785,7 +788,7 @@ class ToolsMixin(BaseMixin):
 
         def _next():
             sc = self.getscreen()
-            name_at = (37, 390, 104, 445)
+            name_at = (40, 393, 104, 441)
             self.click(929, 269)
             # TODO 这里会卡，原因不明
             for _ in range(10):

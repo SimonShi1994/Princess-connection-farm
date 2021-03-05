@@ -82,9 +82,17 @@ class GlobalConfig:
         globals()[option] = value
         if find_global:
             mypath = str(pathlib.Path().absolute())
+
+            def is_pcr_pack(module, mypath):
+                file_name = getattr(module, "__file__", "")
+                if not isinstance(file_name, str):
+                    return False
+                if file_name.startswith(mypath):
+                    return True
+                return False
+
             for name, module in sys.modules.items():
-                if getattr(module, "__file__", "").startswith(mypath) or getattr(module.__spec__, "origin",
-                                                                                 "").startswith(mypath):
+                if is_pcr_pack(module, mypath):
                     # Is PCR modules
                     if hasattr(module, option):
                         # If Pre-Loaded, Change it.
@@ -155,16 +163,24 @@ trace_exception_for_debug = GC.add_bool('debug', 'trace_exception_for_debug', Fa
 use_template_cache = GC.add_bool('debug', 'use_template_cache', True)
 baidu_ocr_img = GC.add_bool('debug', 'baidu_ocr_img', False)
 disable_timeout_raise = GC.add_bool('debug', 'disable_timeout_raise', False)
+u2_record_size = GC.add_int('debug', 'u2_record_size', 20)
+debug_record_size = GC.add_int('debug', 'debug_record_size', 50)
+u2_record_filter = GC.add_list('debug', 'u2_record_filter', [])
+debug_record_filter = GC.add_list('debug', 'debug_record_filter', ['_lock_img', '_move_check'])
 
 qqbot_key = GC.add_str('log', 'qqbot_key')
 qqbot_select = GC.add_str('log', 'qqbot_select')
+tg_token = GC.add_str('log', 'tg_token')
+tg_mute = GC.add_bool('log', 'tg_mute', False)
 qqbot_private_send_switch = GC.add_int('log', 'qqbot_private_send_switch', 0)
 qqbot_group_send_switch = GC.add_int('log', 'qqbot_group_send_switch', 0)
-qq = GC.add_str('log', 'qq')
+qq = GC.add_str('log', 'qq', '0')
 s_sckey = GC.add_str('log', 's_sckey')
 log_lev = GC.add_str('log', 'log_lev', "1")
 log_cache = GC.add_int('log', 'log_cache', 3)
-s_sentstate = GC.add_int('log', 's_sentstate', 30)
+sentstate = GC.add_int('log', 'sentstate', 30)
+proxy_http = GC.add_str('log', 'proxy_http')
+proxy_https = GC.add_str('log', 'proxy_https')
 
 baidu_apiKey = GC.add_str('pcrfarm_setting', 'baidu_apiKey')
 baidu_secretKey = GC.add_str('pcrfarm_setting', 'baidu_secretKey')
@@ -179,7 +195,7 @@ fast_screencut_delay = GC.add_float('pcrfarm_setting', 'fast_screencut_delay', 0
 fast_screencut_timeout = GC.add_int('pcrfarm_setting', 'fast_screencut_timeout', 3)
 end_shutdown = GC.add_bool('pcrfarm_setting', 'end_shutdown', False)
 lockimg_timeout = GC.add_int('pcrfarm_setting', 'lockimg_timeout', 90)
-enable_pause = GC.add_bool('pcrfarm_setting', 'enable_pause', True)
+enable_pause = GC.add_bool('pcrfarm_setting', 'enable_pause', False)
 max_reboot = GC.add_int('pcrfarm_setting', 'max_reboot', 3)
 running_input = GC.add_bool('pcrfarm_setting', 'running_input', False)
 captcha_skip = GC.add_bool('pcrfarm_setting', 'captcha_skip', False)
@@ -221,7 +237,7 @@ disable_timeout_raise = cfg.getboolean('debug', 'disable_timeout_raise')
 s_sckey = cfg.get('log', 's_sckey')
 log_lev = cfg.get('log', 'log_lev')
 log_cache = cfg.getint('log', 'log_cache')
-s_sentstate = cfg.getint('log', 's_sentstate')
+sentstate = cfg.getint('log', 'sentstate')
 
 baidu_apiKey = cfg.get('pcrfarm_setting', 'baidu_apiKey')
 baidu_secretKey = cfg.get('pcrfarm_setting', 'baidu_secretKey')

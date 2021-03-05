@@ -21,6 +21,7 @@ from core.pcr_config import trace_exception_for_debug, captcha_skip
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import check_task_dict, list_all_flags, is_in_group
 from core.valid_task import VALID_TASK, getcustomtask
+from core.bot import Bot
 
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
@@ -44,6 +45,9 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             self.log.write_log("error", f"自定义脚本导入失败！{e}")
         if func is not None:
             func(self=self, var=var, **kwargs)
+
+    def SkipTask(self, to_id=None):
+        self.send_move_method("skip", to_id)
 
     def RunTasks(self, tasks: dict, continue_=True, max_retry=3,
                  first_init_home=True, rec_addr="rec"):
@@ -84,6 +88,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
 
         self.log.write_log("info", f"任务列表：")
         # 解析任务列表
+        self._task_index = {}
         for task in tasks["tasks"]:
             typ = task["type"]
 
@@ -134,11 +139,12 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 if v_p.default is not None and v_p.key not in kwargs:
                     kwargs[v_p.key] = v_p.default
 
-            self.ms.nextwv(funwarper(cur["funname"], cur['title'], kwargs))  # 自动创建序列
+            idx = self.ms.nextwv(funwarper(cur["funname"], cur['title'], kwargs))  # 自动创建序列
             if typ != "nothing":
                 self.log.write_log("info", f"  +任务 {cur['title']}")  # 打印该任务
                 for key in kwargs:
                     self.log.write_log("info", f"    参数 {key} ： {kwargs[key]}")
+                self._task_index[idx] = cur['title']
         self.ms.exitw(None)  # 结束自动序列创建
         # 未知异常：仍然是重启哒！万能的重启万岁！
         last_exception = None
@@ -191,9 +197,13 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 try:
                     os.makedirs(f"error_screenshot/{account}", exist_ok=True)
                     nowtime = datetime.datetime.strftime(datetime.datetime.now(), "%Y%m%d_%H%M%S")
-                    target = f"error_screenshot/{account}/{nowtime}_RT{retry}.bmp"
+                    target = f"error_screenshot/{account}/{nowtime}_RT{retry}.jpg"
                     cv2.imwrite(target, self.last_screen)
                     pcr_log(account).write_log(level="error", message=f"错误截图已经保存至{target}")
+                    # 错误截图日志为0级消息，后面可能会改成warning级别或者error
+                    Bot().server_bot('', '', '', self.last_screen, f"模拟器：{self.address}"
+                                                                   f"账号：{self.account}的运行错误重启截图"
+                                                                   f"错误原因：{e}")
                 except Exception as es:
                     pcr_log(account).write_log(level="error", message=f"错误截图保存失败：{es}")
                 if trace_exception_for_debug:

@@ -267,11 +267,11 @@ schedulename的计划。也可以把first改成continue，此时从上次中断�
 
 ### 3.1 配置Server Bot
 
-- Wechat:
+- Wechat/Wework:
 
-Server酱 API申请地址：http://sc.ftqq.com/3.version
+Server酱 API申请地址：https://sct.ftqq.com/sendkey
 
-申请好Server酱 API并且完成 **与** 微信的绑定http://sc.ftqq.com/?c=wechat&a=bind
+申请好Server酱 API并且完成 **与** 微信的绑定https://sct.ftqq.com/sendkey
 
 之后将 申请好的Server酱 API填入项目目录下的**config.ini**的**s_sckey**中
 
@@ -298,7 +298,19 @@ qq:指定接收消息的QQ号或者QQ群号,可以添加多个,以英文逗号�
 
 
 
-Wechat/QQ 这两个API可以两个都填，那就两个一起发送
+- TG:
+
+TG搜索`@PCR_pushbot`并添加好友
+
+发送`/token`获取你的token，填入本项目config.ini中
+
+（服务器出错请联系@CyiceK）
+
+**就这么简单**
+
+
+
+Wechat/QQ/TG API可以都填，那就一起发送
 
 
 
@@ -336,6 +348,8 @@ OCR模式介绍：
 识别精度比百度OCR低，优点速度快，无其他特殊介绍
 
 ### 3.3 配置模拟器自动控制
+
+**目前多个自启动会出现相互打架掐死adb的情况，请确保模拟器能够同时或者在短时间内进入桌面**
 
 本节的内容介绍如何配置模拟器自动控制，以达成让脚本自动在执行任务时唤醒模拟器，在闲置时关闭模拟器，以及在模拟器卡死时自动重启模拟器。
 配置模拟器自动控制将使家庭电脑上24小时执行成为可能。

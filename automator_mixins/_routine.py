@@ -270,7 +270,7 @@ class RoutineMixin(ShuatuBaseMixin):
 
         # 买药
 
-    def buyExp(self):
+    def buyExp(self, qianghuashi=False):
         # 进入商店
         ts = self.AR.get("time_status", UDD["time_status"])
         if not diff_6hour(time.time(), ts["buyexp"]):
@@ -300,6 +300,19 @@ class RoutineMixin(ShuatuBaseMixin):
             time.sleep(1)
             self.click(596, 478)
             time.sleep(1)
+            self.click(475, 478)
+            time.sleep(1)
+            if qianghuashi:  # 上面买完药水，下面的强化石会自动上去，所以直接点一圈就好了
+                self.click(386, 148)
+                self.click(556, 148)
+                self.click(729, 148)
+                self.click(897, 148)
+                self.click(795, 437)
+                time.sleep(1)
+                self.click(596, 478)
+                time.sleep(1)
+                self.click(475, 478)
+                time.sleep(1)
         ts["buyexp"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
@@ -530,4 +543,14 @@ class RoutineMixin(ShuatuBaseMixin):
         tryfun_shengji()
         ts["shengji"] = time.time()
         self.AR.set("time_status", ts)
+        self.lock_home()
+
+    def shouqunvshenji(self):
+        """
+        收取女神祭
+        """
+        self.lock_home()
+        self.click_btn(MAIN_BTN["nsj"], until_appear=MAIN_BTN["wanfa"], side_check=self.right_kkr)
+        for _ in range(10):
+            self.click(833, 437)  # 收取！
         self.lock_home()

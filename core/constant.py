@@ -135,6 +135,9 @@ MAIN_BTN = {
     "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),
 
     "xzcw": p(img="img/home/xzcw.bmp", at=(438, 135, 520, 157)),  # 下载错误
+    # 女神祭
+    "nsj": p(541, 430),
+    "wanfa": p(img="img/home/wanfa.bmp", at=(234, 6, 275, 64)),  # 玩法
 
 }
 JJC_BTN = {
@@ -548,7 +551,7 @@ DXC_COORD = {
         5: p(297, 190)
     }
 }
-MAX_MAP = 19
+MAX_MAP = 20
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -645,7 +648,11 @@ HARD_COORD = {
         2: p(473, 262),
         3: p(764, 317),
     },
-
+    20: {
+        1: p(215, 270),
+        2: p(476, 331),
+        3: p(766, 269),
+    }
 }
 
 SHOP_BTN = {
@@ -716,11 +723,13 @@ ZHUXIAN_ID = {
     17: p(img="img/zhuxian/17.bmp", at=(448, 71, 539, 90)),
     18: p(img="img/zhuxian/18L.bmp", at=(424, 75, 508, 88)),
     19: p(img="img/zhuxian/19L.bmp", at=(422, 76, 507, 88)),
+    20: p(img="img/zhuxian/20L.bmp", at=(419, 74, 520, 88)),
 }
 ZHUXIAN_XXXYY_ID = {
     # 小行星原野你长得太像了，无奈增加二级分类
     18: p(img="img/zhuxian/18R.bmp", at=(532, 73, 561, 88)),
     19: p(img="img/zhuxian/19R.bmp", at=(530, 73, 562, 89)),
+    # 20: p(img="img/zhuxian/20R.bmp",at=(538,74,567,89)),  # 卡斯塔里森林
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -1113,6 +1122,26 @@ NORMAL_COORD = {
             3: p(203, 375),
             2: p(345, 312),
             1: p(245, 248),
+        }
+    },
+    20: {
+        "right": {
+            14: p(826, 246),
+            13: p(747, 336),
+            12: p(611, 386),
+            11: p(572, 277),
+            10: p(445, 319),
+        },
+        "left": {
+            9: p(733, 418),
+            8: p(631, 377),
+            7: p(642, 243),
+            6: p(514, 272),
+            5: p(454, 375),
+            4: p(368, 305),
+            3: p(303, 205),
+            2: p(192, 266),
+            1: p(243, 379),
         }
     }
 }
