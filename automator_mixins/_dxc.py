@@ -187,7 +187,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 break
 
             time.sleep(self.change_time + 1)
-            if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,at=(45, 144, 163, 252)):
+            if self.is_exists(DXC_ELEMENT["zhiyuan_gouxuan"]):
+                pass
+            elif self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,at=(45, 144, 163, 252)):
                 # 如果第二个也等级不足就退出
                 if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,at=(160, 126, 270, 232)):
                     pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)

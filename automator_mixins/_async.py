@@ -224,10 +224,11 @@ class AsyncMixin(ToolsMixin):
         :return:
         """
         while Multithreading({}).is_stopped():
-            await asyncio.sleep(sentstate * 60 + 1)
-            pcr_log(self.account).server_bot('', '', '', img=self.last_screen, img_title=f"server_bot运行截图播报\n"
-                                                                                         f"账号:{self.account}\n"
-                                                                                         f"所运行的设备:{self.address}")
+            if sentstate != 0:
+                await asyncio.sleep(sentstate * 60 + 1)
+                pcr_log(self.account).server_bot('STATE', '', '', img=self.last_screen, img_title=f"server_bot运行截图播报\n"
+                                                                                                  f"账号:{self.account}\n"
+                                                                                                  f"所运行的设备:{self.address}")
 
     async def aor_purse(self):
         """

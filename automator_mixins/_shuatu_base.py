@@ -1500,7 +1500,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         # TODO 装备强化问题
         def _next():
             sc = self.getscreen()
-            name_at = (182, 78, 315, 98)
+            name_at = (40, 393, 104, 441)
             self.click(929, 269)
             # TODO 这里会卡，原因不明
             for _ in range(10):

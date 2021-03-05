@@ -277,7 +277,7 @@ def ShowServerChan():
         print("* QQbot未配置，可前往config.ini - qqbot_key进行设置")
     if tg_token != "":
         print("* TGbot已配置！")
-        print("是否消息铃声静音 tg_mute：", tg_mute)
+        print("  - 是否消息铃声静音 tg_mute：", tg_mute)
     else:
         print("* TGbot未配置，可前往config.ini - tg_token进行设置")
 
@@ -460,7 +460,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.5.20210303")
+        print("当前版本为 Ver 2.5.20210304")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
