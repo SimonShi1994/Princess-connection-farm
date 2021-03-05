@@ -5,8 +5,8 @@ import queue
 import random
 import threading
 import time
-from typing import Optional, Union, Type
 from collections import OrderedDict
+from typing import Optional, Union, Type
 
 import cv2
 import numpy as np
@@ -1200,6 +1200,7 @@ class BaseMixin:
     def output_debug_info(self, running):
         return self.debug_record.get(running)
 
+    @DEBUG_RECORD
     def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
         """
         :param size: 放大的大小
