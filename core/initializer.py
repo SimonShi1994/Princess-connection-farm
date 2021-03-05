@@ -18,10 +18,11 @@ import keyboard
 from automator_mixins._base import Multithreading, ForceKillException, FastScreencutException
 from automator_mixins._captcha import CaptionSkip
 from core.Automator import Automator
+from core.atxutils import AtxClient
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
-from core.pcr_config import GC, enable_pause
+from core.pcr_config import GC, enable_pause, debug
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
     trace_exception_for_debug, sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
     max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr, ignore_serials
@@ -171,7 +172,15 @@ class Device:
         return False
 
     def start_u2(self):
-        self.device.shell("/data/local/tmp/atx-agent server -d", timeout=5)
+        if debug:
+            print("正在安装魔改ATX……")
+        ATX = AtxClient(self.device)
+        ATX.push_binary()
+        if debug:
+            print("正在启动atx-agent……")
+        output = ATX.restart_agent()
+        if debug:
+            print("启动返回值：", output)
 
     def init(self):
         self.state = self.DEVICE_AVAILABLE

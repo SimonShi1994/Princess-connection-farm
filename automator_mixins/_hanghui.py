@@ -5,6 +5,7 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.utils import diffday
+from ._base import DEBUG_RECORD
 from ._tools import ToolsMixin
 
 
@@ -14,6 +15,7 @@ class HanghuiMixin(ToolsMixin):
     包含行会相关的脚本。
     """
 
+    @DEBUG_RECORD
     def hanghui(self, once_times):
         """
         行会自动捐赠装备
@@ -63,6 +65,7 @@ class HanghuiMixin(ToolsMixin):
         self.find_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=self.change_time,
                       at=(891, 413, 930, 452))  # 回首页
 
+    @DEBUG_RECORD
     def tichuhanghui(self):  # 踢出行会
         self.lock_home()
         # 进入
@@ -83,6 +86,7 @@ class HanghuiMixin(ToolsMixin):
         # 返回
         self.lock_home()
 
+    @DEBUG_RECORD
     def yaoqinghanghui(self, inviteUID):  # 邀请行会
         self.click(693, 430)  # 点击行会
         self.lock_img('img/zhiyuansheding.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
@@ -98,6 +102,7 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/ok.bmp', ifclick=[(588, 439)], ifdelay=1)  # 点击ok
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
+    @DEBUG_RECORD
     def jieshouhanghui(self):
         self.click(693, 430)  # 点击行会
         self.lock_img('img/zujianhanghui.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
@@ -128,6 +133,7 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/ok.bmp', ifclick=[(591, 440)], ifdelay=1)  # 点击ok
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
+    @DEBUG_RECORD
     def joinhanghui(self, clubname):  # 小号加入行会
         print('>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
         self.click(693, 430)  # 点击行会
@@ -148,6 +154,7 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/ok.jpg', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
+    @DEBUG_RECORD
     def join_hanghui(self, clubname):
         self.lock_home()
         # 进入
@@ -176,6 +183,7 @@ class HanghuiMixin(ToolsMixin):
         self.click_btn(HANGHUI_BTN["hanghui_ok"], elsedelay=1)
         self.lock_home()
 
+    @DEBUG_RECORD
     def zhiyuan(self, zhiyuanjieshu=False):
         # Add: By TheAutumnOfRice 考虑了无法撤下支援的情况
         """
@@ -227,6 +235,7 @@ class HanghuiMixin(ToolsMixin):
             zhiyuansheding()
         self.lock_home()
 
+    @DEBUG_RECORD
     def dianzan(self, sortflag=0):
         """
         2020/8/6 By:CyiceK 检查完毕
@@ -285,6 +294,7 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1), (480, 374)], elsedelay=self.change_time,
                       at=(891, 413, 930, 452))  # 回首页
 
+    @DEBUG_RECORD
     def faqijuanzeng(self, equip_img: str, wait_time: int = 300):
         """
         发起装备捐赠。
@@ -401,6 +411,7 @@ class HanghuiMixin(ToolsMixin):
             set_last_record()
         self.lock_home()
 
+    @DEBUG_RECORD
     def tuanduizhan(self):
         """
         自动摸会战 By：CyiceK

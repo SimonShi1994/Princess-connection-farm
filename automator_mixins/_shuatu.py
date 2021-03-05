@@ -7,6 +7,7 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.valid_task import ShuatuToTuple
+from ._base import DEBUG_RECORD
 from ._shuatu_base import ShuatuBaseMixin
 
 
@@ -17,6 +18,7 @@ class ShuatuMixin(ShuatuBaseMixin):
     """
 
     # 刷经验1-1
+    @DEBUG_RECORD
     def shuajingyan(self, map):
         """
         刷图刷1-1
@@ -26,6 +28,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.shuatuNN(["1-1-160"])
 
     # 刷经验3-1
+    @DEBUG_RECORD
     def shuajingyan3(self, map):
         """
         刷图刷3-1
@@ -34,6 +37,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         # 进入冒险
         self.shuatuNN(["3-1-125"])
 
+    @DEBUG_RECORD
     def shuatuNN(self, tu_dict: list, var={}):
         """
         刷指定N图
@@ -83,6 +87,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         mv.save()
         self.lock_home()
 
+    @DEBUG_RECORD
     def shuatuHH(self, tu_dict: list, var={}):
         """
         刷指定H图
@@ -125,6 +130,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
 
     # 刷活动hard图
+    @DEBUG_RECORD
     def doActivityHard(self):
         # 进入冒险
         time.sleep(2)
@@ -154,6 +160,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
 
     # 刷活动normal图(有bug，不可用）
+    @DEBUG_RECORD
     def do_activity_normal(self, buy_tili=0, activity_name="", mode=0):
         self.lock_home()
         if activity_name == "":
@@ -215,6 +222,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         assert len(strs) == 2, f"错误的编队信息：{tustr}"
         return int(strs[0]), int(strs[1])
 
+    @DEBUG_RECORD
     def tuitu(self, mode, to, from_="new", buy_tili=0, auto_upgrade=2, use_ub=2,
               force_three_star=False, clear_tili=True, var={}):
         """
@@ -416,6 +424,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.clear_tili_info(var)
         self.lock_home()
 
+    @DEBUG_RECORD
     def chushihua(self, var={}):
         """
         初始化：从1-3到3-1。
@@ -465,6 +474,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.clear_tili_info(var)
         mv.clearflags()
 
+    @DEBUG_RECORD
     def chushihua2(self, var={}):
         """
         另一个初始化的思路：全部体力投入1-1刷经验之后，等级拉上来了不需要装备都能秒关
@@ -514,6 +524,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.clear_tili_info(var)
         mv.clearflags()
 
+    @DEBUG_RECORD
     def shuajingyan_super(self, mode=1, buytili=6, var={}):
         """
         超级刷经验1-1！
@@ -553,6 +564,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.clear_tili_info(var)
         self.lock_home()
 
+    @DEBUG_RECORD
     def save_box_screen(self, dir: str, sort: str = "xingshu"):
         """
         拍下自己的box并保存到dir文件夹中
@@ -593,6 +605,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.log.write_log("error", "box拍摄失败！")
         self.lock_home()
 
+    @DEBUG_RECORD
     def zidongtuitu_normal(self, buy_tili=3, max_tu="max", var={},auto_upgrade = 1):
         """
         装备号自动推图，没达到三星自动强化。
@@ -615,6 +628,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
         self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var,auto_upgrade=auto_upgrade)
 
+    @DEBUG_RECORD
     def zidongtuitu_hard(self, buy_tili=3, max_tu="max", var={},auto_upgrade = 1):
         """
         装备号自动推HARD图，没达到三星自动强化。
@@ -637,6 +651,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             max_tu = f"{MAX_MAP}-3"
         self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, var=var,auto_upgrade = auto_upgrade)
 
+    @DEBUG_RECORD
     def shuatu_daily(self, tu_order: list, daily_tili=0, xianding=False, do_tuitu=False, var={}):
         """
         每日刷图（使用扫荡券）。每天重置一次刷图记录。
@@ -805,6 +820,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.log.write_log("info", f"全部刷图任务已经完成。")
         self.lock_home()
 
+    @DEBUG_RECORD
     def shuatu_daily_new(self, tu_order: list, daily_tili=0, xianding=False, do_tuitu=False, var={}):
         """
         每日刷图（使用扫荡券）。每天重置一次刷图记录。
@@ -977,6 +993,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.log.write_log("info", f"全部刷图任务已经完成。")
         self.lock_home()
 
+    @DEBUG_RECORD
     def meiriHtu(self, H_list, daily_tili, xianding, do_tuitu, var={}):
         """
         每日H本。
@@ -991,6 +1008,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             lst += [f"H{A}-{B}-3"]
         self.shuatu_daily(lst, daily_tili, xianding, do_tuitu, var=var)
 
+    @DEBUG_RECORD
     def xiaohaoHtu(self, daily_tili, do_tuitu, var={}):
         """
         小号每日打H本。
@@ -1004,6 +1022,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 L += [f"{i + 1}-{j}"]
         self.meiriHtu(L, daily_tili, False, do_tuitu, var)
 
+    @DEBUG_RECORD
     def shengjijuese(self, buy_tili=0, do_rank=True, do_shuatu=True):
         self.lock_home()
         self.auto_upgrade(buy_tili=buy_tili, do_rank=do_rank, do_shuatu=do_shuatu)

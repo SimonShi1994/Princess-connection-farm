@@ -5,6 +5,7 @@ from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.utils import diff_6hour, diff_5_12hour, diffday
+from ._base import DEBUG_RECORD
 from ._shuatu_base import ShuatuBaseMixin
 
 
@@ -14,6 +15,7 @@ class RoutineMixin(ShuatuBaseMixin):
     包含日常行动相关的脚本
     """
 
+    @DEBUG_RECORD
     def gonghuizhijia(self, auto_update=False):  # 家园领取
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         # 2020-09-09 CyiceK: 添加升级
@@ -56,6 +58,7 @@ class RoutineMixin(ShuatuBaseMixin):
 
         self.lock_home()
 
+    @DEBUG_RECORD
     def mianfeiniudan(self):
         # 免费扭蛋
         # 2020-07-31 TheAutumnOfRice: 检查完毕
@@ -94,6 +97,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.AR.set("time_status", ts)
         self.lock_home()
 
+    @DEBUG_RECORD
     def mianfeishilian(self):
         # 免费十连
         # 2020/9/20 CyiceK进行了稳定性修复
@@ -134,6 +138,7 @@ class RoutineMixin(ShuatuBaseMixin):
             # 首页锁定，保证回到首页
             self.lock_home()
 
+    @DEBUG_RECORD
     def shouqu(self):  # 收取全部礼物
         # 2020-08-06 TheAutumnOfRice: 检查完毕
         self.lock_home()
@@ -153,6 +158,7 @@ class RoutineMixin(ShuatuBaseMixin):
         else:
             self.lock_home()
 
+    @DEBUG_RECORD
     def shouqurenwu(self):  # 收取任务报酬
         # 2020-08-06 TheAutumnOfRice: 检查完毕
         self.lock_home()
@@ -165,6 +171,7 @@ class RoutineMixin(ShuatuBaseMixin):
                            is_raise=False)
         self.lock_home()
 
+    @DEBUG_RECORD
     def goumaitili(self, times, var={}, limit_today=False):  # 购买体力
         # 稳定性保证
         # 2020-07-31 TheAutumnOfRice: 检查完毕
@@ -202,6 +209,7 @@ class RoutineMixin(ShuatuBaseMixin):
         del var["cur"]
         mv.save()
 
+    @DEBUG_RECORD
     def goumaimana(self, times, mode=1, var={}, limit_today=False):
         # mode 1: 购买times次10连
         # mode 0：购买times次1连
@@ -250,6 +258,7 @@ class RoutineMixin(ShuatuBaseMixin):
         mv.save()
         self.lock_home()
 
+    @DEBUG_RECORD
     def goumaijingyan(self):
         self.lock_home()
         self.click(617, 435)
@@ -270,6 +279,7 @@ class RoutineMixin(ShuatuBaseMixin):
 
         # 买药
 
+    @DEBUG_RECORD
     def buyExp(self, qianghuashi=False):
         # 进入商店
         ts = self.AR.get("time_status", UDD["time_status"])
@@ -317,6 +327,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.AR.set("time_status", ts)
         self.lock_home()
 
+    @DEBUG_RECORD
     def tansuo(self, mode=0):  # 探索函数
         """
         mode 0: 刷最上面的
@@ -428,6 +439,7 @@ class RoutineMixin(ShuatuBaseMixin):
         # 完成战斗后
         self.lock_home()
 
+    @DEBUG_RECORD
     def tansuo_new(self, mode=0):
         """
         重写探索：刷/打最上可行的关卡
@@ -499,6 +511,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.AR.set("time_status", ts)
         self.lock_home()
 
+    @DEBUG_RECORD
     def shengji(self, mode=0, times=5, tili=False):
         """
             mode = 0 刷1+2（适合大号）
@@ -545,6 +558,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.AR.set("time_status", ts)
         self.lock_home()
 
+    @DEBUG_RECORD
     def shouqunvshenji(self):
         """
         收取女神祭

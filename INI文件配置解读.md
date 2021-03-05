@@ -32,6 +32,9 @@
 |    async_screenshot_freq     |                     异步截图一次休眠时间                     |  int   |          |        5        |
 |     bad_connecting_time      |                      异步判断异常的时间                      |  int   |          |       30        |
 |        fast_screencut        |                       mincap 快速截图                        |  bool  |          |      True       |
+|minicap_rate|minicap 截图帧率|float|越高越吃CPU|10.0|
+|minicap_quality|minicap 截图质量|int|JPEG质量0-100|100|
+|minicap_rotation|minicap 旋转参数|int|一般无需更改|0|
 |     fast_screencut_delay     | 由于截图太快造成脚本崩溃，可以使用这个加上全局的截图delay，模拟卡顿。 | float  |          |       0.5       |
 |    fast_screencut_timeout    |                      等待服传输数据超时                      | float  |          |       10        |
 |         end_shutdown         |                   非常“危险”的Windows功能:自动关机           |  bool  |          |      True       |

@@ -1,6 +1,6 @@
 from automator_mixins._fight_base import FightBaseMixin
 from core.constant import MAIN_BTN, JJC_BTN, PCRelement
-
+from ._base import DEBUG_RECORD
 
 class JJCMixin(FightBaseMixin):
     """
@@ -10,6 +10,7 @@ class JJCMixin(FightBaseMixin):
 
     # 进入jjc
     # 做jjc任务
+    @DEBUG_RECORD
     def doJJC(self):
         # 进入jjc
         self.lock_home()
@@ -41,6 +42,7 @@ class JJCMixin(FightBaseMixin):
         self.lock_home()
         # 做pjjc任务
 
+    @DEBUG_RECORD
     def doPJJC(self):
         self.lock_home()
         self.click_btn(MAIN_BTN["maoxian"], until_appear=MAIN_BTN["zhuxian"])

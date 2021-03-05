@@ -106,6 +106,7 @@ class ToolsMixin(BaseMixin):
         time.sleep(1)
         self.lock_home()  # 追加检测
 
+    @DEBUG_RECORD
     def setting(self):
         self.lock_home()
         self.click_btn(MAIN_BTN["zhucaidan"], until_appear=MAIN_BTN["setting_pic"])
@@ -121,9 +122,11 @@ class ToolsMixin(BaseMixin):
         self.click(95, 516)
         self.lock_home()
 
+    @DEBUG_RECORD
     def zanting(self):
         TimeoutMsgBox("暂停", desc=f"{self.address}暂停中\n账号：{self.account}", join=True, geo="200x60")
 
+    @DEBUG_RECORD
     def maizhuangbei(self, day_interval):
         """
         卖掉数量前三的装备，（如果超过1000）
@@ -224,6 +227,7 @@ class ToolsMixin(BaseMixin):
         except:
             raise Exception("ocr-error", "OCR识别错误。")
 
+    @DEBUG_RECORD
     def ocr_local(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
         if screen_shot is None:
             screen_shot = self.getscreen()
@@ -248,6 +252,7 @@ class ToolsMixin(BaseMixin):
 
     # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
     # 使用Baidu OCR接口
+    @DEBUG_RECORD
     def baidu_ocr(self, x1, y1, x2, y2, size=1.0, screen_shot=None):
         # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
         # 默认原图大小（1.0）
@@ -287,6 +292,7 @@ class ToolsMixin(BaseMixin):
                                                                    '是否有误！')
             return -1
 
+    @DEBUG_RECORD
     def get_base_info(self, base_info=False, introduction_info=False, props_info=False, out_xls=False, s_sent=False,
                       acc_nature=0):
         """
@@ -441,6 +447,7 @@ class ToolsMixin(BaseMixin):
         finally:
             return acc_info_dict
 
+    @DEBUG_RECORD
     def get_tili(self):
         # 利用baiduOCR获取当前体力值（要保证当前界面有‘主菜单’选项）
         # API key存放在baiduocr.txt中
@@ -461,6 +468,7 @@ class ToolsMixin(BaseMixin):
         else:
             return int(ret['words_result'][1]['words'].split('/')[0])
 
+    @DEBUG_RECORD
     def rename(self, name, auto_id):  # 重命名
         # 2021/1/4 CyiceK对代码进行了维护
         name = name.split(' ')
@@ -484,6 +492,7 @@ class ToolsMixin(BaseMixin):
         self.lock_img('img/zhucaidan/bangzhu.bmp', elseclick=[(32, 32)])  # 锁定帮助
         pcr_log(self.account).write_log(level='info', message='账号：%s已修改名字' % name)
 
+    @DEBUG_RECORD
     def get_bar(self, bar: PCRelement, screen=None):
         """
         进度条类百分比获取
@@ -517,6 +526,7 @@ class ToolsMixin(BaseMixin):
         t = t[left:right + 1]
         return t.sum() / len(t)
 
+    @DEBUG_RECORD
     def get_daoju_number(self, screen=None, must_int=True):
         """想尽一切办法获得右上角道具数量。
         利用x号定位，获取精确范围。
@@ -572,6 +582,7 @@ class ToolsMixin(BaseMixin):
             else:
                 return must_int
 
+    @DEBUG_RECORD
     def kucunshibie(self, scan_zb=True, scan_sp=True, var: Optional[dict] = None):
         mv = movevar(var)
         self.lock_home()
@@ -751,6 +762,7 @@ class ToolsMixin(BaseMixin):
         mv.clearflags()
         self.lock_home()
 
+    @DEBUG_RECORD
     def count_stars(self, star_dict=None, screen=None):
         """
         获取右上角当前关卡的星星数
@@ -773,6 +785,7 @@ class ToolsMixin(BaseMixin):
         t = tf < tb
         return np.sum(t)
 
+    @DEBUG_RECORD
     def _load_data_cache(self):
         if hasattr(self, "data_cache"):
             data = getattr(self, "data_cache")
@@ -783,6 +796,7 @@ class ToolsMixin(BaseMixin):
                 setattr(self, "data_cache", data)
         return data
 
+    @DEBUG_RECORD
     def _check_img_in_list_or_dir(self, target_txt, target_pic_at, target_dir, target_list_name, screen):
 
         data = self._load_data_cache()
@@ -813,6 +827,7 @@ class ToolsMixin(BaseMixin):
         self.log.write_log("warning", f"文字{target_txt}可能识别有误！请修改{save_target}的文件名为正确的值！")
         return target_txt
 
+    @DEBUG_RECORD
     def jueseshibie(self, var: Optional[dict] = None):
         mv = movevar(var)
 

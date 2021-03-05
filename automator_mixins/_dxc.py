@@ -3,6 +3,7 @@ import time
 from core.constant import DXC_NUM, FIGHT_BTN, DXC_ELEMENT
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
+from ._base import DEBUG_RECORD
 from ._dxc_base import DXCBaseMixin
 from ._tools import ToolsMixin
 
@@ -16,6 +17,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
     def __init__(self):
         super().__init__()
 
+    @DEBUG_RECORD
     def dixiacheng_ocr(self, skip, assist_num=1, stuck_today=False, stuck_notzhandoukaishi=False):
         """
         地下城函数已于2020/7/11日重写
@@ -307,6 +309,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ui/ok_btn_1.bmp')
 
+    @DEBUG_RECORD
     def dixiacheng(self, skip):
         """
         地下城函数于2020/7/14日修改
@@ -412,6 +415,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], at=(891, 413, 930, 452))
 
+    @DEBUG_RECORD
     def dixiachengYunhai(self):  # 地下城 云海 （第一个）
         self.click(480, 505)
         time.sleep(1)
@@ -455,6 +459,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             # 完成战斗后
             self.lock_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=1)  # 回首页
 
+    @DEBUG_RECORD
     def dixiachengDuanya(self):  # 地下城 断崖（第三个）
         self.click(480, 505)
         time.sleep(1)
@@ -510,6 +515,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         # 完成战斗后
         self.lock_home()
 
+    @DEBUG_RECORD
     def shuatuDD(self, dxc_id: int, mode: int, stop_criteria: int = 0, after_stop: int = 0, teams=None,
                  safety_stop=1):  # 刷地下城
         """

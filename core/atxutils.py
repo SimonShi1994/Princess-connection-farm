@@ -1,17 +1,22 @@
-import uiautomator2 as u2
-import adbutils
 import time
 
+import adbutils
+import uiautomator2 as u2
+
+from core.pcr_config import debug
+
+
 class AtxClient:
-    def __init__(self, device: adbutils.AdbDevice=None):
+    def __init__(self, device: adbutils.AdbDevice = None):
         self.device = device
         self.base_minicap_refresh_url_format = "curl 127.0.0.1:7912/v2/minicap?frameRate={}&rotate={}&jpgQuality={}"
 
-    def refresh_minicap(self, frame_rate: float=10.0, rotation: int=0, jpg_quality: int=80) -> bool:
+    def refresh_minicap(self, frame_rate: float = 10.0, rotation: int = 0, jpg_quality: int = 80) -> bool:
         for i in range(60):
             res = self._refresh_minicap(frame_rate, rotation, jpg_quality)
             if "success" not in res:
-                print(res)
+                if debug:
+                    print(res)
                 time.sleep(1)
             else:
                 return True

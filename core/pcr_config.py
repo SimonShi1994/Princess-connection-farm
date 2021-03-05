@@ -191,6 +191,10 @@ async_screenshot_freq = GC.add_int('pcrfarm_setting', 'async_screenshot_freq', 5
 bad_connecting_time = GC.add_int('pcrfarm_setting', 'bad_connecting_time', 10)
 fast_screencut = GC.add_bool('pcrfarm_setting', 'fast_screencut', True)
 force_fast_screencut = GC.add_bool('pcrfarm_setting', 'force_fast_screencut', True)
+minicap_rate = GC.add_float('pcrfarm_setting', 'minicap_rate', 10.0)
+minicap_quality = GC.add_int('pcrfarm_setting', 'minicap_quality', 100)
+minicap_rotation = GC.add_int('pcrfarm_setting', 'minicap_rotation', 0)
+
 fast_screencut_delay = GC.add_float('pcrfarm_setting', 'fast_screencut_delay', 0)
 fast_screencut_timeout = GC.add_int('pcrfarm_setting', 'fast_screencut_timeout', 3)
 end_shutdown = GC.add_bool('pcrfarm_setting', 'end_shutdown', False)

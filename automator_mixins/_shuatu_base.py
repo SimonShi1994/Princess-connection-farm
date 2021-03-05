@@ -1349,9 +1349,11 @@ class ShuatuBaseMixin(FightBaseMixin):
                 return id
         return -1
 
+    @DEBUG_RECORD
     def check_normal_id(self, screen=None):
         return self.check_zhuxian_id(screen)
 
+    @DEBUG_RECORD
     def check_hard_id(self, screen=None):
         return self.check_zhuxian_id(screen)
 

@@ -8,6 +8,7 @@ import time
 from collections import OrderedDict
 from typing import Optional, Union
 
+import adbutils
 import cv2
 import numpy as np
 import uiautomator2 as u2
@@ -15,11 +16,13 @@ import uiautomator2 as u2
 from core import log_handler
 from core.MoveRecord import MoveSkipException
 from core.MoveRecord import moveset
+from core.atxutils import AtxClient
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
-    force_fast_screencut, adb_dir, clear_traces_and_cache, debug_record_size, debug_record_filter
+    force_fast_screencut, adb_dir, clear_traces_and_cache, debug_record_size, debug_record_filter, minicap_rate, \
+    minicap_quality, minicap_rotation
 from core.safe_u2 import SafeU2Handle, safe_u2_connect
 from core.usercentre import AutomatorRecorder
 
@@ -131,6 +134,8 @@ class BaseMixin:
         self.account = "debug"
         self._d: Optional[u2.Device] = None
         self.d: Optional[SafeU2Handle] = None
+        self.device: Optional[adbutils.AdbDevice] = None
+        self.ATX: Optional[AtxClient] = None
         self.dWidth = 960
         self.dHeight = 540
         self.log: Optional[log_handler.pcr_log] = None
@@ -154,6 +159,7 @@ class BaseMixin:
             self.lport: Optional[int] = None
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
 
+    @DEBUG_RECORD
     def save_last_screen(self, filename):
         if self.last_screen is not None:
             try:
@@ -169,7 +175,15 @@ class BaseMixin:
     @DEBUG_RECORD
     def init_fastscreen(self):
         if fast_screencut and Multithreading({}).program_is_stopped():
-            from core.get_screen import ReceiveFromMinicap
+            print("Device:", self._d.serial, "正在初始化minicap参数……")
+            output = self.ATX.refresh_minicap(minicap_rate, minicap_rotation, minicap_quality)
+            if not output:
+                if force_fast_screencut:
+                    raise FastScreencutException("minicap参数初始化失败！")
+                else:
+                    self.fastscreencut_retry = 3
+                    print("Device:", self._d.serial, "minicap参数初始化失败！使用慢速截图。")
+                    return
             self.receive_minicap = ReceiveFromMinicap(self.address)
             self.receive_minicap.start()
             print("Device:", self._d.serial, "快速截图已打开，测试中……")
@@ -205,6 +219,8 @@ class BaseMixin:
         if address != "debug":
             self._d = safe_u2_connect(address)
             self.d = SafeU2Handle(self._d)
+            self.device = adbutils.adb.device(address)
+            self.ATX = AtxClient(self.device)
             self.init_fastscreen()
 
     @DEBUG_RECORD

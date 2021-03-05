@@ -260,6 +260,7 @@ class AsyncMixin(ToolsMixin):
         Multithreading({}).pause()
         if fast_screencut and self.fastscreencut_retry < 3:
             if self.receive_minicap is not None:
+                self.ATX.restart_agent()
                 self.receive_minicap.stop()
         # print(Multithreading({}).is_stopped())
 
