@@ -96,13 +96,13 @@ class ZhuXianBase(SevenBTNMixin):
         def gotofun():
             self.click_img(self.last_screen, MAOXIAN_BTN["normal_on"])
 
-        return self.goto(ZhuXianNormal, gotofun)  # Type:ZhuXianNormal
+        return self.goto(ZhuXianNormal, gotofun,use_in_feature_only=True)  # Type:ZhuXianNormal
 
     def goto_hard(self) -> "ZhuXianHard":
         from scenes.zhuxian.zhuxian_hard import ZhuXianHard
         def gotofun():
             self.click_img(self.last_screen,MAOXIAN_BTN["hard_on"])
-        return self.goto(ZhuXianHard,gotofun)  # Type:ZhuXianHard
+        return self.goto(ZhuXianHard,gotofun,use_in_feature_only=True)  # Type:ZhuXianHard
 
     def goto_buytili(self) -> "BuyTiliBox":
         from scenes.zhuxian.zhuxian_msg import BuyTiliBox

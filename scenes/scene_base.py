@@ -1,8 +1,11 @@
 import time
-from typing import Type, List, Union
+from typing import Type, List, Union,TYPE_CHECKING
 
 from core.constant import PCRelement
 from core.pcr_checker import Checker, LockTimeoutError, LockMaxRetryError
+
+if TYPE_CHECKING:
+    from core.Automator import Automator
 
 """
 
@@ -31,8 +34,7 @@ PCRSceneBase类也会提供Automator中的常用方法，如click, lock_img等�
 class PCRSceneBase:
 
     def __init__(self, a, *args, **kwargs):
-        from automator_mixins._base import BaseMixin
-        self._a: BaseMixin = a
+        self._a: "Automator" = a
         self.scene_name = "BaseScene"
         self.initFC = None
         self.feature = None  # screen -> True/False

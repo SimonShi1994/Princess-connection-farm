@@ -378,10 +378,12 @@ FIGHT_BTN = {
     },
     "team_close": p(476, 477, img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),  # 选队界面的关闭按钮
     "shbg": p(img="img/fight/shbg.bmp", at=(709, 23, 898, 52)),  # 伤害报告
+    "duiwu_icon":p(img="img/fight/duiwu_icon.bmp",at=(896,78,924,97)),
     "menu": p(img="img/fight/menu.bmp", at=(871, 18, 928, 32)),
     "qwjsyl": p(576, 495, img="img/fight/qwjsyl.bmp", at=(392, 457, 948, 528)),  # 前往角色一览
     "win": p(img="img/fight/win.bmp", at=(400, 6, 551, 127)),  # 过关的帽子
     "zhandoukaishi": p(834, 453, img="img/fight/zhandoukaishi.bmp", at=(761, 431, 911, 472)),
+    "duiwubianzu":p(img="img/fight/duiwubianzu.bmp",at=(433,31,520,53)),
     "xuanguan_quxiao": p(665, 455, img="img/ui/quxiao2.bmp", at=(597, 440, 736, 470)),  # 选关界面（选择使用扫荡券）右下角的取消
     "upperright_stars":  # “挑战”页面右上角的星星位置
         {
@@ -401,6 +403,7 @@ FIGHT_BTN = {
     "fangqi_2": p(625, 376, img="img/fight/fangqi_2.bmp", at=(491, 346, 686, 392)),
     "tgdw": p(img="img/fight/tgdw.bmp",at=(805,82,900,105)),
     "infinity":p(img="img/fight/infinity.bmp",at=(897,407,920,420)),
+    "fighting_caidan":p(img="img/fight/fighting_caidan.bmp",at=(882,18,918,32)),
 }
 
 JUESE_BTN = {

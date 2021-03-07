@@ -1,9 +1,11 @@
+import time
 from math import inf
 
 import numpy as np
 
 from core.constant import FIGHT_BTN, MAOXIAN_BTN
 from core.pcr_checker import LockMaxRetryError
+from scenes.fight.fightbianzu_zhuxian import FightBianZuZhuXian
 from scenes.fight.fightinfo_base import FightInfoBase
 from scenes.zhuxian.zhuxian_msg import SaoDangQueRen
 
@@ -87,7 +89,7 @@ class FightInfoZhuXian(FightInfoBase):
         # 判断是不是还没打过的图
         return self.get_upperright_stars(screen) == 0
 
-    def set_saodang_cishu(self, target:int,one_tili=None,left_tili=None,right_tili=None,sc=None,max_retry=3):
+    def set_saodang_cishu(self, target:int,one_tili=None,left_tili=None,right_tili=None,sc=None,max_retry=6,delay=1):
         # 设定扫荡次数
         if sc is None:
             sc = self.getscreen()
@@ -108,9 +110,13 @@ class FightInfoZhuXian(FightInfoBase):
             elif now_cishu>target:
                 for _ in range(now_cishu-target):
                     self.click(MAOXIAN_BTN["saodang_minus"])
+            time.sleep(delay)
             right_tili = self.get_tili_right()
             now_cishu = (left_tili-right_tili)//one_tili
             retry += 1
 
     def goto_saodang(self)->SaoDangQueRen:
         return self.goto(SaoDangQueRen,self.fun_click(MAOXIAN_BTN["saodang_on"]))
+
+    def goto_tiaozhan(self)->FightBianZuZhuXian:
+        return self.goto(FightBianZuZhuXian,self.fun_click(FIGHT_BTN["tiaozhan2"]))

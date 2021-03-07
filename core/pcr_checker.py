@@ -485,6 +485,11 @@ class RetryNow(Exception):
         super().__init__()
         self.name = name
 
+class ContinueNow(Exception):
+    # 立即重试，不过不会retry++
+    def __init__(self, name=None):
+        super().__init__()
+        self.name = name
 
 class TooMuchRetry(Exception):
     pass
@@ -497,12 +502,14 @@ class PCRRetry:
                  delay=0,
                  include_errors: Optional[Union[List, bool]] = None,
                  record_list=False,
+                 raise_return=None,
                  ):
         self.name = name
         self.max_retry = max_retry
         self.delay=delay  # 失败延迟
         self.include_errors = include_errors  # None或False时，只检测RetryNow，其它不拦截；List时，还包括List中指定的错误, True全包括
         self.record_list = record_list  # 是否记录全部产生得错误
+        self.raise_return = raise_return  # 非None时，产生错误时，不raise，return这个值
 
     def __call__(self, fun):
         def f(*args, **kwargs):
@@ -519,6 +526,10 @@ class PCRRetry:
                         if count > self.max_retry:
                             output_error = TooMuchRetry(f"尝试次数过多{'' if self.name is None else f'Name {self.name}'}")
                             break
+                        time.sleep(self.delay)
+                        continue
+                except ContinueNow as r:
+                    if r.name == self.name:
                         time.sleep(self.delay)
                         continue
                 except Exception as e:
@@ -543,7 +554,10 @@ class PCRRetry:
                     raise e
                 break
             if output_error is not None:
-                raise output_error
+                if self.raise_return is not None:
+                    return self.raise_return
+                else:
+                    raise output_error
 
         return f
 
