@@ -1612,6 +1612,8 @@ class ShuatuBaseMixin(FightBaseMixin):
         now = self.check_zhuxian_id()
         while now != last:
             last = now
+            if now == 13:
+                self.Drag_Right()  # 防止误触
             self.goRight()
             now = self.check_zhuxian_id()
         return now
