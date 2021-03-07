@@ -375,6 +375,19 @@ class PCRData:
         else:
             return None
 
+    @staticmethod
+    def get_map_id(mode, A, B):
+        assert mode in ["normal", "hard"]
+        if mode == "normal":
+            diff_id = 11000000
+        elif mode == "hard":
+            diff_id = 12000000
+        return diff_id + A * 1000 + B
+
+    def get_map_tili(self, mode, A, B):
+        mid = self.get_map_id(mode, A, B)
+        return self.MInfo[mid]['tili']
+
     def calc_equip_decompose(self, equip_id, num=1, store={}, copy=True):
         """
         store中有的部分会被事先消耗。
@@ -497,3 +510,8 @@ class PCRData:
             out_map[map_id[ind]] = int(v)
             int_result += v
         return out_map, int_result
+
+
+if __name__ == "__main__":
+    # debug
+    pass
