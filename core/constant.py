@@ -657,9 +657,11 @@ HARD_COORD = {
 
 SHOP_BTN = {
     "xianding_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
+    "shop_left_kkr": p(img="img/girl/kkr_middle.bmp", at=(78, 311, 179, 339)),
     "lijiguanbi": p(527, 438),
     "querenchongzhi": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
+    "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
 }
 MAOXIAN_BTN = {
     "normal_on": p(699, 82, img="img/maoxian/normal_on.bmp", at=(656, 72, 748, 91)),

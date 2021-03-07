@@ -1,35 +1,11 @@
-from core.constant import FIGHT_BTN, MAOXIAN_BTN
-
 from typing import TYPE_CHECKING
 
 from core.constant import FIGHT_BTN, MAOXIAN_BTN
-from core.pcr_checker import GotoException
 from scenes.scene_base import PCRMsgBoxBase
 
 if TYPE_CHECKING:
-    from core.Automator import Automator
+    from scenes.shop.xianding import XianDingShangDian
 
-
-class AfterFightException:
-    def __init__(self, a: "Automator"):
-        self._a = a
-        self.info = {}
-
-    def do_xianding(self):
-        # TODO !!!
-        pass
-
-    def make_FC(self):
-        FC = self._a.getFC(False)
-        FC.getscreen()
-        # 限定商店
-        FC.exist(MAOXIAN_BTN["xianding"], raise_=GotoException("xianding"))
-        # 超出物品上限
-        FC.exist(MAOXIAN_BTN["chaochushangxian"], raise_=GotoException("chaochushangxian"))
-        # 等级提升
-        FC.exist(FIGHT_BTN["dengjitisheng"], raise_=GotoException("dengjitisheng"))
-        # 公会战
-        FC.exist(MAOXIAN_BTN["tuanduizhan"], raise_=GotoException("tuanduizhan"))
 
 
 class SaoDangQueRen(PCRMsgBoxBase):
@@ -67,3 +43,47 @@ class SaoDangJieGuo(PCRMsgBoxBase):
     def OK(self):
         def gotofun():
             self.click(473, 475)
+
+
+class ChaoChuShangXianBox(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "ChaoChuShangXianBox"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["chaochushangxian"])
+
+    def OK(self):
+        self.exit(self.fun_click(38, 24))  # Outside
+
+
+class LevelUpBox(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "LevelUpBox"
+        self.feature = self.fun_feature_exist(FIGHT_BTN["dengjitisheng"])
+
+    def OK(self):
+        self.exit(self.fun_click(38, 24))  # Outside
+
+
+class TuanDuiZhanBox(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "TuanDuiZhanBox"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["tuanduizhan"])
+
+    def OK(self):
+        self.click_btn(MAOXIAN_BTN["tuanduizhan_quxiao"])  # 跳过团队站
+
+
+class XianDingShangDianBox(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "XianDingShangDianBox"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["xianding"])
+
+    def Go(self) -> "XianDingShangDian":
+        from scenes.shop.xianding import XianDingShangDian
+        return self.goto(XianDingShangDian, self.fun_click(MAOXIAN_BTN["xianding"]))
+
+    def Cancel(self):
+        self.exit(self.fun_click(1, 1))  # OutSide
