@@ -657,7 +657,7 @@ class PCRInitializer:
                                 print(q)
                         elif msg["method"] == "rec":
                             print(device.serial, " - Automator 执行记录：")
-                            for q in device.a.output_debug_info():
+                            for q in device.a.output_debug_info(msg["running"]):
                                 print(q)
                         else:
                             print(device.serial, " - 不认识的msg！", msg)
@@ -892,8 +892,8 @@ class PCRInitializer:
     def show_u2_record(self, device=None):
         self.send_message(device, {'method': 'u2rec'})
 
-    def show_debug_record(self, device=None):
-        self.send_message(device, {'method': 'rec'})
+    def show_debug_record(self, running=False, device=None):
+        self.send_message(device, {'method': 'rec', 'running': running})
 
     def stop(self, join=False, clear=False, force=False):
         if clear:

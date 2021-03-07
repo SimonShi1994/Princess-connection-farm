@@ -5,6 +5,7 @@ import queue
 import random
 import threading
 import time
+from collections import OrderedDict
 from typing import Optional, Union
 
 import cv2
@@ -50,6 +51,7 @@ class FastScreencutException(Exception):
 class DebugRecord:
     def __init__(self, record_size):
         self.Q = queue.Queue(record_size)
+        self.running = OrderedDict()
 
     def gettime(self):
         cur_time = time.time()
@@ -87,8 +89,8 @@ class DebugRecord:
             self.Q.put(cur)
         return cur
 
-    def get(self):
-        L = self.Q.queue
+    def get(self, running=False):
+        L = self.Q.queue if not running else self.running.values()
         out = []
         for l in L:
             if l['end'] is None:
@@ -98,12 +100,15 @@ class DebugRecord:
         return out
 
 
+
 def DEBUG_RECORD(fun):
     def new_fun(self, *args, **kwargs):
         rd = self.debug_record
         cur = rd.add(fun.__name__, *args, **kwargs)
+        rd.running[id(cur)] = cur
         out = fun(self, *args, **kwargs)
         cur['end'] = rd.gettime()
+        del rd.running[id(cur)]
         return out
 
     return new_fun
@@ -1196,8 +1201,8 @@ class BaseMixin:
             os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
             # print("》》》匿名完毕《《《")
 
-    def output_debug_info(self):
-        return self.debug_record.get()
+    def output_debug_info(self, running):
+        return self.debug_record.get(running)
 
 
 class Multithreading(threading.Thread, BaseMixin):
