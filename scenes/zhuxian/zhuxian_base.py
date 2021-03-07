@@ -10,6 +10,7 @@ from scenes.root.seven_btn import SevenBTNMixin
 if TYPE_CHECKING:
     from scenes.zhuxian.zhuxian_normal import ZhuXianNormal
     from scenes.zhuxian.zhuxian_hard import ZhuXianHard
+    from scenes.zhuxian.zhuxian_msg import BuyTiliBox
 
 
 class ZhuXianBase(SevenBTNMixin):
@@ -103,3 +104,6 @@ class ZhuXianBase(SevenBTNMixin):
             self.click_img(self.last_screen,MAOXIAN_BTN["hard_on"])
         return self.goto(ZhuXianHard,gotofun)  # Type:ZhuXianHard
 
+    def goto_buytili(self) -> "BuyTiliBox":
+        from scenes.zhuxian.zhuxian_msg import BuyTiliBox
+        return self.goto(BuyTiliBox,self.fun_click(655,30))

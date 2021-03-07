@@ -61,6 +61,7 @@ class FightInfoZhuXian(FightInfoBase):
 
     def get_tili_right(self, screen=None):
         # OCR获得扫荡后体力数量
+        # TODO: 没体力
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()

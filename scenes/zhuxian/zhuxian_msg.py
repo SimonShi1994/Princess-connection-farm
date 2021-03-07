@@ -1,6 +1,7 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from core.constant import FIGHT_BTN, MAOXIAN_BTN
+from core.pcr_checker import LockError
 from scenes.scene_base import PCRMsgBoxBase,PossibleMsgBoxList
 
 if TYPE_CHECKING:
@@ -101,3 +102,35 @@ class AfterFightMsgBox(PossibleMsgBoxList):
         self.TuanDuiZhanBox = TuanDuiZhanBox
         self.XianDingShangDianBox = XianDingShangDianBox
         super().__init__(a,msgbox_list)
+
+class BuyTiliBox(PCRMsgBoxBase):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.scene_name = "BuyTiliBox"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["tlhf"])
+
+    def OK(self)->Union["BuyTiliSuccessBox","EmptyOK"]:
+        try:
+            return self.goto(BuyTiliSuccessBox,self.fun_click(MAOXIAN_BTN["buytili_ok"]))
+        except LockError:
+            # 这个框不检测也没问题。直接左上角跳过。
+            return self.goto(EmptyOK,self.fun_click(1,1))
+
+class EmptyOK(PCRMsgBoxBase):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.scene_name = "无能狂怒"
+
+    def OK(self):
+        for _ in range(6):
+            self.click(1,1)
+
+
+class BuyTiliSuccessBox(PCRMsgBoxBase):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.scene_name = "BuyTiliSuccessBox"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["tili_success"])
+    def OK(self):
+        for _ in range(6):
+            self.click(1,1)
