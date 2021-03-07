@@ -51,4 +51,3 @@ class ZhuXianHard(ZhuXianBase):
         cur_id = self.check_hard_id()
         if cur_id != id:
             raise RetryNow()
-

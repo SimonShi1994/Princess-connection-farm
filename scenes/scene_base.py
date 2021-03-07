@@ -1,5 +1,5 @@
 import time
-from typing import Type, List
+from typing import Type, List, Union
 
 from core.constant import PCRelement
 from core.pcr_checker import Checker, LockTimeoutError, LockMaxRetryError
@@ -75,19 +75,30 @@ class PCRSceneBase:
     def last_screen(self):
         return self._a.last_screen
 
-    def goto(self, scene: Type["PCRSceneBase"], gotofun, before_clear=True, timeout=None, interval=8, retry=None):
+    def goto(self, scene: Union[Type["PCRSceneBase"], Type["PCRMsgBoxBase"]], gotofun, use_in_feature_only=None,
+             before_clear=True, timeout=None, interval=8, retry=None):
+        next_scene = scene(self._a)
+        if use_in_feature_only is None:
+            if PCRMsgBoxBase in scene.__mro__:
+                use_in_feature_only = True
+            else:
+                use_in_feature_only = False
+
         def featureout(screen):
-            return True if not self.feature(screen) else False
+            if use_in_feature_only:
+                return True if next_scene.feature(screen) else False
+            else:
+                return True if not self.feature(screen) else False
 
         if before_clear:
             self.clear_initFC()
         if self.feature is not None:
-            self._a.getFC().getscreen(). \
+            self._a.getFC().getscreen().wait_for_loading(). \
                 add(Checker(featureout, name=f"{self.scene_name} - Feature Out"), rv=True). \
                 add_intervalprocess(gotofun, retry=retry, interval=interval, name="gotofun").lock(timeout=timeout)
         if not before_clear:
             self.clear_initFC()
-        return scene(self._a).enter()
+        return next_scene.enter()
 
     def enter(self,timeout=None):
         def featurein(screen):
@@ -95,7 +106,7 @@ class PCRSceneBase:
         if self.initFC is not None:
             self._a.ES.register(self.initFC,group=self.scene_name)
         if self.feature is not None:
-            self._a.getFC().getscreen(). \
+            self._a.getFC().getscreen().wait_for_loading(). \
                 add(Checker(featurein, name=f"{self.scene_name} - Feature In"), rv=True).lock(timeout=timeout)
         return self
 
@@ -190,7 +201,8 @@ class PossibleMsgBoxList(PCRSceneBase):
         last_check_time = None
         no_msg = False
         start_time = time.time()
-        for retry in range(self.max_retry):
+        retry = 0
+        while retry < self.max_retry:
             if self.timeout is not None and time.time() - start_time > self.timeout:
                 raise LockTimeoutError("MsgBoxList判断超时！")
             for msgbox in self.msgbox_list:
@@ -201,15 +213,16 @@ class PossibleMsgBoxList(PCRSceneBase):
                     no_msg = self.no_msg_feature(screen)
                 else:
                     no_msg = True
-                if no_msg:
-                    start_time = time.time()
-                    if last_check_time is None:
-                        last_check_time = time.time()
-                    else:
-                        if time.time() - last_check_time > self.double_check:
-                            return None  # No Msg
-                        else:
-                            time.sleep(time.time() - last_check_time - self.double_check)  # Double Check
+            if no_msg:
+                start_time = time.time()
+                if last_check_time is None:
+                    last_check_time = time.time()
                 else:
-                    last_check_time = None
+                    if time.time() - last_check_time > self.double_check:
+                        return None  # No Msg
+                    else:
+                        time.sleep(-time.time() + last_check_time + self.double_check)  # Double Check
+            else:
+                last_check_time = None
+                retry += 1
         raise LockMaxRetryError("MsgBoxList判断超出尝试上限！")

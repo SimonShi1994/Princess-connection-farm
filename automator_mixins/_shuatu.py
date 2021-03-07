@@ -1,6 +1,6 @@
 import os
 import time
-from math import inf, floor
+from math import floor
 
 from core.MoveRecord import movevar
 from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, ACTIVITY_COORD
@@ -8,10 +8,10 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.valid_task import ShuatuToTuple
+from pcrdata.pcrdata import PCRData
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian
-from scenes.zhuxian.zhuxian_msg import XianDingShangDianBox, BuyTiliBox
 from ._shuatu_base import ShuatuBaseMixin
-from scenes.zhuxian.zhuxian_base import ZhuXianBase
+
 
 class ShuatuMixin(ShuatuBaseMixin):
     """
@@ -900,6 +900,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         last_a = -1
         last_m = None
         for ind, (m, a, b, t) in enumerate(cur):
+            mode = "hard" if m == "H" else "normal"
             x, y, _, d = GetXYTD(m, a, b)
             # m: mode (H,N)
             # a,b: a-b
@@ -910,10 +911,10 @@ class ShuatuMixin(ShuatuBaseMixin):
             if m != last_m or a != last_a:
                 if m == "N":
                     S = S.goto_normal()
-                    S = S.select_normal_id(a)
+                    S.select_normal_id(a)
                 else:
                     S = S.goto_hard()
-                    S = S.select_hard_id(a)
+                    S.select_hard_id(a)
             if d=="left":
                 S.Drag_Left()
             elif d=="right":
@@ -941,16 +942,16 @@ class ShuatuMixin(ShuatuBaseMixin):
                 if quan<max_cishu:
                     self._zdzb_info = "noquan"
                     if quan==0:
-                        self.log.write_log("warning","已经没有扫荡券了！终止刷图。")
-                        break
+                        self.log.write_log("warning", "已经没有扫荡券了！终止刷图。")
+                        self.lock_home()
+                        return
                     self.log.write_log("warning",f"扫荡券不足，只能支持刷{quan}次了。")
                     max_cishu=quan
 
                 # 体力判断：最多还能进行几次
                 left_tili = M.get_tili_left(sc)
-                right_tili = M.get_tili_right(sc)
-                one_tili = left_tili - right_tili
-                max_cishu_tili = floor(left_tili/one_tili)
+                one_tili = PCRData().get_map_tili(mode, a, b)
+                max_cishu_tili = floor(left_tili / one_tili)
                 while max_cishu_tili < max_cishu:
                     # 体力不足：可以选择买体力倒是。
                     if var["cur_tili"] < buy_tili:
@@ -970,28 +971,27 @@ class ShuatuMixin(ShuatuBaseMixin):
                         self._zdzb_info = "notili"
                         if max_cishu_tili == 0:
                             self.log.write_log("info", "已经一点体力都不剩了！终止刷图。")
+                            self.stop_shuatu()
+                            self.lock_home()
+                            return
                         else:
                             self.log.write_log("info", f"剩下的体力只够刷{max_cishu_tili}次了！")
                         break
-
-                max_cishu = min(max_cishu,max_cishu_tili)
-
+                max_cishu = min(max_cishu, max_cishu_tili)
                 # 扫荡
-                true_cishu = min(t,max_cishu)
-                mode = "hard" if m=="H" else "normal"
-                M.set_saodang_cishu(true_cishu)
-                # 记录
-                ds[mode][f"{a}-{b}"] += true_cishu
-                self.AR.set("daily_status", ds)
-                new_day(ds)
+                true_cishu = max_cishu
+                M.set_saodang_cishu(true_cishu, one_tili=one_tili, left_tili=left_tili)
                 SD = M.goto_saodang()  # 扫荡确认
                 SD = SD.OK()  # 扫荡结果
+                # 记录
+                ds[mode][f"{a}-{b}"] += true_cishu
+                new_day(ds)
                 MsgList = SD.OK()  # 扫荡后的一系列MsgBox
                 while True:
                     out = MsgList.check()
                     if out is None:  # 无msgbox
                         break
-                    if isinstance(out,MsgList.XianDingShangDianBox):
+                    if isinstance(out, MsgList.XianDingShangDianBox):
                         # 限定商店
                         if xianding:
                             shop = out.Go()
@@ -1018,8 +1018,10 @@ class ShuatuMixin(ShuatuBaseMixin):
             else:
                 # 不能扫荡：还是老代码把。
                 for _ in range(6):
-                    self.click(1,1)
-                #TODO HERE!
+                    self.click(1, 1)
+                if not do_tuitu:
+                    continue
+                # TODO HERE! yysy，这块真的写的不行，等待用Scene重构。
                 now_time = 0
                 retry_cnt = 0
                 while now_time < t:
@@ -1028,19 +1030,16 @@ class ShuatuMixin(ShuatuBaseMixin):
                     FS = self.GetFightSteps()
                     FS.EnterMap(x, y, drag=d)
                     FS.ShowInfo()
-                    s = self.zhandouzuobiao(x, y, 1, d, use_saodang=True, buy_tili=buy_tili, buy_cishu=0, xianding=xianding,
-                                            var=var)
-                    if s == -2 and self._zdzb_info == "nosaodang" and do_tuitu:
-                        # 无扫荡，进推图
-                        self._zdzb_info = ""
-                        s = self.zhandouzuobiao(x, y, 1, d, use_saodang="auto", buy_tili=buy_tili, buy_cishu=0,
-                                                xianding=xianding,
-                                                end_mode=1, juqing_in_fight=True, var=var)
-                        # 坐标重新确认
-                        if m == "N":
-                            self.select_normal_id(a)
-                        else:
-                            self.select_hard_id(a)
+                    # 无扫荡，进推图
+                    self._zdzb_info = ""
+                    s = self.zhandouzuobiao(x, y, 1, d, use_saodang="auto", buy_tili=buy_tili, buy_cishu=0,
+                                            xianding=xianding,
+                                            end_mode=1, juqing_in_fight=True, var=var)
+                    # 坐标重新确认
+                    if m == "N":
+                        self.select_normal_id(a)
+                    else:
+                        self.select_hard_id(a)
                     new_tili = var["cur_tili"]
                     if new_tili > last_tili:
                         # 之前的战斗中购买了体力

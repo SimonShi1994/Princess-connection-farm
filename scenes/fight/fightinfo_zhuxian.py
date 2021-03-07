@@ -14,7 +14,7 @@ class FightInfoZhuXian(FightInfoBase):
         self.scene_name = "FightInfoZhuXian"
 
         def feature(screen):
-            return self.is_exists(FIGHT_BTN["tgdw"],screen=screen)
+            return self.is_exists(FIGHT_BTN["baochou"], screen=screen)
 
         self.initFC=None
         self.feature=feature

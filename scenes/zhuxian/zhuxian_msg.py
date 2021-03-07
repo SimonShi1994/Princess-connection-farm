@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Union
 
 from core.constant import FIGHT_BTN, MAOXIAN_BTN
 from core.pcr_checker import LockError
-from scenes.scene_base import PCRMsgBoxBase,PossibleMsgBoxList
+from scenes.scene_base import PCRMsgBoxBase, PossibleMsgBoxList
 
 if TYPE_CHECKING:
     from scenes.shop.xianding import XianDingShangDian
@@ -31,18 +31,23 @@ class SaoDangJieGuo(PCRMsgBoxBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "SaoDangJieGuo"
+        self._last_see_ok2 = False
 
         def feature(screen):
             a1 = self.is_exists(MAOXIAN_BTN["saodang_tiaoguo"], screen=screen)
             a2 = self.is_exists(MAOXIAN_BTN["saodang_ok2"], screen=screen)
+            self._last_see_ok2 = a2
             a3 = self.is_exists(MAOXIAN_BTN["saodang_tiaoguo"], is_black=True, screen=screen)
             return a1 or a2 or a3
 
         self.initFC = None
         self.feature = feature
 
-    def OK(self)->"AfterFightMsgBox":
-        self.exit(self.fun_click(473,475))
+    def OK(self) -> "AfterFightMsgBox":
+        def _click():
+            self.click(473, 475, post_delay=1 if self._last_see_ok2 else 2)
+
+        self.exit(_click, interval=4)
         return AfterFightMsgBox(self._a)
 
 

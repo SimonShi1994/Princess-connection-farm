@@ -165,17 +165,8 @@ class BaseMixin:
 
     def register_basic_ES(self):
         # Loading时，啥事不干（防止卡住，只检测last_screen）
-        def not_loading():
-            if self.last_screen is None:
-                return True
-            return self.not_loading(self.last_screen)
-        loading_fc = self.getFC(False).add(Checker(not_loading,funvar=[],name="not_loading"),rv=True).getscreen().lock()
-        self.ES.register(loading_fc,"basic")
-
-    def force_loading_fc(self):
-        # 一个每次click都会让你截图的ES，除非特殊，尽量不用。
-        loading_fc = self.getFC(False).getscreen().add(Checker(self.not_loading,funvar=["screen"],name="force_not_loading"),rv=True).lock()
-        return loading_fc
+        loading_fc = self.getFC(False).wait_for_loading()
+        self.ES.register(loading_fc, "wait_for_loading")
 
     def save_last_screen(self, filename):
         if self.last_screen is not None:

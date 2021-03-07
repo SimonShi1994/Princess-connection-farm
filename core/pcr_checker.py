@@ -145,11 +145,13 @@ import inspect
 import random
 import time
 from math import inf
-from typing import Callable, Any, Dict, Optional, Union, List, Type
+from typing import Callable, Any, Dict, Optional, Union, List, Type, TYPE_CHECKING
 
 from core.constant import PCRelement
 from core.pcr_config import lockimg_timeout
 
+if TYPE_CHECKING:
+    from automator_mixins._base import BaseMixin
 
 class Checker:
     def __init__(self, fun: Callable[[Any], bool], vardict: Optional[Dict[str, Any]] = None, funvar=None, name=None):
@@ -322,7 +324,7 @@ class FunctionChecker:
             return rv.value
         return None
 
-    def lock(self, delay=0, timeout=None, until=None, is_raise=True):
+    def lock(self, delay=0.5, timeout=None, until=None, is_raise=True):
         # 锁Checker
         # 直到检测到ReturnValue，或者当until设置时，ReturnValue满足until条件
         self.last_time = time.time()
@@ -406,6 +408,28 @@ class ElementChecker(FunctionChecker):
             self._have_getscreen = True
         return self
 
+    def wait_for_loading(self, force_getscreen=False):
+        # force_getscreen：第一次使用新截图。不开：使用老截图。
+        def waiting_force():
+            screen = self._a.getscreen()
+            if self._a.not_loading(screen):
+                pass
+            else:
+                self._a.wait_for_loading(delay=0.5)
+
+        def waiting():
+            if self._a.last_screen is not None:
+                if self._a.not_loading(self._a.last_screen):
+                    pass
+                else:
+                    self._a.wait_for_loading(delay=0.5)
+
+        if force_getscreen:
+            self.add_process(waiting_force, "force_loading")
+        else:
+            self.add_process(waiting, "loading")
+        return self
+
     def exist(self, img: Union[PCRelement, str], dofunction: Optional[Callable] = None, rv=True, raise_=None,
               clear=False,
               **kwargs):
@@ -445,7 +469,8 @@ class ElementChecker(FunctionChecker):
 
     def bind_ES(self, es: ExceptionSet, name="ExceptionSet"):
         for i in es.FCs.values():
-            assert i.header is False, "绑定的异常集中不能含有header,请设置getFC(false)！"
+            if isinstance(i, ElementChecker):
+                assert i.header is False, "绑定的异常集中不能含有header,请设置getFC(false)！"
         self.add_process(es.run, name=name)
         return self
 
