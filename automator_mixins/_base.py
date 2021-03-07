@@ -161,6 +161,21 @@ class BaseMixin:
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
 
         self.ES=ExceptionSet(self)
+        self.register_basic_ES()
+
+    def register_basic_ES(self):
+        # Loading时，啥事不干（防止卡住，只检测last_screen）
+        def not_loading():
+            if self.last_screen is None:
+                return True
+            return self.not_loading(self.last_screen)
+        loading_fc = self.getFC(False).add(Checker(not_loading,funvar=[],name="not_loading"),rv=True).getscreen().lock()
+        self.ES.register(loading_fc,"basic")
+
+    def force_loading_fc(self):
+        # 一个每次click都会让你截图的ES，除非特殊，尽量不用。
+        loading_fc = self.getFC(False).getscreen().add(Checker(self.not_loading,funvar=["screen"],name="force_not_loading"),rv=True).lock()
+        return loading_fc
 
     def save_last_screen(self, filename):
         if self.last_screen is not None:
@@ -542,6 +557,19 @@ class BaseMixin:
             if value < threshold:
                 return True
         return False
+
+    def not_loading(self,screen=None):
+        """
+        判断是否在黑屏Loading 或者 右上角Connecting
+        """
+        if self.is_exists(img='img/error/connecting.bmp', at=(748, 20, 931, 53), screen=screen):
+            return False
+        sc_cut = UIMatcher.img_cut(screen, MAIN_BTN["loading_left"].at)
+        if (sc_cut == 1).all():
+            # 全黑
+            return False
+        return True
+
 
     @DEBUG_RECORD
     def wait_for_loading(self, screen=None, delay=0.5, timeout=30):

@@ -1,8 +1,9 @@
 from core.constant import SHOP_BTN
 from scenes.scene_base import PCRSceneBase
+from scenes.shop.shop_base import ShopBase
 
 
-class XianDingShangDian(PCRSceneBase):
+class XianDingShangDian(ShopBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -30,3 +31,7 @@ class XianDingShangDian(PCRSceneBase):
         # 返回
         for _ in range(5):
             self.click(24, 84)
+
+    def back(self):
+        self.click_btn(SHOP_BTN["fanhui"])
+        self.wait_for_loading()

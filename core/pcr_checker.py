@@ -324,6 +324,7 @@ class FunctionChecker:
 
     def lock(self, delay=0, timeout=None, until=None, is_raise=True):
         # 锁Checker
+        # 直到检测到ReturnValue，或者当until设置时，ReturnValue满足until条件
         self.last_time = time.time()
         self.retry_times = 0
         if timeout is None:

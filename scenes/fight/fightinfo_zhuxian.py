@@ -2,8 +2,10 @@ from math import inf
 
 import numpy as np
 
-from core.constant import FIGHT_BTN
+from core.constant import FIGHT_BTN, MAOXIAN_BTN
+from core.pcr_checker import LockMaxRetryError
 from scenes.fight.fightinfo_base import FightInfoBase
+from scenes.zhuxian.zhuxian_msg import SaoDangQueRen
 
 
 class FightInfoZhuXian(FightInfoBase):
@@ -84,5 +86,30 @@ class FightInfoZhuXian(FightInfoBase):
         # 判断是不是还没打过的图
         return self.get_upperright_stars(screen) == 0
 
-    def goto_saodang(self):
-        pass
+    def set_saodang_cishu(self, target:int,one_tili=None,left_tili=None,right_tili=None,sc=None,max_retry=3):
+        # 设定扫荡次数
+        if sc is None:
+            sc = self.getscreen()
+        if left_tili is None:
+            left_tili = self.get_tili_left(sc)
+        if right_tili is None:
+            right_tili = self.get_tili_right(sc)
+        if one_tili is None:
+            one_tili = left_tili - right_tili
+        now_cishu = (left_tili-right_tili)//one_tili  # 使用X张 的识别效果很不好
+        retry = 0
+        while now_cishu != target:
+            if retry >= max_retry:
+                raise LockMaxRetryError("设定扫荡次数尝试过多！")
+            if now_cishu<target:
+                for _ in range(target-now_cishu):
+                    self.click(MAOXIAN_BTN["saodang_plus"])
+            elif now_cishu>target:
+                for _ in range(now_cishu-target):
+                    self.click(MAOXIAN_BTN["saodang_minus"])
+            right_tili = self.get_tili_right()
+            now_cishu = (left_tili-right_tili)//one_tili
+            retry += 1
+
+    def goto_saodang(self)->SaoDangQueRen:
+        return self.goto(SaoDangQueRen,self.fun_click(MAOXIAN_BTN["saodang_on"]))

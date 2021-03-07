@@ -1,5 +1,6 @@
 import os
 import time
+from math import inf, floor
 
 from core.MoveRecord import movevar
 from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, ACTIVITY_COORD
@@ -7,8 +8,10 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.valid_task import ShuatuToTuple
+from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian
+from scenes.zhuxian.zhuxian_msg import XianDingShangDianBox
 from ._shuatu_base import ShuatuBaseMixin
-
+from scenes.zhuxian.zhuxian_base import ZhuXianBase
 
 class ShuatuMixin(ShuatuBaseMixin):
     """
@@ -891,18 +894,95 @@ class ShuatuMixin(ShuatuBaseMixin):
             buy_tili = 0
         if not self.check_shuatu():
             return
-        self.lock_home()
-        self.enter_zhuxian()
+
+        S = self.get_zhuye()
+        S = S.goto_maoxian()
         last_a = -1
         last_m = None
         for ind, (m, a, b, t) in enumerate(cur):
             x, y, _, d = GetXYTD(m, a, b)
+            # m: mode (H,N)
+            # a,b: a-b
+            # t: **剩余** 要刷几次
+            # x,y：坐标
+            # d：拖动状态
+            # Enter
             if m != last_m or a != last_a:
                 if m == "N":
-                    self.select_normal_id(a)
+                    S = S.goto_normal()
+                    S = S.select_normal_id(a)
                 else:
-                    self.select_hard_id(a)
-
+                    S = S.goto_hard()
+                    S = S.select_hard_id(a)
+            if d=="left":
+                S.Drag_Left()
+            elif d=="right":
+                S.Drag_Right()
+            M:FightInfoZhuXian = S.click_xy_and_open_fightinfo(x,y)
+            sc = self.getscreen()
+            stars = M.get_upperright_stars(sc)
+            if stars == 3:
+                # 可以扫荡
+                quan = M.get_saodangquan(sc)
+                left_tili = M.get_tili_left(sc)
+                right_tili = M.get_tili_right(sc)
+                # 次数判断：对Hard图
+                max_cishu = inf
+                if m == "H":
+                    cishu = M.get_cishu(sc)
+                    if cishu==0:
+                        # 不能扫荡，没有次数
+                        ds["hard"][f"{a}-{b}"] = 3
+                        self.AR.set("daily_status", ds)
+                        new_day(ds)
+                        for _ in range(6):
+                            self.click(1,1)
+                        continue
+                    max_cishu = cishu
+                # 体力判断：最多还能进行几次
+                one_tili = left_tili - right_tili
+                max_cishu = min(max_cishu,floor(left_tili/one_tili))
+                # 扫荡券判断：最多还能扫荡几次
+                if quan<max_cishu:
+                    self.log.write_log("warning",f"扫荡券不足，只能支持刷{quan}次了。")
+                    max_cishu=quan
+                # 扫荡
+                mode = "hard" if m=="H" else "normal"
+                M.set_saodang_cishu(t)
+                # 记录
+                ds[mode][f"{a}-{b}"] += t
+                self.AR.set("daily_status", ds)
+                new_day(ds)
+                SD = M.goto_saodang()  # 扫荡确认
+                SD = SD.OK()  # 扫荡结果
+                MsgList = SD.OK()  # 扫荡后的一系列MsgBox
+                while True:
+                    out = MsgList.check()
+                    if out is None:  # 无msgbox
+                        break
+                    if isinstance(out,MsgList.XianDingShangDianBox):
+                        # 限定商店
+                        if xianding:
+                            shop = out.Go()
+                            shop.buy_all()
+                            shop.back()
+                            break
+                        else:
+                            out.Cancel()
+                    if isinstance(out,MsgList.TuanDuiZhanBox):
+                        out.OK()
+                    if isinstance(out,MsgList.LevelUpBox):
+                        out.OK()
+                    if isinstance(out,MsgList.ChaoChuShangXianBox):
+                        out.OK()
+                # 扫荡结束
+                # 保险起见
+                for _ in range(6):
+                    self.click(1,1)
+            else:
+                # 不能扫荡：还是老代码把。
+                pass
+            #TODO HERE!
             now_time = 0
             retry_cnt = 0
             while now_time < t:

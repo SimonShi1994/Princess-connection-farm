@@ -1,6 +1,6 @@
-from scenes.scene_base import PCRSceneBase
+from scenes.scene_base import PCRMsgBoxBase
 
-class FightInfoBase(PCRSceneBase):
+class FightInfoBase(PCRMsgBoxBase):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.scene_name="FightInfo"

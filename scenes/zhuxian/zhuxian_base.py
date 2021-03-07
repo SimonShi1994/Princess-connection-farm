@@ -23,6 +23,7 @@ class ZhuXianBase(SevenBTNMixin):
         self.click(35, 275, post_delay=3)
 
     def goRight(self):
+
         self.click(925, 275, post_delay=3)
 
     def check_maoxian_screen(self, screen=None, is_raise=True):

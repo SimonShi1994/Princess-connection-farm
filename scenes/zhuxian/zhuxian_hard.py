@@ -41,11 +41,14 @@ class ZhuXianHard(ZhuXianBase):
             else:
                 raise e
             raise RetryNow()
-        if cur_id == id:
-            return
-        elif cur_id < id:
+
+        if cur_id < id:
             for i in range(id - cur_id):
                 self.goRight()
         else:
             for i in range(cur_id - id):
                 self.goLeft()
+        cur_id = self.check_hard_id()
+        if cur_id != id:
+            raise RetryNow()
+
