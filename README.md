@@ -183,6 +183,13 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 ## :hammer:更新历史:wrench:   
 
+2021/3/8 By:TheAutumnOfRice
+
+- 使用Scenes框架解构方法
+- 内核使用FunctionChecker框架改写，增加稳定性
+- 增加了OCR刷图推图 `s9`
+- OCR增加效率 `s7-ocr` `s7-a-ocr`
+
 2021/3/5 By:Klarkxy
 
 - "r8购买经验" 新增参数"qianghuashi"，用来进行额外购买强化石。
