@@ -6,6 +6,14 @@
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
+## 警告：使用pull升级v2.6dev版本会强制删除config.ini，请提前做好备份
+
+config.ini已经加入.gitignore中，此后的所有版本config.ini都将动态生成（运行main_new.py即自动更新）。
+
+在v2.6dev.20210308版本中，将config.ini从仓库中移除，这将导致使用pull更新会强制删去本地的config.ini，请及时做好备份。
+
+备份方法：将config.ini的内容复制；git pull；将config.ini备份粘贴回去；运行main_new.py自动补全剩余。
+
 ## :bookmark_tabs:简介
 
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
