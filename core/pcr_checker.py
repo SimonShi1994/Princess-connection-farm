@@ -474,6 +474,17 @@ class ElementChecker(FunctionChecker):
         self.add_process(es.run, name=name)
         return self
 
+    def lock(self, delay=0.5, timeout=None, until=None, is_raise=True):
+        def ClearTimeout():
+            if self._a._paused:
+                self._a._paused = False
+                return True
+            else:
+                return False
+
+        self.add(Checker(ClearTimeout), clear=True)
+        return super().lock(delay, timeout, until, is_raise)
+
 
 class GotoException(Exception):
     def __init__(self, ident):

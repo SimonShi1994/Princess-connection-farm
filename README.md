@@ -1,8 +1,8 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.5.20210304
+ # Princess connection 公主连结农场脚本v2.6dev.20210308
  
- > Develop V2: 增加场景支持；增加FunctionChecker模块。 
+ > Develop V2.6: 增加场景支持；增加FunctionChecker模块。 
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -162,7 +162,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - [x] 模拟器自启动控制
 - [x] 简化Schedule操作模式
 - [ ] WebGUI界面
-- [ ] 提高刷图效率
+- [x] 提高刷图效率
 - [ ] 刷活动本
 - [x] 女神祭
 - [ ] 跳过18图切图动画

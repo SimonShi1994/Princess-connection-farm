@@ -138,6 +138,7 @@ class BaseMixin:
         self.account = "debug"
         self._d: Optional[u2.Device] = None
         self.d: Optional[SafeU2Handle] = None
+        self.scenes = []
         self.dWidth = 960
         self.dHeight = 540
         self.log: Optional[log_handler.pcr_log] = None
@@ -155,7 +156,7 @@ class BaseMixin:
         self.last_star = 0  # 上次战斗的星数
         self._move_method = ""  # 接收其它线程发送的处理方法
         self._move_msg = ""  # 接收其它线程发送的信息
-
+        self._paused = False
         # fastscreencap
         if fast_screencut:
             self.lport: Optional[int] = None
@@ -318,6 +319,7 @@ class BaseMixin:
                     while block_sw == 1:
                         from automator_mixins._async import block_sw
                         time.sleep(1)
+                        self._paused = True
                         _ck()
                     print(self.address, "- 脚本恢复~")
                     return True
@@ -326,6 +328,7 @@ class BaseMixin:
                     print(self.address, "- 脚本暂停中~")
                     while self.freeze:
                         time.sleep(1)
+                        self._paused = True
                         _ck()
                     print(self.address, "- 脚本恢复~")
                     return True
@@ -1289,7 +1292,8 @@ class BaseMixin:
             img_binary = cv2.imencode('.png', part)[1].tobytes()
             files = {'file': ('tmp.png', img_binary, 'image/png')}
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
-            pcr_log(self.account).write_log(level='info', message='本地OCR识别结果：%s' % local_ocr_text.text)
+            if debug:
+                print('本地OCR识别结果：%s' % local_ocr_text.text)
             return local_ocr_text.text
         except Exception as ocr_error:
             pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)

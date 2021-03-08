@@ -22,19 +22,18 @@ class MaoXian(SevenBTNMixin):
 
     def goto_zhuxian(self) -> "ZhuXianBase":
         from scenes.zhuxian.zhuxian_base import ZhuXianBase
-        return self.goto(ZhuXianBase, self.fun_click(MAIN_BTN["zhuxian"]))
+        return self.goto(ZhuXianBase, self.fun_click(MAIN_BTN["zhuxian"]), use_in_feature_only=True)
 
     def goto_normal(self) -> "ZhuXianNormal":
         from scenes.zhuxian.zhuxian_normal import ZhuXianNormal
         def gotofun():
-            self.click_img(self.last_screen, MAIN_BTN["zhuxian"])
-            self.click_img(self.last_screen, MAOXIAN_BTN["normal_off"])
+            self.click(MAOXIAN_BTN["normal_off"])
 
-        return self.goto(ZhuXianNormal, gotofun)
+        return self.goto_zhuxian().goto(ZhuXianNormal, gotofun, use_in_feature_only=True)
 
     def goto_hard(self)->"ZhuXianHard":
         from scenes.zhuxian.zhuxian_hard import ZhuXianHard
         def gotofun():
-            self.click_img(self.last_screen,MAIN_BTN["zhuxian"])
-            self.click_img(self.last_screen,MAOXIAN_BTN["normal_on"])
-        return self.goto(ZhuXianHard,gotofun)
+            self.click(MAOXIAN_BTN["hard_off"])
+
+        return self.goto_zhuxian().goto(ZhuXianHard, gotofun, use_in_feature_only=True)

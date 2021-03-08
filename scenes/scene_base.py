@@ -37,6 +37,7 @@ class PCRSceneBase:
     def __init__(self, a, *args, **kwargs):
         self._a: "Automator" = a
         self.scene_name = "BaseScene"
+        self._a.scenes += [self]
         self.initFC = None
         self.feature = None  # screen -> True/False
         self._raise = self._a._raise
@@ -99,15 +100,19 @@ class PCRSceneBase:
             self._a.getFC().getscreen().wait_for_loading(). \
                 add(Checker(featureout, name=f"{self.scene_name} - Feature Out"), rv=True). \
                 add_intervalprocess(gotofun, retry=retry, interval=interval, name="gotofun").lock(timeout=timeout)
-        if not before_clear:
-            self.clear_initFC()
         return next_scene.enter()
 
     def enter(self,timeout=None):
         def featurein(screen):
             return True if self.feature(screen) else False
+
+        # Clear Other Scenes InitFC
+        for scene in self._a.scenes:
+            if scene.scene_name != self.scene_name:
+                scene.clear_initFC()
+        self._a.scenes = [self]
         if self.initFC is not None:
-            self._a.ES.register(self.initFC,group=self.scene_name)
+            self._a.ES.register(self.initFC, group=self.scene_name)
         if self.feature is not None:
             self._a.getFC().getscreen().wait_for_loading(). \
                 add(Checker(featurein, name=f"{self.scene_name} - Feature In"), rv=True).lock(timeout=timeout)
@@ -118,7 +123,7 @@ class PCRSceneBase:
         return self
 
     def set_initFC(self):
-        self._a.ES.register(self.initFC)
+        self._a.ES.register(self.initFC, self.scene_name)
         return self
 
     def no_initFC(self):

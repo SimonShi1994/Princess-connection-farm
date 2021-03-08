@@ -845,8 +845,7 @@ VALID_TASK = ValidTask() \
                                              "xingji - 按照星级排序取前五。\n"
                                              "(A)-(B) - 使用队伍编组A-B，且1<=A<=5,1<=B<=3。\n"
                                              "Example:  3-1  # 编组3队伍1."))
-          ]) \
- \
+          ])
 customtask_addr = "customtask"
 
 
