@@ -301,7 +301,9 @@ class FunctionChecker:
                 __last_time__[ID_I] = time.time()
                 if retry is not None:
                     if __retry__[ID_R] > retry:
-                        raise LockMaxRetryError("重试次数超过", retry, "次！")
+                        # raise LockMaxRetryError("重试次数超过", retry, "次！")
+                        # master版本里重试过多是返回的False
+                        raise ReturnValue(False)
                 dofunction()
                 if retry is not None:
                     __retry__[ID_R] += 1

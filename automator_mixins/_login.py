@@ -57,6 +57,7 @@ class LoginMixin(BaseMixin):
         # 结构梳理下为：auth -> login_auth(是否需要实名认证<->login<->do_login[验证码处理]) -> init_home(lock_home)
         for retry in range(30):
             self._move_check()
+            self.click(945, 13)  # 防止卡住
             if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
                 self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
                 time.sleep(2)
