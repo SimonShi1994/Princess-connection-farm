@@ -20,7 +20,7 @@ class ZhuXianNormal(ZhuXianBase):
     def check_normal_id(self, screen=None):
         return self.check_zhuxian_id(screen)
 
-    @PCRRetry("select_normal", 3)
+    @PCRRetry("select_normal", 3, raise_return=False)
     def select_normal_id(self, id):
         """
         走到normal的几图
@@ -50,5 +50,4 @@ class ZhuXianNormal(ZhuXianBase):
         cur_id = self.check_normal_id()
         if cur_id != id:
             raise RetryNow()
-
-    
+        return True

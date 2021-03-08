@@ -158,6 +158,7 @@ class GlobalConfig:
 GC = GlobalConfig()
 
 debug = GC.add_bool('debug', 'debug', False)
+save_debug_img = GC.add_bool('debug', 'save_debug_img', True)
 ignore_warning = GC.add_bool('debug', 'ignore_warning', True)
 trace_exception_for_debug = GC.add_bool('debug', 'trace_exception_for_debug', False)
 use_template_cache = GC.add_bool('debug', 'use_template_cache', True)

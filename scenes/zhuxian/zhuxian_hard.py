@@ -20,7 +20,7 @@ class ZhuXianHard(ZhuXianBase):
     def check_hard_id(self, screen=None):
         return self.check_zhuxian_id(screen)
 
-    @PCRRetry("select_hard", 3)
+    @PCRRetry("select_hard", 3, raise_return=False)
     def select_hard_id(self, id):
         """
         走到normal的几图
@@ -51,3 +51,4 @@ class ZhuXianHard(ZhuXianBase):
         cur_id = self.check_hard_id()
         if cur_id != id:
             raise RetryNow()
+        return True

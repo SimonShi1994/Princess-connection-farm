@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Union
 
 from core.constant import FIGHT_BTN, MAOXIAN_BTN
 from core.pcr_checker import LockError
-from scenes.scene_base import PCRMsgBoxBase, PossibleMsgBoxList
+from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
 
 if TYPE_CHECKING:
     from scenes.shop.xianding import XianDingShangDian
@@ -43,12 +43,12 @@ class SaoDangJieGuo(PCRMsgBoxBase):
         self.initFC = None
         self.feature = feature
 
-    def OK(self) -> "AfterFightMsgBox":
+    def OK(self) -> "AfterSaoDangScene":
         def _click():
             self.click(473, 475, post_delay=1 if self._last_see_ok2 else 2)
 
         self.exit(_click, interval=4)
-        return AfterFightMsgBox(self._a)
+        return AfterSaoDangScene(self._a)
 
 
 class ChaoChuShangXianBox(PCRMsgBoxBase):
@@ -94,9 +94,10 @@ class XianDingShangDianBox(PCRMsgBoxBase):
     def Cancel(self):
         self.exit(self.fun_click(1, 1))  # OutSide
 
-class AfterFightMsgBox(PossibleMsgBoxList):
-    def __init__(self,a,*args,**kwargs):
-        msgbox_list=[
+
+class AfterSaoDangScene(PossibleSceneList):
+    def __init__(self, a, *args, **kwargs):
+        msgbox_list = [
             ChaoChuShangXianBox(a),
             LevelUpBox(a),
             TuanDuiZhanBox(a),

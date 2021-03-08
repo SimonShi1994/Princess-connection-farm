@@ -1,5 +1,6 @@
 import time
-from typing import Type, List, Union,TYPE_CHECKING
+from math import inf
+from typing import Type, List, Union, TYPE_CHECKING
 
 from core.constant import PCRelement
 from core.pcr_checker import Checker, LockTimeoutError, LockMaxRetryError
@@ -143,13 +144,6 @@ class PCRSceneBase:
                     obj.set_initFC()
 
         return _no_initFC()
-
-
-class PCRMsgBoxBase(PCRSceneBase):
-    def __init__(self, a):
-        super().__init__(a)
-        self.scene_name = "PCRMsgBox"
-
     def exit(self, exitfun, before_clear=True, timeout=None, interval=8, retry=None):
         """
         不断执行exitfun直到退出Scene（feature无法识别）
@@ -169,53 +163,60 @@ class PCRMsgBoxBase(PCRSceneBase):
         return None
 
 
-class PossibleMsgBoxList(PCRSceneBase):
+class PCRMsgBoxBase(PCRSceneBase):
+    def __init__(self, a):
+        super().__init__(a)
+        self.scene_name = "PCRMsgBox"
+
+
+class PossibleSceneList(PCRSceneBase):
     """
     可能一个操作之后，产生数个msgbox，这些msgbox的内容、顺序不一定一致，而且可能会有多个跳出。
     使用PossibleMsgBoxList来把这些msgbox全部同时考虑住。
-    msgbox_list:包含msgbox的列表，每个msgbox必须有feature参数以确认是否显示。
-    no_msg_feature：当检测到时，则认定当前没有msgbox弹出；若不指定，则只有当全部msgbox_list均未弹出才判定为无msgbox
+    scene_list:包含msgbox的列表，每个msgbox必须有feature参数以确认是否显示。
+    no_scene_feature：当检测到时，则认定当前没有msgbox弹出；若不指定，则只有当全部msgbox_list均未弹出才判定为无msgbox
 
     缺陷：如果两个msgbox之间弹出间隔过长，则可能该方法失效。
     解决方法：双重判定。(double_check)：为一个时间， 表示必须满足间隔为double_check的两次判定均生效才认定无msgbox。
         double_check设置为None则不使用双重判定。
 
     Example:
-        PossibleMsgBoxList([
+        PossibleSceneList([
     """
 
-    def __init__(self, a, msgbox_list: List[PCRMsgBoxBase], no_msg_feature=None, double_check=2., timeout=10.,
+    def __init__(self, a, scene_list: List[PCRMsgBoxBase], no_scene_feature=None, double_check=2., timeout=10.,
                  max_retry=3):
-        self.msgbox_list = msgbox_list
-        self.no_msg_feature = no_msg_feature
+        self.scene_list = scene_list
+        self.no_scene_feature = no_scene_feature
         self.double_check = double_check
-        self.timeout = timeout
-        self.max_retry = max_retry
+        self.timeout = timeout if timeout is not None else inf
+        self.max_retry = max_retry if max_retry is not None else inf
         super().__init__(a)
 
     def check(self):
         """
-        检查场景上是否存在满足要求的msgbox。
-        若存在指定msgbox，则返回该msgbox。
-        若无msgbox，则返回None
+        检查场景上是否存在满足要求的scene。
+        若存在指定scene，则返回该scene。
+        若无scene，则返回None
         """
 
         last_check_time = None
-        no_msg = False
+        no_scene = False
         start_time = time.time()
         retry = 0
+
         while retry < self.max_retry:
             if self.timeout is not None and time.time() - start_time > self.timeout:
-                raise LockTimeoutError("MsgBoxList判断超时！")
-            for msgbox in self.msgbox_list:
+                raise LockTimeoutError("SceneList判断超时！")
+            for scene in self.scene_list:
                 screen = self.getscreen()
-                if msgbox.feature(screen):
-                    return msgbox
-                if self.no_msg_feature is not None:
-                    no_msg = self.no_msg_feature(screen)
+                if scene.feature(screen):
+                    return scene
+                if self.no_scene_feature is not None:
+                    no_scene = self.no_scene_feature(screen)
                 else:
-                    no_msg = True
-            if no_msg:
+                    no_scene = True
+            if no_scene:
                 start_time = time.time()
                 if last_check_time is None:
                     last_check_time = time.time()
@@ -227,4 +228,4 @@ class PossibleMsgBoxList(PCRSceneBase):
             else:
                 last_check_time = None
                 retry += 1
-        raise LockMaxRetryError("MsgBoxList判断超出尝试上限！")
+        raise LockMaxRetryError("SceneList判断超出尝试上限！")

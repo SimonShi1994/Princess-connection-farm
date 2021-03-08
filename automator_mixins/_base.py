@@ -6,6 +6,7 @@ import random
 import threading
 import time
 from collections import OrderedDict
+from pathlib import Path
 from typing import Optional, Union, Type
 
 import cv2
@@ -169,6 +170,8 @@ class BaseMixin:
         self.ES.register(loading_fc, "wait_for_loading")
 
     def save_last_screen(self, filename):
+        dir = Path(filename).parent
+        os.makedirs(dir, exist_ok=True)
         if self.last_screen is not None:
             try:
                 cv2.imwrite(filename, self.last_screen)

@@ -1,8 +1,9 @@
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
-from core.constant import MAOXIAN_BTN, ZHUXIAN_ID, ZHUXIAN_SECOND_ID
-from core.pcr_checker import retry_run
+from core.constant import MAOXIAN_BTN, ZHUXIAN_ID, ZHUXIAN_SECOND_ID, DXC_ELEMENT
+from core.pcr_checker import retry_run, Checker, LockError
+from core.pcr_config import save_debug_img
 from scenes.errors import MaoxianRecognizeError, ZhuxianIDRecognizeError
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian
 from scenes.root.seven_btn import SevenBTNMixin
@@ -15,10 +16,41 @@ if TYPE_CHECKING:
 
 class ZhuXianBase(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args,**kwargs)
-        self.scene_name="ZhuXianBase"
-        self.maoxian_screen_state=None
-        self.maoxian_id=None
+        super().__init__(*args, **kwargs)
+        self.scene_name = "ZhuXianBase"
+        self.maoxian_screen_state = None
+        self.maoxian_id = None
+
+        def feature(screen):
+            if not self.is_exists(MAOXIAN_BTN["ditu"], screen=screen):
+                return False
+            state = self.check_maoxian_screen(screen, is_raise=False)
+            return state in [1, 2]
+
+        self.feature = feature
+        self.initFC = self.outside_fc()
+
+    def outside_fc(self):
+        def ck1(screen):
+            return self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen)
+
+        def do1():
+            self.chulijiaocheng(None)
+            self._a.get_zhuye().goto_maoxian().goto_zhuxian()
+
+        def ck2(screen):
+            return self.click_img(img="img/ui/close_btn_1.bmp", screen=screen)
+
+        def do2():
+            if save_debug_img:
+                self._a.save_last_screen(f"debug_imgs/{time.time()}.bmp")
+
+        FC = self.getFC(False). \
+            getscreen(). \
+            wait_for_loading(). \
+            add(Checker(ck1, funvar=["screen"], name="check_kkr"), do1, clear=True). \
+            add(Checker(ck2, funvar=["screen"], name="check_dialog"), do2, clear=True)
+        return FC
 
     def goLeft(self):
         self.click(35, 275, post_delay=3)
@@ -85,11 +117,14 @@ class ZhuXianBase(SevenBTNMixin):
         # self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(self._a.change_time)
 
-    def click_xy_and_open_fightinfo(self, x, y) -> "FightInfoZhuXian":
+    def click_xy_and_open_fightinfo(self, x, y) -> Optional["FightInfoZhuXian"]:
         def gotofun():
             self.click(x, y)
 
-        return self.goto(FightInfoZhuXian, gotofun)
+        try:
+            return self.goto(FightInfoZhuXian, gotofun, retry=3, interval=3)
+        except LockError:
+            return None
 
     def goto_normal(self) -> "ZhuXianNormal":
         from scenes.zhuxian.zhuxian_normal import ZhuXianNormal

@@ -3,6 +3,7 @@
 |              项              |                             说明                             |  属性  |   备注   |       例        |
 | :--------------------------: | :----------------------------------------------------------: | :----: | :------: | :-------------: |
 |            debug             |                           输出日志                           |  bool  |          |      False      |
+|save_debug_img|输出调试文件|bool|给开发者后，可以帮助减少BUG|True|
 |  trace_exception_for_debug   | 开启后，所有的try向上传递错误信息，并且只用第一个device跑第一个任务（单进程） |  bool  |          |      False      |
 |      use_template_cache      |                 在开发工具使用时可以将其关闭                 |  bool  |          |      True       |
 |        baidu_ocr_img         |      是否输出名为 baidu_ocr.bmp的图片，该图片为原生截图      |  bool  |          |      False      |

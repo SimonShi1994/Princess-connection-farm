@@ -178,7 +178,7 @@ class FightBaseMixin(ToolsMixin):
             True 设置成功
             False 可能未设置成功
         """
-        @PCRRetry(max_retry=max_retry, raise_return=False)
+        @PCRRetry(delay=0.5, max_retry=max_retry, raise_return=False)
         def fun():
             nonlocal screen
             out = self.get_fight_speed(screen, 3)
@@ -228,7 +228,8 @@ class FightBaseMixin(ToolsMixin):
             True 设置成功
             False 可能未设置成功
         """
-        @PCRRetry(max_retry=max_retry,raise_return=False)
+
+        @PCRRetry(delay=0.5, max_retry=max_retry, raise_return=False)
         def fun():
             nonlocal  screen
             out = self.get_fight_auto(screen,3)
