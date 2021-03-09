@@ -11,10 +11,10 @@ class TanSuoMenu(SevenBTNMixin):
         self.feature = self.fun_feature_exist(MAIN_BTN["jingyanzhiguanqia"])
 
     def goto_jingyan(self) -> "TanSuoJingYan":
-        return self.goto(TanSuoJingYan, gotofun=self.fun_click(MAIN_BTN["jingyanzhiguanqia"]))
+        return self.goto(TanSuoJingYan, gotofun=self.fun_click(MAIN_BTN["jingyanzhiguanqia"]), use_in_feature_only=True)
 
     def goto_mana(self) -> "TanSuoMaNa":
-        return self.goto(TanSuoMaNa, gotofun=self.fun_click(MAIN_BTN["managuanqia"]))
+        return self.goto(TanSuoMaNa, gotofun=self.fun_click(MAIN_BTN["managuanqia"]), use_in_feature_only=True)
 
 
 class TanSuoXuanGuanBase(SevenBTNMixin):
