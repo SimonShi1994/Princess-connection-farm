@@ -1003,12 +1003,12 @@ class ShuatuMixin(ShuatuBaseMixin):
                             S.goto_buytili().OK().OK()
                             ds["buy_tili"] += 1
                             new_day(ds)
-                            self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{buy_tili}")
+                            self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{daily_tili}")
                             left_tili += 120
                             max_cishu_tili = floor(left_tili / one_tili)
                         else:
                             # 已经……买不动了
-                            if buy_tili>0:
+                            if daily_tili > 0:
                                 self.log.write_log("info", f"已经消耗完全部的买体力次数了。")
                             self._zdzb_info = "notili"
                             if max_cishu_tili == 0:
@@ -1109,7 +1109,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             S.goto_buytili().OK().OK()
                             ds["buy_tili"] += 1
                             new_day(ds)
-                            self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{buy_tili}")
+                            self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{daily_tili}")
                         else:
                             # 已经……买不动了
                             self.log.write_log("info", "已经一点体力都不剩了！终止刷图。")
