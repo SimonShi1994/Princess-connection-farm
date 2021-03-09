@@ -99,7 +99,8 @@ class PCRSceneBase:
         if self.feature is not None:
             self._a.getFC().getscreen().wait_for_loading(). \
                 add(Checker(featureout, name=f"{self.scene_name} - Feature Out"), rv=True). \
-                add_intervalprocess(gotofun, retry=retry, interval=interval, name="gotofun").lock(timeout=timeout)
+                add_intervalprocess(gotofun, retry=retry, interval=interval, name="gotofun", raise_retry=True).lock(
+                timeout=timeout)
         return next_scene.enter()
 
     def enter(self,timeout=None):

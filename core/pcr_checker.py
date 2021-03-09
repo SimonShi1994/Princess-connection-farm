@@ -279,7 +279,8 @@ class FunctionChecker:
         self.checkers += [(Checker.true(name), dofunction)]
         return self
 
-    def add_intervalprocess(self, dofunction: Callable, retry=None, interval=1, name="interval_process"):
+    def add_intervalprocess(self, dofunction: Callable, retry=None, interval=1, name="interval_process",
+                            raise_retry=False, ):
         # 每隔interval执行一次的process，第一次不需等待
         # 重复执行次数（包括第一次）达到retry后，弹出错误
         # retry=0等价于retry=None （历史遗留原因）。
@@ -301,9 +302,11 @@ class FunctionChecker:
                 __last_time__[ID_I] = time.time()
                 if retry is not None:
                     if __retry__[ID_R] > retry:
-                        # raise LockMaxRetryError("重试次数超过", retry, "次！")
+                        if raise_retry:
+                            raise LockMaxRetryError("重试次数超过", retry, "次！")
                         # master版本里重试过多是返回的False
-                        raise ReturnValue(False)
+                        else:
+                            raise ReturnValue(False)
                 dofunction()
                 if retry is not None:
                     __retry__[ID_R] += 1

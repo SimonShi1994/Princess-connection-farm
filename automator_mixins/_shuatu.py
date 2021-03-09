@@ -908,9 +908,6 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         if ds["buy_tili"] < daily_tili:
             self.start_shuatu()
-        buy_tili = daily_tili - ds["buy_tili"]
-        if buy_tili < 0:
-            buy_tili = 0
         if not self.check_shuatu():
             return
 
@@ -998,7 +995,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     bought_tili = False
                     while max_cishu_tili < max_cishu:
                         # 体力不足：可以选择买体力倒是。
-                        if ds["buy_tili"] < buy_tili:
+                        if ds["buy_tili"] < daily_tili:
                             # 可以！买体力！
                             for _ in range(6):
                                 self.click(1, 1)
@@ -1104,7 +1101,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     bought_tili = False
                     if left_tili<one_tili:
                         # 体力不足：可以选择买体力倒是。
-                        if ds["buy_tili"] < buy_tili:
+                        if ds["buy_tili"] < daily_tili:
                             # 可以！买体力！
                             for _ in range(6):
                                 self.click(1, 1)
