@@ -179,13 +179,18 @@ class BaseMixin:
             except Exception as e:
                 self.log.write_log("error", f"保存最后一次截图失败：{e}")
 
+    def clear_all_initFC(self, except_name=None):
+        for scene in self.scenes:
+            if except_name is None or scene.scene_name != except_name:
+                scene.clear_initFC()
+
     def do_nothing(self):
         # 啥事不干
         # self.log.write_log("info", "Do nothing.")
         pass
 
-    def _raise(self,e:Type[PCRError],*args,screen_log=True,text_log=True,error_dir=None):
-        raise e(*args,automator=self,screen_log=screen_log,text_log=text_log,error_dir=error_dir)
+    def _raise(self, e: Type[PCRError], *args, screen_log=True, text_log=True, error_dir=None):
+        raise e(*args, automator=self, screen_log=screen_log, text_log=text_log, error_dir=error_dir)
 
     def check_ocr_running(self):
         # 以后可能会用

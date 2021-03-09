@@ -40,6 +40,7 @@ class ToolsMixin(BaseMixin):
         要求场景：存在“我的主页”按钮
         逻辑：不断点击我的主页，直到右下角出现“礼物”
         """
+        self.clear_all_initFC()
         last = time.time()
         while True:
             sc = self.getscreen()

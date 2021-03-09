@@ -1207,7 +1207,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             if time.time() - last_time > 120:
                                 raise LockTimeoutError("在结算页面超时！")
                             out = next.check()
-                            if out is None and state["can_exit"]:
+                            if out is None:
                                 break
                             if isinstance(out, next.XianDingShangDianBox):
                                 # 限定商店

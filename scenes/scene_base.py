@@ -112,9 +112,7 @@ class PCRSceneBase:
             return True if self.feature(screen) else False
 
         # Clear Other Scenes InitFC
-        for scene in self._a.scenes:
-            if scene.scene_name != self.scene_name:
-                scene.clear_initFC()
+        self._a.clear_all_initFC(self.scene_name)
         self._a.scenes = [self]
         if self.initFC is not None:
             self._a.ES.register(self.initFC, group=self.scene_name)
