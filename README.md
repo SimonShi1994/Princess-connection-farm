@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.6dev.20210308
+ # Princess connection 公主连结农场脚本v2.6dev.20210309
  
  > Develop V2.6: 增加场景支持；增加FunctionChecker模块。 
 
@@ -182,6 +182,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## :hammer:更新历史:wrench:   
+
+2021/3/9 By:TheAutumnOfRice
+
+- 新增`force_as_ocr_as_possible`一键修改所有任务为OCR任务
+- 新增OCR探索`r9-ocr`
+- 修复诸多BUG
 
 2021/3/8 By:TheAutumnOfRice
 

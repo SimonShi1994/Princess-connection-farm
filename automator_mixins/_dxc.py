@@ -3,6 +3,7 @@ import time
 from core.constant import DXC_NUM, FIGHT_BTN, DXC_ELEMENT
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
+from core.pcr_config import force_as_ocr_as_possible
 from ._dxc_base import DXCBaseMixin
 from ._tools import ToolsMixin
 
@@ -316,6 +317,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         :param skip:
         :return:
         """
+        if force_as_ocr_as_possible:
+            self.dixiacheng_ocr(skip)
         # 首页 -> 地下城选章/（新号）地下城章内
         self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
         self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
