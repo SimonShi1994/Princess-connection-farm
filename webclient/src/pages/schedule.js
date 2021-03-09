@@ -1,6 +1,7 @@
 import React from 'react'
 import Schedulelist from '../components/Schedulelist/index'
-import { Button, Collapse, List } from 'antd';
+import { Button, Collapse, List, message } from 'antd';
+import ProForm, { ModalForm, ProFormText, } from '@ant-design/pro-form';
 import request from '../request'
 
 const { Panel } = Collapse;
@@ -34,7 +35,52 @@ export default () => {
                     </Panel>
                 ))}
             </Collapse>
-            <Button type="primary" style={{ marginTop: 20 }}>新增Schedule</Button>
-        </div>
+            <ModalForm
+                validateMessages={
+                    {
+                        types: {
+
+                        }
+                    }}
+                trigger={
+                    <Button type="primary" style={{ marginTop: 20 }}>新增Schedule</Button>
+                }
+                title="新建计划"
+                onFinish={async (values) => {
+                    console.log(values.name);
+                    // 不返回不会关闭弹框
+                    const json = {
+                        "name": "test",
+                        "batchlist": [],
+                        "condition": {},
+                        "type": "asap",
+                        "filename": values.name
+                    }
+                    const result = await request(`/schedules_save`, {
+                        method: 'post',
+                        data: json
+                    })
+
+                    if (result.code === 200) {
+                        message.success('新增成功')
+                    } else {
+                        message.error('新增失败')
+                    }
+                    return true;
+                }}
+            >
+                <ProFormText rules={[
+                    {
+                        required: true,
+                        message: '请填写计划名'
+                    },
+                    {
+                        validator: (_, value) => {
+                            return !list.includes(value) ? Promise.resolve() : Promise.reject(new Error('有重复计划名'))
+                        }
+                    },
+                ]} validateTrigger width="sm" name="name" label="计划名" ></ProFormText>
+            </ModalForm>
+        </div >
     )
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import request from '../../request'
 import ConditionComponent from '@/components/Formcomponents/CondtionComponent'
 import Batchlist from '@/components/Formcomponents/Batchlist'
-import { Form, Input, Button, Card, InputNumber, Row, Col, Radio } from 'antd';
+import { Form, Input, Button, Card, InputNumber, Row, Col, Radio, message } from 'antd';
 
 const layout = {
     labelCol: { span: 8 },
@@ -31,12 +31,17 @@ export default (props) => {
         updateschedules(temp)
     }
     const onFinish = async (values) => {
-        await request(`/schedules_save`, {
+        const result = await request(`/schedules_save`, {
             method: 'post', data: {
                 ...values,
                 "filename": 'test1',
             }
         })
+        if (result.code === 200) {
+            message.success('修改成功')
+        } else {
+            message.error('修改失败')
+        }
     }
     console.log(schedules)
     return (
