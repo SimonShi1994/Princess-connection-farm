@@ -2,6 +2,7 @@ import os
 import time
 from math import floor
 
+from DataCenter import LoadPCRData
 from core.MoveRecord import movevar
 from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, ACTIVITY_COORD
 from core.constant import USER_DEFAULT_DICT as UDD
@@ -10,7 +11,6 @@ from core.log_handler import pcr_log
 from core.pcr_checker import PCRRetry, LockTimeoutError, RetryNow, ContinueNow
 from core.pcr_config import force_as_ocr_as_possible
 from core.valid_task import ShuatuToTuple
-from pcrdata.pcrdata import PCRData
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian
 from ._shuatu_base import ShuatuBaseMixin
 
@@ -991,7 +991,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
                     # 体力判断：最多还能进行几次
                     left_tili = M.get_tili_left(sc)
-                    one_tili = PCRData().get_map_tili(mode, a, b)
+                    one_tili = LoadPCRData().get_map_tili(mode, a, b)
                     max_cishu_tili = floor(left_tili / one_tili)
                     bought_tili = False
                     while max_cishu_tili < max_cishu:
@@ -1098,7 +1098,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             return "continue"
                     # 体力判断：至少得有一次体力，否则就买
                     left_tili = M.get_tili_left(sc)
-                    one_tili = PCRData().get_map_tili(mode, a, b)
+                    one_tili = LoadPCRData().get_map_tili(mode, a, b)
                     bought_tili = False
                     if left_tili<one_tili:
                         # 体力不足：可以选择买体力倒是。

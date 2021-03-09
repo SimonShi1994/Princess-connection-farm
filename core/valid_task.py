@@ -782,7 +782,7 @@ VALID_TASK = ValidTask() \
                                                    "如果某一关没有三星过关，则强化重打。\n"
                                                    "若强化了还是打不过，则退出。\n"
                                                    "若没体力了，也退出。",
-         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3),
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程最多购买体力次数（每天）", 3),
           TaskParam("auto_upgrade", int, "自动升级设置", "开启后，如果推图失败，则会进入升级逻辑"
                                                    "如果升级之后仍然推图失败，则放弃推图"
                                                    "0: 关闭自动升级"
@@ -793,7 +793,7 @@ VALID_TASK = ValidTask() \
                                                  "如果某一关没有三星过关，则强化重打。\n"
                                                  "若强化了还是打不过，则退出。\n"
                                                  "若没体力了，也退出。",
-         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3),
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程最多购买体力次数（每天）", 3),
           TaskParam("auto_upgrade", int, "自动升级设置", "开启后，如果推图失败，则会进入升级逻辑"
                                                    "如果升级之后仍然推图失败，则放弃推图"
                                                    "0: 关闭自动升级"
@@ -803,20 +803,20 @@ VALID_TASK = ValidTask() \
     .add("s7", "meiriHtu", "每日H图", "每天按照顺序依次扫荡H图，直到体力耗尽。\n"
                                    "扫过的图当日不会再扫，第二天重置。",
          [TaskParam("H_list", list, "H图列表", "H图图号", inputbox=MeiRiHTuInputer()),
-          TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+          TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力购买次数，该记录每日清零。", 0),
           TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True),
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
     .add("s7-ocr", "meiriHtu_ocr", "每日H图OCR", "【使用OCR】每天按照顺序依次扫荡H图，直到体力耗尽。\n"
                                               "扫过的图当日不会再扫，第二天重置。",
          [TaskParam("H_list", list, "H图列表", "H图图号", inputbox=MeiRiHTuInputer()),
-          TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+          TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力购买次数，该记录每日清零。", 0),
           TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True),
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
     .add("s7-a", "xiaohaoHtu", "每日H图全刷", "从H1-1开始一直往后刷直到没法刷为止。",
-         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力购买次数，该记录每日清零。", 0),
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
     .add("s7-a-ocr", "xiaohaoHtu_ocr", "每日H图全刷OCR", "【使用OCR】从H1-1开始一直往后刷直到没法刷为止。",
-         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力购买次数，该记录每日清零。", 0),
           TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True),
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
     .add("nothing", "do_nothing", "啥事不干", "啥事不干，调试用") \
@@ -832,7 +832,7 @@ VALID_TASK = ValidTask() \
                                               "    3-1-60  # 刷普通图3-1 60次。\n"
                                               "    H10-3-3  # 刷H图10-3 3次。\n"
                                               "注：困难图最多刷3次，并不会买次数。")),
-          TaskParam("daily_tili", int, "每日体力", "每日在刷图上所用的体力总数。", 0),
+          TaskParam("daily_tili", int, "每日体力", "每日在刷图上所用的体力购买总数。", 0),
           TaskParam("xianding", bool, "限定商店", "是否买空限定商店", True),
           TaskParam("zero_star_action", str, "从未通关时",
                     desc="对从未通关的图（零星最新图）执行的操作",

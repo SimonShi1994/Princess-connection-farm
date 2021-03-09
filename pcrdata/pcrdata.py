@@ -1,4 +1,3 @@
-import os
 import sqlite3
 import time
 from collections import defaultdict
@@ -17,6 +16,15 @@ def update():
         f.write(db)
     print("下载完毕！")
 
+
+import os
+
+if not os.path.exists("pcrdata/data.db"):
+    print("[!] 未找到干炸里脊数据库，更新中……")
+    try:
+        update()
+    except Exception as e:
+        print("[x] 更新失败：", e, "这可能导致有些需要使用数据库的任务无法正确执行！")
 
 conn = sqlite3.connect("pcrdata/data.db")
 cur = conn.cursor()
@@ -273,7 +281,12 @@ def dict_plus(d1, d2, is_copy=True):
 class PCRData:
     def __init__(self):
         # INITING>>>
-        self.EQU_ID, self.ID_EQU = get_equip_id_name()
+        try:
+            self.EQU_ID, self.ID_EQU = get_equip_id_name()
+        except Exception as e:
+            print("[!] 获取数据产生错误：", e, "试图重新更新干炸里脊数据库……")
+            update()
+            self.EQU_ID, self.ID_EQU = get_equip_id_name()
         self.ITEM_ID, self.ID_ITEM = get_item_id_name()
         self.MInfo = create_MInfo()
         self.WInfo = create_wave_info()
