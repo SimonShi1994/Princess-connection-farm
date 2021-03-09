@@ -17,7 +17,7 @@ from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from core.pcr_config import debug, fast_screencut
+from core.pcr_config import debug, fast_screencut, lockimg_timeout
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import get_all_group
@@ -40,7 +40,23 @@ class ToolsMixin(BaseMixin):
         要求场景：存在“我的主页”按钮
         逻辑：不断点击我的主页，直到右下角出现“礼物”
         """
-        return self.get_zhuye()
+        last = time.time()
+        while True:
+            sc = self.getscreen()
+            if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
+                self.click(MAIN_BTN["xiazai"])
+            num_of_white, _, x, y = UIMatcher.find_gaoliang(sc)
+            if num_of_white < 77000:
+                self.chulijiaocheng(None)  # 增加对教程的处理功能
+                last = time.time()
+            if self.is_exists(MAIN_BTN["liwu"], screen=sc):
+                return
+            self.click(MAIN_BTN["zhuye"])
+            # 防卡公告
+            self.click(1, 1)
+            time.sleep(1.5)
+            if time.time() - last > lockimg_timeout:
+                raise Exception("lock_home时出错：超时！")
 
     def get_zhuye(self):
         """
@@ -48,7 +64,7 @@ class ToolsMixin(BaseMixin):
         返回主页Scene
         """
         from scenes.root.wodezhuye import WoDeZhuYe
-        return WoDeZhuYe(self).enter()
+        return WoDeZhuYe(self).enter(timeout=300)
 
     @timeout(300, "init_home执行超时：超过5分钟")
     @DEBUG_RECORD
@@ -201,120 +217,114 @@ class ToolsMixin(BaseMixin):
         }
         acc_info_list = []
         self.lock_home()
-        try:
-            if base_info:
-                time.sleep(2)
-                self.lock_home()
-                screen_shot = self.getscreen()
-                # 体力 包括/
-                acc_info_dict["tili"] = self.ocr_center(243, 6, 305, 22, screen_shot=screen_shot, size=2.0) \
-                    .replace('=', '').replace('-', '').replace('一', '').replace('_', '')
-                # 等级
-                acc_info_dict["dengji"] = make_it_as_number_as_possible(
-                    self.ocr_center(29, 43, 60, 67, screen_shot=screen_shot, size=2.0))
-                # mana
-                acc_info_dict["mana"] = make_it_as_number_as_possible(
-                    self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot, size=2.0) \
-                        .replace(',', '').replace('.', ''))
-                # 宝石
-                acc_info_dict["baoshi"] = make_it_as_number_as_possible(
-                    self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, size=2.0) \
-                        .replace(',', '').replace('.', ''))
-            if introduction_info:
-                self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
-                # 去简介
-                self.lock_no_img(ZHUCAIDAN_BTN["jianjie"], elseclick=[(382, 268)])
-                self.lock_img(ZHUCAIDAN_BTN["jianjie_L"], elseclick=[(382, 268)])  # 锁定简介
-                screen_shot = self.getscreen()
-                acc_info_dict["jianjie_name"] = self.ocr_center(607, 126, 880, 152, screen_shot=screen_shot, size=2.0)
-                acc_info_dict["dengji"] = make_it_as_number_as_possible(
-                    self.ocr_center(761, 163, 799, 182, screen_shot=screen_shot, size=2.0))
-                acc_info_dict["jianjie_zhanli"] = make_it_as_number_as_possible(
-                    self.ocr_center(703, 195, 801, 216, screen_shot=screen_shot, size=2.0))
-                acc_info_dict["jianjie_hanghui"] = self.ocr_center(703, 230, 917, 248, screen_shot=screen_shot,
-                                                                   size=2.0)
-                acc_info_dict["jianjie_id"] = make_it_as_number_as_possible(
-                    self.ocr_center(600, 415, 765, 435, screen_shot=screen_shot, size=1.2))
-            if props_info:
-                self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
-                # 去道具
-                self.lock_no_img(ZHUCAIDAN_BTN["daoju"], elseclick=[(536, 159)])
-                self.lock_img(ZHUCAIDAN_BTN["daojuyilan"], elseclick=[(536, 159)])  # 锁定道具一览
-                screen_shot = self.getscreen()
-                self.click_img(screen=screen_shot, img="img/zhucaidan/saodangquan.bmp")
-                time.sleep(2)
-                screen_shot = self.getscreen()
-                acc_info_dict["saodangquan"] = self.get_daoju_number(screen_shot, must_int=False)
-            acc_info_list.append(acc_info_dict)
+        if base_info:
+            time.sleep(2)
             self.lock_home()
-            # 表格数据整理和转换
-            if out_xls:
-                # 将字典列表转换为DataFrame
-                pf = pd.DataFrame(list(acc_info_list))
-                # 指定字段顺序
-                order = ['dengji', 'jianjie_name', 'tili', 'mana', 'baoshi', 'jianjie_zhanli',
-                         'jianjie_hanghui', 'jianjie_id', 'zhanghao', 'group', 'saodangquan', 'date']
-                pf = pf[order]
-                # 将列名替换为中文
-                columns_map = {
-                    'dengji': '等级',
-                    'jianjie_name': '名字',
-                    'tili': '体力',
-                    'mana': '玛娜数量',
-                    'baoshi': '宝石数量',
-                    'jianjie_zhanli': '全角色战力',
-                    'jianjie_hanghui': '所属行会',
-                    'jianjie_id': '玩家ID',
-                    'zhanghao': '账号',
-                    'group': '所在组',
-                    'saodangquan': '所拥有的扫荡券',
-                    'date': '录入日期',
-                }
-                pf.rename(columns=columns_map, inplace=True)
+            screen_shot = self.getscreen()
+            # 体力 包括/
+            acc_info_dict["tili"] = self.ocr_center(243, 6, 305, 22, screen_shot=screen_shot, size=2.0) \
+                .replace('=', '').replace('-', '').replace('一', '').replace('_', '')
+            # 等级
+            acc_info_dict["dengji"] = make_it_as_number_as_possible(
+                self.ocr_center(29, 43, 60, 67, screen_shot=screen_shot, size=2.0))
+            # mana
+            acc_info_dict["mana"] = make_it_as_number_as_possible(
+                self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot, size=2.0) \
+                    .replace(',', '').replace('.', ''))
+            # 宝石
+            acc_info_dict["baoshi"] = make_it_as_number_as_possible(
+                self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, size=2.0) \
+                    .replace(',', '').replace('.', ''))
+        if introduction_info:
+            self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
+            # 去简介
+            self.lock_no_img(ZHUCAIDAN_BTN["jianjie"], elseclick=[(382, 268)])
+            self.lock_img(ZHUCAIDAN_BTN["jianjie_L"], elseclick=[(382, 268)])  # 锁定简介
+            screen_shot = self.getscreen()
+            acc_info_dict["jianjie_name"] = self.ocr_center(607, 126, 880, 152, screen_shot=screen_shot, size=2.0)
+            acc_info_dict["dengji"] = make_it_as_number_as_possible(
+                self.ocr_center(761, 163, 799, 182, screen_shot=screen_shot, size=2.0))
+            acc_info_dict["jianjie_zhanli"] = make_it_as_number_as_possible(
+                self.ocr_center(703, 195, 801, 216, screen_shot=screen_shot, size=2.0))
+            acc_info_dict["jianjie_hanghui"] = self.ocr_center(703, 230, 917, 248, screen_shot=screen_shot,
+                                                               size=2.0)
+            acc_info_dict["jianjie_id"] = make_it_as_number_as_possible(
+                self.ocr_center(600, 415, 765, 435, screen_shot=screen_shot, size=1.2))
+        if props_info:
+            self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
+            # 去道具
+            self.lock_no_img(ZHUCAIDAN_BTN["daoju"], elseclick=[(536, 159)])
+            self.lock_img(ZHUCAIDAN_BTN["daojuyilan"], elseclick=[(536, 159)])  # 锁定道具一览
+            screen_shot = self.getscreen()
+            self.click_img(screen=screen_shot, img="img/zhucaidan/saodangquan.bmp")
+            time.sleep(2)
+            screen_shot = self.getscreen()
+            acc_info_dict["saodangquan"] = self.get_daoju_number(screen_shot, must_int=False)
+        acc_info_list.append(acc_info_dict)
+        self.lock_home()
+        # 表格数据整理和转换
+        if out_xls:
+            # 将字典列表转换为DataFrame
+            pf = pd.DataFrame(list(acc_info_list))
+            # 指定字段顺序
+            order = ['dengji', 'jianjie_name', 'tili', 'mana', 'baoshi', 'jianjie_zhanli',
+                     'jianjie_hanghui', 'jianjie_id', 'zhanghao', 'group', 'saodangquan', 'date']
+            pf = pf[order]
+            # 将列名替换为中文
+            columns_map = {
+                'dengji': '等级',
+                'jianjie_name': '名字',
+                'tili': '体力',
+                'mana': '玛娜数量',
+                'baoshi': '宝石数量',
+                'jianjie_zhanli': '全角色战力',
+                'jianjie_hanghui': '所属行会',
+                'jianjie_id': '玩家ID',
+                'zhanghao': '账号',
+                'group': '所在组',
+                'saodangquan': '所拥有的扫荡券',
+                'date': '录入日期',
+            }
+            pf.rename(columns=columns_map, inplace=True)
 
-                if acc_nature == 0:
-                    # 小号/农场号输出格式
-                    xls_path = 'xls/%s-pcr_farm_info.xls' % self.today_date
-                elif acc_nature == 1:
-                    # 大号统一文件格式
-                    xls_path = 'xls/pcr_farm_info.xls'
-                else:
-                    # 乱输入就这样的格式
-                    xls_path = 'xls/%s-pcr_farm_info.xls' % self.today_date
+            if acc_nature == 0:
+                # 小号/农场号输出格式
+                xls_path = 'xls/%s-pcr_farm_info.xls' % self.today_date
+            elif acc_nature == 1:
+                # 大号统一文件格式
+                xls_path = 'xls/pcr_farm_info.xls'
+            else:
+                # 乱输入就这样的格式
+                xls_path = 'xls/%s-pcr_farm_info.xls' % self.today_date
 
-                # 指定生成的Excel表格名称
-                file_path = pd.ExcelWriter(xls_path)
-                # 将空的单元格替换为空字符
-                pf.fillna('', inplace=True)
-                # 判断文件是否存在
-                if not os.path.exists(xls_path):
-                    # 输出
-                    pf.to_excel(file_path, encoding='utf-8', index=False)
-                    # 保存表格
-                    file_path.save()
-                    return acc_info_dict
-                # 多进程怎么加锁QAQ
-
+            # 指定生成的Excel表格名称
+            file_path = pd.ExcelWriter(xls_path)
+            # 将空的单元格替换为空字符
+            pf.fillna('', inplace=True)
+            # 判断文件是否存在
+            if not os.path.exists(xls_path):
+                # 输出
+                pf.to_excel(file_path, encoding='utf-8', index=False)
                 # 保存表格
-                index = len(list(acc_info_list))  # 获取需要写入数据的行数
-                workbook = xlrd.open_workbook(file_path)  # 打开表格
-                sheets = workbook.sheet_names()  # 获取表格中的所有表格
-                worksheet = workbook.sheet_by_name(sheets[0])  # 获取表格中所有表格中的的第一个表格
-                rows_old = worksheet.nrows  # 获取表格中已存在的数据的行数
-                new_workbook = copy(workbook)  # 将xlrd对象拷贝转化为xlwt对象
-                new_worksheet = new_workbook.get_sheet(0)  # 获取转化后工作簿中的第一个表格
-                for i in range(0, index):
-                    for j in range(0, len(list(acc_info_list)[i])):
-                        # 追加写入数据，注意是从i+rows_old行开始写入
-                        new_worksheet.write(i + rows_old, j, list(acc_info_dict.values())[j])
-                new_workbook.save(file_path)  # 保存表格
+                file_path.save()
+                return acc_info_dict
+            # 多进程怎么加锁QAQ
 
-            if s_sent:
-                pcr_log(self.account).server_bot('info', message='未完成')
-        except Exception as e:
-            print('get_base_info-出现异常：', e)
-        finally:
-            return acc_info_dict
+            # 保存表格
+            index = len(list(acc_info_list))  # 获取需要写入数据的行数
+            workbook = xlrd.open_workbook(file_path)  # 打开表格
+            sheets = workbook.sheet_names()  # 获取表格中的所有表格
+            worksheet = workbook.sheet_by_name(sheets[0])  # 获取表格中所有表格中的的第一个表格
+            rows_old = worksheet.nrows  # 获取表格中已存在的数据的行数
+            new_workbook = copy(workbook)  # 将xlrd对象拷贝转化为xlwt对象
+            new_worksheet = new_workbook.get_sheet(0)  # 获取转化后工作簿中的第一个表格
+            for i in range(0, index):
+                for j in range(0, len(list(acc_info_list)[i])):
+                    # 追加写入数据，注意是从i+rows_old行开始写入
+                    new_worksheet.write(i + rows_old, j, list(acc_info_dict.values())[j])
+            new_workbook.save(file_path)  # 保存表格
+
+        return acc_info_dict
 
     def get_tili(self):
         # 利用baiduOCR获取当前体力值（要保证当前界面有‘主菜单’选项）

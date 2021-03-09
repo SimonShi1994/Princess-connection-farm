@@ -25,7 +25,7 @@ from core.pcr_checker import ExceptionSet, ElementChecker, Checker, ReturnValue
 from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, ocr_mode
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
     force_fast_screencut, adb_dir, clear_traces_and_cache, debug_record_size, debug_record_filter
-from core.safe_u2 import SafeU2Handle, safe_u2_connect
+from core.safe_u2 import SafeU2Handle, safe_u2_connect, timeout
 from core.usercentre import AutomatorRecorder
 from core.utils import make_it_as_number_as_possible
 from scenes.errors import PCRError
@@ -993,6 +993,7 @@ class BaseMixin:
                                      elseafter=0 if elseafter is None else elseafter, side_check=side_check)
         return r
 
+    @timeout(300, "处理教程时间过长，超过5分钟！")
     @DEBUG_RECORD
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
         """
