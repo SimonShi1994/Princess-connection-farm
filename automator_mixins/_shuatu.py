@@ -39,7 +39,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         # 进入冒险
         self.shuatuNN(["3-1-125"])
 
-    def shuatuNN(self, tu_dict: list, var={}):
+    def shuatuNN(self, tu_dict: list, use_ocr=False, var={}):
         """
         刷指定N图
         tu_dict: 其实应该叫tu_list，来不及改了
@@ -48,6 +48,14 @@ class ShuatuMixin(ShuatuBaseMixin):
         """
         # 进入冒险
         L = ShuatuToTuple(tu_dict)
+        if use_ocr or force_as_ocr_as_possible:
+            # L: List[Tuple[A,B,T]]
+            new_L = []
+            for l in L:
+                A, B, T = l
+                new_L += [f"{A}-{B}-{T}"]
+            self.shuatu_daily_ocr(new_L, 0, False, "do", "do", "skip", "exit", False, "zhanli", False, var)
+            return
         # 按照 A-B的顺序排序：A为主要依据，B为次要依据。
         self.enter_normal()
         self.switch = 0
@@ -88,7 +96,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         mv.save()
         self.lock_home()
 
-    def shuatuHH(self, tu_dict: list, var={}):
+    def shuatuHH(self, tu_dict: list, use_ocr: bool = False, var={}):
         """
         刷指定H图
         :param tu_dict: 刷图列表
@@ -97,6 +105,14 @@ class ShuatuMixin(ShuatuBaseMixin):
         :return:
         """
         L = ShuatuToTuple(tu_dict)
+        if use_ocr or force_as_ocr_as_possible:
+            # L: List[Tuple[A,B,T]]
+            new_L = []
+            for l in L:
+                A, B, T = l
+                new_L += [f"H{A}-{B}-{T}"]
+            self.shuatu_daily_ocr(new_L, 0, False, "do", "do", "skip", "exit", False, "zhanli", False, var)
+            return
         self.enter_hard()
         self.switch = 0
         cur_map = self.check_hard_id(self.last_screen)
@@ -820,6 +836,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                          can_not_enter_action="exit",
                          win_without_threestar_is_lose=True,
                          team_order="zhanli",
+                         _use_daily=True,
                          var={}):
         """
         OCR 刷图！！超快！！
@@ -849,21 +866,33 @@ class ShuatuMixin(ShuatuBaseMixin):
                 - "dengji" 按等级排序
                 - "xingshu" 按星数排序
             若为"none"：不换人
+        :param _use_daily: 开启后，统计体力使用次数以及每个图刷过的次数（兼容shuatuNN）
         """
         # 每日更新
         from core.utils import diffday
-        ds = self.AR.get("daily_status", UDD["daily_status"])
-        def new_day(ds):
-            t1 = time.time()
-            t2 = ds["last_time"]
-            if diffday(t1, t2):
-                # 新的一天，清空刷图记录
-                self.log.write_log("info", "已经重置刷图记录。")
-                ds["normal"] = {}
-                ds["hard"] = {}
-                ds["buy_tili"] = 0
-            ds["last_time"] = t1
-            self.AR.set("daily_status", ds)
+        mv = movevar(var)
+        if _use_daily:
+            ds = self.AR.get("daily_status", UDD["daily_status"])
+        else:
+            mv.regflag("normal", {})
+            mv.regflag("hard", {})
+            mv.regflag("buy_tili", 0)
+            ds = var
+
+        def record_ds(ds):
+            if _use_daily:
+                t1 = time.time()
+                t2 = ds["last_time"]
+                if diffday(t1, t2):
+                    # 新的一天，清空刷图记录
+                    self.log.write_log("info", "已经重置刷图记录。")
+                    ds["normal"] = {}
+                    ds["hard"] = {}
+                    ds["buy_tili"] = 0
+                ds["last_time"] = t1
+                self.AR.set("daily_status", ds)
+            else:
+                mv.save()
 
         # 图号解析
         def parse_tu(ds):
@@ -901,11 +930,12 @@ class ShuatuMixin(ShuatuBaseMixin):
                 D = HARD_COORD[nowA]
                 return D[nowB].x, D[nowB].y, 1, None
 
-        new_day(ds)
+        record_ds(ds)
         cur = parse_tu(ds)
         ds.setdefault("buy_tili", 0)
         if len(cur) == 0:
-            self.log.write_log("info", "今天的刷图任务已经全部完成啦。")
+            if _use_daily:
+                self.log.write_log("info", "今天的刷图任务已经全部完成啦。")
             return
         if ds["buy_tili"] < daily_tili:
             self.start_shuatu()
@@ -972,7 +1002,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                         if cishu == 0:
                             # 不能扫荡，没有次数
                             ds["hard"][f"{a}-{b}"] = 3
-                            new_day(ds)
+                            record_ds(ds)
                             for _ in range(6):
                                 self.click(1,1)
                             self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
@@ -1003,7 +1033,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             bought_tili = True
                             S.goto_buytili().OK().OK()
                             ds["buy_tili"] += 1
-                            new_day(ds)
+                            record_ds(ds)
                             self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{daily_tili}")
                             left_tili += 120
                             max_cishu_tili = floor(left_tili / one_tili)
@@ -1031,7 +1061,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     SD = SD.OK()  # 扫荡结果
                     # 记录
                     ds[mode][f"{a}-{b}"] += true_cishu
-                    new_day(ds)
+                    record_ds(ds)
                     MsgList = SD.OK()  # 扫荡后的一系列MsgBox
                     while True:
                         out = MsgList.check()
@@ -1091,7 +1121,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                         if cishu == 0:
                             # 不能扫荡，没有次数
                             ds["hard"][f"{a}-{b}"] = 3
-                            new_day(ds)
+                            record_ds(ds)
                             for _ in range(6):
                                 self.click(1, 1)
                             self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
@@ -1109,7 +1139,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             bought_tili = True
                             S.goto_buytili().OK().OK()
                             ds["buy_tili"] += 1
-                            new_day(ds)
+                            record_ds(ds)
                             self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{daily_tili}")
                         else:
                             # 已经……买不动了
@@ -1153,7 +1183,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     if state["flag"] == "win":
                         # 记录
                         ds[mode][f"{a}-{b}"] += 1
-                        new_day(ds)
+                        record_ds(ds)
                     if state["flag"] == "win" and state["star"] < 3 and win_without_threestar_is_lose:
                         self.log.write_log("info", f"没有三星通关（{state['star']}/3），算作失败！")
                         state["flag"] = "lose"
@@ -1214,8 +1244,11 @@ class ShuatuMixin(ShuatuBaseMixin):
             if cmd == "continue":
                 continue
             elif cmd == "return":
+                if not _use_daily:
+                    mv.clearflags()
                 return
-
+        if not _use_daily:
+            mv.clearflags()
         self.log.write_log("info", f"全部刷图任务已经完成。")
         self.lock_home()
 

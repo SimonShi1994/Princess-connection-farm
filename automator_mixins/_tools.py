@@ -17,8 +17,7 @@ from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from core.pcr_config import lockimg_timeout, \
-    debug, fast_screencut
+from core.pcr_config import debug, fast_screencut
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import get_all_group
@@ -34,7 +33,6 @@ class ToolsMixin(BaseMixin):
     还有很多常用函数，比如回首页
     """
 
-    @timeout(300, "lock_home执行超时：超过5分钟")
     @DEBUG_RECORD
     def lock_home(self):
         """
@@ -42,23 +40,7 @@ class ToolsMixin(BaseMixin):
         要求场景：存在“我的主页”按钮
         逻辑：不断点击我的主页，直到右下角出现“礼物”
         """
-        last = time.time()
-        while True:
-            sc = self.getscreen()
-            if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
-                self.click(MAIN_BTN["xiazai"])
-            num_of_white, _, x, y = UIMatcher.find_gaoliang(sc)
-            if num_of_white < 77000:
-                self.chulijiaocheng(None)  # 增加对教程的处理功能
-                last = time.time()
-            if self.is_exists(MAIN_BTN["liwu"], screen=sc):
-                return
-            self.click(MAIN_BTN["zhuye"])
-            # 防卡公告
-            self.click(1, 1)
-            time.sleep(1.5)
-            if time.time() - last > lockimg_timeout:
-                raise Exception("lock_home时出错：超时！")
+        return self.get_zhuye()
 
     def get_zhuye(self):
         """

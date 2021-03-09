@@ -771,9 +771,11 @@ VALID_TASK = ValidTask() \
                                          "2：纯手刷\n", 1),
           TaskParam("buytili", int, "体力购买次数", "消耗多少管体力执行超级刷经验", 6)]) \
     .add("s2", "shuatuNN", "刷N图", "使用扫荡券刷指定普通副本",
-         [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
+         [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox()),
+          TaskParam("use_ocr", bool, "使用OCR", "是否使用OCR来优化刷图", False)]) \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",
-         [TaskParam("tu_dict", list, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox())]) \
+         [TaskParam("tu_dict", list, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox()),
+          TaskParam("use_ocr", bool, "使用OCR", "是否使用OCR来优化刷图", False)]) \
     .add("s4", "doActivityHard", "刷活动图", "使用扫荡券刷活动副本（慎用，因为每次活动坐标都不同）") \
     .add("s5", "chushihua", "初始化", "从1-3自动推到3-1，已经推过的部分不会再推。") \
     .add("s5-2", "chushihua2", "快速初始化", "从1-3自动推到3-1，已经推过的部分不会再推。\n"
