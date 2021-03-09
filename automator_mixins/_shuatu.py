@@ -8,6 +8,7 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_checker import PCRRetry, LockTimeoutError, RetryNow, ContinueNow
+from core.pcr_config import force_as_ocr_as_possible
 from core.valid_task import ShuatuToTuple
 from pcrdata.pcrdata import PCRData
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian
@@ -1226,6 +1227,8 @@ class ShuatuMixin(ShuatuBaseMixin):
         xianding：是否买空限定商店
         do_tuitu 是否允许推图
         """
+        if force_as_ocr_as_possible:
+            self.meiriHtu_ocr(H_list, daily_tili, xianding, do_tuitu, var)
         lst = []
         for s in H_list:
             A, B = tuple(s.split("-"))
@@ -1262,6 +1265,8 @@ class ShuatuMixin(ShuatuBaseMixin):
         :param daily_tili:购买体力次数
         :param do_tuitu: 是否允许推图
         """
+        if force_as_ocr_as_possible:
+            self.xiaohaoHtu_ocr(daily_tili, False, do_tuitu, var)
         L = []
         for i in range(MAX_MAP):
             for j in [1, 2, 3]:

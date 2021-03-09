@@ -15,7 +15,7 @@ class SaoDangQueRen(PCRMsgBoxBase):
         self.scene_name = "SaoDangQueRen"
 
         def feature(screen):
-            return self.is_exists(MAOXIAN_BTN["saodang_query"], screen=screen)
+            return self.is_exists(MAOXIAN_BTN["sdqqr"], screen=screen)
 
         self.initFC = None
         self.feature = feature

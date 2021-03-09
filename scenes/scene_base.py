@@ -79,6 +79,10 @@ class PCRSceneBase:
     def last_screen(self):
         return self._a.last_screen
 
+    @property
+    def log(self):
+        return self._a.log
+
     def goto(self, scene: Union[Type["PCRSceneBase"], Type["PCRMsgBoxBase"]], gotofun, use_in_feature_only=None,
              before_clear=True, timeout=None, interval=8, retry=None):
         next_scene = scene(self._a)
@@ -190,7 +194,7 @@ class PossibleSceneList(PCRSceneBase):
         PossibleSceneList([
     """
 
-    def __init__(self, a, scene_list: List[PCRMsgBoxBase], no_scene_feature=None, double_check=2., timeout=10.,
+    def __init__(self, a, scene_list: List[PCRSceneBase], no_scene_feature=None, double_check=2., timeout=10.,
                  max_retry=3):
         self.scene_list = scene_list
         self.no_scene_feature = no_scene_feature

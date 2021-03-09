@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from scenes.zhuxian.zhuxian_normal import ZhuXianNormal
     from scenes.zhuxian.zhuxian_hard import ZhuXianHard
     from scenes.zhuxian.zhuxian_base import ZhuXianBase
-
+    from scenes.maoxian.tansuo import TanSuoMenu
 
 class MaoXian(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
@@ -31,9 +31,13 @@ class MaoXian(SevenBTNMixin):
 
         return self.goto_zhuxian().goto(ZhuXianNormal, gotofun, use_in_feature_only=True)
 
-    def goto_hard(self)->"ZhuXianHard":
+    def goto_hard(self) -> "ZhuXianHard":
         from scenes.zhuxian.zhuxian_hard import ZhuXianHard
         def gotofun():
             self.click(MAOXIAN_BTN["hard_off"])
 
         return self.goto_zhuxian().goto(ZhuXianHard, gotofun, use_in_feature_only=True)
+
+    def goto_tansuo(self) -> "TanSuoMenu":
+        from scenes.maoxian.tansuo import TanSuoMenu
+        return self.goto(TanSuoMenu, self.fun_click(MAIN_BTN["tansuo"]))

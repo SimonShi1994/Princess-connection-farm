@@ -704,7 +704,7 @@ VALID_TASK = ValidTask() \
           TaskParam("times", int, "购买mana的次数", "购买mana的次数(第一次单抽不计入)"),
           TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False", False), ]) \
     .add("r8", "buyExp", "购买经验", "买空商店里的经验药水",
-        [TaskParam("qianghuashi", bool, "是否同时购买强化石", "True/False", False)]) \
+         [TaskParam("qianghuashi", bool, "是否同时购买强化石", "True/False", False)]) \
     .add("r9", "tansuo", "探索", "进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
                                        "mode 0: 刷最上面的\n"
@@ -716,6 +716,19 @@ VALID_TASK = ValidTask() \
                                        "mode 0: 刷最上关卡（适合大号） \n"
                                        "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
                                        "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）")]) \
+    .add("r9-ocr", "tansuo_new_ocr", "可推图探索OCR", "进行探索活动",
+         [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
+                                       "mode 0: 刷最上关卡（适合大号） \n"
+                                       "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
+                                       "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）"),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
+                    inputbox=StrInputer(desc="none - 不改变队伍，使用上次队伍。\n"
+                                             "zhanli - 按照战力排序取前五。\n"
+                                             "dengji - 按照等级排序取前五。\n"
+                                             "xingji - 按照星级排序取前五。\n"
+                                             "(A)-(B) - 使用队伍编组A-B，且1<=A<=5,1<=B<=3。\n"
+                                             "Example:  3-1  # 编组3队伍1.")),
+          ]) \
     .add("r10", "shengji", "圣迹调查", "进行圣迹调查",
          [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
                                        "mode 0: 刷1+2\n"

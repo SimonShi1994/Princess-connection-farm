@@ -347,6 +347,9 @@ def ShowPCRPerformance():
     print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", "已开启" if captcha_popup else "未开启")
     print("* 缓存清理 clear_traces_and_cache：", "已开启" if clear_traces_and_cache else "未开启")
 
+def ShowTaskInfo():
+    print("* 如果有OCR版本，强制使用OCR版本的任务。", "已开启" if force_as_ocr_as_possible else "未开启")
+
 
 def ShowDebugInfo():
     print("* 输出Debug信息 debug：", "已开启" if debug else "未开启")
@@ -393,6 +396,7 @@ def CheckConstantImgs():
 
 def ShowInfo():
     ShowDebugInfo()
+    ShowTaskInfo()
     ShowServerChan()
     ShowOCR()
     ShowPCRPerformance()
@@ -464,13 +468,15 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.6dev.20210308")
+        print("当前版本为 Ver 2.6dev.20210309")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
         print("app 启动app.py", end=" ")
         print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
         print("[内部模式：", "已开启" if inline_app else "未开启", "]")
+        if force_as_ocr_as_possible:
+            print("注意：你正在强制OCR模式下运行(force_as_ocr_as_possible)，app必须开启！")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("edit 进入编辑模式")
