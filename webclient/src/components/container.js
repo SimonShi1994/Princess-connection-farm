@@ -21,6 +21,9 @@ const Container = (props) => {
     const [_, path] = hash.split('/')
     const dataindex = menu.findIndex(m => m.link === `/${path}`) + 1 + ''
     setindex(dataindex)
+    if(!path){
+      setindex('1')
+    }
   })
   return (
     <>
