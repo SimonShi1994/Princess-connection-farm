@@ -58,7 +58,7 @@ class DXCBaseMixin(FightBaseMixin):
             1：战胜
             2：战败
         """
-        self.wait_for_stable(at=DXC_ELEMENT["map"], delay=1.5)  # 等待小人走完
+        self.wait_for_stable(at=DXC_ELEMENT["map"], delay=1.5, threshold=0.1, max_retry=5)  # 等待小人走完
         # 点人
         state = self.lock_no_img(DXC_ELEMENT["dxc_shop_btn"], elseclick=(x, y), elsedelay=10, retry=2)
         if not state:
