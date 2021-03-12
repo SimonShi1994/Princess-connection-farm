@@ -168,6 +168,7 @@ u2_record_size = GC.add_int('debug', 'u2_record_size', 20)
 debug_record_size = GC.add_int('debug', 'debug_record_size', 50)
 u2_record_filter = GC.add_list('debug', 'u2_record_filter', [])
 debug_record_filter = GC.add_list('debug', 'debug_record_filter', ['_lock_img', '_move_check'])
+trace_tree = GC.add_str('debug', 'trace_tree', 'master')
 
 force_as_ocr_as_possible = GC.add_bool("task", "force_as_ocr_as_possible", True)
 sent_state_img = GC.add_bool('log', 'sent_state_img', False)

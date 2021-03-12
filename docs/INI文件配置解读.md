@@ -12,6 +12,7 @@
 |u2_record_filter|U2指令过滤列表|list|列表中的指令不会被记录|[]      |
 |debug_record_size|Automator指令记录列表大小|int|50      ||
 |debug_record_filter|Automator指令过滤列表|list|列表中的指令不会被记录|['_lock_img','_move_check']      |
+|trace_tree|追踪的分支版本|str||master |
 |force_as_ocr_as_possible|开启后，如果某个任务有OCR版本，则自动使用之|bool||True|
 | qqbot_select | qqbot的选择api服务商 | str | CoolPush/Qmsgnike | CoolPush |
 | qqbot_private_send_switch | qqbot私聊开关 | int | 0关 1开 | 0 |
