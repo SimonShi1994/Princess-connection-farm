@@ -24,6 +24,7 @@
 | proxy_https|推送使用的代理|str|||
 |           s_sckey            |                     s_sckey为Server酱API                     | string |          | SCU6390~94d830b |
 |         sentstate          |                 全体BOT播定时报脚本任务状态                 |  int   | 单位分钟 |        5        |
+| sent_state_img | 播报任务状态时是否推送运行截图 | bool |  | Flase |
 |           log_lev            | log_levBOT的日志等级，微信日志等级 仅有0/1/2/3，越小越详细，注意每天接口调用有上限！ |  int   |          |        1        |
 |          log_cache           |                       日志缓冲消息条数                       |  int   |          |        3        |
 |         baidu_apiKey         |                  baidu_apiKey为百度ocr api                   | string |          | SCU6390~94d830b |
@@ -61,6 +62,8 @@
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
 |wait_for_launch_time|自启动模拟器最大忍耐超时时间|int||600|
 |ignore_serials|不连接的模拟器|str||["emulator-5554"]|
+
+
 
 ------
 
