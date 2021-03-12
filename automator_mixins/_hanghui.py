@@ -413,36 +413,51 @@ class HanghuiMixin(ToolsMixin):
             pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战哦")
             return
         while True:
-            self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr)
-            try:
-                screen = self.getscreen()
-                r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
-                if self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
-                                 side_check=self.juqing_kkr):
-                    if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
-                        break
-            except Exception as e:
-                pcr_log(self.account).write_log("info", f"识别不到boss信息，已退出本任务")
-                return
+            if self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr):
+                time.sleep(5 + self.change_time)
+                try:
+                    self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1),
+                                  side_check=self.juqing_kkr)
+                    screen = self.getscreen()
+                    r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
+                    if self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
+                                     side_check=self.juqing_kkr):
+                        if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
+                            break
+                except Exception as e:
+                    pcr_log(self.account).write_log("info", f"识别不到boss信息，已退出本任务")
+                    return
             else:
                 continue
 
-        self.lock_no_img(TUANDUIZHAN_BTN["tiaozhan"], elseclick=(833, 462), retry=5)
-        if not self.is_exists(DXC_ELEMENT["quanbu_blue"]):
-            pcr_log(self.account).write_log("info", f"{self.account}该用户没次数")
-            self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1), side_check=self.juqing_kkr)
-            return
+        while True:
+            self.lock_no_img(TUANDUIZHAN_BTN["tiaozhan"], elseclick=(833, 462))
+            if self.is_exists(DXC_ELEMENT["quanbu_blue"]):
+                break
+            # if not self.is_exists(DXC_ELEMENT["quanbu_blue"]):
+            #     pcr_log(self.account).write_log("info", f"{self.account}该用户没次数")
+            #     self.lock_home()
+            #     return
 
-        if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
-            # 全部
-            self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
-            for i in range(1, 9):
-                self.click(DXC_ELEMENT["zhiyuan_dianren"][i])
-            # 点完人后确认一遍
+        while True:
             if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
-                pcr_log(self.account).write_log(level='info', message="%s没有合适的人物打公会战!" % self.account)
-                self.lock_home()
-                return
+                # 全部
+                self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
+                if not self.is_exists(DXC_ELEMENT["zhiyuan_gouxuan"]):
+                    for i in range(1, 9):
+                        self.click(DXC_ELEMENT["zhiyuan_dianren"][i])
+                        break
+                else:
+                    # 点完人后确认一遍
+                    if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True,
+                                      black_threshold=1500):
+                        pcr_log(self.account).write_log(level='info', message="%s没有合适的人物打公会战!" % self.account)
+                        self.lock_home()
+                        return
+                    break
+            elif self.is_exists('img/dxc/zhandoukaishi.bmp', at=(758, 423, 915, 473)):
+                break
+
 
         while True:
             # 战斗开始

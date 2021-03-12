@@ -193,7 +193,7 @@ class LoginMixin(BaseMixin):
                 if _id == 0:
                     time.sleep(4)
                     # 检测到题目id为0就重新验证
-                    return AutoCaptcha()
+                    AutoCaptcha()
 
                 state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
 
