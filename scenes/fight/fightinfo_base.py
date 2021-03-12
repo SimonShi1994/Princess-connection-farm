@@ -5,6 +5,7 @@ import numpy as np
 
 from core.constant import MAOXIAN_BTN, FIGHT_BTN
 from core.pcr_checker import LockMaxRetryError
+from core.pcr_config import save_debug_img
 from scenes.fight.fightbianzu_zhuxian import FightBianZuZhuXian
 from scenes.scene_base import PCRMsgBoxBase
 from scenes.zhuxian.zhuxian_msg import SaoDangQueRen
@@ -44,7 +45,7 @@ class FightInfoBase(PCRMsgBoxBase):
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()
-        at = (836, 271, 888, 291)
+        at = (841, 272, 887, 291)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
 
@@ -110,6 +111,11 @@ class FightInfoBase(PCRMsgBoxBase):
             time.sleep(delay)
             right_tili = self.get_tili_right()
             now_cishu = (left_tili - right_tili) // one_tili
+            if abs(now_cishu - target) > 5:
+                self.log.write_log("warning", "可能是OCR出现问题，体力识别失败了！")
+                if save_debug_img:
+                    self._a.save_last_screen(f"debug_imgs/tili_rec_{time.time()}.bmp")
+                return
             retry += 1
 
     def goto_saodang(self) -> SaoDangQueRen:

@@ -1016,7 +1016,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             self.log.write_log("warning", "已经没有扫荡券了！终止刷图。")
                             self.lock_home()
                             return "return"
-                        self.log.write_log("warning",f"扫荡券不足，只能支持刷{quan}次了。")
+                        self.log.write_log("warning", f"扫荡券可能不足，只能支持刷{quan}次了。")
                         max_cishu=quan
 
                     # 体力判断：最多还能进行几次

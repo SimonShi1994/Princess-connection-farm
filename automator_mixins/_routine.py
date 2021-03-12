@@ -332,6 +332,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.tansuo_new_ocr(2)
             else:
                 self.tansuo_new_ocr(1)
+            return
         is_used = 0
         self.click(480, 505)
         time.sleep(1)
@@ -445,7 +446,7 @@ class RoutineMixin(ShuatuBaseMixin):
         """
         if force_as_ocr_as_possible:
             self.tansuo_new_ocr(mode)
-
+            return
         def tryfun():
             if mode == 0:
                 ec = [(539, 146)]

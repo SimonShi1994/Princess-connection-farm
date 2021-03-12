@@ -41,6 +41,7 @@ class ZhuXianNormal(ZhuXianBase):
             else:
                 raise e
             raise RetryNow()
+
         if cur_id < id:
             for i in range(id - cur_id):
                 self.goRight()
