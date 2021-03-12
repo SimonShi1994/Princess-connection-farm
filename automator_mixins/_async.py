@@ -7,7 +7,8 @@ import psutil
 from automator_mixins._base import DEBUG_RECORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause, sentstate
+from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause, sentstate, \
+    tg_token, sent_state_img
 from core.safe_u2 import timeout
 from ._base import Multithreading
 from ._tools import ToolsMixin
@@ -225,10 +226,13 @@ class AsyncMixin(ToolsMixin):
         """
         while Multithreading({}).is_stopped():
             if sentstate != 0:
+                account = self.account
+                address = self.address
                 await asyncio.sleep(sentstate * 60 + 1)
-                pcr_log(self.account).server_bot('STATE', '', '', img=self.last_screen, img_title=f"server_bot运行截图播报\n"
-                                                                                                  f"账号:{self.account}\n"
-                                                                                                  f"所运行的设备:{self.address}")
+                sent_img = self.getscreen()
+                pcr_log(account).server_bot('STATE', '', '', img=sent_img, img_title=f"server_bot运行截图播报\n"
+                                                                                     f"账号:{account}\n"
+                                                                                     f"所运行的设备:{address}")
 
     async def aor_purse(self):
         """
@@ -237,12 +241,11 @@ class AsyncMixin(ToolsMixin):
         测试
         :return:
         """
-        global block_sw, async_block_sw
+        global block_sw
         if not enable_pause:
             return
         # print(Multithreading({}).is_stopped())
         while Multithreading({}).is_stopped():
-            async_block_sw = 1
             keyboard.wait('shift+p')
             block_sw = 1
             print("下一步，脚本暂停,按shift+p恢复")
@@ -251,12 +254,14 @@ class AsyncMixin(ToolsMixin):
             block_sw = 0
             print("恢复运行")
             await asyncio.sleep(0.8)
-        async_block_sw = 0
 
     def start_th(self):
         Multithreading({}).resume()
 
     def stop_th(self):
+        global async_block_sw
+        # 解锁异步
+        async_block_sw = 0
         Multithreading({}).pause()
         if fast_screencut and self.fastscreencut_retry < 3:
             if self.receive_minicap is not None:
@@ -264,6 +269,7 @@ class AsyncMixin(ToolsMixin):
         # print(Multithreading({}).is_stopped())
 
     def start_async(self):
+        global async_block_sw
         # 随着账号开启而开启
         account = self.account
         self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
@@ -271,8 +277,12 @@ class AsyncMixin(ToolsMixin):
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
         # self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
         if not async_block_sw:
+            async_block_sw = 1
+            # 马上锁上，仅运行一次，非随账号运行
             self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
-            self.c_async(self, account, self.c_img_server_bot(), sync=False)  # 异步server截图发送播报
+            if sent_state_img:
+                self.c_async(self, account, self.c_img_server_bot(), sync=False)  # 异步server截图发送播报
+                # self.c_async(self, account, self.bot_get_command(), sync=False)  # 异步获取远端命令
         self.c_async(self, account, self.auto_time_sleep(), sync=False)  # 异步根据CPU负载调控time sleep
 
     def program_start_async(self):

@@ -170,7 +170,7 @@ u2_record_filter = GC.add_list('debug', 'u2_record_filter', [])
 debug_record_filter = GC.add_list('debug', 'debug_record_filter', ['_lock_img', '_move_check'])
 
 force_as_ocr_as_possible = GC.add_bool("task", "force_as_ocr_as_possible", True)
-
+sent_state_img = GC.add_bool('log', 'sent_state_img', False)
 qqbot_key = GC.add_str('log', 'qqbot_key')
 qqbot_select = GC.add_str('log', 'qqbot_select')
 tg_token = GC.add_str('log', 'tg_token')
