@@ -3,6 +3,7 @@ import time
 from core.constant import DXC_NUM, FIGHT_BTN, DXC_ELEMENT
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
+from core.pcr_config import force_as_ocr_as_possible
 from ._dxc_base import DXCBaseMixin
 from ._tools import ToolsMixin
 
@@ -49,6 +50,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
                                   threshold=0.98)
                 break
+            else:
+                self.Drag_Left()
                 # self.dxc_kkr()
         tmp_cout = 0
         while tmp_cout <= 2:
@@ -189,9 +192,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             time.sleep(self.change_time + 1)
             if self.is_exists(DXC_ELEMENT["zhiyuan_gouxuan"]):
                 pass
-            elif self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,at=(45, 144, 163, 252)):
+            elif self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,
+                                at=(45, 144, 163, 252)):
                 # 如果第二个也等级不足就退出
-                if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,at=(160, 126, 270, 232)):
+                if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,
+                                  at=(160, 126, 270, 232)):
                     pcr_log(self.account).write_log(level='info', message="%s 的等级无法达到两个支援要求的最低等级!" % self.account)
                     self.dxc_switch = 1
                     break
@@ -316,8 +321,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         :param skip:
         :return:
         """
+        if force_as_ocr_as_possible:
+            self.dixiacheng_ocr(skip)
         # 首页 -> 地下城选章/（新号）地下城章内
         self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
+        self.Drag_Left()  # 滑到最左
         self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
                          at=(837, 92, 915, 140))
         # 防止一进去就是塔币教程

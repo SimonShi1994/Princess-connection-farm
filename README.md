@@ -1,8 +1,18 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.5.20210304
+ # Princess connection 公主连结农场脚本v2.6dev.20210312
+
+ > Develop V2.6: 增加场景支持；增加FunctionChecker模块。 
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
+
+## 警告：使用pull升级v2.6dev版本会强制删除config.ini，请提前做好备份
+
+config.ini已经加入.gitignore中，此后的所有版本config.ini都将动态生成（运行main_new.py即自动更新）。
+
+在v2.6dev.20210308版本中，将config.ini从仓库中移除，这将导致使用pull更新会强制删去本地的config.ini，请及时做好备份。
+
+备份方法：将config.ini的内容复制；git pull；将config.ini备份粘贴回去；运行main_new.py自动补全剩余。
 
 ## :bookmark_tabs:简介
 
@@ -160,7 +170,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - [x] 模拟器自启动控制
 - [x] 简化Schedule操作模式
 - [ ] WebGUI界面
-- [ ] 提高刷图效率
+- [x] 提高刷图效率
 - [ ] 刷活动本
 - [x] 女神祭
 - [ ] 跳过18图切图动画
@@ -172,6 +182,19 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## :hammer:更新历史:wrench:   
+
+2021/3/9 By:TheAutumnOfRice
+
+- 新增`force_as_ocr_as_possible`一键修改所有任务为OCR任务
+- 新增OCR探索`r9-ocr`
+- 修复诸多BUG
+
+2021/3/8 By:TheAutumnOfRice
+
+- 使用Scenes框架解构方法
+- 内核使用FunctionChecker框架改写，增加稳定性
+- 增加了OCR刷图推图 `s9`
+- OCR增加效率 `s7-ocr` `s7-a-ocr`
 
 2021/3/5 By:Klarkxy
 

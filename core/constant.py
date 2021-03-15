@@ -202,7 +202,9 @@ NIUDAN_BTN = {
     "niudanjieguo_ok": p(481, 443, img="img/ui/ok_btn_2.bmp", at=(383, 423, 597, 462)),
     "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(610, 320, 750, 450)),
     "niudan_shilian": p(872, 355),
-    "mianfeishilian": p(img='img/niudan/mianfeishilian.bmp', at=(819, 300, 919, 319))
+    "mianfeishilian": p(img='img/niudan/mianfeishilian.bmp', at=(819, 300, 919, 319)),
+    "xiangqing":p(883,279,img="img/niudan/xiangqing.bmp",at=(865,268,906,286)),
+
 }
 
 HANGHUI_BTN = {
@@ -376,10 +378,14 @@ FIGHT_BTN = {
     },
     "team_close": p(476, 477, img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),  # 选队界面的关闭按钮
     "shbg": p(img="img/fight/shbg.bmp", at=(709, 23, 898, 52)),  # 伤害报告
+    "duiwu_icon": p(img="img/fight/duiwu_icon.bmp", at=(896, 78, 924, 97)),
+    "huodedaoju": p(img="img/fight/huodedaoju.bmp", at=(442, 135, 514, 160)),
+    "xiayibu": p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502)),
     "menu": p(img="img/fight/menu.bmp", at=(871, 18, 928, 32)),
     "qwjsyl": p(576, 495, img="img/fight/qwjsyl.bmp", at=(392, 457, 948, 528)),  # 前往角色一览
     "win": p(img="img/fight/win.bmp", at=(400, 6, 551, 127)),  # 过关的帽子
     "zhandoukaishi": p(834, 453, img="img/fight/zhandoukaishi.bmp", at=(761, 431, 911, 472)),
+    "duiwubianzu": p(img="img/fight/duiwubianzu.bmp", at=(433, 31, 520, 53)),
     "xuanguan_quxiao": p(665, 455, img="img/ui/quxiao2.bmp", at=(597, 440, 736, 470)),  # 选关界面（选择使用扫荡券）右下角的取消
     "upperright_stars":  # “挑战”页面右上角的星星位置
         {
@@ -397,6 +403,9 @@ FIGHT_BTN = {
     "caidan": p(902, 33, img="img/fight/menu.bmp", at=(856, 14, 942, 35)),
     "fangqi_1": p(625, 376, img="img/fight/fangqi_1.bmp", at=(558, 346, 690, 392)),
     "fangqi_2": p(625, 376, img="img/fight/fangqi_2.bmp", at=(491, 346, 686, 392)),
+    "tgdw": p(img="img/fight/tgdw.bmp",at=(805,82,900,105)),
+    "infinity":p(img="img/fight/infinity.bmp",at=(897,407,920,420)),
+    "fighting_caidan":p(img="img/fight/fighting_caidan.bmp",at=(882,18,918,32)),
 }
 
 JUESE_BTN = {
@@ -653,9 +662,11 @@ HARD_COORD = {
 
 SHOP_BTN = {
     "xianding_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
+    "shop_left_kkr": p(img="img/girl/kkr_middle.bmp", at=(78, 311, 179, 339)),
     "lijiguanbi": p(527, 438),
     "querenchongzhi": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
+    "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
 }
 MAOXIAN_BTN = {
     "normal_on": p(699, 82, img="img/maoxian/normal_on.bmp", at=(656, 72, 748, 91)),
@@ -667,6 +678,7 @@ MAOXIAN_BTN = {
     "tili_bar": p(at=(529, 32, 637, 38), fc=(255, 215, 99), bc=(90, 101, 115)),
     "saodang_on": p(753, 334, img="img/maoxian/saodang_on.bmp", at=(679, 314, 826, 349)),  # 使用1张 蓝色
     "saodang_plus": p(878, 328),
+    "saodang_minus":p(626,330),
     "saodang_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "saodang_tiaoguo": p(475, 477, img="img/maoxian/saodang_tiaoguo.bmp", at=(380, 460, 574, 496)),
     "saodang_ok2": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
@@ -681,6 +693,7 @@ MAOXIAN_BTN = {
     "buytili_quxiao": p(371, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
     "buytili_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
     "tlhf": p(img="img/maoxian/tlhf.bmp", at=(434, 137, 524, 157)),
+    "tili_success":p(img="img/maoxian/tili_success.bmp",at=(262,274,404,335)),
     "no_cishu": p(img="img/maoxian/no_cishu.bmp", at=(400, 229, 541, 289)),
     "chaochushangxian": p(img="img/maoxian/chaochushangxian.bmp", at=(343, 207, 602, 232)),
     "sytzcshf": p(img="img/maoxian/sytzcshf.bmp", at=(391, 132, 562, 155)),  # 剩余挑战次数恢复
