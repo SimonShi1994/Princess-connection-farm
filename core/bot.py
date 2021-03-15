@@ -101,9 +101,9 @@ class Bot:
                 self.memory_info = "内存使用：%0.2fG||使用率%0.1f%%||剩余内存：%0.2fG" % (used_memory, memory_percent, free_memory)
                 # print(memory_info)
                 # 兼容老接口
-                if len(s_sckey) != 0 and img is None:
+                if len(s_sckey) != 0 and img == '':
                     self.wechat_bot(s_level, message=message, acc_state=acc_state)
-                if len(qqbot_key) != 0 and img is None:
+                if len(qqbot_key) != 0 and img == '':
                     self.qq_bot(s_level, message=message, acc_state=acc_state)
                 if len(tg_token) != 0:
                     self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)

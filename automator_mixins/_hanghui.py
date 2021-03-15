@@ -432,14 +432,6 @@ class HanghuiMixin(ToolsMixin):
 
         while True:
             self.lock_no_img(TUANDUIZHAN_BTN["tiaozhan"], elseclick=(833, 462))
-            if self.is_exists(DXC_ELEMENT["quanbu_blue"]):
-                break
-            # if not self.is_exists(DXC_ELEMENT["quanbu_blue"]):
-            #     pcr_log(self.account).write_log("info", f"{self.account}该用户没次数")
-            #     self.lock_home()
-            #     return
-
-        while True:
             if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
                 # 全部
                 self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
