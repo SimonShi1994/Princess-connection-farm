@@ -26,6 +26,7 @@ def get_list_all_schedules():
 @schedule_api.route('/get_schedules/<filename>', methods=['GET'])
 def get_schedules_info(filename):
     # x,y,z都为字典的拆分所产生出来的临时变量
+    # 后面会优化
     try:
         r = AutomatorRecorder.getschedule(filename)
         if len(r['schedules']) > 1:
@@ -59,11 +60,15 @@ def get_schedules_info(filename):
 @schedule_api.route('/schedules_save', methods=['POST'])
 def save_schedules():
     # '{"name":"test","batchlist":["zhuangbeirichang"],"condition":{},"type":"asap"}'
-    obj = request.json
-    save_dict = {"schedules": [obj]}
-    ScheduleFileName = request.json.get("filename")
-    if check_valid_schedule(save_dict, is_raise=False):
-        AutomatorRecorder.setschedule(ScheduleFileName, save_dict)
-        return jsonify({"code":200, "msg":f"{save_dict}-保存成功"})
-    else:
-        return jsonify({"code":500, "msg":f"{save_dict}-保存失败"})
+    try:
+        obj = request.json
+        ScheduleFileName = request.json.get("filename")
+        obj.pop("filename")
+        save_dict = {"schedules": [obj]}
+        if check_valid_schedule(save_dict, is_raise=False):
+            AutomatorRecorder.setschedule(ScheduleFileName, save_dict)
+            return jsonify({"code":200, "msg":f"{save_dict}-保存成功"})
+        else:
+            return jsonify({"code":500, "msg":f"{save_dict}-保存失败"})
+    except Exception as e:
+        return jsonify({"code":500, "msg":f"{e}-保存失败"})
