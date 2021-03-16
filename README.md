@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.6dev.20210312
+ # Princess connection 公主连结农场脚本v2.6dev.20210316
 
  > Develop V2.6: 增加场景支持；增加FunctionChecker模块。 
 
@@ -182,6 +182,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## :hammer:更新历史:wrench:   
+
+2021/3/16 By TheAutumnOfRice
+
+- 试图修复地下城5图问题
 
 2021/3/9 By:TheAutumnOfRice
 
