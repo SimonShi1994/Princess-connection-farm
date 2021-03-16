@@ -42,16 +42,17 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             if self.is_exists('img/dixiacheng.jpg', at=(837, 92, 915, 140)):
                 self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=self.change_time, retry=10)
                 self.click(1, 1, pre_delay=3.5)
-                for _ in range(3):
-                    self.Drag_Left(origin=True)
-                if self.is_exists('img/yunhai.bmp'):
-                    break
                 # 防止一进去就是塔币教程
                 if self.is_exists('img/dxc/chetui.bmp'):
                     time.sleep(1.2)
                     self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
                                   threshold=0.98)
                     break
+                if self.is_exists('img/yunhai.bmp'):
+                    break
+                else:
+                    for _ in range(3):
+                        self.Drag_Left(origin=True)
                 # self.dxc_kkr()
         tmp_cout = 0
         while tmp_cout <= 2:
