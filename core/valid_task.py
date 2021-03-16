@@ -669,7 +669,7 @@ VALID_TASK = ValidTask() \
     .add("d3", "dixiachengYunhai", "打云海关", "打通云海关【细节待补充】") \
     .add("d4", "dixiachengDuanya", "打断崖关", "打通断崖关【细节待补充】") \
     .add("d5", "shuatuDD", "通关地下城", "通用的打通地下城函数",
-         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4"),
+         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5"),
           TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
                                        "mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss\n"
                                        "mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss\n"

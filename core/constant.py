@@ -380,7 +380,7 @@ FIGHT_BTN = {
     "shbg": p(img="img/fight/shbg.bmp", at=(709, 23, 898, 52)),  # 伤害报告
     "duiwu_icon": p(img="img/fight/duiwu_icon.bmp", at=(896, 78, 924, 97)),
     "huodedaoju": p(img="img/fight/huodedaoju.bmp", at=(442, 135, 514, 160)),
-    "xiayibu": p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502)),
+    "xiayibu_fight": p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502)),
     "menu": p(img="img/fight/menu.bmp", at=(871, 18, 928, 32)),
     "qwjsyl": p(576, 495, img="img/fight/qwjsyl.bmp", at=(392, 457, 948, 528)),  # 前往角色一览
     "win": p(img="img/fight/win.bmp", at=(400, 6, 551, 127)),  # 过关的帽子
@@ -516,6 +516,13 @@ DXC_NUM = {
         3: p(img="img/dxc/dxc4/3.bmp", at=(206, 424, 225, 439)),
         4: p(img="img/dxc/dxc4/4.bmp", at=(206, 424, 225, 438)),
         5: p(img="img/dxc/dxc4/5.bmp", at=(201, 426, 226, 439)),
+    },
+    5: {
+        1: p(img="img/dxc/dxc5/1.bmp", at=(216, 423, 226, 440)),
+        2: p(img="img/dxc/dxc5/2.bmp", at=(214, 425, 225, 438)),
+        3: p(img="img/dxc/dxc5/3.bmp", at=(210, 425, 227, 438)),
+        4: p(img="img/dxc/dxc5/4.bmp", at=(214, 425, 226, 439)),
+        5: p(img="img/dxc/dxc5/5.bmp", at=(215, 425, 225, 439)),
     }
 }
 DXC_ENTRANCE = {
@@ -524,6 +531,14 @@ DXC_ENTRANCE = {
     2: p(366, 245, name="密林的大树"),
     3: p(600, 246, name="断崖的遗迹"),
     4: p(831, 246, name="沧海的孤塔"),
+    5: p(831, 246, name="EX 2"),
+}
+DXC_ENTRANCE_DRAG = {
+    1: "left",
+    2: "left",
+    3: "left",
+    4: "left",
+    5: "right",
 }
 DXC_COORD = {
     # 每个地下城里面每一个关卡的位置
@@ -554,6 +569,13 @@ DXC_COORD = {
         3: p(325, 283),
         4: p(681, 285),
         5: p(297, 190)
+    },
+    5: {
+        1: p(455, 245),
+        2: p(629, 266),
+        3: p(491, 262),
+        4: p(425, 250),
+        5: p(502, 259),
     }
 }
 MAX_MAP = 20

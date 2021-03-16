@@ -455,6 +455,12 @@ class ElementChecker(FunctionChecker):
                  clear=clear)
         return self
 
+    def add_sidecheck(self, sidecheck, dofunction=None, rv=None, raise_=None, clear=True):
+        def named_sidecheck(screen):
+            return sidecheck(screen)
+
+        self.add(Checker(named_sidecheck, funvar=["screen"], name="SideCheck"), dofunction, rv, raise_, clear)
+
     def click(self, *args, pre_delay=0., post_delay=0., interval=0, retry=None, **kwargs):
         def f():
             self._a.click(*args, pre_delay=pre_delay, post_delay=post_delay, **kwargs)
