@@ -44,14 +44,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.click(1, 1, pre_delay=3.5)
                 if self.is_exists('img/yunhai.bmp'):
                     break
+                else:
+                    self.Drag_Left(origin=True)
                 # 防止一进去就是塔币教程
                 if self.is_exists('img/dxc/chetui.bmp'):
                     time.sleep(1.2)
                     self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
                                   threshold=0.98)
                 break
-            else:
-                self.Drag_Left(origin=True)
                 # self.dxc_kkr()
         tmp_cout = 0
         while tmp_cout <= 2:
