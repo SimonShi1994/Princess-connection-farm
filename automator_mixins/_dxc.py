@@ -51,7 +51,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                                   threshold=0.98)
                 break
             else:
-                self.Drag_Left()
+                self.Drag_Left(origin=True)
                 # self.dxc_kkr()
         tmp_cout = 0
         while tmp_cout <= 2:
