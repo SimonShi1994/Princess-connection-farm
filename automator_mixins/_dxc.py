@@ -35,24 +35,35 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         if assist_num > 8 or assist_num < 1:
             assist_num = 1
 
-        while True:
-            # 进入流程先锁上地下城执行函数
-            self.dxc_switch = 1
-            self.click(480, 505, pre_delay=self.change_time, post_delay=self.change_time)
-            if self.is_exists('img/dixiacheng.jpg', at=(837, 92, 915, 140)):
-                self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=self.change_time, retry=10)
-                self.click(1, 1, pre_delay=3.5)
-                if self.is_exists('img/yunhai.bmp'):
-                    break
-                else:
-                    self.Drag_Left(origin=True)
-                # 防止一进去就是塔币教程
-                if self.is_exists('img/dxc/chetui.bmp'):
-                    time.sleep(1.2)
-                    self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
-                                  threshold=0.98)
+        tmp_cout = 0
+        while tmp_cout <= 3:
+            if self.enter_dxc(1):
                 break
-                # self.dxc_kkr()
+            else:
+                tmp_cout += 1
+        if tmp_cout > 3:
+            pcr_log(self.account).write_log("error", f"{self.account}-重试三次后进入地下城失败！")
+        # while True:
+        #     self.enter_dxc()
+        #     # 进入流程先锁上地下城执行函数
+        #     self.dxc_switch = 1
+        #     self.click(480, 505, pre_delay=self.change_time, post_delay=self.change_time)
+        #     if self.is_exists('img/dixiacheng.jpg', at=(837, 92, 915, 140)):
+        #         self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=self.change_time, retry=10)
+        #         self.click(1, 1, pre_delay=3.5)
+        #         # 防止一进去就是塔币教程
+        #         if self.is_exists('img/dxc/chetui.bmp'):
+        #             time.sleep(1.2)
+        #             self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+        #                           threshold=0.98)
+        #             break
+        #         if self.is_exists('img/yunhai.bmp'):
+        #             break
+        #         else:
+        #             for _ in range(5):
+        #                 # 我不信滑5下还滑不到头=。=
+        #                 self.Drag_Left(origin=True)
+        #         # self.dxc_kkr()
         tmp_cout = 0
         while tmp_cout <= 2:
             try:
