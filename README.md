@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.6dev.20210316
+ # Princess connection 公主连结农场脚本v2.6dev.20210318
 
  > Develop V2.6: 增加场景支持；增加FunctionChecker模块。 
 
