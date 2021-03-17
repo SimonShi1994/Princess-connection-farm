@@ -1,6 +1,16 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
  # Princess connection 公主连结农场脚本v2.5.20210304
+ 
+ > 请尽快使用develop版本！
+ > 
+ > 目前所有改动均在develop分支上提交，master分支不再维护！预计三月底将develop分支合并到master分支上。
+ > 
+ > develop分支提供了更高的稳定性和刷图效率，但并没有改变原有的工作流程，建议切换尝试！
+ > 
+ > 注意：切换到develop或等develop合并到master后，再次通过git更新会导致config.ini丢失，请做好备份！
+ > 
+ > https://github.com/SimonShi1994/Princess-connection-farm/tree/develop
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
