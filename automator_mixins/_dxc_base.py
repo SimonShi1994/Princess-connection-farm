@@ -2,7 +2,7 @@ import time
 
 from automator_mixins._base import DEBUG_RECORD
 from core.constant import DXC_ELEMENT, FIGHT_BTN, MAIN_BTN, DXC_NUM, JJC_BTN, DXC_ENTRANCE_DRAG, \
-    JUQING_BTN
+    JUQING_BTN, DXC_ENTRANCE
 from core.cv import UIMatcher
 from core.pcr_checker import ReturnValue
 from ._fight_base import FightBaseMixin
@@ -172,7 +172,7 @@ class DXCBaseMixin(FightBaseMixin):
                 elif drag == "right":
                     self.Drag_Right(origin=True)
                     time.sleep(1.5)
-                self.click(DXC_ELEMENT[dxc_id])
+                self.click(DXC_ENTRANCE[dxc_id])
 
             FC.add_intervalprocess(do_fun, interval=4)
             out = FC.lock()
