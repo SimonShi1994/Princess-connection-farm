@@ -35,14 +35,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         if assist_num > 8 or assist_num < 1:
             assist_num = 1
 
-        tmp_cout = 0
-        while tmp_cout <= 3:
-            if self.enter_dxc(1):
-                break
-            else:
-                tmp_cout += 1
-        if tmp_cout > 3:
-            pcr_log(self.account).write_log("error", f"{self.account}-重试三次后进入地下城失败！")
+        out = self.enter_dxc(1)
+        if not out:
+            pcr_log(self.account).write_log("info", f"{self.account}-已经刷过地下城！")
+            self.lock_home()
+            return
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数
