@@ -43,6 +43,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 tmp_cout += 1
         if tmp_cout > 3:
             pcr_log(self.account).write_log("error", f"{self.account}-重试三次后进入地下城失败！")
+            return False
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数
