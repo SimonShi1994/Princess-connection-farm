@@ -1,8 +1,8 @@
 import time
 
 from automator_mixins._base import DEBUG_RECORD
-from core.constant import DXC_ELEMENT, FIGHT_BTN, MAIN_BTN, DXC_ENTRANCE, DXC_NUM, JJC_BTN, DXC_ENTRANCE_DRAG, \
-    JUQING_BTN
+from core.constant import DXC_ELEMENT, FIGHT_BTN, MAIN_BTN, DXC_NUM, JJC_BTN, DXC_ENTRANCE_DRAG, \
+    JUQING_BTN, DXC_ENTRANCE
 from core.cv import UIMatcher
 from core.pcr_checker import ReturnValue
 from ._fight_base import FightBaseMixin
@@ -157,17 +157,6 @@ class DXCBaseMixin(FightBaseMixin):
                 else:
                     pass
 
-            def Drag(mode):
-                def drag():
-                    if mode == "left":
-                        self.Drag_Left(origin=True)
-                        time.sleep(1.5)
-                    elif mode == "right":
-                        self.Drag_Right(origin=True)
-                        time.sleep(1.5)
-
-                return drag
-
             FC = self.getFC().getscreen()
             # 开图跳脸防止
             FC.add_sidecheck(self.juqing_kkr)
@@ -175,9 +164,17 @@ class DXCBaseMixin(FightBaseMixin):
             FC.exist(DXC_ELEMENT["quyuxuanzequeren_ok"], rv=True)
             FC.exist(DXC_ELEMENT["dxc_shop_btn"], rv="IN")
             drag = DXC_ENTRANCE_DRAG[dxc_id]
-            FC.add_process(Drag(drag))
 
-            FC.add_intervalprocess(fun_click(DXC_ENTRANCE[dxc_id]), interval=4)
+            def do_fun():
+                if drag == "left":
+                    self.Drag_Left(origin=True)
+                    time.sleep(1.5)
+                elif drag == "right":
+                    self.Drag_Right(origin=True)
+                    time.sleep(1.5)
+                self.click(DXC_ENTRANCE[dxc_id])
+
+            FC.add_intervalprocess(do_fun, interval=4)
             out = FC.lock()
             if out == "0/1":
                 return False
