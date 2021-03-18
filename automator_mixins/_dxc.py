@@ -331,6 +331,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         """
         if force_as_ocr_as_possible:
             self.dixiacheng_ocr(skip)
+            return
         # 首页 -> 地下城选章/（新号）地下城章内
         self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
         self.Drag_Left(origin=True)

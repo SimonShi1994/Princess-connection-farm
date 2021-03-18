@@ -8,7 +8,7 @@ from automator_mixins._base import DEBUG_RECORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause, sentstate, \
-    tg_token, sent_state_img
+    sent_state_img
 from core.safe_u2 import timeout
 from ._base import Multithreading
 from ._tools import ToolsMixin
@@ -293,6 +293,7 @@ class AsyncMixin(ToolsMixin):
 
     @timeout(180, "重启超时，三分钟仍然未响应")
     def _fix_reboot(self, back_home):
+        self.debug_record.clear()
         # 重启逻辑：重启应用，重启异步线程
         self.stop_th()
         self.d.session("com.bilibili.priconne")
