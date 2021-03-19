@@ -468,7 +468,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.6dev.20210318")
+        print("当前版本为 Ver 2.6dev.20210319")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -550,6 +550,7 @@ if __name__ == "__main__":
                     print("task [-d (device_id)] 查看某个device当前的task列表")
                     print("skip [-d (device_id)] [-t (task_id)] 跳过当前任务；若指定-t，则跳转到指定任务（通过task查看ID）")
                     print("!!!________FOR DEBUG________!!!")
+                    # print("last_screen [-d (device_id)] 监视某一个设备的最后一次截图")
                     print("u2rec [-d (device_id)] 查看某个device的u2运行记录")
                     print("rec [-d (device_id)] [-r] 查看某个device的Automator运行记录,-r只查看running的记录。")
                     print("debug (on/off) [-d (device_id)] [-m (module_name)] 打开/关闭某个设备的调试显示，-m可指定某一个模块，默认为全部模块。")

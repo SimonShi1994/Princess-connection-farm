@@ -174,7 +174,7 @@ class DXCBaseMixin(FightBaseMixin):
                     time.sleep(1.5)
                 self.click(DXC_ENTRANCE[dxc_id])
 
-            FC.add_intervalprocess(do_fun, interval=4)
+            FC.add_intervalprocess(do_fun, interval=10)
             out = FC.lock()
             if out == "0/1":
                 return False
