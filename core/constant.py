@@ -203,7 +203,7 @@ NIUDAN_BTN = {
     "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(610, 320, 750, 450)),
     "niudan_shilian": p(872, 355),
     "mianfeishilian": p(img='img/niudan/mianfeishilian.bmp', at=(819, 300, 919, 319)),
-    "xiangqing":p(883,279,img="img/niudan/xiangqing.bmp",at=(865,268,906,286)),
+    "xiangqing": p(883, 279, img="img/niudan/xiangqing.bmp", at=(865, 268, 906, 286)),
 
 }
 
@@ -403,9 +403,9 @@ FIGHT_BTN = {
     "caidan": p(902, 33, img="img/fight/menu.bmp", at=(856, 14, 942, 35)),
     "fangqi_1": p(625, 376, img="img/fight/fangqi_1.bmp", at=(558, 346, 690, 392)),
     "fangqi_2": p(625, 376, img="img/fight/fangqi_2.bmp", at=(491, 346, 686, 392)),
-    "tgdw": p(img="img/fight/tgdw.bmp",at=(805,82,900,105)),
-    "infinity":p(img="img/fight/infinity.bmp",at=(897,407,920,420)),
-    "fighting_caidan":p(img="img/fight/fighting_caidan.bmp",at=(882,18,918,32)),
+    "tgdw": p(img="img/fight/tgdw.bmp", at=(805, 82, 900, 105)),
+    "infinity": p(img="img/fight/infinity.bmp", at=(897, 407, 920, 420)),
+    "fighting_caidan": p(img="img/fight/fighting_caidan.bmp", at=(882, 18, 918, 32)),
 }
 
 JUESE_BTN = {
@@ -443,9 +443,14 @@ JUESE_BTN = {
     "fhqhdj_ok": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),  # 返还强化道具
 
 }
-MAX_DXC = 4  # 一共出了多少个地下城关
+MAX_DXC = 5  # 一共出了多少个地下城关
 
 DXC_ELEMENT = {
+    # 由于识别率不佳，暂时不用
+    # "right": p(14, 242, img="img/dxc/right.bmp", at=(10, 195, 56, 277)),
+    # "left": p(945, 242, img="img/dxc/left.bmp", at=(898, 194, 949, 277)),
+    "right": p(14, 242),
+    "left": p(945, 242),
     "chetui": p(806, 431, img="img/dxc/chetui.bmp", at=(779, 421, 833, 440)),
     "chetui_ok": p(591, 365, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "sytzcs": p(723, 438, img="img/dxc/sytzcs.bmp", at=(667, 428, 784, 447)),
@@ -700,7 +705,7 @@ MAOXIAN_BTN = {
     "tili_bar": p(at=(529, 32, 637, 38), fc=(255, 215, 99), bc=(90, 101, 115)),
     "saodang_on": p(753, 334, img="img/maoxian/saodang_on.bmp", at=(679, 314, 826, 349)),  # 使用1张 蓝色
     "saodang_plus": p(878, 328),
-    "saodang_minus":p(626,330),
+    "saodang_minus": p(626, 330),
     "saodang_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "saodang_tiaoguo": p(475, 477, img="img/maoxian/saodang_tiaoguo.bmp", at=(380, 460, 574, 496)),
     "saodang_ok2": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
@@ -715,7 +720,7 @@ MAOXIAN_BTN = {
     "buytili_quxiao": p(371, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
     "buytili_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
     "tlhf": p(img="img/maoxian/tlhf.bmp", at=(434, 137, 524, 157)),
-    "tili_success":p(img="img/maoxian/tili_success.bmp",at=(262,274,404,335)),
+    "tili_success": p(img="img/maoxian/tili_success.bmp", at=(262, 274, 404, 335)),
     "no_cishu": p(img="img/maoxian/no_cishu.bmp", at=(400, 229, 541, 289)),
     "chaochushangxian": p(img="img/maoxian/chaochushangxian.bmp", at=(343, 207, 602, 232)),
     "sytzcshf": p(img="img/maoxian/sytzcshf.bmp", at=(391, 132, 562, 155)),  # 剩余挑战次数恢复
