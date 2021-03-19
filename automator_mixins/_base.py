@@ -55,10 +55,16 @@ class FastScreencutException(Exception):
         self.args = args
 
 
+class BeforeHomeException(Exception): pass
+
+
 class DebugRecord:
     def __init__(self, record_size):
         self.Q = queue.Queue(record_size)
         self.running = OrderedDict()
+
+    def clear(self):
+        self.running.clear()
 
     def gettime(self):
         cur_time = time.time()

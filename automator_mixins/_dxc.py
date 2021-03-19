@@ -35,15 +35,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         if assist_num > 8 or assist_num < 1:
             assist_num = 1
 
-        tmp_cout = 0
-        while tmp_cout <= 3:
-            if self.enter_dxc(1):
-                break
-            else:
-                tmp_cout += 1
-        if tmp_cout > 3:
-            pcr_log(self.account).write_log("error", f"{self.account}-重试三次后进入地下城失败！")
-            return False
+        out = self.enter_dxc(1)
+        if not out:
+            pcr_log(self.account).write_log("info", f"{self.account}-已经刷过地下城！")
+            self.lock_home()
+            return
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数
@@ -335,6 +331,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         """
         if force_as_ocr_as_possible:
             self.dixiacheng_ocr(skip)
+            return
         # 首页 -> 地下城选章/（新号）地下城章内
         self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
         self.Drag_Left(origin=True)

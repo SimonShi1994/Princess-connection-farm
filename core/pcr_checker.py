@@ -459,7 +459,7 @@ class ElementChecker(FunctionChecker):
         def named_sidecheck(screen):
             return sidecheck(screen)
 
-        self.add(Checker(named_sidecheck, funvar=["screen"], name="SideCheck"), dofunction, rv, raise_, clear)
+        return self.add(Checker(named_sidecheck, funvar=["screen"], name="SideCheck"), dofunction, rv, raise_, clear)
 
     def click(self, *args, pre_delay=0., post_delay=0., interval=0, retry=None, **kwargs):
         def f():
@@ -494,6 +494,7 @@ class ElementChecker(FunctionChecker):
                 return False
 
         self.add(Checker(ClearTimeout), clear=True)
+        self._a._last_lock_FC = self
         return super().lock(delay, timeout, until, is_raise)
 
 
