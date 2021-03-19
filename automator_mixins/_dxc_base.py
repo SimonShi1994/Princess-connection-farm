@@ -167,10 +167,12 @@ class DXCBaseMixin(FightBaseMixin):
 
             def do_fun():
                 if drag == "left":
-                    self.Drag_Left(origin=True)
+                    self.click(10, 242)
+                    # self.Drag_Left(origin=True)
                     time.sleep(1.5)
                 elif drag == "right":
-                    self.Drag_Right(origin=True)
+                    # self.Drag_Right(origin=True)
+                    self.click(950, 242)
                     time.sleep(1.5)
                 self.click(DXC_ENTRANCE[dxc_id])
 

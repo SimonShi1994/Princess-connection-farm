@@ -131,7 +131,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
                 pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
                 self.dixiacheng(skip)
-                return False
+                return
             try:
                 if self.is_exists('img/yunhai.bmp') and dixiacheng_times == 1:
                     self.dxc_switch = 0
@@ -142,7 +142,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 elif self.is_exists('img/yunhai.bmp') and dixiacheng_times == 0:
                     self.dxc_switch = 1
                     pcr_log(self.account).write_log(level='info', message='%s今天已经打过地下城' % self.account)
-                    return False
+                    return
                 if self.dxc_switch == 0:
                     # 不加可能会导致卡顿找不到图片
                     self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(130, 259)])
@@ -151,14 +151,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     pcr_log(self.account).write_log(level='warning', message='识别不到次数！')
                     # LOG().Account_undergroundcity(self.account)
                     self.dxc_switch = 1
-                    return False
+                    return
                 self.d.click(1, 1)
                 # 这里防止卡可可萝
             except Exception as error:
                 pcr_log(self.account).write_log(level='warning', message='3-检测出异常{}'.format(error))
                 pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！')
                 self.dixiacheng(skip)
-                return False
+                return
             try:
                 if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)) and dixiacheng_times <= 1:
                     # print('>>>', dixiacheng_times)
@@ -167,7 +167,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 pcr_log(self.account).write_log(level='warning', message='地下城次数为非法值！')
                 pcr_log(self.account).write_log(level='warning', message='OCR无法识别！即将调用 非OCR版本地下城函数！\r\n')
                 self.dixiacheng(skip)
-                return False
+                return
 
         while self.dxc_switch == 0:
             if stuck_today:
@@ -330,18 +330,24 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         :return:
         """
         if force_as_ocr_as_possible:
+            pcr_log(self.account).write_log("info", f"{self.account}-即将调用OCR版地下城！")
             self.dixiacheng_ocr(skip)
             return
-        # 首页 -> 地下城选章/（新号）地下城章内
-        self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
-        self.Drag_Left(origin=True)
-        self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
-                         at=(837, 92, 915, 140))
-        # 防止一进去就是塔币教程
-        self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.dxc_kkr, retry=3, at=(738, 420, 872, 442))
-        # 防止教程
-        self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.juqing_kkr, at=(738, 420, 872, 442),
-                      retry=3)
+
+        out = self.enter_dxc(1)
+        if not out:
+            pcr_log(self.account).write_log("info", f"{self.account}-已经刷过地下城！")
+            self.lock_home()
+            return
+        # # 首页 -> 地下城选章/（新号）地下城章内
+        # self.lock_img('img/dixiacheng.jpg', elseclick=[(480, 505)], elsedelay=0.5, at=(837, 92, 915, 140))  # 进入地下城
+        # self.lock_no_img('img/dixiacheng.jpg', elseclick=[(900, 138)], elsedelay=0.5, alldelay=5,
+        #                  at=(837, 92, 915, 140))
+        # # 防止一进去就是塔币教程
+        # self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.dxc_kkr, retry=3, at=(738, 420, 872, 442))
+        # # 防止教程
+        # self.lock_img('img/chetui.jpg', elseclick=[(1, 1)], side_check=self.juqing_kkr, at=(738, 420, 872, 442),
+        #               retry=3)
 
         # 撤退 如果 已经进入
         while True:
