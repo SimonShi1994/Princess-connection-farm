@@ -7,7 +7,7 @@ import threading
 import time
 from collections import OrderedDict
 from pathlib import Path
-from typing import Optional, Union, Type
+from typing import Optional, Union, Type, Callable, Any
 
 import cv2
 import numpy as np
@@ -168,7 +168,8 @@ class BaseMixin:
             self.lport: Optional[int] = None
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
 
-        self.ES=ExceptionSet(self)
+        self.ES = ExceptionSet(self)
+        self.headers_group = {}
         self.register_basic_ES()
 
     def register_basic_ES(self):
@@ -347,15 +348,67 @@ class BaseMixin:
             print('暂停-错误:', error)
             return True
         _ck()
-    def getFC(self,header=True):
+
+    def setFCHeader(self, group_name, FCFun: Callable[[ElementChecker], Any], enable=True, unique=True):
+        """
+        给self.getFC中添加一些header。
+        默认的_move_check和ExceptionSet的header不会收到影响。
+        <可用于with>
+        :param group_name: 挂载header的名称
+        :param FCFun: FC控制函数，参数为FC，里面应该调用一系列FC的成员函数
+        :param enable: 初始化可用状态（自己被调用时，会设置自己enable=False防止重复调用）
+        :param unique: 设置为True可以在自己被调用时屏蔽其它的Header
+        """
+        self.headers_group[group_name] = dict(FCFun=FCFun, enable=enable, unique=unique)
+        outer = self
+
+        class _clear_when_exit:
+            def __enter__(self):
+                pass
+
+            def __exit__(self):
+                outer.clearFCHeader(group_name)
+
+        return _clear_when_exit()
+
+    def clearFCHeader(self, group_name):
+        if group_name in self.headers_group:
+            del self.headers_group[group_name]
+
+    def getFC(self, header=True):
         """
         获得包含自身实例及异常集的FunctionChecker
         """
-        FC=ElementChecker(self)
+        FC = ElementChecker(self)
         if header:
-            FC.header=True
-            FC.add(Checker(self._move_check,name="_move_check"),clear=True)
-            FC.bind_ES(self.ES,name="ExceptionSet")
+            FC.add(Checker(self._move_check, name="_move_check"), clear=True)
+            FC.bind_ES(self.ES, name="ExceptionSet")
+            FC.header = True
+            for myheaders in self.headers_group.values():
+                FCFun = myheaders["FCFun"]
+                enable = myheaders["enable"]
+                unique = myheaders["unique"]
+                if enable is False:
+                    continue
+                enable_list = []
+
+                def _set():
+                    if unique:
+                        for h in self.headers_group.values():
+                            if h["enable"]:
+                                enable_list.append(h)
+                                h["enable"] = False
+                    else:
+                        enable_list.append(myheaders)
+                        myheaders["enable"] = False
+
+                def _unset():
+                    for h in enable_list:
+                        h["enable"] = True
+
+                FC.add_process(_set, name="Enter My Header")
+                FCFun(FC)
+                FC.add_process(_unset, name="Exit My Header")
         else:
             FC.header=False
         return FC
@@ -1055,7 +1108,8 @@ class BaseMixin:
             elif self.click_img(screen_shot_, 'img/juqing/tiaoguo_2.bmp'):
                 time.sleep(3)
             elif self.click_img(screen_shot_, 'img/zhuye.jpg', at=(46, 496, 123, 537)):
-                pass
+                for _ in range(5):
+                    self.click(MAIN_BTN["zhuye"])  # Speed  Up CLick
             elif self.click_img(screen_shot_, 'img/juqing/caidanyuan.bmp', at=(898, 23, 939, 62)):
                 time.sleep(0.7)
                 self.click(804, 45)
@@ -1067,7 +1121,8 @@ class BaseMixin:
                     self.click(390, 369)
                     time.sleep(1)
             else:
-                self.click(1, 100)
+                for _ in range(6):
+                    self.click(1, 100)  # Speed Up Click
             count[0] = 0
 
         FC.add(Checker(f))

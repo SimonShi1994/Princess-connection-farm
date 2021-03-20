@@ -130,6 +130,7 @@ MAIN_BTN = {
     # 圣迹调查
     "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)),  # 圣迹调查
     "shengji": p(736, 267, img="img/shengji/shengjidiaocha.bmp", at=(700, 225, 777, 302)),
+    "karin_middle": p(img="img/girl/karin_middle.bmp", at=(410, 309, 572, 390)),
 
     # 右侧的kkr
     "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),

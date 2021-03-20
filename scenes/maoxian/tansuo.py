@@ -9,6 +9,7 @@ class TanSuoMenu(SevenBTNMixin):
         super().__init__(*args, **kwargs)
         self.scene_name = "TanSuoMenu"
         self.feature = self.fun_feature_exist(MAIN_BTN["jingyanzhiguanqia"])
+        self.initFC = self.getFC(False).getscreen().add_sidecheck(self._a.right_kkr)
 
     def goto_jingyan(self) -> "TanSuoJingYan":
         return self.goto(TanSuoJingYan, gotofun=self.fun_click(MAIN_BTN["jingyanzhiguanqia"]), use_in_feature_only=True)
