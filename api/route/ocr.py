@@ -50,6 +50,10 @@ def baidu_ocr():
     if img:
         time.sleep(random.uniform(1.5, 2.05))
         part = queue.get()
-        result = client.basicGeneral(part)
-        return result
+        try:
+            result = client.basicGeneral(part)
+            return result
+        except Exception as e:
+            result = client.basicGeneral(part)
+            return result
     return 400
