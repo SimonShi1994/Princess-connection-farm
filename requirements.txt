@@ -1,8 +1,7 @@
 adbutils -i https://pypi.douban.com/simple
 websocket_client -i https://pypi.douban.com/simple
 pandas -i https://pypi.douban.com/simple
-xlrd -i https://pypi.douban.com/simple
-xlutils -i https://pypi.douban.com/simple
+openpyxl -i https://pypi.douban.com/simple
 gevent==20.6.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 psutil==5.7.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 baidu-aip==2.2.18.0
