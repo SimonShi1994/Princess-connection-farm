@@ -1,0 +1,15 @@
+{
+ "enable": true,
+ "order": 0,
+ "switches": [
+  {
+   "flags": [
+    "hz"
+   ],
+   "default": true,
+   "user": {},
+   "group": {},
+   "special": {}
+  }
+ ]
+}

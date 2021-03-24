@@ -8,8 +8,7 @@ from typing import Optional
 import cv2
 import numpy as np
 import pandas as pd
-import xlrd
-from xlutils.copy import copy
+import openpyxl
 
 from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
@@ -24,7 +23,6 @@ from core.usercentre import get_all_group
 from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, make_it_as_juese_as_possible, \
     get_time_str, checkNameValid
 from ._base import BaseMixin
-
 
 class ToolsMixin(BaseMixin):
     """
@@ -290,22 +288,22 @@ class ToolsMixin(BaseMixin):
 
             if acc_nature == 0:
                 # 小号/农场号输出格式
-                xls_path = 'xls/%s-pcr_farm_info.xls' % self.today_date
+                xls_path = 'xls/%s-pcr_farm_info.xlsx' % self.today_date
             elif acc_nature == 1:
                 # 大号统一文件格式
-                xls_path = 'xls/pcr_farm_info.xls'
+                xls_path = 'xls/pcr_farm_info.xlsx'
             else:
                 # 乱输入就这样的格式
-                xls_path = 'xls/%s-pcr_farm_info.xls' % self.today_date
+                xls_path = 'xls/%s-pcr_farm_info.xlsx' % self.today_date
 
             # 指定生成的Excel表格名称
-            file_path = pd.ExcelWriter(xls_path)
+            file_path = pd.ExcelWriter(xls_path, engine='openpyxl')
             # 将空的单元格替换为空字符
             pf.fillna('', inplace=True)
             # 判断文件是否存在
             if not os.path.exists(xls_path):
                 # 输出
-                pf.to_excel(file_path, encoding='utf-8', index=False)
+                pf.to_excel(file_path, engine='openpyxl', encoding='utf-8', index=False)
                 # 保存表格
                 file_path.save()
                 return acc_info_dict
@@ -313,17 +311,15 @@ class ToolsMixin(BaseMixin):
 
             # 保存表格
             index = len(list(acc_info_list))  # 获取需要写入数据的行数
-            workbook = xlrd.open_workbook(file_path)  # 打开表格
-            sheets = workbook.sheet_names()  # 获取表格中的所有表格
-            worksheet = workbook.sheet_by_name(sheets[0])  # 获取表格中所有表格中的的第一个表格
-            rows_old = worksheet.nrows  # 获取表格中已存在的数据的行数
-            new_workbook = copy(workbook)  # 将xlrd对象拷贝转化为xlwt对象
-            new_worksheet = new_workbook.get_sheet(0)  # 获取转化后工作簿中的第一个表格
+            workbook = openpyxl.load_workbook(file_path)  # 打开表格
+            sheets = workbook.sheetnames  # 获取表格中的所有表格
+            worksheet = workbook[sheets[0]]  # 获取表格中所有表格中的的第一个表格
+            rows_old = worksheet.max_row  # 获取表格中已存在的数据的行数
             for i in range(0, index):
                 for j in range(0, len(list(acc_info_list)[i])):
-                    # 追加写入数据，注意是从i+rows_old行开始写入
-                    new_worksheet.write(i + rows_old, j, list(acc_info_dict.values())[j])
-            new_workbook.save(file_path)  # 保存表格
+                    # 追加写入数据
+                   worksheet.cell(row= i + 1 + rows_old, column = 1 + j).value = list(acc_info_dict.values())[j]
+            workbook.save(file_path)  # 保存表格
 
         return acc_info_dict
 

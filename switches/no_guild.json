@@ -1,0 +1,17 @@
+{
+ "enable": true,
+ "order": 0,
+ "switches": [
+  {
+   "flags": [
+    "no_guild"
+   ],
+   "default": false,
+   "user": {},
+   "group": {
+    "no_guild": true
+   },
+   "special": {}
+  }
+ ]
+}

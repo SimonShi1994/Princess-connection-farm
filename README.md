@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.6dev.20210320
+ # Princess connection 公主连结农场脚本v2.6dev.20210324
 
  > Develop V2.6: 增加场景支持；增加FunctionChecker模块。 
 
@@ -182,6 +182,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## :hammer:更新历史:wrench:   
+2021/3/24 By UVJkiNTQ
+
+- 添加了xlsx导出支持，可兼容pandas>=1.2.0
+- 移除了xls导出
 
 2021/3/16 By TheAutumnOfRice
 
