@@ -121,7 +121,10 @@ def DEBUG_RECORD(fun):
         rd.running[id(cur)] = cur
         out = fun(self, *args, **kwargs)
         cur['end'] = rd.gettime()
-        del rd.running[id(cur)]
+        try:
+            del rd.running[id(cur)]
+        except:
+            pass
         return out
 
     return new_fun

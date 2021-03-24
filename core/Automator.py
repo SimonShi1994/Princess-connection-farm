@@ -15,13 +15,13 @@ from automator_mixins._routine import RoutineMixin
 from automator_mixins._shuatu import ShuatuMixin
 from automator_mixins._tools import ToolsMixin
 from core.MoveRecord import moveset, UnknownMovesetException
+from core.bot import Bot
 from core.log_handler import pcr_log
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
 from core.pcr_config import trace_exception_for_debug, captcha_skip
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import check_task_dict, list_all_flags, is_in_group
 from core.valid_task import VALID_TASK, getcustomtask
-from core.bot import Bot
 
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
@@ -170,7 +170,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 try:
                     self.ms.run(continue_=continue_)
                 except UnknownMovesetException as e:
-                    pcr_log(account).write_log("warning", message=f'记录文件冲突，自动刷新运行记录：{e}')
+                    pcr_log(account).write_log("warning", message=f'记录文件冲突，自动刷新运行记录：{str(e)}')
                     self.ms.run(continue_=False)
                 # 刷完啦！标记一下”我刷完了“
                 self.task_finished()
@@ -183,14 +183,14 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                     pcr_log(account).write_log(level='warning', message=f'强制终止-重启失败！')
                 raise e
             except FastScreencutException as e:
-                pcr_log(account).write_log(level='error', message=f'快速截图出现错误，{e},尝试重新连接……')
+                pcr_log(account).write_log(level='error', message=f'快速截图出现错误，{str(e)},尝试重新连接……')
                 self.fix_reboot(not before_)
                 self.init_fastscreen()
             except OfflineException as e:
-                pcr_log(account).write_log('error', message=f'main-检测到设备离线：{e}')
+                pcr_log(account).write_log('error', message=f'main-检测到设备离线：{str(e)}')
                 return False
             except ReadTimeoutException as e:
-                pcr_log(account).write_log('error', message=f'main-检测到连接超时，{e}，尝试重新连接……')
+                pcr_log(account).write_log('error', message=f'main-检测到连接超时，{str(e)}，尝试重新连接……')
                 self.init_device(self.address)
             except Exception as e:
                 retry += 1
@@ -203,26 +203,26 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                     # 错误截图日志为0级消息，后面可能会改成warning级别或者error
                     Bot().server_bot('', '', '', self.last_screen, f"模拟器：{self.address}\n"
                                                                    f"账号：{self.account}的运行错误重启截图\n"
-                                                                   f"错误原因：{e}")
+                                                                   f"错误原因：{str(e)}")
                 except Exception as es:
-                    pcr_log(account).write_log(level="error", message=f"错误截图保存失败：{es}")
+                    pcr_log(account).write_log(level="error", message=f"错误截图保存失败：{str(es)}")
                 if trace_exception_for_debug:
                     tb = traceback.format_exc()
                     pcr_log(account).write_log(level="error", message=tb)
                 last_exception = e
                 continue_ = True
                 if retry == max_retry:
-                    pcr_log(account).write_log(level="error", message=f"main-检测出异常{e} 超出最大重试次数，跳过账号！")
+                    pcr_log(account).write_log(level="error", message=f"main-检测出异常{str(e)} 超出最大重试次数，跳过账号！")
                     # 标记错误！
                     self.task_error(str(last_exception))
                     self.fix_reboot(False)
                     return False
-                pcr_log(account).write_log(level='error', message=f'main-检测出异常{e}，重启中 次数{retry}/{max_retry}')
+                pcr_log(account).write_log(level='error', message=f'main-检测出异常{str(e)}，重启中 次数{retry}/{max_retry}')
 
                 try:
                     self.fix_reboot(not before_)
                 except Exception as e:
-                    pcr_log(account).write_log(level='error', message=f'main-自动重启失败，跳过账号!{e}')
+                    pcr_log(account).write_log(level='error', message=f'main-自动重启失败，跳过账号!{str(e)}')
                     self.task_error(str(last_exception))
                     try:
                         self.fix_reboot(False)

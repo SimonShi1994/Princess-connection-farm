@@ -288,11 +288,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     break
                 time.sleep(self.change_time)
                 self.click(1, 1)  # 跳过结算
-                if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
+                screen_shot_ = self.getscreen()
+                if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(779, 421, 833, 440)):
                     self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(808, 435)])
                     self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
                     continue
-                elif self.is_exists(DXC_ELEMENT["sytzcs"]):
+                elif self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
+                    break
+                elif self.is_exists("img/yunhai.bmp", screen=screen_shot_, threshold=0.975):
                     break
                 else:
                     self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画

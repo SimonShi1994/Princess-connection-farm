@@ -224,8 +224,11 @@ class ReturnValue(Exception):
 
 class LockError(Exception):
     def __init__(self, *args):
+        self.args = args
         super().__init__(*args)
 
+    def __repr__(self):
+        return f"<{type(self)}> {','.join(self.args)}"
 
 class LockTimeoutError(LockError):
     def __init__(self, *args):
