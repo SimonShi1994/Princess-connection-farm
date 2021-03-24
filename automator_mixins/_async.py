@@ -293,7 +293,7 @@ class AsyncMixin(ToolsMixin):
 
     @timeout(180, "重启超时，三分钟仍然未响应")
     def _fix_reboot(self, back_home):
-        # self.debug_record.clear()
+        self.debug_record.clear()
         # 重启逻辑：重启应用，重启异步线程
         self.stop_th()
         self.d.session("com.bilibili.priconne")
