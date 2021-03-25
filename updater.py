@@ -115,7 +115,7 @@ class Pcr_Downloader:
 
     def move_user_option(self):
         opt = ['users', 'tasks', 'batches', 'xls', 'log', 'error_screenshot', 'schedules', 'groups', 'config.ini',
-               'rec', 'switches']
+               'rec', 'switches', 'customtask', 'debug_imgs', 'ocrfix', 'outputs', 'PCRError']
         # 用户所的配置文件
         if not os.path.exists('config.ini'):
             print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
