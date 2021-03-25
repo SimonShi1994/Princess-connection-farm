@@ -70,7 +70,7 @@ MAIN_BTN = {
     # 冒险按钮
     "maoxian": p(480, 515, img="img/home/maoxian.bmp", at=(421, 447, 535, 535)),
     # 地下城
-    "dxc": p(935, 77, img="img/home/dxc.bmp", at=(848, 101, 898, 145)),
+    "dxc": p(img="img/home/dxc.bmp", at=(841, 94, 903, 126)),
     # 主线关卡
     "zhuxian": p(500, 90, img="img/home/zhuxian.bmp", at=(526, 117, 587, 186)),
     # 公会之家
