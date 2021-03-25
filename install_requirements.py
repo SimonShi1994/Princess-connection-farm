@@ -17,7 +17,7 @@ def is_installed(packetname):
 
 
 USE_PIP = "pip"
-USE_I = r"https://pypi.tuna.tsinghua.edu.cn/simple/"
+USE_I = r"http://mirrors.aliyun.com/pypi/simple/"
 
 
 def install(packetname, pipname=None, use_i=None, user=False):
@@ -80,8 +80,7 @@ if __name__ == "__main__":
     print("正在安装：系统状态库……")
     install("psutil", "psutil==5.7.2")
     print("正在安装：xls表格操作库……")
-    install("xlrd", "xlrd==1.2.0")
-    install("xlutils", "xlutils==2.0.0")
+    install("openpyxl", "openpyxl==3.0.7")
     print("--------------------app部分---------------------")
     print("不使用OCR可以不安装。")
     install("flask", "flask==1.1.2")
