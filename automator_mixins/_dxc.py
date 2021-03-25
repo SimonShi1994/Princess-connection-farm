@@ -299,6 +299,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     break
                 else:
                     self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
+                    self.click(10, 242)  # 左点
             # 执行完后再检测一轮后跳出大循环 self.lock_no_img('img/dxc/chetui.bmp', elseclick=[(808, 435), (588, 371)], retry=20,
             # at=(779, 421, 833, 440)) self.lock_img('img/yunhai.bmp')
             break
