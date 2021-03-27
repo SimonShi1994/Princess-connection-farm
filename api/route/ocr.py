@@ -44,6 +44,9 @@ def local_ocr():
 
 @ocr_api.route('/baidu_ocr/', methods=['POST'])
 def baidu_ocr():
+    def sent_ocr(ocr_img):
+        ocr_result = client.basicGeneral(ocr_img)
+        return ocr_result
     # 接收图片
     img = request.files.get('file')
     queue.put((img.read()))
@@ -51,9 +54,9 @@ def baidu_ocr():
         time.sleep(random.uniform(1.5, 2.05))
         part = queue.get()
         try:
-            result = client.basicGeneral(part)
+            result = sent_ocr(part)
             return result
         except Exception as e:
-            result = client.basicGeneral(part)
+            result = sent_ocr(part)
             return result
     return 400
