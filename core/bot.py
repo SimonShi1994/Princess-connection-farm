@@ -68,7 +68,7 @@ class Bot:
         self.qqbot_url1 = self.private_url.get(f"{self.qqbot_select}_private_url", "")
         self.qqbot_url2 = self.group_url.get(f"{self.qqbot_select}_group_url", "")
 
-    def server_bot(self, s_level, message='', acc_state='', img=None, img_title=None):
+    def server_bot(self, s_level, message='', acc_state='', img=None, img_title=''):
         """
         消息推送
         :param s_level:
@@ -101,9 +101,9 @@ class Bot:
                 self.memory_info = "内存使用：%0.2fG||使用率%0.1f%%||剩余内存：%0.2fG" % (used_memory, memory_percent, free_memory)
                 # print(memory_info)
                 # 兼容老接口
-                if len(s_sckey) != 0:
+                if len(s_sckey) != 0 and img == '':
                     self.wechat_bot(s_level, message=message, acc_state=acc_state)
-                if len(qqbot_key) != 0:
+                if len(qqbot_key) != 0 and img == '':
                     self.qq_bot(s_level, message=message, acc_state=acc_state)
                 if len(tg_token) != 0:
                     self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
@@ -130,7 +130,7 @@ class Bot:
         try:
             self.req_post.post(self.server_nike_url, proxies=BOT_PROXY, params=info)
         except Exception as e:
-            pass
+            self.wechat_bot(s_level, message=message, acc_state=acc_state)
             # pcr_log("__SERVER_BOT__").write_log("error", f"ServerBot发送失败：{e}")
         # 不因为0级消息而清空消息队列
 
@@ -226,18 +226,19 @@ class Bot:
                     tmp_dict = {'msg': sent, qq: self.qq}
                     self.req_post.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
         except Exception as e:
-            pass
+            self.qq_bot(s_level, message=message, acc_state=acc_state)
 
-    def tg_bot(self, s_level, message='', acc_state='', img=None, img_title=None):
+    def tg_bot(self, s_level, message='', acc_state='', img=None, img_title=''):
         # TG推送机器人 By:CyiceK
         # img传进来的是cv2格式
         if debug:
             print("Now TG BOT!")
         try:
+            # Markdown
             # To escape characters '_', '*', '`', '[' outside of an entity, prepend the characters '\' before them.
-
             message = message.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
             acc_state = acc_state.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
+            img_title = img_title.replace('_', '\_').replace('*', '\*').replace('`', '\`').replace('[', '\[')
 
             if img is not None:
 
@@ -314,3 +315,5 @@ class Bot:
 
         except Exception as e:
             print('TG推送服务器错误', e)
+            self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
+

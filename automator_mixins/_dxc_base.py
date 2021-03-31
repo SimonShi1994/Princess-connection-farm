@@ -1,8 +1,10 @@
 import time
 
 from automator_mixins._base import DEBUG_RECORD
-from core.constant import DXC_ELEMENT, FIGHT_BTN, MAIN_BTN, DXC_ENTRANCE, DXC_NUM, JJC_BTN
+from core.constant import DXC_ELEMENT, FIGHT_BTN, MAIN_BTN, DXC_NUM, JJC_BTN, DXC_ENTRANCE_DRAG, \
+    JUQING_BTN, DXC_ENTRANCE
 from core.cv import UIMatcher
+from core.pcr_checker import ReturnValue
 from ._fight_base import FightBaseMixin
 
 
@@ -26,6 +28,12 @@ class DXCBaseMixin(FightBaseMixin):
         if screen_shot is None:
             screen_shot = self.getscreen()
         # time.sleep(2)  # 等妈出现
+        if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen_shot):
+            self.click_btn(JUQING_BTN["caidanyuan"], wait_self_before=True, until_appear=JUQING_BTN["tiaoguo_1"])  # 菜单
+            self.click_btn(JUQING_BTN["tiaoguo_1"], until_appear=JUQING_BTN["tiaoguo_2"])  # 跳过
+            self.click_btn(JUQING_BTN["tiaoguo_2"], until_disappear=JUQING_BTN["tiaoguo_2"])  # 蓝色跳过
+            return True
+
         if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen_shot):
             self.chulijiaocheng(turnback=None)
             if self.is_exists(DXC_ELEMENT["dxc_in_shop"]):
@@ -58,7 +66,7 @@ class DXCBaseMixin(FightBaseMixin):
             1：战胜
             2：战败
         """
-        self.wait_for_stable(at=DXC_ELEMENT["map"], delay=1.5)  # 等待小人走完
+        self.wait_for_stable(at=DXC_ELEMENT["map"], delay=1.5, threshold=0.1, max_retry=5)  # 等待小人走完
         # 点人
         state = self.lock_no_img(DXC_ELEMENT["dxc_shop_btn"], elseclick=(x, y), elsedelay=10, retry=2)
         if not state:
@@ -121,29 +129,61 @@ class DXCBaseMixin(FightBaseMixin):
         :return: 是否进入成功
         
         """
+
+        def fun_click(*args, **kwargs):
+            def fun():
+                self.click(*args, **kwargs)
+
+            return fun
+
         # 锁定主页
         self.lock_home()
         # 进入冒险
         self.lock_img(MAIN_BTN["dxc"], elseclick=MAIN_BTN["maoxian"], elsedelay=0.5)
         # 进入地下城
         state = self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5,
-                               until_appear={DXC_ELEMENT["dxc_choose_shop"]: 1, DXC_ELEMENT["dxc_shop_btn"]: 2})
+                               until_appear={DXC_ELEMENT["dxc_choose_shop"]: 1, DXC_ELEMENT["dxc_shop_btn"]: 2},
+                               side_check=self.juqing_kkr)
         if state == 1:
             self.wait_for_stable(delay=3)
-            screen_shot_ = self.getscreen()
-            if self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
-                # 剩余挑战次数的图片存在，要么已经打过地下城，没次数了，要么还没有打呢。
-                # 额 0/1 和 1/1 中可能性更高的那个
-                p0 = self.img_prob(DXC_ELEMENT["0/1"], screen=screen_shot_)
-                p1 = self.img_prob(DXC_ELEMENT["1/1"], screen=screen_shot_)
-                if p0 > p1:
+
+            def CishuCheck():
+                screen = self.last_screen
+                p0 = self.img_prob(DXC_ELEMENT["0/1"], screen=screen)
+                p1 = self.img_prob(DXC_ELEMENT["1/1"], screen=screen)
+                if p0 > p1 and p0 > 0.8:
                     self.log.write_log("info", "地下城次数已经用完，放弃。")
-                    return False
+                    raise ReturnValue("0/1")
                 else:
-                    # 没刷完，进入地下城
-                    self.click_btn(DXC_ENTRANCE[dxc_id], elsedelay=8, until_appear=DXC_ELEMENT["quyuxuanzequeren_ok"])
-                    self.click_btn(DXC_ELEMENT["quyuxuanzequeren_ok"],
-                                   until_appear={DXC_ELEMENT["chetui"]: 1, DXC_ELEMENT["dxc_kkr"]: 2})
+                    pass
+
+            FC = self.getFC().getscreen()
+            # 开图跳脸防止
+            FC.add_sidecheck(self.juqing_kkr)
+            FC.exist(DXC_ELEMENT["sytzcs"], CishuCheck, rv=None)
+            FC.exist(DXC_ELEMENT["quyuxuanzequeren_ok"], rv=True)
+            FC.exist(DXC_ELEMENT["dxc_shop_btn"], rv="IN")
+            drag = DXC_ENTRANCE_DRAG[dxc_id]
+
+            def do_fun():
+                if drag == "left":
+                    self.click(10, 242)
+                    # self.Drag_Left(origin=True)
+                    time.sleep(1.5)
+                elif drag == "right":
+                    # self.Drag_Right(origin=True)
+                    self.click(950, 242)
+                    time.sleep(1.5)
+                self.click(DXC_ENTRANCE[dxc_id])
+
+            FC.add_intervalprocess(do_fun, interval=10)
+            out = FC.lock()
+            if out == "0/1":
+                return False
+            elif out != "IN":
+                self.click_btn(DXC_ELEMENT["quyuxuanzequeren_ok"],
+                               until_appear={DXC_ELEMENT["chetui"]: 1, DXC_ELEMENT["dxc_kkr"]: 2})
+                time.sleep(2)
         self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5, side_check=self.dxc_kkr)  # 锁定撤退
         return True
 

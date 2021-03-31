@@ -347,6 +347,9 @@ def ShowPCRPerformance():
     print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", "已开启" if captcha_popup else "未开启")
     print("* 缓存清理 clear_traces_and_cache：", "已开启" if clear_traces_and_cache else "未开启")
 
+def ShowTaskInfo():
+    print("* 如果有OCR版本，强制使用OCR版本的任务。", "已开启" if force_as_ocr_as_possible else "未开启")
+
 
 def ShowDebugInfo():
     print("* 输出Debug信息 debug：", "已开启" if debug else "未开启")
@@ -393,6 +396,7 @@ def CheckConstantImgs():
 
 def ShowInfo():
     ShowDebugInfo()
+    ShowTaskInfo()
     ShowServerChan()
     ShowOCR()
     ShowPCRPerformance()
@@ -449,7 +453,7 @@ if __name__ == "__main__":
             s.mount('http://', HTTPAdapter(max_retries=5))
             s.mount('https://', HTTPAdapter(max_retries=5))
             # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
-            api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/master"
+            api_url = f"https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/{trace_tree}"
             all_info = s.get(api_url)
             if all_info.status_code == 403:
                 update_info = "最新版本为 {请求频繁，当前无法连接到github！请休息2分钟后再试}"
@@ -457,20 +461,22 @@ if __name__ == "__main__":
                 all_info = all_info.json()
                 new_time = all_info["commit"].get("committer").get("date")
                 new_messages = all_info["commit"].get("message")
-                update_info = f"最新版本为 {new_time} -> 更新内容为 {new_messages}"
+                update_info = f"{trace_tree}分支最新版本为 {new_time} -> 更新内容为 {new_messages}"
             else:
                 update_info = "最新版本为 {当前无法连接到github！}"
         except:
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.5.20210304")
+        print("当前版本为 Ver 2.6dev.20210325")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
         print("app 启动app.py", end=" ")
         print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
         print("[内部模式：", "已开启" if inline_app else "未开启", "]")
+        if force_as_ocr_as_possible:
+            print("注意：你正在强制OCR模式下运行(force_as_ocr_as_possible)，app必须开启！")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("edit 进入编辑模式")
@@ -544,6 +550,7 @@ if __name__ == "__main__":
                     print("task [-d (device_id)] 查看某个device当前的task列表")
                     print("skip [-d (device_id)] [-t (task_id)] 跳过当前任务；若指定-t，则跳转到指定任务（通过task查看ID）")
                     print("!!!________FOR DEBUG________!!!")
+                    # print("last_screen [-d (device_id)] 监视某一个设备的最后一次截图")
                     print("u2rec [-d (device_id)] 查看某个device的u2运行记录")
                     print("rec [-d (device_id)] [-r] 查看某个device的Automator运行记录,-r只查看running的记录。")
                     print("debug (on/off) [-d (device_id)] [-m (module_name)] 打开/关闭某个设备的调试显示，-m可指定某一个模块，默认为全部模块。")
