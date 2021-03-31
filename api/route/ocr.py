@@ -2,6 +2,7 @@ import queue
 import random
 import time
 from flask import Blueprint, jsonify, request
+from retrying import retry
 
 from aip import AipOcr
 from core.pcr_config import ocr_mode, baidu_apiKey, baidu_secretKey, baidu_QPS
@@ -44,19 +45,22 @@ def local_ocr():
 
 @ocr_api.route('/baidu_ocr/', methods=['POST'])
 def baidu_ocr():
-    def sent_ocr(ocr_img):
-        ocr_result = client.basicGeneral(ocr_img)
-        return ocr_result
     # 接收图片
     img = request.files.get('file')
     queue.put((img.read()))
     if img:
         time.sleep(random.uniform(1.5, 2.05))
         part = queue.get()
-        try:
-            result = sent_ocr(part)
-            return result
-        except Exception as e:
-            result = sent_ocr(part)
-            return result
+
+        @retry(stop_max_attempt_number=5)
+        def sent_ocr():
+            try:
+                ocr_result = client.basicGeneral(part)
+                return ocr_result
+            except Exception as e:
+                raise Exception('BaiDuOCR发生了错误，原因为:{}'.format(e))
+
+        result = sent_ocr()
+        return result
+
     return 400

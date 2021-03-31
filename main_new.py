@@ -468,7 +468,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.6dev.20210325")
+        print("当前版本为 Ver 2.6dev.20210331")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")

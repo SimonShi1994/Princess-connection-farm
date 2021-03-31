@@ -1404,9 +1404,11 @@ class BaseMixin:
             result = requests.post(url="http://127.0.0.1:5000/ocr/baidu_ocr/", files=files)
             # 原生输出有助于开发者
             result = result.json().get('words_result')[0].get('words')
+            if debug:
+                print('百度OCR识别结果：%s' % result)
             return result
         except:
-            pcr_log(self.account).write_log(level='error', message='百度云识别失败！请检查apikey和secretkey以及截图范围返回结果'
+            pcr_log(self.account).write_log(level='error', message='百度OCR识别失败！请检查apikey和secretkey以及截图范围返回结果'
                                                                    '是否有误！')
             return -1
 
