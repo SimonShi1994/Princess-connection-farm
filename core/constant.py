@@ -584,7 +584,7 @@ DXC_COORD = {
         5: p(502, 259),
     }
 }
-MAX_MAP = 20
+MAX_MAP = 21
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -685,6 +685,11 @@ HARD_COORD = {
         1: p(215, 270),
         2: p(476, 331),
         3: p(766, 269),
+    },
+    21: {
+        1: p(220, 277),
+        2: p(487, 330),
+        3: p(765, 265),
     }
 }
 
@@ -761,15 +766,21 @@ ZHUXIAN_ID = {
     18: p(img="img/zhuxian/18L.bmp", at=(424, 75, 508, 88)),
     19: p(img="img/zhuxian/19L.bmp", at=(422, 76, 507, 88)),
     20: p(img="img/zhuxian/20L.bmp", at=(419, 74, 520, 88)),
+    21: p(img="img/zhuxian/21L.bmp", at=(421, 75, 516, 86)),
+
 }
 ZHUXIAN_XXXYY_ID = {
     # 小行星原野你长得太像了，无奈增加二级分类
     18: p(img="img/zhuxian/18R.bmp", at=(532, 73, 561, 88)),
     19: p(img="img/zhuxian/19R.bmp", at=(530, 73, 562, 89)),
-    # 20: p(img="img/zhuxian/20R.bmp",at=(538,74,567,89)),  # 卡斯塔里森林
+}
+ZHUXIAN_KSTLYSL_ID = {
+    20: p(img="img/zhuxian/20R.bmp", at=(538, 74, 567, 89)),  # 卡斯塔里森林
+    21: p(img="img/zhuxian/21R.bmp", at=(536, 75, 563, 88)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
+    (20, 21): ZHUXIAN_KSTLYSL_ID,
 }
 
 NORMAL_COORD = {
@@ -1180,7 +1191,27 @@ NORMAL_COORD = {
             2: p(192, 266),
             1: p(243, 379),
         }
-    }
+    },
+    21: {
+        "right": {
+            14: p(779, 210),
+            13: p(716, 340),
+            12: p(593, 259),
+            11: p(589, 399),
+            10: p(433, 397),
+            9: p(447, 254),
+            8: p(294, 220),
+        },
+        "left": {
+            7: p(577, 268),
+            6: p(682, 361),
+            5: p(543, 400),
+            4: p(414, 351),
+            3: p(379, 221),
+            2: p(265, 296),
+            1: p(174, 395),
+        }
+    },
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(204, 110, 287, 136)),
