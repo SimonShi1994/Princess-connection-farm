@@ -22,6 +22,10 @@ log
 /developutils/*.bmp
 /error_screenshot/
 outputs/
+*.cmd
+xls/
+PCRError/
+pcrdata/data.db
 
 # 测试用文件夹
 /test/
