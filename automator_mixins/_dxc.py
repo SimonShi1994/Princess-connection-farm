@@ -40,6 +40,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             pcr_log(self.account).write_log("info", f"{self.account}-已经刷过地下城！")
             self.lock_home()
             return
+        while True:
+            if self.is_exists('img/dxc/chetui.bmp'):
+                time.sleep(1.2)
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                              threshold=0.98)
+                break
+            else:
+                self.lock_img(DXC_ELEMENT["sytzcs"], side_check=self.dxc_kkr)
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数
