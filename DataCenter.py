@@ -634,7 +634,7 @@ def ZB_ST_LACK(args):
         print(table)
 
 
-def ZB_ST_ADVICE(args):
+def ZB_ST_ADVICE(args, verbose=True):
     from rich import print
     max_tu = get_arg(args, "--max-tu", None)
     if max_tu is not None:
@@ -705,7 +705,8 @@ def ZB_ST_ADVICE(args):
                 continue
             result_int += out_map[i]
     out_sorted = sorted(out_map, reverse=True, key=lambda x: out_map[x])
-
+    if not verbose:
+        return out_sorted, out_map
     table = RTable(title="刷取建议",
                    caption=RText("倍率：") + RValue("【", mul, "】") + RText(' 总次数：') + RValue(int(result_int)),
                    box=rbox.HEAVY_EDGE, show_lines=True)

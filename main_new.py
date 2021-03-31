@@ -403,6 +403,21 @@ def ShowInfo():
     ShowAutoConsole()
     CheckConstantImgs()
 
+def PrintQQ():
+    print("------------------------------------------")
+    print("QQ: 1130884619  - 公主连结国服代码交♂流群")
+    print("进群请备注你从什么地方了解本脚本！")
+    print("有BUG反馈或脚本问题欢迎进群讨论！")
+    print("------------------------------------------")
+    print("（原作者学业繁忙中因此）脚本最近更新速度将放缓，\n"
+          "很多BUG来不及修，新功能也没有时间上线……")
+    print("实在忙不过来了，如果你对python稍微有点了解，欢迎加入我们一起进行开发和维护！")
+    print("-  Ver3开发 （随便会点vue/antdesign/flask)")
+    print("-  完善使用教程（会用本脚本就行）")
+    print("-  图号录入人 （每次更新时将坐标和相关图片录入即可）")
+    print("-  BOT人 （有机器人推送、交互经验）")
+    print("-  基础脚本开发和维护 （随便懂点基础python语法）")
+    print("-  全自动养号向脚本开发和维护（会python最好再会点CV）")
 
 def Start_App():
     if is_ocr_running():
@@ -468,7 +483,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.6dev.20210325")
+        print("当前版本为 Ver 2.6.20210331")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -479,11 +494,12 @@ if __name__ == "__main__":
             print("注意：你正在强制OCR模式下运行(force_as_ocr_as_possible)，app必须开启！")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
-        print("edit 进入编辑模式")
-        print("data 进入数据中心  <- NEW！")
+        print("edit 进入编辑模式                  qq QQ群")
+        print("data 进入数据中心")
         print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
+        print("Tips: config.ini会在启动main_new后自动生成或更新，如果修改了config.ini，重启程序后生效。")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
     while True:
@@ -556,6 +572,8 @@ if __name__ == "__main__":
                     print("debug (on/off) [-d (device_id)] [-m (module_name)] 打开/关闭某个设备的调试显示，-m可指定某一个模块，默认为全部模块。")
                     print("debug show [-d (device_id)] 显示某一个设备的每个模块的调试启动状况。")
                     print("exec [-d (device_id)] [-f (script_file)] 进入python命令调试模式，若指定-f，则执行某一文件。")
+            elif order == "qq":
+                PrintQQ()
             elif order == "task":
                 assert SCH is not None, "当前无运行的Schedule！"
                 argv = cmds[1:]

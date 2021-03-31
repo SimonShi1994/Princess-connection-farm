@@ -10,6 +10,7 @@ opencv-python==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 uiautomator2 -i https://mirrors.aliyun.com/pypi/simple/
 opencv-contrib-python==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 keyboard==0.13.5 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+retrying
 
 # For datacenter
 pypinyin
