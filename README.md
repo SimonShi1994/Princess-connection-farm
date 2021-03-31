@@ -1,18 +1,16 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.5.20210304
- 
- > 请尽快使用develop版本！
- > 
- > 目前所有改动均在develop分支上提交，master分支不再维护！预计三月底将develop分支合并到master分支上。
- > 
- > develop分支提供了更高的稳定性和刷图效率，但并没有改变原有的工作流程，建议切换尝试！
- > 
- > 注意：切换到develop或等develop合并到master后，再次通过git更新会导致config.ini丢失，请做好备份！
- > 
- > https://github.com/SimonShi1994/Princess-connection-farm/tree/develop
+# Princess connection 公主连结农场脚本v2.6.20210331
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
+
+## 警告：使用pull升级v2.6版本会强制删除config.ini，请提前做好备份
+
+config.ini已经加入.gitignore中，此后的所有版本config.ini都将动态生成（运行main_new.py即自动更新）。
+
+在v2.6.20210308版本中，将config.ini从仓库中移除，这将导致使用pull更新会强制删去本地的config.ini，请及时做好备份。
+
+备份方法：将config.ini的内容复制；git pull；将config.ini备份粘贴回去；运行main_new.py自动补全剩余。
 
 ## :bookmark_tabs:简介
 
@@ -170,7 +168,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - [x] 模拟器自启动控制
 - [x] 简化Schedule操作模式
 - [ ] WebGUI界面
-- [ ] 提高刷图效率
+- [x] 提高刷图效率
 - [ ] 刷活动本
 - [x] 女神祭
 - [ ] 跳过18图切图动画
@@ -181,7 +179,39 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
-## :hammer:更新历史:wrench:   
+## :hammer:更新历史:wrench:
+
+2021/3/31 By TheAutumnOfRice
+
+- 更新到Ver2.6版本
+- 新增21图
+
+2021/3/25 By TheAutumnOfRice
+
+- 自动更新程序和Requirements的微调
+
+2021/3/24 By UVJkiNTQ
+
+- 添加了xlsx导出支持，可兼容pandas>=1.2.0
+- 移除了xls导出
+
+2021/3/16 By TheAutumnOfRice
+
+- 试图修复地下城5图问题
+- 增加地下城5图
+
+2021/3/9 By:TheAutumnOfRice
+
+- 新增`force_as_ocr_as_possible`一键修改所有任务为OCR任务
+- 新增OCR探索`r9-ocr`
+- 修复诸多BUG
+
+2021/3/8 By:TheAutumnOfRice
+
+- 使用Scenes框架解构方法
+- 内核使用FunctionChecker框架改写，增加稳定性
+- 增加了OCR刷图推图 `s9`
+- OCR增加效率 `s7-ocr` `s7-a-ocr`
 
 2021/3/5 By:Klarkxy
 

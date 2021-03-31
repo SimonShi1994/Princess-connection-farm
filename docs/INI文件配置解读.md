@@ -3,6 +3,7 @@
 |              项              |                             说明                             |  属性  |   备注   |       例        |
 | :--------------------------: | :----------------------------------------------------------: | :----: | :------: | :-------------: |
 |            debug             |                           输出日志                           |  bool  |          |      False      |
+|save_debug_img|输出调试文件|bool|给开发者后，可以帮助减少BUG|True|
 |  trace_exception_for_debug   | 开启后，所有的try向上传递错误信息，并且只用第一个device跑第一个任务（单进程） |  bool  |          |      False      |
 |      use_template_cache      |                 在开发工具使用时可以将其关闭                 |  bool  |          |      True       |
 |        baidu_ocr_img         |      是否输出名为 baidu_ocr.bmp的图片，该图片为原生截图      |  bool  |          |      False      |
@@ -11,6 +12,8 @@
 |u2_record_filter|U2指令过滤列表|list|列表中的指令不会被记录|[]      |
 |debug_record_size|Automator指令记录列表大小|int|50      ||
 |debug_record_filter|Automator指令过滤列表|list|列表中的指令不会被记录|['_lock_img','_move_check']      |
+|trace_tree|追踪的分支版本|str||master |
+|force_as_ocr_as_possible|开启后，如果某个任务有OCR版本，则自动使用之|bool||True|
 | qqbot_select | qqbot的选择api服务商 | str | CoolPush/Qmsgnike | CoolPush |
 | qqbot_private_send_switch | qqbot私聊开关 | int | 0关 1开 | 0 |
 | qqbot_group_send_switch | qqbot群聊开关 | int | 0关 1开 | 0 |
@@ -22,6 +25,7 @@
 | proxy_https|推送使用的代理|str|||
 |           s_sckey            |                     s_sckey为Server酱API                     | string |          | SCU6390~94d830b |
 |         sentstate          |                 全体BOT播定时报脚本任务状态                 |  int   | 单位分钟 |        5        |
+| sent_state_img | 播报任务状态时是否推送运行截图 | bool |  | Flase |
 |           log_lev            | log_levBOT的日志等级，微信日志等级 仅有0/1/2/3，越小越详细，注意每天接口调用有上限！ |  int   |          |        1        |
 |          log_cache           |                       日志缓冲消息条数                       |  int   |          |        3        |
 |         baidu_apiKey         |                  baidu_apiKey为百度ocr api                   | string |          | SCU6390~94d830b |
@@ -59,6 +63,8 @@
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
 |wait_for_launch_time|自启动模拟器最大忍耐超时时间|int||600|
 |ignore_serials|不连接的模拟器|str||["emulator-5554"]|
+
+
 
 ------
 

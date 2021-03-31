@@ -76,7 +76,12 @@ class FloatInputer(InputBoxBase):
 
 
 class StrInputer(InputBoxBase):
+    def __init__(self, desc=""):
+        self.desc = desc
+
     def create(self) -> str:
+        if self.desc != "":
+            print(self.desc)
         a = input("请输入一个字符串 ")
         return a
 
@@ -581,6 +586,54 @@ class MeiRiHTuInputer(InputBoxBase):
         return ""
 
 
+class ListInputer(InputBoxBase):
+    def __init__(self, convert=None, desc=""):
+        super().__init__()
+        self.desc = desc
+        if convert is None:
+            self.convert = lambda x: x
+        else:
+            self.convert = convert
+
+    def create(self):
+        print("一行输入一些东西，表示列表中每一行的值。")
+        print(self.desc)
+        print("啥都不输入直接回车结束。")
+        lst = []
+        while True:
+            s = input(">")
+            if s == "":
+                break
+            else:
+                lst += [self.convert(s)]
+        return lst
+
+    def check(self, obj):
+        if type(obj) is not list:
+            return "参数必须为list类型"
+        return ""
+
+
+class StrChooseInputer(InputBoxBase):
+    def __init__(self, choose_dict):
+        super().__init__()
+        self.choose_dict = choose_dict
+
+    def create(self) -> str:
+        print("请输入下列字符串之一：")
+        for k, v in self.choose_dict.items():
+            print(k, "  :  ", v)
+        a = input(">")
+        return a
+
+    def check(self, obj):
+        if not isinstance(obj, str):
+            return f"应是str类型，而不是{type(str)}"
+        if obj not in self.choose_dict:
+            return f"{obj}只能在{list(self.choose_dict)}中选择！"
+        return ""
+
+
 VALID_TASK = ValidTask() \
     .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备",
          [TaskParam("once_times", int, "单账号捐赠的次数", "一个账号轮询捐赠多少次，多次可以提高容错率但会增加脚本执行时间", 2)]) \
@@ -605,7 +658,7 @@ VALID_TASK = ValidTask() \
                                               "程序自动记录上一次成功发起的时间.\n"
                                               "如果两次捐赠小于8小时，且相差小于等待时间\n"
                                               "则程序进入什么都不做的等待，否则跳过。", 300)]) \
-    .add("h10", "tuanduizhan", "自动摸会战", "农场号自动出甜心刀,请自己确保执行到该任务时已经有挑战次数。目前还在bate，不排除有问题") \
+    .add("h10", "tuanduizhan", "自动摸会战", "农场号自动出甜心刀,请自己确保执行到该任务时已经有挑战次数。目前还在beta，不排除有问题") \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
          [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个", 1),
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False),
@@ -616,7 +669,7 @@ VALID_TASK = ValidTask() \
     .add("d3", "dixiachengYunhai", "打云海关", "打通云海关【细节待补充】") \
     .add("d4", "dixiachengDuanya", "打断崖关", "打通断崖关【细节待补充】") \
     .add("d5", "shuatuDD", "通关地下城", "通用的打通地下城函数",
-         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4"),
+         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5"),
           TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
                                        "mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss\n"
                                        "mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss\n"
@@ -651,7 +704,7 @@ VALID_TASK = ValidTask() \
           TaskParam("times", int, "购买mana的次数", "购买mana的次数(第一次单抽不计入)"),
           TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False", False), ]) \
     .add("r8", "buyExp", "购买经验", "买空商店里的经验药水",
-        [TaskParam("qianghuashi", bool, "是否同时购买强化石", "True/False", False)]) \
+         [TaskParam("qianghuashi", bool, "是否同时购买强化石", "True/False", False)]) \
     .add("r9", "tansuo", "探索", "进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
                                        "mode 0: 刷最上面的\n"
@@ -663,6 +716,19 @@ VALID_TASK = ValidTask() \
                                        "mode 0: 刷最上关卡（适合大号） \n"
                                        "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
                                        "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）")]) \
+    .add("r9-ocr", "tansuo_new_ocr", "可推图探索OCR", "进行探索活动",
+         [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
+                                       "mode 0: 刷最上关卡（适合大号） \n"
+                                       "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
+                                       "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）"),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
+                    inputbox=StrInputer(desc="none - 不改变队伍，使用上次队伍。\n"
+                                             "zhanli - 按照战力排序取前五。\n"
+                                             "dengji - 按照等级排序取前五。\n"
+                                             "xingji - 按照星级排序取前五。\n"
+                                             "(A)-(B) - 使用队伍编组A-B，且1<=A<=5,1<=B<=3。\n"
+                                             "Example:  3-1  # 编组3队伍1.")),
+          ]) \
     .add("r10", "shengji", "圣迹调查", "进行圣迹调查",
          [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
                                        "mode 0: 刷1+2\n"
@@ -705,9 +771,11 @@ VALID_TASK = ValidTask() \
                                          "2：纯手刷\n", 1),
           TaskParam("buytili", int, "体力购买次数", "消耗多少管体力执行超级刷经验", 6)]) \
     .add("s2", "shuatuNN", "刷N图", "使用扫荡券刷指定普通副本",
-         [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox())]) \
+         [TaskParam("tu_dict", list, "刷图列表", "要刷的普通图", inputbox=ShuatuNNBox()),
+          TaskParam("use_ocr", bool, "使用OCR", "是否使用OCR来优化刷图", False)]) \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",
-         [TaskParam("tu_dict", list, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox())]) \
+         [TaskParam("tu_dict", list, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox()),
+          TaskParam("use_ocr", bool, "使用OCR", "是否使用OCR来优化刷图", False)]) \
     .add("s4", "doActivityHard", "刷活动图", "使用扫荡券刷活动副本（慎用，因为每次活动坐标都不同）") \
     .add("s5", "chushihua", "初始化", "从1-3自动推到3-1，已经推过的部分不会再推。") \
     .add("s5-2", "chushihua2", "快速初始化", "从1-3自动推到3-1，已经推过的部分不会再推。\n"
@@ -716,7 +784,7 @@ VALID_TASK = ValidTask() \
                                                    "如果某一关没有三星过关，则强化重打。\n"
                                                    "若强化了还是打不过，则退出。\n"
                                                    "若没体力了，也退出。",
-         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3),
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程最多购买体力次数（每天）", 3),
           TaskParam("auto_upgrade", int, "自动升级设置", "开启后，如果推图失败，则会进入升级逻辑"
                                                    "如果升级之后仍然推图失败，则放弃推图"
                                                    "0: 关闭自动升级"
@@ -727,7 +795,7 @@ VALID_TASK = ValidTask() \
                                                  "如果某一关没有三星过关，则强化重打。\n"
                                                  "若强化了还是打不过，则退出。\n"
                                                  "若没体力了，也退出。",
-         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程共用最多多少体力", 3),
+         [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程最多购买体力次数（每天）", 3),
           TaskParam("auto_upgrade", int, "自动升级设置", "开启后，如果推图失败，则会进入升级逻辑"
                                                    "如果升级之后仍然推图失败，则放弃推图"
                                                    "0: 关闭自动升级"
@@ -737,18 +805,62 @@ VALID_TASK = ValidTask() \
     .add("s7", "meiriHtu", "每日H图", "每天按照顺序依次扫荡H图，直到体力耗尽。\n"
                                    "扫过的图当日不会再扫，第二天重置。",
          [TaskParam("H_list", list, "H图列表", "H图图号", inputbox=MeiRiHTuInputer()),
-          TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+          TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力购买次数，该记录每日清零。", 0),
+          TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True),
+          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
+    .add("s7-ocr", "meiriHtu_ocr", "每日H图OCR", "【使用OCR】每天按照顺序依次扫荡H图，直到体力耗尽。\n"
+                                              "扫过的图当日不会再扫，第二天重置。",
+         [TaskParam("H_list", list, "H图列表", "H图图号", inputbox=MeiRiHTuInputer()),
+          TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力购买次数，该记录每日清零。", 0),
           TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True),
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
     .add("s7-a", "xiaohaoHtu", "每日H图全刷", "从H1-1开始一直往后刷直到没法刷为止。",
-         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力，该记录每日清零。", 0),
+         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力购买次数，该记录每日清零。", 0),
+          TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
+    .add("s7-a-ocr", "xiaohaoHtu_ocr", "每日H图全刷OCR", "【使用OCR】从H1-1开始一直往后刷直到没法刷为止。",
+         [TaskParam("daily_tili", int, "每日体力", "每天最多用于每日H图的体力购买次数，该记录每日清零。", 0),
+          TaskParam("xianding", bool, "买空限定商店", "如果限定商店出现了，是否买空", True),
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False)]) \
     .add("nothing", "do_nothing", "啥事不干", "啥事不干，调试用") \
     .add("s8", "shengjijuese", "自动升级", "此功能为自动升级角色功能",
          [TaskParam("buy_tili", int, "体力次数", "如果要通过刷图来获取装备，最多买体力次数"),
           TaskParam("do_rank", bool, "是否升rank", "是否自动升rank"),
-          TaskParam("do_shuatu", bool, "是否刷图", "是否在装备可以获得但不够时，通过刷图来获取装备")])
-
+          TaskParam("do_shuatu", bool, "是否刷图", "是否在装备可以获得但不够时，通过刷图来获取装备")]) \
+    .add("s9", "shuatu_daily_ocr", "OCR主线通用刷图推图", "使用OCR辅助的稳定的通用主线刷图/推图",
+         [TaskParam("tu_order", list, "刷图顺序", "刷图/推图会依次按照该顺序",
+                    inputbox=ListInputer(desc="一行一个字符串(A)-(B)-(T)或者H(A)-(B)-(T)\n"
+                                              "表示刷/推图A-B或者HA-B T 次（每日）。\n"
+                                              "Example:\n"
+                                              "    3-1-60  # 刷普通图3-1 60次。\n"
+                                              "    H10-3-3  # 刷H图10-3 3次。\n"
+                                              "注：困难图最多刷3次，并不会买次数。")),
+          TaskParam("daily_tili", int, "每日体力", "每日在刷图上所用的体力购买总数。", 0),
+          TaskParam("xianding", bool, "限定商店", "是否买空限定商店", True),
+          TaskParam("zero_star_action", str, "从未通关时",
+                    desc="对从未通关的图（零星最新图）执行的操作",
+                    default="exit",
+                    inputbox=StrChooseInputer(dict(do="推图", exit="终止刷图", skip="跳过该图"))),
+          TaskParam("not_three_star_action", str, "不可扫荡时",
+                    desc="对不可扫荡的图（三星未满但已经过关）执行的操作",
+                    default="do",
+                    inputbox=StrChooseInputer(dict(do="推图", exit="终止刷图", skip="跳过该图"))),
+          TaskParam("lose_action", str, "推图失败时",
+                    desc="推图失败后执行的操作",
+                    default="skip",
+                    inputbox=StrChooseInputer(dict(do="再次推图", exit="终止刷图", skip="跳过该图"))),
+          TaskParam("can_not_enter_action", str, "无法进图时",
+                    desc="对还无法进入的图（还未解锁）的操作",
+                    default="exit",
+                    inputbox=StrChooseInputer(dict(exit="终止刷图", skip="跳过该图"))),
+          TaskParam("win_without_threestar_is_lose", bool, "不三星就是失败", "如果推图结果未三星，则当作推图失败处理。", True),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
+                    inputbox=StrInputer(desc="none - 不改变队伍，使用上次队伍。\n"
+                                             "zhanli - 按照战力排序取前五。\n"
+                                             "dengji - 按照等级排序取前五。\n"
+                                             "xingji - 按照星级排序取前五。\n"
+                                             "(A)-(B) - 使用队伍编组A-B，且1<=A<=5,1<=B<=3。\n"
+                                             "Example:  3-1  # 编组3队伍1."))
+          ])
 customtask_addr = "customtask"
 
 

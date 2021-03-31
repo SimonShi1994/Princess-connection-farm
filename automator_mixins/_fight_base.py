@@ -5,6 +5,7 @@ import numpy as np
 from automator_mixins._base import DEBUG_RECORD
 from core.constant import FIGHT_BTN, MAIN_BTN, MAOXIAN_BTN, JJC_BTN
 from core.cv import UIMatcher
+from core.pcr_checker import PCRRetry, RetryNow, ContinueNow
 from core.pcr_config import debug
 from ._tools import ToolsMixin
 
@@ -16,15 +17,19 @@ class FightBaseMixin(ToolsMixin):
     """
 
     @DEBUG_RECORD
-    def Drag_Right(self):
-        self.d.touch.down(600, 120).sleep(0.1).move(200, 120).sleep(0.2).up(200, 120)
-        # self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+    def Drag_Right(self, origin=False):
+        if origin:
+            self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+        else:
+            self.d.touch.down(600, 120).sleep(0.1).move(200, 120).sleep(0.2).up(200, 120)
         time.sleep(self.change_time)
 
     @DEBUG_RECORD
-    def Drag_Left(self):
-        self.d.touch.down(200, 120).sleep(0.1).move(600, 120).sleep(0.2).up(600, 120)
-        # self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+    def Drag_Left(self, origin=False):
+        if origin:
+            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+        else:
+            self.d.touch.down(200, 120).sleep(0.1).move(600, 120).sleep(0.2).up(600, 120)
         time.sleep(self.change_time)
 
     @DEBUG_RECORD
@@ -154,29 +159,16 @@ class FightBaseMixin(ToolsMixin):
             -1：检测失败
             0，1，2：原速、两倍速、三倍速
         """
-        retry = 0
-        while retry <= max_retry:
-            retry += 1
-            if screen is None:
-                sc = self.getscreen()
-            else:
-                sc = screen
-                screen = None
-            state = self.get_fight_state(sc, max_retry=1)
-            if state == -1:
-                continue
-            elif state in [1, 2]:
-                return -1
-
-            p0 = self.img_prob(FIGHT_BTN["speed_0"], screen=sc)
-            p1 = self.img_prob(FIGHT_BTN["speed_1"], screen=sc)
-            p2 = self.img_prob(FIGHT_BTN["speed_2"], screen=sc)
-            probs = np.array([p0, p1, p2])
-            if probs.max() < 0.84:
-                continue
-            else:
-                return probs.argmax()
-        return -1
+        SPEED_DICT = {
+            0: FIGHT_BTN["speed_0"],
+            1: FIGHT_BTN["speed_1"],
+            2: FIGHT_BTN["speed_2"],
+        }
+        out = self.check_dict_id(SPEED_DICT, screen, max_retry=max_retry)
+        if out is None:
+            return -1
+        else:
+            return out
 
     @DEBUG_RECORD
     def set_fight_speed(self, level, max_level=1, screen=None, max_retry=3) -> bool:
@@ -190,37 +182,23 @@ class FightBaseMixin(ToolsMixin):
             True 设置成功
             False 可能未设置成功
         """
-        retry = 0
-        while retry <= max_retry:
-            retry += 1
-            if screen is None:
-                sc = self.getscreen()
+        @PCRRetry(delay=0.5, max_retry=max_retry, raise_return=False)
+        def fun():
+            nonlocal screen
+            out = self.get_fight_speed(screen, 3)
+            if out == -1:
+                raise RetryNow()
+            if out == level:
+                return True
             else:
-                sc = screen
-                screen = None
-            speed = self.get_fight_speed(sc)
-            if speed == -1:
-                return False
-            else:
-                # 获取速度成功
-                if speed != level:
-                    while speed != level:
-                        speed = (speed + 1) % (max_level + 1)
-                        self.click(FIGHT_BTN["speed_0"])
-                    # 检查设置情况
-                    time.sleep(0.2)
-                    speed = self.get_fight_speed()
-                    if speed == -1:
-                        return False
-                    elif speed == level:
-                        # 设置成功
-                        return True
-                    else:
-                        continue
-                else:
-                    return True
-        # 超过最大尝试次数
-        return False
+                while out!=level:
+                    self.click(FIGHT_BTN["speed_0"], post_delay=0.2)
+                    out=(out+1)%(max_level+1)
+                time.sleep(1.3)  # 防止涟漪
+                screen = self.getscreen()
+                raise ContinueNow()
+
+        return fun()
 
     @DEBUG_RECORD
     def get_fight_auto(self, screen=None, max_retry=3) -> int:
@@ -233,27 +211,15 @@ class FightBaseMixin(ToolsMixin):
             0：未开
             1：开了
         """
-        retry = 0
-        while retry <= max_retry:
-            retry += 1
-            if screen is None:
-                sc = self.getscreen()
-            else:
-                sc = screen
-                screen = None
-            state = self.get_fight_state(sc, max_retry=1)
-            if state == -1:
-                continue
-            elif state in [1, 2]:
-                return -1
-            p0 = self.img_prob(FIGHT_BTN["auto_off"], screen=sc)
-            p1 = self.img_prob(FIGHT_BTN["auto_on"], screen=sc)
-            probs = np.array([p0, p1])
-            if probs.max() < 0.84:
-                continue
-            else:
-                return probs.argmax()
-        return -1
+        AUTO_DICT = {
+            0: FIGHT_BTN["auto_off"],
+            1: FIGHT_BTN["auto_on"],
+        }
+        out = self.check_dict_id(AUTO_DICT, screen, max_retry=max_retry)
+        if out is None:
+            return -1
+        else:
+            return out
 
     @DEBUG_RECORD
     def set_fight_auto(self, auto, screen=None, max_retry=3) -> bool:
@@ -266,34 +232,20 @@ class FightBaseMixin(ToolsMixin):
             True 设置成功
             False 可能未设置成功
         """
-        retry = 0
-        while retry <= max_retry:
-            retry += 1
-            if screen is None:
-                sc = self.getscreen()
+
+        @PCRRetry(delay=0.5, max_retry=max_retry, raise_return=False)
+        def fun():
+            nonlocal  screen
+            out = self.get_fight_auto(screen,3)
+            if out==-1:
+                raise RetryNow()
+            if out == auto:
+                return True
             else:
-                sc = screen
-                screen = None
-            cur = self.get_fight_auto(sc)
-            if cur == -1:
-                return False
-            else:
-                if cur != auto:
-                    self.click(FIGHT_BTN["auto_off"])
-                    # 检查设置情况
-                    time.sleep(0.2)
-                    cur = self.get_fight_auto()
-                    if cur == -1:
-                        return False
-                    elif cur == auto:
-                        # 设置成功
-                        return True
-                    else:
-                        continue
-                else:
-                    return True
-        # 超过最大尝试次数
-        return False
+                self.click(FIGHT_BTN["auto_on"],post_delay=1.5)  # 避免涟漪影响
+                screen=self.getscreen()
+                raise ContinueNow()
+        return fun()
 
     @DEBUG_RECORD
     def set_fight_team(self, bianzu, duiwu):

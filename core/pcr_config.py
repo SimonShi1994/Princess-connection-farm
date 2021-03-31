@@ -158,6 +158,7 @@ class GlobalConfig:
 GC = GlobalConfig()
 
 debug = GC.add_bool('debug', 'debug', False)
+save_debug_img = GC.add_bool('debug', 'save_debug_img', True)
 ignore_warning = GC.add_bool('debug', 'ignore_warning', True)
 trace_exception_for_debug = GC.add_bool('debug', 'trace_exception_for_debug', False)
 use_template_cache = GC.add_bool('debug', 'use_template_cache', True)
@@ -167,7 +168,10 @@ u2_record_size = GC.add_int('debug', 'u2_record_size', 20)
 debug_record_size = GC.add_int('debug', 'debug_record_size', 50)
 u2_record_filter = GC.add_list('debug', 'u2_record_filter', [])
 debug_record_filter = GC.add_list('debug', 'debug_record_filter', ['_lock_img', '_move_check'])
+trace_tree = GC.add_str('debug', 'trace_tree', 'master')
 
+force_as_ocr_as_possible = GC.add_bool("task", "force_as_ocr_as_possible", True)
+sent_state_img = GC.add_bool('log', 'sent_state_img', False)
 qqbot_key = GC.add_str('log', 'qqbot_key')
 qqbot_select = GC.add_str('log', 'qqbot_select')
 tg_token = GC.add_str('log', 'tg_token')
