@@ -83,6 +83,10 @@ class PCRSceneBase:
     def log(self):
         return self._a.log
 
+    @property
+    def debug_record(self):
+        return self._a.debug_record
+
     def goto(self, scene: Union[Type["PCRSceneBase"], Type["PCRMsgBoxBase"]], gotofun, use_in_feature_only=None,
              before_clear=True, timeout=None, interval=8, retry=None):
         next_scene = scene(self._a)

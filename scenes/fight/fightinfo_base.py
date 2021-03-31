@@ -3,6 +3,7 @@ from math import inf
 
 import numpy as np
 
+from automator_mixins._base import DEBUG_RECORD
 from core.constant import MAOXIAN_BTN, FIGHT_BTN
 from core.pcr_checker import LockMaxRetryError
 from core.pcr_config import save_debug_img
@@ -86,6 +87,7 @@ class FightInfoBase(PCRMsgBoxBase):
         # 判断是不是还没打过的图
         return self.get_upperright_stars(screen) == 0
 
+    @DEBUG_RECORD
     def set_saodang_cishu(self, target: int, one_tili=None, left_tili=None, right_tili=None, sc=None, max_retry=6,
                           delay=1):
         # 设定扫荡次数
