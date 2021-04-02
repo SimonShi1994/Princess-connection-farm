@@ -46,8 +46,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
                               threshold=0.98)
                 break
-            else:
-                self.lock_img(DXC_ELEMENT["sytzcs"], side_check=self.dxc_kkr)
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数

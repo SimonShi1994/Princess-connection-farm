@@ -55,7 +55,7 @@ class FightInfoBase(PCRMsgBoxBase):
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()
-        at = (658, 404, 700, 423)
+        at = (668, 406, 699, 421)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
 
@@ -65,7 +65,7 @@ class FightInfoBase(PCRMsgBoxBase):
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()
-        at = (711, 405, 748, 422)
+        at = (712, 406, 742, 421)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
 

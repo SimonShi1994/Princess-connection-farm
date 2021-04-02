@@ -45,19 +45,24 @@ def local_ocr():
 
 @ocr_api.route('/baidu_ocr/', methods=['POST'])
 def baidu_ocr():
+    lay_sw = False
     # 接收图片
     img = request.files.get('file')
     queue.put((img.read()))
     if img:
-        time.sleep(random.uniform(1.5, 2.05))
+        # time.sleep(random.uniform(1.5, 2.05))
         part = queue.get()
 
         @retry(stop_max_attempt_number=5)
         def sent_ocr():
+            nonlocal lay_sw
             try:
+                if lay_sw:
+                    time.sleep(random.uniform(1.5, 2.05))
                 ocr_result = client.basicGeneral(part)
                 return ocr_result
             except Exception as e:
+                lay_sw = True
                 raise Exception('BaiDuOCR发生了错误，原因为:{}'.format(e))
 
         result = sent_ocr()
