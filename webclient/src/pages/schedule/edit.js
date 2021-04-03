@@ -34,7 +34,7 @@ export default (props) => {
         const result = await request(`/schedules_save`, {
             method: 'post', data: {
                 ...values,
-                "filename": 'test1',
+                "filename": id,
             }
         })
         if (result.code === 200) {

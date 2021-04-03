@@ -63,11 +63,13 @@ def save_schedules():
     try:
         obj = request.json
         ScheduleFileName = request.json.get("filename")
+        # old_schedule = AutomatorRecorder.getschedule(ScheduleFileName)
         obj.pop("filename")
         save_dict = {"schedules": [obj]}
         if check_valid_schedule(save_dict, is_raise=False):
             AutomatorRecorder.setschedule(ScheduleFileName, save_dict)
-            return jsonify({"code":200, "msg":f"{save_dict}-保存成功"})
+            old_schedule = AutomatorRecorder.getschedule(ScheduleFileName)
+            return jsonify({"code":200, "msg":f"{old_schedule}-保存成功"})
         else:
             return jsonify({"code":500, "msg":f"{save_dict}-保存失败"})
     except Exception as e:

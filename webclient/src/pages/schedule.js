@@ -50,7 +50,7 @@ export default () => {
                     console.log(values.name);
                     // 不返回不会关闭弹框
                     const json = {
-                        "name": "test",
+                        "name": values.name,
                         "batchlist": [],
                         "condition": {},
                         "type": "asap",
