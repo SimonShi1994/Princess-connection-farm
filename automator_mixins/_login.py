@@ -322,10 +322,11 @@ class LoginMixin(BaseMixin):
                     self.click(678, 377)  # 下载
             return self.do_login(ac, pwd)
         except Exception as e:
-            if error_flag:
-                raise e
-            # 异常重试登陆逻辑
-            return self.do_login(ac, pwd)
+            # if error_flag:
+            #     raise e
+            # # 异常重试登陆逻辑
+            # return self.login(ac, pwd)  # 修改无限重复BUG
+            raise e  # 应该报错的时候就应该报错，上面会处理的。
 
     @DEBUG_RECORD
     def auth(self, auth_name, auth_id):
