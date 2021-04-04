@@ -4,6 +4,7 @@ from core.constant import MAIN_BTN, HANGHUI_BTN, PCRelement, TUANDUIZHAN_BTN, DX
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
+from core.safe_u2 import timeout
 from core.utils import diffday
 from ._tools import ToolsMixin
 
@@ -14,6 +15,7 @@ class HanghuiMixin(ToolsMixin):
     包含行会相关的脚本。
     """
 
+    @timeout(300, "行会捐赠用时过长，可能卡住！")
     def hanghui(self, once_times):
         """
         行会自动捐赠装备

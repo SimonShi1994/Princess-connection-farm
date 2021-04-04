@@ -6,7 +6,7 @@ import numpy as np
 from automator_mixins._base import DEBUG_RECORD
 from core.constant import MAOXIAN_BTN, FIGHT_BTN
 from core.pcr_checker import LockMaxRetryError
-from core.pcr_config import save_debug_img
+from core.pcr_config import save_debug_img, ocr_mode
 from scenes.fight.fightbianzu_zhuxian import FightBianZuZhuXian
 from scenes.scene_base import PCRMsgBoxBase
 from scenes.zhuxian.zhuxian_msg import SaoDangQueRen
@@ -55,7 +55,7 @@ class FightInfoBase(PCRMsgBoxBase):
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()
-        at = (668, 406, 699, 421)
+        at = (668, 406, 699, 421) if ocr_mode != "本地" else (658, 404, 700, 423)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
 
@@ -65,7 +65,7 @@ class FightInfoBase(PCRMsgBoxBase):
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()
-        at = (712, 406, 742, 421)
+        at = (712, 406, 742, 421) if ocr_mode != "本地" else (711, 405, 748, 422)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
 
