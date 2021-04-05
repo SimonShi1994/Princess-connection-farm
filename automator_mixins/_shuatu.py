@@ -1007,6 +1007,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                                 self.click(1,1)
                             self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
                             return "continue"
+                        max_cishu = min(cishu, max_cishu)
                     self._zdzb_info = ""  # 记录失败原因
                     # 扫荡券判断：最多还能扫荡几次
                     quan = M.get_saodangquan(sc)

@@ -10,6 +10,7 @@ opencv-python==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 uiautomator2 -i https://mirrors.aliyun.com/pypi/simple/
 opencv-contrib-python==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 keyboard==0.13.5 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+retrying
 
 # For datacenter
 pypinyin
@@ -31,6 +32,7 @@ muggle-ocr
 numpy==1.19.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pillow -i https://pypi.douban.com/simple
 pyyaml -i https://pypi.douban.com/simple
+git+https://github.com/myhub/tr.git@master
 # 低于python3.8版本的可能需要protobuf==3.6.0，大于就随便3.14.0
 protobuf==3.6.0
 

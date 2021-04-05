@@ -113,7 +113,6 @@ class DebugRecord:
         return out
 
 
-
 def DEBUG_RECORD(fun):
     def new_fun(self, *args, **kwargs):
         rd = self.debug_record
@@ -413,8 +412,9 @@ class BaseMixin:
                 FCFun(FC)
                 FC.add_process(_unset, name="Exit My Header")
         else:
-            FC.header=False
+            FC.header = False
         return FC
+
     @DEBUG_RECORD
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0., method=cv2.TM_CCOEFF_NORMED):
         """
@@ -425,7 +425,7 @@ class BaseMixin:
         :return: success
         """
         self._move_check()
-        img,at = self._get_img_at(img,at)
+        img, at = self._get_img_at(img, at)
         position = UIMatcher.img_where(screen, img, threshold, at, method)
         if position:
             self.click(*position, pre_delay, post_delay)
@@ -622,7 +622,7 @@ class BaseMixin:
                 return True
         return False
 
-    def not_loading(self,screen=None):
+    def not_loading(self, screen=None):
         """
         判断是否在黑屏Loading 或者 右上角Connecting
         """
@@ -633,7 +633,6 @@ class BaseMixin:
             # 全黑
             return False
         return True
-
 
     @DEBUG_RECORD
     def wait_for_loading(self, screen=None, delay=0.5, timeout=30):
@@ -868,11 +867,12 @@ class BaseMixin:
             ifclick = [ifclick]
         if type(elseclick) is not list:
             elseclick = [elseclick]
-        FC=self.getFC()
+        FC = self.getFC()
         if timeout is None:
             timeout = lockimg_timeout
+
         def f():
-            rv=RTFun(*args,**kwargs)
+            rv = RTFun(*args, **kwargs)
             if rv is False:
                 return False
             else:
@@ -881,13 +881,14 @@ class BaseMixin:
                     self.click(clicks[0], clicks[1], post_delay=elseafter)
                     time.sleep(ifdelay)
                 raise ReturnValue(rv)
+
         def f2():
             for clicks in elseclick:
                 self.click(clicks[0], clicks[1], post_delay=elseafter)
 
-        FC.add(Checker(f,name="lock_fun - RTFun"))
-        FC.add_intervalprocess(f2,retry,elsedelay,name="lock_fun - elseclick")
-        FC.lock(alldelay,timeout,is_raise=False if disable_timeout_raise else is_raise)
+        FC.add(Checker(f, name="lock_fun - RTFun"))
+        FC.add_intervalprocess(f2, retry, elsedelay, name="lock_fun - elseclick")
+        FC.lock(alldelay, timeout, is_raise=False if disable_timeout_raise else is_raise)
 
     @DEBUG_RECORD
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
@@ -950,34 +951,36 @@ class BaseMixin:
             img = {(img, at): True}
         if timeout is None:
             timeout = lockimg_timeout
-        FC=self.getFC()
+        FC = self.getFC()
         FC.getscreen()
         if side_check is not None:
             def f(screen):
                 return side_check(screen)
-            FC.add(Checker(f,funvar=["screen"],name="lock_img - side_check"),clear=True)
+
+            FC.add(Checker(f, funvar=["screen"], name="lock_img - side_check"), clear=True)
 
         def f2():
             for clicks in ifclick:
                 time.sleep(ifbefore)
                 self.click(clicks[0], clicks[1], post_delay=elseafter)
                 time.sleep(ifdelay)
+
         for i, j in img.items():
             if not isinstance(i, PCRelement):
                 _img, _at = self._get_img_at(i[0], i[1])
             else:
                 _img, _at = self._get_img_at(i, None)
             if lock_no:
-                fun=FC.not_exist
+                fun = FC.not_exist
             else:
-                fun=FC.exist
-            fun(PCRelement(img=_img,at=_at),dofunction=f2,rv=j,method=method,threshold=threshold)
+                fun = FC.exist
+            fun(PCRelement(img=_img, at=_at), dofunction=f2, rv=j, method=method, threshold=threshold)
 
         def f3():
             for clicks in elseclick:
                 self.click(clicks[0], clicks[1], post_delay=elseafter)
 
-        FC.add_intervalprocess(f3,retry,elsedelay,name="lock_img - elseclick")
+        FC.add_intervalprocess(f3, retry, elsedelay, name="lock_img - elseclick")
         return FC.lock(alldelay, timeout, is_raise=False if disable_timeout_raise else is_raise)
 
     @DEBUG_RECORD
@@ -1079,8 +1082,9 @@ class BaseMixin:
         :return:
         """
         # 2021-1-10 FC改写
-        count=[0]
-        FC=self.getFC().getscreen()
+        count = [0]
+        FC = self.getFC().getscreen()
+
         def f(screen):
             screen_shot_ = screen
             num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
@@ -1129,12 +1133,13 @@ class BaseMixin:
             count[0] = 0
 
         FC.add(Checker(f))
-        FC.lock(delay=1,until="break")
+        FC.lock(delay=1, until="break")
         if turnback == "shuatu":
             # 返回冒险
             self.click(480, 505)
             time.sleep(2)
             self.lock_img('img/zhuxianguanqia.jpg', elseclick=[(480, 513), (390, 369)], elsedelay=0.5)
+
             def f2(screen):
                 screen_shot_ = screen
                 if UIMatcher.img_where(screen_shot_, 'img/zhuxianguanqia.jpg', at=(511, 286, 614, 314)):
@@ -1142,15 +1147,18 @@ class BaseMixin:
                     time.sleep(0.5)
                 else:
                     raise ReturnValue("break")
-            self.getFC().getscreen().add(Checker(f2)).lock(timeout=lockimg_timeout,until="break")
+
+            self.getFC().getscreen().add(Checker(f2)).lock(timeout=lockimg_timeout, until="break")
             time.sleep(3)
+
             def f3(screen):
                 screen_shot_ = screen
                 if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
                     raise ReturnValue("break")
                 self.click(704, 84)
                 time.sleep(0.5)
-            self.getFC().getscreen().add(Checker(f3)).lock(timeout=lockimg_timeout,until="break")
+
+            self.getFC().getscreen().add(Checker(f3)).lock(timeout=lockimg_timeout, until="break")
 
     def task_start(self):
         # 标记这个用户开始重新刷图了
@@ -1296,8 +1304,9 @@ class BaseMixin:
         return self.debug_record.get(running)
 
     @DEBUG_RECORD
-    def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
+    def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91):
         """
+        :param credibility: 结果可信度阈值,目前仅有本地OCR2才用到
         :param size: 放大的大小
         :param x1: 左上坐标
         :param y1: 左上坐标
@@ -1330,13 +1339,17 @@ class BaseMixin:
             ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
         elif ocr_mode == "本地":
             ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+        elif ocr_mode == "本地2":
+            ocr_text = self.ocr_local2(x1, y1, x2, y2, screen_shot=screen_shot, size=size, credibility=credibility)
         elif ocr_mode == "混合":
             # 机器伪随机
-            ocr_way = random.randint(1, 2)
+            ocr_way = random.randint(1, 3)
             if ocr_way == 1:
                 ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
             elif ocr_way == 2:
                 ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+            elif ocr_way == 3:
+                ocr_text = self.ocr_local2(x1, y1, x2, y2, screen_shot=screen_shot, size=size, credibility=credibility)
 
         # OCR返回的数据 纠错
         try:
@@ -1404,14 +1417,45 @@ class BaseMixin:
             result = requests.post(url="http://127.0.0.1:5000/ocr/baidu_ocr/", files=files)
             # 原生输出有助于开发者
             result = result.json().get('words_result')[0].get('words')
+            if debug:
+                print('百度OCR识别结果：%s' % result)
             return result
         except:
-            pcr_log(self.account).write_log(level='error', message='百度云识别失败！请检查apikey和secretkey以及截图范围返回结果'
+            pcr_log(self.account).write_log(level='error', message='百度OCR识别失败！请检查apikey和secretkey以及截图范围返回结果'
                                                                    '是否有误！')
             return -1
 
+    def ocr_local2(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91):
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+
+        try:
+            if screen_shot.shape[0] > screen_shot.shape[1]:
+                if anticlockwise_rotation_times >= 1:
+                    for _ in range(anticlockwise_rotation_times):
+                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            img_binary = cv2.imencode('.png', part)[1].tobytes()
+            files = {'file': ('tmp.png', img_binary, 'image/png')}
+            r = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr2/", files=files).json().get("res")
+            local_ocr_text = r[0]
+            # local_ocr_text_credibility = float(local_ocr_text[1])  # 可信度
+            if round(float(r[1]), 2) > credibility:
+                if debug:
+                    print('本地OCR-2识别结果：%s' % local_ocr_text)
+                return local_ocr_text
+            else:
+                if debug:
+                    print('本地OCR-2识别结果：%s,该结果可信度太低，丢弃！' % local_ocr_text)
+                return -1
+        except Exception as ocr_error:
+            pcr_log(self.account).write_log(level='error', message='本地OCR-2识别失败，原因：%s' % ocr_error)
+            return -1
+
     def ocr_int(self, x1, y1, x2, y2, screen_shot=None):
-        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot)
+        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=2.0, credibility=0.97)
         if out == -1:
             raise OCRRecognizeError("整数OCR失败了！", outstr=str(out))
         out = make_it_as_number_as_possible(out)

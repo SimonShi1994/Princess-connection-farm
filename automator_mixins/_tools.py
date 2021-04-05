@@ -7,8 +7,8 @@ from typing import Optional
 
 import cv2
 import numpy as np
-import pandas as pd
 import openpyxl
+import pandas as pd
 
 from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
@@ -23,6 +23,7 @@ from core.usercentre import get_all_group
 from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, make_it_as_juese_as_possible, \
     get_time_str, checkNameValid
 from ._base import BaseMixin
+
 
 class ToolsMixin(BaseMixin):
     """
@@ -176,7 +177,6 @@ class ToolsMixin(BaseMixin):
         set_last_record()
         self.lock_home()
 
-
     def get_base_info(self, base_info=False, introduction_info=False, props_info=False, out_xls=False, s_sent=False,
                       acc_nature=0):
         """
@@ -296,7 +296,6 @@ class ToolsMixin(BaseMixin):
                 # 乱输入就这样的格式
                 xls_path = 'xls/%s-pcr_farm_info.xlsx' % self.today_date
 
-
             # 将空的单元格替换为空字符
             pf.fillna('', inplace=True)
             # 判断文件是否存在
@@ -319,7 +318,7 @@ class ToolsMixin(BaseMixin):
             for i in range(0, index):
                 for j in range(0, len(list(acc_info_list)[i])):
                     # 追加写入数据，注意是从i+rows_old行开始写入
-                   worksheet.cell(row= i + 1 + rows_old, column = 1 + j).value = list(acc_info_dict.values())[j]
+                    worksheet.cell(row=i + 1 + rows_old, column=1 + j).value = list(acc_info_dict.values())[j]
             workbook.save(xls_path)  # 保存表格
 
         return acc_info_dict
@@ -770,17 +769,20 @@ class ToolsMixin(BaseMixin):
             for p in Six_Points:
                 w, h = 60, 30
                 pic = UIMatcher.img_cut(value, (p[0], p[1], p[0] + w, p[1] + h))
-                if pic.max() > 200:
+                if debug:
+                    print(pic.max())
+                if pic.max() > 150:
                     out += [True]
                 else:
                     out += [False]
+            if debug:
+                print(out)
             return out
 
         def _next():
             sc = self.getscreen()
             name_at = (40, 393, 104, 441)
             self.click(929, 269)
-            # TODO 这里会卡，原因不明
             for _ in range(10):
                 m = self.wait_for_change(screen=sc, at=name_at, delay=1, threshold=0.84, max_retry=1)
                 if self.is_exists(JUESE_BTN["fhqhdj_ok"], screen=self.last_screen):
@@ -870,4 +872,3 @@ class ToolsMixin(BaseMixin):
         mv.clearflags()
         output_dict(self.AR.get("juese_info", UDD["juese_info"]))
         self.lock_home()
-

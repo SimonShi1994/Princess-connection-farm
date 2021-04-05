@@ -40,6 +40,12 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             pcr_log(self.account).write_log("info", f"{self.account}-已经刷过地下城！")
             self.lock_home()
             return
+        while True:
+            if self.is_exists('img/dxc/chetui.bmp'):
+                time.sleep(1.2)
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                              threshold=0.98)
+                break
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数
@@ -85,6 +91,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         if self.is_exists('img/dxc/chetui.bmp'):
                             self.click(808, 435, pre_delay=self.change_time)
                             self.click(588, 371, pre_delay=1 + self.change_time)
+                            self.lock_home()
+                            self.dixiacheng_ocr(skip, assist_num, stuck_today, stuck_notzhandoukaishi)
                             break
                     elif dixiacheng_floor >= 1 and dixiacheng_floor_times <= 1:
                         pcr_log(self.account).write_log(level='info', message='%s 不知是否打过地下城，开始执行地下城流程' % self.account)

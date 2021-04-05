@@ -3,9 +3,10 @@ from math import inf
 
 import numpy as np
 
+from automator_mixins._base import DEBUG_RECORD
 from core.constant import MAOXIAN_BTN, FIGHT_BTN
 from core.pcr_checker import LockMaxRetryError
-from core.pcr_config import save_debug_img
+from core.pcr_config import save_debug_img, ocr_mode
 from scenes.fight.fightbianzu_zhuxian import FightBianZuZhuXian
 from scenes.scene_base import PCRMsgBoxBase
 from scenes.zhuxian.zhuxian_msg import SaoDangQueRen
@@ -54,7 +55,7 @@ class FightInfoBase(PCRMsgBoxBase):
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()
-        at = (658, 404, 700, 423)
+        at = (668, 406, 699, 421) if ocr_mode == "网络" or ocr_mode == "智能" else (658, 404, 700, 423)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
 
@@ -64,7 +65,7 @@ class FightInfoBase(PCRMsgBoxBase):
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()
-        at = (711, 405, 748, 422)
+        at = (712, 406, 742, 421) if ocr_mode == "网络" or ocr_mode == "智能" else (711, 405, 748, 422)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
 
@@ -86,6 +87,7 @@ class FightInfoBase(PCRMsgBoxBase):
         # 判断是不是还没打过的图
         return self.get_upperright_stars(screen) == 0
 
+    @DEBUG_RECORD
     def set_saodang_cishu(self, target: int, one_tili=None, left_tili=None, right_tili=None, sc=None, max_retry=6,
                           delay=1):
         # 设定扫荡次数

@@ -78,9 +78,12 @@ class AsyncMixin(ToolsMixin):
         cumulative_time = 0.1
         while Multithreading({}).is_stopped():
             try:
-                screenshot = self.last_screen
-                if screenshot is None:
-                    continue
+
+                if self.last_screen is None:
+                    screenshot = self.getscreen()
+                else:
+                    screenshot = self.last_screen
+
                 if time.time() - self.last_screen_time > async_screenshot_freq:
                     continue
                 time_start = time.time()

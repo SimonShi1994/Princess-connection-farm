@@ -7,7 +7,7 @@ import cv2
 import requests
 from requests.adapters import HTTPAdapter
 
-from core.pcr_config import captcha_userstr, captcha_software_key, captcha_level
+from core.pcr_config import captcha_userstr, captcha_software_key, captcha_level, debug
 from core.log_handler import pcr_log
 from core.safe_u2 import timeout
 
@@ -97,7 +97,8 @@ class CaptionSkip:
         elif captcha_level == "特速":
             question_type = question_type.replace('X', 'T')
 
-        print("!验证码识别模块开始运行!")
+        if debug:
+            print("!验证码识别模块开始运行!")
         self.get_host()
 
         # 发送图片
@@ -121,7 +122,8 @@ class CaptionSkip:
         # print(img_post_url)
         # 题号
         caption_id = self.conversation.post(url=self.img_post_url, data=img_post, headers=self.img_hear_dict)
-        print(">图片发送了……")
+        if debug:
+            print(">图片发送了……")
         if caption_id.text in self.error_feature:
             pcr_log('admin').write_log(level='error', message=caption_id.text)
         # print(caption_id.text)
@@ -130,14 +132,15 @@ class CaptionSkip:
             'r': random.randint(1000000000, 9999999999),
         }
 
-        print(">>等待验证码识别返回值")
+        if debug:
+            print(">>等待验证码识别返回值")
         while True:
             # 获取答案
             time.sleep(random.uniform(0.8, 2.88))
             answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
             self._count_times += 1
             count_len = len(answer_result.text)
-            if answer_result.text not in self.error_feature:
+            if str(answer_result.text) not in self.error_feature:
                 # print("开始处理")
                 if question_type is "X6001" or question_type is "T6001":
                     # 466,365
@@ -145,7 +148,8 @@ class CaptionSkip:
                     if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
                         # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
-                        print(">刷新验证码")
+                        if debug:
+                            print(">刷新验证码")
                         # 刷新验证码
                         answer_result = [162, 420]
                         return answer_result, count_len, 0
@@ -156,7 +160,8 @@ class CaptionSkip:
                     if not (266 < int(answer_result[0]) < 696) and not (338 < int(answer_result[1]) < 434):
                         # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
-                        print(">刷新验证码")
+                        if debug:
+                            print(">刷新验证码")
                         # 刷新验证码
                         answer_result = [162, 420]
                         return answer_result, count_len, 0
@@ -169,7 +174,8 @@ class CaptionSkip:
                     if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
                         # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
-                        print(">刷新验证码")
+                        if debug:
+                            print(">刷新验证码")
                         # 刷新验证码
                         answer_result = [162, 420]
                         return answer_result, count_len, 0
@@ -177,7 +183,8 @@ class CaptionSkip:
 
             elif answer_result.text in self.no_result or self._count_times >= 7:
                 # 答案不确定(不扣分)
-                print(">刷新验证码")
+                if debug:
+                    print(">刷新验证码")
                 # 刷新验证码
                 answer_result = [162, 420]
                 # answer_result = tmp_list.split(',')
