@@ -3,6 +3,8 @@ import random
 import time
 from flask import Blueprint, jsonify, request
 from retrying import retry
+from PIL import Image, ImageDraw
+from io import BytesIO
 
 from aip import AipOcr
 from core.pcr_config import ocr_mode, baidu_apiKey, baidu_secretKey, baidu_QPS
@@ -16,10 +18,14 @@ queue = queue.Queue(baidu_QPS)
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 if ocr_mode != "网络" and len(ocr_mode) != 0:
-    import muggle_ocr
+    if ocr_mode == "本地" or ocr_mode == "混合" or ocr_mode == "智能":
+        import muggle_ocr
+        # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
+        sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
 
-    # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
-    sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
+    if ocr_mode == "本地2" or ocr_mode == "混合" or ocr_mode == "智能":
+        import tr
+
 
 config = {
     'appId': 'PCR',
@@ -40,6 +46,21 @@ def local_ocr():
         result = sdk.predict(upload_file.read())
         # print(result)
         return result
+    return 400
+
+
+@ocr_api.route('/local_ocr2/', methods=['POST'])
+def local_ocr2():
+    # 接收图片 二进制流
+    upload_file = request.files.get('file')
+    # print(upload_file)
+    if upload_file:
+        upload_file = Image.open(BytesIO(upload_file.read()))
+        upload_file = upload_file.convert("RGB")
+        # print(tr.run(img.copy().convert("L"), flag=tr.FLAG_ROTATED_RECT))
+        result = tr.recognize(upload_file.copy().convert("L"))
+        # print(result)
+        return {"res": result}
     return 400
 
 

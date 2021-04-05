@@ -87,7 +87,9 @@ config.ini已经加入.gitignore中，此后的所有版本config.ini都将动�
 
 - 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
-- OCR 需求 `VS C++ Build Tool`
+- **Q:**我可以不要OCR吗？**A:**不行，以后只会对非OCR越来越不友好=。=
+
+- OCR 需求 [VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 和 [VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
 
 - 自行打开`requirements.txt`确认依赖无误
 
@@ -182,6 +184,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## :hammer:更新历史:wrench:
+
+2021/4/5 By CyiceK
+
+- 上线另一个本地OCR（Tr）`本地2`，需要安装新的依赖
 
 2021/4/5 By TheAutumnOfRice
 

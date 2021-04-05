@@ -91,6 +91,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         if self.is_exists('img/dxc/chetui.bmp'):
                             self.click(808, 435, pre_delay=self.change_time)
                             self.click(588, 371, pre_delay=1 + self.change_time)
+                            self.lock_home()
+                            self.dixiacheng_ocr(skip, assist_num, stuck_today, stuck_notzhandoukaishi)
                             break
                     elif dixiacheng_floor >= 1 and dixiacheng_floor_times <= 1:
                         pcr_log(self.account).write_log(level='info', message='%s 不知是否打过地下城，开始执行地下城流程' % self.account)

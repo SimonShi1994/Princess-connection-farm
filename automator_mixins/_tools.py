@@ -177,7 +177,6 @@ class ToolsMixin(BaseMixin):
         set_last_record()
         self.lock_home()
 
-
     def get_base_info(self, base_info=False, introduction_info=False, props_info=False, out_xls=False, s_sent=False,
                       acc_nature=0):
         """
@@ -297,7 +296,6 @@ class ToolsMixin(BaseMixin):
                 # 乱输入就这样的格式
                 xls_path = 'xls/%s-pcr_farm_info.xlsx' % self.today_date
 
-
             # 将空的单元格替换为空字符
             pf.fillna('', inplace=True)
             # 判断文件是否存在
@@ -320,7 +318,7 @@ class ToolsMixin(BaseMixin):
             for i in range(0, index):
                 for j in range(0, len(list(acc_info_list)[i])):
                     # 追加写入数据，注意是从i+rows_old行开始写入
-                   worksheet.cell(row= i + 1 + rows_old, column = 1 + j).value = list(acc_info_dict.values())[j]
+                    worksheet.cell(row=i + 1 + rows_old, column=1 + j).value = list(acc_info_dict.values())[j]
             workbook.save(xls_path)  # 保存表格
 
         return acc_info_dict
@@ -874,4 +872,3 @@ class ToolsMixin(BaseMixin):
         mv.clearflags()
         output_dict(self.AR.get("juese_info", UDD["juese_info"]))
         self.lock_home()
-
