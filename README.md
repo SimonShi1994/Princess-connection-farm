@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210405
+# Princess connection 公主连结农场脚本v2.6.20210412
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -184,6 +184,9 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
 ## :hammer:更新历史:wrench:
+
+<details>
+<summary>更新日志（点击展开）</summary>
 
 2021/4/5 By CyiceK
 
@@ -767,3 +770,5 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - 收取礼物函数优化了逻辑，去掉了全部收取按钮的锁定
 - 行会捐赠函数优化了逻辑，现在大概不会捐赠失败了
 - 地下城函数优化了逻辑增加了鲁棒性，加入跳过剧情/首次进入时已经进了地下城 两种情况的初始号的处理法
+
+</details>
