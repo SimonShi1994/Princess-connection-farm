@@ -20,7 +20,7 @@ class ZhuXianHard(ZhuXianBase):
     def check_hard_id(self, screen=None):
         return self.check_zhuxian_id(screen)
 
-    @PCRRetry("select_hard", 3, raise_return=False)
+    @PCRRetry("select_hard", 5, raise_return=False, delay=2)
     def select_hard_id(self, id):
         """
         走到normal的几图
