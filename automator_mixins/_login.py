@@ -279,13 +279,12 @@ class LoginMixin(BaseMixin):
                 try_count += 1
                 if try_count % 5 == 0 and try_count > 10:
                     # 看一下会不会一直点右上角？
-                    if self.last_screen is not None:
-                        if self.is_exists(MAIN_BTN["liwu"], screen=self.last_screen):
-                            # 已经登陆了老哥！
-                            # 重 新 来 过
-                            self.log.write_log("error", "可能出现了狂点右上角错误，换号")
-                            self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
-                            self.change_acc()
+                    if self.is_exists(MAIN_BTN["liwu"]):
+                        # 已经登陆了老哥！
+                        # 重 新 来 过
+                        self.log.write_log("error", "可能出现了狂点右上角错误，换号")
+                        self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
+                        self.change_acc()
                 if try_count > 100:
                     # 点了1000次了，重启吧
                     error_flag = 1

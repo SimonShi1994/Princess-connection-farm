@@ -914,7 +914,18 @@ class ShuatuMixin(ShuatuBaseMixin):
                 target.setdefault(label, 0)
                 if target[label] < t:
                     cur += [(m, a, b, t - target[label])]
-            return cur
+            new_cur = []
+            # 分解任务：一次最多80扫荡
+            for m, a, b, t in cur:
+                tt = t
+                while tt > 0:
+                    if tt > 80:
+                        ttt = 80
+                    else:
+                        ttt = tt
+                    tt -= ttt
+                    new_cur += [(m, a, b, ttt)]
+            return new_cur
 
         # 关卡分析
         def GetXYTD(mode, nowA, nowB):

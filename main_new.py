@@ -483,7 +483,7 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.6.20210405")
+        print("当前版本为 Ver 2.6.20210416")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
@@ -500,6 +500,7 @@ if __name__ == "__main__":
         print("By TheAutumnOfRice")
         print("----------------------------------------")
         print("Tips: config.ini会在启动main_new后自动生成或更新，如果修改了config.ini，重启程序后生效。")
+        print("公主连结 Re:Dive 生日快乐 （")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
     while True:
