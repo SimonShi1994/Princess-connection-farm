@@ -172,7 +172,7 @@ LIWU_BTN = {
 RENWU_BTN = {
     "quanbushouqu_off": p(844, 439, img="img/home/quanbushouqu_off.bmp", at=(747, 421, 939, 455)),
     "quanbushouqu": p(844, 439, img="img/home/quanbushouqu_on.bmp", at=(751, 421, 936, 457)),
-    "renwutip": p(img="img/home/renwutip.bmp", at=(466, 363, 803, 389)),
+    "renwutip": p(img="img/home/renwutip.bmp", at=(456, 364, 794, 393)),
     "guanbi": p(img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),
 }
 JIAYUAN_BTN = {
@@ -311,7 +311,7 @@ TUANDUIZHAN_BTN = {
     "qianwangguanqia": p(592, 436, img="img/hanghui/qianwangguanqia.bmp", at=(478, 404, 697, 462)),
 }
 ZHUCAIDAN_BTN = {
-    "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(493, 247, 695, 290)),
+    "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(699, 198, 915, 255)),
     "jianjie": p(img="img/zhucaidan/jianjie.bmp", at=(267, 241, 499, 290)),
     "daoju": p(475, 160, img="img/zhucaidan/daoju.bmp", at=(475, 112, 610, 187)),
     "saodangquan": p(img="img/zhucaidan/saodangquan.bmp"),
@@ -453,7 +453,7 @@ DXC_ELEMENT = {
     # "left": p(945, 242, img="img/dxc/left.bmp", at=(898, 194, 949, 277)),
     "right": p(14, 242),
     "left": p(945, 242),
-    "chetui": p(806, 431, img="img/dxc/chetui.bmp", at=(779, 421, 833, 440)),
+    "chetui": p(806, 431, img="img/dxc/chetui.bmp", at=(830, 407, 929, 448)),
     "chetui_ok": p(591, 365, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "sytzcs": p(723, 438, img="img/dxc/sytzcs.bmp", at=(667, 428, 784, 447)),
     "1/1": p(img="img/dxc/dxc_1_1.bmp", at=(887, 429, 913, 446)),
@@ -469,9 +469,9 @@ DXC_ELEMENT = {
     # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
     # 商店按钮，此商店按钮与jjc的不同，要大一点
-    "dxc_shop_btn": p(918, 30, img="img/dxc/shop.bmp", at=(905, 21, 924, 41)),
+    "dxc_shop_btn": p(918, 30, img="img/dxc/shop.bmp", at=(883, 1, 947, 69)),
     # 地下城选关界面商店
-    "dxc_choose_shop": p(917, 28, img="img/dxc/dxc_choose_shop.bmp", at=(906, 19, 928, 36)),
+    "dxc_choose_shop": p(917, 28, img="img/dxc/dxc_choose_shop.bmp", at=(883, 1, 947, 69)),
     # 支援
     "zhiyuan_dianren": {
         1: p(100, 173),
@@ -493,6 +493,7 @@ DXC_ELEMENT = {
     "zhiyuan_white": p(477, 86, img="img/dxc/zhiyuan_white.bmp", at=(433, 75, 524, 99)),
     "zhiyuan_blue": p(477, 86, img="img/dxc/zhiyuan_blue.bmp", at=(430, 73, 521, 104)),
     "ok_btn_1": p(588, 371, img="img/ui/ok_btn_1.bmp"),
+    "sheding": p(478, 443, img="img/dxc/sheding.bmp"),
 }
 DXC_NUM = {
     # 没有OCR用此来检测层数

@@ -43,7 +43,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while True:
             if self.is_exists('img/dxc/chetui.bmp'):
                 time.sleep(1.2)
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
                               threshold=0.98)
                 break
         # while True:
@@ -70,13 +70,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         tmp_cout = 0
         while tmp_cout <= 2:
             try:
-                if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
-                    self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448)):
+                    self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
                                   threshold=0.98)
-                    dixiacheng_floor = self.ocr_center(216, 423, 259, 442, size=1.5)
+                    dixiacheng_floor = self.ocr_center(586, 421, 614, 438, size=1.5)
                     # print(dixiacheng_floor)
                     dixiacheng_floor = int(dixiacheng_floor.split('/')[0])
-                    dixiacheng_floor_times = self.ocr_center(668, 421, 697, 445, size=1.5)
+                    dixiacheng_floor_times = self.ocr_center(789, 422, 820, 438, size=1.5)
                     # print(dixiacheng_floor_times)
 
                     # 本地OCR会把0识别成字母O。。。
@@ -168,7 +168,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.dixiacheng(skip)
                 return
             try:
-                if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)) and dixiacheng_times <= 1:
+                if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448) and dixiacheng_times <= 1):
                     # print('>>>', dixiacheng_times)
                     break
             except:
@@ -183,17 +183,18 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 break
 
             # 防止一进去就是塔币教程
-            self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440))
+            self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448))
             # 又一防御措施，防止没进去地下城
             self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259), (592, 369)], threshold=0.97)
             while True:
                 time.sleep(0.5)
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440), threshold=0.97)
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(779, 421, 833, 440))
-                if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448), threshold=0.97)
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(830, 407, 929, 448))
+                if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448)):
                     self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
                                   side_check=self.juqing_kkr)
                     # 锁定挑战和第一层
+                    self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=6)
                     break
             time.sleep(self.change_time)
             if self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
@@ -297,7 +298,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 time.sleep(self.change_time)
                 self.click(1, 1)  # 跳过结算
                 screen_shot_ = self.getscreen()
-                if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(779, 421, 833, 440)):
+                if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(830, 407, 929, 448)):
                     self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(808, 435)])
                     self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
                     continue
@@ -327,7 +328,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 continue
 
             screen_shot = self.getscreen()
-            self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(779, 421, 833, 440))
+            self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(830, 407, 929, 448))
             time.sleep(2 + self.change_time)
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ui/ok_btn_1.bmp')

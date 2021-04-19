@@ -437,6 +437,7 @@ class HanghuiMixin(ToolsMixin):
             # 非主流写法，内部方法
             while True:
                 self.lock_no_img(TUANDUIZHAN_BTN["tiaozhan"], elseclick=(833, 462))
+                self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=6)
                 if self.is_exists(TUANDUIZHAN_BTN["qianwangguanqia"]):
                     # self.lock_no_img(TUANDUIZHAN_BTN["qianwangguanqia"], elseclick=(592, 436))
                     # 刷 1-1获取次数？
