@@ -194,7 +194,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
                                   side_check=self.juqing_kkr)
                     # 锁定挑战和第一层
-                    self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=6)
+                    self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=3)
                     break
             time.sleep(self.change_time)
             if self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
@@ -299,7 +299,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.click(1, 1)  # 跳过结算
                 screen_shot_ = self.getscreen()
                 if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(830, 407, 929, 448)):
-                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(808, 435)])
+                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(876, 427)])
                     self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
                     continue
                 elif self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):

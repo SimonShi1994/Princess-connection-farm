@@ -453,7 +453,7 @@ DXC_ELEMENT = {
     # "left": p(945, 242, img="img/dxc/left.bmp", at=(898, 194, 949, 277)),
     "right": p(14, 242),
     "left": p(945, 242),
-    "chetui": p(806, 431, img="img/dxc/chetui.bmp", at=(830, 407, 929, 448)),
+    "chetui": p(876, 427, img="img/dxc/chetui.bmp", at=(830, 407, 929, 448)),
     "chetui_ok": p(591, 365, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "sytzcs": p(723, 438, img="img/dxc/sytzcs.bmp", at=(667, 428, 784, 447)),
     "1/1": p(img="img/dxc/dxc_1_1.bmp", at=(887, 429, 913, 446)),
