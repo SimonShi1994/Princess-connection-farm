@@ -92,7 +92,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                             self.click(876, 427, pre_delay=self.change_time)
                             self.click(588, 371, pre_delay=1 + self.change_time)
                             self.lock_home()
-                            self.dixiacheng_ocr(skip, assist_num, stuck_today, stuck_notzhandoukaishi)
+                            # self.dixiacheng_ocr(skip, assist_num, stuck_today, stuck_notzhandoukaishi)
                             break
                     elif dixiacheng_floor >= 1 and dixiacheng_floor_times <= 1:
                         pcr_log(self.account).write_log(level='info', message='%s 不知是否打过地下城，开始执行地下城流程' % self.account)
@@ -193,10 +193,12 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448)):
                     self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
                                   side_check=self.juqing_kkr)
+                    self.lock_no_img('img/tiaozhan.bmp', ifclick=[(667, 360), (667, 330)], elseclick=[(833, 456)],
+                                  side_check=self.juqing_kkr)
                     # 锁定挑战和第一层
-                    self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=3)
                     break
             time.sleep(self.change_time)
+            self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=4)
             if self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
                               retry=3, wait_self_before=True):
                 pass
