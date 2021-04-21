@@ -104,7 +104,7 @@ class ZhuXianBase(SevenBTNMixin):
             self.maoxian_id = id
             return id
 
-        return retry_run(fun,max_retry)
+        return retry_run(fun, max_retry, include_errors=False)
 
 
     def Drag_Right(self):

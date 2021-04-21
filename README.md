@@ -188,6 +188,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2021/4/21 By TheAutumnOfRice
+
+- 修复图号识别，Normal Hard图特征
+- 修复跳过按钮图片
+- 新增通关地下城OCR，增加攒TP模式(mode 4)，借人参数(assist)
+
 2021/4/16 By TheAutumnOfRice
 
 - 试图提高选图稳定性
