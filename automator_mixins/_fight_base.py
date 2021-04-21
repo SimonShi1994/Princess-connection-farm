@@ -292,7 +292,7 @@ class FightBaseMixin(ToolsMixin):
         """
         按照战力顺序设置战斗队伍
         order in ["zhanli","dengji","xingshu"]
-        change:0-不换人 1-人全部换下不上 2-默认：全部换人
+        change:0-不换人 1-人全部换下不上 2-默认：全部换人 3- 不下人，直接上人
         要求场景：处于”队伍编组“情况下。
         """
         sc = self.getscreen()
@@ -317,7 +317,7 @@ class FightBaseMixin(ToolsMixin):
                 self.click(FIGHT_BTN["cat_star"], pre_delay=0.5, post_delay=1)
                 self.click_btn(FIGHT_BTN["cat_ok"])
         # 换人3
-        if change >= 1:
+        if 1 <= change <= 2:
             for _ in range(5):
                 self.click(FIGHT_BTN["empty"][1], post_delay=0.5)
         if change >= 2:

@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Union, Type
 
-from core.constant import FIGHT_BTN, MAIN_BTN, DXC_ELEMENT
+from core.constant import MAIN_BTN, DXC_ELEMENT
 from scenes.fight.fighting_base import FightingBase, FightingWinBase, FightingLoseBase
 from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
 
@@ -13,13 +13,6 @@ class FightingZhuXian(FightingBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "FightingZhuXian"
-        self.feature = self.fun_feature_exist(FIGHT_BTN["fighting_caidan"])
-
-    def set_auto(self, auto, screen=None, max_retry=3):
-        self._a.set_fight_auto(auto, screen, max_retry)
-
-    def set_speed(self, level, max_level=1, screen=None, max_retry=3):
-        self._a.set_fight_speed(level, max_level, screen, max_retry)
 
     def get_during(self) -> "DuringFightingZhuXian":
         return DuringFightingZhuXian(self._a)
@@ -67,13 +60,6 @@ class FightingWinZhuXian(FightingWinBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "FightingWinZhuXian"
-        self.feature = self.win_feature
-
-    def win_feature(self, screen):
-        from core.constant import p
-        duiwu_icon = p(img="img/fight/duiwu_icon.bmp", at=(896, 78, 924, 97))
-        shbg = p(850, 37, img="img/fight/shbg.bmp", at=(814, 26, 886, 48))
-        return self.is_exists(duiwu_icon, screen=screen) and self.is_exists(shbg, screen=screen)
 
     def get_star(self, screen=None):
         return self._a.get_fight_middle_stars(screen)
@@ -134,13 +120,6 @@ class FightingLoseZhuXian(FightingLoseBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "FightingLoseZhuXian2"
-        self.feature = self.lose_feature
-
-    def lose_feature(self, screen):
-        from core.constant import p
-        duiwu_icon = p(910, 35, img="img/fight/duiwu_icon.bmp", at=(896, 25, 924, 44))
-        shbg = p(790, 37, img="img/fight/shbg.bmp", at=(754, 26, 826, 48))
-        return self.is_exists(duiwu_icon, screen=screen) and self.is_exists(shbg, screen=screen)
 
     def goto_zhuxian(self, zhuxian_type: Union[Type["ZhuXianHard"], Type["ZhuXianNormal"]]) -> Union[
         "ZhuXianHard", "ZhuXianNormal"]:

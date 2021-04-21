@@ -668,12 +668,13 @@ VALID_TASK = ValidTask() \
          [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False)]) \
     .add("d3", "dixiachengYunhai", "打云海关", "打通云海关【细节待补充】") \
     .add("d4", "dixiachengDuanya", "打断崖关", "打通断崖关【细节待补充】") \
-    .add("d5", "shuatuDD", "通关地下城", "通用的打通地下城函数",
+    .add("d5", "shuatuDD_OCR", "通关地下城OCR", "通用的打通地下城函数",
          [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5"),
           TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
                                        "mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss\n"
                                        "mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss\n"
-                                       "mode 3：用只打第一小关，无论怎样都退出"),
+                                       "mode 3：用只打第一小关，无论怎样都退出\n"
+                                       "mode 4:（攒TP）用队伍[1,2,3,...,N-1]攒TP，N为总层数；用队伍[N,N+1,...]打Boss （不支持借人）"),
           TaskParam("stop_criteria", int, "终止条件", "设置为0时，只要战斗中出现人员伤亡，直接结束\n"
                                                   "设置为1时，一直战斗到当前队伍无人幸存，才结束\n"
                                                   "注：如果在小关遇到停止条件，则直接结束\n"
@@ -685,9 +686,10 @@ VALID_TASK = ValidTask() \
           TaskParam("teams", list, "编队列表", "编队列表，参战地下城所使用的编队\n"
                                            "按照列表顺序分别表示编队1号，2号，3号……\n"
                                            "每一个元素为一个字符串\n"
-                                           "若为\"zhanli\"，则按照战力排序，选择前五战力为当前队伍\n"
-                                           "若为\“a-b\",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b", inputbox=TeamInputer()),
-          TaskParam("safety_stop", int, "安全保护", "防止大号误撤退。\n设置为0时，不管；\n设置为1时，若小关伤亡惨重，直接返回主页不撤退。", 1)]) \
+                                           "若为\"zhanli/dengji/xingshu\"，则按照相关排序，选择前五最高为当前队伍\n"
+                                           "若为\"a-b\",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b", inputbox=TeamInputer()),
+          TaskParam("safety_stop", int, "安全保护", "防止大号误撤退。\n设置为0时，不管；\n设置为1时，若小关伤亡惨重，直接返回主页不撤退。", 1),
+          TaskParam("assist", int, "支援设置", "0表示不用支援，1~16选支援第1/2行的第n个（1-8）(9-16)，等级限制会自动选择第n+1个", 0)]) \
     .add("j1", "doJJC", "竞技场", "竞技场白给脚本") \
     .add("j2", "doPJJC", "公主竞技场", "公主竞技场白给脚本") \
     .add('r1', "gonghuizhijia", "家园领取", "收取公会之家的奖励",

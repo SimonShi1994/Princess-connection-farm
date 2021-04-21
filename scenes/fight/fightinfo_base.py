@@ -17,6 +17,7 @@ class FightInfoBase(PCRMsgBoxBase):
         super().__init__(*args, **kwargs)
         self.scene_name = "FightInfo"
         self.initFC = None
+        # 检测编组设定
         self.feature = self.fun_feature_exist(FIGHT_BTN["baochou"])
 
     def get_upperright_stars(self, screen=None):
@@ -100,6 +101,8 @@ class FightInfoBase(PCRMsgBoxBase):
         if one_tili is None:
             one_tili = left_tili - right_tili
         now_cishu = (left_tili - right_tili) // one_tili  # 使用X张 的识别效果很不好
+        if now_cishu < 1:
+            now_cishu = 1
         retry = 0
         while now_cishu != target:
             if retry >= max_retry:

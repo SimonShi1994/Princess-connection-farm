@@ -64,6 +64,7 @@ class ToolsMixin(BaseMixin):
         返回主页Scene
         """
         from scenes.root.wodezhuye import WoDeZhuYe
+        self.lock_home()
         return WoDeZhuYe(self).enter(timeout=300)
 
     @timeout(300, "init_home执行超时：超过5分钟")
