@@ -50,11 +50,13 @@ class PCRSceneBase:
         self.getFC=self._a.getFC
         self.is_exists=self._a.is_exists
         self.img_prob=self._a.img_prob
-        self.img_where_all=self._a.img_where_all
-        self.img_equal=self._a.img_equal
+        self.img_where_all = self._a.img_where_all
+        self.img_where_all_prob = self._a.img_where_all_prob
+        self.img_equal = self._a.img_equal
         self.wait_for_stable=self._a.wait_for_stable
         self.wait_for_change = self._a.wait_for_change
         self.wait_for_loading = self._a.wait_for_loading
+        self.not_loading = self._a.not_loading
         self.getscreen = self._a.getscreen
         self.lock_fun = self._a.lock_fun
         self.chulijiaocheng = self._a.chulijiaocheng
@@ -186,46 +188,97 @@ class PossibleSceneList(PCRSceneBase):
     可能一个操作之后，产生数个msgbox，这些msgbox的内容、顺序不一定一致，而且可能会有多个跳出。
     使用PossibleMsgBoxList来把这些msgbox全部同时考虑住。
     scene_list:包含msgbox的列表，每个msgbox必须有feature参数以确认是否显示。
-    no_scene_feature：当检测到时，则认定当前没有msgbox弹出；若不指定，则只有当全部msgbox_list均未弹出才判定为无msgbox
+    若同时满足多个feature，按照顺序选择。
+    no_scene_feature：当检测到时，则认定当前没有msgbox弹出；若不指定，则只有当全部msgbox_list均未弹出才判定为无msgbox；
+    no_scene_feature设置为False时，一直等待直到出现scene。
 
     缺陷：如果两个msgbox之间弹出间隔过长，则可能该方法失效。
     解决方法：双重判定。(double_check)：为一个时间， 表示必须满足间隔为double_check的两次判定均生效才认定无msgbox。
         double_check设置为None则不使用双重判定。
 
+    缺陷：如果对于多场景/多msgbox，则可能出现场景feature已经出现，msgbox未出现情形，并导致跳过。
+    解决方法：场景双判。(check_double_scene)：默认开启。使用后，对于检查到的PCRSceneBase类，会对其进行double_check，必须两次满足才行。
+
+    TIPS: 使用check命令可以处理“无scene”的情况。
+    若使用enter命令(被goto），则必须保证有一个可以成功跳转的scene，否则返回None。
+
     Example:
         PossibleSceneList([
     """
 
-    def __init__(self, a, scene_list: List[PCRSceneBase], no_scene_feature=None, double_check=2., timeout=10.,
-                 max_retry=3):
+    def __init__(self, a, scene_list: List[PCRSceneBase], no_scene_feature=None, double_check=2.,
+                 check_double_scene=True, timeout=30.,
+                 max_retry=None):
+        super().__init__(a)
         self.scene_list = scene_list
         self.no_scene_feature = no_scene_feature
         self.double_check = double_check
         self.timeout = timeout if timeout is not None else inf
         self.max_retry = max_retry if max_retry is not None else inf
-        super().__init__(a)
+        self.check_double_scene = check_double_scene
+        self.scene_name = "PossibleSceneList"
 
-    def check(self):
+    def feature(self, screen=None):
+        if screen is None:
+            screen = self.getscreen()
+        for scene in self.scene_list:
+            if scene.feature(screen):
+                return True
+        return False
+
+    def enter(self, timeout=None):
+        if self.initFC is not None:
+            self._a.ES.register(self.initFC, group=self.scene_name)
+        return self.check(timeout=timeout, max_retry=inf, no_scene_feature=False)
+
+    def check(self, double_check=None, check_double_scene=None, timeout=None, max_retry=None, no_scene_feature=None):
         """
         检查场景上是否存在满足要求的scene。
         若存在指定scene，则返回该scene。
         若无scene，则返回None
         """
-
+        if double_check is None:
+            double_check = self.double_check
+        if check_double_scene is None:
+            check_double_scene = self.check_double_scene
+        if timeout is None:
+            timeout = self.timeout
+        if no_scene_feature is None:
+            no_scene_feature = self.no_scene_feature
+        if max_retry is None:
+            max_retry = self.max_retry
         last_check_time = None
+        last_scene = type(None)
         no_scene = False
         start_time = time.time()
         retry = 0
 
-        while retry < self.max_retry:
-            if self.timeout is not None and time.time() - start_time > self.timeout:
+        while retry < max_retry:
+            if timeout is not None and time.time() - start_time > timeout:
                 raise LockTimeoutError("SceneList判断超时！")
+            screen = self.getscreen()
+            if not self.not_loading(screen):
+                start_time = time.time()
             for scene in self.scene_list:
-                screen = self.getscreen()
                 if scene.feature(screen):
-                    return scene
-                if self.no_scene_feature is not None:
-                    no_scene = self.no_scene_feature(screen)
+                    if isinstance(scene, PCRMsgBoxBase):
+                        return scene
+                    else:
+                        # 场景双判
+                        if check_double_scene:
+                            if isinstance(scene, last_scene):
+                                return scene
+                            else:
+                                last_scene = type(scene)
+                                time.sleep(double_check)
+                                continue
+                        else:
+                            return scene
+                if no_scene_feature is not None:
+                    if no_scene_feature is False:
+                        no_scene = False
+                    else:
+                        no_scene = no_scene_feature(screen)
                 else:
                     no_scene = True
             if no_scene:
@@ -233,10 +286,10 @@ class PossibleSceneList(PCRSceneBase):
                 if last_check_time is None:
                     last_check_time = time.time()
                 else:
-                    if time.time() - last_check_time > self.double_check:
+                    if time.time() - last_check_time > double_check:
                         return None  # No Msg
                     else:
-                        time.sleep(-time.time() + last_check_time + self.double_check)  # Double Check
+                        time.sleep(-time.time() + last_check_time + double_check)  # Double Check
             else:
                 last_check_time = None
                 retry += 1

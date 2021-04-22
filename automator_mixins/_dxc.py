@@ -4,6 +4,7 @@ from core.constant import DXC_NUM, FIGHT_BTN, DXC_ELEMENT
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import force_as_ocr_as_possible
+from scenes.dxc.dxc_select import DXCSelectA, DXCSelectB, PossibleDXCMenu
 from ._dxc_base import DXCBaseMixin
 from ._tools import ToolsMixin
 
@@ -43,7 +44,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while True:
             if self.is_exists('img/dxc/chetui.bmp'):
                 time.sleep(1.2)
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
                               threshold=0.98)
                 break
         # while True:
@@ -70,13 +71,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         tmp_cout = 0
         while tmp_cout <= 2:
             try:
-                if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
-                    self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
+                if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448)):
+                    self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
                                   threshold=0.98)
-                    dixiacheng_floor = self.ocr_center(216, 423, 259, 442, size=1.5)
+                    dixiacheng_floor = self.ocr_center(586, 421, 614, 438, size=1.5)
                     # print(dixiacheng_floor)
                     dixiacheng_floor = int(dixiacheng_floor.split('/')[0])
-                    dixiacheng_floor_times = self.ocr_center(668, 421, 697, 445, size=1.5)
+                    dixiacheng_floor_times = self.ocr_center(789, 422, 820, 438, size=1.5)
                     # print(dixiacheng_floor_times)
 
                     # 本地OCR会把0识别成字母O。。。
@@ -89,10 +90,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     if dixiacheng_floor > 1 and dixiacheng_floor_times <= 1:
                         pcr_log(self.account).write_log(level='info', message='%s 已经打过地下城，执行撤退' % self.account)
                         if self.is_exists('img/dxc/chetui.bmp'):
-                            self.click(808, 435, pre_delay=self.change_time)
+                            self.click(876, 427, pre_delay=self.change_time)
                             self.click(588, 371, pre_delay=1 + self.change_time)
                             self.lock_home()
-                            self.dixiacheng_ocr(skip, assist_num, stuck_today, stuck_notzhandoukaishi)
+                            # self.dixiacheng_ocr(skip, assist_num, stuck_today, stuck_notzhandoukaishi)
                             break
                     elif dixiacheng_floor >= 1 and dixiacheng_floor_times <= 1:
                         pcr_log(self.account).write_log(level='info', message='%s 不知是否打过地下城，开始执行地下城流程' % self.account)
@@ -168,7 +169,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.dixiacheng(skip)
                 return
             try:
-                if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)) and dixiacheng_times <= 1:
+                if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448) and dixiacheng_times <= 1):
                     # print('>>>', dixiacheng_times)
                     break
             except:
@@ -183,19 +184,22 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 break
 
             # 防止一进去就是塔币教程
-            self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440))
+            self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448))
             # 又一防御措施，防止没进去地下城
             self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259), (592, 369)], threshold=0.97)
             while True:
                 time.sleep(0.5)
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440), threshold=0.97)
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(779, 421, 833, 440))
-                if self.is_exists('img/dxc/chetui.bmp', at=(779, 421, 833, 440)):
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448), threshold=0.97)
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(830, 407, 929, 448))
+                if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448)):
                     self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
+                                  side_check=self.juqing_kkr)
+                    self.lock_no_img('img/tiaozhan.bmp', ifclick=[(667, 360), (667, 330)], elseclick=[(833, 456)],
                                   side_check=self.juqing_kkr)
                     # 锁定挑战和第一层
                     break
             time.sleep(self.change_time)
+            self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=4)
             if self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
                               retry=3, wait_self_before=True):
                 pass
@@ -297,8 +301,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 time.sleep(self.change_time)
                 self.click(1, 1)  # 跳过结算
                 screen_shot_ = self.getscreen()
-                if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(779, 421, 833, 440)):
-                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(808, 435)])
+                if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(830, 407, 929, 448)):
+                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(876, 427)])
                     self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
                     continue
                 elif self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
@@ -327,7 +331,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 continue
 
             screen_shot = self.getscreen()
-            self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(779, 421, 833, 440))
+            self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(830, 407, 929, 448))
             time.sleep(2 + self.change_time)
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ui/ok_btn_1.bmp')
@@ -547,39 +551,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
     def shuatuDD(self, dxc_id: int, mode: int, stop_criteria: int = 0, after_stop: int = 0, teams=None,
                  safety_stop=1):  # 刷地下城
-        """
-        2020-07-29 Add By TheAutumnOfRice
 
-        统一刷地下城函数，全Auto通关地下城
-        三倍速通关！
-
-        :param dxc_id: 地下城的ID
-        :param mode: 模式
-            mode 0：不打Boss，用队伍1只打小关
-            mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss
-            mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss
-            mode 3：用只打第一小关，无论怎样都退出
-        :param stop_criteria: 终止条件
-            设置为0时，只要战斗中出现人员伤亡，直接结束
-            设置为1时，一直战斗到当前队伍无人幸存，才结束
-                注：如果在小关遇到停止条件，则直接结束
-                打Boss时，如果选用mode 2，则当一个队触发停止条件后会更换下一个队伍
-                直到队伍列表全部被遍历完毕才结束。
-        :param after_stop: 停止之后做什么
-            设置为0时，直接回到主页
-            设置为1时，撤退并回到主页
-                注：如果mode==1（不打Boss），则打完小关之后是否撤退仍然受到该参数的影响
-        :param teams:
-            编队列表，参战地下城所使用的编队
-            按照列表顺序分别表示编队1号，2号，3号……
-            每一个元素为一个字符串
-            若为空字符串，则表示不进行队伍更改，沿用上次队伍
-            若为"zhanli"，则按照战力排序，选择前五战力为当前队伍
-            若为“a-b",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b。
-        :param safety_stop: 安全措施（防止过早退出）
-            设置为0时，如果在小关触发停止条件，则不管
-            设置为1时，如果在小关触发停止条件，则跳过本脚本，不撤退，防止大号误撤退（默认）
-        """
+        return self.shuatuDD_OCR(dxc_id, mode, stop_criteria, after_stop, teams, safety_stop, 0)
         # 2020-08-01 Fix By TheAutumnOfRice 对快速截屏的兼容性
         from core.constant import DXC_COORD
         def parse_team_str(teamstr: str):
@@ -706,5 +679,232 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 # 打输了，看看有没有机会再打一次
                 self.log.write_log("info", f"战败于地下城{dxc_id}-BOSS!")
                 continue
+        # 打赢了
+        self.lock_home()
+
+    def shuatuDD_OCR(self, dxc_id: int, mode: int, stop_criteria: int = 0, after_stop: int = 0, teams=None,
+                     safety_stop=1, assist=0):  # 刷地下城
+        """
+        2020-07-29 Add By TheAutumnOfRice
+
+        统一刷地下城函数，全Auto通关地下城
+        三倍速通关！
+
+        :param dxc_id: 地下城的ID
+        :param mode: 模式
+            mode 0：不打Boss，用队伍1只打小关
+            mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss
+            mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss
+            mode 3：用只打第一小关，无论怎样都退出
+            mode 4：（攒TP）用队伍[1,2,3,...,N-1]攒TP，N为总层数；用队伍[N,N+1,...]打Boss （不支持借人）
+        :param stop_criteria: 终止条件
+            设置为0时，只要战斗中出现人员伤亡，直接结束
+            设置为1时，一直战斗到当前队伍无人幸存，才结束
+                注：如果在小关遇到停止条件，则直接结束
+                打Boss时，如果选用mode 2，则当一个队触发停止条件后会更换下一个队伍
+                直到队伍列表全部被遍历完毕才结束。
+        :param after_stop: 停止之后做什么
+            设置为0时，直接回到主页
+            设置为1时，撤退并回到主页
+                注：如果mode==1（不打Boss），则打完小关之后是否撤退仍然受到该参数的影响
+        :param teams:
+            编队列表，参战地下城所使用的编队
+            按照列表顺序分别表示编队1号，2号，3号……
+            每一个元素为一个字符串
+            若为空字符串，则表示不进行队伍更改，沿用上次队伍
+            若为"zhanli/dengji/xingshu"，则按照相关排序，选择前五最高为当前队伍
+            若为“a-b",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b。
+        :param safety_stop: 安全措施（防止过早退出）
+            设置为0时，如果在小关触发停止条件，则不管
+            设置为1时，如果在小关触发停止条件，则跳过本脚本，不撤退，防止大号误撤退（默认）
+        :param assist: 借人模式
+            设置为0时，不借人。
+            设置为1~16时，借第n个人（若设置为1，则借左上角的，以此类推）
+            注：若指定了具体编队，则借人在编队后进行；否则借人将先进行。
+        """
+        # 2020-08-01 Fix By TheAutumnOfRice 对快速截屏的兼容性
+        from core.constant import DXC_COORD
+
+        def stop_fun():
+            if after_stop == 0:
+                self.log.write_log("info", "触发停止条件，回到主页。")
+                self.lock_home()
+            else:
+                self.log.write_log("info", "触发停止条件，撤退。")
+                S = DXCSelectB(self)
+                S.goto_chetui().ok()
+                self.lock_home()
+
+        if teams is None:
+            teams = [""]
+        assert len(teams) > 0, "至少设置一个队伍！"
+        if mode == 2:
+            assert len(teams) > 1, "模式2下，至少设置两个队伍！"
+        if dxc_id not in DXC_COORD:
+            self.log.write_log("error", f"坐标库中没有{dxc_id}号地下城的信息！")
+            return
+
+        # Start
+        S = self.get_zhuye()
+        S = S.goto_maoxian()
+        S = S.goto_dxc()
+        if isinstance(S, DXCSelectA):
+            cishu = S.get_cishu()
+            if cishu == 0:
+                self.log.write_log("info", "地下城次数已经耗尽。")
+                self.lock_home()
+                return
+            S = S.enter_dxc(dxc_id)
+
+        # 已经进入地下城
+        cur_layer = S.get_jieshu()
+        max_layer = max(DXC_NUM[dxc_id])
+
+        if stop_criteria == 0:
+            min_live = 5
+        else:
+            min_live = 1
+
+        cur_team = -1
+
+        while cur_layer <= max_layer:
+            if mode == 3 and cur_layer >= 2:
+                self.log.write_log("info", "只打第一层")
+                stop_fun()
+                return
+            if mode == 0 and cur_layer == max_layer:
+                self.log.write_log("info", "不打Boss。")
+                stop_fun()
+                return
+            cur_x, cur_y = DXC_COORD[dxc_id][cur_layer]
+
+            # 尝试点图
+            self.wait_for_stable(at=DXC_ELEMENT["map"], delay=1, threshold=0.1, max_retry=5)  # 等待小人走完
+            out = S.click_xy_and_open_fightinfo_xy(cur_x, cur_y)
+            if out is None:
+                # 点图失败，跳过下一层
+                self.log.write_log("warning", "进图失败，尝试下一层。")
+                cur_layer += 1
+                continue
+            out = out.goto_tiaozhan()
+            _team_init = False
+            # 进入编组，这个循环控制：换人 - 检查存活 - 如果存活满足要求，跳出循环
+            while True:
+                if cur_layer < max_layer:
+                    # 打小怪的配置
+                    cur_team = 0
+                else:
+                    if not _team_init:
+                        # 初始化打Boss队伍配置
+                        _team_init = True
+                        if mode == 1:
+                            cur_team = 0
+                        elif mode == 2:
+                            cur_team = 1
+                        elif mode == 4:
+                            cur_team = max_layer - 1
+                        else:
+                            cur_team = 0  # 错误的配置
+                        if cur_team >= len(teams):
+                            cur_team = len(teams) - 1
+                if mode < 4:
+                    # 非攒TP模式，只在第一层进行选人
+                    if assist > 0:
+                        if teams[cur_team] in ['zhanli', 'xingshu', 'dengji']:
+                            # 先支援，再选满
+                            out.select_by_sort(order=teams[0], change=1)  # 先把人全下了 (change=1)
+                            out.get_zhiyuan(assist)  # 上支援
+                            out.select_by_sort(order=teams[0], change=3)  # 不下人，尽量上人 (change=3)
+                        elif teams[cur_team] == "":
+                            # 不动。
+                            pass
+                        else:
+                            # 先选队伍，再支援
+                            out.select_team(teams[cur_team])
+                            out.get_zhiyuan(assist)
+                    else:
+                        # 没有支援就很简单了：直接上人。
+                        out.select_team(teams[cur_team])
+
+                    # 仅第一次进入时借人和选人。
+                    assist = 0
+                    teams[cur_team] = ""
+                else:
+                    # 攒TP模式，根据层数选人，不支持借人
+                    out.select_team(teams[cur_layer - 1])
+
+                # 检查死亡情况
+                if out.get_fight_current_member_count() < min_live:
+                    # 伤亡惨重
+                    if cur_layer < max_layer:
+                        # 小关阵亡，直接结束
+                        if safety_stop:
+                            self.log.write_log("warning", "安全保护启动，可能在小关中阵亡，跳过地下城。")
+                            self.save_last_screen("安全保护Debug.bmp")
+                            for _ in range(10):
+                                self.click(1, 1)
+                            self.lock_home()
+                        else:
+                            self.log.write_log("warning", "在地下城小关伤亡惨重！")
+                            for _ in range(10):
+                                self.click(1, 1)
+                            stop_fun()
+                        return
+                    else:
+                        # Boss阵亡，换队伍直到不能换位置。
+                        cur_team += 1
+                        if cur_team >= len(teams):
+                            self.log.write_log("info", "你的队伍都死光啦！")
+                            stop_fun()
+                            return
+                        else:
+                            self.log.write_log("info", f"伤亡惨重，更换队伍：{teams[cur_team]}")
+                            continue
+                else:
+                    # 找到满足要求的队伍，出战！
+                    break
+
+            # 开始战斗
+            out = out.goto_zhandou()
+            if cur_layer < max_layer:
+                if mode == 4:
+                    # 攒TP
+                    out.set_auto(0)
+                else:
+                    # 不攒TP
+                    out.set_auto(1)
+            else:
+                out.set_auto(1)
+            out.set_speed(2, 2)  # 三倍速
+            state = out.wait_for_end()
+            if state == 1:
+                # 战斗胜利
+                self.log.write_log("info", f"战胜了地下城{dxc_id}-{cur_layer}!")
+                cur_layer += 1
+            else:
+                # 战斗失败
+                self.log.write_log("info", f"战败于地下城{dxc_id}-{cur_layer}!")
+
+            # 战斗结束的一系列处理
+            PS = PossibleDXCMenu(self)
+            out = PS.check(double_check=3, check_double_scene=True, timeout=60, no_scene_feature=False)
+            if isinstance(out, PS.DXCSelectA):
+                # 打完了地下城，通关了。
+                self.log.write_log("info", "通关地下城！")
+                self.lock_home()
+                return
+            elif isinstance(out, (PS.DXCKKR, PS.DXCJuQing)):
+                # 跳过KKR和剧情
+                out.skip()
+                self.get_zhuye().goto_maoxian().goto_dxc()
+                # continue再次检查处于A还是B
+                continue
+            elif isinstance(out, PS.ShouQuBaoChou):
+                out.ok()
+                continue
+            elif isinstance(out, PS.DXCSelectB):
+                # 回到选图界面，轮询结束。
+                break
+
         # 打赢了
         self.lock_home()

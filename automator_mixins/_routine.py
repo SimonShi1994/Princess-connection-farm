@@ -4,7 +4,7 @@ from core.MoveRecord import movevar
 from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN, FIGHT_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
-from core.pcr_checker import RetryNow, PCRRetry
+from core.pcr_checker import RetryNow, PCRRetry, LockMaxRetryError
 from core.pcr_config import force_as_ocr_as_possible
 from core.utils import diff_6hour, diff_5_12hour, diffday
 from ._shuatu_base import ShuatuBaseMixin
@@ -541,7 +541,12 @@ class RoutineMixin(ShuatuBaseMixin):
                 L = J.get_cishu_left()
                 if L > 0:
                     # 仍然可以
-                    B = J.try_click(mode)
+                    try:
+                        B = J.try_click(mode)
+                    except LockMaxRetryError:
+                        self.log.write_log("warning", "无法进入探索，可能还未解锁！")
+                        J.back()
+                        return
                     P = B.shua(team_order)
                     while True:
                         out = P.check()

@@ -64,6 +64,7 @@ class ToolsMixin(BaseMixin):
         返回主页Scene
         """
         from scenes.root.wodezhuye import WoDeZhuYe
+        self.lock_home()
         return WoDeZhuYe(self).enter(timeout=300)
 
     @timeout(300, "init_home执行超时：超过5分钟")
@@ -237,18 +238,18 @@ class ToolsMixin(BaseMixin):
         if introduction_info:
             self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
             # 去简介
-            self.lock_no_img(ZHUCAIDAN_BTN["jianjie"], elseclick=[(382, 268)])
-            self.lock_img(ZHUCAIDAN_BTN["jianjie_L"], elseclick=[(382, 268)])  # 锁定简介
+            self.lock_no_img(ZHUCAIDAN_BTN["jianjie"], elseclick=[(382, 230)])
+            self.lock_img(ZHUCAIDAN_BTN["jianjie_L"], elseclick=[(382, 230)])  # 锁定简介
             screen_shot = self.getscreen()
-            acc_info_dict["jianjie_name"] = self.ocr_center(607, 126, 880, 152, screen_shot=screen_shot, size=2.0)
+            acc_info_dict["jianjie_name"] = self.ocr_center(608, 151, 879, 178, screen_shot=screen_shot, size=2.0)
             acc_info_dict["dengji"] = make_it_as_number_as_possible(
-                self.ocr_center(761, 163, 799, 182, screen_shot=screen_shot, size=2.0))
+                self.ocr_center(702, 184, 785, 205, screen_shot=screen_shot, size=2.0))
             acc_info_dict["jianjie_zhanli"] = make_it_as_number_as_possible(
-                self.ocr_center(703, 195, 801, 216, screen_shot=screen_shot, size=2.0))
-            acc_info_dict["jianjie_hanghui"] = self.ocr_center(703, 230, 917, 248, screen_shot=screen_shot,
+                self.ocr_center(702, 214, 786, 235, screen_shot=screen_shot, size=2.0))
+            acc_info_dict["jianjie_hanghui"] = self.ocr_center(703, 243, 918, 266, screen_shot=screen_shot,
                                                                size=2.0)
             acc_info_dict["jianjie_id"] = make_it_as_number_as_possible(
-                self.ocr_center(600, 415, 765, 435, screen_shot=screen_shot, size=1.2))
+                self.ocr_center(598, 415, 768, 435, screen_shot=screen_shot, size=1.2))
         if props_info:
             self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
             # 去道具

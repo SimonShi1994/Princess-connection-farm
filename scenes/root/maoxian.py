@@ -1,6 +1,7 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from core.constant import MAIN_BTN, MAOXIAN_BTN
+from core.pcr_checker import LockTimeoutError
 from scenes.root.seven_btn import SevenBTNMixin
 
 if TYPE_CHECKING:
@@ -8,6 +9,7 @@ if TYPE_CHECKING:
     from scenes.zhuxian.zhuxian_hard import ZhuXianHard
     from scenes.zhuxian.zhuxian_base import ZhuXianBase
     from scenes.maoxian.tansuo import TanSuoMenu
+    from scenes.dxc.dxc_select import DXCSelectA, DXCSelectB
 
 class MaoXian(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
@@ -41,3 +43,18 @@ class MaoXian(SevenBTNMixin):
     def goto_tansuo(self) -> "TanSuoMenu":
         from scenes.maoxian.tansuo import TanSuoMenu
         return self.goto(TanSuoMenu, self.fun_click(MAIN_BTN["tansuo"]))
+
+    def goto_dxc(self) -> Union["DXCSelectA", "DXCSelectB"]:
+        from scenes.dxc.dxc_select import PossibleDXCMenu, DXCSelectA, DXCSelectB, DXCKKR, DXCJuQing
+        PS = self.goto(PossibleDXCMenu, self.fun_click(MAIN_BTN["dxc"]))
+        while True:
+            if isinstance(PS, (DXCKKR, DXCJuQing)):
+                PS.skip()
+                PS = self.goto_maoxian().goto(PossibleDXCMenu, self.fun_click(MAIN_BTN["dxc"]))
+                continue
+            elif isinstance(PS, DXCSelectA):
+                return PS
+            elif isinstance(PS, DXCSelectB):
+                return PS
+            else:
+                raise LockTimeoutError("进入地下城失败！")

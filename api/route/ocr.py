@@ -23,7 +23,7 @@ if ocr_mode != "网络" and len(ocr_mode) != 0:
         # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
         sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
 
-    if ocr_mode == "本地2" or ocr_mode == "混合" or ocr_mode == "智能":
+    if ocr_mode == "本地2" or ocr_mode == "混合":
         import tr
 
 

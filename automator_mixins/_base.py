@@ -114,11 +114,12 @@ class DebugRecord:
 
 
 def DEBUG_RECORD(fun):
-    def new_fun(self, *args, **kwargs):
+    def new_fun(*args, **kwargs):
+        self = args[0]
         rd = self.debug_record
-        cur = rd.add(fun.__name__, *args, **kwargs)
+        cur = rd.add(fun.__name__, *args[1:], **kwargs)
         rd.running[id(cur)] = cur
-        out = fun(self, *args, **kwargs)
+        out = fun(self, *args[1:], **kwargs)
         cur['end'] = rd.gettime()
         try:
             del rd.running[id(cur)]

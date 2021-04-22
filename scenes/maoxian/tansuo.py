@@ -61,7 +61,7 @@ class TanSuoXuanGuanBase(SevenBTNMixin):
             for p in ec:
                 self.click(*p)
 
-        IB = self.goto(TanSuoInfoBox, gotofun)
+        IB = self.goto(TanSuoInfoBox, gotofun, retry=3)
         IB.NAME = self.NAME
         return IB
 
