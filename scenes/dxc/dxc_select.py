@@ -19,9 +19,11 @@ class PossibleDXCMenu(PossibleSceneList):
         self.DXCKKR = DXCKKR
         self.DXCJuQing = DXCJuQing
         self.ShouQuBaoChou = ShouQuBaoChou
+        self.QuYuXuanZeQueRen = QuYuXuanZeQueRen
         scene_list = [
             DXCKKR(a),
             ShouQuBaoChou(a),
+            QuYuXuanZeQueRen(a),
             DXCJuQing(a),
             DXCSelectA(a),
             DXCSelectB(a),
@@ -65,6 +67,9 @@ class DXCSelectA(SevenBTNMixin):
                 continue
             elif isinstance(PS, DXCSelectB):
                 return PS
+            elif isinstance(PS, QuYuXuanZeQueRen):
+                PS = PS.ok()
+                continue
             else:
                 raise LockTimeoutError("进入地下城失败！")
 
@@ -134,6 +139,14 @@ class ShouQuBaoChou(PCRMsgBoxBase):
     def ok(self):
         self.exit(self.fun_click(475, 481))  # ok
 
+
+class QuYuXuanZeQueRen(PCRMsgBoxBase):
+    def __init__(self, a):
+        super().__init__(a)
+        self.feature = self.fun_feature_exist(DXC_ELEMENT["qyxzqr"])
+
+    def ok(self):
+        return self.goto(PossibleDXCMenu, self.fun_click(DXC_ELEMENT["quyuxuanzequeren_ok"]))
 
 class DXCKKR(PCRMsgBoxBase):
     def __init__(self, a):

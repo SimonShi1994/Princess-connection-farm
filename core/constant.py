@@ -142,13 +142,15 @@ MAIN_BTN = {
 
 }
 JJC_BTN = {
-    "list": p(img="img/jjc/list.bmp", at=(829, 80, 926, 101)),  # 列表更新
+    "list": p(img="img/jjc/list.bmp", at=(821, 77, 888, 103)),  # 列表更新
+    "plist": p(img="img/jjc/plist.bmp", at=(826, 79, 886, 102)),
     "shouqu": p(289, 334),
     "shouqu_ok": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
     "player": p(866, 168),
     "tzcs": p(img="img/jjc/tzcs.bmp", at=(433, 134, 520, 158)),  # 挑战次数
     "zdks": p(834, 454, img="img/jjc/zdks.bmp", at=(760, 429, 911, 473)),  # 战斗开始
-    "xyb": p(img="img/jjc/xyb.bmp", at=(642, 427, 948, 530)),
+    "xyb": p(img="img/jjc/xyb.bmp", at=(794, 474, 857, 503)),
+    "pxyb": p(img="img/jjc/pxyb.bmp", at=(774, 476, 844, 505)),
     "dwbz": p(img="img/jjc/dwbz.bmp", at=(431, 24, 524, 51)),  # 队伍编组
 
 }
@@ -470,6 +472,7 @@ DXC_ELEMENT = {
     "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
     "shouqubaochou_ok": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
     "qianwangdixiacheng": p(805, 495),
+    "qyxzqr": p(img="img/dxc/qyxzqr.bmp", at=(415, 135, 540, 157)),
     "quyuxuanzequeren_ok": p(585, 371, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     # 判断是否在地下城商店内（用于新手教程）
