@@ -10,6 +10,7 @@ from CreateUser import create_schedule as service_create_schedule, edit_schedule
 schedule_api = Blueprint('schedules', __name__)
 
 @schedule_api.route('/schedules', methods=['GET'])
+# 查
 def get_list_all_schedules():
     try:
         count = 0
@@ -24,6 +25,7 @@ def get_list_all_schedules():
 
 
 @schedule_api.route('/get_schedules/<filename>', methods=['GET'])
+# 查
 def get_schedules_info(filename):
     # x,y,z都为字典的拆分所产生出来的临时变量
     # 后面会优化
@@ -58,6 +60,7 @@ def get_schedules_info(filename):
 
 
 @schedule_api.route('/schedules_save', methods=['POST'])
+# 增 改
 def save_schedules():
     # '{"name":"test","batchlist":["zhuangbeirichang"],"condition":{},"type":"asap"}'
     try:
@@ -74,3 +77,12 @@ def save_schedules():
             return jsonify({"code":500, "msg":f"{save_dict}-保存失败"})
     except Exception as e:
         return jsonify({"code":500, "msg":f"{e}-保存失败"})
+
+@schedule_api.route('/schedules_del/<filename>', methods=['GET'])
+# 删
+def del_schedule(filename):
+    try:
+        AutomatorRecorder.del_schedule(filename)
+        return 200
+    except Exception as e:
+        return 500
