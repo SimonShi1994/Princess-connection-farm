@@ -91,6 +91,11 @@ class PCRSceneBase:
 
     def goto(self, scene: Union[Type["PCRSceneBase"], Type["PCRMsgBoxBase"]], gotofun, use_in_feature_only=None,
              before_clear=True, timeout=None, interval=8, retry=None):
+        def nothing():
+            pass
+
+        if gotofun is None:
+            gotofun = nothing
         next_scene = scene(self._a)
         if use_in_feature_only is None:
             if PCRMsgBoxBase in scene.__mro__:

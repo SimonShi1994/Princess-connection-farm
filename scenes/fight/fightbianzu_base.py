@@ -8,7 +8,7 @@ class FightBianZuBase(PCRMsgBoxBase):
         self.scene_name = "FightBianZu"
         self.feature = self.fun_feature_exist(FIGHT_BTN["duiwubianzu"])
         self.initFC = self.getFC(False).exist(MAOXIAN_BTN["bianzusheding"],
-                                              self.fun_click(MAOXIAN_BTN["bianzusheding_ok"]))
+                                              self.fun_click(476, 437))
 
     def select_by_sort(self, order="zhanli", change=2):
         """
