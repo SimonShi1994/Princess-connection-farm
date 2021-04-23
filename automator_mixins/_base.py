@@ -1,24 +1,34 @@
 import asyncio
 import datetime
 import os
+import queue
 import random
 import threading
 import time
-from typing import Optional, Union
+from collections import OrderedDict
+from pathlib import Path
+from typing import Optional, Union, Type, Callable, Any
 
 import cv2
 import numpy as np
+import requests
 import uiautomator2 as u2
 
 from core import log_handler
+from core.MoveRecord import MoveSkipException
 from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
+from core.log_handler import pcr_log
+from core.pcr_checker import ExceptionSet, ElementChecker, Checker, ReturnValue
+from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, ocr_mode
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
-    force_fast_screencut, adb_dir, clear_traces_and_cache
-from core.safe_u2 import SafeU2Handle, safe_u2_connect
+    force_fast_screencut, adb_dir, clear_traces_and_cache, debug_record_size, debug_record_filter
+from core.safe_u2 import SafeU2Handle, safe_u2_connect, timeout
 from core.usercentre import AutomatorRecorder
+from core.utils import make_it_as_number_as_possible
+from scenes.errors import PCRError
 
 lock = threading.Lock()
 
@@ -45,6 +55,81 @@ class FastScreencutException(Exception):
         self.args = args
 
 
+class BeforeHomeException(Exception): pass
+
+
+class DebugRecord:
+    def __init__(self, record_size):
+        self.Q = queue.Queue(record_size)
+        self.running = OrderedDict()
+
+    def clear(self):
+        self.running.clear()
+
+    def gettime(self):
+        cur_time = time.time()
+        time_str = datetime.datetime.fromtimestamp(cur_time).strftime("%H%M%S")
+        return time_str
+
+    def cutstr(self, s, length=30):
+        s = str(s)
+        s = s.replace("\n", "")
+        if len(s) > length:
+            s = s[:length] + "..."
+        return s
+
+    def getitemstr(self, item):
+        if type(item) in [int, float, str, bool]:
+            return self.cutstr(str(item), 100)
+        elif isinstance(item, np.ndarray):
+            return f"<array:{'x'.join([str(s) for s in item.shape])}>"
+        else:
+            return self.cutstr(str(item), 60)
+
+    def add(self, item="()", *args, **kwargs):
+        new_args = []
+        for arg in args:
+            new_args += [self.getitemstr(arg)]
+        new_kwargs = {}
+        for kw in kwargs:
+            new_kwargs[kw] = self.getitemstr(kwargs[kw])
+        str_args = ','.join(new_args)
+        str_kwargs = ','.join(["%s:%s" % (str(k), str(v)) for k, v in new_kwargs.items()])
+        cur = {"cmd": f"{item} -- {str_args} -- {str_kwargs}", "start": self.gettime(), "end": None}
+        if item not in debug_record_filter:
+            if self.Q.full():
+                self.Q.get()
+            self.Q.put(cur)
+        return cur
+
+    def get(self, running=False):
+        L = self.Q.queue if not running else self.running.values()
+        out = []
+        for l in L:
+            if l['end'] is None:
+                out += [f"{l['start']} ~ Running: {l['cmd']}"]
+            else:
+                out += [f"{l['start']} ~ {l['end']} : {l['cmd']}"]
+        return out
+
+
+def DEBUG_RECORD(fun):
+    def new_fun(*args, **kwargs):
+        self = args[0]
+        rd = self.debug_record
+        cur = rd.add(fun.__name__, *args[1:], **kwargs)
+        rd.running[id(cur)] = cur
+        out = fun(self, *args[1:], **kwargs)
+        cur['end'] = rd.gettime()
+        try:
+            del rd.running[id(cur)]
+        except:
+            pass
+        return out
+
+    return new_fun
+
+
 class BaseMixin:
     """
     基础插片：包含设备信息(u2)，账户信息(account)
@@ -56,9 +141,13 @@ class BaseMixin:
     def __init__(self):
 
         self.appRunning = False
+        self.freeze = False  # 是否处于暂停状态（被_move_check检测） 由于与shift+P冲突，在enable_pause关闭时，该项才会生效
+        self._task_index = {}  # 记录每个任务的index便于跳转
+        self.debug_record = DebugRecord(debug_record_size)
         self.account = "debug"
         self._d: Optional[u2.Device] = None
         self.d: Optional[SafeU2Handle] = None
+        self.scenes = []
         self.dWidth = 960
         self.dHeight = 540
         self.log: Optional[log_handler.pcr_log] = None
@@ -76,24 +165,48 @@ class BaseMixin:
         self.last_star = 0  # 上次战斗的星数
         self._move_method = ""  # 接收其它线程发送的处理方法
         self._move_msg = ""  # 接收其它线程发送的信息
-
+        self._paused = False
         # fastscreencap
         if fast_screencut:
             self.lport: Optional[int] = None
             self.receive_minicap: Optional[ReceiveFromMinicap] = None
 
+        self.ES = ExceptionSet(self)
+        self.headers_group = {}
+        self.register_basic_ES()
+
+    def register_basic_ES(self):
+        # Loading时，啥事不干（防止卡住，只检测last_screen）
+        loading_fc = self.getFC(False).wait_for_loading()
+        self.ES.register(loading_fc, "wait_for_loading")
+
     def save_last_screen(self, filename):
+        dir = Path(filename).parent
+        os.makedirs(dir, exist_ok=True)
         if self.last_screen is not None:
             try:
                 cv2.imwrite(filename, self.last_screen)
             except Exception as e:
                 self.log.write_log("error", f"保存最后一次截图失败：{e}")
 
+    def clear_all_initFC(self, except_name=None):
+        for scene in self.scenes:
+            if except_name is None or scene.scene_name != except_name:
+                scene.clear_initFC()
+
     def do_nothing(self):
         # 啥事不干
-        self.log.write_log("info", "Do nothing.")
+        # self.log.write_log("info", "Do nothing.")
         pass
 
+    def _raise(self, e: Type[PCRError], *args, screen_log=True, text_log=True, error_dir=None):
+        raise e(*args, automator=self, screen_log=screen_log, text_log=text_log, error_dir=error_dir)
+
+    def check_ocr_running(self):
+        # 以后可能会用
+        return True
+
+    @DEBUG_RECORD
     def init_fastscreen(self):
         if fast_screencut and Multithreading({}).program_is_stopped():
             from core.get_screen import ReceiveFromMinicap
@@ -122,6 +235,7 @@ class BaseMixin:
                 else:
                     print("Device:", self._d.serial, f"快速截图打开失败！使用慢速截图。")
 
+    @DEBUG_RECORD
     def init_device(self, address):
         """
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
@@ -133,11 +247,13 @@ class BaseMixin:
             self.d = SafeU2Handle(self._d)
             self.init_fastscreen()
 
+    @DEBUG_RECORD
     def init_account(self, account, rec_addr="users"):
         self.account = account
         self.log = log_handler.pcr_log(account)  # 初始化日志
         self.AR = AutomatorRecorder(account, rec_addr)
 
+    @DEBUG_RECORD
     def init(self, address, account, rec_addr="users"):
         # 兼容
         self.init_device(address)
@@ -158,6 +274,7 @@ class BaseMixin:
         else:
             return at
 
+    @DEBUG_RECORD
     def send_move_method(self, method, msg):
         """
         给主线程发送一条消息
@@ -173,29 +290,133 @@ class BaseMixin:
         while self._move_method != "":
             pass
 
+    @DEBUG_RECORD
     def _move_check(self):
         """
         作为最小执行单元，接收暂停、退出等信息
         :return: False：无影响 True：造成影响
         """
+
+        def _ck():
+            if self._move_method == "restart":
+                print(self.address, "- 重启")
+                self._move_method = ""
+                raise Exception(self._move_msg)
+            if self._move_method == "forcekill":
+                print(self.address, "- 强制停止")
+                self._move_method = ""
+                raise ForceKillException()
+            if self._move_method == "skip":
+                if self._move_msg is None:
+
+                    next_id = self.ms.current_id + 1
+                    if next_id in self._task_index:
+                        print(self.address, "- 跳过当前任务")
+                    else:
+                        print(self.address, "- 已经是最后一个任务了！")
+                else:
+                    if str(self._move_msg).isnumeric():
+                        next_id = int(self._move_msg)
+                    else:
+                        next_id = "asduasiudhsaiuheuifhBUNENGTIAO"
+                    if next_id in self._task_index:
+                        print(self.address, "- 跳转至：", self._move_msg)
+                    else:
+                        print(self.address, "- 不存在的任务，无法跳转！")
+                self._move_method = ""
+                raise MoveSkipException(self._move_msg)
+
         try:
-            from automator_mixins._async import block_sw
-            if block_sw == 1:
-                print("脚本暂停中~")
-                while block_sw == 1:
-                    from automator_mixins._async import block_sw
-                    time.sleep(1)
-                return True
+            from automator_mixins._async import block_sw, enable_pause
+            if enable_pause:
+                if block_sw == 1:
+                    print(self.address, "- 脚本暂停中~")
+                    while block_sw == 1:
+                        from automator_mixins._async import block_sw
+                        time.sleep(1)
+                        self._paused = True
+                        _ck()
+                    print(self.address, "- 脚本恢复~")
+                    return True
+            else:
+                if self.freeze:
+                    print(self.address, "- 脚本暂停中~")
+                    while self.freeze:
+                        time.sleep(1)
+                        self._paused = True
+                        _ck()
+                    print(self.address, "- 脚本恢复~")
+                    return True
         except Exception as error:
             print('暂停-错误:', error)
             return True
-        if self._move_method == "restart":
-            self._move_method = ""
-            raise Exception(self._move_msg)
-        if self._move_method == "forcekill":
-            self._move_method = ""
-            raise ForceKillException()
+        _ck()
 
+    def setFCHeader(self, group_name, FCFun: Callable[[ElementChecker], Any], enable=True, unique=True):
+        """
+        给self.getFC中添加一些header。
+        默认的_move_check和ExceptionSet的header不会收到影响。
+        <可用于with>
+        :param group_name: 挂载header的名称
+        :param FCFun: FC控制函数，参数为FC，里面应该调用一系列FC的成员函数
+        :param enable: 初始化可用状态（自己被调用时，会设置自己enable=False防止重复调用）
+        :param unique: 设置为True可以在自己被调用时屏蔽其它的Header
+        """
+        self.headers_group[group_name] = dict(FCFun=FCFun, enable=enable, unique=unique)
+        outer = self
+
+        class _clear_when_exit:
+            def __enter__(self):
+                pass
+
+            def __exit__(self):
+                outer.clearFCHeader(group_name)
+
+        return _clear_when_exit()
+
+    def clearFCHeader(self, group_name):
+        if group_name in self.headers_group:
+            del self.headers_group[group_name]
+
+    def getFC(self, header=True):
+        """
+        获得包含自身实例及异常集的FunctionChecker
+        """
+        FC = ElementChecker(self)
+        if header:
+            FC.add(Checker(self._move_check, name="_move_check"), clear=True)
+            FC.bind_ES(self.ES, name="ExceptionSet")
+            FC.header = True
+            for myheaders in self.headers_group.values():
+                FCFun = myheaders["FCFun"]
+                enable = myheaders["enable"]
+                unique = myheaders["unique"]
+                if enable is False:
+                    continue
+                enable_list = []
+
+                def _set():
+                    if unique:
+                        for h in self.headers_group.values():
+                            if h["enable"]:
+                                enable_list.append(h)
+                                h["enable"] = False
+                    else:
+                        enable_list.append(myheaders)
+                        myheaders["enable"] = False
+
+                def _unset():
+                    for h in enable_list:
+                        h["enable"] = True
+
+                FC.add_process(_set, name="Enter My Header")
+                FCFun(FC)
+                FC.add_process(_unset, name="Exit My Header")
+        else:
+            FC.header = False
+        return FC
+
+    @DEBUG_RECORD
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0., method=cv2.TM_CCOEFF_NORMED):
         """
         try to click the img
@@ -205,7 +426,7 @@ class BaseMixin:
         :return: success
         """
         self._move_check()
-        at = self._get_at(at)
+        img, at = self._get_img_at(img, at)
         position = UIMatcher.img_where(screen, img, threshold, at, method)
         if position:
             self.click(*position, pre_delay, post_delay)
@@ -213,6 +434,7 @@ class BaseMixin:
         else:
             return False
 
+    @DEBUG_RECORD
     def click(self, *args, pre_delay=0., post_delay=0., **kwargs):
         """
         点击函数
@@ -254,6 +476,7 @@ class BaseMixin:
             img = img.img
         return img, at
 
+    @DEBUG_RECORD
     def is_exists(self, img, threshold=0.84, at=None, screen=None, is_black=False,
                   black_threshold=1500, method=cv2.TM_CCOEFF_NORMED):
         """
@@ -274,6 +497,7 @@ class BaseMixin:
         img, at = self._get_img_at(img, at)
         return UIMatcher.img_where(screen, img, threshold, at, method, is_black, black_threshold) is not False
 
+    @DEBUG_RECORD
     def img_prob(self, img, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
         """
         返回一个图片存在的阈值
@@ -290,6 +514,7 @@ class BaseMixin:
         img, at = self._get_img_at(img, at)
         return UIMatcher.img_prob(screen, img, at, method)
 
+    @DEBUG_RECORD
     def img_where_all(self, img, threshold=0.9, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
         """
         返回一个图片所有的位置
@@ -306,6 +531,24 @@ class BaseMixin:
         img, at = self._get_img_at(img, at)
         return UIMatcher.img_all_where(screen, img, threshold, at, method)
 
+    @DEBUG_RECORD
+    def img_where_all_prob(self, img, threshold=0.9, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED):
+        """
+        返回一个图片所有的位置和prob
+        :param img:
+            一个字符串，表示图片的地址；或者为PCRelement类型。
+            当img为PCRelement时，如果at参数为None，则会使用img.at。
+        :param threshold: 阈值
+        :param at: 搜素范围
+        :param screen: 若设置为None，则重新截图；否则使用screen为截图
+        :return: list[(prob,x,y,at)]
+        """
+        if screen is None:
+            screen = self.getscreen()
+        img, at = self._get_img_at(img, at)
+        return UIMatcher.img_all_prob(screen, img, threshold, at, method)
+
+    @DEBUG_RECORD
     def img_equal(self, img1, img2, at=None, similarity=0.01) -> float:
         """
         输出两张图片对应像素相似程度
@@ -327,6 +570,7 @@ class BaseMixin:
             print("EQT:", eqt)
         return eqt
 
+    @DEBUG_RECORD
     def wait_for_stable(self, delay=0.5, threshold=0.2, similarity=0.001, max_retry=0, at=None, screen=None):
         """
         等待动画结束,画面稳定。此时相邻两帧的相似度大于threshold
@@ -353,6 +597,7 @@ class BaseMixin:
             sc = sc2
         return False
 
+    @DEBUG_RECORD
     def wait_for_change(self, delay=0.5, threshold=0.10, similarity=0.01, max_retry=0, at=None, screen=None):
         """
         等待画面跳转变化，此时尾帧与头帧的相似度小于threshold
@@ -378,6 +623,19 @@ class BaseMixin:
                 return True
         return False
 
+    def not_loading(self, screen=None):
+        """
+        判断是否在黑屏Loading 或者 右上角Connecting
+        """
+        if self.is_exists(img='img/error/connecting.bmp', at=(748, 20, 931, 53), screen=screen):
+            return False
+        sc_cut = UIMatcher.img_cut(screen, MAIN_BTN["loading_left"].at)
+        if (sc_cut == 1).all():
+            # 全黑
+            return False
+        return True
+
+    @DEBUG_RECORD
     def wait_for_loading(self, screen=None, delay=0.5, timeout=30):
         """
         等待黑屏loading结束
@@ -403,7 +661,8 @@ class BaseMixin:
             time.sleep(delay)
             sc = self.getscreen()
 
-    def check_dict_id(self, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05):
+    @DEBUG_RECORD
+    def check_dict_id(self, id_dict, screen=None, max_threshold=0.8, diff_threshold=0.05, max_retry=3):
         """
         识别不同图的编号，比较其概率
         :param id_dict: 字典，{key:PCRElement}，表示{编号:图片}
@@ -414,19 +673,23 @@ class BaseMixin:
             None: 识别失败
             Else: 识别的key
         """
-        sc = self.getscreen() if screen is None else screen
-        pdict = {}
-        for i, j in id_dict.items():
-            pdict[i] = self.img_prob(j, screen=sc)
-        tu = max(pdict, key=lambda x: pdict[x])
-        l = sorted(pdict.values(), reverse=True)
-        if debug:
-            print(tu)
-            print(l)
-        if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
-            return None
-        else:
-            return tu
+        for retry in range(max_retry):
+            sc = self.getscreen() if screen is None else screen
+            screen = None
+            pdict = {}
+            for i, j in id_dict.items():
+                pdict[i] = self.img_prob(j, screen=sc)
+            tu = max(pdict, key=lambda x: pdict[x])
+            l = sorted(pdict.values(), reverse=True)
+            if debug:
+                print(tu)
+                print(l)
+            if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
+                time.sleep(0.5)
+                continue
+            else:
+                return tu
+        return None
 
     def run_func(self, th_name, a, fun, async_sexitflag=False):
         if async_sexitflag:
@@ -460,6 +723,7 @@ class BaseMixin:
             pass
         pass
 
+    @DEBUG_RECORD
     def getscreen(self, filename=None):
         """
         包装了self.d.screenshot
@@ -491,15 +755,26 @@ class BaseMixin:
                             self.receive_minicap.stop()
                         self.last_screen = self.d.screenshot(filename, format="opencv")
             else:
-                self.last_screen = self.d.screenshot(filename, format="opencv")
+                if filename is None:
+                    self.last_screen = self.d.screenshot(filename, format="opencv")
+                else:
+                    self.d.screenshot(filename, format="opencv")
+                    self.last_screen = cv2.imread(filename)
             self.last_screen_time = time.time()
-            return UIMatcher.AutoRotateClockWise90(self.last_screen)
+            output_screen = UIMatcher.AutoRotateClockWise90(self.last_screen)
+            if debug:
+                if output_screen is None:
+                    print("ERROR！截图为空！")
+            if output_screen is not None and output_screen.shape != (540, 960, 3):
+                print("Warning: 截屏大小为", output_screen.shape, "应为 (540,960,3)， 可能模拟器分辨率没有被正确设置！")
+            return output_screen
         else:
             if isinstance(self.debug_screen, str):
                 return cv2.imread(self.debug_screen)
             else:
                 return self.debug_screen
 
+    @DEBUG_RECORD
     def find_img(self, img, at=None, alldelay=0.5,
                  ifclick=None, ifbefore=0.5, ifdelay=1,
                  elseclick=None, elsedelay=0.5, retry=0):
@@ -549,6 +824,7 @@ class BaseMixin:
             attempt += 1
         return True if inf_attempt or attempt < retry else False
 
+    @DEBUG_RECORD
     def guochang(self, screen_shot, template_paths, suiji=1):
         # suji标号置1, 表示未找到时将点击左上角, 置0则不点击
         # 输入截图, 模板list, 得到下一次操作
@@ -575,8 +851,9 @@ class BaseMixin:
                 # print('未找到所需的按钮,无动作')
                 pass
 
+    @DEBUG_RECORD
     def lock_fun(self, RTFun, *args, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
-                 elsedelay=0.5, alldelay=0.5, retry=0, is_raise=False, timeout=None, elseafter=0., **kwargs):
+                 elsedelay=0.5, alldelay=0.5, retry=None, is_raise=False, timeout=None, elseafter=0., **kwargs):
         """
         任意方法锁定
         @RTFun 锁定的函数
@@ -591,49 +868,32 @@ class BaseMixin:
             ifclick = [ifclick]
         if type(elseclick) is not list:
             elseclick = [elseclick]
-        attempt = 0
-        lasttime = time.time()
-        ec_time = 0  # else click time: 上次点elseclick的时间
+        FC = self.getFC()
         if timeout is None:
             timeout = lockimg_timeout
-        while True:
-            self._move_check()
-            lasttime = time.time()
-            if debug:
-                print("FUN:", RTFun)
-                print("FUNOUT:", RTFun())
-            out = RTFun(*args, **kwargs)
-            if debug:
-                print("OUT:", out)
-            if out:
-                if ifclick != []:
-                    for clicks in ifclick:
-                        time.sleep(ifbefore)
-                        self.click(clicks[0], clicks[1], post_delay=elseafter)
-                        time.sleep(ifdelay)
-                return out
-            if ec_time == 0:
-                # 第一次：必点
-                # 此后每次等待elsedelay
-                ec_time = time.time() - elsedelay
-            if time.time() - ec_time >= elsedelay:
-                if elseclick != []:
-                    for clicks in elseclick:
-                        self.click(clicks[0], clicks[1], post_delay=elseafter)
-                    attempt += 1
-                    ec_time = time.time()
-            time.sleep(alldelay)
-            if retry != 0 and attempt > retry:
-                return False
-            if timeout != 0 and time.time() - lasttime > timeout:
-                if is_raise:
-                    if disable_timeout_raise:
-                        continue
-                    raise Exception("lock_fun 超时！")
-                return False
 
+        def f():
+            rv = RTFun(*args, **kwargs)
+            if rv is False:
+                return False
+            else:
+                for clicks in ifclick:
+                    time.sleep(ifbefore)
+                    self.click(clicks[0], clicks[1], post_delay=elseafter)
+                    time.sleep(ifdelay)
+                raise ReturnValue(rv)
+
+        def f2():
+            for clicks in elseclick:
+                self.click(clicks[0], clicks[1], post_delay=elseafter)
+
+        FC.add(Checker(f, name="lock_fun - RTFun"))
+        FC.add_intervalprocess(f2, retry, elsedelay, name="lock_fun - elseclick")
+        FC.lock(alldelay, timeout, is_raise=False if disable_timeout_raise else is_raise)
+
+    @DEBUG_RECORD
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
-                  elsedelay=0.5, alldelay=0.5, retry=0, side_check=None,
+                  elsedelay=0.5, alldelay=0.5, retry=None, side_check=None,
                   at=None, is_raise=False, lock_no=False, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84,
                   elseafter=0.):
         """
@@ -674,6 +934,7 @@ class BaseMixin:
         # 2020-08-01 Add: 增加了局部timeout参数
         # 2020-08-06 Add: img可以传入list了
         # 2020-8-19 Add:暂停+方法调用
+        # 2021-1-10 大改，采用新框架FC
         if elseclick is None:
             elseclick = []
         if ifclick is None:
@@ -689,55 +950,41 @@ class BaseMixin:
                 img[i] = True
         if not isinstance(img, dict):
             img = {(img, at): True}
-        attempt = 0
-        lasttime = time.time()
-        ec_time = 0  # else click time: 上次点elseclick的时间
         if timeout is None:
             timeout = lockimg_timeout
-        while True:
-            screen_shot = self.getscreen()
-            # 方法配对，如有需要可以加个验证side_check是否合法
-            if side_check is not None:
-                # 感谢Sisphyus大佬分享的文章
-                # side_check理论支持调用_base的所有子类方法
-                # _method = getattr(self, side_check)
-                determine = side_check(screen_shot)
-                if determine:
-                    lasttime = time.time()
-            if self._move_check():
-                lasttime = time.time()
-            for i, j in img.items():
-                if not isinstance(i, PCRelement):
-                    _img, _at = self._get_img_at(i[0], i[1])
-                else:
-                    _img, _at = self._get_img_at(i, None)
-                if self.is_exists(_img, at=_at, screen=screen_shot, method=method, threshold=threshold) is not lock_no:
-                    if ifclick != []:
-                        for clicks in ifclick:
-                            time.sleep(ifbefore)
-                            self.click(clicks[0], clicks[1], post_delay=elseafter)
-                            time.sleep(ifdelay)
-                    return j
-            if ec_time == 0:
-                # 第一次：必点
-                # 此后每次等待elsedelay
-                ec_time = time.time() - elsedelay
-            if time.time() - ec_time >= elsedelay:
-                if elseclick != []:
-                    for clicks in elseclick:
-                        self.click(clicks[0], clicks[1], post_delay=elseafter)
-                    attempt += 1
-                    ec_time = time.time()
-            time.sleep(alldelay)
-            if retry != 0 and attempt > retry:
-                return False
-            if timeout != 0 and time.time() - lasttime > timeout:
-                if is_raise:
-                    if disable_timeout_raise:
-                        continue
-                    raise Exception("%s——lock_img 超时！" % img)
-                return False
+        FC = self.getFC()
+        FC.getscreen()
+        if side_check is not None:
+            def f(screen):
+                return side_check(screen)
 
+            FC.add(Checker(f, funvar=["screen"], name="lock_img - side_check"), clear=True)
+
+        def f2():
+            for clicks in ifclick:
+                time.sleep(ifbefore)
+                self.click(clicks[0], clicks[1], post_delay=elseafter)
+                time.sleep(ifdelay)
+
+        for i, j in img.items():
+            if not isinstance(i, PCRelement):
+                _img, _at = self._get_img_at(i[0], i[1])
+            else:
+                _img, _at = self._get_img_at(i, None)
+            if lock_no:
+                fun = FC.not_exist
+            else:
+                fun = FC.exist
+            fun(PCRelement(img=_img, at=_at), dofunction=f2, rv=j, method=method, threshold=threshold)
+
+        def f3():
+            for clicks in elseclick:
+                self.click(clicks[0], clicks[1], post_delay=elseafter)
+
+        FC.add_intervalprocess(f3, retry, elsedelay, name="lock_img - elseclick")
+        return FC.lock(alldelay, timeout, is_raise=False if disable_timeout_raise else is_raise)
+
+    @DEBUG_RECORD
     def lock_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5, retry=0,
                  at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED, threshold=0.84, side_check=None,
                  elseafter=0.):
@@ -750,6 +997,7 @@ class BaseMixin:
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=False, timeout=timeout,
                               method=method, threshold=threshold, side_check=side_check, elseafter=elseafter)
 
+    @DEBUG_RECORD
     def lock_no_img(self, img, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None, elsedelay=2., alldelay=0.5,
                     retry=0, at=None, is_raise=True, timeout=None, method=cv2.TM_CCOEFF_NORMED,
                     threshold=0.84, side_check=None, elseafter=0.):  # 锁定指定图像
@@ -762,6 +1010,7 @@ class BaseMixin:
                               alldelay=alldelay, retry=retry, at=at, is_raise=is_raise, lock_no=True, timeout=timeout,
                               method=method, threshold=threshold, side_check=side_check, elseafter=elseafter)
 
+    @DEBUG_RECORD
     def click_btn(self, btn: PCRelement, elsedelay=8., timeout=30., wait_self_before=False,
                   until_appear: Optional[Union[PCRelement, dict, list]] = None,
                   until_disappear: Optional[Union[str, PCRelement, dict, list]] = "self",
@@ -815,6 +1064,8 @@ class BaseMixin:
                                      elseafter=0 if elseafter is None else elseafter, side_check=side_check)
         return r
 
+    @timeout(300, "处理教程时间过长，超过5分钟！")
+    @DEBUG_RECORD
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
         """
         这个处理教程函数是给chushihua.py用的
@@ -831,9 +1082,12 @@ class BaseMixin:
             None: 不返回任何页面
         :return:
         """
-        count = 0  # 出现主页的次数
-        while True:
-            screen_shot_ = self.getscreen()
+        # 2021-1-10 FC改写
+        count = [0]
+        FC = self.getFC().getscreen()
+
+        def f(screen):
+            screen_shot_ = screen
             num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 try:
@@ -841,16 +1095,16 @@ class BaseMixin:
                 except:
                     pass
                 time.sleep(1)
-                continue
+                raise ReturnValue("continue")
 
             if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp', at=(891, 413, 930, 452)):
-                count += 1
-                if count > 2:
-                    break
+                count[0] += 1
+                if count[0] > 2:
+                    raise ReturnValue("break")
                 time.sleep(1)
-                continue
+                raise ReturnValue("continue")
             elif UIMatcher.img_where(screen_shot_, 'img/jiaruhanghui.jpg'):
-                break
+                raise ReturnValue("break")
             elif self.is_exists(MAIN_BTN["xiazai"], screen=screen_shot_):
                 self.click(MAIN_BTN["xiazai"])
             elif self.click_img(screen_shot_, 'img/xiayibu.jpg'):
@@ -862,7 +1116,8 @@ class BaseMixin:
             elif self.click_img(screen_shot_, 'img/juqing/tiaoguo_2.bmp'):
                 time.sleep(3)
             elif self.click_img(screen_shot_, 'img/zhuye.jpg', at=(46, 496, 123, 537)):
-                pass
+                for _ in range(5):
+                    self.click(MAIN_BTN["zhuye"])  # Speed  Up CLick
             elif self.click_img(screen_shot_, 'img/juqing/caidanyuan.bmp', at=(898, 23, 939, 62)):
                 time.sleep(0.7)
                 self.click(804, 45)
@@ -874,28 +1129,37 @@ class BaseMixin:
                     self.click(390, 369)
                     time.sleep(1)
             else:
-                self.click(1, 100)
-            count = 0
-            time.sleep(1)
+                for _ in range(6):
+                    self.click(1, 100)  # Speed Up Click
+            count[0] = 0
+
+        FC.add(Checker(f))
+        FC.lock(delay=1, until="break")
         if turnback == "shuatu":
             # 返回冒险
             self.click(480, 505)
             time.sleep(2)
             self.lock_img('img/zhuxianguanqia.jpg', elseclick=[(480, 513), (390, 369)], elsedelay=0.5)
-            while True:
-                screen_shot_ = self.getscreen()
+
+            def f2(screen):
+                screen_shot_ = screen
                 if UIMatcher.img_where(screen_shot_, 'img/zhuxianguanqia.jpg', at=(511, 286, 614, 314)):
                     self.click(562, 253)
                     time.sleep(0.5)
                 else:
-                    break
+                    raise ReturnValue("break")
+
+            self.getFC().getscreen().add(Checker(f2)).lock(timeout=lockimg_timeout, until="break")
             time.sleep(3)
-            while True:
-                screen_shot_ = self.getscreen()
+
+            def f3(screen):
+                screen_shot_ = screen
                 if UIMatcher.img_where(screen_shot_, 'img/normal.jpg', at=(660, 72, 743, 94)):
-                    break
+                    raise ReturnValue("break")
                 self.click(704, 84)
                 time.sleep(0.5)
+
+            self.getFC().getscreen().add(Checker(f3)).lock(timeout=lockimg_timeout, until="break")
 
     def task_start(self):
         # 标记这个用户开始重新刷图了
@@ -923,6 +1187,7 @@ class BaseMixin:
         d["error"] = error
         self.AR.set_run_status(d)
 
+    @DEBUG_RECORD
     def juqing_kkr(self, screen_shot=None):
         """
         处理剧情+剧情版的可可萝
@@ -941,6 +1206,7 @@ class BaseMixin:
             return True
         return False
 
+    @DEBUG_RECORD
     def right_kkr(self, screen=None):
         """
         处理提示kkr。一般在右边。
@@ -960,6 +1226,7 @@ class BaseMixin:
             screen = self.getscreen()
         return flag
 
+    @DEBUG_RECORD
     def phone_privacy(self):
         """
         2020/7/10
@@ -1033,6 +1300,191 @@ class BaseMixin:
             os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
             os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
             # print("》》》匿名完毕《《《")
+
+    def output_debug_info(self, running):
+        return self.debug_record.get(running)
+
+    @DEBUG_RECORD
+    def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91):
+        """
+        :param credibility: 结果可信度阈值,目前仅有本地OCR2才用到
+        :param size: 放大的大小
+        :param x1: 左上坐标
+        :param y1: 左上坐标
+        :param x2: 右下坐标
+        :param y2: 右下坐标
+        :param screen_shot: 截图
+        :return:
+        """
+        global ocr_text
+
+        try:
+            requests.get(url="http://127.0.0.1:5000/ocr/")
+        except:
+            pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
+            return -1
+
+        if len(ocr_mode) == 0:
+            return -1
+        # OCR识别任务分配
+        if ocr_mode == "智能":
+            baidu_ocr_ping = requests.get(url="https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic")
+            code = baidu_ocr_ping.status_code
+            if code == 200:
+                ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+                if ocr_text == -1:
+                    ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+            else:
+                ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+        elif ocr_mode == "网络":
+            ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+        elif ocr_mode == "本地":
+            ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+        elif ocr_mode == "本地2":
+            ocr_text = self.ocr_local2(x1, y1, x2, y2, screen_shot=screen_shot, size=size, credibility=credibility)
+        elif ocr_mode == "混合":
+            # 机器伪随机
+            ocr_way = random.randint(1, 3)
+            if ocr_way == 1:
+                ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+            elif ocr_way == 2:
+                ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
+            elif ocr_way == 3:
+                ocr_text = self.ocr_local2(x1, y1, x2, y2, screen_shot=screen_shot, size=size, credibility=credibility)
+
+        # OCR返回的数据 纠错
+        try:
+            if ocr_text:
+                return str(ocr_text)
+            else:
+                return -1
+        except:
+            raise Exception("ocr-error", "OCR识别错误。")
+
+    def ocr_local(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+
+        try:
+            if screen_shot.shape[0] > screen_shot.shape[1]:
+                if anticlockwise_rotation_times >= 1:
+                    for _ in range(anticlockwise_rotation_times):
+                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            img_binary = cv2.imencode('.png', part)[1].tobytes()
+            files = {'file': ('tmp.png', img_binary, 'image/png')}
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
+            if debug:
+                print('本地OCR识别结果：%s' % local_ocr_text.text)
+            return local_ocr_text.text
+        except Exception as ocr_error:
+            pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
+            return -1
+
+    # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
+    # 使用Baidu OCR接口
+    def baidu_ocr(self, x1, y1, x2, y2, size=1.0, screen_shot=None):
+        # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
+        # 默认原图大小（1.0）
+        if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
+            pcr_log(self.account).write_log(level='error', message='读取SecretKey或apiKey失败！')
+            return -1
+
+        # 强制size为1.0，避免百度无法识图
+        size = 1.0
+
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+        # from numpy import rot90
+        # screen_shot_ = rot90(screen_shot_)  # 旋转90°
+        if baidu_ocr_img:
+            cv2.imwrite('baidu_ocr.bmp', screen_shot)
+        if screen_shot.shape[0] > screen_shot.shape[1]:
+            if anticlockwise_rotation_times >= 1:
+                for _ in range(anticlockwise_rotation_times):
+                    screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            # cv2.imwrite('fuck_rot90_test.bmp', screen_shot_)
+            # screen_shot_ = rot90(screen_shot_)  # 旋转90°
+            pass
+        part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+        part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+        partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
+
+        try:
+            files = {'file': ('tmp.png', partbin, 'image/png')}
+            result = requests.post(url="http://127.0.0.1:5000/ocr/baidu_ocr/", files=files)
+            # 原生输出有助于开发者
+            result = result.json().get('words_result')[0].get('words')
+            if debug:
+                print('百度OCR识别结果：%s' % result)
+            return result
+        except:
+            pcr_log(self.account).write_log(level='error', message='百度OCR识别失败！请检查apikey和secretkey以及截图范围返回结果'
+                                                                   '是否有误！')
+            return -1
+
+    def ocr_local2(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91):
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+
+        try:
+            if screen_shot.shape[0] > screen_shot.shape[1]:
+                if anticlockwise_rotation_times >= 1:
+                    for _ in range(anticlockwise_rotation_times):
+                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            img_binary = cv2.imencode('.png', part)[1].tobytes()
+            files = {'file': ('tmp.png', img_binary, 'image/png')}
+            r = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr2/", files=files).json().get("res")
+            local_ocr_text = r[0]
+            # local_ocr_text_credibility = float(local_ocr_text[1])  # 可信度
+            if round(float(r[1]), 2) > credibility:
+                if debug:
+                    print('本地OCR-2识别结果：%s' % local_ocr_text)
+                return local_ocr_text
+            else:
+                if debug:
+                    print('本地OCR-2识别结果：%s,该结果可信度太低，丢弃！' % local_ocr_text)
+                return -1
+        except Exception as ocr_error:
+            pcr_log(self.account).write_log(level='error', message='本地OCR-2识别失败，原因：%s' % ocr_error)
+            return -1
+
+    def ocr_int(self, x1, y1, x2, y2, screen_shot=None):
+        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=2.0, credibility=0.97)
+        if out == -1:
+            raise OCRRecognizeError("整数OCR失败了！", outstr=str(out))
+        out = make_it_as_number_as_possible(out)
+        return int(out)
+
+    def ocr_A_B(self, x1, y1, x2, y2, screen_shot=None):
+        def ABfun(s):
+            assert s != "-1", "什么都没有检测到"
+            assert "/" in s, "字符串中应该有/"
+            l = s.split("/")
+            assert len(l) == 2, "字符串中有且只有一个/！"
+            a, b = l
+            return a, b
+
+        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot)
+        try:
+            a, b = ABfun(out)
+            a = make_it_as_number_as_possible(a)
+            b = make_it_as_number_as_possible(b)
+            return int(a), int(b)
+        except Exception as e:
+            raise OCRRecognizeError("OCR失败了！", e, outstr=out)
+
+
+class OCRRecognizeError(Exception):
+    def __init__(self, *args, outstr):
+        self.outstr = outstr
+        super().__init__(*args)
 
 
 class Multithreading(threading.Thread, BaseMixin):

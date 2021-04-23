@@ -1,17 +1,23 @@
 adbutils -i https://pypi.douban.com/simple
-websocket_client -i https://pypi.douban.com/simple
+websocket_client==0.57.0 -i https://pypi.douban.com/simple
 pandas -i https://pypi.douban.com/simple
-xlrd -i https://pypi.douban.com/simple
-xlutils -i https://pypi.douban.com/simple
+openpyxl -i https://pypi.douban.com/simple
 gevent==20.6.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 psutil==5.7.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 baidu-aip==2.2.18.0
 matplotlib==3.1.3 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 opencv-python==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
-uiautomator2==2.10.0 -i https://mirrors.aliyun.com/pypi/simple/
+uiautomator2 -i https://mirrors.aliyun.com/pypi/simple/
 opencv-contrib-python==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 keyboard==0.13.5 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+retrying -i https://pypi.douban.com/simple
 
+# For datacenter
+pypinyin
+rich
+cvxpy
+cvxopt
+brotli
 
 # web api server
 flask==1.1.2 -i https://pypi.douban.com/simple
@@ -21,10 +27,12 @@ flasgger==0.9.5 -i https://pypi.douban.com/simple
 
 
 #OCR
-tensorflow -i https://pypi.douban.com/simple
+tensorflow == 2.4.0 -i https://pypi.douban.com/simple
 muggle-ocr
-numpy==1.19.0 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+numpy==1.19.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 pillow -i https://pypi.douban.com/simple
 pyyaml -i https://pypi.douban.com/simple
-# 低于python3.8版本的可能需要protobuf==3.6.0，大于就随便3.14.0
-protobuf
+# 本地用不了再用这个本地2吧 git+https://github.com/myhub/tr.git@master
+# 低于python3.8版本的可能需要protobuf==3.6.0，大于就>=3.14.0
+protobuf==3.14.0
+

@@ -1,10 +1,18 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
- # Princess connection 公主连结农场脚本v2.2.20210120
+# Princess connection 公主连结农场脚本v2.6.20210422
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
-## 简介
+## 警告：使用pull升级v2.6版本会强制删除config.ini，请提前做好备份
+
+config.ini已经加入.gitignore中，此后的所有版本config.ini都将动态生成（运行main_new.py即自动更新）。
+
+在v2.6.20210308版本中，将config.ini从仓库中移除，这将导致使用pull更新会强制删去本地的config.ini，请及时做好备份。
+
+备份方法：将config.ini的内容复制；git pull；将config.ini备份粘贴回去；运行main_new.py自动补全剩余。
+
+## :bookmark_tabs:简介
 
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
@@ -20,7 +28,11 @@
 
 **支持开关一键修改配置**
 
-## 详细功能
+**支持自定义任务（如果你会python）**
+
+**支持数据中心（库存、角色、刷图规划）**
+
+## :books:详细功能
 
 1. 行会
 
@@ -28,6 +40,7 @@
 - [x] 支援助战
 - [x] 行会捐赠
 - [x] 行会点赞
+- [x] 公会战自动出甜心刀
 
 2. 地下城
 
@@ -51,6 +64,7 @@
 - [x] 购买经验
 - [x] 探索
 - [x] 圣迹调查
+- [x] 收取女神祭
 
 5. 工具
 
@@ -59,6 +73,8 @@
 - [x] OCR获取账号信息
 - [x] 卖出过量装备
 - [x] 暂停手操
+- [x] 库存识别 （仅限装备）
+- [x] 角色识别
 
 6. 刷图
 
@@ -67,9 +83,15 @@
 - [x] 初始化
 - [x] 自动推图
 
-## 环境
+## :globe_with_meridians:环境
 
 - 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
+
+- **Q:**我可以不要OCR吗？**A:**不行，以后只会对非OCR越来越不友好=。=
+
+- OCR 需求 [VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 和 [VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
+
+- 自行打开`requirements.txt`确认依赖无误
 
 - 先cd进项目目录下
 
@@ -82,7 +104,7 @@
 - 如果上面的指令执行后感觉比较慢的话，可以试一下:
 
   ```
-  pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+  pip install -r requirements.txt -i https://pypi.douban.com/simple
   ```
 
 ~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。（建议先试一下不设置的情况
@@ -95,15 +117,25 @@
 
 如何申请百度文字识别apikey和Secret Key:(https://blog.csdn.net/biao197/article/details/102907492 )
 
-Server酱食用方法：(http://sc.ftqq.com/3.version)
+## :loudspeaker:推送
 
-## 使用方式
+|     支持推送的API     | 是否可以交互 | 是否支持图片发送   | 支持‘不受限制’的文字发送 | 使用第三方服务API  | 衍生支持                                              |
+| :-------------------: | ------------ | ------------------ | ------------------------ | ------------------ | ----------------------------------------------------- |
+| QQpush QQ:cold_sweat: | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
+| Wechat 微信（:hand:） | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
+|    Wework 企业微信    | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | APP Bark_IOS Wework群机器人 钉钉群机器人 飞书群机器人 |
+|    TG 电报（:+1:）    | :x:          | :heavy_check_mark: | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
+|     QQBot[开发中]     |              |                    |                          |                    |                                                       |
+
+Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
+
+## :taxi:使用方式
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
-- 使用OCR相关的服务，请先启动**app.py**(双击app.py/`python app.py`)
+- 使用OCR相关的服务，必须启动app。使用2021-01-23后的版本程序默认自动启动app。
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 - 出现“No module named 'XXX'，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
-- 第一次正常运行后，就可以通过**run.bat**来一键启动
+- 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
 - 如果模拟器没有安装 ATX ，请在打开模拟器后，在控控制台里输入init进行初始化模拟器环境
 - **第一次使用，完全不懂怎么办？** 
 
@@ -111,14 +143,14 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
 [如何接入打码平台](docs/如何接入打码平台.md)
 
-开关用法正在绝赞编写中！
+[如何使用开关模块](docs/switch_guide.md)
 
 - 感觉还是不会使用，怎么办？
 
 更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
 
 
-## 额外说明
+## :warning:额外说明
 
 1. 请不要用于商业用途。代码交流和bug反馈请加群加qq群 1130884619
 
@@ -134,24 +166,198 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 
    [![Stargazers over time](https://starchart.cc/SimonShi1994/Princess-connection-farm.svg)](https://starchart.cc/SimonShi1994/Princess-connection-farm)
 
-## 更新计划
+## :date:更新计划
 
 - [x] 滑动验证码问题
 - [x] 模拟器自启动控制
 - [x] 简化Schedule操作模式
 - [ ] WebGUI界面
-- [ ] 提高刷图效率
+- [x] 提高刷图效率
 - [ ] 刷活动本
-- [ ] 女神祭
+- [x] 女神祭
 - [ ] 跳过18图切图动画
 
-## 免责声明
+## :mute:免责声明
 
 当你**下载或使用**本项目，将默许
 
 本项目仅供交流和学习使用，请勿用此从事 违法/商业盈利等，开发者团队拥有本项目的最终解释权
 
-## 更新历史
+## :hammer:更新历史:wrench:
+
+<details>
+<summary>更新日志（点击展开）</summary>
+
+2021/4/22 By TheAutumnOfRice
+
+- 修复一些BUG
+- 修复JJC，PJJC
+
+2021/4/21 By TheAutumnOfRice
+
+- 修复图号识别，Normal Hard图特征
+- 修复跳过按钮图片
+- 新增通关地下城OCR，增加攒TP模式(mode 4)，借人参数(assist)
+
+2021/4/16 By TheAutumnOfRice
+
+- 试图提高选图稳定性
+- 进一步解决无限右上角问题
+
+2021/4/5 By CyiceK
+
+- 上线另一个本地OCR（Tr）`本地2`，需要安装新的依赖
+
+2021/4/5 By TheAutumnOfRice
+
+- 进一步增加OCR识别扫荡次数稳定性
+- 增加登录稳定性，进一步防止无限右上角
+- 给行会捐赠增加300s TimeOut，防止无限卡战斗
+
+2021/3/31 By TheAutumnOfRice
+
+- 更新到Ver2.6版本
+- 新增21图
+
+2021/3/25 By TheAutumnOfRice
+
+- 自动更新程序和Requirements的微调
+
+2021/3/24 By UVJkiNTQ
+
+- 添加了xlsx导出支持，可兼容pandas>=1.2.0
+- 移除了xls导出
+
+2021/3/16 By TheAutumnOfRice
+
+- 试图修复地下城5图问题
+- 增加地下城5图
+
+2021/3/9 By:TheAutumnOfRice
+
+- 新增`force_as_ocr_as_possible`一键修改所有任务为OCR任务
+- 新增OCR探索`r9-ocr`
+- 修复诸多BUG
+
+2021/3/8 By:TheAutumnOfRice
+
+- 使用Scenes框架解构方法
+- 内核使用FunctionChecker框架改写，增加稳定性
+- 增加了OCR刷图推图 `s9`
+- OCR增加效率 `s7-ocr` `s7-a-ocr`
+
+2021/3/5 By:Klarkxy
+
+- "r8购买经验" 新增参数"qianghuashi"，用来进行额外购买强化石。
+
+2021/3/4 By:TheAutumnOfRice
+
+- 修复升级/角色识别中的切换错误
+
+2021/3/3 By:TheAutumnOfRice
+
+- 增加更多调试句柄
+- 修复进入Hard图的问题
+
+2021/3/2 By:Klarkxy
+
+- 编辑界面增加友好提示，方便编辑时使用。
+
+2021/3/2 By:CyiceK
+
+- 新增TGbot推送，去本地化设计，本地无需科学上网即可食用（因此也失去了脚本交互功能）
+
+2021/3/2 By:TheAutumnOfRice
+
+- 新增舒爽的流程控制
+  - 新增暂停继续指令 `pause`/`resume`
+  - 新增任务查看与跳转 `task`/`skip`
+  - 
+- 新增强大的调试工具
+  - 单独开关指定debug `debug`
+  - 记录Automator和u2的操作信息 `rec`/`u2rec`
+  - 支持命令调试 `exec`
+- 增加Bot的代理设置 （proxy_http,proxy_https)
+
+2021/3/1 By:TheAutumnOfRice
+
+- 新增20图
+- 修复data > js trackinfo中部分角色不显示的BUG
+
+2021/2/24 By:TheAutumnOfRice
+
+- 新增女神祭`r11`
+
+2021/2/10 By:TheAutumnOfRice
+
+- 修复自定义任务无法导入的BUG
+
+2021/2/9 By:TheAutumnOfRice
+
+- 修复19图图号错乱
+
+2021/2/5 By:CyiceK
+
+- 上线公会战自动摸`h10`
+
+2021/2/5 By:TheAutumnOfRice
+
+- 数据中心新增角色养成状态总览 `js trackinfo`
+- 修复一个计算Rank所需装备的BUG
+
+2021/2/4 By:CyiceK
+
+- 修复QQBot推送的些许bug，彻底解决了因推送内容字数过多导致发不出去的问题
+
+2021/2/3 By:TheAutumnOfRice
+
+- 修复角色识别覆盖追踪信息的BUG
+- 修复角色识别中OCR爆炸的BUG
+- 增加刷图规划的体验
+- 优化requirements文件
+- 修复19图刷图识别问题
+
+2021/2/2 By:TheAutumnOfRice
+
+- 上线数据中心（DataCenter)，可于主界面data启动
+  - 增加干炸里脊数据库支持
+  - 增加刷图规划
+  - 支持兰德索尔图书馆数据交互
+- 增加角色识别，修复一些识别BUG
+- 修复QQBot不启用时报错的BUG
+- 增加19图
+
+2021/1/31 By:CyiceK
+
+- 优化推送机器人的代码结构
+- 上线QQbot，已知问题是QQbot推送有字数限制，有几率触发无法推送
+- 快速截图默认关闭，若有脚本问题 卡住等，需要速率的再自行开启
+
+2021/1/27 By:TheAutumnOfRice
+
+- 修复一些BUG
+- OCR信息获取体验更佳
+- 增加库存识别 `t6`
+
+2021/1/26 By:TheAutumnOfRice
+
+- 修复了list_all_groups的一些BUG
+- 增加了便捷的组管理命令
+- 给ocr信息获取增加了“所在组”
+- 增加了开关的使用说明
+- 增加自定义模块 `customtask`
+
+2021/1/24 By:TheAutumnOfRice
+
+- 修复inline_app, pcr_config.py的一些BUG
+- 将config.ini加入.gitignore
+
+2021/1/23 By:TheAutumnOfRice
+
+- pcr_config结构变动：现在允许动态增删改查以及自动补全缺失了
+- 增加app的内部模式`inline_app`，优化app启动体验，防止app过量启动
+- batch支持随机优先级了（见edit-batch-random）
+- 修复了开关相关的BUG
 
 2021/1/20 By:TheAutumnOfRice
 
@@ -580,3 +786,5 @@ Server酱食用方法：(http://sc.ftqq.com/3.version)
 - 收取礼物函数优化了逻辑，去掉了全部收取按钮的锁定
 - 行会捐赠函数优化了逻辑，现在大概不会捐赠失败了
 - 地下城函数优化了逻辑增加了鲁棒性，加入跳过剧情/首次进入时已经进了地下城 两种情况的初始号的处理法
+
+</details>

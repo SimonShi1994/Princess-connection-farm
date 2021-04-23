@@ -2,8 +2,10 @@ import time
 
 import numpy as np
 
+from automator_mixins._base import DEBUG_RECORD
 from core.constant import FIGHT_BTN, MAIN_BTN, MAOXIAN_BTN, JJC_BTN
 from core.cv import UIMatcher
+from core.pcr_checker import PCRRetry, RetryNow, ContinueNow
 from core.pcr_config import debug
 from ._tools import ToolsMixin
 
@@ -14,16 +16,23 @@ class FightBaseMixin(ToolsMixin):
     包括与战斗相关的基本操作
     """
 
-    def Drag_Right(self):
-        self.d.touch.down(600, 120).sleep(0.1).move(200, 120).sleep(0.2).up(200, 120)
-        # self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+    @DEBUG_RECORD
+    def Drag_Right(self, origin=False):
+        if origin:
+            self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+        else:
+            self.d.touch.down(600, 120).sleep(0.1).move(200, 120).sleep(0.2).up(200, 120)
         time.sleep(self.change_time)
 
-    def Drag_Left(self):
-        self.d.touch.down(200, 120).sleep(0.1).move(600, 120).sleep(0.2).up(600, 120)
-        # self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+    @DEBUG_RECORD
+    def Drag_Left(self, origin=False):
+        if origin:
+            self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
+        else:
+            self.d.touch.down(200, 120).sleep(0.1).move(600, 120).sleep(0.2).up(600, 120)
         time.sleep(self.change_time)
 
+    @DEBUG_RECORD
     def get_fight_middle_stars(self, screen=None):
         """
         获取战斗胜利后中间的星数
@@ -50,6 +59,7 @@ class FightBaseMixin(ToolsMixin):
         t = tf < tb
         return np.sum(t)
 
+    @DEBUG_RECORD
     def get_fight_state(self, screen=None, max_retry=10, delay=1,
                         check_hat=False, check_xd=True, go_xd=False,
                         check_jq=False, check_ghz=True, check_star=False) -> int:
@@ -139,6 +149,7 @@ class FightBaseMixin(ToolsMixin):
                 continue
         return -1
 
+    @DEBUG_RECORD
     def get_fight_speed(self, screen=None, max_retry=3) -> int:
         """
         获取速度等级
@@ -148,30 +159,18 @@ class FightBaseMixin(ToolsMixin):
             -1：检测失败
             0，1，2：原速、两倍速、三倍速
         """
-        retry = 0
-        while retry <= max_retry:
-            retry += 1
-            if screen is None:
-                sc = self.getscreen()
-            else:
-                sc = screen
-                screen = None
-            state = self.get_fight_state(sc, max_retry=1)
-            if state == -1:
-                continue
-            elif state in [1, 2]:
-                return -1
+        SPEED_DICT = {
+            0: FIGHT_BTN["speed_0"],
+            1: FIGHT_BTN["speed_1"],
+            2: FIGHT_BTN["speed_2"],
+        }
+        out = self.check_dict_id(SPEED_DICT, screen, max_retry=max_retry)
+        if out is None:
+            return -1
+        else:
+            return out
 
-            p0 = self.img_prob(FIGHT_BTN["speed_0"], screen=sc)
-            p1 = self.img_prob(FIGHT_BTN["speed_1"], screen=sc)
-            p2 = self.img_prob(FIGHT_BTN["speed_2"], screen=sc)
-            probs = np.array([p0, p1, p2])
-            if probs.max() < 0.84:
-                continue
-            else:
-                return probs.argmax()
-        return -1
-
+    @DEBUG_RECORD
     def set_fight_speed(self, level, max_level=1, screen=None, max_retry=3) -> bool:
         """
         调节速度等级
@@ -183,38 +182,25 @@ class FightBaseMixin(ToolsMixin):
             True 设置成功
             False 可能未设置成功
         """
-        retry = 0
-        while retry <= max_retry:
-            retry += 1
-            if screen is None:
-                sc = self.getscreen()
+        @PCRRetry(delay=0.5, max_retry=max_retry, raise_return=False)
+        def fun():
+            nonlocal screen
+            out = self.get_fight_speed(screen, 3)
+            if out == -1:
+                raise RetryNow()
+            if out == level:
+                return True
             else:
-                sc = screen
-                screen = None
-            speed = self.get_fight_speed(sc)
-            if speed == -1:
-                return False
-            else:
-                # 获取速度成功
-                if speed != level:
-                    while speed != level:
-                        speed = (speed + 1) % (max_level + 1)
-                        self.click(FIGHT_BTN["speed_0"])
-                    # 检查设置情况
-                    time.sleep(0.2)
-                    speed = self.get_fight_speed()
-                    if speed == -1:
-                        return False
-                    elif speed == level:
-                        # 设置成功
-                        return True
-                    else:
-                        continue
-                else:
-                    return True
-        # 超过最大尝试次数
-        return False
+                while out!=level:
+                    self.click(FIGHT_BTN["speed_0"], post_delay=0.2)
+                    out=(out+1)%(max_level+1)
+                time.sleep(1.3)  # 防止涟漪
+                screen = self.getscreen()
+                raise ContinueNow()
 
+        return fun()
+
+    @DEBUG_RECORD
     def get_fight_auto(self, screen=None, max_retry=3) -> int:
         """
         获取当前是否开着自动
@@ -225,28 +211,17 @@ class FightBaseMixin(ToolsMixin):
             0：未开
             1：开了
         """
-        retry = 0
-        while retry <= max_retry:
-            retry += 1
-            if screen is None:
-                sc = self.getscreen()
-            else:
-                sc = screen
-                screen = None
-            state = self.get_fight_state(sc, max_retry=1)
-            if state == -1:
-                continue
-            elif state in [1, 2]:
-                return -1
-            p0 = self.img_prob(FIGHT_BTN["auto_off"], screen=sc)
-            p1 = self.img_prob(FIGHT_BTN["auto_on"], screen=sc)
-            probs = np.array([p0, p1])
-            if probs.max() < 0.84:
-                continue
-            else:
-                return probs.argmax()
-        return -1
+        AUTO_DICT = {
+            0: FIGHT_BTN["auto_off"],
+            1: FIGHT_BTN["auto_on"],
+        }
+        out = self.check_dict_id(AUTO_DICT, screen, max_retry=max_retry)
+        if out is None:
+            return -1
+        else:
+            return out
 
+    @DEBUG_RECORD
     def set_fight_auto(self, auto, screen=None, max_retry=3) -> bool:
         """
         调节auto开关
@@ -257,35 +232,22 @@ class FightBaseMixin(ToolsMixin):
             True 设置成功
             False 可能未设置成功
         """
-        retry = 0
-        while retry <= max_retry:
-            retry += 1
-            if screen is None:
-                sc = self.getscreen()
-            else:
-                sc = screen
-                screen = None
-            cur = self.get_fight_auto(sc)
-            if cur == -1:
-                return False
-            else:
-                if cur != auto:
-                    self.click(FIGHT_BTN["auto_off"])
-                    # 检查设置情况
-                    time.sleep(0.2)
-                    cur = self.get_fight_auto()
-                    if cur == -1:
-                        return False
-                    elif cur == auto:
-                        # 设置成功
-                        return True
-                    else:
-                        continue
-                else:
-                    return True
-        # 超过最大尝试次数
-        return False
 
+        @PCRRetry(delay=0.5, max_retry=max_retry, raise_return=False)
+        def fun():
+            nonlocal  screen
+            out = self.get_fight_auto(screen,3)
+            if out==-1:
+                raise RetryNow()
+            if out == auto:
+                return True
+            else:
+                self.click(FIGHT_BTN["auto_on"],post_delay=1.5)  # 避免涟漪影响
+                screen=self.getscreen()
+                raise ContinueNow()
+        return fun()
+
+    @DEBUG_RECORD
     def set_fight_team(self, bianzu, duiwu):
         """
         设置战斗队伍
@@ -305,6 +267,7 @@ class FightBaseMixin(ToolsMixin):
         else:
             return True
 
+    @DEBUG_RECORD
     def get_fight_current_member_count(self, screen=None):
         """
         获取”当前的成员"的数量
@@ -324,11 +287,12 @@ class FightBaseMixin(ToolsMixin):
                 count_live -= 1
         return count_live
 
+    @DEBUG_RECORD
     def set_fight_team_order(self, order="zhanli", change=2):
         """
         按照战力顺序设置战斗队伍
         order in ["zhanli","dengji","xingshu"]
-        change:0-不换人 1-人全部换下不上 2-默认：全部换人
+        change:0-不换人 1-人全部换下不上 2-默认：全部换人 3- 不下人，直接上人
         要求场景：处于”队伍编组“情况下。
         """
         sc = self.getscreen()
@@ -353,31 +317,18 @@ class FightBaseMixin(ToolsMixin):
                 self.click(FIGHT_BTN["cat_star"], pre_delay=0.5, post_delay=1)
                 self.click_btn(FIGHT_BTN["cat_ok"])
         # 换人3
-        if change >= 1:
+        if 1 <= change <= 2:
             for _ in range(5):
                 self.click(FIGHT_BTN["empty"][1], post_delay=0.5)
         if change >= 2:
             for i in range(5):
                 self.click(FIGHT_BTN["first_five"][i + 1], post_delay=0.5)
 
+    @DEBUG_RECORD
     def get_upperright_stars(self, screen=None):
         """
         获取右上角当前关卡的星星数
         :param screen: 设置为None时，不另外截屏
         :return: 0~3
         """
-        if screen is None:
-            screen = self.getscreen()
-        fc = np.array([98, 228, 245])  # G B R:金色
-        bc = np.array([212, 171, 139])  # G B R:灰色
-        c = []
-        us = FIGHT_BTN["upperright_stars"]
-        for i in range(1, 4):
-            x = us[i].x
-            y = us[i].y
-            c += [screen[y, x]]
-        c = np.array(c)
-        tf = np.sqrt(((c - fc) ** 2)).sum(axis=1)
-        tb = np.sqrt(((c - bc) ** 2)).sum(axis=1)
-        t = tf < tb
-        return np.sum(t)
+        return self.count_stars(FIGHT_BTN["upperright_stars"], screen)

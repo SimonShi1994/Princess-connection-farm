@@ -1,5 +1,4 @@
 import subprocess
-import sys
 import traceback
 
 import requests
@@ -10,10 +9,12 @@ from core.initializer import PCRInitializer, Schedule
 from core.launcher import EMULATOR_DICT
 from core.pcr_config import *
 from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
+from core.utils import is_ocr_running
 
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
+script_version = "Ver 2.6.20210422"
 
 
 def GetLastSchedule():
@@ -246,22 +247,40 @@ def JoinShutdown(nowait=False):
 
 def ShowGuide():
     print("/docs/introduce_to_schedule.md  Schedule使用帮助")
+    print("/docs/switch_guide              开关使用说明 [<New!]")
     print("/docs/如何接入打码平台.md")
     print("/equip/                         自动发起捐赠所用的样例装备")
     print("/INI文件配置解读.md               配置文件使用说明")
     print("/AboutUpdater.md                自动更新使用说明（自动更新已经很久没更新过了，可能不能使用）")
     print("/webclient/README.md            前端使用说明  (前端还不能用）")
     print("/tasks_example/                 样例任务json文件")
+    print("/example_customtask/            样例自定义任务文件")
 
 
 def ShowServerChan():
+    print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
+    print("  - 日志记录过滤等级 log_lev：", log_lev)
+    print("  - 日志记录最大累积条数 log_cache：", log_cache)
     if s_sckey != "":
         print("* Server酱已配置！")
-        print("  - 运行状态消息发送间隔(s) s_sentstate schedule：", s_sentstate)
+    else:
+        print("* Server酱未配置，可前往config.ini - s_sckey进行设置")
+    if qqbot_key != "":
+        print("* QQbot已配置！")
+        print("选择的QQbot提供商 qqbot_select：", qqbot_select)
+        print("QQbot私聊你的开关 qqbot_private_send_switch：", qqbot_private_send_switch)
+        print("QQbot群聊的开关 qqbot_group_send_switch：", qqbot_group_send_switch)
+        print("设置发送的QQ号/群号 qq：", qq)
+        print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
         print("  - 记录过滤等级 log_lev：", log_lev)
         print("  - 记录最大累积条数 log_cache：", log_cache)
     else:
-        print("* Server酱未配置，前往config.ini - s_sckey进行设置")
+        print("* QQbot未配置，可前往config.ini - qqbot_key进行设置")
+    if tg_token != "":
+        print("* TGbot已配置！")
+        print("  - 是否消息铃声静音 tg_mute：", tg_mute)
+    else:
+        print("* TGbot未配置，可前往config.ini - tg_token进行设置")
 
 
 def ShowAutoConsole():
@@ -286,6 +305,7 @@ def ShowAutoConsole():
     else:
         print("* 模拟器自动控制未配置，前往config.ini - emulator_console进行配置")
     print("* 自动启动app.py auto_start_app：", "已开启" if auto_start_app else "未开启")
+    print("* 内部方式启动app：", "已开启" if inline_app else "未开启")
 
 
 def ShowOCR():
@@ -294,6 +314,11 @@ def ShowOCR():
         print("* BaiduAPI 已配置！")
     else:
         print("* BaiduAPI 未配置，前往config.ini - baidu_apiKey进行配置")
+    print("* 本地OCR状态：", end="")
+    if is_ocr_running():
+        print("运行中")
+    else:
+        print("未运行")
 
 
 def ShowPCRPerformance():
@@ -323,12 +348,20 @@ def ShowPCRPerformance():
     print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", "已开启" if captcha_popup else "未开启")
     print("* 缓存清理 clear_traces_and_cache：", "已开启" if clear_traces_and_cache else "未开启")
 
+def ShowTaskInfo():
+    print("* 如果有OCR版本，强制使用OCR版本的任务。", "已开启" if force_as_ocr_as_possible else "未开启")
+
+
 def ShowDebugInfo():
     print("* 输出Debug信息 debug：", "已开启" if debug else "未开启")
     print("* 忽略警告信息 ignore_warning：", "已开启" if ignore_warning else "未开启")
     print("* 保存错误堆栈 trace_exception_for_debug:", "已开启" if trace_exception_for_debug else "未开启")
     print("* 保存baiduocr的图片 baidu_ocr_img：", "已开启" if baidu_ocr_img else "未开启")
     print("* 屏蔽图像匹配超时报错 disable_timeout_raise：", "已开启" if disable_timeout_raise else "未开启")
+    print("* U2指令记录队列大小 u2_record_size：", u2_record_size)
+    print("* U2指令过滤列表 u2_record_filter:", u2_record_filter)
+    print("* Automator指令记录队列大小 debug_record_size: ", debug_record_size)
+    print("* Automator指令过滤列表 debug_record_filter: ", debug_record_filter)
 
 
 def CheckConstantImgs():
@@ -364,19 +397,60 @@ def CheckConstantImgs():
 
 def ShowInfo():
     ShowDebugInfo()
+    ShowTaskInfo()
     ShowServerChan()
     ShowOCR()
     ShowPCRPerformance()
     ShowAutoConsole()
     CheckConstantImgs()
 
-
+def PrintQQ():
+    print("------------------------------------------")
+    print("QQ: 1130884619  - 公主连结国服代码交♂流群")
+    print("进群请备注你从什么地方了解本脚本！")
+    print("有BUG反馈或脚本问题欢迎进群讨论！")
+    print("------------------------------------------")
+    print("（原作者学业繁忙中因此）脚本最近更新速度将放缓，\n"
+          "很多BUG来不及修，新功能也没有时间上线……")
+    print("实在忙不过来了，如果你对python稍微有点了解，欢迎加入我们一起进行开发和维护！")
+    print("-  Ver3开发 （随便会点vue/antdesign/flask)")
+    print("-  完善使用教程（会用本脚本就行）")
+    print("-  图号录入人 （每次更新时将坐标和相关图片录入即可）")
+    print("-  BOT人 （有机器人推送、交互经验）")
+    print("-  基础脚本开发和维护 （随便懂点基础python语法）")
+    print("-  全自动养号向脚本开发和维护（会python最好再会点CV）")
 
 def Start_App():
-    subprocess.Popen([sys.executable, "app.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    if is_ocr_running():
+        print("app 已经启动！")
+        return
+    if not inline_app:
+        subprocess.Popen([sys.executable, "app.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
+    else:
+        subprocess.Popen([sys.executable, "app.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print("正在等待app启动完毕……")
+    import time
+    start_time = time.time()
+    while time.time() - start_time <= 60:
+        if is_ocr_running():
+            print("app启动完毕！")
+            return
+    print("app可能启动失败。")
 
 
+def get_arg(argv, key, default):
+    for ind, a in enumerate(argv):
+        if a == key:
+            return argv[ind + 1]
+    return default
+
+def has_arg(argv, key, default):
+    for ind, a in enumerate(argv):
+        if a == key:
+            return True
+    return default
 if __name__ == "__main__":
+    CheckConstantImgs()
     GetLastSchedule()
     argv = sys.argv
     # 自启动app
@@ -395,7 +469,7 @@ if __name__ == "__main__":
             s.mount('http://', HTTPAdapter(max_retries=5))
             s.mount('https://', HTTPAdapter(max_retries=5))
             # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
-            api_url = "https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/master"
+            api_url = f"https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/{trace_tree}"
             all_info = s.get(api_url)
             if all_info.status_code == 403:
                 update_info = "最新版本为 {请求频繁，当前无法连接到github！请休息2分钟后再试}"
@@ -403,32 +477,36 @@ if __name__ == "__main__":
                 all_info = all_info.json()
                 new_time = all_info["commit"].get("committer").get("date")
                 new_messages = all_info["commit"].get("message")
-                update_info = f"最新版本为 {new_time} -> 更新内容为 {new_messages}"
+                update_info = f"{trace_tree}分支最新版本为 {new_time} -> 更新内容为 {new_messages}"
             else:
                 update_info = "最新版本为 {当前无法连接到github！}"
         except:
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print("当前版本为 Ver 2.2.20210120")
+        print(f"当前版本为 {script_version}")
         print(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
-        print("app 启动app.py [自启动：", "已开启" if auto_start_app else "未开启", "]")
+        print("app 启动app.py", end=" ")
+        print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
+        print("[内部模式：", "已开启" if inline_app else "未开启", "]")
+        if force_as_ocr_as_possible:
+            print("注意：你正在强制OCR模式下运行(force_as_ocr_as_possible)，app必须开启！")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
+        print("edit 进入编辑模式                  qq QQ群")
+        print("data 进入数据中心")
+        print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
-        print("* Tip：如果要使用任何OCR（包括本地和网络），请手动启动app.py！")
-        print("* Tip：如果要自动填写验证码，请在config关闭captcha_skip")
-        print("* Tip：如果某Schedule莫名无法运行，可能是存在未解决的错误，请参考introduce中错误解决相关部分！")
-        print("* Happy 2021 Year!")
+        print("Tips: config.ini会在启动main_new后自动生成或更新，如果修改了config.ini，重启程序后生效。")
+        print("公主连结 Re:Dive 生日快乐 （")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
-        print("* 开关（Switch）模块上线！进入edit看看吧！（虽然还没来得及写教程）")
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Main[{last_schedule}]> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "info":
@@ -468,8 +546,6 @@ if __name__ == "__main__":
                         print("unbind", "解除与计划", last_schedule, "的绑定。")
 
                     print("state -tuitu 显示所有用户推图的状态")
-                    print("edit 进入用户配置编辑模式")
-                    print("screencut 进入截图小工具")
                 else:
                     print("实时控制帮助")
                     print("stop [-f] 停止当前的Schedule，-f表示强制停止")
@@ -484,6 +560,122 @@ if __name__ == "__main__":
                     print("join [-nowait] 一直运行至队列为空，设备全部闲置后退出，设置-nowait后将忽略等待执行的任务")
                     print("join-shutdown [-nowait] 一直运行至队列为空、设备全部闲置时，关机，设置-nowait后将忽略等待执行的任务")
                     print("reconnect 重新搜索模拟器")
+                    print("以下device_id若不指定，默认将信息发给全部Device。device_id可通过device命令查看，为整数。")
+                    if enable_pause:
+                        print("<Shift+P> 暂停/继续 (关闭enable_pause，可以使用命令暂停/继续某一个指定device）")
+                    else:
+                        print("pause/resume [-d (device_id)] 暂停/继续 （开启enable_pause，可以用热键暂停device）")
+                    print("task [-d (device_id)] 查看某个device当前的task列表")
+                    print("skip [-d (device_id)] [-t (task_id)] 跳过当前任务；若指定-t，则跳转到指定任务（通过task查看ID）")
+                    print("!!!________FOR DEBUG________!!!")
+                    # print("last_screen [-d (device_id)] 监视某一个设备的最后一次截图")
+                    print("u2rec [-d (device_id)] 查看某个device的u2运行记录")
+                    print("rec [-d (device_id)] [-r] 查看某个device的Automator运行记录,-r只查看running的记录。")
+                    print("debug (on/off) [-d (device_id)] [-m (module_name)] 打开/关闭某个设备的调试显示，-m可指定某一个模块，默认为全部模块。")
+                    print("debug show [-d (device_id)] 显示某一个设备的每个模块的调试启动状况。")
+                    print("exec [-d (device_id)] [-f (script_file)] 进入python命令调试模式，若指定-f，则执行某一文件。")
+            elif order == "qq":
+                PrintQQ()
+            elif order == "task":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.show_task_index(device)
+            elif order == "u2rec":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.show_u2_record(device)
+            elif order == "rec":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                running_mode = has_arg(argv, "-r", False)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.show_debug_record(running_mode, device)
+            elif order == "skip":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                to_id = get_arg(argv, "-t", None)
+                if to_id is not None:
+                    to_id = int(to_id)
+                SCH.pcr.skip_task(to_id, device)
+            elif order == "pause":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.set_freeze(True, device)
+            elif order == "resume":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.set_freeze(False, device)
+
+            elif order == "debug":
+                assert SCH is not None, "当前无运行的Schedule！"
+                assert len(cmds) >= 2, "输入错误！"
+                argv = cmds[2:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                if cmds[1] == "on":
+                    module_name = get_arg(argv, "-m", "__all__")
+                    SCH.pcr.start_debug(True, module_name, device)
+                elif cmds[1] == "off":
+                    module_name = get_arg(argv, "-m", "__all__")
+                    SCH.pcr.start_debug(False, module_name, device)
+                elif cmds[1] == "show":
+                    SCH.pcr.show_all_module_debug(device)
+            elif order == "exec":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                script_file = get_arg(argv, "-f", None)
+                if script_file is not None:
+                    SCH.pcr.exec_script(script_file, device)
+                else:
+                    print("--------- EXEC调试模式 ----------")
+                    print("直接输入 回车 : 退出调试模式")
+                    print("输入其它： 会像指定的设备发送exec指令")
+                    print("绑定设备：", "全部" if device is None else device)
+                    print("--------------------------------")
+                    while True:
+                        cmd = input("")
+                        if cmd == "":
+                            break
+                        else:
+                            SCH.pcr.exec_command(cmd, device)
+
             elif order == "bind":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 assert len(cmds) == 2, "必须输入计划名称"
@@ -566,7 +758,9 @@ if __name__ == "__main__":
             elif order == "edit":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("CreateUser.py", "r", encoding="utf-8").read())
-
+            elif order == "data":
+                assert SCH is None, "必须先停止正在运行的Schedule"
+                exec(open("DataCenter.py", "r", encoding="utf-8").read())
             elif order == "screencut":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("screencut.py", "r", encoding="utf-8").read())
@@ -598,6 +792,8 @@ if __name__ == "__main__":
                     JoinShutdown(True)
                 else:
                     JoinShutdown(False)
+            elif order == "exit":
+                break
             else:
                 print("未知的命令")
         except Exception as e:

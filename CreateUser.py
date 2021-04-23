@@ -21,6 +21,7 @@ DOC_STR = {
         帮助手册    在命令后输入?查看具体使用方法
         user       创建或编辑一个新的用户信息
         task       创建或编辑一个任务列表
+        customtask 生成自定义任务文件
         group      创建或编辑一个用户组
         batch      创建或编辑一个批配置
         schedule   创建或编辑一个计划配置
@@ -56,15 +57,38 @@ DOC_STR = {
         task -d TaskName 删除某一Task
         task -d -all 删除全部Task
         """,
+    "customtask?":
+        """
+        帮助：customtask
+        默认任务的力量是有极限的，
+            我要超越默认任务！！！！！！！
+        customtask -l 列举全部自定义任务程序文件
+        在sample_customtask中有很多模板任务
+        可以查看sample_customtask/sample_task.py中详细的自定义任务说明
+        在/customtask中的.py文件会被自动识别并加入CreateUser（重启程序有效）
+        可以复制相关的sample到其中并自己编写相关代码。        
+        """,
     "group?":
         """
         帮助：group
         group -l 列举全部组列表
-        group GroupName 显示某个组的全部成员
+        group GroupName [-g] 显示某个组的全部成员，输入-g后还会显示其成员全部所在组
         group的创建：非常简单，不写方法了。
         Step 1. 前往./groups 文件夹
-        Step 2. 创建一个.txt文件，文件名为组名
-        Step 3. 在该txt文件内每行一个用户名，表示该组的成员
+        Step 2. 创建一个.json文件，文件名为组名
+        Step 3. 在该json文件内每行一个用户名，表示该组的成员  <- 由于某些原因，它其实以txt结尾最好，毕竟一行一个明显不是json吧……
+        [新增方法] 以下方法中如果组不存在将被自动创建
+        group add (GroupName) (UserName1) [(UserNameN) ...]
+            将UserName或一系列空格隔开的UserNames添加到组GroupName
+        group add (GroupName) *TargetGroup
+            将TargetGroup中的用户添加到组GroupName，注：*TargetGroup表示在名称前加*号，如*xiaohao。
+        group del (GroupName) (UserName1) [(UserNameN) ...] 从组GroupName中移除一个或多个空格隔开的UserName
+        group del (GroupName) * 删除GroupName中全部组成员
+        group del (GroupName) *TargetGroup 删除GroupName中全部TargetGroup中的组成员
+        group move (GroupName1) (GroupName2) (UserName1) [(UserNameN) ...] 将一个或多个用户从组GroupName1移动到GroupName2
+        group move (GroupName1) (GroupName2) * 将GroupName1中组成员全部移动至GroupName2
+        group move (GroupName1) (GroupName2) *TargetGroup 将GroupName1中TargetGroup中的组成员全部移动至GroupName2
+        group user (UserName) 显示某一个用户所在的全部组
         """,
     "batch?":
         """
@@ -95,6 +119,7 @@ DOC_STR = {
         switch文件默认存放于./switches中。
         """
 }
+
 T = VALID_TASK.T
 
 
@@ -115,6 +140,8 @@ def show_task_detail(ind, i, more=False):
     show_task_simple(ind, i)
     for k, v in i.items():
         if k in ["type", "__disable__"]:
+            continue
+        if k not in T[i["type"]]["param_dict"]:
             continue
         print("  -", T[i["type"]]["param_dict"][k].title, ":", v)
         if more:
@@ -160,9 +187,10 @@ def TaskEditor(taskname):
     print(f"Task编辑器  当前文件：  {taskname}")
     print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
     obj = AutomatorRecorder.gettask(taskname)
+    is_edited = ''
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Task[{taskname}]{is_edited}> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "help":
@@ -188,10 +216,13 @@ def TaskEditor(taskname):
                 return
             elif order == "save":
                 AutomatorRecorder.settask(taskname, obj)
+                is_edited = ''
             elif order == "load":
                 obj = AutomatorRecorder.gettask(taskname)
+                is_edited = ''
             elif order == "clear":
                 obj = {"tasks": []}
+                is_edited = '*'
             elif order == "list":
                 if len(cmds) > 1:
                     tag = cmds[1].lstrip("-")
@@ -206,12 +237,15 @@ def TaskEditor(taskname):
             elif order == "enable" and len(cmds) == 2:
                 ind = int(cmds[1])
                 obj["tasks"][ind]["__disable__"] = False
+                is_edited = '*'
             elif order == "disable" and len(cmds) == 2:
                 ind = int(cmds[1])
                 obj["tasks"][ind]["__disable__"] = True
+                is_edited = '*'
             elif order == "flag" and len(cmds) == 3:
                 ind = int(cmds[2])
                 obj["tasks"][ind]["__disable__"] = cmds[1]
+                is_edited = '*'
             elif order == "add":
                 if len(cmds) == 1:
                     print("需要指定Type！")
@@ -227,12 +261,14 @@ def TaskEditor(taskname):
                     print(i.desc)
                     cur[i.key] = i.inputbox.create()
                 obj['tasks'] += [cur]
+                is_edited = '*'
             elif order == "del":
                 if len(cmds) == 1:
                     print("需要指定ID！")
                     continue
                 ID = int(cmds[1])
                 del obj["tasks"][ID]
+                is_edited = '*'
             elif order == "move":
                 if len(cmds) <= 2:
                     print("需要指定ID1和ID2！")
@@ -249,6 +285,7 @@ def TaskEditor(taskname):
                         tmp = obj["tasks"][ID1]
                         obj["tasks"].insert(ID2 + 1, tmp)
                         del obj["tasks"][ID1]
+                    is_edited = '*'
             elif order == "detail":
                 if len(cmds) == 1:
                     show_tasks_detail(obj)
@@ -268,7 +305,6 @@ def TaskEditor(taskname):
                 print("不认识的命令。")
         except Exception as e:
             print("输入错误！", e)
-
 
 def show_account(account):
     A = AutomatorRecorder(account)
@@ -342,14 +378,79 @@ def del_all_task():
         del_task(t)
 
 
-def show_group(GroupName):
-    gp = AutomatorRecorder.getgroup(GroupName)
+def show_group(GroupName, all_group=False):
+    gp = AutomatorRecorder.getgroup(GroupName, False)
     users = list_all_users(0)
+    if all_group:
+        groups = list_all_groups(0)
+        detailed_group = {}
+        for g in groups:
+            detailed_group[g] = AutomatorRecorder.getgroup(g)
     for i in gp:
         if i in users:
-            print(i)
+            print(i, end=" ")
+            if all_group:
+                print("所在组：", get_all_group(i, detailed_group))
+            else:
+                print()
         else:
             print(i, " 【未找到】")
+
+
+def show_group_user(UserName):
+    gps = get_all_group(UserName)
+    print(gps)
+
+
+def group_add(GroupName, UserNames: List[str]):
+    gp = AutomatorRecorder.getgroup(GroupName, False)
+    for acc in UserNames:
+        if acc not in gp:
+            gp += [acc]
+        else:
+            print("用户", acc, "已经存在在", GroupName, "中，不再重复添加！")
+    AutomatorRecorder.setgroup(GroupName, gp)
+
+
+def group_add_group(GroupName, TargetGroup):
+    group_add(GroupName, AutomatorRecorder.getgroup(TargetGroup, False))
+
+
+def group_del(GroupName, UserNames: List[str]):
+    gp = AutomatorRecorder.getgroup(GroupName, False)
+    for acc in UserNames:
+        if acc in gp:
+            gp.remove(acc)
+        else:
+            print("用户", acc, "不存在于", GroupName, "中。")
+    AutomatorRecorder.setgroup(GroupName, gp)
+
+
+def group_del_group(GroupName, TargetGroup):
+    group_del(GroupName, AutomatorRecorder.getgroup(TargetGroup, False))
+
+
+def group_del_all(GroupName):
+    AutomatorRecorder.setgroup(GroupName, [])
+
+
+def group_move(GroupName1, GroupName2, UserNames: List[str]):
+    assert GroupName1 != GroupName2, "两个组不能相同！"
+    group_add(GroupName2, UserNames)
+    group_del(GroupName1, UserNames)
+
+
+def group_move_group(GroupName1, GroupName2, TargetGroup):
+    assert GroupName1 != GroupName2, "两个组不能相同！"
+    UserNames = AutomatorRecorder.getgroup(TargetGroup, False)
+    group_add(GroupName2, UserNames)
+    group_del(GroupName1, UserNames)
+
+
+def group_move_all(GroupName1, GroupName2):
+    assert GroupName1 != GroupName2, "两个组不能相同！"
+    group_add(GroupName2, AutomatorRecorder.getgroup(GroupName1, False))
+    group_del_all(GroupName1)
 
 
 def create_batch(BatchName):
@@ -357,13 +458,21 @@ def create_batch(BatchName):
     AutomatorRecorder.setbatch(BatchName, d)
 
 
+def print_batch(obj):
+    for ind, i in enumerate(obj["batch"]):
+        if "group" in i:
+            print("ID: ", ind, "组", i["group"], "任务：", i["taskfile"], "优先级：", i["priority"], end=" ")
+        elif "account" in i:
+            print("ID: ", ind, "用户", i["account"], "任务：", i["taskfile"], "优先级：", i["priority"], end=" ")
+        if "random" in i and i["random"] is True:
+            print(" [随机模式]")
+        else:
+            print()
+
+
 def show_batch(BatchName):
     obj = AutomatorRecorder.getbatch(BatchName)
-    for i in obj["batch"]:
-        if "group" in i:
-            print("组", i["group"], "任务：", i["taskfile"], "优先级：", i["priority"])
-        elif "account" in i:
-            print("用户", i["account"], "任务：", i["taskfile"], "优先级：", i["priority"])
+    print_batch(obj)
 
 
 def edit_batch(BatchName):
@@ -371,9 +480,10 @@ def edit_batch(BatchName):
     print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
     print("什么是batch:  what")
     obj = AutomatorRecorder.getbatch(BatchName)
+    is_edited = ''
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Batch[{BatchName}]{is_edited}> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "help":
@@ -386,6 +496,7 @@ def edit_batch(BatchName):
                 print("    该文件由若干行组成，每一行应填入四个空格隔开的元素：")
                 print("    若添加单独任务，则第一列写字母A，后面三个空依次填入account,task,priority。")
                 print("    若添加组任务，则第一列写字母G，后面三个空依次填入group,task,priority")
+                print("random enable/disable (ID)  随机编号为ID的batch的优先级（优先级将±0.5浮动）")
                 print("show 显示现在的任务情况")
                 print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
                 print("什么是batch:  what")
@@ -405,16 +516,28 @@ def edit_batch(BatchName):
                 return
             elif order == "save":
                 AutomatorRecorder.setbatch(BatchName, obj)
+                is_edited = ''
             elif order == "load":
                 obj = AutomatorRecorder.getbatch(BatchName)
+                is_edited = ''
             elif order == "clear":
                 obj = {"batch": []}
+                is_edited = '*'
             elif order == "show":
-                for i in obj["batch"]:
-                    if "group" in i:
-                        print("组", i["group"], "任务：", i["taskfile"], "优先级：", i["priority"])
-                    elif "account" in i:
-                        print("用户", i["account"], "任务：", i["taskfile"], "优先级：", i["priority"])
+                print_batch(obj)
+            elif order == "random":
+                if len(cmds) >= 3:
+                    ind = int(cmds[2])
+                    if cmds[1] == "enable":
+                        obj["batch"][ind]["random"] = True
+                        is_edited = '*'
+                    elif cmds[1] == "disable":
+                        obj["batch"][ind]["random"] = False
+                        is_edited = '*'
+                    else:
+                        print("只能输入enable或者disable！")
+                else:
+                    print("random命令有误！")
             elif order == "add":
                 if len(cmds) in [4, 5] and cmds[1] == '-g':
                     group = cmds[2]
@@ -424,6 +547,7 @@ def edit_batch(BatchName):
                     else:
                         priority = 0
                     obj["batch"] += [dict(group=group, taskfile=task, priority=priority)]
+                    is_edited = '*'
                 elif len(cmds) == 3 and cmds[1] == "-file":
                     with open(cmds[2], "r", encoding="utf-8") as f:
                         for line in f:
@@ -442,6 +566,7 @@ def edit_batch(BatchName):
                                 d['group'] = curs[1]
                             d['taskfile'] = curs[2]
                             obj["batch"] += d
+                    is_edited = '*'
                 elif len(cmds) in [3, 4]:
                     account = cmds[1]
                     task = cmds[2]
@@ -450,6 +575,7 @@ def edit_batch(BatchName):
                     else:
                         priority = 0
                     obj["batch"] += [dict(account=account, taskfile=task, priority=priority)]
+                    is_edited = '*'
                 else:
                     print("add命令有误！")
             else:
@@ -628,9 +754,10 @@ def edit_schedule(ScheduleName):
     print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
     print("什么是schedule:  what")
     obj = AutomatorRecorder.getschedule(ScheduleName)
+    is_edited = ''
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Schedule[{ScheduleName}]{is_edited}> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "help":
@@ -658,15 +785,19 @@ def edit_schedule(ScheduleName):
                 return
             elif order == "save":
                 AutomatorRecorder.setschedule(ScheduleName, obj)
+                is_edited = ''
             elif order == "load":
                 obj = AutomatorRecorder.getschedule(ScheduleName)
+                is_edited = ''
             elif order == "clear":
                 obj = {"schedules": []}
+                is_edited = '*'
             elif order == "show":
                 _show_schedule(obj)
             elif order == "add" and len(cmds) == 2:
                 if cmds[1] in ["asap", "wait", "config"]:
                     obj["schedules"] += [_edit_asap_wait_config(cmds[1])]
+                    is_edited = '*'
                 else:
                     print("add命令有误！")
             elif order == "enable" and len(cmds) == 2:
@@ -675,18 +806,21 @@ def edit_schedule(ScheduleName):
                     print("未找到", cmds[1])
                 else:
                     obj["schedules"][ind]["__disable__"] = False
+                    is_edited = '*'
             elif order == "disable" and len(cmds) == 2:
                 ind = _get_subschedule_id(obj, cmds[1])
                 if ind == -1:
                     print("未找到", cmds[1])
                 else:
                     obj["schedules"][ind]["__disable__"] = True
+                    is_edited = '*'
             elif order == "flag" and len(cmds) == 3:
                 ind = _get_subschedule_id(obj, cmds[2])
                 if ind == -1:
                     print("未找到", cmds[2])
                 else:
                     obj["schedules"][ind]["__disable__"] = cmds[1]
+                    is_edited = '*'
             else:
                 print("不认识的命令。")
         except Exception as e:
@@ -794,9 +928,10 @@ def edit_switch(SwitchName):
     print("帮助： help  退出： exit  保存：save  重载：load 重写： clear")
     print("什么是switch:  what")
     obj = AutomatorRecorder.getswitch(SwitchName)
+    is_saved = ''
     while True:
         try:
-            cmd = input("> ")
+            cmd = input(f"Switch[{SwitchName}]{is_saved}> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "help":
@@ -853,20 +988,27 @@ def edit_switch(SwitchName):
                 return
             elif order == "save":
                 AutomatorRecorder.setswitch(SwitchName, obj)
+                is_saved = ''
             elif order == "load":
                 obj = AutomatorRecorder.getswitch(SwitchName)
+                is_edited = ''
             elif order == "clear":
                 obj["switches"] = []
+                is_saved = '*'
             elif order == "show":
                 show_switch(obj)
             elif order == "order":
                 obj["order"] = IntInputer().create()
+                is_saved = '*'
             elif order == "enable":
                 obj["enable"] = True
+                is_saved = '*'
             elif order == "disable":
                 obj["enable"] = False
+                is_saved = '*'
             elif order == "add":
                 obj["switches"] += [_add_switch()]
+                is_saved = '*'
             else:
                 print("不认识的命令。")
         except Exception as e:
@@ -878,7 +1020,7 @@ if __name__ == "__main__":
     print("当前工作路径：", getcwd())
     while True:
         try:
-            cmd = input("> ")
+            cmd = input("Edit> ")
             cmds = cmd.split(" ")
             order = cmds[0]
             if order == "exit":
@@ -889,6 +1031,8 @@ if __name__ == "__main__":
                 print(DOC_STR["user?"])
             elif order == "task?" or cmd == "task":
                 print(DOC_STR["task?"])
+            elif order == "customtask?" or cmd == "customtask":
+                print(DOC_STR["customtask?"])
             elif order == "group?" or cmd == "group":
                 print(DOC_STR["group?"])
             elif order == "batch?" or cmd == "batch":
@@ -935,11 +1079,53 @@ if __name__ == "__main__":
                     del_all_task()
                 else:
                     print("Wrong Order!")
+            elif order == "customtask":
+                if len(cmds) == 2 and cmds[1] == "-l":
+                    list_all_customtasks()
+                else:
+                    print("Wrong Order!")
             elif order == "group":
                 if len(cmds) == 2 and cmds[1] == "-l":
                     list_all_groups()
+                elif len(cmds) == 4 and cmds[1] == "add" and cmds[3].startswith("*") and cmds[3] != "*":
+                    TargetGroup = cmds[3][1:]
+                    GroupName = cmds[2]
+                    group_add_group(GroupName, TargetGroup)
+                elif len(cmds) >= 4 and cmds[1] == "add":
+                    UserNames = cmds[3:]
+                    GroupName = cmds[2]
+                    group_add(GroupName, UserNames)
+                elif len(cmds) == 4 and cmds[1] == "del" and cmds[3] == "*":
+                    GroupName = cmds[2]
+                    group_del_all(GroupName)
+                elif len(cmds) == 4 and cmds[1] == "del" and cmds[3].startswith("*"):
+                    GroupName = cmds[2]
+                    TargetGroup = cmds[3][1:]
+                    group_del_group(GroupName, TargetGroup)
+                elif len(cmds) >= 4 and cmds[1] == "del":
+                    UserNames = cmds[3:]
+                    GroupName = cmds[2]
+                    group_del(GroupName, UserNames)
+                elif len(cmds) == 5 and cmds[1] == "move" and cmds[4] == "*":
+                    GroupName1 = cmds[2]
+                    GroupName2 = cmds[3]
+                    group_move_all(GroupName1, GroupName2)
+                elif len(cmds) == 5 and cmds[1] == "move" and cmds[4].startswith("*"):
+                    GroupName1 = cmds[2]
+                    GroupName2 = cmds[3]
+                    TargetGroup = cmds[4][1:]
+                    group_move_group(GroupName1, GroupName2, TargetGroup)
+                elif len(cmds) >= 5 and cmds[1] == "move":
+                    UserNames = cmds[4:]
+                    GroupName1 = cmds[2]
+                    GroupName2 = cmds[3]
+                    group_move(GroupName1, GroupName2, UserNames)
+                elif len(cmds) == 3 and cmds[1] == "user":
+                    show_group_user(cmds[2])
+                elif len(cmds) == 3 and cmds[2] == "-g":
+                    show_group(cmds[1], True)
                 elif len(cmds) == 2:
-                    show_group(cmds[1])
+                    show_group(cmds[1], False)
                 else:
                     print("Wrong Order!")
             elif order == "batch":

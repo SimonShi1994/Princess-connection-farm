@@ -1,11 +1,14 @@
+import asyncio
 import time
 
 import keyboard
 import psutil
 
+from automator_mixins._base import DEBUG_RECORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause
+from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause, sentstate, \
+    sent_state_img
 from core.safe_u2 import timeout
 from ._base import Multithreading
 from ._tools import ToolsMixin
@@ -26,14 +29,14 @@ class AsyncMixin(ToolsMixin):
         cumulative_time = 0.1
         while Multithreading({}).is_stopped():
             if not self.async_juqingtiaoguo_switch:
-                time.sleep(1)
+                await asyncio.sleep(1)
                 continue
             # print('juqing', self.change_time)
             try:
                 # await asyncio.sleep(10)
                 # time.sleep(10)
                 # 过快可能会卡
-                time.sleep(cumulative_time)
+                await asyncio.sleep(cumulative_time)
                 screenshot = self.last_screen
                 if self.is_exists(screen=screenshot, img='img/juqing/caidanyuan.bmp', at=(860, 0, 960, 100)):
                     self.lock_img('img/juqing/caidanyuan.bmp', ifclick=[(917, 39)], ifdelay=self.change_time,
@@ -66,7 +69,7 @@ class AsyncMixin(ToolsMixin):
                 pcr_log(self.account).write_log(level='error', message='juqingtiaoguo-异步线程终止并检测出异常{}'.format(e))
                 # sys.exit()
                 break
-            time.sleep(0.8 + self.change_time)
+            await asyncio.sleep(0.8 + self.change_time)
 
     async def bad_connecting(self):
         # 异步判断异常 By：CyiceK
@@ -75,9 +78,12 @@ class AsyncMixin(ToolsMixin):
         cumulative_time = 0.1
         while Multithreading({}).is_stopped():
             try:
-                screenshot = self.last_screen
-                if screenshot is None:
-                    continue
+
+                if self.last_screen is None:
+                    screenshot = self.getscreen()
+                else:
+                    screenshot = self.last_screen
+
                 if time.time() - self.last_screen_time > async_screenshot_freq:
                     continue
                 time_start = time.time()
@@ -124,13 +130,13 @@ class AsyncMixin(ToolsMixin):
                 elif cumulative_time < 8:
                     cumulative_time = cumulative_time + 1
 
-                time.sleep(bad_connecting_time + cumulative_time)
+                await asyncio.sleep(bad_connecting_time + cumulative_time)
                 # 过快可能会卡
 
             except Exception as e:
                 self.send_move_method("restart", f"bad_connecting-{e}")
-                time.sleep(1)
-            time.sleep(0.8 + self.change_time)
+                await asyncio.sleep(1)
+            await asyncio.sleep(0.8 + self.change_time)
             # print('bad', self.change_time)
 
             # sys.exit()
@@ -149,9 +155,9 @@ class AsyncMixin(ToolsMixin):
                 else:
                     if self.last_screen is None:
                         self.getscreen()
-                time.sleep(0.8 + self.change_time)
+                await asyncio.sleep(0.8 + self.change_time)
                 # print('screen', self.change_time)
-                time.sleep(async_screenshot_freq)
+                await asyncio.sleep(async_screenshot_freq)
                 # 如果之前已经截过图了，就不截图了
                 # print('截图中')
                 # cv2.imwrite('test.bmp', screenshot)
@@ -163,7 +169,7 @@ class AsyncMixin(ToolsMixin):
         判断是否一直在同一界面
         :return:
         """
-        time.sleep(self.change_time)
+        await asyncio.sleep(self.change_time)
         # print('c', UIMatcher.img_similar(screenshot))
         _cout = 0
         while Multithreading({}).is_stopped():
@@ -192,7 +198,7 @@ class AsyncMixin(ToolsMixin):
         while Multithreading({}).is_stopped():
             # print(psutil.cpu_times())
             # 我休眠我自己
-            time.sleep(self.change_time)
+            await asyncio.sleep(self.change_time)
             self.cpu_occupy = psutil.cpu_percent(interval=30, percpu=False)
             # print(self.cpu_occupy)
             # 游戏拿不了fps
@@ -216,6 +222,21 @@ class AsyncMixin(ToolsMixin):
         # 2020-8-26 播报系统移动至core.initializer._run
         pass
 
+    async def c_img_server_bot(self):
+        """
+        此函数会定时发送截图给sever_bot
+        :return:
+        """
+        while Multithreading({}).is_stopped():
+            if sentstate != 0:
+                account = self.account
+                address = self.address
+                await asyncio.sleep(sentstate * 60 + 1)
+                sent_img = self.getscreen()
+                pcr_log(account).server_bot('STATE', '', '', img=sent_img, img_title=f"server_bot运行截图播报\n"
+                                                                                     f"账号:{account}\n"
+                                                                                     f"所运行的设备:{address}")
+
     async def aor_purse(self):
         """
         脚本暂停函数
@@ -223,26 +244,27 @@ class AsyncMixin(ToolsMixin):
         测试
         :return:
         """
-        global block_sw, async_block_sw
+        global block_sw
         if not enable_pause:
             return
         # print(Multithreading({}).is_stopped())
         while Multithreading({}).is_stopped():
-            async_block_sw = 1
             keyboard.wait('shift+p')
             block_sw = 1
             print("下一步，脚本暂停,按shift+p恢复")
-            time.sleep(0.8)
+            await asyncio.sleep(0.8)
             keyboard.wait('shift+p')
             block_sw = 0
             print("恢复运行")
-            time.sleep(0.8)
-        async_block_sw = 0
+            await asyncio.sleep(0.8)
 
     def start_th(self):
         Multithreading({}).resume()
 
     def stop_th(self):
+        global async_block_sw
+        # 解锁异步
+        async_block_sw = 0
         Multithreading({}).pause()
         if fast_screencut and self.fastscreencut_retry < 3:
             if self.receive_minicap is not None:
@@ -250,14 +272,20 @@ class AsyncMixin(ToolsMixin):
         # print(Multithreading({}).is_stopped())
 
     def start_async(self):
+        global async_block_sw
         # 随着账号开启而开启
         account = self.account
-        self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
+        # self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
         # self.c_async(self, account, self.juqingtiaoguo(), sync=False)  # 异步剧情跳过
         self.c_async(self, account, self.bad_connecting(), sync=False)  # 异步异常处理
         # self.c_async(self, account, self.same_img(), sync=False)  # 异步卡死判断
         if not async_block_sw:
+            async_block_sw = 1
+            # 马上锁上，仅运行一次，非随账号运行
             self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
+            if sent_state_img:
+                self.c_async(self, account, self.c_img_server_bot(), sync=False)  # 异步server截图发送播报
+                # self.c_async(self, account, self.bot_get_command(), sync=False)  # 异步获取远端命令
         self.c_async(self, account, self.auto_time_sleep(), sync=False)  # 异步根据CPU负载调控time sleep
 
     def program_start_async(self):
@@ -268,16 +296,18 @@ class AsyncMixin(ToolsMixin):
 
     @timeout(180, "重启超时，三分钟仍然未响应")
     def _fix_reboot(self, back_home):
+        self.debug_record.clear()
         # 重启逻辑：重启应用，重启异步线程
         self.stop_th()
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
         self.d.app_wait("com.bilibili.priconne")
-        self.start_th()
-        self.init_fastscreen()
-        self.start_async()
         if back_home:
+            self.start_th()
+            self.init_fastscreen()
+            self.start_async()
             self.lock_home()
 
+    @DEBUG_RECORD
     def fix_reboot(self, back_home=True):
         self._fix_reboot(back_home)

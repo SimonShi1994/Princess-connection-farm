@@ -5,23 +5,25 @@ import zipfile
 
 import requests
 
+from core.pcr_config import trace_tree
+
 
 class Pcr_Downloader:
     file_name = 'Princess-connection-farm.zip'
     download_url_dict = {
-        'github_url': 'https://github.com/SimonShi1994/Princess-connection-farm/archive/master.zip',
-        'github_us1_url': 'https://gh.con.sh/https://github.com/SimonShi1994/Princess-connection-farm/archive/master'
-                          '.zip',
-        'github_us2_url': 'https://gh.api.99988866.xyz/https://github.com/SimonShi1994/Princess-connection-farm/archive'
-                          '/master.zip ',
-        'github_jp1_url': 'https://download.fastgit.org/SimonShi1994/Princess-connection-farm/archive/master.zip',
-        'github_jp2_url': 'https://github.xiu2.xyz/https://github.com/SimonShi1994/Princess-connection-farm/archive'
-                          '/master'
-                          '.zip ',
-        'github_kr_url': 'https://ghproxy.com/https://github.com/SimonShi1994/Princess-connection-farm/archive/master'
-                         '.zip',
-        'github_hk_url': 'https://pd.zwc365.com/seturl/https://github.com/SimonShi1994/Princess-connection-farm/archive'
-                         '/master.zip ',
+        'github_url': f'https://github.com/SimonShi1994/Princess-connection-farm/archive/{trace_tree}.zip',
+        'github_us1_url': f'https://gh.con.sh/https://github.com/SimonShi1994/Princess-connection-farm/archive/{trace_tree}'
+                          f'.zip',
+        'github_us2_url': f'https://gh.api.99988866.xyz/https://github.com/SimonShi1994/Princess-connection-farm/archive'
+                          f'/{trace_tree}.zip ',
+        'github_jp1_url': f'https://download.fastgit.org/SimonShi1994/Princess-connection-farm/archive/{trace_tree}.zip',
+        'github_jp2_url': f'https://github.xiu2.xyz/https://github.com/SimonShi1994/Princess-connection-farm/archive'
+                          f'/{trace_tree}'
+                          f'.zip ',
+        'github_kr_url': f'https://ghproxy.com/https://github.com/SimonShi1994/Princess-connection-farm/archive/'
+                         f'{trace_tree}.zip',
+        'github_hk_url': f'https://pd.zwc365.com/seturl/https://github.com/SimonShi1994/Princess-connection-farm/archive'
+                         f'/{trace_tree}.zip ',
     }
     download_url_list = ['_', 'github_url', 'github_us1_url', 'github_us2_url', 'github_jp1_url', 'github_jp2_url',
                          'github_kr_url', 'github_hk_url']
@@ -33,6 +35,7 @@ class Pcr_Downloader:
               'Write By Yuki_Asuuna\nUpdate By CyiceK')
         print('请将本程序放在git clone的文件夹下')
         print('本程序仅供普通用户使用，原项目开发人员还是老老实实用git吧^_^')
+        print(f'当前检测版本分支为{trace_tree}')
         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
 
     def abortion(self):
@@ -111,7 +114,8 @@ class Pcr_Downloader:
             self.abortion()
 
     def move_user_option(self):
-        opt = ['users', 'tasks', 'batches', 'xls', 'log', 'error_screenshot', 'config.ini']
+        opt = ['users', 'tasks', 'batches', 'xls', 'log', 'error_screenshot', 'schedules', 'groups', 'config.ini',
+               'rec', 'switches', 'customtask', 'debug_imgs', 'ocrfix', 'outputs', 'PCRError']
         # 用户所的配置文件
         if not os.path.exists('config.ini'):
             print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
@@ -134,7 +138,7 @@ class Pcr_Downloader:
                         print('>>>config由于特殊性，请自行对比更新目录下config_old，自行替换更新')
                         shutil.copy('config.ini', dst + '/config_old.ini')
                     else:
-                        shutil.copytree(fn, dst+'/'+fn)
+                        shutil.copytree(fn, dst + '/' + fn)
                 except Exception as e:
                     print(e, '在迁移当前文件的过程中发生了意外的错误，程序终止！')
                     self.abortion()

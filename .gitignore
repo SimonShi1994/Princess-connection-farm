@@ -11,6 +11,7 @@ accounts_init.txt
 bind_schedule.txt
 diy.py
 /screenshots/
+/switches/
 /users/
 /rec/
 log
@@ -20,8 +21,19 @@ log
 /groups/
 /developutils/*.bmp
 /error_screenshot/
+outputs/
+*.cmd
+xls/
+PCRError/
+pcrdata/data.db
 
 # 测试用文件夹
 /test/
 /developutils/
 /users_bak/
+
+# 配置文件g
+config.ini
+
+# 自定义脚本
+/customtask

@@ -10,6 +10,13 @@ from core.Automator import Automator
 
 
 def WindowMode(frame=None):
+    try:
+        from IPython import get_ipython
+        ip = get_ipython()
+        ip.run_line_magic("matplotlib", "qt")
+        return
+    except:
+        pass
     if frame is None:
         try:
             matplotlib.use("Qt5Agg")
@@ -293,11 +300,21 @@ class AutomatorDebuger(Automator):
                 ax.figure.canvas.draw()
                 print(f"at=({x1},{y1},{x2},{y2})")
 
+        def OnKeyPress(event):
+            if event.inaxes is None:
+                return
+            if event.key == 'o':
+                x1, x2 = plt.xlim()
+                y1, y2 = plt.ylim()
+                print(self.ocr_center(int(x1), int(y2), int(x2), int(y1), img.IMG))
+                event.inaxes.figure.canvas.draw()
+
         img.show(False)
         ax = plt.gca()
         ax.figure.canvas.mpl_connect('button_press_event', OnClick)
         ax.figure.canvas.mpl_connect('motion_notify_event', OnMove)
         ax.figure.canvas.mpl_connect('button_release_event', OnRelease)
+        ax.figure.canvas.mpl_connect('key_press_event', OnKeyPress)
         plt.show(block=True)
 
 

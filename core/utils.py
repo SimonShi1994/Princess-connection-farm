@@ -1,8 +1,15 @@
+import copy
+import datetime
 import random
+import re
 import string
 import sys
 import time
+import unicodedata
+from collections import defaultdict
 from io import StringIO
+
+import requests
 
 
 def random_name():
@@ -185,6 +192,198 @@ def PrettyEnter(s, before="", firstbefore=None):
     for ind, i in enumerate(ss):
         print(before if ind > 0 else firstbefore, end="")
         print(i)
+
+
+def is_ocr_running():
+    try:
+        requests.get(url="http://127.0.0.1:5000/ocr/", timeout=1)
+        return True
+    except:
+        return False
+
+
+def slugify(value, allow_unicode=False):
+    """
+    Taken from https://github.com/django/django/blob/master/django/utils/text.py
+    Convert to ASCII if 'allow_unicode' is False. Convert spaces or repeated
+    dashes to single dashes. Remove characters that aren't alphanumerics,
+    underscores, or hyphens. Convert to lowercase. Also strip leading and
+    trailing whitespace, dashes, and underscores.
+    """
+    value = str(value)
+    if allow_unicode:
+        value = unicodedata.normalize('NFKC', value)
+    else:
+        value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
+    value = re.sub(r'[^\w\s-]', '', value.lower())
+    return re.sub(r'[-\s]+', '-', value).strip('-_')
+
+
+def checkNameValid(name=None):
+    """
+    检测Windows文件名称！
+    """
+    if name is None:
+        print("name is None!")
+        return
+    reg = re.compile(r'[\\/:*?"<>|\r\n]+')
+    valid_name = reg.findall(name)
+    if valid_name:
+        for nv in valid_name:
+            name = name.replace(nv, "_")
+    return name
+
+def make_it_as_number_as_possible(out: str):
+    out = str(out)
+    trans_table = {
+        'l': '1',
+        'i': '1',
+        'o': '0',
+        'O': '0',
+        'q': '9',
+        'I': '1',
+        's': '5',
+        'S': '5',
+        'b': '6',
+        'g': '9',
+        'z': '2',
+        'Z': '2',
+        'C': '0',
+        'c': '0',
+        '|': '1',
+        '!': '1',
+        '了': '7',
+        'G': '6',
+    }
+    new_out = []
+    for c in out:
+        if c in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+            new_out += [c]
+        elif c in trans_table:
+            new_out += [trans_table[c]]
+        else:
+            pass  # Delete it
+    return "".join(new_out)
+
+
+def get_time_str(cur):
+    s = datetime.datetime.fromtimestamp(cur).strftime("%Y-%m-%d %H:%M:%S")
+    return s
+
+
+def make_it_as_zhuangbei_as_possible(title: str):
+    title = str(title)
+    title = title.replace("《", "（")
+    title = title.replace("》", "）")
+    title = title.replace("(", "（")
+    title = title.replace(")", "）")
+    title = title.replace("骑土", "骑士")
+    title = title.replace("隐土", "隐士")
+    title = title.replace("干禧", "千禧")
+    title = title.replace("苍辉之错", "苍辉之铠")
+    return title
+
+
+def make_it_as_juese_as_possible(title: str):
+    title = str(title)
+    title = title.replace("《", "（")
+    title = title.replace("》", "）")
+    title = title.replace("(", "（")
+    title = title.replace(")", "）")
+    title = title.replace(" ", "")
+    title = title.replace("联恋", "咲恋")
+    title = title.replace("美联", "美咲")
+    title = title.replace("綦", "栞")
+    title = title.replace("桀", "栞")
+    title = title.replace("唉", "咲")
+    title = title.rstrip("的记忆碎片")
+    return title
+
+
+def merge_dict_tree(t1, t2, is_copy=True):
+    tree = t1.copy if is_copy else t1
+
+    def fun(curt1, curt2):
+        if not isinstance(curt2, dict):
+            return
+        if not isinstance(curt1, dict):
+            return
+        for k, v in curt2.items():
+            if k in curt1:
+                fun(curt1[k], curt2[k])
+            else:
+                curt1[k] = v
+
+    fun(tree, t2)
+    return tree
+
+
+class WowSearch:
+    def __init__(self, hzlist):
+        self.hzlist = hzlist  # 汉字list
+        self.pydict = defaultdict(dict)
+        self.splittree = {}
+
+    def parse(self):
+        from pypinyin import pinyin, Style
+        from itertools import product
+        for ind, hz in enumerate(self.hzlist):
+            lst = pinyin(hz, style=Style.NORMAL, heteronym=False, errors='ignore')
+            if len(lst) == 0:
+                continue
+            for l in product(*lst):
+                self.pydict["'".join(l)][hz] = True
+                # Build Search Tree
+                LastTree = self.splittree
+                for t in l:
+                    if t not in LastTree:
+                        LastTree[t] = {}
+                    LastTree = LastTree[t]
+                LastTree[hz] = True
+
+    def get_all_by_tree(self, word):
+        S = {}
+        # 初始化搜索范围
+        for k, v in self.splittree.items():
+            S[k] = copy.deepcopy(v)
+        for w in word:
+            # 缩减范围
+            newS = {}
+            if w != "'":
+                if not w.isalpha():
+                    continue
+                for k, v in S.items():
+                    if v is True:
+                        # 搜索到了！但是不对！
+                        continue
+                    if k[0] == w:
+                        # GOOD SEARCH
+                        if len(k) > 1:
+                            newS[k[1:]] = copy.deepcopy(v)
+                        merge_dict_tree(newS, copy.deepcopy(v), False)
+            else:
+                # 分隔符
+                for k, v in S.items():
+                    merge_dict_tree(newS, copy.deepcopy(v), False)
+            S = copy.deepcopy(newS)
+        # 递归
+        OUT = []
+
+        def fun(cur):
+            nonlocal OUT
+            if not isinstance(cur, dict):
+                return
+            for k, v in cur.items():
+                if v is True:
+                    if k in OUT:
+                        continue
+                    OUT = OUT + [k]
+            for k, v in cur.items():
+                if isinstance(v, dict):
+                    fun(v)
+
+        fun(S)
+        return OUT
 
 
 if __name__ == '__main__':

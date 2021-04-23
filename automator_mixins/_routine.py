@@ -4,6 +4,8 @@ from core.MoveRecord import movevar
 from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN, FIGHT_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
+from core.pcr_checker import RetryNow, PCRRetry, LockMaxRetryError
+from core.pcr_config import force_as_ocr_as_possible
 from core.utils import diff_6hour, diff_5_12hour, diffday
 from ._shuatu_base import ShuatuBaseMixin
 
@@ -27,7 +29,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 time.sleep(10)
 
         self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
-                      side_check=self.juqing_kkr, retry=5)
+                      side_check=self.juqing_kkr, retry=5, is_raise=False)
 
         if auto_update:
             i = 0
@@ -270,7 +272,7 @@ class RoutineMixin(ShuatuBaseMixin):
 
         # 买药
 
-    def buyExp(self):
+    def buyExp(self, qianghuashi=False):
         # 进入商店
         ts = self.AR.get("time_status", UDD["time_status"])
         if not diff_6hour(time.time(), ts["buyexp"]):
@@ -300,6 +302,19 @@ class RoutineMixin(ShuatuBaseMixin):
             time.sleep(1)
             self.click(596, 478)
             time.sleep(1)
+            self.click(475, 478)
+            time.sleep(1)
+            if qianghuashi:  # 上面买完药水，下面的强化石会自动上去，所以直接点一圈就好了
+                self.click(386, 148)
+                self.click(556, 148)
+                self.click(729, 148)
+                self.click(897, 148)
+                self.click(795, 437)
+                time.sleep(1)
+                self.click(596, 478)
+                time.sleep(1)
+                self.click(475, 478)
+                time.sleep(1)
         ts["buyexp"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
@@ -311,6 +326,14 @@ class RoutineMixin(ShuatuBaseMixin):
         mode 2: 第一次手动过最上面的，再刷一次次上面的
         mode 3: 第一次手动过最上面的，再刷一次最上面的
         """
+        if force_as_ocr_as_possible:
+            if mode == 0:
+                self.tansuo_new_ocr(0)
+            elif mode == 1:
+                self.tansuo_new_ocr(2)
+            else:
+                self.tansuo_new_ocr(1)
+            return
         is_used = 0
         self.click(480, 505)
         time.sleep(1)
@@ -422,7 +445,9 @@ class RoutineMixin(ShuatuBaseMixin):
         mode=1 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）
         mode=2 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）
         """
-
+        if force_as_ocr_as_possible:
+            self.tansuo_new_ocr(mode)
+            return
         def tryfun():
             if mode == 0:
                 ec = [(539, 146)]
@@ -486,6 +511,63 @@ class RoutineMixin(ShuatuBaseMixin):
         self.AR.set("time_status", ts)
         self.lock_home()
 
+    def tansuo_new_ocr(self, mode=0, team_order="zhanli", var={}):
+        """
+        :param mode:
+        重写探索：刷/打最上可行的关卡
+        mode=0 刷最上关卡（适合大号）
+        mode=1 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）
+        mode=2 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）
+         :param team_order:
+        使用队伍 "A-B" 形式，表示编组A选择B。
+        若为 order指令：则按以下order排序后取前5.
+            - "zhanli" 按战力排序
+            - "dengji" 按等级排序
+            - "xingshu" 按星数排序
+        若为"none"：不换人
+        """
+        ts = self.AR.get("time_status", UDD["time_status"])
+        if not diffday(time.time(), ts["tansuo"]):
+            self.log.write_log("info", "今天已经探索过！")
+            return
+        T = self.get_zhuye().goto_maoxian().goto_tansuo()
+
+        def tansuo_fun(m):
+            if m == "J":
+                J = T.goto_jingyan()
+            else:  # m=="M"
+                J = T.goto_mana()
+            while True:
+                L = J.get_cishu_left()
+                if L > 0:
+                    # 仍然可以
+                    try:
+                        B = J.try_click(mode)
+                    except LockMaxRetryError:
+                        self.log.write_log("warning", "无法进入探索，可能还未解锁！")
+                        J.back()
+                        return
+                    P = B.shua(team_order)
+                    while True:
+                        out = P.check()
+                        if isinstance(out, P.TanSuoMenu):
+                            # 刷完了
+                            return
+                        elif isinstance(out, P.TanSuoXuanGuanBase):
+                            # 还可能没刷完
+                            if B.state == False:  # 战败！
+                                return
+                            break
+                else:
+                    # 不可以
+                    J.back()
+                    return
+
+        tansuo_fun("J")
+        tansuo_fun("M")
+        self.AR.set("time_status", ts)
+        self.lock_home()
+
     def shengji(self, mode=0, times=5, tili=False):
         """
             mode = 0 刷1+2（适合大号）
@@ -498,12 +580,14 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.click(541, 260)
                 time.sleep(3)
                 self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
+                self.clearFCHeader("KarinFC")
                 time.sleep(0.5)
 
             def sj2():
                 self.click(539, 146)
                 time.sleep(3)
                 self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
+                self.clearFCHeader("KarinFC")
                 time.sleep(0.5)
 
             if mode == 0:
@@ -524,10 +608,36 @@ class RoutineMixin(ShuatuBaseMixin):
         if not self.check_shuatu():
             return
 
-        self.lock_home()
-        self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
-        self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
-        tryfun_shengji()
+        def KarinFun():
+            self.ES.clear("KarinFC")
+            self.chulijiaocheng(None)
+            raise RetryNow(name="Karin")
+
+        def KarinFC(FC):
+            FC.getscreen().exist(MAIN_BTN["karin_middle"], KarinFun)
+
+        self.setFCHeader("KarinFC", KarinFC)
+
+        @PCRRetry(name="Karin")
+        def KarinLoop():
+            self.lock_home()
+            self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
+            self.setFCHeader("KarinFC", KarinFC)
+            self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
+            tryfun_shengji()
+
+        KarinLoop()
+
         ts["shengji"] = time.time()
         self.AR.set("time_status", ts)
+        self.lock_home()
+
+    def shouqunvshenji(self):
+        """
+        收取女神祭
+        """
+        self.lock_home()
+        self.click_btn(MAIN_BTN["nsj"], until_appear=MAIN_BTN["wanfa"], side_check=self.right_kkr)
+        for _ in range(10):
+            self.click(833, 437)  # 收取！
         self.lock_home()

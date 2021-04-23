@@ -1,7 +1,8 @@
 import React from 'react'
-import example from '../../example/schedule.json'
+import request from '../../request'
 import ConditionComponent from '@/components/Formcomponents/CondtionComponent'
-import { Form, Input, Button, Checkbox, InputNumber, Row, Col, Radio } from 'antd';
+import Batchlist from '@/components/Formcomponents/Batchlist'
+import { Form, Input, Button, Card, InputNumber, Row, Col, Radio, message } from 'antd';
 
 const layout = {
     labelCol: { span: 8 },
@@ -16,34 +17,56 @@ const options = [
 ];
 export default (props) => {
     const { id } = props.match.params
-    const [schedules, updateschedules] = React.useState(example[id].schedules)
+    const [schedules, updateschedules] = React.useState([])
+    React.useEffect(() => {
+        async function temp() {
+            const { data } = await request(`/get_schedules/${id}`)
+            updateschedules(data.schedules)
+        }
+        temp();
+    }, [])
     const handlechange = (index, value) => {
         const temp = [...schedules]
-        console.log(value)
         temp[index] = value
         updateschedules(temp)
     }
+    const onFinish = async (values) => {
+        const result = await request(`/schedules_save`, {
+            method: 'post', data: {
+                ...values,
+                "filename": id,
+            }
+        })
+        if (result.code === 200) {
+            message.success('修改成功')
+        } else {
+            message.error('修改失败')
+        }
+    }
+    console.log(schedules)
     return (
         <div>
-            {schedules.map((schedule, index) => {
-                switch (schedule.type) {
-                    case 'asap':
-                        return (
-                            <Asapform updateschedules={handlechange} key={index} index={index} {...schedule} />
-                        );
-                    case 'config':
-                        return (
-                            <Configform updateschedules={handlechange} key={index} index={index} {...schedule} />
-                        )
-                    case 'wait':
-                        return (
-                            <Waitconfig updateschedules={handlechange} key={index} index={index} {...schedule} />
-                        )
-                    default:
-                        return;
+            <Card title={id}>
+                {schedules.map((schedule, index) => {
+                    switch (schedule.type) {
+                        case 'asap':
+                            return (
+                                <Asapform updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
+                            );
+                        case 'config':
+                            return (
+                                <Configform updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
+                            )
+                        case 'wait':
+                            return (
+                                <Waitconfig updateschedules={handlechange} onFinish={onFinish} key={index} index={index} {...schedule} />
+                            )
+                        default:
+                            return;
+                    }
                 }
-            }
-            )}
+                )}
+            </Card>
 
         </div>
     )
@@ -83,7 +106,7 @@ export default (props) => {
 
 const Asapform = (props) => {
 
-    const { updateschedules, index } = props
+    const { updateschedules, index, onFinish } = props
     const handlechange = (_, values) => {
         updateschedules(index, values)
     }
@@ -93,9 +116,9 @@ const Asapform = (props) => {
             name={props.name}
             key={props.name}
             initialValues={props}
+            onFinish={onFinish}
             onValuesChange={handlechange}
         >
-            <Row><Col offset={4} span={8}>{props.name}</Col></Row>
             <Form.Item
                 label="计划名"
                 name="name"
@@ -104,11 +127,11 @@ const Asapform = (props) => {
                 <Input />
             </Form.Item>
             <Form.Item
-                label="batchfile"
-                name="batchfile"
-                rules={[{ required: true, message: 'Please input your batchfile!' }]}
+                label="batchlist"
+                name="batchlist"
+                rules={[{ required: true, message: 'Please input your batchlist!' }]}
             >
-                <Input />
+                <Batchlist />
             </Form.Item>
             <Form.Item
                 label="condition"
@@ -119,7 +142,7 @@ const Asapform = (props) => {
             <Form.Item
                 label="类型"
                 name="type"
-                rules={[{ required: true, message: 'Please input your batchfile!' }]}
+                rules={[{ required: true, message: 'Please input your type!' }]}
             >
                 <Radio.Group
                     options={options}
@@ -127,12 +150,20 @@ const Asapform = (props) => {
                     buttonStyle="solid"
                 />
             </Form.Item>
+
+            <Row>
+                <Col offset={7} span={8}>
+                    <Button type="primary" htmlType="submit">
+                        保存
+                     </Button>
+                </Col>
+            </Row>
         </Form>
     )
 }
 
 const Configform = (props) => {
-    const { index, updateschedules } = props
+    const { index, updateschedules, onFinish } = props
     const handlechange = (_, values) => {
         updateschedules(index, values)
     }
@@ -142,6 +173,7 @@ const Configform = (props) => {
             name={`config${index}`}
             key={`config${index}`}
             initialValues={props}
+            onFinish={onFinish}
             onValuesChange={handlechange}
         >
             <Row><Col offset={4} span={8}>Config</Col></Row>
@@ -163,6 +195,14 @@ const Configform = (props) => {
                     buttonStyle="solid"
                 />
             </Form.Item>
+
+            <Row>
+                <Col offset={7} span={8}>
+                    <Button type="primary" htmlType="submit">
+                        保存
+                     </Button>
+                </Col>
+            </Row>
         </Form>)
 }
 // # 等待执行计划
@@ -182,7 +222,7 @@ const Configform = (props) => {
 //     "record":int
 // }
 const Waitconfig = (props) => {
-    const { updateschedules, index } = props
+    const { updateschedules, index, onFinish } = props
     const handlechange = (_, values) => {
         updateschedules(index, values)
     }
@@ -192,9 +232,9 @@ const Waitconfig = (props) => {
             name={props.name}
             key={props.name}
             initialValues={props}
+            onFinish={onFinish}
             onValuesChange={handlechange}
         >
-            <Row><Col offset={4} span={8}>{props.name}</Col></Row>
             <Form.Item
                 label="计划名"
                 name="name"
@@ -203,11 +243,11 @@ const Waitconfig = (props) => {
                 <Input />
             </Form.Item>
             <Form.Item
-                label="batchfile"
-                name="batchfile"
-                rules={[{ required: true, message: 'Please input your batchfile!' }]}
+                label="batchlist"
+                name="batchlist"
+                rules={[{ required: true, message: 'Please input your batchlist!' }]}
             >
-                <Input />
+                <Batchlist />
             </Form.Item>
             <Form.Item
                 label="record"
@@ -233,6 +273,14 @@ const Waitconfig = (props) => {
                     buttonStyle="solid"
                 />
             </Form.Item>
+
+            <Row>
+                <Col offset={7} span={8}>
+                    <Button type="primary" htmlType="submit">
+                        保存
+                     </Button>
+                </Col>
+            </Row>
         </Form>
     )
 }

@@ -1,12 +1,12 @@
 # import matplotlib.pylab as plt
 import os
+import pathlib
 
 import cv2
 import numpy as np
 
 from core.log_handler import pcr_log
 from core.pcr_config import debug, use_template_cache
-
 
 def cv_imread(file_path):  # 用于中文目录的imread函数
     """
@@ -180,6 +180,34 @@ class UIMatcher:
         return l
 
     @classmethod
+    def img_all_prob(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):
+        """
+        找全部匹配和概率，返回一个列表[(prob,x,y,(at))]
+        """
+        if isinstance(screen, str):
+            screen = cv2.imread(screen)
+        screen = cls.AutoRotateClockWise90(screen)
+        template = cls._get_template(template_path)
+        th, tw = template.shape[:2]  # rows->h, cols->w
+        if at is not None:
+            x1, y1, x2, y2 = at
+        else:
+            x1, y1, x2, y2 = 0, 0, 959, 539
+        screen = cls.img_cut(screen, (x1, y1, x2, y2))
+        res = UIMatcher.matchTemplate(screen, template, method)
+        l = []
+        for i in range(res.shape[0]):
+            for j in range(res.shape[1]):
+                if res[i, j] >= threshold:
+                    _x = x1 + j + tw // 2
+                    _y = y1 + i + th // 2
+                    _at = (x1 + j, y1 + i, x1 + j + tw - 1, y1 + i + th - 1)
+                    l += [(res[i, j], _x, _y, _at)]
+                    if debug:
+                        print(f"p({_x},{_y},img=\"{template_path}\",at={_at}), \nCCOEFF=", res[i, j])
+        return sorted(l, reverse=True)
+
+    @classmethod
     def img_where(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED,
                   is_black=False, black_threshold=1500):
         """
@@ -335,6 +363,29 @@ class UIMatcher:
         cls.screen_short_befor = screen_short
         # print(round(max_val, 3))
         return round(max_val, 3)
+
+    @classmethod
+    def pic_compare_with_filename(cls, pic, dir):
+        """
+        text为OCR后的某个值，但是它可能不对。
+        则比对dir路径下所有.bmp的图片文件
+        如果出现与pic相同的
+        那么就返回它的文件名。
+        :param dir:
+        :return:
+        """
+        if not os.path.isdir(dir):
+            os.makedirs(dir)
+        cur = pathlib.Path(dir)
+        for item in cur.iterdir():
+            if item.suffix == ".bmp":
+                prob = cls.img_prob(pic, item)
+                if prob > 0.98:
+                    return item.stem
+        return None
+
+
+1
 
 #
 # d = u2.connect()

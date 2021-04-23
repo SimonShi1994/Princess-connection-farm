@@ -2,11 +2,14 @@
 新的启动函数，支持Batch，schedule操作等。
 """
 import multiprocessing
+import pathlib
+import sys
 import time
 import traceback
 from multiprocessing import Process
 from multiprocessing.managers import SyncManager
 from queue import PriorityQueue
+from random import random
 from typing import List, Tuple, Optional, Dict, Union
 
 import adbutils
@@ -18,11 +21,12 @@ from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher
+from core.pcr_config import GC, enable_pause
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
-    trace_exception_for_debug, s_sckey, s_sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
+    trace_exception_for_debug, sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
     max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr, ignore_serials
 from core.safe_u2 import OfflineException, ReadTimeoutException
-from core.usercentre import AutomatorRecorder, parse_batch
+from core.usercentre import AutomatorRecorder, parse_batch, list_all_flags
 from core.utils import diffday, PrintToStr
 
 abs_dir = os.path.abspath(adb_dir)
@@ -34,6 +38,7 @@ if add_adb_to_path:
 
 
 def _connect():  # 连接adb与uiautomator
+    global FIRST_CONNECT
     try:
         if enable_auto_find_emulator:
             port_list = check_known_emulators()
@@ -341,13 +346,18 @@ class AllDevices:
                 L += [i]
         return L
 
+    def get_device_by_id(self, id):
+        id = int(id)
+        L = list(self.devices.keys())
+        return self.devices[L[id]]
+
     def show(self):
         """
         显示当前全部设备状态
         """
         print("= 设备信息 =")
-        for i, j in self.devices.items():
-            print(i, ": ", end="")
+        for ind, (i, j) in enumerate(self.devices.items()):
+            print("ID", ind, "-", i, ": ", end="")
             if j.state == Device.DEVICE_OFFLINE:
                 print("离线")
             elif j.state == Device.DEVICE_AVAILABLE:
@@ -451,24 +461,30 @@ class PCRInitializer:
             except Exception as e:
                 pass
 
-    def add_task(self, task: Union[Tuple[int, str, str, dict], Tuple[int, str, str]], continue_, rec_addr):
+    def add_task(self, task: Union[Tuple[int, str, str, dict], Tuple[int, str, str]], continue_, rec_addr,
+                 rand_pri=False):
         """
         向优先级队列中增加一个task
         该task为六元组，(priority, account, taskname,rec_addr, task, continue_)
         """
         if len(task) == 3:
-            task = (0 - task[0], task[1], task[2], rec_addr, AutomatorRecorder.gettask(task[2]), continue_)
+            task = (
+                0 - task[0] - rand_pri * (random() / 2 - 1), task[1], task[2], rec_addr,
+                AutomatorRecorder.gettask(task[2]),
+                continue_)
         else:
-            task = (0 - task[0], task[1], task[2], rec_addr, task[3], continue_)  # 最大优先队列
+            task = (
+                0 - task[0] - rand_pri * (random() / 2 - 1), task[1], task[2], rec_addr, task[3], continue_)  # 最大优先队列
         self._add_task(task)
 
-    def add_tasks(self, tasks: list, continue_, rec_addr):
+    def add_tasks(self, tasks: list, continue_, rec_addr, rand_pri=False):
         """
         向优先级队列中增加一系列tasks
         该task为六元组，(priority, account, taskname,rec_addr, task, continue_)
+        rand_pri:随机增加一个0~0.5的优先级
         """
         for task in tasks:
-            self.add_task(task, continue_, rec_addr)
+            self.add_task(task, continue_, rec_addr, rand_pri)
 
     def pause_tasks(self):
         """
@@ -560,6 +576,95 @@ class PCRInitializer:
                     if device.a is not None:
                         device.a.force_kill()
                     break
+                if type(msg) is dict and "method" in msg:
+                    try:
+                        if msg["method"] == "config":
+                            # 修改配置
+                            GC.set(msg["option"], msg["value"])
+                            print(device.serial, "设置", msg["option"], "属性为", msg["value"])
+                        elif msg["method"] == "exec":
+                            # 执行语句
+                            flagg = 0
+                            try:
+                                out = eval(msg['command'])
+                                print(out)
+                            except:
+                                flagg = 1
+                            if flagg:
+                                try:
+                                    exec(msg["command"])
+                                except Exception as e:
+                                    print("执行语句产生错误：", e)
+                                    traceback.print_exc()
+                        elif msg["method"] == "debug":
+                            # 开关debug
+                            if msg["target"] == "__all__":
+                                # 对全部进行操作
+                                GC.set("debug", msg["value"])
+                                print(device.serial, "设置debug属性为", msg["value"])
+                            else:
+                                # 指定某个模块操作
+                                module_name = msg["target"]
+                                if module_name in sys.modules:
+                                    module = sys.modules[module_name]
+                                    if hasattr(module, "debug"):
+                                        setattr(module, "debug", msg["value"])
+                                    else:
+                                        print(device.serial, "模块", module_name, "不含debug信息。")
+                                else:
+                                    print(device.serial, "不存在的模块名：", module_name, "!")
+                        elif msg["method"] == "show_all_module":
+                            mypath = str(pathlib.Path().absolute())
+
+                            def is_pcr_pack(module, mypath):
+                                file_name = getattr(module, "__file__", "")
+                                if not isinstance(file_name, str):
+                                    return False
+                                if file_name.startswith(mypath):
+                                    return True
+                                return False
+
+                            for name, module in sys.modules.items():
+                                if is_pcr_pack(module, mypath):
+                                    if hasattr(module, "debug"):
+                                        print(device.serial, " - ", name, "DEBUG状态：", getattr(module, "debug"))
+                        elif msg["method"] == "freeze":
+                            if enable_pause:
+                                print(device.serial, " - ", "enable_pause已经启用，请使用shift+P暂停。")
+                            else:
+                                device.a.freeze = msg["value"]
+                        elif msg["method"] == "taskindex":
+                            if not hasattr(device.a, "ms") or device.a.ms is None:
+                                print(device.serial, " - 暂无任务")
+                                continue
+                            cur_id = device.a.ms.current_id
+                            if cur_id in device.a._task_index:
+                                cur_title = device.a._task_index[cur_id]
+                                print(device.serial, " - 当前任务：", cur_title)
+                            print(device.serial, " - 任务列表")
+                            for idx, tit in device.a._task_index.items():
+                                if idx == cur_id:
+                                    print("-> ", end="")
+                                else:
+                                    print("   ", end="")
+                                print(idx, ":", tit)
+                        elif msg["method"] == "skip":
+                            device.a.SkipTask(msg["to_id"])
+                        elif msg["method"] == "u2rec":
+                            Q = device.a.d.R.get()
+                            print(device.serial, " - U2 执行记录：")
+                            for q in Q:
+                                print(q)
+                        elif msg["method"] == "rec":
+                            print(device.serial, " - Automator 执行记录：")
+                            for q in device.a.output_debug_info(msg["running"]):
+                                print(q)
+                        else:
+                            print(device.serial, " - 不认识的msg！", msg)
+
+                    except Exception as e:
+                        print(device.serial, "在执行", msg, "时遇到错误：", e)
+
                 time.sleep(1)
 
         serial = device.serial
@@ -740,17 +845,55 @@ class PCRInitializer:
                         kwargs=dict(device=d, task_queue=self.tasks, in_queue=self.in_queue[d],
                                     out_queue=self.out_queue), daemon=True).start()
 
-    def send_message(self, device: Device, msg):
+    def send_message(self, device: Optional[Device] = None, msg=None):
+        if device is None:
+            # BoardCast
+            for d in self.in_queue:
+                self.send_message(d, msg)
         if device not in self.in_queue:
             return
         target = self.in_queue[device]
         target.put(msg)
 
-    def stop_device(self, device: Device):
+    def stop_device(self, device=None):
         self.send_message(device, "quit")
 
-    def forcekill_device(self, device: Device):
+    def forcekill_device(self, device=None):
         self.send_message(device, "forcekill")
+
+    def change_config(self, option, value, device=None):
+        self.send_message(device, {"method": "config", "option": option, "value": value})
+
+    def start_debug(self, value, module="__all__", device=None):
+        self.send_message(device, {"method": "debug", "value": value, "target": module})
+
+    def show_all_module_debug(self, device=None):
+        self.send_message(device, {"method": "show_all_module"})
+
+    def exec_command(self, command, device=None):
+        self.send_message(device, {"method": "exec", "command": command})
+
+    def exec_script(self, script_file, device=None):
+        try:
+            command = open(script_file, "r", encoding="utf-8").read()
+            self.send_message(device, {"method": "exec", "command": command})
+        except Exception as e:
+            print("读取文件错误！", e)
+
+    def set_freeze(self, value, device=None):
+        self.send_message(device, {"method": "freeze", "value": value})
+
+    def show_task_index(self, device=None):
+        self.send_message(device, {"method": "taskindex"})
+
+    def skip_task(self, to_id=None, device=None):
+        self.send_message(device, {"method": "skip", "to_id": to_id})
+
+    def show_u2_record(self, device=None):
+        self.send_message(device, {'method': 'u2rec'})
+
+    def show_debug_record(self, running=False, device=None):
+        self.send_message(device, {'method': 'rec', 'running': running})
 
     def stop(self, join=False, clear=False, force=False):
         if clear:
@@ -846,11 +989,23 @@ class Schedule:
              or "name":[("batch1","rec_addr1"),("batch2","rec_addr2"),...]
         }
         """
+        FLAGS = list_all_flags()
         for s in self.schedule["schedules"]:
+            if "__disable__" in s:
+                if s["__disable__"] is True:
+                    continue
+                elif s["__disable__"] is not False:
+                    detail = None
+                    for flag, details in FLAGS.items():
+                        if s["__disable__"] == flag:
+                            detail = details
+                            break
+                    if detail is not None:
+                        if detail["default"] is True:
+                            continue
+
             if s["type"] == "config":
                 self.config.update(s)
-                continue
-            if "__disable__" in s and s["__disable__"]:
                 continue
             typ = s["type"]
             nam = s["name"]
@@ -1102,7 +1257,7 @@ class Schedule:
     def _run(self):
         # self._get_status()
         _time_start = time.time()  # 第一次直接输出初始状态
-        if len(s_sckey) != 0 and self.name != "":
+        if sentstate != 0 and self.name != "":
             acc_state = f"Schedule {self.name} 开始运行！\n"
             from CreateUser import _show_schedule
             acc_state += PrintToStr(_show_schedule, self.schedule)
@@ -1119,10 +1274,10 @@ class Schedule:
                 self.log("info", p)
 
             # Report Information
-            if not self.is_free() and len(s_sckey) != 0:
+            if not self.is_free() and sentstate != 0:
                 _time_end = time.time()
                 _time = int(_time_end - _time_start) / 60
-                if _time >= s_sentstate:
+                if _time >= sentstate:
                     self.log("info", "server_bot 播报当前状态")
                     pcr_log("admin").server_bot("STATE", acc_state=PrintToStr(self.show_everything))
                     _time_start = time.time()
