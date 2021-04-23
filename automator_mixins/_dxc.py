@@ -685,10 +685,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
     def shuatuDD_OCR(self, dxc_id: int, mode: int, stop_criteria: int = 0, after_stop: int = 0, teams=None,
                      safety_stop=1, assist=0):  # 刷地下城
         """
-        2020-07-29 Add By TheAutumnOfRice
+        2021-04-22 Add By TheAutumnOfRice
 
         统一刷地下城函数，全Auto通关地下城
         三倍速通关！
+        修复周年庆UIBUG，采用scenes框架
 
         :param dxc_id: 地下城的ID
         :param mode: 模式
