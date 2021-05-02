@@ -699,7 +699,7 @@ def ZB_ST_ADVICE(args, verbose=True):
         result_int = 0
         keys = list(out_map.keys())
         for i in keys:
-            out_map[i] = int(round(out_map[i] / 2))
+            out_map[i] = int(round(out_map[i] / mul))
             if out_map[i] == 0:
                 out_map.pop(i)
                 continue
