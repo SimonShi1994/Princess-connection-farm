@@ -14,7 +14,7 @@ import threading
 import psutil
 
 from core.log_handler import pcr_log
-from core.pcr_config import adb_dir
+from core.pcr_config import adb_dir, emulators_port_interval, emulators_port_list
 
 emulator_ip = "127.0.0.1"
 
@@ -160,7 +160,7 @@ def get_ports(emulator):
     # print(
     #     _("{name}({type}) processes:").format(
     #         name=emulator.name, type=emulator.type))
-    # print(ps)
+    print(ps)
     ports = []
     if 1 <= len(ps) <= len(emulator.default_ports):
         for default_port in emulator.default_ports:
@@ -228,6 +228,8 @@ def get_process_unique_id(p):
 
 def get_port(PID):
     """通过pid获取端口号"""
+    i = 1
+    por = 65599
     cmd = 'netstat -ano | findstr' + ' ' + str(PID)
     # print(cmd)
     a = os.popen(cmd)
@@ -235,9 +237,26 @@ def get_port(PID):
     text = a.read()
     # 要用read（）方法读取后才是文本对象
     first_line = text.split(':')
-    ab = first_line[1]
-    cd = ab.split(' ')
-    por = cd[0]
+    # print(first_line)
+    while True:
+        ab = first_line[i].replace('  ', '')
+        cd = ab.split(' ')
+        # print(cd[1])
+        if cd[1] == "0.0.0.0":
+            if emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
+                if emulators_port_list:
+                    if int(cd[0]) in emulators_port_list:
+                        por = cd[0]
+                        # print("1-",por)
+                        break
+                    else:
+                        break
+                else:
+                    por = cd[0]
+                    # print(por)
+                    break
+        else:
+            i += 1
     # print(por)
     return por
 
@@ -257,6 +276,7 @@ def check_known_emulators():
         for t, e in _EMULATORS.items():
             if e.unique_id == unique_id:
                 # print(e)
+                # result = get_ports(e)
                 ps = get_processes(e)
                 # print(len(ps))
                 for i in range(0, len(ps)):
