@@ -12,6 +12,11 @@ const menu = [
     key: '2',
     link: '/schedule',
     description: '计划',
+  },
+  {
+    key: '3',
+    link: '/task',
+    description: '任务',
   }
 ]
 const Container = (props) => {
