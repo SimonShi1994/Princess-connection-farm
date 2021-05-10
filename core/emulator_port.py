@@ -239,11 +239,16 @@ def get_port(PID):
     first_line = text.split(':')
     # print(first_line)
     while True:
-        ab = first_line[i].replace('  ', '')
+        ab = first_line[i].replace('\r\n', '')
         cd = ab.split(' ')
-        # print(cd[1])
-        if cd[1] == "0.0.0.0":
-            if emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
+        if cd[-1] == "0.0.0.0":
+            if "failed" in os.popen(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(' '):
+                pcr_log('admin').write_log(level='error', message=f"连接模拟器失败，不是这个模拟器{emulator_ip + ':' + str(cd[0])}")
+                os.system(f"cd {adb_dir} & adb kill-server")
+                i += 1
+                continue
+            elif emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
+                # print(cd)
                 if emulators_port_list:
                     if int(cd[0]) in emulators_port_list:
                         por = cd[0]
@@ -278,9 +283,10 @@ def check_known_emulators():
                 # print(e)
                 # result = get_ports(e)
                 ps = get_processes(e)
-                # print(len(ps))
+                # print(ps)
                 for i in range(0, len(ps)):
-                    result.append(get_port(ps[i].pid))
+                    if str(get_port(ps[i].pid)) not in result:
+                        result.append(get_port(ps[i].pid))
                     # result = [5565]
                     # a = get_processes(e)
                     # print(port(24664))

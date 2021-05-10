@@ -41,7 +41,8 @@ def _connect():  # 连接adb与uiautomator
     global FIRST_CONNECT
     try:
         if enable_auto_find_emulator:
-            port_list = check_known_emulators()
+            os.system(f"cd {adb_dir} & adb kill-server")
+            port_list = set(check_known_emulators())
             # print(port_list)
             print("自动搜寻模拟器：" + str(port_list))
             for port in port_list:
