@@ -215,6 +215,8 @@ auto_start_app = GC.add_bool("pcrfarm_setting", "auto_start_app", True)
 inline_app = GC.add_bool("pcrfarm_setting", "inline_app", True)
 
 enable_auto_find_emulator = GC.add_bool('emulator_setting', 'enable_auto_find_emulator', False)
+emulators_port_interval: Optional[list] = (GC.add_list('emulator_setting', 'emulators_port_interval', [30000, 5000]))
+emulators_port_list: Optional[list] = (GC.add_list('emulator_setting', 'emulators_port_list', []))
 emulator_ports: Optional[list] = (GC.add_list('emulator_setting', 'emulator_ports', []))
 adb_dir = GC.add_abspath('emulator_setting', 'adb_dir', "adb")
 add_adb_to_path = GC.add_bool('emulator_setting', 'add_adb_to_path', True)
