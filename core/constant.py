@@ -80,7 +80,7 @@ MAIN_BTN = {
     # 主菜单
     "zhucaidan": p(877, 515),
     # 关闭 用于活动剧情
-    "guanbi": p(285, 467, img="img/home/guanbi.bmp", at=(264, 451, 480, 508)),
+    "guanbi": p(285, 467, img="img/home/guanbi.bmp", at=(4, 298, 956, 538)),
 
     # 礼物
     "liwu": p(908, 432, img="img/home/liwu.bmp", at=(891, 417, 927, 448)),

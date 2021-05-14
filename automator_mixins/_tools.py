@@ -51,8 +51,16 @@ class ToolsMixin(BaseMixin):
                 last = time.time()
             if self.is_exists(MAIN_BTN["liwu"], screen=sc):
                 return
-            if self.is_exists(MAIN_BTN["guanbi"], screen=sc):
-                self.click(MAIN_BTN["guanbi"])
+            # if self.is_exists(MAIN_BTN["guanbi"], screen=sc):
+            #     self.click(MAIN_BTN["guanbi"])
+            try:
+                r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=sc)
+                if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
+                                 side_check=self.juqing_kkr):
+                    time.sleep(5)
+                    continue
+            except:
+                pass
             self.click(MAIN_BTN["zhuye"])
             # 防卡公告
             self.click(1, 1)
@@ -88,9 +96,17 @@ class ToolsMixin(BaseMixin):
                 self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
                 continue
-            if self.is_exists(MAIN_BTN["guanbi"], screen=screen_shot_):
-                self.click(MAIN_BTN["guanbi"])
-                continue
+            try:
+                r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
+                if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
+                                 side_check=self.juqing_kkr):
+                    time.sleep(5)
+                    continue
+            except:
+                pass
+            # if self.is_exists(MAIN_BTN["guanbi"], screen=screen_shot_):
+            #     self.click(MAIN_BTN["guanbi"])
+            #     continue
             # num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             # print(num_of_white)
             # if num_of_white < 77000:
