@@ -531,7 +531,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         if a == 1 and b == 8:
             self.auto_upgrade(0, True, False)
         if a < 3:
-            self.tuitu(0, "3-2", buy_tili=3, auto_upgrade=1, use_ub=1, clear_tili=False, var=var)
+            self.tuitu(0, "3-1", buy_tili=3, auto_upgrade=1, use_ub=1, clear_tili=False, var=var)
         self.clear_tili_info(var)
         mv.clearflags()
 

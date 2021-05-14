@@ -244,7 +244,7 @@ def get_port(PID):
         if cd[-1] == "0.0.0.0":
             if "failed" in os.popen(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(' '):
                 pcr_log('admin').write_log(level='error', message=f"连接模拟器失败，不是这个模拟器{emulator_ip + ':' + str(cd[0])}")
-                os.system("taskkill /im adb.exe /f")
+                # os.system("taskkill /im adb.exe /f")
                 i += 1
                 continue
             elif emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
