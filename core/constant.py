@@ -79,6 +79,8 @@ MAIN_BTN = {
     "niudan": p(753, 514),
     # 主菜单
     "zhucaidan": p(877, 515),
+    # 关闭 用于活动剧情
+    "guanbi": p(285, 467, img="img/home/guanbi.bmp", at=(264, 451, 480, 508)),
 
     # 礼物
     "liwu": p(908, 432, img="img/home/liwu.bmp", at=(891, 417, 927, 448)),
@@ -311,6 +313,7 @@ TUANDUIZHAN_BTN = {
     "tiaozhan": p(833, 462, img="img/hanghui/tiaozhan.bmp", at=(738, 422, 924, 497)),
     "zhandou": p(587, 374, img="img/hanghui/zhandou.bmp", at=(473, 334, 696, 400)),
     "qianwangguanqia": p(592, 436, img="img/hanghui/qianwangguanqia.bmp", at=(478, 404, 697, 462)),
+    "guanbi": p(833, 462, img="img/hanghui/close_btn_1.bmp", at=(199, 393, 742, 526)),
 }
 ZHUCAIDAN_BTN = {
     "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(699, 198, 915, 255)),

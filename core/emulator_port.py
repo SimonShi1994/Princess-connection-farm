@@ -14,6 +14,7 @@ import threading
 import psutil
 
 from core.log_handler import pcr_log
+from core.pcr_config import adb_dir, emulators_port_interval, emulators_port_list
 
 emulator_ip = "127.0.0.1"
 
@@ -75,7 +76,7 @@ def check_adb_connectable_by_ports(ports, auto_disconnect=True):
         def run(self) -> None:
             port_now = self.ports_queue.get()
             device_now = "%s:%s" % (emulator_ip, port_now)
-            sh("adb connect %s" % device_now, timeout=1)
+            sh(f"cd {adb_dir} && adb connect {device_now}", timeout=1)
             self.devices_queue.put(device_now)
 
     connet_thread_list = []
@@ -91,7 +92,7 @@ def check_adb_connectable_by_ports(ports, auto_disconnect=True):
     if auto_disconnect:
         for i in range(devices_queue.qsize()):
             device = devices_queue.get()
-            os.system("adb disconnect %s" % device)
+            os.system(f"cd {adb_dir} && adb disconnect {device}")
     ports = [int(x.split(':')[1]) for x in result]
     return ports
 
@@ -140,7 +141,7 @@ def sh(command, print_msg=True, timeout=0):
 
 def check_adb_connected(devices_queue):
     # check if device is active
-    active_result = sh("adb devices", print_msg=False)
+    active_result = sh(f"cd {adb_dir}adb && devices", print_msg=False)
     connected_devices = []
     for i in range(devices_queue.qsize()):
         device = devices_queue.get()
@@ -153,17 +154,16 @@ def check_adb_connected(devices_queue):
 def get_ports(emulator):
     ps = get_processes(emulator)
     pcr_log('admin').write_log(level='debug',
-                      message=_("{name}({type}) processes:").format(
-                          name=emulator.name, type=emulator.type))
+                               message=_("{name}({type}) processes:").format(
+                                   name=emulator.name, type=emulator.type))
     pcr_log('admin').write_log(level='debug', message=ps)
     # print(
     #     _("{name}({type}) processes:").format(
     #         name=emulator.name, type=emulator.type))
-    # print(ps)
+    print(ps)
     ports = []
     if 1 <= len(ps) <= len(emulator.default_ports):
         for default_port in emulator.default_ports:
-            # print(default_port)
             result = check_adb_connectable_by_port(
                 default_port, auto_disconnect=False)
             if result:
@@ -226,19 +226,72 @@ def get_process_unique_id(p):
     return "%s/%s" % (relative_path, p.name())
 
 
+def get_port(PID):
+    """通过pid获取端口号"""
+    i = 1
+    por = 65599
+    cmd = 'netstat -ano | findstr' + ' ' + str(PID)
+    # print(cmd)
+    a = os.popen(cmd)
+    # 此时打开的a是一个对象，如果直接打印的话是对象内存地址
+    text = a.read()
+    # 要用read（）方法读取后才是文本对象
+    first_line = text.split(':')
+    # print(first_line)
+    while True:
+        ab = first_line[i].replace('\r\n', '')
+        cd = ab.split(' ')
+        if cd[-1] == "0.0.0.0":
+            if "failed" in os.popen(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(' '):
+                pcr_log('admin').write_log(level='error', message=f"连接模拟器失败，不是这个模拟器{emulator_ip + ':' + str(cd[0])}")
+                os.system("taskkill /im adb.exe /f")
+                i += 1
+                continue
+            elif emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
+                # print(cd)
+                if emulators_port_list:
+                    if int(cd[0]) in emulators_port_list:
+                        por = cd[0]
+                        # print("1-",por)
+                        break
+                    else:
+                        break
+                else:
+                    por = cd[0]
+                    # print(por)
+                    break
+        else:
+            i += 1
+    # print(por)
+    return por
+
+
 def check_known_emulators():
     read_config()
     emulators = {}
     filtered_emulator = []
+    result = []
     ischanged = False
     for p in psutil.process_iter():
         unique_id = get_process_unique_id(p)
         if unique_id in filtered_emulator:
             continue
         filtered_emulator.append(unique_id)
+        # print(unique_id)
         for t, e in _EMULATORS.items():
             if e.unique_id == unique_id:
-                result = get_ports(e)
+                # print(e)
+                # result = get_ports(e)
+                ps = get_processes(e)
+                # print(ps)
+                for i in range(0, len(ps)):
+                    if str(get_port(ps[i].pid)) not in result:
+                        result.append(get_port(ps[i].pid))
+                    # result = [5565]
+                    # a = get_processes(e)
+                    # print(port(24664))
+                    # print(a)
+                    # print(result)
                 if result:
                     if not emulators.get(e.unique_id):
                         emulators[e.unique_id] = copy.deepcopy(e)
@@ -249,5 +302,6 @@ def check_known_emulators():
     result_ports = []
     for i, j in emulators.items():
         result_ports += j.default_ports
+    # return ischanged, emulators.values()
     # return emulators
     return result_ports

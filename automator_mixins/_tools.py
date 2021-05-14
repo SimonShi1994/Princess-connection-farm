@@ -51,6 +51,8 @@ class ToolsMixin(BaseMixin):
                 last = time.time()
             if self.is_exists(MAIN_BTN["liwu"], screen=sc):
                 return
+            if self.is_exists(MAIN_BTN["guanbi"], screen=sc):
+                self.click(MAIN_BTN["guanbi"])
             self.click(MAIN_BTN["zhuye"])
             # 防卡公告
             self.click(1, 1)
@@ -86,6 +88,9 @@ class ToolsMixin(BaseMixin):
                 self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
                 continue
+            if self.is_exists(MAIN_BTN["guanbi"], screen=screen_shot_):
+                self.click(MAIN_BTN["guanbi"])
+                continue
             # num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             # print(num_of_white)
             # if num_of_white < 77000:
@@ -95,7 +100,7 @@ class ToolsMixin(BaseMixin):
             self.click(1, 1, post_delay=0.5)
             self.click(330, 270, post_delay=1)
             # 跳过抽签（备用）
-            self.d.touch.down(470, 30).sleep(0.1).move(470, 500).sleep(0.2).up(470, 500)
+            self.d.touch.down(370, 30).sleep(0.1).move(50, 50).sleep(0.2).up(370, 450)
 
         self.lock_home()
         time.sleep(0.5)

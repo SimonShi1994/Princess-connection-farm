@@ -55,15 +55,15 @@ class LoginMixin(BaseMixin):
         # 我放弃了。  新增自动点击“下载”，自动下载新增数据功能， 2020-11-23 By TheAutumnOfRice
 
         # 结构梳理下为：auth -> login_auth(是否需要实名认证<->login<->do_login[验证码处理]) -> init_home(lock_home)
-        for retry in range(30):
+        for retry in range(300):
             self._move_check()
             self.click(945, 13)  # 防止卡住
             if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
                 self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
-                time.sleep(2)
+                time.sleep(0.2)
                 continue
             if not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
-                time.sleep(2)
+                time.sleep(0.2)
             else:
                 break
         else:
