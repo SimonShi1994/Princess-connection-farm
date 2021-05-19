@@ -374,8 +374,8 @@ class ToolsMixin(BaseMixin):
         else:
             name = name[random.randint(0, name_len - 1)]
         self.click(871, 513)  # 主菜单
-        self.lock_img('img/zhucaidan/bangzhu.bmp', ifclick=[(370, 270)])  # 锁定帮助 点击简介
-        self.lock_img('img/bianji.bmp', ifclick=[(900, 140)])  # 锁定 点击铅笔修改按钮
+        self.lock_img('img/zhucaidan/bangzhu.bmp', ifclick=[(370, 250)])  # 锁定帮助 点击简介
+        self.lock_img('img/bianji.bmp', ifclick=[(900, 155)])  # 锁定 点击铅笔修改按钮
         self.lock_img('img/biangeng.bmp', ifclick=[(480, 270)])  # 锁定 玩家名 点击游戏渲染编辑框
         time.sleep(1)
         self.click(290, 425)  # 点击编辑框
