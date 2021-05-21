@@ -188,6 +188,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2021/5/21 By UVJkiNTQ
+
+- 修复自动重命名
+
 2021/5/9 By CyiceK
 
 - 修复自动搜寻模拟器-蓝叠的问题
