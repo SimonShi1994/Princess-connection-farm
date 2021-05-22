@@ -102,6 +102,10 @@ class FightBaseMixin(ToolsMixin):
                     retry = 0
                     continue
                     # return 1
+            elif self.is_exists(FIGHT_BTN["zhandou_failed"], screen=sc):
+                if self.is_exists(FIGHT_BTN["qwjsyl"], screen=sc):
+                    # 前往角色一览：失败
+                    return 2
             elif self.is_exists(FIGHT_BTN["shbg"], screen=sc):
                 # 出现伤害报告，战斗结束 （地下城）
                 if self.is_exists(FIGHT_BTN["qwjsyl"], screen=sc):
