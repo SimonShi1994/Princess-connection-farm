@@ -187,6 +187,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2021/5/23 By thsheep
+
+- 修复了战斗结束点击下一步错位的问题
+- 修复了战斗失败卡死在Failed的界面上
 
 2021/5/21 By UVJkiNTQ
 

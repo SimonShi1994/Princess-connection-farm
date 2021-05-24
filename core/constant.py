@@ -403,7 +403,7 @@ FIGHT_BTN = {
     "tiaozhan": p(839, 456, img="img/ui/tiaozhan.bmp", at=(788, 444, 889, 467)),
     "tiaozhan2": p(839, 453, img="img/ui/tiaozhan2.bmp", at=(814, 440, 865, 466)),
     "xiayibu2": p(829, 490, img="img/ui/xiayibu2.bmp", at=(785, 477, 870, 505)),  # 短的下一步，用于“战利品”界面
-    "xiayibu": p(832, 504, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),  # 长的下一步，用于经验值、好感度页面
+    "xiayibu": p(832, 504, img="img/ui/xiayibu.bmp", at=(731, 466, 933, 514)),  # 长的下一步，用于经验值、好感度页面
     "qwzxgq": p(808, 493, img="img/fight/qwzxgq.bmp", at=(745, 481, 869, 504)),  # 前往主线关卡：输的时候会显示
     "baochou": p(img="img/fight/baochou.bmp", at=(61, 414, 114, 481)),
     "dengjitisheng": p(img="img/fight/dengjitisheng.bmp", at=(431, 132, 525, 158)),
@@ -413,6 +413,7 @@ FIGHT_BTN = {
     "tgdw": p(img="img/fight/tgdw.bmp", at=(805, 82, 900, 105)),
     "infinity": p(img="img/fight/infinity.bmp", at=(897, 407, 920, 420)),
     "fighting_caidan": p(img="img/fight/fighting_caidan.bmp", at=(882, 18, 918, 32)),
+    "zhandou_failed": p(img="img/fight/zhandou_failed.bmp"),
 }
 
 JUESE_BTN = {
