@@ -1,5 +1,7 @@
 import gc
+import random
 import time
+from id_validator import validator
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN, START_UI
 from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip, captcha_senderror, \
@@ -83,6 +85,8 @@ class LoginMixin(BaseMixin):
             sc = self.getscreen()
             if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
                 self.click(MAIN_BTN["xiazai"])
+            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
+                return 1  # 说明要进行认证
             if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                 break
             elif self.is_exists(MAIN_BTN["liwu"], screen=sc):
@@ -91,8 +95,8 @@ class LoginMixin(BaseMixin):
                 break
             elif toast_message is "密码错误":
                 raise Exception("密码错误！")
-            elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists():
-                break
+            # elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists():
+            #     break
 
         def SkipAuth():
             for _ in range(2):
@@ -195,7 +199,7 @@ class LoginMixin(BaseMixin):
                     # 检测到题目id为0就重新验证
                     AutoCaptcha()
 
-                state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=8, retry=5, is_raise=False)
+                state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=5, retry=8, is_raise=False)
 
                 # 这里是获取toast，看是否输错密码
                 toast_message = self.d.toast.get_message()
@@ -252,7 +256,7 @@ class LoginMixin(BaseMixin):
                     SkipAuth()
         if flag:
             return -1
-        if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.1):
+        if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
             return 1  # 说明要进行认证
         else:
             return 0  # 正常
@@ -338,30 +342,38 @@ class LoginMixin(BaseMixin):
         :return:
         """
         self._move_check()
-        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
+        # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
+        self.d.xpath(
+            '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[1]').click()
         self._move_check()
         self.d.clear_text()
         self._move_check()
         self.d.send_keys(str(auth_name))
         self._move_check()
-        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_id_number").click()
+        # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_id_number").click()
+        self.d.xpath(
+            '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[2]').click()
         self._move_check()
         self.d.clear_text()
         self._move_check()
         self.d.send_keys(str(auth_id))
         self._move_check()
-        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
+        self.d.xpath('//*[@text="提交实名"]').click()
+        # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
         self._move_check()
-        self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
+        # self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
+        self.d(text="我知道了").click()
 
     @timeout(300, "login_auth登录超时，超过5分钟")
     @DEBUG_RECORD
     def login_auth(self, ac, pwd):
+        # CreatIDnum() 可能阿B升级了验证，不推荐使用了，没有合法性校验
         need_auth = self.login(ac=ac, pwd=pwd)
         if need_auth == -1:  # 这里漏了一句，无法检测验证码。
             return -1
         if need_auth == 1:
-            auth_name, auth_id = random_name(), CreatIDnum()
+            birthday = str(random.randint(1970, 1999))
+            auth_name, auth_id = random_name(), validator.fake_id(birthday=birthday)
             self.auth(auth_name=auth_name, auth_id=auth_id)
 
     @DEBUG_RECORD
