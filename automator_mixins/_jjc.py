@@ -64,8 +64,9 @@ class JJCMixin(FightBaseMixin):
             return
         for _ in range(10):
             self.click(843, 452, post_delay=0.5)
+        # 843, 452
         self.wait_for_loading(delay=2)
         self.set_fight_speed(2, 2)
-        self.lock_img(JJC_BTN["pxyb"], elseclick=[(843, 452)], timeout=180 * 3, alldelay=1)
+        self.lock_img(JJC_BTN["pxyb"], elseclick=[(803, 506)], timeout=180 * 3, alldelay=1)
         self.click_btn(PCRelement(803, 506), until_disappear=JJC_BTN["pxyb"])
         self.lock_home()
