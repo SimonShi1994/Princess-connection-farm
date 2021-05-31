@@ -85,14 +85,14 @@ class LoginMixin(BaseMixin):
             sc = self.getscreen()
             if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
                 self.click(MAIN_BTN["xiazai"])
-            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
-                return 1  # 说明要进行认证
             if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                 break
             elif self.is_exists(MAIN_BTN["liwu"], screen=sc):
                 break
             elif self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                 break
+            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
+                return 1  # 说明要进行认证
             elif toast_message is "密码错误":
                 raise Exception("密码错误！")
             elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists() and \
@@ -255,10 +255,10 @@ class LoginMixin(BaseMixin):
                 if not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                     flag = False
                     SkipAuth()
-        if flag:
-            return -1
         if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
             return 1  # 说明要进行认证
+        if flag:
+            return -1
         else:
             return 0  # 正常
 
@@ -342,6 +342,10 @@ class LoginMixin(BaseMixin):
         :param auth_id:
         :return:
         """
+        if self.d(text="还剩2次实名认证机会").exists():
+            raise Exception("实名仅剩2次验证机会了！")
+        elif self.d(text="还剩1次实名认证机会").exists():
+            raise Exception("实名仅剩1次验证机会了！")
         self._move_check()
         # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
         self.d.xpath(
