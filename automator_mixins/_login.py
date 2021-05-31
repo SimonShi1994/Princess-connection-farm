@@ -95,8 +95,9 @@ class LoginMixin(BaseMixin):
                 break
             elif toast_message is "密码错误":
                 raise Exception("密码错误！")
-            # elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists():
-            #     break
+            elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists() and \
+                    not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
+                break
 
         def SkipAuth():
             for _ in range(2):
