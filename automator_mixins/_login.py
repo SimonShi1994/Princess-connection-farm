@@ -284,6 +284,15 @@ class LoginMixin(BaseMixin):
                 try_count += 1
                 if try_count % 5 == 0 and try_count > 10:
                     # 看一下会不会一直点右上角？
+                    try:
+                        screen_shot_ = self.getscreen()
+                        r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
+                        if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
+                                            side_check=self.juqing_kkr):
+                            time.sleep(10)
+                            continue
+                    except:
+                        pass
                     if self.is_exists(MAIN_BTN["liwu"]):
                         # 已经登陆了老哥！
                         # 重 新 来 过
@@ -291,7 +300,7 @@ class LoginMixin(BaseMixin):
                         self.lock_img(MAIN_BTN["liwu"], elseclick=MAIN_BTN["zhuye"], elsedelay=1)  # 回首页
                         self.change_acc()
                 if try_count > 100:
-                    # 点了1000次了，重启吧
+                    # 点了100次了，重启吧
                     error_flag = 1
                     raise Exception("点了100次右上角了，重启罢！")
                 # todo 登陆失败报错：-32002 Client error: <> data: Selector [
@@ -343,8 +352,10 @@ class LoginMixin(BaseMixin):
         :return:
         """
         if self.d(text="还剩2次实名认证机会").exists():
+            self.log.write_log("error", message='%s账号实名仅剩2次验证机会了！' % self.account)
             raise Exception("实名仅剩2次验证机会了！")
         elif self.d(text="还剩1次实名认证机会").exists():
+            self.log.write_log("error", message='%s账号实名仅剩1次验证机会了！' % self.account)
             raise Exception("实名仅剩1次验证机会了！")
         self._move_check()
         # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()

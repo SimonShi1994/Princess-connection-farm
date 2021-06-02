@@ -57,7 +57,7 @@ class ToolsMixin(BaseMixin):
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=sc)
                 if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
                                  side_check=self.juqing_kkr):
-                    time.sleep(5)
+                    time.sleep(10)
                     continue
             except:
                 pass
@@ -100,7 +100,7 @@ class ToolsMixin(BaseMixin):
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
                 if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
                                  side_check=self.juqing_kkr):
-                    time.sleep(5)
+                    time.sleep(10)
                     continue
             except:
                 pass
@@ -116,7 +116,7 @@ class ToolsMixin(BaseMixin):
             self.click(1, 1, post_delay=0.5)
             self.click(330, 270, post_delay=1)
             # 跳过抽签（备用）
-            self.d.touch.down(370, 30).sleep(0.1).move(50, 50).sleep(0.2).up(370, 450)
+            self.d.touch.down(370, 330).sleep(0.1).move(50, 50).sleep(0.2).up(370, 450)
 
         self.lock_home()
         time.sleep(0.5)

@@ -67,6 +67,6 @@ class JJCMixin(FightBaseMixin):
         # 843, 452
         self.wait_for_loading(delay=2)
         self.set_fight_speed(2, 2)
-        self.lock_img(JJC_BTN["pxyb"], elseclick=[(803, 506)], timeout=180 * 3, alldelay=1)
+        # self.lock_img(JJC_BTN["pxyb"], elseclick=[(803, 506)], timeout=180 * 3, alldelay=1)
         self.click_btn(PCRelement(803, 506), until_disappear=JJC_BTN["pxyb"])
         self.lock_home()

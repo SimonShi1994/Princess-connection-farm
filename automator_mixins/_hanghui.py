@@ -21,6 +21,7 @@ class HanghuiMixin(ToolsMixin):
         行会自动捐赠装备
         2020/8/6 By:CyiceK 检查完毕
         """
+        self.lock_home()
         self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time,
                       at=(891, 413, 930, 452))  # 回首页
         # self.d.click(693, 436)
