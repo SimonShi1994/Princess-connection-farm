@@ -626,7 +626,7 @@ class AutomatorRecorder:
         self.rec_addr = rec_addr
 
     @staticmethod
-    def _load(jsonaddr) -> Optional[dict]:
+    def load(jsonaddr) -> Optional[dict]:
         """
         读取json文件。输出字典类型
         :param jsonaddr: json地址
@@ -663,14 +663,14 @@ class AutomatorRecorder:
 
     def getuser(self) -> dict:
         target_name = "%s/%s.json" % (user_addr, self.account)
-        d = self._load(target_name)
+        d = self.load(target_name)
         check_user_dict(d, True)
         return d
 
     @staticmethod
     def gettask(taskfile) -> dict:
         target_name = "%s/%s.json" % (task_addr, taskfile)
-        d = AutomatorRecorder._load(target_name)
+        d = AutomatorRecorder.load(target_name)
         check_task_dict(d, True)
         return d
 
@@ -698,21 +698,21 @@ class AutomatorRecorder:
     @staticmethod
     def getbatch(batchfile) -> dict:
         target_name = "%s/%s.json" % (batch_addr, batchfile)
-        d = AutomatorRecorder._load(target_name)
+        d = AutomatorRecorder.load(target_name)
         check_valid_batch(d)
         return d
 
     @staticmethod
     def getschedule(schedulefile):
         target_name = "%s/%s.json" % (schedule_addr, schedulefile)
-        d = AutomatorRecorder._load(target_name)
+        d = AutomatorRecorder.load(target_name)
         check_valid_schedule(d)
         return d
 
     @staticmethod
     def getswitch(switchfile):
         target_name = "%s/%s.json" % (switch_addr, switchfile)
-        d = AutomatorRecorder._load(target_name)
+        d = AutomatorRecorder.load(target_name)
         check_valid_switch(d)
         return d
 
@@ -835,7 +835,7 @@ class AutomatorRecorder:
         if default is not None and (not os.path.isdir(dir) or not os.path.exists(target_name)):
             self.json_save(target_name, default)
 
-        now = self._load(target_name)
+        now = self.load(target_name)
         if now is None:
             self.json_save(target_name, default)
             return default
@@ -869,7 +869,7 @@ class AutomatorRecorder:
         default = UDD["run_status"]
         if not os.path.isdir(dir) or not os.path.exists(target_name):
             self.json_save(target_name, default)
-        now = self._load(target_name)
+        now = self.load(target_name)
         flag = False
         # 检查缺失值，用默认值填充
         for k, v in default.items():

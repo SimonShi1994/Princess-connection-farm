@@ -213,6 +213,7 @@ captcha_popup = GC.add_bool("pcrfarm_setting", "captcha_popup", True)
 clear_traces_and_cache = GC.add_bool("pcrfarm_setting", "clear_traces_and_cache", True)
 auto_start_app = GC.add_bool("pcrfarm_setting", "auto_start_app", True)
 inline_app = GC.add_bool("pcrfarm_setting", "inline_app", True)
+use_my_id = GC.add_bool("pcrfarm_setting", "use_my_id", False)
 
 enable_auto_find_emulator = GC.add_bool('emulator_setting', 'enable_auto_find_emulator', False)
 emulators_port_interval: Optional[list] = (GC.add_list('emulator_setting', 'emulators_port_interval', [30000, 5000]))

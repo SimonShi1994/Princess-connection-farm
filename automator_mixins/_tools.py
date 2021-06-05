@@ -42,6 +42,7 @@ class ToolsMixin(BaseMixin):
         self.clear_all_initFC()
         last = time.time()
         while True:
+            time.sleep(5)
             sc = self.getscreen()
             if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
                 self.click(MAIN_BTN["xiazai"])
@@ -49,18 +50,18 @@ class ToolsMixin(BaseMixin):
             if num_of_white < 77000:
                 self.chulijiaocheng(None)  # 增加对教程的处理功能
                 last = time.time()
-            if self.is_exists(MAIN_BTN["liwu"], screen=sc):
-                return
-            # if self.is_exists(MAIN_BTN["guanbi"], screen=sc):
-            #     self.click(MAIN_BTN["guanbi"])
             try:
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=sc)
                 if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
-                                 side_check=self.juqing_kkr):
+                                    side_check=self.juqing_kkr):
                     time.sleep(10)
                     continue
             except:
                 pass
+            if self.is_exists(MAIN_BTN["liwu"], screen=sc):
+                return
+            # if self.is_exists(MAIN_BTN["guanbi"], screen=sc):
+            #     self.click(MAIN_BTN["guanbi"])
             self.click(MAIN_BTN["zhuye"])
             # 防卡公告
             self.click(1, 1)
@@ -82,6 +83,7 @@ class ToolsMixin(BaseMixin):
     def init_home(self):
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         while True:
+            time.sleep(5)
             screen_shot_ = self.getscreen()
             if self.is_exists(MAIN_BTN["liwu"], screen=screen_shot_):
                 break

@@ -5,9 +5,10 @@ from id_validator import validator
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN, START_UI
 from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip, captcha_senderror, \
-    captcha_senderror_times
+    captcha_senderror_times, use_my_id
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
+from core.usercentre import AutomatorRecorder
 from core.utils import random_name, CreatIDnum
 from ._base import BaseMixin
 from ._base import DEBUG_RECORD
@@ -62,10 +63,10 @@ class LoginMixin(BaseMixin):
             self.click(945, 13)  # 防止卡住
             if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
                 self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
-                time.sleep(0.2)
+                time.sleep(0.8)
                 continue
             if not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
-                time.sleep(0.2)
+                time.sleep(0.8)
             else:
                 break
         else:
@@ -91,12 +92,12 @@ class LoginMixin(BaseMixin):
                 break
             elif self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                 break
-            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
+            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
                 return 1  # 说明要进行认证
             elif toast_message is "密码错误":
                 raise Exception("密码错误！")
             elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists() and \
-                    not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
+                    not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
                 break
 
         def SkipAuth():
@@ -305,7 +306,7 @@ class LoginMixin(BaseMixin):
                     raise Exception("点了100次右上角了，重启罢！")
                 # todo 登陆失败报错：-32002 Client error: <> data: Selector [
                 #  resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
-                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.1):
+                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.2):
                     return True
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").exists():
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").click()
@@ -351,24 +352,28 @@ class LoginMixin(BaseMixin):
         :param auth_id:
         :return:
         """
-        if self.d(text="还剩2次实名认证机会").exists():
+        if self.d(textContains="还剩2次实名认证机会").exists():
             self.log.write_log("error", message='%s账号实名仅剩2次验证机会了！' % self.account)
             raise Exception("实名仅剩2次验证机会了！")
-        elif self.d(text="还剩1次实名认证机会").exists():
+        elif self.d(textContains="还剩1次实名认证机会").exists():
             self.log.write_log("error", message='%s账号实名仅剩1次验证机会了！' % self.account)
             raise Exception("实名仅剩1次验证机会了！")
         self._move_check()
         # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
-        self.d.xpath(
-            '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[1]').click()
+        self.click(464, 205)
+        # self.d.xpath(
+        #     '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View['
+        #     '1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[1]').click()
         self._move_check()
         self.d.clear_text()
         self._move_check()
         self.d.send_keys(str(auth_name))
         self._move_check()
+        self.click(464, 280)
         # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_id_number").click()
-        self.d.xpath(
-            '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View[1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[2]').click()
+        # self.d.xpath(
+        #     '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View['
+        #     '1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[2]').click()
         self._move_check()
         self.d.clear_text()
         self._move_check()
@@ -388,9 +393,15 @@ class LoginMixin(BaseMixin):
         if need_auth == -1:  # 这里漏了一句，无法检测验证码。
             return -1
         if need_auth == 1:
-            birthday = str(random.randint(1970, 1999))
-            auth_name, auth_id = random_name(), validator.fake_id(birthday=birthday)
-            self.auth(auth_name=auth_name, auth_id=auth_id)
+            if use_my_id:
+                real_id = AutomatorRecorder.load("./idcard.json")
+                id_list = list(real_id.keys())
+                count = random.randint(0, len(id_list)-1)
+                self.auth(auth_name=id_list[count], auth_id=real_id[id_list[count]])
+            else:
+                birthday = str(random.randint(1970, 1999))
+                auth_name, auth_id = random_name(), validator.fake_id(birthday=birthday)
+                self.auth(auth_name=auth_name, auth_id=auth_id)
 
     @DEBUG_RECORD
     def change_acc(self):  # 切换账号
