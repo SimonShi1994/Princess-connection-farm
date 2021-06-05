@@ -38,3 +38,6 @@ config.ini
 
 # 自定义脚本
 /customtask
+
+# 隐私
+idcard.json
