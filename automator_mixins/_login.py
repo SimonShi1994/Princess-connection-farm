@@ -180,7 +180,7 @@ class LoginMixin(BaseMixin):
                     print(f">{self.account}-滑块坐标识别：", x, 386)
                     # print(type(x))
                     # 从322,388 滑动到 x,y
-                    self.d.drag_to(322, 388, x, 386, 1.2)
+                    self.d.drag_to(322, 388, x, 386, 3.6)
 
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
@@ -189,9 +189,10 @@ class LoginMixin(BaseMixin):
                 sc1 = self.getscreen()
 
                 def PopFun():
+                    time.sleep(1)
                     sc2 = self.getscreen()
                     p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
-                    if p < 0.85:
+                    if p < 0.76:
                         return True
                     else:
                         return False
@@ -352,12 +353,10 @@ class LoginMixin(BaseMixin):
         :param auth_id:
         :return:
         """
-        if self.d(textContains="还剩2次实名认证机会").exists():
-            self.log.write_log("error", message='%s账号实名仅剩2次验证机会了！' % self.account)
-            raise Exception("实名仅剩2次验证机会了！")
-        elif self.d(textContains="还剩1次实名认证机会").exists():
+        if self.d(textContains="还剩1次实名认证机会").exists():
             self.log.write_log("error", message='%s账号实名仅剩1次验证机会了！' % self.account)
             raise Exception("实名仅剩1次验证机会了！")
+        time.sleep(5)
         self._move_check()
         # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
         self.click(464, 205)
