@@ -309,8 +309,15 @@ class LoginMixin(BaseMixin):
                 #  resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.2):
                     return True
-                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change").click()
+
+                try:
+                    # 这里错误不要上抛，容易被U2的bug炸掉 u2版本 2.18.0
+                    if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change",
+                              clickable="true").exists():
+                        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change",
+                               clickable="true").click()
+                except:
+                    continue
                 if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
                     self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
                     time.sleep(2)
@@ -395,7 +402,7 @@ class LoginMixin(BaseMixin):
             if use_my_id:
                 real_id = AutomatorRecorder.load("./idcard.json")
                 id_list = list(real_id.keys())
-                count = random.randint(0, len(id_list)-1)
+                count = random.randint(0, len(id_list) - 1)
                 self.auth(auth_name=id_list[count], auth_id=real_id[id_list[count]])
             else:
                 birthday = str(random.randint(1970, 1999))
