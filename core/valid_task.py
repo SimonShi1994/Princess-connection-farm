@@ -664,11 +664,9 @@ VALID_TASK = ValidTask() \
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False),
           TaskParam("stuck_today", bool, "卡住地下城", "设置为True时，无论如何，进去地下城但是不打。\n设置为False时，为正常借人。", False),
           TaskParam("stuck_notzhandoukaishi", bool, "无法出击但不撤退", "设置为True时，如果发现无法出击，那就不撤退。\n设置为False时，则相反。", False), ]) \
-    .add("d2", "dixiacheng", "地下城", "小号地下城借人换mana",
+    .add("d2", "dixiacheng", "地下城", "【不推荐使用】小号地下城借人换mana",
          [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False)]) \
-    .add("d3", "dixiachengYunhai", "打云海关", "打通云海关【细节待补充】") \
-    .add("d4", "dixiachengDuanya", "打断崖关", "打通断崖关【细节待补充】") \
-    .add("d5", "shuatuDD_OCR", "通关地下城OCR", "通用的打通地下城函数",
+    .add("d5", "shuatuDD_OCR", "通关地下城OCR", "【适合大号，借人可能有BUG】通用的打通地下城函数",
          [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5"),
           TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
                                        "mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss\n"
@@ -707,18 +705,18 @@ VALID_TASK = ValidTask() \
           TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False", False), ]) \
     .add("r8", "buyExp", "购买经验", "买空商店里的经验药水",
          [TaskParam("qianghuashi", bool, "是否同时购买强化石", "True/False", False)]) \
-    .add("r9", "tansuo", "探索", "进行探索活动",
+    .add("r9", "tansuo", "探索【不推荐】", "【非OCR，不推荐使用】进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
                                        "mode 0: 刷最上面的\n"
                                        "mode 1: 刷次上面的\n"
                                        "mode 2: 第一次手动过最上面的，再刷一次次上面的\n"
                                        "mode 3: 第一次手动过最上面的，再刷一次最上面的")]) \
-    .add("r9-n", "tansuo_new", "可推图探索", "进行探索活动",
+    .add("r9-n", "tansuo_new", "可推图探索【不推荐】", "【非OCR，不推荐使用】进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
                                        "mode 0: 刷最上关卡（适合大号） \n"
                                        "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
                                        "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）")]) \
-    .add("r9-ocr", "tansuo_new_ocr", "可推图探索OCR", "进行探索活动",
+    .add("r9-ocr", "tansuo_new_ocr", "可推图探索OCR【推荐】", "进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
                                        "mode 0: 刷最上关卡（适合大号） \n"
                                        "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
@@ -763,10 +761,10 @@ VALID_TASK = ValidTask() \
     .add("t6", "kucunshibie", "库存识别", "识别装备库存并输出到outputs文件夹。") \
     .add("t7", "jueseshibie", "角色识别", "识别角色信息并输出到outputs文件夹。") \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
-         [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
+         [TaskParam("map", str, "废弃参数", "随便输入啥都行")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",
-         [TaskParam("map", int, "主图", "如果你的号最远推到A-B,则主图为A。")]) \
-    .add("s1-s", "shuajingyan_super", "超级刷1-1", "扫荡券用完了就采用手刷，有扫荡券就再用扫荡券\n"
+         [TaskParam("map", str, "废弃参数", "随便输入啥都行")]) \
+    .add("s1-s", "shuajingyan_super", "超级刷1-1", "【可能有BUG】扫荡券用完了就采用手刷，有扫荡券就再用扫荡券\n"
                                                 "一直刷到倾家荡产，体力耗尽！",
          [TaskParam("mode", int, "刷图模式", "0：纯扫荡券\n"
                                          "1：先扫荡券，无法扫荡时手刷\n"
@@ -778,7 +776,6 @@ VALID_TASK = ValidTask() \
     .add("s3", "shuatuHH", "刷H图", "使用扫荡券刷指定困难副本",
          [TaskParam("tu_dict", list, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox()),
           TaskParam("use_ocr", bool, "使用OCR", "是否使用OCR来优化刷图", False)]) \
-    .add("s4", "doActivityHard", "刷活动图", "使用扫荡券刷活动副本（慎用，因为每次活动坐标都不同）") \
     .add("s5", "chushihua", "初始化", "从1-3自动推到3-1，已经推过的部分不会再推。") \
     .add("s5-2", "chushihua2", "快速初始化", "从1-3自动推到3-1，已经推过的部分不会再推。\n"
                                         "先刷经验后推图，效率更高，但是会刷很多次1-1.") \
