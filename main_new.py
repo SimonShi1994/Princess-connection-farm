@@ -501,7 +501,6 @@ if __name__ == "__main__":
         print("By TheAutumnOfRice")
         print("----------------------------------------")
         print("Tips: config.ini会在启动main_new后自动生成或更新，如果修改了config.ini，重启程序后生效。")
-        print("公主连结 Re:Dive 生日快乐 （")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
     while True:
