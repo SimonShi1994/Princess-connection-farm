@@ -260,9 +260,13 @@ def FromLibrary(all=False):
             js[key]['zb'] = equ
             js[key]['rank'] = rank
             js[key]['star'] = star
+
         track = cur['t']
+        if track.isnumeric() and float(track) > 30:
+            print("出现奇怪现象：你的", key, "的Track是不是", track, "?")
+
         js[key]['track'] = track
-        if track not in ["false", "true"]:
+        if track not in ["false", "true", False, True]:
             if '.' in track:
                 A, B = track.split(".")
                 A = int(A)
@@ -278,7 +282,7 @@ def FromLibrary(all=False):
                 A = int(track)
                 js[key]["track_rank"] = A
                 js[key]["track_zb"] = [True] * 6
-        elif track == "false":
+        elif track in ['false', False]:
             if "track_rank" in js[key]:
                 del js[key]["track_rank"]
             if "track_zb" in js[key]:
@@ -298,7 +302,11 @@ def FromLibrary(all=False):
                 continue
             comment = "From Lib"
             update_time = time.time()
-            num = int(cur['c'])
+            try:
+                num = int(cur['c'])
+            except:
+                num = int(cur['c'], 16)
+                print("出现奇妙的现象：你的装备", data.ID_EQU[eid], "数量是不是", num, '个？')
             zb[key] = (num, update_time, comment)
         AR.set("zhuangbei_kucun", zb)
 
@@ -699,7 +707,7 @@ def ZB_ST_ADVICE(args, verbose=True):
         result_int = 0
         keys = list(out_map.keys())
         for i in keys:
-            out_map[i] = int(round(out_map[i] / 2))
+            out_map[i] = int(round(out_map[i] / mul))
             if out_map[i] == 0:
                 out_map.pop(i)
                 continue
@@ -940,4 +948,5 @@ if __name__ == "__main__":
                 print("xls output 导出到xls/account.xls [敬请期待]")
                 print("xls input 从xls/account.xls导入 [敬请期待]")
         except Exception as e:
+            raise e
             print("输入错误！", e)

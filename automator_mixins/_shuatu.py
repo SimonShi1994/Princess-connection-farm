@@ -22,7 +22,7 @@ class ShuatuMixin(ShuatuBaseMixin):
     """
 
     # 刷经验1-1
-    def shuajingyan(self, map):
+    def shuajingyan(self, map=3):
         """
         刷图刷1-1
         map为主图
@@ -30,8 +30,8 @@ class ShuatuMixin(ShuatuBaseMixin):
         # 进入冒险
         self.shuatuNN(["1-1-160"])
 
-    # 刷经验3-1
-    def shuajingyan3(self, map):
+    # 刷经验3-13
+    def shuajingyan3(self, map=3):
         """
         刷图刷3-1
         map为主图

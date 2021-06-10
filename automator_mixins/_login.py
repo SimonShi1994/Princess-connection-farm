@@ -1,6 +1,7 @@
 import gc
 import random
 import time
+
 from id_validator import validator
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN, START_UI
@@ -9,7 +10,7 @@ from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_ski
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import AutomatorRecorder
-from core.utils import random_name, CreatIDnum
+from core.utils import random_name
 from ._base import BaseMixin
 from ._base import DEBUG_RECORD
 from ._captcha import CaptionSkip

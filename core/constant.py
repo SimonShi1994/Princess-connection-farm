@@ -79,8 +79,6 @@ MAIN_BTN = {
     "niudan": p(753, 514),
     # 主菜单
     "zhucaidan": p(877, 515),
-    # 关闭 用于活动剧情
-    "guanbi": p(285, 467, img="img/home/guanbi.bmp", at=(4, 298, 956, 538)),
 
     # 礼物
     "liwu": p(908, 432, img="img/home/liwu.bmp", at=(891, 417, 927, 448)),
@@ -142,6 +140,8 @@ MAIN_BTN = {
     "nsj": p(541, 430),
     "wanfa": p(img="img/home/wanfa.bmp", at=(234, 6, 275, 64)),  # 玩法
 
+    # 动画设定
+    "dhsd": p(img="img/home/donghuasheding.bmp", at=(435, 29, 527, 55)),
 }
 JJC_BTN = {
     "list": p(img="img/jjc/list.bmp", at=(821, 77, 888, 103)),  # 列表更新
@@ -313,7 +313,6 @@ TUANDUIZHAN_BTN = {
     "tiaozhan": p(833, 462, img="img/hanghui/tiaozhan.bmp", at=(738, 422, 924, 497)),
     "zhandou": p(587, 374, img="img/hanghui/zhandou.bmp", at=(473, 334, 696, 400)),
     "qianwangguanqia": p(592, 436, img="img/hanghui/qianwangguanqia.bmp", at=(478, 404, 697, 462)),
-    "guanbi": p(430, 487, img="img/hanghui/close_btn_1.bmp", at=(199, 393, 742, 526)),
 }
 ZHUCAIDAN_BTN = {
     "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(699, 198, 915, 255)),
@@ -403,7 +402,7 @@ FIGHT_BTN = {
     "tiaozhan": p(839, 456, img="img/ui/tiaozhan.bmp", at=(788, 444, 889, 467)),
     "tiaozhan2": p(839, 453, img="img/ui/tiaozhan2.bmp", at=(814, 440, 865, 466)),
     "xiayibu2": p(829, 490, img="img/ui/xiayibu2.bmp", at=(785, 477, 870, 505)),  # 短的下一步，用于“战利品”界面
-    "xiayibu": p(832, 504, img="img/ui/xiayibu.bmp", at=(731, 466, 933, 514)),  # 长的下一步，用于经验值、好感度页面
+    "xiayibu": p(832, 504, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),  # 长的下一步，用于经验值、好感度页面
     "qwzxgq": p(808, 493, img="img/fight/qwzxgq.bmp", at=(745, 481, 869, 504)),  # 前往主线关卡：输的时候会显示
     "baochou": p(img="img/fight/baochou.bmp", at=(61, 414, 114, 481)),
     "dengjitisheng": p(img="img/fight/dengjitisheng.bmp", at=(431, 132, 525, 158)),
@@ -413,11 +412,10 @@ FIGHT_BTN = {
     "tgdw": p(img="img/fight/tgdw.bmp", at=(805, 82, 900, 105)),
     "infinity": p(img="img/fight/infinity.bmp", at=(897, 407, 920, 420)),
     "fighting_caidan": p(img="img/fight/fighting_caidan.bmp", at=(882, 18, 918, 32)),
-    "zhandou_failed": p(img="img/fight/zhandou_failed.bmp"),
 }
 
 JUESE_BTN = {
-    "duiwu": p(img="img/juese/duiwu.bmp", at=(855, 15, 929, 35)),
+    "duiwu": p(img="img/juese/duiwu.bmp", at=(853, 15, 929, 35)),
     "mana_ball": p(img="img/juese/mana_ball.bmp", at=(609, 21, 620, 34)),
     "first_juese": p(175, 140),
     "nine_juese": {
@@ -705,7 +703,17 @@ HARD_COORD = {
         1: p(220, 277),
         2: p(487, 330),
         3: p(765, 265),
-    }
+    },
+    22: {
+        1: p(210, 340),
+        2: p(478, 271),
+        3: p(762, 324),
+    },
+    23: {
+        1: p(216, 287),
+        2: p(477, 336),
+        3: p(765, 251),
+    },
 }
 
 SHOP_BTN = {
@@ -784,7 +792,8 @@ ZHUXIAN_ID = {
     19: p(img="img/zhuxian/19L.bmp", at=(104, 60, 170, 72)),
     20: p(img="img/zhuxian/20L.bmp", at=(89, 59, 196, 72)),
     21: p(img="img/zhuxian/21L.bmp", at=(87, 61, 196, 72)),
-
+    22: p(img="img/zhuxian/22L.bmp", at=(109, 58, 175, 73)),
+    23: p(img="img/zhuxian/23L.bmp", at=(109, 58, 177, 75)),
 }
 ZHUXIAN_XXXYY_ID = {
     # 小行星原野你长得太像了，无奈增加二级分类
@@ -795,9 +804,14 @@ ZHUXIAN_KSTLYSL_ID = {
     20: p(img="img/zhuxian/20R.bmp", at=(218, 59, 248, 70)),  # 卡斯塔里森林
     21: p(img="img/zhuxian/21R.bmp", at=(217, 59, 244, 71)),
 }
+ZHUXIAN_XXXYF_ID = {
+    22: p(img="img/zhuxian/22R.bmp", at=(200, 59, 229, 77)),
+    23: p(img="img/zhuxian/23R.bmp", at=(198, 58, 230, 74)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
+    (22, 23): ZHUXIAN_XXXYF_ID,
 }
 
 NORMAL_COORD = {
@@ -1229,6 +1243,47 @@ NORMAL_COORD = {
             1: p(174, 395),
         }
     },
+    22: {
+        "right": {
+            14: p(742, 220),
+            13: p(607, 266),
+            12: p(757, 344),
+            11: p(615, 398),
+            10: p(467, 357),
+            9: p(457, 209),
+            8: p(298, 223),
+        },
+        "left": {
+            7: p(578, 273),
+            6: p(714, 359),
+            5: p(578, 404),
+            4: p(403, 409),
+            3: p(427, 275),
+            2: p(299, 319),
+            1: p(175, 399),
+        }
+    },
+    23: {
+        "right": {
+            14: p(779, 235),
+            13: p(637, 273),
+            12: p(702, 393),
+            11: p(538, 375),
+            10: p(470, 245),
+
+        },
+        "left": {
+            9: p(783, 326),
+            8: p(689, 235),
+            7: p(559, 254),
+            6: p(589, 385),
+            5: p(445, 400),
+            4: p(328, 353),
+            3: p(429, 242),
+            2: p(298, 223),
+            1: p(180, 259),
+        }
+    },
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(204, 110, 287, 136)),
@@ -1243,6 +1298,7 @@ RANKS_DICT = {
     10: p(img="img/ranks/10.bmp", at=(202, 113, 293, 134)),
     11: p(img="img/ranks/11.bmp", at=(202, 110, 291, 135)),
     12: p(img="img/ranks/12.bmp", at=(201, 112, 290, 134)),
+    13: p(img="img/ranks/13.bmp", at=(202, 114, 291, 133)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict

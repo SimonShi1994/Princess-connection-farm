@@ -867,16 +867,18 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
             # 开始战斗
             out = out.goto_zhandou()
+            screen = self.getscreen()
             if cur_layer < max_layer:
                 if mode == 4:
                     # 攒TP
-                    out.set_auto(0)
+                    out.set_auto(0, screen)
                 else:
                     # 不攒TP
-                    out.set_auto(1)
+                    out.set_auto(1, screen)
             else:
-                out.set_auto(1)
-            out.set_speed(2, 2)  # 三倍速
+                out.set_auto(1, screen)
+            screen = self.last_screen
+            out.set_speed(2, 2, screen)  # 三倍速
             state = out.wait_for_end()
             if state == 1:
                 # 战斗胜利
@@ -905,7 +907,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 continue
             elif isinstance(out, PS.DXCSelectB):
                 # 回到选图界面，轮询结束。
-                break
+                continue
 
         # 打赢了
         self.lock_home()
