@@ -319,7 +319,6 @@ class AsyncMixin(ToolsMixin):
                     time.sleep(6)
             self.lock_home()
 
-
     @DEBUG_RECORD
     def fix_reboot(self, back_home=True):
         self._fix_reboot(back_home)

@@ -9,9 +9,13 @@ class FightingBase(PCRSceneBase):
         self.feature = self.fun_feature_exist(FIGHT_BTN["fighting_caidan"])
 
     def set_auto(self, auto, screen=None, max_retry=3):
+        if screen is None:
+            screen = self.getscreen()
         self._a.set_fight_auto(auto, screen, max_retry)
 
     def set_speed(self, level, max_level=1, screen=None, max_retry=3):
+        if screen is None:
+            screen = self.getscreen()
         self._a.set_fight_speed(level, max_level, screen, max_retry)
 
 

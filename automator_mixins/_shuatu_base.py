@@ -1338,6 +1338,8 @@ class ShuatuBaseMixin(FightBaseMixin):
         """
         # self.Drag_Left()  # 保证截图区域一致
         for retry in range(max_retry):
+            if screen is None:
+                screen = self.getscreen()
             id = self.check_dict_id(ZHUXIAN_ID, screen, diff_threshold=0)
             for second in ZHUXIAN_SECOND_ID:
                 if id in second:

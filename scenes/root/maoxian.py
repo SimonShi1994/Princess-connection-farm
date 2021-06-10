@@ -50,7 +50,7 @@ class MaoXian(SevenBTNMixin):
         while True:
             if isinstance(PS, (DXCKKR, DXCJuQing)):
                 PS.skip()
-                PS = self.goto_maoxian().goto(PossibleDXCMenu, self.fun_click(MAIN_BTN["dxc"]))
+                PS = self.goto_wodezhuye().goto_maoxian().goto(PossibleDXCMenu, self.fun_click(MAIN_BTN["dxc"]))
                 continue
             elif isinstance(PS, DXCSelectA):
                 return PS

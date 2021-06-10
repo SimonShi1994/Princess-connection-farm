@@ -89,6 +89,21 @@ class FightInfoBase(PCRMsgBoxBase):
         return self.get_upperright_stars(screen) == 0
 
     @DEBUG_RECORD
+    def set_saodang_to_max(self):
+        at = (729, 316, 788, 343)
+        sc1 = self.getscreen()
+        handle = self._a.d.touch.down(*MAOXIAN_BTN["saodang_plus"])
+        time.sleep(1)
+        while True:
+            time.sleep(1)
+            sc2 = self.getscreen()
+            p = self.img_equal(sc1, sc2, at=at)
+            if p > 0.95:
+                break
+            sc1 = sc2
+        handle.up(*MAOXIAN_BTN["saodang_plus"])
+
+    @DEBUG_RECORD
     def set_saodang_cishu(self, target: int, one_tili=None, left_tili=None, right_tili=None, sc=None, max_retry=6,
                           delay=1):
         # 设定扫荡次数

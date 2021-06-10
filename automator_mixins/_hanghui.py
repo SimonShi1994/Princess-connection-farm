@@ -446,7 +446,8 @@ class HanghuiMixin(ToolsMixin):
                     pcr_log(self.account).write_log("info", f"没有挑战次数")
                     self.lock_home()
                     return
-                if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True, black_threshold=1500):
+                if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True,
+                                  black_threshold=1500):
                     # 全部
                     self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
                     if not self.is_exists(DXC_ELEMENT["zhiyuan_gouxuan"]):

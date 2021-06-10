@@ -266,7 +266,7 @@ class FightBaseMixin(ToolsMixin):
         self.click(FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
         self.click(FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
         if not self.is_exists(JJC_BTN["dwbz"]):
-            self.lock_img(JJC_BTN["dwbz"], elseclick=(1, 1), timeout=20)
+            self.lock_img(JJC_BTN["dwbz"], elseclick=(477, 493), timeout=20)
             return False
         else:
             return True

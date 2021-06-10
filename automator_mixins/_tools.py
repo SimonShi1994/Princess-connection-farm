@@ -101,7 +101,7 @@ class ToolsMixin(BaseMixin):
             try:
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
                 if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
-                                 side_check=self.juqing_kkr):
+                                    side_check=self.juqing_kkr):
                     time.sleep(10)
                     continue
             except:
