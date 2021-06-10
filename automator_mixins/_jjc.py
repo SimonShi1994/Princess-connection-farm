@@ -1,5 +1,5 @@
 from automator_mixins._fight_base import FightBaseMixin
-from core.constant import MAIN_BTN, JJC_BTN, PCRelement
+from core.constant import MAIN_BTN, JJC_BTN
 
 
 class JJCMixin(FightBaseMixin):
@@ -36,8 +36,7 @@ class JJCMixin(FightBaseMixin):
         # 803 496
         self.wait_for_loading(delay=2)
         self.set_fight_speed(2, 2)
-        self.lock_img(JJC_BTN["xyb"], timeout=180, alldelay=1)
-        self.click_btn(PCRelement(803, 496), until_disappear=JJC_BTN["xyb"])
+        self.lock_img(JJC_BTN["list"], timeout=180, elseclick=[(803, 496), (1, 1)], elsedelay=8)
         self.lock_home()
         # 做pjjc任务
 
@@ -64,8 +63,8 @@ class JJCMixin(FightBaseMixin):
             return
         for _ in range(10):
             self.click(843, 452, post_delay=0.5)
+        # 843, 452
         self.wait_for_loading(delay=2)
         self.set_fight_speed(2, 2)
-        self.lock_img(JJC_BTN["pxyb"], elseclick=[(843, 452)], timeout=180 * 3, alldelay=1)
-        self.click_btn(PCRelement(803, 506), until_disappear=JJC_BTN["pxyb"])
+        self.lock_img(JJC_BTN["plist"], timeout=180 * 3, elseclick=[(803, 506), (1, 1)], elsedelay=8)
         self.lock_home()

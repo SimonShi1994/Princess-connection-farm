@@ -42,6 +42,7 @@ class ToolsMixin(BaseMixin):
         self.clear_all_initFC()
         last = time.time()
         while True:
+            time.sleep(5)
             sc = self.getscreen()
             if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
                 self.click(MAIN_BTN["xiazai"])
@@ -49,8 +50,18 @@ class ToolsMixin(BaseMixin):
             if num_of_white < 77000:
                 self.chulijiaocheng(None)  # 增加对教程的处理功能
                 last = time.time()
+            try:
+                r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=sc)
+                if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
+                                    side_check=self.juqing_kkr):
+                    time.sleep(10)
+                    continue
+            except:
+                pass
             if self.is_exists(MAIN_BTN["liwu"], screen=sc):
                 return
+            # if self.is_exists(MAIN_BTN["guanbi"], screen=sc):
+            #     self.click(MAIN_BTN["guanbi"])
             self.click(MAIN_BTN["zhuye"])
             # 防卡公告
             self.click(1, 1)
@@ -72,6 +83,7 @@ class ToolsMixin(BaseMixin):
     def init_home(self):
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         while True:
+            time.sleep(5)
             screen_shot_ = self.getscreen()
             if self.is_exists(MAIN_BTN["liwu"], screen=screen_shot_):
                 break
@@ -86,6 +98,17 @@ class ToolsMixin(BaseMixin):
                 self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
                 continue
+            try:
+                r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
+                if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
+                                    side_check=self.juqing_kkr):
+                    time.sleep(10)
+                    continue
+            except:
+                pass
+            # if self.is_exists(MAIN_BTN["guanbi"], screen=screen_shot_):
+            #     self.click(MAIN_BTN["guanbi"])
+            #     continue
             # num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             # print(num_of_white)
             # if num_of_white < 77000:
@@ -95,7 +118,7 @@ class ToolsMixin(BaseMixin):
             self.click(1, 1, post_delay=0.5)
             self.click(330, 270, post_delay=1)
             # 跳过抽签（备用）
-            self.d.touch.down(470, 30).sleep(0.1).move(470, 500).sleep(0.2).up(470, 500)
+            self.d.touch.down(370, 330).sleep(0.1).move(50, 50).sleep(0.2).up(370, 450)
 
         self.lock_home()
         time.sleep(0.5)
@@ -353,8 +376,8 @@ class ToolsMixin(BaseMixin):
         else:
             name = name[random.randint(0, name_len - 1)]
         self.click(871, 513)  # 主菜单
-        self.lock_img('img/zhucaidan/bangzhu.bmp', ifclick=[(370, 270)])  # 锁定帮助 点击简介
-        self.lock_img('img/bianji.bmp', ifclick=[(900, 140)])  # 锁定 点击铅笔修改按钮
+        self.lock_img('img/zhucaidan/bangzhu.bmp', ifclick=[(370, 250)])  # 锁定帮助 点击简介
+        self.lock_img('img/bianji.bmp', ifclick=[(900, 155)])  # 锁定 点击铅笔修改按钮
         self.lock_img('img/biangeng.bmp', ifclick=[(480, 270)])  # 锁定 玩家名 点击游戏渲染编辑框
         time.sleep(1)
         self.click(290, 425)  # 点击编辑框

@@ -140,6 +140,8 @@ MAIN_BTN = {
     "nsj": p(541, 430),
     "wanfa": p(img="img/home/wanfa.bmp", at=(234, 6, 275, 64)),  # 玩法
 
+    # 动画设定
+    "dhsd": p(img="img/home/donghuasheding.bmp", at=(435, 29, 527, 55)),
 }
 JJC_BTN = {
     "list": p(img="img/jjc/list.bmp", at=(821, 77, 888, 103)),  # 列表更新
@@ -413,7 +415,7 @@ FIGHT_BTN = {
 }
 
 JUESE_BTN = {
-    "duiwu": p(img="img/juese/duiwu.bmp", at=(855, 15, 929, 35)),
+    "duiwu": p(img="img/juese/duiwu.bmp", at=(853, 15, 929, 35)),
     "mana_ball": p(img="img/juese/mana_ball.bmp", at=(609, 21, 620, 34)),
     "first_juese": p(175, 140),
     "nine_juese": {
@@ -701,7 +703,17 @@ HARD_COORD = {
         1: p(220, 277),
         2: p(487, 330),
         3: p(765, 265),
-    }
+    },
+    22: {
+        1: p(210, 340),
+        2: p(478, 271),
+        3: p(762, 324),
+    },
+    23: {
+        1: p(216, 287),
+        2: p(477, 336),
+        3: p(765, 251),
+    },
 }
 
 SHOP_BTN = {
@@ -780,7 +792,8 @@ ZHUXIAN_ID = {
     19: p(img="img/zhuxian/19L.bmp", at=(104, 60, 170, 72)),
     20: p(img="img/zhuxian/20L.bmp", at=(89, 59, 196, 72)),
     21: p(img="img/zhuxian/21L.bmp", at=(87, 61, 196, 72)),
-
+    22: p(img="img/zhuxian/22L.bmp", at=(109, 58, 175, 73)),
+    23: p(img="img/zhuxian/23L.bmp", at=(109, 58, 177, 75)),
 }
 ZHUXIAN_XXXYY_ID = {
     # 小行星原野你长得太像了，无奈增加二级分类
@@ -791,9 +804,14 @@ ZHUXIAN_KSTLYSL_ID = {
     20: p(img="img/zhuxian/20R.bmp", at=(218, 59, 248, 70)),  # 卡斯塔里森林
     21: p(img="img/zhuxian/21R.bmp", at=(217, 59, 244, 71)),
 }
+ZHUXIAN_XXXYF_ID = {
+    22: p(img="img/zhuxian/22R.bmp", at=(200, 59, 229, 77)),
+    23: p(img="img/zhuxian/23R.bmp", at=(198, 58, 230, 74)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
+    (22, 23): ZHUXIAN_XXXYF_ID,
 }
 
 NORMAL_COORD = {
@@ -1223,6 +1241,47 @@ NORMAL_COORD = {
             3: p(379, 221),
             2: p(265, 296),
             1: p(174, 395),
+        }
+    },
+    22: {
+        "right": {
+            14: p(742, 220),
+            13: p(607, 266),
+            12: p(757, 344),
+            11: p(615, 398),
+            10: p(467, 357),
+            9: p(457, 209),
+            8: p(298, 223),
+        },
+        "left": {
+            7: p(578, 273),
+            6: p(714, 359),
+            5: p(578, 404),
+            4: p(403, 409),
+            3: p(427, 275),
+            2: p(299, 319),
+            1: p(175, 399),
+        }
+    },
+    23: {
+        "right": {
+            14: p(779, 235),
+            13: p(637, 273),
+            12: p(702, 393),
+            11: p(538, 375),
+            10: p(470, 245),
+
+        },
+        "left": {
+            9: p(783, 326),
+            8: p(689, 235),
+            7: p(559, 254),
+            6: p(589, 385),
+            5: p(445, 400),
+            4: p(328, 353),
+            3: p(429, 242),
+            2: p(298, 223),
+            1: p(180, 259),
         }
     },
 }

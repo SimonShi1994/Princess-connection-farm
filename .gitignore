@@ -26,6 +26,7 @@ outputs/
 xls/
 PCRError/
 pcrdata/data.db
+ocrfix/
 
 # 测试用文件夹
 /test/
@@ -37,3 +38,6 @@ config.ini
 
 # 自定义脚本
 /customtask
+
+# 隐私
+idcard.json

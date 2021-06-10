@@ -44,6 +44,8 @@
 |       running_input          |           开启后，可以在运行时向控制台输入指令                   |  bool |          |      True  |
 |selected_emulator|使用的模拟器的名称|string||雷电|
 |enable_auto_find_emulator|启动自动模拟器搜索，理论支持各种模拟器共同使用|bool|建议关闭|False|
+|emulators_port_interval|自动搜索模拟器端口区间|list||[5565,5566]|
+|emulators_port_list|自动搜索模拟器连接的端口list|list||[5565,5566]|
 |emulator_ports|（除雷电外的的）模拟器端口|list|雷电可以不写|[]|
 |adb_dir|adb目录|str|可以使用脚本自带adb|adb|
 |emulator_console|模拟器控制台目录|str|目前仅支持雷电|F:\XuanZhi\LDPlayer\ldconsole.exe|
@@ -58,13 +60,12 @@
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|
 |captcha_wait_time|出现验证码后等待用户输入的时间|int||60|
 |clear_traces_and_cache|是否清除PCR产生的缓存|bool||True|
+|use_my_id|是否使用自己提供的身份证|bool|                             |True|
 |auto_start_app|执行first/continue后是否自动打开app.py|bool||True|
 |inline_app|是否采用内部方式打开app（无窗口，无输出）|bool||True|
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
 |wait_for_launch_time|自启动模拟器最大忍耐超时时间|int||600|
 |ignore_serials|不连接的模拟器|str||["emulator-5554"]|
-
-
 
 ------
 

@@ -1,16 +1,8 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210422
+# Princess connection 公主连结农场脚本v2.6.20210606
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
-
-## 警告：使用pull升级v2.6版本会强制删除config.ini，请提前做好备份
-
-config.ini已经加入.gitignore中，此后的所有版本config.ini都将动态生成（运行main_new.py即自动更新）。
-
-在v2.6.20210308版本中，将config.ini从仓库中移除，这将导致使用pull更新会强制删去本地的config.ini，请及时做好备份。
-
-备份方法：将config.ini的内容复制；git pull；将config.ini备份粘贴回去；运行main_new.py自动补全剩余。
 
 ## :bookmark_tabs:简介
 
@@ -87,9 +79,11 @@ config.ini已经加入.gitignore中，此后的所有版本config.ini都将动�
 
 - 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
-- **Q:**我可以不要OCR吗？**A:**不行，以后只会对非OCR越来越不友好=。=
+- **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
-- OCR 需求 [VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 和 [VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
+- OCR
+  需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe)
+  和 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
 
 - 自行打开`requirements.txt`确认依赖无误
 
@@ -109,11 +103,11 @@ config.ini已经加入.gitignore中，此后的所有版本config.ini都将动�
 
 ~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。（建议先试一下不设置的情况
 
-建议使用雷电模拟器4，本项目中均以雷电模拟器4为示例。
+建议使用雷电模拟器4但不意味着其他模拟器无法使用，本项目中均以雷电模拟器4为示例。
 
 **重要：模拟器分辨率要求540*960**
 
-**重要**：目前关于API部分已经移入 config.ini 中，如何填入请参考目录下的md文件
+**重要**：目前关于API部分已经移入 config.ini 中，如何填入请参考目录下的md文件，config.ini在运行main_new.py后自动生成
 
 如何申请百度文字识别apikey和Secret Key:(https://blog.csdn.net/biao197/article/details/102907492 )
 
@@ -132,18 +126,32 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 ## :taxi:使用方式
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
+
 - 使用OCR相关的服务，必须启动app。使用2021-01-23后的版本程序默认自动启动app。
+
+- 关于本地OCR1删库问题，可以使用清华源安装
+
+  也可以到docs文件夹下打开cmd
+
+  ```shell
+  pip install muggle_ocr-1.0.3-py3-none-any.whl
+  ```
+
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
-- 出现“No module named 'XXX'，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
+
+- 出现`“No module named 'XXX'`，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
+
 - 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
+
 - 如果模拟器没有安装 ATX ，请在打开模拟器后，在控控制台里输入init进行初始化模拟器环境
-- **第一次使用，完全不懂怎么办？** 
 
-[Schedule使用方法](docs/introduce_to_schedule.md)
+- **第一次使用，完全不懂怎么办，请阅读下列新手方法**
 
-[如何接入打码平台](docs/如何接入打码平台.md)
+  [Schedule使用方法](docs/introduce_to_schedule.md)
 
-[如何使用开关模块](docs/switch_guide.md)
+  [如何接入打码平台](docs/如何接入打码平台.md)
+
+  [如何使用开关模块](docs/switch_guide.md)
 
 - 感觉还是不会使用，怎么办？
 
@@ -187,6 +195,25 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/5/30 By CyiceK
+
+- 修复失效的实名验证
+- 本地OCR依赖修复
+
+2021/5/23 By thsheep
+
+- 修复了战斗结束点击下一步错位的问题
+- 修复了战斗失败卡死在Failed的界面上
+
+2021/5/21 By UVJkiNTQ
+
+- 修复自动重命名
+
+2021/5/9 By CyiceK
+
+- 修复自动搜寻模拟器-蓝叠的问题
+- 修复无法关闭活动剧情提示
 
 2021/4/22 By TheAutumnOfRice
 

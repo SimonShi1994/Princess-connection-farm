@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
+from CreateUser import create_account as service_create_account, edit_account, del_account
 from api.constants.errors import NotFoundError, BadRequestError
 from api.constants.reply import Reply, ListReply
 from core.usercentre import list_all_users, AutomatorRecorder
-from CreateUser import create_account as service_create_account, edit_account, del_account
 
 account_api = Blueprint('account', __name__)
 
@@ -38,7 +38,6 @@ def list_account():
             data.append({
                 'username': user.get('account'),
                 'password': '********',
-                'taskname': user.get('taskfile'),
                 'tags': '-'
             })
 
@@ -126,15 +125,20 @@ def create_account():
         return BadRequestError(f'参数不合法')
     username = body.get('username', '')
     password = body.get('password', '')
-    taskname = body.get('taskname', '')
-    if username == '':
-        return BadRequestError(f'参数 username 不为空')
-    if password == '':
-        return BadRequestError(f'参数 password 不为空')
+    # taskname = body.get('taskname', '')
+    # taskname已经被废弃不再需要
+    try:
+        if username == '':
+            return BadRequestError(f'参数 username 不为空')
+        if password == '':
+            return BadRequestError(f'参数 password 不为空')
 
-    service_create_account(account=username, password=password, taskfile=taskname)
+        service_create_account(account=username, password=password)
 
-    return Reply({'username': username, 'password': password})
+        return Reply({'username': username, 'password': password})
+
+    except Exception as e:
+        return NotFoundError(f"添加用户 {username} 失败, {e}")
 
 
 @account_api.route('/account/<username>', methods=['PUT'])
@@ -177,10 +181,10 @@ def update_account(username):
     if body is None:
         return BadRequestError(f'参数不合法')
     password = body.get('password', None)
-    taskname = body.get('taskname', None)
+    # taskname = body.get('taskname', None)
 
-    edit_account(account=username, password=password, taskfile=taskname)
-    return Reply({'username': username, 'password': password, 'taskname': taskname})
+    edit_account(account=username, password=password)
+    return Reply({'username': username, 'password': password})
 
 
 @account_api.route('/account/<username>', methods=['DELETE'])

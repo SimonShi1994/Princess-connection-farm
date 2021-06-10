@@ -306,6 +306,17 @@ class AsyncMixin(ToolsMixin):
             self.start_th()
             self.init_fastscreen()
             self.start_async()
+            # 临时堆放，用于重启后跳过协议
+            for _ in range(2):
+                # 有两个协议需要同意
+                while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                    self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                    if self.d(text="请滑动阅读协议内容").exists():
+                        self.d(text="同意").click()
+                    if self.d(description="请滑动阅读协议内容").exists():
+                        # 雷电三
+                        self.d(description="同意").click()
+                    time.sleep(6)
             self.lock_home()
 
     @DEBUG_RECORD
