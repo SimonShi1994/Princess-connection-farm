@@ -436,7 +436,7 @@ class HanghuiMixin(ToolsMixin):
         def tiaozhan():
             # 非主流写法，内部方法
             while True:
-                self.lock_no_img(TUANDUIZHAN_BTN["tiaozhan"], elseclick=[(833, 462)], side_check=self.juqing_kkr)
+                self.lock_img(TUANDUIZHAN_BTN["tiaozhan"], ifclick=[(833, 462)], side_check=self.juqing_kkr)
                 self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=3)
                 if self.is_exists(TUANDUIZHAN_BTN["guanbi"]):
                     self.click(TUANDUIZHAN_BTN["guanbi"])
@@ -482,7 +482,7 @@ class HanghuiMixin(ToolsMixin):
         while True:
             if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], retry=3):
                 self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], elsedelay=0.2, retry=3)
-                self.lock_img('img/kuaijin_1.bmp', elseclick=[(913, 494)], elsedelay=0.2, retry=3)
+                self.lock_img('img/kuaijin_1.jpg', elseclick=[(913, 494)], elsedelay=0.2, retry=3)
             if self.is_exists('img/shanghaibaogao.jpg', at=(767, 18, 948, 65)) and \
                     self.is_exists('img/xiayibu.jpg', at=(694, 474, 920, 535)):
                 self.lock_no_img('img/xiayibu.jpg', elseclick=[(806, 508)])

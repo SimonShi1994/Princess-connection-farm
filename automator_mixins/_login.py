@@ -367,7 +367,7 @@ class LoginMixin(BaseMixin):
         time.sleep(5)
         self._move_check()
         # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
-        self.click(464, 205)
+        self.click(464, 285)
         # self.d.xpath(
         #     '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View['
         #     '1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[1]').click()
@@ -376,7 +376,7 @@ class LoginMixin(BaseMixin):
         self._move_check()
         self.d.send_keys(str(auth_name))
         self._move_check()
-        self.click(464, 280)
+        self.click(464, 360)
         # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_id_number").click()
         # self.d.xpath(
         #     '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View['
