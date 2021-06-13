@@ -142,6 +142,9 @@ MAIN_BTN = {
 
     # 动画设定
     "dhsd": p(img="img/home/donghuasheding.bmp", at=(435, 29, 527, 55)),
+
+    # 活动提示关闭（大范围检测
+    "guanbi": p(430, 487, img="img/hanghui/close_btn_1.bmp", at=(199, 393, 742, 526)),
 }
 JJC_BTN = {
     "list": p(img="img/jjc/list.bmp", at=(821, 77, 888, 103)),  # 列表更新
@@ -313,6 +316,7 @@ TUANDUIZHAN_BTN = {
     "tiaozhan": p(833, 462, img="img/hanghui/tiaozhan.bmp", at=(738, 422, 924, 497)),
     "zhandou": p(587, 374, img="img/hanghui/zhandou.bmp", at=(473, 334, 696, 400)),
     "qianwangguanqia": p(592, 436, img="img/hanghui/qianwangguanqia.bmp", at=(478, 404, 697, 462)),
+    "guanbi": p(430, 487, img="img/hanghui/close_btn_1.bmp", at=(199, 393, 742, 526)),
 }
 ZHUCAIDAN_BTN = {
     "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(699, 198, 915, 255)),

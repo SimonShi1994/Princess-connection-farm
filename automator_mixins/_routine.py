@@ -216,7 +216,7 @@ class RoutineMixin(ShuatuBaseMixin):
             if limit_today:
                 time.sleep(0.5)
                 self.lock_img(MAIN_BTN["mana_title"], elseclick=MAIN_BTN["mana_plus"])
-                mana_time = self.ocr_center(422, 451, 480, 471, size=2.0).split('/')
+                mana_time = self.ocr_center(555, 296, 605, 310, size=2.0).split('/')
                 mana_time = int(mana_time[0])
                 if mana_time >= times:
                     self.lock_home()
