@@ -87,7 +87,7 @@ class StrInputer(InputBoxBase):
 
     def check(self, obj):
         if not isinstance(obj, str):
-            return f"应是str类型，而不是{type(str)}"
+            return f"应是str类型，而不是{type(obj)}"
         return ""
 
 
@@ -761,9 +761,9 @@ VALID_TASK = ValidTask() \
     .add("t6", "kucunshibie", "库存识别", "识别装备库存并输出到outputs文件夹。") \
     .add("t7", "jueseshibie", "角色识别", "识别角色信息并输出到outputs文件夹。") \
     .add("s1", "shuajingyan", "刷经验1-1", "刷图1-1，经验获取效率最大。",
-         [TaskParam("map", str, "废弃参数", "随便输入啥都行")]) \
+         [TaskParam("map", int, "废弃参数", "随便输入一个整数")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1", "刷图3-1，比较节省刷图卷。",
-         [TaskParam("map", str, "废弃参数", "随便输入啥都行")]) \
+         [TaskParam("map", int, "废弃参数", "随便输入一个整数")]) \
     .add("s1-s", "shuajingyan_super", "超级刷1-1", "【可能有BUG】扫荡券用完了就采用手刷，有扫荡券就再用扫荡券\n"
                                                 "一直刷到倾家荡产，体力耗尽！",
          [TaskParam("mode", int, "刷图模式", "0：纯扫荡券\n"

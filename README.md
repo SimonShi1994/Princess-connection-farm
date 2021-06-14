@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210613
+# Princess connection 公主连结农场脚本v2.6.20210614
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -194,13 +194,33 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2021/6/14 By TheAutumnOfRice
+
+- 修复参数map不正确问题
+
+2021/6/11 By TheAutumnOfRice
+
+- BUG修复
+  - 通关地下城OCR：
+    - 修复跳过KKR卡在主界面
+    - 修复打Boss死亡后重开卡住
+    - 修复打Boss死亡后直接结束
+  - JJC,PJJC：修复胜利卡住
+  - 升级/角色识别：卡在九宫格界面
+- 坐标：增加主线22，主线23坐标
+- 优化：
+  - 主线关卡识别
+  - 战斗设置auto/速率
+- 其它
+  - 移除install_requirements.py
+  - 删除部分冗余任务
+
 2021/5/30 By CyiceK
 
 - 修复失效的实名验证
 - 本地OCR依赖修复
 
 2021/5/23 By thsheep
-
 
 - 修复了战斗结束点击下一步错位的问题
 - 修复了战斗失败卡死在Failed的界面上
