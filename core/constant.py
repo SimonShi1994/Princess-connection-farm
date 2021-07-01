@@ -416,6 +416,7 @@ FIGHT_BTN = {
     "tgdw": p(img="img/fight/tgdw.bmp", at=(805, 82, 900, 105)),
     "infinity": p(img="img/fight/infinity.bmp", at=(897, 407, 920, 420)),
     "fighting_caidan": p(img="img/fight/fighting_caidan.bmp", at=(882, 18, 918, 32)),
+    "zhandou_failed": p(img="img/fight/zhandou_failed.bmp"),
 }
 
 JUESE_BTN = {
