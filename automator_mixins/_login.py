@@ -80,6 +80,8 @@ class LoginMixin(BaseMixin):
         self.d.send_keys(str(pwd))
         self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
         toast_message = self.d.toast.get_message()
+        if toast_message is "密码错误":
+            raise Exception("密码错误！")
         while True:
             # 快速响应
             # 很容易在这里卡住
@@ -95,8 +97,6 @@ class LoginMixin(BaseMixin):
                 break
             elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
                 return 1  # 说明要进行认证
-            elif toast_message is "密码错误":
-                raise Exception("密码错误！")
             elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists() and \
                     not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
                 break
@@ -193,7 +193,7 @@ class LoginMixin(BaseMixin):
                     time.sleep(1)
                     sc2 = self.getscreen()
                     p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
-                    if p < 0.76:
+                    if p < 0.99:
                         return True
                     else:
                         return False
@@ -203,7 +203,7 @@ class LoginMixin(BaseMixin):
                     # 检测到题目id为0就重新验证
                     AutoCaptcha()
 
-                state = self.lock_fun(PopFun, elseclick=START_UI["queren"], elsedelay=5, retry=8, is_raise=False)
+                state = self.lock_fun(PopFun, elseclick=START_UI["queren"], retry=8, is_raise=False)
 
                 # 这里是获取toast，看是否输错密码
                 toast_message = self.d.toast.get_message()

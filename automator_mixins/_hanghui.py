@@ -21,8 +21,9 @@ class HanghuiMixin(ToolsMixin):
         行会自动捐赠装备
         2020/8/6 By:CyiceK 检查完毕
         """
-        self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time,
-                      at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
+        # self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time,
+        #               at=(891, 413, 930, 452))  # 回首页
         # self.d.click(693, 436)
         self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=2)  # 锁定进入行会
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5, side_check=self.juqing_kkr)
@@ -61,9 +62,10 @@ class HanghuiMixin(ToolsMixin):
             self.guochang(screen_shot, ['img/ok.bmp'], suiji=0)
             self.click(1, 1, post_delay=self.change_time)  # 处理被点赞的情况
 
-        self.click(100, 505, post_delay=self.change_time)  # 回到首页
-        self.find_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=self.change_time,
-                      at=(891, 413, 930, 452))  # 回首页
+        # self.click(100, 505, post_delay=self.change_time)  # 回到首页
+        self.lock_home()
+        # self.find_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=self.change_time,
+        #               at=(891, 413, 930, 452))  # 回首页
 
     def tichuhanghui(self):  # 踢出行会
         self.lock_home()
@@ -284,8 +286,9 @@ class HanghuiMixin(ToolsMixin):
         # 保存点赞时间
         ts["dianzan"] = time.time()
         self.AR.set("time_status", ts)
-        self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1), (480, 374)], elsedelay=self.change_time,
-                      at=(891, 413, 930, 452))  # 回首页
+        # self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1), (480, 374)], elsedelay=self.change_time,
+        #               at=(891, 413, 930, 452))  # 回首页
+        self.lock_home()
 
     def faqijuanzeng(self, equip_img: str, wait_time: int = 300):
         """
@@ -433,7 +436,7 @@ class HanghuiMixin(ToolsMixin):
             else:
                 continue
 
-        def tiaozhan():
+        def tiaozhan() -> bool:
             # 非主流写法，内部方法
             while True:
                 self.lock_img(TUANDUIZHAN_BTN["tiaozhan"], ifclick=[(833, 462)], side_check=self.juqing_kkr)
@@ -445,7 +448,7 @@ class HanghuiMixin(ToolsMixin):
                     # 刷 1-1获取次数？
                     pcr_log(self.account).write_log("info", f"没有挑战次数")
                     self.lock_home()
-                    return
+                    return False
                 if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True,
                                   black_threshold=1500):
                     # 全部
@@ -460,12 +463,16 @@ class HanghuiMixin(ToolsMixin):
                                           black_threshold=1500):
                             pcr_log(self.account).write_log(level='info', message="%s没有合适的人物打公会战!" % self.account)
                             self.lock_home()
-                            return
+                            return False
                         break
                 elif self.is_exists('img/dxc/zhandoukaishi.bmp', at=(758, 423, 915, 473)):
-                    break
+                    return True
 
-        tiaozhan()
+        state = tiaozhan()
+
+        if not state:
+            return
+
         while True:
             # 战斗开始
             self.click_btn(DXC_ELEMENT["zhandoukaishi"], until_disappear=DXC_ELEMENT["zhandoukaishi"], elsedelay=0.1)
