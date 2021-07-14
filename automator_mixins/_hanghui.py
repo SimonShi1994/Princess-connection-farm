@@ -450,7 +450,7 @@ class HanghuiMixin(ToolsMixin):
                     self.lock_home()
                     return False
                 if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True,
-                                  black_threshold=1500):
+                                  black_threshold=1400):
                     # 全部
                     self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
                     if not self.is_exists(DXC_ELEMENT["zhiyuan_gouxuan"]):
@@ -460,7 +460,7 @@ class HanghuiMixin(ToolsMixin):
                     else:
                         # 点完人后确认一遍
                         if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True,
-                                          black_threshold=1500):
+                                          black_threshold=1400):
                             pcr_log(self.account).write_log(level='info', message="%s没有合适的人物打公会战!" % self.account)
                             self.lock_home()
                             return False
@@ -494,3 +494,4 @@ class HanghuiMixin(ToolsMixin):
                     self.is_exists('img/xiayibu.jpg', at=(694, 474, 920, 535)):
                 self.lock_no_img('img/xiayibu.jpg', elseclick=[(806, 508)])
                 break
+        self.lock_home()

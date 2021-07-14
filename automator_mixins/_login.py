@@ -386,13 +386,16 @@ class LoginMixin(BaseMixin):
         self._move_check()
         self.d.send_keys(str(auth_id))
         self._move_check()
-        self.d.xpath('//*[@text="提交实名"]').click()
-        # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
-        self._move_check()
-        # self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
-        self.d(text="我知道了").click()
-        time.sleep(3)
-        if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
+        if self.d(text="提交实名").exists():
+            self.d.xpath('//*[@text="提交实名"]').click()
+            # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
+            self._move_check()
+            # self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
+
+        if self.d(text="我知道了").exists():
+            self.d(text="我知道了").click()
+            time.sleep(3)
+        else:
             # 阿B实名界面有两个。。。xpath在u2全局查找元素点击上有adb爆炸的bug，先用这个凑合着吧
             if self.d(textContains="还剩1次实名认证机会").exists():
                 self.log.write_log("error", message='%s账号实名仅剩1次验证机会了！' % self.account)
