@@ -55,4 +55,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     app = create_app()
-    app.run(host='0.0.0.0', port=args.port, debug=True)
+    app.run(host='127.0.0.1', port=args.port, debug=False)

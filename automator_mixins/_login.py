@@ -193,7 +193,7 @@ class LoginMixin(BaseMixin):
                     time.sleep(1)
                     sc2 = self.getscreen()
                     p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
-                    if p < 0.99:
+                    if p <= 0.99:
                         return True
                     else:
                         return False
@@ -393,6 +393,7 @@ class LoginMixin(BaseMixin):
             # self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
         if self.d(text="我知道了").exists():
+            self._move_check()
             self.d(text="我知道了").click()
             time.sleep(3)
         else:
@@ -417,7 +418,6 @@ class LoginMixin(BaseMixin):
             self.d.xpath('//*[@text="提交实名"]').click()
             self._move_check()
             self.d(text="我知道了").click()
-
 
     @timeout(300, "login_auth登录超时，超过5分钟")
     @DEBUG_RECORD

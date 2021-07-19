@@ -42,6 +42,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.lock_home()
             return
         while True:
+            # 塔币教程处理
+            time.sleep(3)
             if self.is_exists('img/dxc/chetui.bmp'):
                 time.sleep(1.2)
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
@@ -194,14 +196,17 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448)):
                     self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
                                   side_check=self.juqing_kkr)
+                    time.sleep(2)
                     self.lock_no_img('img/tiaozhan.bmp', ifclick=[(667, 360), (667, 330)], elseclick=[(833, 456)],
-                                  side_check=self.juqing_kkr)
+                                     side_check=self.juqing_kkr)
                     # 锁定挑战和第一层
                     break
             time.sleep(self.change_time)
             self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=4)
             if self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
                               retry=3, wait_self_before=True):
+                if assist_num >= 3:
+                    print("开发者没有写大于支援位置3的暗点检测，需要到再在群里提吧（有点小麻烦")
                 pass
             # if self.lock_no_img(DXC_ELEMENT["zhiyuan_blue"], retry=1):
             else:
@@ -302,7 +307,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.click(1, 1)  # 跳过结算
                 screen_shot_ = self.getscreen()
                 if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(830, 407, 929, 448)):
-                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(876, 427)])
+                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(876, 427)], elsedelay=2.8)
                     self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
                     continue
                 elif self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
