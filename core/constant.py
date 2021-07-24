@@ -114,7 +114,7 @@ MAIN_BTN = {
 
     "exp_bar": p(at=(78, 23, 178, 31), fc=(106, 205, 176), bc=(94, 125, 146)),
     "speaker_box": p(img="img/ui/speaker_box.bmp", at=(182, 395, 209, 409)),  # 有人说话时名字左上角的红色
-    "setting_pic": p(74, 268, img="img/home/setting.bmp", at=(49, 197, 115, 258)),
+    "setting_pic": p(151, 231, img="img/home/setting.bmp", at=(49, 197, 115, 258)),
     "tansuo": p(738, 137),
 
     # 探索
@@ -387,7 +387,7 @@ FIGHT_BTN = {
         5: p(531, 170),
     },
     "team_close": p(476, 477, img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),  # 选队界面的关闭按钮
-    "shbg": p(img="img/fight/shbg.bmp", at=(709, 23, 898, 52)),  # 伤害报告
+    "shbg": p(img="img/fight/shbg.bmp", at=(804, 24, 902, 54)),  # 伤害报告
     "duiwu_icon": p(img="img/fight/duiwu_icon.bmp", at=(896, 78, 924, 97)),
     "huodedaoju": p(img="img/fight/huodedaoju.bmp", at=(442, 135, 514, 160)),
     "xiayibu_fight": p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502)),
@@ -405,8 +405,10 @@ FIGHT_BTN = {
         },
     "tiaozhan": p(839, 456, img="img/ui/tiaozhan.bmp", at=(788, 444, 889, 467)),
     "tiaozhan2": p(839, 453, img="img/ui/tiaozhan2.bmp", at=(814, 440, 865, 466)),
-    "xiayibu2": p(829, 490, img="img/ui/xiayibu2.bmp", at=(785, 477, 870, 505)),  # 短的下一步，用于“战利品”界面
-    "xiayibu": p(832, 504, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),  # 长的下一步，用于经验值、好感度页面
+    # 应对周年庆UI变动，删除xiayibu2 的 at=(785, 477, 870, 505)
+    "xiayibu2": p(829, 490, img="img/ui/xiayibu2.bmp"),  # 短的下一步，用于“战利品”界面
+    # 应对周年庆UI变动，删除xiayibu 的 at=(729, 465, 939, 521)
+    "xiayibu": p(832, 504, img="img/ui/xiayibu.bmp"),  # 长的下一步，用于经验值、好感度页面
     "qwzxgq": p(808, 493, img="img/fight/qwzxgq.bmp", at=(745, 481, 869, 504)),  # 前往主线关卡：输的时候会显示
     "baochou": p(img="img/fight/baochou.bmp", at=(61, 414, 114, 481)),
     "dengjitisheng": p(img="img/fight/dengjitisheng.bmp", at=(431, 132, 525, 158)),
