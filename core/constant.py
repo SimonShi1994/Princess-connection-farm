@@ -114,7 +114,7 @@ MAIN_BTN = {
 
     "exp_bar": p(at=(78, 23, 178, 31), fc=(106, 205, 176), bc=(94, 125, 146)),
     "speaker_box": p(img="img/ui/speaker_box.bmp", at=(182, 395, 209, 409)),  # 有人说话时名字左上角的红色
-    "setting_pic": p(74, 268, img="img/home/setting.bmp", at=(59, 253, 91, 281)),
+    "setting_pic": p(74, 268, img="img/home/setting.bmp", at=(49, 197, 115, 258)),
     "tansuo": p(738, 137),
 
     # 探索

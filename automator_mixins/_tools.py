@@ -42,7 +42,7 @@ class ToolsMixin(BaseMixin):
         self.clear_all_initFC()
         last = time.time()
         while True:
-            time.sleep(5)
+            time.sleep(3)
             sc = self.getscreen()
             if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
                 self.click(MAIN_BTN["xiazai"])
@@ -54,7 +54,7 @@ class ToolsMixin(BaseMixin):
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=sc)
                 if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
                                     side_check=self.juqing_kkr):
-                    time.sleep(10)
+                    time.sleep(5)
                     continue
             except:
                 pass
