@@ -44,11 +44,14 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         while True:
             # 塔币教程处理
             time.sleep(3)
-            if self.is_exists('img/dxc/chetui.bmp'):
+            if not self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448), is_black=True, black_threshold=200):
                 time.sleep(1.2)
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
                               threshold=0.98)
                 break
+            else:
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
+                              threshold=0.98, retry=2)
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数
@@ -195,10 +198,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(830, 407, 929, 448))
                 if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448)):
                     self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
-                                  side_check=self.juqing_kkr)
+                                  side_check=self.dxc_kkr)
                     time.sleep(2)
                     self.lock_no_img('img/tiaozhan.bmp', ifclick=[(667, 360), (667, 330)], elseclick=[(833, 456)],
-                                     side_check=self.juqing_kkr)
+                                     side_check=self.dxc_kkr)
                     # 锁定挑战和第一层
                     break
             time.sleep(self.change_time)

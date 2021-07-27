@@ -32,6 +32,7 @@ class LoginMixin(BaseMixin):
         启动脚本，请确保已进入游戏页面。
         """
         while True:
+            self.phone_privacy()
             # 判断jgm进程是否在前台, 最多等待20秒，否则唤醒到前台
             if self.d.app_wait("com.bilibili.priconne", front=True, timeout=1):
                 if not self.appRunning:
@@ -62,23 +63,32 @@ class LoginMixin(BaseMixin):
         for retry in range(300):
             self._move_check()
             self.click(945, 13)  # 防止卡住
-            if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
-                self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
+            if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
+                self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
                 time.sleep(0.8)
                 continue
-            if not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
+            if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").exists():
+                self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").click()
+                time.sleep(0.8)
+                continue
+            if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
+                self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
+                time.sleep(0.8)
+                continue
+            if not self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
                 time.sleep(0.8)
             else:
                 break
         else:
             raise Exception("进入登陆页面失败！")
-        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
+        self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
         self.d.clear_text()
         self.d.send_keys(str(ac))
-        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_password_login").click()
+        self.d(resourceId="com.bilibili.priconne:id/et_gsc_account_pwd").click()
         self.d.clear_text()
         self.d.send_keys(str(pwd))
-        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
+        time.sleep(random.uniform(0.2, 2))
+        self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
         toast_message = self.d.toast.get_message()
         if toast_message is "密码错误":
             raise Exception("密码错误！")
@@ -97,7 +107,7 @@ class LoginMixin(BaseMixin):
                 break
             elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
                 return 1  # 说明要进行认证
-            elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists() and \
+            elif not self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").exists() and \
                     not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
                 break
 
@@ -292,7 +302,7 @@ class LoginMixin(BaseMixin):
                         r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
                         if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
                                             side_check=self.juqing_kkr):
-                            time.sleep(10)
+                            time.sleep(6)
                             continue
                     except:
                         pass
@@ -306,25 +316,24 @@ class LoginMixin(BaseMixin):
                     # 点了100次了，重启吧
                     error_flag = 1
                     raise Exception("点了100次右上角了，重启罢！")
-                # todo 登陆失败报错：-32002 Client error: <> data: Selector [
-                #  resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
-                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.2):
-                    return True
 
-                try:
-                    # 这里错误不要上抛，容易被U2的bug炸掉 u2版本 2.18.0
-                    if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change",
-                              clickable="true").exists():
-                        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change",
-                               clickable="true").click()
-                except:
-                    continue
-                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
+                # if self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").exists():
+                #     self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").click()
+
+                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
                     time.sleep(2)
                     continue
-                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
+                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").click()
+                    time.sleep(2)
+                    continue
+                if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
+                    time.sleep(2)
+                    continue
+                if self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
                     break
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     self.click(667, 65, post_delay=3)
