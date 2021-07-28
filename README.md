@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210727
+# Princess connection 公主连结农场脚本v2.6.20210728
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -193,6 +193,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/7/28 By CyiceK
+
+- 临时修复OCR地下城1卡塔币教程，修复剧情/设置/协议在特定情况下一直初始化的问题
+- PCR清理缓存函数，使用时请打开模拟器ROOT权限
 
 2021/7/27 By CyiceK
 

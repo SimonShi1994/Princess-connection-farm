@@ -733,6 +733,27 @@ class BaseMixin:
         """
         # 如果debug_screen为None，则正常截图；
         # 否则，getscreen函数使用debug_screen作为读取的screen
+
+        try:
+            from automator_mixins._async import block_sw, enable_pause
+            if enable_pause:
+                if block_sw == 1:
+                    print(self.address, "- 截图暂停中~")
+                    while block_sw == 1:
+                        from automator_mixins._async import block_sw
+                        time.sleep(1)
+                        self._paused = True
+                    print(self.address, "- 截图恢复~")
+            else:
+                if self.freeze:
+                    print(self.address, "- 截图暂停中~")
+                    while self.freeze:
+                        time.sleep(1)
+                        self._paused = True
+                    print(self.address, "- 截图恢复~")
+        except Exception as error:
+            print('截图暂停-错误:', error)
+
         if self.debug_screen is None:
             if fast_screencut and self.fastscreencut_retry < 3:
                 try:
@@ -1300,17 +1321,32 @@ class BaseMixin:
             # 清除痕迹和缓存
             clear_list = ["/storage/emulated/0/bilibili_data", "/storage/emulated/0/bilibili_time",
                           "data/data/com.bilibili.priconne/databases", "data/data/com.bilibili.priconne/shared_prefs"]
+            not_clear_file = ["*.playerprefs.xml", "config_data.xml"]
             for i in clear_list:
+                if i == clear_list[3]:
+                    for j in not_clear_file:
+                        run_cmd(
+                            f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force {j} .. && exit" + "'")
                 run_cmd(
                     f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
+                if i == clear_list[3]:
+                    for j in not_clear_file:
+                        run_cmd(
+                            f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force ../{j} "
+                                                                                           f"&& exit" + "'")
+
             clear_list2 = ["time_*", "data_*"]
             for i in clear_list2:
                 run_cmd(
-                    f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd /data/data/com.bilibili.priconne/files && rm -rf {i} && exit" + "'")
+                    f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd /data/data/com.bilibili"
+                                                                                   f".priconne/files && rm -rf "
+                                                                                   f"{i} && exit" + "'")
             run_cmd(
-                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne/lib && chmod 000 libsecsdk.so && exit' + "'")
-            run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
-            run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
+                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
+                                                                               '/lib && chmod 000 libsecsdk.so'
+                                                                               ' && exit' + "'")
+            # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
+            # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
             # print("》》》匿名完毕《《《")
 
     def output_debug_info(self, running):

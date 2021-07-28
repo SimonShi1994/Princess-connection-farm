@@ -306,6 +306,7 @@ class AsyncMixin(ToolsMixin):
             self.start_th()
             self.init_fastscreen()
             self.start_async()
+            time.sleep(5)
             # 临时堆放，用于重启后跳过协议
             for _ in range(2):
                 # 有两个协议需要同意

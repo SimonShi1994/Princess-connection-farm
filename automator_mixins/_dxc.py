@@ -50,6 +50,19 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                               threshold=0.98)
                 break
             else:
+                if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448), is_black=True,
+                                  black_threshold=4000):
+                    # raise (Exception, "卡教程了")
+                    self.chulijiaocheng(turnback=None)
+                    if self.is_exists(DXC_ELEMENT["dxc_in_shop"]):
+                        self.click(DXC_ELEMENT["dxc_in_shop"])
+                    else:
+                        # 应急处理：从主页返回
+                        self.lock_home()  # 回首页
+                        self.click(480, 505, post_delay=1)
+                        self.lock_img('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
+                        self.click(900, 138, post_delay=3)
+                        self.lock_img(DXC_ELEMENT["chetui"])  # 锁定撤退
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
                               threshold=0.98, retry=2)
         # while True:
