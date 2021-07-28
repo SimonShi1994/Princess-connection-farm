@@ -120,7 +120,7 @@ class LoginMixin(BaseMixin):
                     if debug:
                         print("发现协议")
                     self._move_check()
-                    self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                    self.d.touch.down(810, 378).sleep(1).up(810, 378)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
                     if self.d(description="请滑动阅读协议内容").exists():
@@ -342,7 +342,7 @@ class LoginMixin(BaseMixin):
                 if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                     if debug:
                         print("发现协议")
-                    self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                    self.d.touch.down(810, 378).sleep(1).up(810, 378)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
                     if self.d(description="请滑动阅读协议内容").exists():
