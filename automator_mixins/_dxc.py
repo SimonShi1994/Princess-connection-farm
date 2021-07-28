@@ -45,7 +45,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             # 塔币教程处理
             time.sleep(3)
             if not self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448), is_black=True, black_threshold=200):
-                time.sleep(1.2)
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
                               threshold=0.98)
                 break
@@ -63,8 +62,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         self.lock_img('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
                         self.click(900, 138, post_delay=3)
                         self.lock_img(DXC_ELEMENT["chetui"])  # 锁定撤退
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
-                              threshold=0.98, retry=2)
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数

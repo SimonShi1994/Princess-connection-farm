@@ -1274,7 +1274,7 @@ class BaseMixin:
 
         def run_cmd(commands):
             p = subprocess.Popen(f'{commands}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            sout = p.stdout.readlines()
+            p.stdout.readlines()
 
         # print("》》》匿名开始《《《", self.address)
         # tmp_rand = []
@@ -1326,7 +1326,8 @@ class BaseMixin:
                 if i == clear_list[3]:
                     for j in not_clear_file:
                         run_cmd(
-                            f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force {j} .. && exit" + "'")
+                            f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force {j} .. "
+                                                                                           f"&& exit" + "'")
                 run_cmd(
                     f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
                 if i == clear_list[3]:

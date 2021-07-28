@@ -320,8 +320,8 @@ class LoginMixin(BaseMixin):
                     error_flag = 1
                     raise Exception("点了100次右上角了，重启罢！")
 
-                if self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").click()
+                # if self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").exists():
+                #     self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").click()
 
                 if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
                     self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()

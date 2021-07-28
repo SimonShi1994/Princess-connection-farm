@@ -321,8 +321,7 @@ class AsyncMixin(ToolsMixin):
 
             # 清理痕迹后需要重新登录账号
             if clear_traces_and_cache:
-                if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
-                    LoginMixin.relogin_acc()
+                LoginMixin.relogin_acc()
 
             self.lock_home()
 
