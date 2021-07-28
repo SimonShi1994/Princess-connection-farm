@@ -22,6 +22,9 @@ class LoginMixin(BaseMixin):
     包含登录相关操作的脚本
     """
 
+    __acc = ''
+    __pwd = ''
+
     @timeout(180, "start执行超时：超过3分钟")
     @DEBUG_RECORD
     def start(self):
@@ -108,7 +111,7 @@ class LoginMixin(BaseMixin):
             elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
                 return 1  # 说明要进行认证
             elif not self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").exists() and \
-                    not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
+                    not self.d(resourceId="com.bilibili.priconne:id/gsc_rl_realname_web").exists():
                 break
 
         def SkipAuth():
@@ -268,7 +271,7 @@ class LoginMixin(BaseMixin):
                 if not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                     flag = False
                     SkipAuth()
-        if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
+        if self.d(resourceId="com.bilibili.priconne:id/gsc_rl_realname_web").exists(timeout=0.1):
             return 1  # 说明要进行认证
         if flag:
             return -1
@@ -317,8 +320,8 @@ class LoginMixin(BaseMixin):
                     error_flag = 1
                     raise Exception("点了100次右上角了，重启罢！")
 
-                # if self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").exists():
-                #     self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").click()
+                if self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").click()
 
                 if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
                     self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
@@ -431,6 +434,10 @@ class LoginMixin(BaseMixin):
     @timeout(300, "login_auth登录超时，超过5分钟")
     @DEBUG_RECORD
     def login_auth(self, ac, pwd):
+
+        # 保留账号数据以便于重登
+        self.__save_accinfo(ac, pwd)
+
         # CreatIDnum() 可能阿B升级了验证，不推荐使用了，没有合法性校验
         need_auth = self.login(ac=ac, pwd=pwd)
         if need_auth == -1:  # 这里漏了一句，无法检测验证码。
@@ -445,6 +452,15 @@ class LoginMixin(BaseMixin):
                 birthday = str(random.randint(1970, 1999))
                 auth_name, auth_id = random_name(), validator.fake_id(birthday=birthday)
                 self.auth(auth_name=auth_name, auth_id=auth_id)
+
+    @DEBUG_RECORD
+    def __save_accinfo(self, ac, pwd):
+        self.__acc = ac
+        self.__pwd = pwd
+
+    @DEBUG_RECORD
+    def relogin_acc(self):  # 重登账号
+        self.login_auth(self.__acc, self.__pwd)
 
     @DEBUG_RECORD
     def change_acc(self):  # 切换账号

@@ -8,9 +8,10 @@ from automator_mixins._base import DEBUG_RECORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause, sentstate, \
-    sent_state_img
+    sent_state_img, clear_traces_and_cache
 from core.safe_u2 import timeout
 from ._base import Multithreading
+from ._login import LoginMixin
 from ._tools import ToolsMixin
 
 block_sw = 0
@@ -317,6 +318,12 @@ class AsyncMixin(ToolsMixin):
                         # 雷电三
                         self.d(description="同意").click()
                     time.sleep(6)
+
+            # 清理痕迹后需要重新登录账号
+            if clear_traces_and_cache:
+                if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
+                    LoginMixin.relogin_acc()
+
             self.lock_home()
 
     @DEBUG_RECORD
