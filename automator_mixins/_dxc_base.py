@@ -34,7 +34,8 @@ class DXCBaseMixin(FightBaseMixin):
             self.click_btn(JUQING_BTN["tiaoguo_2"], until_disappear=JUQING_BTN["tiaoguo_2"])  # 蓝色跳过
             return True
 
-        if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen_shot):
+        if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448), is_black=True, screen=screen_shot,
+                          black_threshold=4000):
             self.chulijiaocheng(turnback=None)
             if self.is_exists(DXC_ELEMENT["dxc_in_shop"]):
                 self.click(DXC_ELEMENT["dxc_in_shop"])

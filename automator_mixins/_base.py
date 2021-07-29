@@ -1321,7 +1321,7 @@ class BaseMixin:
             # 清除痕迹和缓存
             clear_list = ["/storage/emulated/0/bilibili_data", "/storage/emulated/0/bilibili_time",
                           "data/data/com.bilibili.priconne/databases", "data/data/com.bilibili.priconne/shared_prefs"]
-            not_clear_file = ["*.playerprefs.xml", "config_data.xml"]
+            not_clear_file = ["*.playerprefs.xml", "config_data.xml", "agree_license_info.xml"]
             for i in clear_list:
                 if i == clear_list[3]:
                     for j in not_clear_file:

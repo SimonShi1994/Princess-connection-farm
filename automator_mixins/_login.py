@@ -22,8 +22,8 @@ class LoginMixin(BaseMixin):
     包含登录相关操作的脚本
     """
 
-    __acc = ''
-    __pwd = ''
+    __acc = ' '
+    __pwd = ' '
 
     @timeout(180, "start执行超时：超过3分钟")
     @DEBUG_RECORD
@@ -108,7 +108,7 @@ class LoginMixin(BaseMixin):
                 break
             elif self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                 break
-            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
+            elif self.d(resourceId="com.bilibili.priconne:id/gsc_rl_realname_web").exists():
                 return 1  # 说明要进行认证
             elif not self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").exists() and \
                     not self.d(resourceId="com.bilibili.priconne:id/gsc_rl_realname_web").exists():

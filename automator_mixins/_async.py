@@ -300,6 +300,7 @@ class AsyncMixin(ToolsMixin):
         self.debug_record.clear()
         # 重启逻辑：重启应用，重启异步线程
         self.stop_th()
+        self.phone_privacy()
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
         self.d.app_wait("com.bilibili.priconne")

@@ -59,7 +59,7 @@
 |captcha_senderror_times| 验证失败多少次后触发自动申诉题目 |int||2|
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|
 |captcha_wait_time|出现验证码后等待用户输入的时间|int||60|
-|clear_traces_and_cache|是否清除PCR产生的缓存|bool||True|
+|clear_traces_and_cache|是否启用PCR干净模式|bool||True|
 |use_my_id|是否使用自己提供的身份证|bool|                             |True|
 |auto_start_app|执行first/continue后是否自动打开app.py|bool||True|
 |inline_app|是否采用内部方式打开app（无窗口，无输出）|bool||True|

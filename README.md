@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210728
+# Princess connection 公主连结农场脚本v2.6.20210729
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -77,7 +77,7 @@
 
 ## :globe_with_meridians:环境
 
-- 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
+- 需要 Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
 - **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
