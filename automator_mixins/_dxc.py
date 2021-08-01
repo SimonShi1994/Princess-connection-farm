@@ -36,6 +36,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         if assist_num > 8 or assist_num < 1:
             assist_num = 1
 
+        self.lock_home()
+
         out = self.enter_dxc(1)
         if not out:
             pcr_log(self.account).write_log("info", f"{self.account}-已经刷过地下城！")
@@ -62,6 +64,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         self.lock_img('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
                         self.click(900, 138, post_delay=3)
                         self.lock_img(DXC_ELEMENT["chetui"])  # 锁定撤退
+                elif self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448), is_black=True,
+                                    black_threshold=2000):
+                    self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(830, 407, 929, 448),
+                                  threshold=0.98, retry=3)
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数
@@ -335,10 +341,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             break
 
         while True:
-            # 首页锁定
-            if self.is_exists('img/liwu.bmp', at=(891, 413, 930, 452)):
-                break
-            self.click(131, 533, post_delay=self.change_time)  # 保证回到首页
             # 防卡死
             screen_shot_ = self.getscreen()
             # click_img 暂且无法传入list
@@ -346,6 +348,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click_img(screen=screen_shot_, img='img/qianwangdixiacheng.jpg')
 
             if stuck_today or stuck_notzhandoukaishi or self.dxc_switch == 1:
+                self.lock_home()
                 continue
 
             screen_shot = self.getscreen()
@@ -353,6 +356,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             time.sleep(2 + self.change_time)
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ui/ok_btn_1.bmp')
+            self.lock_home()
+            if self.is_exists(img="img/home/liwu.bmp", at=(891, 417, 927, 448)):
+                break
 
     def dixiacheng(self, skip):
         """

@@ -21,7 +21,7 @@ class RoutineMixin(ShuatuBaseMixin):
         # 2020-09-09 CyiceK: 添加升级
         jiaju_list = ["saodangquan", "mana", "jingyan", "tili"]
         self.lock_home()
-        self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], elsedelay=1)
+        self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], side_check=self.juqing_kkr, elsedelay=1)
 
         if auto_update:
             screen_shot = self.getscreen()

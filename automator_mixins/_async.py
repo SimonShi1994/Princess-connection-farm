@@ -300,7 +300,6 @@ class AsyncMixin(ToolsMixin):
         self.debug_record.clear()
         # 重启逻辑：重启应用，重启异步线程
         self.stop_th()
-        self.phone_privacy()
         self.d.session("com.bilibili.priconne")
         time.sleep(8)
         self.d.app_wait("com.bilibili.priconne")
@@ -322,7 +321,7 @@ class AsyncMixin(ToolsMixin):
 
             # 清理痕迹后需要重新登录账号
             if clear_traces_and_cache:
-                LoginMixin.relogin_acc()
+                self.phone_privacy()
 
             self.lock_home()
 
