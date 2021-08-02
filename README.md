@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210801
+# Princess connection 公主连结农场脚本v2.6.20210802
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -193,6 +193,13 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/8/2 By TheAutumnOfRice
+
+- 修复d1无限卡主页
+- “无法进入N3-1”增加相关debug
+- 新增Rank14，2425图
+- PCRInitializer中增加get_all_commands
 
 2021/7/28 By CyiceK
 
