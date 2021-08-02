@@ -3,6 +3,7 @@ import datetime
 import os
 import queue
 import random
+import subprocess
 import threading
 import time
 from collections import OrderedDict
@@ -732,6 +733,27 @@ class BaseMixin:
         """
         # 如果debug_screen为None，则正常截图；
         # 否则，getscreen函数使用debug_screen作为读取的screen
+
+        try:
+            from automator_mixins._async import block_sw, enable_pause
+            if enable_pause:
+                if block_sw == 1:
+                    print(self.address, "- 截图暂停中~")
+                    while block_sw == 1:
+                        from automator_mixins._async import block_sw
+                        time.sleep(1)
+                        self._paused = True
+                    print(self.address, "- 截图恢复~")
+            else:
+                if self.freeze:
+                    print(self.address, "- 截图暂停中~")
+                    while self.freeze:
+                        time.sleep(1)
+                        self._paused = True
+                    print(self.address, "- 截图恢复~")
+        except Exception as error:
+            print('截图暂停-错误:', error)
+
         if self.debug_screen is None:
             if fast_screencut and self.fastscreencut_retry < 3:
                 try:
@@ -1088,6 +1110,14 @@ class BaseMixin:
 
         def f(screen):
             screen_shot_ = screen
+            try:
+                # 处理完教程后可能会卡活动提示
+                r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_, threshold=0.90)
+                if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
+                                    side_check=self.juqing_kkr):
+                    time.sleep(5)
+            except:
+                pass
             num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 try:
@@ -1232,7 +1262,12 @@ class BaseMixin:
         2020/7/10
         模拟器隐私函数
         '高'匿名 防记录(
+
+        2021/7/27
+        加点料，蓝叠不支持修改手机信息
+
         By：CyiceK
+        ！未经许可，不可在本项目外使用！（不想惹事生非
         :return:
         """
 
@@ -1244,6 +1279,10 @@ class BaseMixin:
             part = ''.join(str(random.randrange(0, 9)) for _ in range(n - 1))
             res = luhn_residue('{}{}'.format(part, 0))
             return '{}{}'.format(part, -res % 10)
+
+        def run_cmd(commands):
+            p = subprocess.Popen(f'{commands}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            p.stdout.readlines()
 
         # print("》》》匿名开始《《《", self.address)
         # tmp_rand = []
@@ -1270,35 +1309,53 @@ class BaseMixin:
             8: 'Redmi',
             9: 'LG',
         }
-        os.system(
-            'cd %s & adb -s %s shell setprop ro.product.model %s' % (adb_dir, self.address, phone_model[tmp_rand[0]]))
-        os.system(
-            'cd %s & adb -s %s shell setprop ro.product.manufacturer %s' % (adb_dir,
-                                                                            self.address,
-                                                                            phone_manufacturer[tmp_rand[1]]))
-        os.system('cd %s & adb -s %s shell setprop phone.imei %s' % (adb_dir, self.address, _get_imei(15)))
-        os.system(
-            'cd %s & adb -s %s shell setprop ro.product.name %s' % (adb_dir, self.address, phone_model[tmp_rand[2]]))
-        os.system('cd %s & adb -s %s shell setprop phone.imsi %s' % (adb_dir, self.address, _get_imei(15)))
-        os.system('cd %s & adb -s %s shell setprop phone.linenum %s' % (adb_dir, self.address, _get_imei(11)))
-        os.system('cd %s & adb -s %s shell setprop phone.simserial %s' % (adb_dir, self.address, _get_imei(20)))
+        run_cmd('cd %s & adb -s %s shell setprop ro.product.model %s && exit' % (
+            adb_dir, self.address, phone_model[tmp_rand[0]]))
+        run_cmd('cd %s & adb -s %s shell setprop ro.product.brand %s && exit' % (
+            adb_dir, self.address, phone_model[tmp_rand[0]]))
+        run_cmd('cd %s & adb -s %s shell setprop ro.product.manufacturer %s && exit' % (adb_dir,
+                                                                                        self.address,
+                                                                                        phone_manufacturer[
+                                                                                            tmp_rand[1]]))
+        run_cmd('cd %s & adb -s %s shell setprop phone.imei %s && exit' % (adb_dir, self.address, _get_imei(15)))
+        run_cmd('cd %s & adb -s %s shell setprop ro.product.name %s && exit' % (
+            adb_dir, self.address, phone_model[tmp_rand[2]]))
+        run_cmd('cd %s & adb -s %s shell setprop phone.imsi %s && exit' % (adb_dir, self.address, _get_imei(15)))
+        run_cmd('cd %s & adb -s %s shell setprop phone.linenum %s && exit' % (adb_dir, self.address, _get_imei(11)))
+        run_cmd('cd %s & adb -s %s shell setprop phone.simserial %s && exit' % (
+            adb_dir, self.address, _get_imei(20)))
         # print("》》》匿名完毕《《《")
         if clear_traces_and_cache:
             # 清除痕迹和缓存
-            os.system(
-                f'cd {adb_dir} && adb -s {self.address} shell "cd /storage/emulated/0/bilibili_data && rm -rf * && '
-                f'exit"')
-            os.system(
-                f'cd {adb_dir} && adb -s {self.address} shell "cd /storage/emulated/0/bilibili_time && rm -rf * && '
-                f'exit"')
-            os.system(
-                f'cd {adb_dir} && adb -s {self.address} shell "cd /data/data/com.bilibili.priconne/files/ && rm -rf '
-                f'data_* && exit"')
-            os.system(
-                f'cd {adb_dir} && adb -s {self.address} shell "cd data/data/com.bilibili.priconne/files/ && rm -rf '
-                f'time_* && exit"')
-            os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
-            os.system(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
+            clear_list = ["/storage/emulated/0/bilibili_data", "/storage/emulated/0/bilibili_time",
+                          "data/data/com.bilibili.priconne/databases", "data/data/com.bilibili.priconne/shared_prefs"]
+            not_clear_file = ["*.playerprefs.xml", "config_data.xml", "agree_license_info.xml"]
+            for i in clear_list:
+                if i == clear_list[3]:
+                    for j in not_clear_file:
+                        run_cmd(
+                            f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force {j} .. "
+                                                                                           f"&& exit" + "'")
+                run_cmd(
+                    f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
+                if i == clear_list[3]:
+                    for j in not_clear_file:
+                        run_cmd(
+                            f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force ../{j} "
+                                                                                           f"&& exit" + "'")
+
+            clear_list2 = ["time_*", "data_*"]
+            for i in clear_list2:
+                run_cmd(
+                    f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd /data/data/com.bilibili"
+                                                                                   f".priconne/files && rm -rf "
+                                                                                   f"{i} && exit" + "'")
+            run_cmd(
+                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
+                                                                               '/lib && chmod 000 libsecsdk.so'
+                                                                               ' && exit' + "'")
+            # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
+            # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
             # print("》》》匿名完毕《《《")
 
     def output_debug_info(self, running):

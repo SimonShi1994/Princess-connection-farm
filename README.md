@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210714
+# Princess connection 公主连结农场脚本v2.6.20210801
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -77,7 +77,7 @@
 
 ## :globe_with_meridians:环境
 
-- 需要 Python **64位**版本>=3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
+- 需要 Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
 - **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
@@ -193,6 +193,20 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/7/28 By CyiceK
+
+- 临时修复OCR地下城1卡塔币教程，修复剧情/设置/协议在特定情况下一直初始化的问题
+- PCR清理缓存函数，使用时请打开模拟器ROOT权限
+
+2021/7/27 By CyiceK
+
+- 适配新版登陆UI
+- 升级PCR清理缓存函数，输出干净无扰
+
+2021/7/19 By CyiceK
+
+- 修复行会点赞点不到第二个人的问题
 
 2021/6/14 By TheAutumnOfRice
 

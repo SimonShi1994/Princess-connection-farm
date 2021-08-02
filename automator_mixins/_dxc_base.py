@@ -184,7 +184,7 @@ class DXCBaseMixin(FightBaseMixin):
                 self.click_btn(DXC_ELEMENT["quyuxuanzequeren_ok"],
                                until_appear={DXC_ELEMENT["chetui"]: 1, DXC_ELEMENT["dxc_kkr"]: 2})
                 time.sleep(2)
-        self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5, side_check=self.dxc_kkr)  # 锁定撤退
+        self.lock_img(DXC_ELEMENT["chetui"], elsedelay=0.5, side_check=self.dxc_kkr, retry=5)  # 锁定撤退
         return True
 
     @DEBUG_RECORD

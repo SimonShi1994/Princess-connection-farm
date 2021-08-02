@@ -32,6 +32,7 @@ class LoginMixin(BaseMixin):
         启动脚本，请确保已进入游戏页面。
         """
         while True:
+            self.phone_privacy()
             # 判断jgm进程是否在前台, 最多等待20秒，否则唤醒到前台
             if self.d.app_wait("com.bilibili.priconne", front=True, timeout=1):
                 if not self.appRunning:
@@ -62,23 +63,32 @@ class LoginMixin(BaseMixin):
         for retry in range(300):
             self._move_check()
             self.click(945, 13)  # 防止卡住
-            if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
-                self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
+            if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
+                self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
                 time.sleep(0.8)
                 continue
-            if not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
+            if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").exists():
+                self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").click()
+                time.sleep(0.8)
+                continue
+            if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
+                self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
+                time.sleep(0.8)
+                continue
+            if not self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
                 time.sleep(0.8)
             else:
                 break
         else:
             raise Exception("进入登陆页面失败！")
-        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
+        self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
         self.d.clear_text()
         self.d.send_keys(str(ac))
-        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_password_login").click()
+        self.d(resourceId="com.bilibili.priconne:id/et_gsc_account_pwd").click()
         self.d.clear_text()
         self.d.send_keys(str(pwd))
-        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").click()
+        time.sleep(random.uniform(0.2, 2))
+        self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
         toast_message = self.d.toast.get_message()
         if toast_message is "密码错误":
             raise Exception("密码错误！")
@@ -95,10 +105,10 @@ class LoginMixin(BaseMixin):
                 break
             elif self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                 break
-            elif self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
+            elif self.d(resourceId="com.bilibili.priconne:id/gsc_rl_realname_web").exists():
                 return 1  # 说明要进行认证
-            elif not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_buttonLogin").exists() and \
-                    not self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists():
+            elif not self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").exists() and \
+                    not self.d(resourceId="com.bilibili.priconne:id/gsc_rl_realname_web").exists():
                 break
 
         def SkipAuth():
@@ -110,7 +120,7 @@ class LoginMixin(BaseMixin):
                     if debug:
                         print("发现协议")
                     self._move_check()
-                    self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                    self.d.touch.down(810, 378).sleep(1).up(810, 378)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
                     if self.d(description="请滑动阅读协议内容").exists():
@@ -193,7 +203,7 @@ class LoginMixin(BaseMixin):
                     time.sleep(1)
                     sc2 = self.getscreen()
                     p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
-                    if p < 0.99:
+                    if p <= 0.99:
                         return True
                     else:
                         return False
@@ -258,7 +268,7 @@ class LoginMixin(BaseMixin):
                 if not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                     flag = False
                     SkipAuth()
-        if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_fl_realname_web").exists(timeout=0.1):
+        if self.d(resourceId="com.bilibili.priconne:id/gsc_rl_realname_web").exists(timeout=0.1):
             return 1  # 说明要进行认证
         if flag:
             return -1
@@ -292,7 +302,7 @@ class LoginMixin(BaseMixin):
                         r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
                         if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
                                             side_check=self.juqing_kkr):
-                            time.sleep(10)
+                            time.sleep(6)
                             continue
                     except:
                         pass
@@ -306,25 +316,24 @@ class LoginMixin(BaseMixin):
                     # 点了100次了，重启吧
                     error_flag = 1
                     raise Exception("点了100次右上角了，重启罢！")
-                # todo 登陆失败报错：-32002 Client error: <> data: Selector [
-                #  resourceId='com.bilibili.priconne:id/bsgamesdk_id_welcome_change'], method: None
-                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").exists(timeout=0.2):
-                    return True
 
-                try:
-                    # 这里错误不要上抛，容易被U2的bug炸掉 u2版本 2.18.0
-                    if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change",
-                              clickable="true").exists():
-                        self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_welcome_change",
-                               clickable="true").click()
-                except:
-                    continue
-                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_id_tourist_switch").click()
+                # if self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").exists():
+                #     self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").click()
+
+                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
                     time.sleep(2)
                     continue
-                if self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_username_login").click()
+                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").click()
+                    time.sleep(2)
+                    continue
+                if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
+                    time.sleep(2)
+                    continue
+                if self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
                     break
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     self.click(667, 65, post_delay=3)
@@ -333,7 +342,7 @@ class LoginMixin(BaseMixin):
                 if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                     if debug:
                         print("发现协议")
-                    self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                    self.d.touch.down(810, 378).sleep(1).up(810, 378)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
                     if self.d(description="请滑动阅读协议内容").exists():
@@ -393,6 +402,7 @@ class LoginMixin(BaseMixin):
             # self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
         if self.d(text="我知道了").exists():
+            self._move_check()
             self.d(text="我知道了").click()
             time.sleep(3)
         else:
@@ -418,10 +428,10 @@ class LoginMixin(BaseMixin):
             self._move_check()
             self.d(text="我知道了").click()
 
-
     @timeout(300, "login_auth登录超时，超过5分钟")
     @DEBUG_RECORD
     def login_auth(self, ac, pwd):
+
         # CreatIDnum() 可能阿B升级了验证，不推荐使用了，没有合法性校验
         need_auth = self.login(ac=ac, pwd=pwd)
         if need_auth == -1:  # 这里漏了一句，无法检测验证码。
@@ -436,6 +446,7 @@ class LoginMixin(BaseMixin):
                 birthday = str(random.randint(1970, 1999))
                 auth_name, auth_id = random_name(), validator.fake_id(birthday=birthday)
                 self.auth(auth_name=auth_name, auth_id=auth_id)
+
 
     @DEBUG_RECORD
     def change_acc(self):  # 切换账号

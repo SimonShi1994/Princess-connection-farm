@@ -21,15 +21,17 @@ class RoutineMixin(ShuatuBaseMixin):
         # 2020-09-09 CyiceK: 添加升级
         jiaju_list = ["saodangquan", "mana", "jingyan", "tili"]
         self.lock_home()
-        self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], elsedelay=1)
+        self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], side_check=self.juqing_kkr, elsedelay=1)
 
         if auto_update:
             screen_shot = self.getscreen()
             if self.click_img(img="img/jiayuan/jiayuan_shengji.bmp", screen=screen_shot):
                 time.sleep(10)
 
-        self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
-                      side_check=self.juqing_kkr, retry=5, is_raise=False)
+        for _ in range(2):
+            # 两次是因为有个家具介绍 关闭 确认
+            self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
+                          side_check=self.juqing_kkr, retry=5, is_raise=False)
 
         if auto_update:
             i = 0

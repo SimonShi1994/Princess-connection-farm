@@ -263,22 +263,40 @@ class HanghuiMixin(ToolsMixin):
             self.lock_img('img/ok.bmp', elseclick=[(720, 97)], retry=3)  # 点击排序
             self.lock_no_img('img/ok.bmp', elseclick=[(289, 303), (587, 372)],
                              elsedelay=self.change_time, retry=3)  # 按战力降序 这里可以加一步调降序
-            if not self.lock_img('img/dianzan.bmp', ifclick=[(818, 198), (480, 374), (826, 316), (480, 374), (826, 428)]
-                    , elseclick=[(1, 1)], ifbefore=self.change_time, elsedelay=self.change_time,
-                                 ifdelay=self.change_time, retry=10, is_raise=False):
-                self.log.write_log("error", "找不到点赞按钮")
-                self.lock_home()
-                return
+            if self.is_exists('img/dianzan.bmp'):
+                click_list = [(818, 198), (826, 316), (826, 428)]
+                for i in click_list:
+                    if self.lock_img('img/dianzan.bmp', ifclick=[i], elseclick=[(480, 374)], retry=10):
+                        if self.lock_img('img/ok.bmp', retry=8):
+                            self.lock_no_img('img/ok.bmp', elseclick=[(480, 374)], retry=10)
+                            continue
+                        else:
+                            self.log.write_log("warning", "已经没有点赞次数了")
+                            self.lock_home()
+                            break
+                    else:
+                        self.log.write_log("error", "找不到点赞按钮")
+                        self.lock_home()
+                        break
+
             # 点赞 战力降序第一/第二/第三个人
             # (480, 374) 是ok的坐标
         else:
-            if not self.lock_img(PCRelement(img='img/dianzan.bmp', at=(756, 184, 857, 227)),
-                                 ifclick=[(829, 316), (480, 374), (826, 428)], elseclick=[(1, 1)],
-                                 elsedelay=self.change_time, ifbefore=self.change_time, ifdelay=self.change_time,
-                                 retry=10, is_raise=False):
-                self.log.write_log("error", "找不到点赞按钮")
-                self.lock_home()
-                return
+            if self.is_exists('img/dianzan.bmp'):
+                click_list = [(818, 198), (826, 316), (826, 428)]
+                for i in click_list:
+                    if self.lock_img('img/dianzan.bmp', ifclick=[i], elseclick=[(480, 374)], retry=10):
+                        if self.lock_img('img/ok.bmp', retry=8):
+                            self.lock_no_img('img/ok.bmp', elseclick=[(480, 374)], retry=10)
+                            continue
+                        else:
+                            self.log.write_log("warning", "已经没有点赞次数了")
+                            self.lock_home()
+                            break
+                    else:
+                        self.log.write_log("error", "找不到点赞按钮")
+                        self.lock_home()
+                        break
             # 点赞 职务降序（默认） 第二/第三个人，副会长
         self.click(479, 381)
         screen_shot_ = self.getscreen()

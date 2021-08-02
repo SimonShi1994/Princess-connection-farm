@@ -8,9 +8,10 @@ from automator_mixins._base import DEBUG_RECORD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_screencut, enable_pause, sentstate, \
-    sent_state_img
+    sent_state_img, clear_traces_and_cache
 from core.safe_u2 import timeout
 from ._base import Multithreading
+from ._login import LoginMixin
 from ._tools import ToolsMixin
 
 block_sw = 0
@@ -310,13 +311,18 @@ class AsyncMixin(ToolsMixin):
             for _ in range(2):
                 # 有两个协议需要同意
                 while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
-                    self.d.touch.down(814, 367).sleep(1).up(814, 367)
+                    self.d.touch.down(810, 378).sleep(1).up(810, 378)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
                     if self.d(description="请滑动阅读协议内容").exists():
                         # 雷电三
                         self.d(description="同意").click()
                     time.sleep(6)
+
+            # 清理痕迹后需要重新登录账号
+            if clear_traces_and_cache:
+                self.phone_privacy()
+
             self.lock_home()
 
     @DEBUG_RECORD

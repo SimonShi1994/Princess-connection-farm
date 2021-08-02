@@ -32,7 +32,7 @@ class Bot:
         self.req_post.mount('http://', HTTPAdapter(max_retries=5))
         self.req_post.mount('https://', HTTPAdapter(max_retries=5))
         # https://sctapi.ftqq.com/ server酱Turbo版本
-        self.server_nike_url = f"http://sc.ftqq.com/{s_sckey}.send"
+        self.server_nike_url = f"https://sctapi.ftqq.com/{s_sckey}.send"
         self.lev_0 = ['info', 'warning', 'error', 'STATE', '']
         self.lev_1 = ['warning', 'error', 'STATE', '']
         self.lev_2 = ['error', 'STATE', '']
@@ -130,9 +130,9 @@ class Bot:
         try:
             self.req_post.post(self.server_nike_url, proxies=BOT_PROXY, params=info)
         except Exception as e:
-            self.wechat_bot(s_level, message=message, acc_state=acc_state)
+            print('wechat推送服务器错误', e)
+            # self.wechat_bot(s_level, message=message, acc_state=acc_state)
             # pcr_log("__SERVER_BOT__").write_log("error", f"ServerBot发送失败：{e}")
-        # 不因为0级消息而清空消息队列
 
     def info_cutting(self, msg, _max=1500):
         """
@@ -226,7 +226,8 @@ class Bot:
                     tmp_dict = {'msg': sent, qq: self.qq}
                     self.req_post.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
         except Exception as e:
-            self.qq_bot(s_level, message=message, acc_state=acc_state)
+            print('QQBot推送服务器错误', e)
+            # self.qq_bot(s_level, message=message, acc_state=acc_state)
 
     def tg_bot(self, s_level, message='', acc_state='', img=None, img_title=''):
         # TG推送机器人 By:CyiceK
