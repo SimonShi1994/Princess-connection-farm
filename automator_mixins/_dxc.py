@@ -349,7 +349,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
             if stuck_today or stuck_notzhandoukaishi or self.dxc_switch == 1:
                 self.lock_home()
-                continue
+                # continue
+                break
 
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(830, 407, 929, 448))
