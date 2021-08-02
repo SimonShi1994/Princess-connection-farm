@@ -956,6 +956,27 @@ class PCRInitializer:
         for ind, acc, taskname, rec, _ in L:
             print(f"<{ind}> 账号：{acc}  任务：{taskname}")
 
+    def get_all_commands(self):
+        return [
+            "start",
+            "send_message",
+            "stop_device",
+            "forcekill_device",
+            "change_config",
+            "start_debug",
+            "show_all_module_debug",
+            "exec_command",
+            "exec_script",
+            "set_freeze",
+            "show_task_index",
+            "skip_task",
+            "show_u2_record",
+            "show_debug_record",
+            "stop",
+            "join",
+            "get_status",
+        ]
+
 
 class Schedule:
     """
