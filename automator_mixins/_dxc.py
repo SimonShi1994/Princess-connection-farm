@@ -589,7 +589,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         # 已经进入地下城
         cur_layer = self.check_dxc_level(dxc_id)  # 获取层数
         if cur_layer == -1:
-            # 人力OCR失败，一个一个尝试点击
+            # 人力OCR失败，一个一个尝试bian点击
             cur_layer = 1
         max_layer = max(DXC_NUM[dxc_id])
         set_bianzu, set_duiwu = parse_team_str(teams[0])

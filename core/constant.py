@@ -719,6 +719,16 @@ HARD_COORD = {
         2: p(477, 336),
         3: p(765, 251),
     },
+    24: {
+        1: p(216,293),
+        2: p(476,361),
+        3: p(766,262),
+    },
+    25: {
+        1: p(218,297),
+        2: p(481,359),
+        3: p(769,257),
+    },
 }
 
 SHOP_BTN = {
@@ -799,6 +809,9 @@ ZHUXIAN_ID = {
     21: p(img="img/zhuxian/21L.bmp", at=(87, 61, 196, 72)),
     22: p(img="img/zhuxian/22L.bmp", at=(109, 58, 175, 73)),
     23: p(img="img/zhuxian/23L.bmp", at=(109, 58, 177, 75)),
+    24: p(img="img/zhuxian/24L.bmp",at=(91,59,193,73)),
+    25:p(img="img/zhuxian/25L.bmp",at=(91,59,193,71)),
+
 }
 ZHUXIAN_XXXYY_ID = {
     # 小行星原野你长得太像了，无奈增加二级分类
@@ -813,10 +826,15 @@ ZHUXIAN_XXXYF_ID = {
     22: p(img="img/zhuxian/22R.bmp", at=(200, 59, 229, 77)),
     23: p(img="img/zhuxian/23R.bmp", at=(198, 58, 230, 74)),
 }
+ZHUXIAN_LDWSQF_ID = {
+    24:p(img="img/zhuxian/24R.bmp",at=(219,58,249,72)),
+    25:p(img="img/zhuxian/25R.bmp",at=(216,59,250,73)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
     (22, 23): ZHUXIAN_XXXYF_ID,
+    (24, 25): ZHUXIAN_LDWSQF_ID,
 }
 
 NORMAL_COORD = {
@@ -1289,6 +1307,46 @@ NORMAL_COORD = {
             1: p(180, 259),
         }
     },
+    24: {
+        "right": {
+            14: p(769,238),
+            13: p(710,352),
+            12: p(585,391),
+            11: p(491,299),
+            10: p(426,401),
+            9:  p(300,366),
+            8:  p(336,236),
+        },
+        "left": {
+            7: p(645,244),
+            6: p(554,337),
+            5: p(456,256),
+            4: p(324,309),
+            3: p(420,385),
+            2: p(293,428),
+            1: p(171,394),
+        }
+    },
+    25: {
+        "right": {
+            14: p(751,328),
+            13: p(629,263),
+            12: p(600,401),
+            11: p(441,403),
+            10: p(494,274),
+            9:  p(347,282),
+            8:  p(255,398),
+        },
+        "left": {
+            7: p(666,252),
+            6: p(516,296),
+            5: p(418,404),
+            4: p(253,350),
+            3: p(380,283),
+            2: p(290,183),
+            1: p(162,225),
+        }
+    },
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(204, 110, 287, 136)),
@@ -1304,6 +1362,7 @@ RANKS_DICT = {
     11: p(img="img/ranks/11.bmp", at=(202, 110, 291, 135)),
     12: p(img="img/ranks/12.bmp", at=(201, 112, 290, 134)),
     13: p(img="img/ranks/13.bmp", at=(202, 114, 291, 133)),
+    14: p(img="img/ranks/14.bmp",at=(204,113,292,133)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
