@@ -1,15 +1,15 @@
+import os
 import queue
 import random
 import time
-from flask import Blueprint, jsonify, request
-from retrying import retry
-from PIL import Image, ImageDraw
 from io import BytesIO
 
+from PIL import Image
 from aip import AipOcr
-from core.pcr_config import ocr_mode, baidu_apiKey, baidu_secretKey, baidu_QPS
+from flask import Blueprint, request
+from retrying import retry
 
-import os
+from core.pcr_config import ocr_mode, baidu_apiKey, baidu_secretKey, baidu_QPS
 
 # 这一行创建了发包队列
 queue = queue.Queue(baidu_QPS)
@@ -20,12 +20,12 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 if ocr_mode != "网络" and len(ocr_mode) != 0:
     if ocr_mode == "本地" or ocr_mode == "混合" or ocr_mode == "智能":
         import muggle_ocr
+
         # 初始化；model_type 包含了 ModelType.OCR/ModelType.Captcha 两种
         sdk = muggle_ocr.SDK(model_type=muggle_ocr.ModelType.OCR)
 
     if ocr_mode == "本地2" or ocr_mode == "混合":
         import tr
-
 
 config = {
     'appId': 'PCR',

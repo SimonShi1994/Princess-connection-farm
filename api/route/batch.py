@@ -2,11 +2,11 @@ import os
 
 from flask import Blueprint, jsonify, request
 
-from api.constants.errors import NotFoundError, BadRequestError
-from api.constants.reply import Reply, ListReply
+from api.constants.reply import ListReply
 from core.usercentre import AutomatorRecorder, list_all_batches
 
 batches_api = Blueprint('batches', __name__)
+
 
 @batches_api.route('/batches', methods=['GET'])
 def get_list_all_batches():
@@ -17,6 +17,7 @@ def get_list_all_batches():
         return ListReply(batches, count)
     except Exception as e:
         return 500
+
 
 @batches_api.route('/get_batches/<filename>', methods=['GET'])
 # 查
@@ -43,11 +44,12 @@ def save_batches():
         if check_valid_batch(save_dict, is_raise=False):
             AutomatorRecorder.setbatch(BatchName, save_dict)
             old_batch = AutomatorRecorder.getbatch(BatchesFileName)
-            return jsonify({"code":200, "msg":f"{old_batch}-保存成功"})
+            return jsonify({"code": 200, "msg": f"{old_batch}-保存成功"})
         else:
-            return jsonify({"code":500, "msg":f"{save_dict}-保存失败"})
+            return jsonify({"code": 500, "msg": f"{save_dict}-保存失败"})
     except Exception as e:
-        return jsonify({"code":500, "msg":f"{e}-保存失败"})
+        return jsonify({"code": 500, "msg": f"{e}-保存失败"})
+
 
 @batches_api.route('/batches_del/<filename>', methods=['GET'])
 # 删
