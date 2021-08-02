@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 
+from CreateUser import create_account as service_create_account, edit_account, del_account
 from api.constants.errors import NotFoundError, BadRequestError
 from api.constants.reply import Reply, ListReply
 from core.usercentre import list_all_users, AutomatorRecorder
-from CreateUser import create_account as service_create_account, edit_account, del_account
 
 account_api = Blueprint('account', __name__)
 
@@ -136,7 +136,7 @@ def create_account():
         service_create_account(account=username, password=password)
 
         return Reply({'username': username, 'password': password})
-    
+
     except Exception as e:
         return NotFoundError(f"添加用户 {username} 失败, {e}")
 

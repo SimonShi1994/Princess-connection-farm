@@ -8,6 +8,7 @@ import numpy as np
 from core.log_handler import pcr_log
 from core.pcr_config import debug, use_template_cache
 
+
 def cv_imread(file_path):  # 用于中文目录的imread函数
     """
     项目地址:https://github.com/bbpp222006/Princess-connection

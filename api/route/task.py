@@ -1,7 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
+
+from CreateUser import list_all_tasks, AutomatorRecorder, create_task as service_create_task, del_task
 from api.constants.errors import NotFoundError, BadRequestError
 from api.constants.reply import Reply, ListReply
-from CreateUser import list_all_tasks, AutomatorRecorder, create_task as service_create_task, del_task
 
 task_api = Blueprint('task', __name__)
 

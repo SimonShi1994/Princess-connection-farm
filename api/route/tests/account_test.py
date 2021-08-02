@@ -1,6 +1,6 @@
 import unittest
+
 from app import create_app
-import json
 
 
 class TestAccount(unittest.TestCase):
@@ -14,4 +14,3 @@ class TestAccount(unittest.TestCase):
         pass
         # response = self.client.get("/api/account", data={})
         # resp_dict = json.loads(response.data)
-

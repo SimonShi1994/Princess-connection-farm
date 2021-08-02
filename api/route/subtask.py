@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint
 
-from core.valid_task import VALID_TASK
 from api.constants.reply import Reply, ListReply
+from core.valid_task import VALID_TASK
 
 subtask_api = Blueprint('subtask', __name__)
 
