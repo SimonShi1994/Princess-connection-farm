@@ -976,6 +976,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 if not res:
                     if can_not_enter_action == "exit":
                         self.log.write_log("info", f"无法进入图{m}{a}-{b}！结束刷图。")
+                        self.save_last_screen(f"CanNotEnter1_{self.account}.bmp")
                         self.lock_home()
                         return
                     elif can_not_enter_action == "skip":
@@ -996,6 +997,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 if M is None:
                     if can_not_enter_action == "exit":
                         self.log.write_log("info", f"无法进入图{m}{a}-{b}！结束刷图。")
+                        self.save_last_screen(f"CanNotEnter2_{self.account}.bmp")
                         self.lock_home()
                         return "return"
                     elif can_not_enter_action == "skip":
