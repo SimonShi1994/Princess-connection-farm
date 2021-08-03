@@ -11,7 +11,6 @@ from core.pcr_config import bad_connecting_time, async_screenshot_freq, fast_scr
     sent_state_img, clear_traces_and_cache
 from core.safe_u2 import timeout
 from ._base import Multithreading
-from ._login import LoginMixin
 from ._tools import ToolsMixin
 
 block_sw = 0

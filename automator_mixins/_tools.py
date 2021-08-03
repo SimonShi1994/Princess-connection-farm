@@ -83,7 +83,7 @@ class ToolsMixin(BaseMixin):
     def init_home(self):
         # 2020-07-31 TheAutumnOfRice: 检查完毕
         while True:
-            time.sleep(5)
+            time.sleep(2)
             screen_shot_ = self.getscreen()
             if self.is_exists(MAIN_BTN["liwu"], screen=screen_shot_):
                 break
@@ -102,7 +102,7 @@ class ToolsMixin(BaseMixin):
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
                 if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
                                     side_check=self.juqing_kkr):
-                    time.sleep(10)
+                    time.sleep(3)
                     continue
             except:
                 pass

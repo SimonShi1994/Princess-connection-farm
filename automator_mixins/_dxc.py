@@ -342,6 +342,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         while True:
             # 防卡死
+            if self.is_exists(img="img/home/liwu.bmp", at=(891, 417, 927, 448)):
+                break
             screen_shot_ = self.getscreen()
             # click_img 暂且无法传入list
             self.click_img(screen=screen_shot_, img='img/xiayibu.jpg')
@@ -349,8 +351,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
             if stuck_today or stuck_notzhandoukaishi or self.dxc_switch == 1:
                 self.lock_home()
-                # continue
-                break
+                continue
 
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(830, 407, 929, 448))
@@ -358,8 +359,6 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ui/ok_btn_1.bmp')
             self.lock_home()
-            if self.is_exists(img="img/home/liwu.bmp", at=(891, 417, 927, 448)):
-                break
 
     def dixiacheng(self, skip):
         """

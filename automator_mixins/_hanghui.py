@@ -445,9 +445,13 @@ class HanghuiMixin(ToolsMixin):
                     screen = self.getscreen()
                     r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
                     if self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
-                                     side_check=self.juqing_kkr):
+                                     side_check=self.juqing_kkr, retry=5):
                         if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
                             break
+                    else:
+                        # if看看是不是延迟太高导致的
+                        if not self.is_exists(img=TUANDUIZHAN_BTN["tiaozhan"]):
+                            self.click(1, 1)
                 except Exception as e:
                     pcr_log(self.account).write_log("info", f"识别不到boss信息，已退出本任务")
                     return
