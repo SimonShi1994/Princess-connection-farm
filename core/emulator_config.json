@@ -62,6 +62,19 @@
     },
     {
       "default_ports": [
+        5563,
+        5554
+      ],
+      "desc": null,
+      "name": "雷电模拟器",
+      "process_name": "LdVBoxHeadless.exe",
+      "re_port": null,
+      "type": "LdVBoxHeadless.exe",
+      "unique_id": "Program Files/ldplayerbox/LdVBoxHeadless.exe",
+      "upload_tip_level": 0
+    },
+    {
+      "default_ports": [
         5555
       ],
       "desc": null,

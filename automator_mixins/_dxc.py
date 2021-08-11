@@ -68,6 +68,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                                     black_threshold=2000):
                     self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(830, 407, 929, 448),
                                   threshold=0.98, retry=3)
+                # 过剧情
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(830, 407, 929, 448),
+                              threshold=0.98, retry=3)
         # while True:
         #     self.enter_dxc()
         #     # 进入流程先锁上地下城执行函数

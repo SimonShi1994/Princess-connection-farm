@@ -138,7 +138,7 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/zujianhanghui.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
         time.sleep(1)
         self.lock_img('img/zujianhanghui.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
-        self.click(860, 81)  # 点击设定
+        self.click(860, 79)  # 点击设定
         self.lock_img('img/quxiao2.jpg', ifclick=[(477, 177)], ifdelay=1)  # 点击输入框
         self.d.send_keys(clubname)
         time.sleep(1)

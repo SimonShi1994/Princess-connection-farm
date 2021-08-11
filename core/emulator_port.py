@@ -192,6 +192,7 @@ def read_config(src=_CONFIG_PATH):
         config = json.load(f)
     for e in config['emulators']:
         _EMULATORS[e['unique_id']] = Emulator(e)
+        _EMULATORS[e['name']] = Emulator(e)
 
 
 def is_known_port_changed(emulator, new_ports):
@@ -238,6 +239,8 @@ def get_port(PID):
     # 要用read（）方法读取后才是文本对象
     first_line = text.split(':')
     # print(first_line)
+    if not first_line:
+        print("模拟器程序获取列表为空")
     while True:
         ab = first_line[i].replace('\r\n', '')
         cd = ab.split(' ')
@@ -285,7 +288,11 @@ def check_known_emulators():
                 ps = get_processes(e)
                 # print(ps)
                 for i in range(0, len(ps)):
+                    if ps[i].status() == "stopped":
+                        # print("进程不存活")
+                        continue
                     if str(get_port(ps[i].pid)) not in result:
+                        print("检测到【" + e.name + "】模拟器")
                         result.append(get_port(ps[i].pid))
                     # result = [5565]
                     # a = get_processes(e)
