@@ -321,7 +321,10 @@ class AsyncMixin(ToolsMixin):
 
             # 清理痕迹后需要重新登录账号
             if clear_traces_and_cache:
-                self.phone_privacy()
+                try:
+                    self.phone_privacy()
+                except Exception as e:
+                    print(e)
 
             self.lock_home()
 

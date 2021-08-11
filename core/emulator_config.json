@@ -78,11 +78,23 @@
         5555
       ],
       "desc": null,
-      "name": "BlueStacks蓝叠",
+      "name": "BlueStacks蓝叠国内版",
       "process_name": "HD-Player.exe",
       "re_port": null,
       "type": "HD-Player.exe",
       "unique_id": "Engine/ProgramFiles/HD-Player.exe",
+      "upload_tip_level": 0
+    },
+    {
+      "default_ports": [
+        5555
+      ],
+      "desc": null,
+      "name": "BlueStacks蓝叠国际版",
+      "process_name": "HD-Player.exe",
+      "re_port": null,
+      "type": "HD-Player.exe",
+      "unique_id": "Program Files/BlueStacks_nxt/HD-Player.exe",
       "upload_tip_level": 0
     }
   ]

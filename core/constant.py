@@ -219,13 +219,13 @@ HANGHUI_BTN = {
     "juanzengqingqiu": p(367, 39),
     "juanzeng": p(644, 385),
     # 组建行会（未加入公会）
-    "zujianhanghui": p(851, 442, img="img/zujianhanghui.bmp", at=(746, 426, 931, 464)),
+    "zujianhanghui": p(842, 446, img="img/zujianhanghui.bmp", at=(722, 418, 949, 475)),
     # 设定（加入行会）
     "sheding_join": p(860, 79, img="img/hanghui/sheding_join.bmp", at=(840, 68, 879, 89)),
     # 加入行会设定输入框
-    "input_join": p(370, 180, img="img/hanghui/input_join.bmp", at=(320, 165, 424, 191)),
+    "input_join": p(370, 145, img="img/hanghui/input_join.bmp", at=(317, 130, 448, 158)),
     # 搜索（加入行会，亮）注意，暗的时候为0.97，亮为0.99
-    "sousuo_join": p(589, 431, img="img/hanghui/sousuo_join.bmp", at=(506, 417, 663, 448)),
+    "sousuo_join": p(587, 482, img="img/hanghui/sousuo_join.bmp", at=(480, 451, 702, 507)),
     # 进入行会（从搜索界面）
     "in_join": p(890, 155, img="img/hanghui/in_join.bmp", at=(878, 126, 902, 185)),
     # 加入行会

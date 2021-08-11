@@ -133,6 +133,8 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
     def joinhanghui(self, clubname):  # 小号加入行会
+        # 应该废弃了
+        print("此功能或许已经废弃，转另一个版本")
         print('>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
         self.click(693, 430)  # 点击行会
         self.lock_img('img/zujianhanghui.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
@@ -153,20 +155,23 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
     def join_hanghui(self, clubname):
+        # 2021-8-11 CyiceK修了点bug
+        print('>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
         self.lock_home()
         # 进入
         self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["zujianhanghui"])
+        # 过剧情
+        self.lock_img(img=HANGHUI_BTN["zujianhanghui"], side_check=self.juqing_kkr)
         # 点击设定
         self.click_btn(HANGHUI_BTN["sheding_join"], elsedelay=1, until_appear=HANGHUI_BTN["input_join"])
         time.sleep(1)
         while 1:
-            # 搜索
+            # 点搜索文本框
             self.click_btn(HANGHUI_BTN["input_join"], until_disappear=None)
             time.sleep(1)
             self.d.send_keys(clubname)
             time.sleep(1)
-            self.click(1, 1)
-            time.sleep(1)
+            # self.click(1, 1) 点1,1干嘛
             # 此处必须为0.99
             if self.is_exists(HANGHUI_BTN["sousuo_join"], threshold=0.99):
                 # 搜索按钮点亮，点击搜索

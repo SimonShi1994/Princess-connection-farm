@@ -245,7 +245,7 @@ def get_port(PID):
         ab = first_line[i].replace('\r\n', '')
         cd = ab.split(' ')
         if cd[-1] == "0.0.0.0":
-            if "failed" in os.popen(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(' '):
+            if "failed" in os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(' '):
                 pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip + ':' + str(cd[0])}]失败，不是这个模拟器")
                 # os.system("taskkill /im adb.exe /f")
                 i += 1

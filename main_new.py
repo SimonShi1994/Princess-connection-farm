@@ -5,6 +5,7 @@ import requests
 from requests.adapters import HTTPAdapter
 
 from core.constant import USER_DEFAULT_DICT as UDD
+from core.emulator_port import check_known_emulators
 from core.initializer import PCRInitializer, Schedule
 from core.launcher import EMULATOR_DICT
 from core.pcr_config import *
@@ -515,7 +516,15 @@ if __name__ == "__main__":
             elif order == "break":
                 break
             elif order == "init":
-                os.system(f"cd {adb_dir} & adb start-server")
+                # os.system(f"cd {adb_dir} & adb start-server")
+                emulator_ip = "127.0.0.1"
+                port_list = set(check_known_emulators())
+                os.system("taskkill /im adb.exe /f")
+                # print(port_list)
+                print("自动搜寻模拟器：" + str(port_list))
+                for port in port_list:
+                    os.system(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(port))
+                os.system('python -m uiautomator2 init')
                 os.system(f"cd batches & ren *.txt *.json")
                 os.system(f"cd groups & ren *.txt *.json")
                 os.system(f"cd schedules & ren *.txt *.json")
