@@ -124,6 +124,7 @@ MAIN_BTN = {
     "tansuo_sytzcs": p(img="img/tansuo/sytzcs.bmp", at=(485, 432, 575, 452)),
     "tansuo_back": p(30, 32),
     "tansuo_saodangok2": p(472, 478, img="img/tansuo/jrtssy.bmp", at=(412, 462, 539, 487)),
+    "jrtssy2": p(829, 491, img="img/tansuo/jrtssy2.bmp", at=(756, 472, 900, 506)),
     "zdjjc": p(578, 402),
     "gzjjc": p(820, 395),
 
@@ -133,7 +134,7 @@ MAIN_BTN = {
     "karin_middle": p(img="img/girl/karin_middle.bmp", at=(410, 309, 572, 390)),
 
     # 右侧的kkr
-    "right_kkr": p(img="img/home/right_kkr.bmp", at=(27, 88, 922, 414)),
+    "right_kkr": p(img="img/home/right_kkr.bmp", at=(266, 74, 933, 463)),
 
     "xzcw": p(img="img/home/xzcw.bmp", at=(438, 135, 520, 157)),  # 下载错误
     # 女神祭

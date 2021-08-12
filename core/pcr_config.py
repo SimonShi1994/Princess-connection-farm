@@ -7,7 +7,13 @@ import sys
 from typing import Optional
 
 cfg = configparser.ConfigParser()
-cfg.read('config.ini', encoding="utf-8")
+try:
+    cfg.read('config.ini', encoding="utf-8")
+except configparser.MissingSectionHeaderError as e:
+    if "ufeff" in e.message:
+        cfg.read("config.ini", encoding="utf_8_sig")
+    else:
+        raise e
 
 # cfg.sections() 全部头
 # cfg.get('debug', 'trace_exception_for_debug')

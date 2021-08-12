@@ -32,10 +32,13 @@ class ZhuXianNormal(ZhuXianBase):
             cur_id = self.check_normal_id(sc)
         except ZhuxianIDRecognizeError as e:
             # 跳过大部分对话框
-            for _ in range(6):
-                self.click(1,1)
+            # for _ in range(6):
+            #     self.click(1,1)
+            # 重进，防止不显示
+            zhuye = self._a.get_zhuye()
+            zhuye.goto_maoxian().goto_normal()
             # 防止未更新图的情况
-            if self.is_exists(MAOXIAN_BTN["ditu"],screen=sc):
+            if self.is_exists(MAOXIAN_BTN["ditu"], screen=sc):
                 for _ in range(3):
                     self.goLeft()
             else:

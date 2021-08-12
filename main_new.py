@@ -15,7 +15,7 @@ from core.utils import is_ocr_running
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.6.20210811"
+script_version = "Ver 2.6.20210812"
 
 
 def GetLastSchedule():
@@ -497,6 +497,7 @@ if __name__ == "__main__":
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("edit 进入编辑模式                  qq QQ群")
+        print("adb 执行adb命令")
         print("data 进入数据中心")
         print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
@@ -515,6 +516,8 @@ if __name__ == "__main__":
                 ShowGuide()
             elif order == "break":
                 break
+            elif order == "adb":
+                os.system(f"cd {adb_dir} & {cmd}")
             elif order == "init":
                 # os.system(f"cd {adb_dir} & adb start-server")
                 emulator_ip = "127.0.0.1"

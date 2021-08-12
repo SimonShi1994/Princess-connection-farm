@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Union
 
-from core.constant import FIGHT_BTN, MAOXIAN_BTN
+from core.constant import FIGHT_BTN, MAOXIAN_BTN, MAIN_BTN
 from core.pcr_checker import LockError
 from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
 
@@ -38,7 +38,9 @@ class SaoDangJieGuo(PCRMsgBoxBase):
             a2 = self.is_exists(MAOXIAN_BTN["saodang_ok2"], screen=screen)
             self._last_see_ok2 = a2
             a3 = self.is_exists(MAOXIAN_BTN["saodang_tiaoguo"], is_black=True, screen=screen)
-            return a1 or a2 or a3
+            # For Tansuo:
+            a4 = self.is_exists(MAIN_BTN["tansuo_saodangok2"], screen=screen)
+            return a1 or a2 or a3 or a4
 
         self.initFC = None
         self.feature = feature

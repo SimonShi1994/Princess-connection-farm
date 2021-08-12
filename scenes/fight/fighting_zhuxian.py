@@ -108,9 +108,10 @@ class FightingWinZhuXian2(FightingWinBase):
 
     def win_feature(self, screen):
         from core.constant import p
-        huodedaoju = p(img="img/fight/huodedaoju.bmp", at=(442, 135, 514, 160))
-        xiayibu = p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502))
-        return self.is_exists(huodedaoju, screen=screen) and self.is_exists(xiayibu, screen=screen)
+        huodedaoju = self.is_exists(p(img="img/fight/huodedaoju.bmp", at=(442, 135, 514, 160)), screen=screen)
+        xiayibu = self.is_exists(p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502)), screen=screen)
+        jrtssy = self.is_exists(MAIN_BTN["jrtssy2"], screen=screen)
+        return huodedaoju and (xiayibu or jrtssy)
 
     def next(self):
         self.click(829, 485, post_delay=1)
