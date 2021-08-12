@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210811
+# Princess connection 公主连结农场脚本v2.6.20210812
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -193,6 +193,16 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/8/12 By TheAutumnOfRice
+
+- OCR刷图：
+  - 试图修复因为不显示图号导致的“进入失败”问题
+- OCR探索
+  - 修复可可萝出场被误识别为教程的问题
+  - 试图修复最后一次手动探索后右下角“进入探索首页”无法识别的问题
+- 控制台新增adb命令
+- config支持utf-8-bom解码
 
 2021/8/2 By TheAutumnOfRice
 
