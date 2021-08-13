@@ -15,7 +15,7 @@ from core.utils import is_ocr_running
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.6.20210812"
+script_version = "Ver 2.6.20210813"
 
 
 def GetLastSchedule():
@@ -519,7 +519,7 @@ if __name__ == "__main__":
             elif order == "adb":
                 os.system(f"cd {adb_dir} & {cmd}")
             elif order == "init":
-                # os.system(f"cd {adb_dir} & adb start-server")
+                os.system(f"cd {adb_dir} & adb start-server")
                 emulator_ip = "127.0.0.1"
                 port_list = set(check_known_emulators())
                 os.system("taskkill /im adb.exe /f")
