@@ -141,7 +141,7 @@ class RoutineMixin(ShuatuBaseMixin):
     def shouqu(self):  # 收取全部礼物
         # 2020-08-06 TheAutumnOfRice: 检查完毕
         self.lock_home()
-        self.click_btn(MAIN_BTN["liwu"], until_appear=LIWU_BTN["shouqulvli"])
+        self.click_btn(MAIN_BTN["liwu"], until_appear=LIWU_BTN["shouqulvli"], retry=8)
         state = self.lock_img({LIWU_BTN["ok"]: True, LIWU_BTN["meiyouliwu"]: False},
                               elseclick=LIWU_BTN["quanbushouqu"], retry=2, elsedelay=8)
         if state:
