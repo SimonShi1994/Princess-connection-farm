@@ -567,6 +567,7 @@ class RoutineMixin(ShuatuBaseMixin):
 
         tansuo_fun("J")
         tansuo_fun("M")
+        ts["tansuo"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
 

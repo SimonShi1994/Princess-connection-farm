@@ -279,7 +279,7 @@ HANGHUI_BTN = {
     # 成员管理(第一个)
     "chengyuanguanli_first": p(727, 191, img="img/hanghui/chengyuanguanli.bmp", at=(701, 185, 768, 211)),
     # 开除
-    "kaichu": p(647, 170, img="img/hanghui/kaichu.bmp", at=(627, 161, 668, 181)),
+    "kaichu": p(647, 170, img="img/hanghui/kaichu.bmp", at=(627, 159, 668, 182)),
     # 行会确认
     "hanghui_ok": p(605, 365, img="img/hanghui/hanghui_ok.bmp", at=(554, 353, 630, 382)),
     # 请求捐赠装备
