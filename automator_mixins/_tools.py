@@ -723,6 +723,8 @@ class ToolsMixin(BaseMixin):
         mv = movevar(var)
 
         def get_stars(screen=None):
+            if screen is None:
+                screen = self.getscreen()
             from core.constant import PCRelement as p
             five_stars = {
                 1: p(170, 337),
@@ -734,18 +736,26 @@ class ToolsMixin(BaseMixin):
             return int(self.count_stars(five_stars, screen))
 
         def get_level(screen=None):
+            if screen is None:
+                screen = self.getscreen()
             at = (259, 416, 291, 433)
             return make_it_as_number_as_possible(self.ocr_center(*at, screen))
 
         def get_haogan(screen=None):
+            if screen is None:
+                screen = self.getscreen()
             at = (271, 390, 291, 405)
             return make_it_as_number_as_possible(self.ocr_center(*at, screen))
 
         def get_zhanli(screen=None):
+            if screen is None:
+                screen = self.getscreen()
             at = (830, 261, 894, 275)
             return make_it_as_number_as_possible(self.ocr_center(*at, screen))
 
         def get_name(screen=None):
+            if screen is None:
+                screen = self.getscreen()
             data = self._load_data_cache()
             at = (483, 119, 760, 141)
             ori_out = self.ocr_center(*at, screen)

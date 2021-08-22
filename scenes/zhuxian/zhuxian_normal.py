@@ -20,7 +20,7 @@ class ZhuXianNormal(ZhuXianBase):
     def check_normal_id(self, screen=None):
         return self.check_zhuxian_id(screen)
 
-    @PCRRetry("select_normal", 5, raise_return=False, delay=2)
+    @PCRRetry(None, 5, raise_return=False, delay=2)
     def select_normal_id(self, id):
         """
         走到normal的几图
