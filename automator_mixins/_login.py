@@ -89,8 +89,10 @@ class LoginMixin(BaseMixin):
         self.d.send_keys(str(pwd))
         time.sleep(random.uniform(0.2, 2))
         self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
+        time.sleep(0.5)
         toast_message = self.d.toast.get_message()
-        if toast_message is "密码错误":
+        # print(toast_message)
+        if toast_message == "密码错误":
             raise Exception("密码错误！")
         while True:
             # 快速响应
