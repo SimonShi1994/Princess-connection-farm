@@ -187,7 +187,10 @@ class Pcr_Downloader:
                         print('>>>config由于特殊性，请自行对比更新目录下config_old，自行替换更新')
                         shutil.copy('config.ini', dst + '/config_old.ini')
                     else:
-                        shutil.copytree(fn, dst + '/' + fn)
+                        if os.path.isfile(fn):
+                            shutil.copy(fn, dst + '/' + fn)
+                        elif os.path.isdir(fn):
+                            shutil.copytree(fn, dst + '/' + fn)
                 except Exception as e:
                     print(e, '在迁移当前文件的过程中发生了意外的错误，程序终止！')
                     self.abortion()
