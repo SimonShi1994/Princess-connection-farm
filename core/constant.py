@@ -206,8 +206,10 @@ NIUDAN_BTN = {
     "PT_reset_ok": p(479, 365),
     "putong": p(862, 71),
     "putong_mianfei": p(717, 364, img="img/niudan/putong_mianfei.bmp", at=(650, 340, 750, 400)),
-    "putong_quxiao": p(370, 433, img="img/ui/quxiao.bmp", at=(220, 229, 754, 482)),
-    "putong_ok": p(588, 436, img="img/ui/ok_btn_1.bmp", at=(220, 229, 754, 482)),
+    "putong_quxiao": p(367, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
+    "putong_ok": p(591, 360, img="img/ui/ok_btn_1.bmp", at=(493, 347, 688, 387)),
+    "putong_quxiao_new": p(370, 433, img="img/ui/quxiao.bmp", at=(220, 229, 754, 482)),
+    "putong_ok_new": p(588, 436, img="img/ui/ok_btn_1.bmp", at=(220, 229, 754, 482)),
     "niudanjieguo_ok": p(481, 443, img="img/ui/ok_btn_2.bmp", at=(383, 423, 597, 462)),
     "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(610, 320, 750, 450)),
     "niudan_shilian": p(872, 355),
@@ -224,9 +226,9 @@ HANGHUI_BTN = {
     # 设定（加入行会）
     "sheding_join": p(860, 79, img="img/hanghui/sheding_join.bmp", at=(840, 68, 879, 89)),
     # 加入行会设定输入框
-    "input_join": p(370, 145, img="img/hanghui/input_join.bmp", at=(317, 130, 448, 158)),
-    # 搜索（加入行会，亮）注意，暗的时候为0.97，亮为0.99
-    "sousuo_join": p(587, 482, img="img/hanghui/sousuo_join.bmp", at=(480, 451, 702, 507)),
+    "input_join": p(370, 145, img="img/hanghui/input_join.bmp", at=(303, 86, 458, 124)),
+    # 搜索（加入行会蓝条）
+    "sousuo_join": p(587, 482, img="img/hanghui/sousuo_join.bmp", at=(480, 447, 702, 507)),
     # 进入行会（从搜索界面）
     "in_join": p(890, 155, img="img/hanghui/in_join.bmp", at=(878, 126, 902, 185)),
     # 加入行会
@@ -280,8 +282,8 @@ HANGHUI_BTN = {
     "chengyuanguanli_first": p(727, 191, img="img/hanghui/chengyuanguanli.bmp", at=(701, 185, 768, 211)),
     # 开除
     "kaichu": p(647, 170, img="img/hanghui/kaichu.bmp", at=(627, 159, 668, 182)),
-    # 行会确认
-    "hanghui_ok": p(605, 365, img="img/hanghui/hanghui_ok.bmp", at=(554, 353, 630, 382)),
+    # 行会确认（这里兼顾了两个不同的ok，一个正中，一个偏右）
+    "hanghui_ok": p(514, 371, img="img/hanghui/hanghui_ok.bmp", at=(243, 332, 708, 403)),
     # 请求捐赠装备
     "qqjzzb": p(404, 431, img="img/hanghui/qqzjzb.bmp", at=(342, 419, 460, 440)),
     # 发起捐赠请求

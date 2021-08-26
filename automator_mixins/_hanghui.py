@@ -171,7 +171,7 @@ class HanghuiMixin(ToolsMixin):
             time.sleep(1)
             self.d.send_keys(clubname)
             time.sleep(1)
-            # self.click(1, 1) 点1,1干嘛
+            self.click(1, 1)  # 点1,1干嘛
             # 此处必须为0.99
             if self.is_exists(HANGHUI_BTN["sousuo_join"], threshold=0.99):
                 # 搜索按钮点亮，点击搜索
@@ -179,7 +179,7 @@ class HanghuiMixin(ToolsMixin):
                 break
         # 进入行会
         self.click_btn(HANGHUI_BTN["in_join"], until_appear=HANGHUI_BTN["join_btn"], elsedelay=1)
-        # 点击加入
+        # 点击加入 加入行会！不是申请加入！
         self.click_btn(HANGHUI_BTN["join_btn"], until_appear=HANGHUI_BTN["hanghui_ok"], elsedelay=1)
         # 确认
         self.click_btn(HANGHUI_BTN["hanghui_ok"], elsedelay=1)
