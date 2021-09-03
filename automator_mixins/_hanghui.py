@@ -437,7 +437,7 @@ class HanghuiMixin(ToolsMixin):
         """
         self.lock_home()
         if not self.lock_img(img=TUANDUIZHAN_BTN["tuanduizhan"], ifclick=(875, 272),
-                             elseclick=(478, 519), side_check=self.juqing_kkr, retry=7):
+                             elseclick=(478, 519), elsedelay=5, side_check=self.juqing_kkr, retry=3):
             pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战哦")
             return
         while True:
@@ -466,7 +466,7 @@ class HanghuiMixin(ToolsMixin):
         def tiaozhan() -> bool:
             # 非主流写法，内部方法
             while True:
-                self.lock_img(TUANDUIZHAN_BTN["tiaozhan"], ifclick=[(833, 462)], side_check=self.juqing_kkr)
+                self.lock_img(TUANDUIZHAN_BTN["tiaozhan"], ifclick=[(833, 462)], side_check=self.juqing_kkr, retry=3)
                 self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=3)
                 if self.is_exists(TUANDUIZHAN_BTN["guanbi"]):
                     self.click(TUANDUIZHAN_BTN["guanbi"])
@@ -483,8 +483,7 @@ class HanghuiMixin(ToolsMixin):
                     if not self.is_exists(DXC_ELEMENT["zhiyuan_gouxuan"]):
                         for i in range(1, 9):
                             self.click(DXC_ELEMENT["zhiyuan_dianren"][i])
-                            break
-                    else:
+
                         # 点完人后确认一遍
                         if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True,
                                           black_threshold=1400):
@@ -495,14 +494,14 @@ class HanghuiMixin(ToolsMixin):
                 elif self.is_exists('img/dxc/zhandoukaishi.bmp', at=(758, 423, 915, 473)):
                     return True
 
-        state = tiaozhan()
-
-        if not state:
-            return
-
         while True:
+            # 战斗检测
+            state = tiaozhan()
+            if not state:
+                return
             # 战斗开始
-            self.click_btn(DXC_ELEMENT["zhandoukaishi"], until_disappear=DXC_ELEMENT["zhandoukaishi"], elsedelay=0.1)
+            self.click_btn(DXC_ELEMENT["zhandoukaishi"], until_disappear=DXC_ELEMENT["zhandoukaishi"], elsedelay=0.1,
+                           retry=4)
 
             if self.lock_img(TUANDUIZHAN_BTN["zhandou"], retry=7):
                 # 战斗
