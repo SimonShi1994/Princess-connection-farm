@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210822
+# Princess connection 公主连结农场脚本v2.6.20210903
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -193,6 +193,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/8/26 By CyiceK
+
+- 修复bugs:1.免费十连位置偏移 2.刷图函数报错 3.更新系统判断问题
+- 修复登陆密码错误toast判断
+- 修复免费扭蛋、加入行会h8
 
 2021/8/22 By TheAutumnOfRice
 

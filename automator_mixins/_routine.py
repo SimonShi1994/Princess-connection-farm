@@ -121,8 +121,8 @@ class RoutineMixin(ShuatuBaseMixin):
 
         screen_shot_ = self.getscreen()
         if self.is_exists(screen=screen_shot_, img=NIUDAN_BTN["mianfeishilian"]):  # 仅当有免费十连时抽取免费十连
-            self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao"])
-            self.click_btn(NIUDAN_BTN["putong_ok"], until_disappear=NIUDAN_BTN["putong_ok"])
+            self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
+            self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
             time.sleep(1.5)
             self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
             # self.click(872, 355)  # 点击十连

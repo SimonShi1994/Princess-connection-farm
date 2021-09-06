@@ -1,6 +1,7 @@
 """
 新的启动函数，支持Batch，schedule操作等。
 """
+import gc
 import multiprocessing
 import pathlib
 import sys
@@ -779,6 +780,7 @@ class PCRInitializer:
                 self.write_log(
                     f"账号{account}执行失败！设备：{msg['device']} 状态：{AutomatorRecorder.get_user_state(account, rec_addr)}")
             else:
+                gc.collect()
                 self.write_log(f"账号{account}执行成功！")
         elif msg["status"] == "start":
             self.write_log(f"账号{account}开始执行，设备：{msg['device']} 进度存储目录 {rec_addr}")

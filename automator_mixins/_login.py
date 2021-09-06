@@ -1,4 +1,3 @@
-import gc
 import random
 import time
 
@@ -89,9 +88,13 @@ class LoginMixin(BaseMixin):
         self.d.send_keys(str(pwd))
         time.sleep(random.uniform(0.2, 2))
         self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
+        # time.sleep(0.5)
         toast_message = self.d.toast.get_message()
-        if toast_message is "密码错误":
+        # print(toast_message)
+        if toast_message == "密码错误":
             raise Exception("密码错误！")
+        elif toast_message == "账号异常":
+            raise Exception("账号异常！")
         while True:
             # 快速响应
             # 很容易在这里卡住
@@ -455,6 +458,5 @@ class LoginMixin(BaseMixin):
         self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
         # 设备匿名
         self.phone_privacy()
-        gc.collect()
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
         # pcr_log(self.account).server_bot("warning", "%s账号完成任务" % self.account)
