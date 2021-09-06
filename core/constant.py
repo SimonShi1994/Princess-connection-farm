@@ -55,6 +55,11 @@ START_UI = {
     "imgbox": p(at=(354, 152, 613, 366)),
 }
 
+
+HAOYOU_BTN = {
+    "hysqqr":p(img="img/haoyou/hysqqr.bmp",at=(414,28,542,56)),
+}
+
 # 主页面的按钮对象
 MAIN_BTN = {
     # 下载
@@ -322,7 +327,7 @@ TUANDUIZHAN_BTN = {
     "guanbi": p(430, 487, img="img/hanghui/close_btn_1.bmp", at=(199, 393, 742, 526)),
 }
 ZHUCAIDAN_BTN = {
-    "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(699, 198, 915, 255)),
+    "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(52, 293, 253, 335)),
     "jianjie": p(img="img/zhucaidan/jianjie.bmp", at=(267, 241, 499, 290)),
     "daoju": p(475, 160, img="img/zhucaidan/daoju.bmp", at=(475, 112, 610, 187)),
     "saodangquan": p(img="img/zhucaidan/saodangquan.bmp"),
@@ -747,10 +752,12 @@ SHOP_BTN = {
 MAOXIAN_BTN = {
     "bianzusheding": p(img="img/maoxian/bianzusheding.bmp", at=(373, 124, 590, 164)),
     "bianzusheding_ok": p(436, 162),
-    "normal_on": p(699, 85, img="img/maoxian/normal_on.bmp", at=(662, 74, 739, 96)),
+    "normal_on": p(581,85,img="img/maoxian/normal_on.bmp",at=(542,74,623,95)),
     "normal_off": p(699, 85, img="img/maoxian/normal_off.bmp", at=(661, 74, 740, 97)),
-    "hard_on": p(820, 84, img="img/maoxian/hard_on.bmp", at=(781, 74, 862, 93)),
-    "hard_off": p(820, 84, img="img/maoxian/hard_off.bmp", at=(778, 74, 866, 95)),
+    "hard_on": p(698,84,img="img/maoxian/hard_on.bmp",at=(671,73,730,93)),
+    "hard_off": p(699,84,img="img/maoxian/hard_off.bmp",at=(672,76,729,92)),
+    "vh_off":p(816,85,img="img/maoxian/vh_off.bmp",at=(773,75,867,93)),
+    "vh_on":p(819,85,img="img/maoxian/vh_on.bmp",at=(777,75,866,94)),
     "hard_0_3": p(img="img/maoxian/hard_0_3.bmp", at=(887, 402, 919, 422)),  # 剩余挑战次数0/3
     "ditu": p(img="img/maoxian/ditu.bmp", at=(906, 64, 930, 106)),
     "tili_bar": p(at=(529, 32, 637, 38), fc=(255, 215, 99), bc=(90, 101, 115)),

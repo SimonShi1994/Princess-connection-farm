@@ -203,9 +203,15 @@ class BaseMixin:
     def _raise(self, e: Type[PCRError], *args, screen_log=True, text_log=True, error_dir=None):
         raise e(*args, automator=self, screen_log=screen_log, text_log=text_log, error_dir=error_dir)
 
-    def check_ocr_running(self):
-        # 以后可能会用
-        return True
+    def check_ocr_running(self,is_raise= True):
+        try:
+            requests.get(url="http://127.0.0.1:5000/ocr/", timeout=1)
+            return True
+        except:
+            if is_raise:
+                raise Exception("app.py未开启！无法使用OCR功能。")
+            else:
+                return False
 
     @DEBUG_RECORD
     def init_fastscreen(self):
