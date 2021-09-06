@@ -14,6 +14,7 @@ from ._base import BaseMixin
 from ._base import DEBUG_RECORD
 from ._captcha import CaptionSkip
 
+class BadLoginException(Exception):pass
 
 class LoginMixin(BaseMixin):
     """
@@ -92,9 +93,9 @@ class LoginMixin(BaseMixin):
         toast_message = self.d.toast.get_message()
         # print(toast_message)
         if toast_message == "密码错误":
-            raise Exception("密码错误！")
+            raise BadLoginException("密码错误！")
         elif toast_message == "账号异常":
-            raise Exception("账号异常！")
+            raise BadLoginException("账号异常！")
         while True:
             # 快速响应
             # 很容易在这里卡住
@@ -373,63 +374,95 @@ class LoginMixin(BaseMixin):
         :param auth_id:
         :return:
         """
-        if self.d(textContains="还剩1次实名认证机会").exists():
-            self.log.write_log("error", message='%s账号实名仅剩1次验证机会了！' % self.account)
-            raise Exception("实名仅剩1次验证机会了！")
-        time.sleep(5)
-        self._move_check()
-        # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
-        self.click(464, 205)
-        # self.d.xpath(
-        #     '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View['
-        #     '1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[1]').click()
-        self._move_check()
-        self.d.clear_text()
-        self._move_check()
-        self.d.send_keys(str(auth_name))
-        self._move_check()
-        self.click(464, 280)
-        # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_id_number").click()
-        # self.d.xpath(
-        #     '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View['
-        #     '1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[2]').click()
-        self._move_check()
-        self.d.clear_text()
-        self._move_check()
-        self.d.send_keys(str(auth_id))
-        self._move_check()
-        if self.d(text="提交实名").exists():
-            self.d.xpath('//*[@text="提交实名"]').click()
-            # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
-            self._move_check()
-            # self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
 
-        if self.d(text="我知道了").exists():
-            self._move_check()
-            self.d(text="我知道了").click()
-            time.sleep(3)
-        else:
-            # 阿B实名界面有两个。。。xpath在u2全局查找元素点击上有adb爆炸的bug，先用这个凑合着吧
+
+        ORIGIN_MODE = True  # css炸裂之前的版本，设置为True后应付CSS炸裂之后的版本
+
+        if ORIGIN_MODE:
             if self.d(textContains="还剩1次实名认证机会").exists():
                 self.log.write_log("error", message='%s账号实名仅剩1次验证机会了！' % self.account)
                 raise Exception("实名仅剩1次验证机会了！")
             time.sleep(5)
             self._move_check()
-            self.click(464, 285)
+            # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_name").click()
+            self.click(464, 205)
+            # self.d.xpath(
+            #     '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View['
+            #     '1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[1]').click()
             self._move_check()
             self.d.clear_text()
             self._move_check()
             self.d.send_keys(str(auth_name))
             self._move_check()
-            self.click(464, 360)
+            self.click(464, 280)
+            # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_edit_authentication_id_number").click()
+            # self.d.xpath(
+            #     '//android.widget.RelativeLayout/android.webkit.WebView[1]/android.webkit.WebView[1]/android.view.View['
+            #     '1]/android.view.View[1]/android.view.View[4]/android.widget.EditText[2]').click()
             self._move_check()
             self.d.clear_text()
             self._move_check()
             self.d.send_keys(str(auth_id))
             self._move_check()
-            self.d.xpath('//*[@text="提交实名"]').click()
+            if self.d(text="提交实名").exists():
+                self.d.xpath('//*[@text="提交实名"]').click()
+                # self.d(resourceId="com.bilibili.priconne:id/bsgamesdk_authentication_submit").click()
+                self._move_check()
+                # self.d(resourceId="com.bilibili.priconne:id/bagamesdk_auth_success_comfirm").click()
+
+            if self.d(text="我知道了").exists():
+                self._move_check()
+                self.d(text="我知道了").click()
+                time.sleep(3)
+            else:
+                # 阿B实名界面有两个。。。xpath在u2全局查找元素点击上有adb爆炸的bug，先用这个凑合着吧
+                if self.d(textContains="还剩1次实名认证机会").exists():
+                    self.log.write_log("error", message='%s账号实名仅剩1次验证机会了！' % self.account)
+                    raise Exception("实名仅剩1次验证机会了！")
+                time.sleep(5)
+                self._move_check()
+                self.click(464, 285)
+                self._move_check()
+                self.d.clear_text()
+                self._move_check()
+                self.d.send_keys(str(auth_name))
+                self._move_check()
+                self.click(464, 360)
+                self._move_check()
+                self.d.clear_text()
+                self._move_check()
+                self.d.send_keys(str(auth_id))
+                self._move_check()
+                self.d.xpath('//*[@text="提交实名"]').click()
+                self._move_check()
+                self.d(text="我知道了").click()
+        else:
+
+            # CSS炸裂，变大
+            if self.d(textContains="还剩1次实名认证机会").exists():
+                self.log.write_log("error", message='%s账号实名仅剩1次验证机会了！' % self.account)
+                raise Exception("实名仅剩1次验证机会了！")
+            time.sleep(5)
             self._move_check()
-            self.d(text="我知道了").click()
+            self.d.drag(827, 488, 827, 80, 0.1)
+            self._move_check()
+            self.d.drag(827, 488, 827, 80, 0.1)
+            self.click(431,91)
+            self._move_check()
+            self.d.clear_text()
+            self._move_check()
+            self.d.send_keys(str(auth_name))
+            self._move_check()
+            self.click(460,217)
+            self._move_check()
+            self.d.clear_text()
+            self._move_check()
+            self.d.send_keys(str(auth_id))
+            self._move_check()
+            self.click(469, 364)  # 提交实名
+            time.sleep(3)
+            self.click(475, 407)
+
 
     @timeout(300, "login_auth登录超时，超过5分钟")
     @DEBUG_RECORD

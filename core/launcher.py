@@ -162,6 +162,74 @@ class LDLauncher(LauncherBase):
             return all[id].is_running()
 
 
+
+class BSLauncher(LauncherBase):
+    def __init__(self):
+        self.console_str = emulator_console
+
+    def id_to_serial(self, id: int) -> str:
+        if auto_emulator_address:
+            return f"emulator-{5554 + id * 10}"
+        else:
+            return emulator_address[id]
+
+    def launch(self, id: int, block: bool = False) -> None:
+        cmd = f"{self.console_str} launch --index {id}"
+        subprocess.check_call(cmd)
+
+        if len(emulator_id) == 0:
+            block = False
+
+        if block:
+            last_time = time.time()
+            while not self.is_running(id) and time.time() - last_time < wait_for_launch_time:
+                time.sleep(1)
+
+    def quit(self, id: int) -> None:
+        cmd = f"{self.console_str} quit --index {id}"
+        subprocess.check_call(cmd)
+        time.sleep(3)
+
+    def get_list(self):
+        # 获取模拟器列表
+        cmd = f"{self.console_str} list"
+        text = subprocess.check_output(cmd).decode("gbk")
+        info_list = text.split('\n')
+        device_list = []
+        for i in info_list:
+            if len(i)>0:
+                device_list.append(i)  # Careful: Empty Lines.
+        return device_list
+
+    def get_running_list(self):
+        # 获取运行中模拟器列表
+        cmd = f"{self.console_str} runninglist"
+        text = subprocess.check_output(cmd).decode("gbk")
+        info_list = text.split('\n')
+        device_list = []
+        for i in info_list:
+            if len(i)>0:
+                device_list.append(i)  # Careful: Empty Lines.
+        return device_list
+
+    def is_running(self, id: int) -> bool:
+        running_ids = {}
+        try:
+            all = self.get_list()
+            run = self.get_running_list()
+            for ind,device_name in enumerate(all):
+                running_ids[ind]=device_name in run
+            if id >= len(all):
+                return False
+            else:
+                return running_ids[id]
+
+        except Exception as e:
+            print("WARNING: ", e)
+            return False
+
+
 EMULATOR_DICT = {
     "雷电": LDLauncher,
+    "蓝叠": BSLauncher,
 }

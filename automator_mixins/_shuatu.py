@@ -868,6 +868,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             若为"none"：不换人
         :param _use_daily: 开启后，统计体力使用次数以及每个图刷过的次数（兼容shuatuNN）
         """
+        self.check_ocr_running()
         # 每日更新
         from core.utils import diffday
         mv = movevar(var)

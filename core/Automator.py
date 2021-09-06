@@ -10,7 +10,7 @@ from automator_mixins._base import BaseMixin, ForceKillException, FastScreencutE
 from automator_mixins._dxc import DXCMixin
 from automator_mixins._hanghui import HanghuiMixin
 from automator_mixins._jjc import JJCMixin
-from automator_mixins._login import LoginMixin
+from automator_mixins._login import LoginMixin, BadLoginException
 from automator_mixins._routine import RoutineMixin
 from automator_mixins._shuatu import ShuatuMixin
 from automator_mixins._tools import ToolsMixin
@@ -192,6 +192,11 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             except ReadTimeoutException as e:
                 pcr_log(account).write_log('error', message=f'main-检测到连接超时，{str(e)}，尝试重新连接……')
                 self.init_device(self.address)
+            except BadLoginException as e:
+                pcr_log(account).write_log('error', message=f'main-严重登录错误，{e}跳过账号！')
+                self.task_error(str(e))
+                self.fix_reboot(False)
+                return False
             except Exception as e:
                 retry += 1
                 try:

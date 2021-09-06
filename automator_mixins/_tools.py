@@ -82,6 +82,7 @@ class ToolsMixin(BaseMixin):
     @DEBUG_RECORD
     def init_home(self):
         # 2020-07-31 TheAutumnOfRice: 检查完毕
+        cnt = 0
         while True:
             time.sleep(2)
             screen_shot_ = self.getscreen()
@@ -98,6 +99,12 @@ class ToolsMixin(BaseMixin):
                 self.click(786, 308, post_delay=0.2)  # 选角色
                 self.click(842, 491)  # 开始
                 continue
+            num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
+            if num_of_white < 77000:
+                cnt += 1
+                time.sleep(3)  # 防止黑屏错误识别
+                if cnt>=3:
+                    self.chulijiaocheng(None)  # 增加对教程的处理功能
             try:
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
                 if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
