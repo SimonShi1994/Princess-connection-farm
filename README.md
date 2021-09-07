@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20210907
+# Princess connection 公主连结农场脚本v2.6.20210907.2
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -200,6 +200,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - 尝试新增蓝叠的自启动
 - 修复OCR刷图的问题
 - 密码错误和账号异常现在不会多次重启
+- Ver. 0907.2 修复主线一直点Normal
 
 2021/8/26 By CyiceK
 

@@ -753,7 +753,7 @@ MAOXIAN_BTN = {
     "bianzusheding": p(img="img/maoxian/bianzusheding.bmp", at=(373, 124, 590, 164)),
     "bianzusheding_ok": p(436, 162),
     "normal_on": p(581,85,img="img/maoxian/normal_on.bmp",at=(542,74,623,95)),
-    "normal_off": p(699, 85, img="img/maoxian/normal_off.bmp", at=(661, 74, 740, 97)),
+    "normal_off":p(578,84,img="img/maoxian/normal_off.bmp",at=(544,73,617,95)),
     "hard_on": p(698,84,img="img/maoxian/hard_on.bmp",at=(671,73,730,93)),
     "hard_off": p(699,84,img="img/maoxian/hard_off.bmp",at=(672,76,729,92)),
     "vh_off":p(816,85,img="img/maoxian/vh_off.bmp",at=(773,75,867,93)),
