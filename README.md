@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.6.20210907.2
+# Princess connection 公主连结农场脚本v2.7.20210910
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -55,15 +55,15 @@
 - [x] 购买mana
 - [x] 购买经验
 - [x] 探索
-- [x] 圣迹调查
-- [x] 收取女神祭
+- [ ] 圣迹调查
+- [ ] 收取女神祭
 
 5. 工具
 
-- [x] 账号重命名
+- [ ] 账号重命名
 - [x] box截图
-- [x] OCR获取账号信息
-- [x] 卖出过量装备
+- [ ] OCR获取账号信息
+- [ ] 卖出过量装备
 - [x] 暂停手操
 - [x] 库存识别 （仅限装备）
 - [x] 角色识别
@@ -72,8 +72,10 @@
 
 - [x] 刷经验
 - [x] 副本扫荡
-- [x] 初始化
-- [x] 自动推图
+- [ ] 初始化
+- [ ] 自动推图
+- [ ] 自动升级  
+- [x] 借人推图
 
 ## :globe_with_meridians:环境
 
@@ -193,6 +195,18 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/9/10 By TheAutumnOfRice
+
+- 新增主线借人。
+  - 新增快速借人(s10)，借人推图(s11-n,s11-h)，
+  - OCR推图支持借人参数 (s9,s7-a-ocr,s7-ocr)
+- 新增好友模块 (HaoYouMixin)
+  - 新增好友申请(f1)，好友通过(f2)
+  
+- 修复六星开花下无法角色识别(t7)的问题
+- 修复OCR通关地下城(d5)满人编组后无法借人的问题
+  
 
 2021/9/7 By TheAutumnOfRice
 

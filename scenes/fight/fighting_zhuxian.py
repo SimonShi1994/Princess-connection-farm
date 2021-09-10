@@ -1,6 +1,8 @@
+import time
 from typing import TYPE_CHECKING, Union, Type
 
-from core.constant import MAIN_BTN, DXC_ELEMENT
+from core.constant import MAIN_BTN, DXC_ELEMENT, HAOYOU_BTN
+from core.pcr_checker import LockTimeoutError
 from scenes.fight.fighting_base import FightingBase, FightingWinBase, FightingLoseBase
 from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
 
@@ -17,6 +19,99 @@ class FightingZhuXian(FightingBase):
     def get_during(self) -> "DuringFightingZhuXian":
         return DuringFightingZhuXian(self._a)
 
+    def auto_and_fast(self,max_speed=1):
+        super().auto_and_fast(max_speed=max_speed)
+
+    def wait_for_end_and_return(self,
+                                zhuxian_type,
+                                xianding=False,
+                                max_fight_time = 300,):
+        """
+        :param zhuxian_type: 返回什么场景
+        :param xianding: 是否买空限定商店
+        :param max_fight_time: 最大战斗时间
+        return: state dict{
+            flag:  "win" / "lose"
+            star: if win: 1~3
+        }
+        """
+        dur = self.get_during()
+        last_time = time.time()
+        state = {"flag": None}
+
+        while True:
+            if time.time()-last_time > max_fight_time:
+                raise LockTimeoutError(f"战斗超时！超过{max_fight_time}秒。")
+            out = dur.check()
+            if out is None:
+                continue
+            if isinstance(out,dur.LoveUpScene):
+                out.skip()
+            if isinstance(out,dur.FightingLoseZhuXian):
+                state["flag"] = "lose"
+                out.goto_zhuxian(zhuxian_type)
+                break
+            if isinstance(out,dur.FightingWinZhuXian):
+                state["flag"] = "win"
+                state["star"] = out.get_star()
+                state["next"] = out.get_after()
+                out.next()
+                break
+            if isinstance(out, dur.FightingDialog):
+                out.skip()
+            if isinstance(out,dur.HaoYouMsg):
+                out.exit_with_off()
+
+        if state["flag"] == "win":
+            last_time = time.time()
+            next = state["next"]
+            while True:
+                if time.time() - last_time > 120:
+                    raise LockTimeoutError("在结算页面超时！")
+                out = next.check()
+                if out is None:
+                    break
+                if isinstance(out, next.XianDingShangDianBox):
+                    # 限定商店
+                    if xianding:
+                        shop = out.Go()
+                        shop.buy_all()
+                        shop.back()
+                        break
+                    else:
+                        out.Cancel()
+                if isinstance(out, next.TuanDuiZhanBox):
+                    out.OK()
+                if isinstance(out, next.LevelUpBox):
+                    out.OK()
+                    self._a.start_shuatu()  # 体力又有了！
+                if isinstance(out, next.ChaoChuShangXianBox):
+                    out.OK()
+                if isinstance(out, next.AfterFightKKR):
+                    out.skip()
+                    # 再次进图
+                    self._a.get_zhuye().goto_maoxian().goto_zhuxian()
+                    break
+                if isinstance(out, next.FightingWinZhuXian2):
+                    # 外出后可能还有Box，需要小心谨慎
+                    out.next()
+        return state
+
+    def wait_for_end_and_return_normal(self,
+                                xianding=False,
+                                max_fight_time = 300,):
+        from scenes.zhuxian.zhuxian_normal import ZhuXianNormal
+        return self.wait_for_end_and_return(ZhuXianNormal,xianding=xianding,max_fight_time=max_fight_time)
+
+
+class HaoYouMsg(PCRMsgBoxBase):
+    def __init__(self,a):
+        super().__init__(a)
+        self.feature = self.fun_feature_exist(HAOYOU_BTN["hysqqr"])
+    def exit_with_off(self):
+        self.click(396,383,post_delay=2)
+        self.exit(self.fun_click(369,476))
+
 
 class DuringFightingZhuXian(PossibleSceneList):
     def __init__(self, a, *args, **kwargs):
@@ -24,11 +119,14 @@ class DuringFightingZhuXian(PossibleSceneList):
         self.FightingWinZhuXian = FightingWinZhuXian
         self.FightingLoseZhuXian = FightingLoseZhuXian
         self.FightingDialog = FightingDialog
+        self.HaoYouMsg = HaoYouMsg
+
         scene_list = [
             LoveUpScene(a),
             FightingWinZhuXian(a),
             FightingLoseZhuXian(a),
             FightingDialog(a),
+            HaoYouMsg(a),
         ]
         super().__init__(a, scene_list, double_check=0)
 
@@ -111,7 +209,7 @@ class FightingWinZhuXian2(FightingWinBase):
         huodedaoju = self.is_exists(p(img="img/fight/huodedaoju.bmp", at=(442, 135, 514, 160)), screen=screen)
         xiayibu = self.is_exists(p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502)), screen=screen)
         jrtssy = self.is_exists(MAIN_BTN["jrtssy2"], screen=screen)
-        return huodedaoju and (xiayibu or jrtssy)
+        return huodedaoju or (xiayibu or jrtssy)
 
     def next(self):
         self.click(829, 485, post_delay=1)

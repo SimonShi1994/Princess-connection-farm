@@ -4,7 +4,7 @@ from math import inf
 import numpy as np
 
 from automator_mixins._base import DEBUG_RECORD
-from core.constant import MAOXIAN_BTN, FIGHT_BTN
+from core.constant import MAOXIAN_BTN, FIGHT_BTN, NORMAL_COORD, HARD_COORD
 from core.pcr_checker import LockMaxRetryError
 from core.pcr_config import save_debug_img, ocr_mode
 from scenes.fight.fightbianzu_zhuxian import FightBianZuZhuXian
@@ -60,12 +60,18 @@ class FightInfoBase(PCRMsgBoxBase):
         out = self.ocr_int(*at, screen_shot=screen)
         return out
 
+    def no_tili_for_one_fight(self,screen=None):
+        if screen is None:
+            screen = self.getscreen()
+        return self.is_exists(MAOXIAN_BTN["no_tili_right"],screen=screen)
     def get_tili_right(self, screen=None):
         # OCR获得扫荡后体力数量
-        # TODO: 没体力
+        # -1: 没体力，一次都干不了
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()
+        if self.no_tili_for_one_fight(screen):
+            return -1
         at = (712, 406, 742, 421) if ocr_mode == "网络" or ocr_mode == "智能" else (711, 405, 748, 422)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
@@ -102,6 +108,8 @@ class FightInfoBase(PCRMsgBoxBase):
                 break
             sc1 = sc2
         handle.up(*MAOXIAN_BTN["saodang_plus"])
+
+
 
     @DEBUG_RECORD
     def set_saodang_cishu(self, target: int, one_tili=None, left_tili=None, right_tili=None, sc=None, max_retry=6,

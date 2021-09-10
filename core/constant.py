@@ -57,7 +57,23 @@ START_UI = {
 
 
 HAOYOU_BTN = {
-    "hysqqr":p(img="img/haoyou/hysqqr.bmp",at=(414,28,542,56)),
+    "hysqqr":p(img="img/haoyou/hysqqr.bmp",at=(414,28,542,56)),  # 战斗中的
+    "hysqqr_gl":p(img="img/haoyou/hysqqr.bmp",at=(414, 132, 542, 160)),  # 好友管理中的
+    "lvmaoicon":p(img="img/haoyou/lvmaoicon.bmp",at=(696,197,730,234)),
+    "haoyouguanli_icon":p(img="img/haoyou/haoyouguanli_icon.bmp",at=(66,17,155,44)),
+    "xunzhaohaoyou":p(722,29),
+    "sousuosheding":p(839,90,img="img/haoyou/sousuosheding.bmp",at=(807,79,869,97)),
+    "wanjiaidsousuo":p(img="img/haoyou/wanjiaidsousuo.bmp",at=(422,132,533,157)),
+    "jianjie":p(img="img/haoyou/jianjie.bmp",at=(454,28,499,55)),
+    "info_btn":p(454,176),
+    "name_box":p(at=(385,149,595,172)),
+    "hanghui_box":p(at=(531,237,695,255)),
+    "accept_btn":p(843,198),# 同意
+    "reject_btn":p(733,198), # 拒
+    "hysqtgqr":p(img="img/haoyou/hysqtgqr.bmp",at=(393,135,558,153)),  # 好友申请通过确认
+    "hysqjjqr":p(img="img/haoyou/hysqjjqr.bmp",at=(394,133,559,158)),
+    "haoyou_sup":p(img="img/haoyou/haoyou_sup.bmp",at=(69,123,146,138)),
+    "sqhy":p(img="img/haoyou/sqhy.bmp",at=(434,133,524,160)),
 }
 
 # 主页面的按钮对象
@@ -796,6 +812,7 @@ MAOXIAN_BTN = {
     "duiwu_win": p(img="img/maoxian/duiwu_win.bmp", at=(897, 77, 922, 105)),  # Normal/Hard胜利时，“队伍”图标偏下
     "duiwu_loss": p(img="img/maoxian/duiwu_loss.bmp", at=(895, 23, 924, 49)),  # Normal/Hard失败时，“队伍”图标偏上
 
+    "no_tili_right":p(img="img/maoxian/no_tili_right.bmp",at=(711,404,734,421)),  # 没有体力的红杠杠 --
 }
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(77, 61, 141, 72)),

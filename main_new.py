@@ -15,7 +15,7 @@ from core.utils import is_ocr_running
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.6.20210907.2"
+script_version = "Ver 2.7.20210910"
 
 
 def GetLastSchedule():
@@ -503,6 +503,7 @@ if __name__ == "__main__":
         print("By TheAutumnOfRice")
         print("----------------------------------------")
         print("Tips: config.ini会在启动main_new后自动生成或更新，如果修改了config.ini，重启程序后生效。")
+        print("Tips: 目前基本上所有的非OCR版本都很难用了，请尽量手动切换为OCR任务！")
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
     while True:

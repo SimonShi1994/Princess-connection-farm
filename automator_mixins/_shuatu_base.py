@@ -1640,7 +1640,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                     self.Drag_Right()
                     last_dict["last"] = "right"
                 s = self.click_btn(DR[i], until_appear=FIGHT_BTN["xuanguan_quxiao"], is_raise=False, elsedelay=2,
-                                   timeout=3)
+                                   timeout=5)
                 if s:
                     self.click_btn(MAOXIAN_BTN["quxiao"])
                     return (tu, i)

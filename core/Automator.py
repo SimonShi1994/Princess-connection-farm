@@ -9,6 +9,7 @@ from automator_mixins._async import AsyncMixin
 from automator_mixins._base import BaseMixin, ForceKillException, FastScreencutException
 from automator_mixins._dxc import DXCMixin
 from automator_mixins._hanghui import HanghuiMixin
+from automator_mixins._haoyou import HaoYouMixin
 from automator_mixins._jjc import JJCMixin
 from automator_mixins._login import LoginMixin, BadLoginException
 from automator_mixins._routine import RoutineMixin
@@ -24,7 +25,7 @@ from core.usercentre import check_task_dict, list_all_flags, is_in_group
 from core.valid_task import VALID_TASK, getcustomtask
 
 
-class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, ToolsMixin):
+class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin,HaoYouMixin):
     def __init__(self, address):
         """
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
