@@ -1,8 +1,10 @@
+from typing import Optional
+
 from core.constant import MAOXIAN_BTN
 from core.pcr_checker import RetryNow, PCRRetry
 from scenes.errors import ZhuxianIDRecognizeError
 from scenes.zhuxian.zhuxian_base import ZhuXianBase
-
+from scenes.fight.fightinfo_zhuxian import FightInfoZhuXianNormal
 
 class ZhuXianNormal(ZhuXianBase):
     def __init__(self, *args, **kwargs):
@@ -55,3 +57,17 @@ class ZhuXianNormal(ZhuXianBase):
         if cur_id != id:
             raise RetryNow()
         return True
+
+    def enter_NAB(self,A,B)->Optional["FightInfoZhuXianNormal"]:
+        """
+        进入NA-B，直接返回infobox
+        如果点不进去，返回None
+        """
+        self.select_normal_id(A)
+        xx,yy,dd = self.GetXYD("N",A,B)
+        if dd == "left":
+            self.Drag_Left()
+        else:
+            self.Drag_Right()
+        return self.click_xy_and_open_fightinfo(xx,yy,typ=FightInfoZhuXianNormal)
+

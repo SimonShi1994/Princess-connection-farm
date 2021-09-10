@@ -12,7 +12,7 @@ import pandas as pd
 
 from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE_BTN
+from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE_BTN, DXC_ELEMENT
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -62,9 +62,9 @@ class ToolsMixin(BaseMixin):
                 return
             # if self.is_exists(MAIN_BTN["guanbi"], screen=sc):
             #     self.click(MAIN_BTN["guanbi"])
-            self.click(MAIN_BTN["zhuye"])
+            self.fclick(MAIN_BTN["zhuye"])
             # 防卡公告
-            self.click(1, 1)
+            self.fclick(1, 1)
             time.sleep(1.5)
             if time.time() - last > lockimg_timeout:
                 raise Exception("lock_home时出错：超时！")
@@ -102,8 +102,8 @@ class ToolsMixin(BaseMixin):
             num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 cnt += 1
-                time.sleep(3)  # 防止黑屏错误识别
-                if cnt>=3:
+                time.sleep(1.5)  # 防止黑屏错误识别
+                if cnt>=2:
                     self.chulijiaocheng(None)  # 增加对教程的处理功能
             try:
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
@@ -486,6 +486,7 @@ class ToolsMixin(BaseMixin):
                 return must_int
 
     def kucunshibie(self, scan_zb=True, scan_sp=True, var: Optional[dict] = None):
+        self.check_ocr_running()
         mv = movevar(var)
         self.lock_home()
         title_at = (613, 85, 909, 112)
@@ -728,6 +729,35 @@ class ToolsMixin(BaseMixin):
 
     def jueseshibie(self, var: Optional[dict] = None):
         mv = movevar(var)
+        self.check_ocr_running()
+
+        def get_valid_screen(screen=None):
+            if screen is None:
+                screen = self.getscreen()
+            def checkfunc(sc):
+                while self.click_gaoliang(sc):
+                    sc = self.getscreen()
+                    time.sleep(1)
+                ALL_FEATURES = [
+                    MAIN_BTN["right_kkr"],
+                    DXC_ELEMENT["dxc_kkr"],
+                ]
+                for f in ALL_FEATURES:
+                    if self.is_exists(f, screen=sc):
+                        return True
+                return False
+
+            CNT = 0
+            while checkfunc(screen):
+                if CNT>=10:
+                    raise Exception("在角色检测中跳过kkr失败！")
+                for _ in range(10):
+                    self.click(1,1)
+                CNT+=1
+                time.sleep(1)
+                screen = self.getscreen()
+
+            return screen
 
         def get_stars(screen=None):
             if screen is None:
@@ -761,8 +791,7 @@ class ToolsMixin(BaseMixin):
             return make_it_as_number_as_possible(self.ocr_center(*at, screen))
 
         def get_name(screen=None):
-            if screen is None:
-                screen = self.getscreen()
+            get_valid_screen(screen)
             data = self._load_data_cache()
             at = (483, 119, 760, 141)
             ori_out = self.ocr_center(*at, screen)
@@ -778,6 +807,11 @@ class ToolsMixin(BaseMixin):
 
             out = make_it_as_juese_as_possible(ori_out)
             out = self._check_img_in_list_or_dir(out, (482, 114, 750, 261), "ocrfix/juese", "C_ID", screen)
+            if out == "公主宝珠":
+                for _ in range(5):
+                    self.click(121, 172)
+                time.sleep(1)
+                return get_name()
             return out
 
         def get_rank(screen=None):
@@ -887,7 +921,7 @@ class ToolsMixin(BaseMixin):
         for _ in range(var["count"]):
             _next()
         while True:
-            sc = self.getscreen()
+            sc = get_valid_screen()
             data = self.AR.get("juese_info", UDD["juese_info"])
             # Main Info
             D = {}
@@ -896,7 +930,7 @@ class ToolsMixin(BaseMixin):
             D["rank"] = get_rank(sc)
             D["zb"] = get_six_clothes(sc)
             Click_CaiNeng(sc)
-            sc = self.last_screen
+            sc = get_valid_screen(self.last_screen)
             NAME = get_name(sc)
             if NAME == FIRST_NAME and var["count"] != 0:
                 break

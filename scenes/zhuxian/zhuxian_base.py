@@ -1,7 +1,7 @@
 import time
 from typing import TYPE_CHECKING, Optional
 
-from core.constant import MAOXIAN_BTN, ZHUXIAN_ID, ZHUXIAN_SECOND_ID, DXC_ELEMENT
+from core.constant import MAOXIAN_BTN, ZHUXIAN_ID, ZHUXIAN_SECOND_ID, DXC_ELEMENT, NORMAL_COORD, HARD_COORD
 from core.pcr_checker import retry_run, Checker, LockError
 from core.pcr_config import save_debug_img
 from scenes.errors import MaoxianRecognizeError, ZhuxianIDRecognizeError
@@ -58,6 +58,24 @@ class ZhuXianBase(SevenBTNMixin):
     def goRight(self):
 
         self.click(925, 275, post_delay=3)
+
+    @staticmethod
+    def GetXYD(mode, nowA, nowB):
+        """
+        mode: N or H
+        返回MA-B的： X,Y，Drag方向
+        """
+        if mode == "N":
+            D = NORMAL_COORD[nowA]
+            DR = D["right"]
+            DL = D["left"]
+            if nowB in DR:
+                return DR[nowB].x, DR[nowB].y, "right"
+            else:
+                return DL[nowB].x, DL[nowB].y, "left"
+        elif mode == "H":
+            D = HARD_COORD[nowA]
+            return D[nowB].x, D[nowB].y, None
 
     def check_maoxian_screen(self, screen=None, is_raise=True):
         """
@@ -117,12 +135,11 @@ class ZhuXianBase(SevenBTNMixin):
         # self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(self._a.change_time)
 
-    def click_xy_and_open_fightinfo(self, x, y) -> Optional["FightInfoZhuXian"]:
+    def click_xy_and_open_fightinfo(self, x, y, typ=FightInfoZhuXian) -> Optional["FightInfoZhuXian"]:
         def gotofun():
             self.click(x, y)
-
         try:
-            return self.goto(FightInfoZhuXian, gotofun, retry=3, interval=3)
+            return self.goto(typ, gotofun, retry=3, interval=3)
         except LockError:
             return None
 

@@ -23,37 +23,6 @@ class FightBianzuDXC(FightBianZuBase):
         super().__init__(a)
         self.scene_name = "FightBianzuDXC"
 
-    def get_fight_current_member_count(self):
-        return self._a.get_fight_current_member_count()
-
-    def get_zhiyuan(self, assist_num=1):
-        # 从左到右获取一个可能的支援
-        # out: 0- Success 1- 人满 2- 等级不够 3- 无支援人物
-        now_count = self.get_fight_current_member_count()
-        out = 0
-        if now_count == 5:
-            self.log.write_log("warning", "已经人满，无法借人！")
-            out = 1
-        elif self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
-                            retry=3, wait_self_before=True):
-            for c in range(assist_num, assist_num + 2):
-                if c <= 8:
-                    self.click_juese_by_rc(1, c)
-                else:
-                    self.click_juese_by_rc(2, c - 8)
-            time.sleep(0.5)
-            new_count = self._a.get_fight_current_member_count()
-            if new_count == now_count + 1:
-                self.log.write_log(level='info', message="借人成功！")
-            else:
-                self.log.write_log(level='warning', message="借人失败，可能因为等级不够！")
-                out = 2
-        # if self.lock_no_img(DXC_ELEMENT["zhiyuan_blue"], retry=1):
-        else:
-            self.log.write_log(level='info', message="无支援人物!")
-            out = 3
-        self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
-        return out
 
     def goto_zhandou(self) -> "FightingDXC":
         out = self.goto(AfterEnterTiaoZhan, self.fun_click(FIGHT_BTN["zhandoukaishi"]))

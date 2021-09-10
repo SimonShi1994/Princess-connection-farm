@@ -300,26 +300,27 @@ class FightBaseMixin(ToolsMixin):
         要求场景：处于”队伍编组“情况下。
         """
         sc = self.getscreen()
-        p0 = self.img_prob(FIGHT_BTN["sort_up"], screen=sc)
-        p1 = self.img_prob(FIGHT_BTN["sort_down"], screen=sc)
-        if p0 > p1:
-            # 升序改降序
-            self.click(FIGHT_BTN["sort_up"], pre_delay=0.5, post_delay=1)
-        if order == "zhanli":
-            if not self.is_exists(FIGHT_BTN["sort_power"]):
-                self.click_btn(FIGHT_BTN["sort_power"], until_appear=FIGHT_BTN["cat_ok"])
-                self.click(FIGHT_BTN["cat_zhanli"], pre_delay=0.5, post_delay=1)
-                self.click_btn(FIGHT_BTN["cat_ok"])
-        elif order == "dengji":
-            if not self.is_exists(FIGHT_BTN["sort_level"]):
-                self.click_btn(FIGHT_BTN["sort_level"], until_appear=FIGHT_BTN["cat_ok"])
-                self.click(FIGHT_BTN["cat_dengji"], pre_delay=0.5, post_delay=1)
-                self.click_btn(FIGHT_BTN["cat_ok"])
-        elif order == "xingshu":
-            if not self.is_exists(FIGHT_BTN["sort_star"]):
-                self.click_btn(FIGHT_BTN["sort_star"], until_appear=FIGHT_BTN["cat_ok"])
-                self.click(FIGHT_BTN["cat_star"], pre_delay=0.5, post_delay=1)
-                self.click_btn(FIGHT_BTN["cat_ok"])
+        if change>=2:
+            p0 = self.img_prob(FIGHT_BTN["sort_up"], screen=sc)
+            p1 = self.img_prob(FIGHT_BTN["sort_down"], screen=sc)
+            if p0 > p1:
+                # 升序改降序
+                self.click(FIGHT_BTN["sort_up"], pre_delay=0.5, post_delay=1)
+            if order == "zhanli":
+                if not self.is_exists(FIGHT_BTN["sort_power"]):
+                    self.click_btn(FIGHT_BTN["sort_power"], until_appear=FIGHT_BTN["cat_ok"])
+                    self.click(FIGHT_BTN["cat_zhanli"], pre_delay=0.5, post_delay=1)
+                    self.click_btn(FIGHT_BTN["cat_ok"])
+            elif order == "dengji":
+                if not self.is_exists(FIGHT_BTN["sort_level"]):
+                    self.click_btn(FIGHT_BTN["sort_level"], until_appear=FIGHT_BTN["cat_ok"])
+                    self.click(FIGHT_BTN["cat_dengji"], pre_delay=0.5, post_delay=1)
+                    self.click_btn(FIGHT_BTN["cat_ok"])
+            elif order == "xingshu":
+                if not self.is_exists(FIGHT_BTN["sort_star"]):
+                    self.click_btn(FIGHT_BTN["sort_star"], until_appear=FIGHT_BTN["cat_ok"])
+                    self.click(FIGHT_BTN["cat_star"], pre_delay=0.5, post_delay=1)
+                    self.click_btn(FIGHT_BTN["cat_ok"])
         # 换人3
         if 1 <= change <= 2:
             for _ in range(5):

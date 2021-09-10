@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from scenes.root.juese import JueSe
     from scenes.root.maoxian import MaoXian
     from scenes.root.gonghuizhijia import GongHuiZhiJia
+    from scenes.root.zhucaidan import ZhuCaiDan
 
 class SevenBTNMixin(PCRSceneBase):
 
@@ -41,3 +42,10 @@ class SevenBTNMixin(PCRSceneBase):
         def gotofun():
             self.click(MAIN_BTN["gonghuizhijia"])
         return self.goto(GongHuiZhiJia,gotofun)  # Type:GongHuiZhiJia
+
+    def goto_zhucaidan(self)->"ZhuCaiDan":
+
+        from scenes.root.zhucaidan import ZhuCaiDan
+        def gotofun():
+            self.click(MAIN_BTN["zhucaidan"])
+        return self.goto(ZhuCaiDan,gotofun)  # Type:ZhuCaiDan

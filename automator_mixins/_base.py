@@ -18,7 +18,7 @@ import uiautomator2 as u2
 from core import log_handler
 from core.MoveRecord import MoveSkipException
 from core.MoveRecord import moveset
-from core.constant import PCRelement, MAIN_BTN, JUQING_BTN
+from core.constant import PCRelement, MAIN_BTN, JUQING_BTN, DXC_ELEMENT
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
 from core.log_handler import pcr_log
@@ -440,6 +440,14 @@ class BaseMixin:
             return True
         else:
             return False
+
+
+    def fclick(self, *args, pre_delay=0., post_delay=0., times=5):
+        # 狂点模式
+        time.sleep(pre_delay)
+        for _ in range(times):
+            self.click(*args)
+        time.sleep(post_delay)
 
     @DEBUG_RECORD
     def click(self, *args, pre_delay=0., post_delay=0., **kwargs):
@@ -1092,6 +1100,17 @@ class BaseMixin:
                                      elseafter=0 if elseafter is None else elseafter, side_check=side_check)
         return r
 
+    @DEBUG_RECORD
+    def click_gaoliang(self,screen=None):
+        if screen is None:
+            screen = self.getscreen()
+        num_of_white, _, x, y = UIMatcher.find_gaoliang(screen)
+        if num_of_white < 77000:
+            self.click(x * self.dWidth, y * self.dHeight + 20)
+            return True
+        else:
+            return False
+
     @timeout(300, "处理教程时间过长，超过5分钟！")
     @DEBUG_RECORD
     def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
@@ -1259,6 +1278,36 @@ class BaseMixin:
             cnt += 1
             if cnt >= 10:
                 raise Exception("点了10次，可可罗依然没有消失！")
+            screen = self.getscreen()
+        return flag
+
+    @DEBUG_RECORD
+    def mid_right_kkr(self,screen=None):
+        """
+        处理中间和右边的kkr，一直点屏幕。
+        """
+        flag = False
+        if screen is None:
+            screen = self.getscreen()
+        cnt = 0
+
+        def checkfunc():
+            ALL_FEATURES = [
+                MAIN_BTN["right_kkr"],
+                DXC_ELEMENT["dxc_kkr"],
+            ]
+            for f in ALL_FEATURES:
+                if self.is_exists(f,screen=screen):
+                    return True
+            return False
+
+        while checkfunc():
+            for _ in range(10):
+                self.click(1, 1)
+            flag = True
+            cnt += 1
+            if cnt >= 20:
+                raise Exception("点了200次，可可罗依然没有消失！")
             screen = self.getscreen()
         return flag
 

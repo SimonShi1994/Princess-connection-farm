@@ -43,6 +43,7 @@ class PCRSceneBase:
         self._raise = self._a._raise
         self.check_ocr_running = self._a.check_ocr_running
         self.click = self._a.click
+        self.fclick = self._a.fclick
         self.click_img = self._a.click_img
         self.lock_img = self._a.lock_img
         self.lock_no_img=self._a.lock_no_img

@@ -206,6 +206,7 @@ def TaskEditor(taskname):
                 print("list -r 显示日常指令")
                 print("list -t 显示工具指令")
                 print("list -s 显示刷图指令")
+                print("list -f 显示好友指令")
                 print("enable (ID) 启用编号为ID的任务")
                 print("disable (ID) 禁用编号为ID的任务")
                 print("flag (flagname) (ID) 当flagname被激活时，禁用编号为ID的任务（详见switch）")
