@@ -1368,8 +1368,8 @@ class ShuatuMixin(ShuatuBaseMixin):
 
                     F = TZ.goto_fight()
                     During = F.get_during()
-                    F.set_auto(1, self.last_screen)
-                    F.set_speed(1, self.last_screen)
+                    F.set_auto(1, screen=self.last_screen)
+                    F.set_speed(1, screen=self.last_screen)
                     state = {"flag": None}
                     last_time = time.time()
                     while True:

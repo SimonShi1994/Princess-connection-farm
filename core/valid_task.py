@@ -849,7 +849,7 @@ VALID_TASK = ValidTask() \
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs)]) \
     .add("nothing", "do_nothing", "啥事不干", "啥事不干，调试用") \
-    .add("s8", "shengjijuese", "自动升级", "此功能为自动升级角色功能",
+    .add("s8", "shengjijuese", "自动升级【别用】", "此功能为自动升级角色功能",
          [TaskParam("buy_tili", int, "体力次数", "如果要通过刷图来获取装备，最多买体力次数"),
           TaskParam("do_rank", bool, "是否升rank", "是否自动升rank"),
           TaskParam("do_shuatu", bool, "是否刷图", "是否在装备可以获得但不够时，通过刷图来获取装备")]) \
