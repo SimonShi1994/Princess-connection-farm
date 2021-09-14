@@ -90,7 +90,7 @@ class FightBianZuBase(PCRMsgBoxBase):
     def get_fight_current_member_count(self):
         return self._a.get_fight_current_member_count()
 
-    def get_zhiyuan(self, assist_num=1,force_haoyou=False,if_full=0):
+    def get_zhiyuan(self, assist_num=1,force_haoyou=False,if_full=2):
         # 从左到右获取一个可能的支援
         # out: 0- Success 1- 人满 2- 等级不够 3- 无支援人物 4- 无好友
         # force_haoyou: 只借好友，不然不借
