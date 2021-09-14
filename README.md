@@ -195,6 +195,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2021/9/14 By UVJkiNTQ
+
+- 修复战斗失败后未正常退出问题
+- 修复设置选项失效问题
 
 2021/9/11 By TheAutumnOfRice
 
