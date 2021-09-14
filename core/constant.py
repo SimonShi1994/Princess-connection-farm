@@ -135,7 +135,7 @@ MAIN_BTN = {
 
     "exp_bar": p(at=(78, 23, 178, 31), fc=(106, 205, 176), bc=(94, 125, 146)),
     "speaker_box": p(img="img/ui/speaker_box.bmp", at=(182, 395, 209, 409)),  # 有人说话时名字左上角的红色
-    "setting_pic": p(151, 231, img="img/home/setting.bmp", at=(49, 197, 115, 258)),
+    "setting_pic": p(158, 225, img="img/home/setting.bmp", at=(44, 198, 254, 257)),
     "tansuo": p(738, 137),
 
     # 探索
@@ -810,7 +810,7 @@ MAOXIAN_BTN = {
     "query_box": p(at=(263, 193, 698, 315)),  # 弹出提示框的位置
     "saodang_jieguo": p(img="img/maoxian/saodang_jieguo.bmp", at=(435, 28, 521, 56)),  # 扫荡结果：扫荡跳过界面上面的标题:
     "duiwu_win": p(img="img/maoxian/duiwu_win.bmp", at=(897, 77, 922, 105)),  # Normal/Hard胜利时，“队伍”图标偏下
-    "duiwu_loss": p(img="img/maoxian/duiwu_loss.bmp", at=(895, 23, 924, 49)),  # Normal/Hard失败时，“队伍”图标偏上
+    "duiwu_loss": p(img="img/maoxian/duiwu_loss.bmp", at=(832,17,869,53)),  # Normal/Hard失败时，“队伍”图标偏上
 
     "no_tili_right":p(img="img/maoxian/no_tili_right.bmp",at=(711,404,734,421)),  # 没有体力的红杠杠 --
 }
