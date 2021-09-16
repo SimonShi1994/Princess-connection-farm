@@ -261,7 +261,7 @@ class Pcr_Downloader:
             return cmd, update_way
         else:
             print('输入数字有误')
-            print(cmd,update_way)
+            print(cmd, update_way)
             return self.select_connect()
 
     def sel_update_way(self):

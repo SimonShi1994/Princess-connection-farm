@@ -14,7 +14,9 @@ from ._base import BaseMixin
 from ._base import DEBUG_RECORD
 from ._captcha import CaptionSkip
 
-class BadLoginException(Exception):pass
+
+class BadLoginException(Exception): pass
+
 
 class LoginMixin(BaseMixin):
     """
@@ -94,8 +96,9 @@ class LoginMixin(BaseMixin):
         # print(toast_message)
         if toast_message == "密码错误":
             raise BadLoginException("密码错误！")
-        elif toast_message == "账号异常":
+        elif "账号异常" in str(toast_message).split(" "):
             raise BadLoginException("账号异常！")
+
         while True:
             # 快速响应
             # 很容易在这里卡住
@@ -151,6 +154,8 @@ class LoginMixin(BaseMixin):
                 nonlocal _id
                 nonlocal _pop
 
+                sc1 = self.getscreen()
+
                 time.sleep(5)
                 screen = self.getscreen()
                 screen = screen[1:575, 157:793]
@@ -201,13 +206,13 @@ class LoginMixin(BaseMixin):
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
                     return False
 
-                sc1 = self.getscreen()
-
                 def PopFun():
                     time.sleep(1)
                     sc2 = self.getscreen()
                     p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
+                    print(p)
                     if p <= 0.99:
+                        self.d(text="确认").click()
                         return True
                     else:
                         return False
@@ -217,12 +222,23 @@ class LoginMixin(BaseMixin):
                     # 检测到题目id为0就重新验证
                     AutoCaptcha()
 
-                state = self.lock_fun(PopFun, elseclick=START_UI["queren"], retry=8, is_raise=False)
+                # state = self.lock_fun(PopFun, retry=8, is_raise=False)# elseclick=START_UI["queren"]
+                time.sleep(1)
+                sc2 = self.getscreen()
+                p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
+                if p <= 0.99:
+                    self.d(text="确认").click()
+                    state = True
+                else:
+                    state = False
 
-                # 这里是获取toast，看是否输错密码
                 toast_message = self.d.toast.get_message()
-                if toast_message is "密码错误":
-                    raise Exception("密码错误！")
+                # print(toast_message)
+                if toast_message == "请检查网络,-662":
+                    # print("请检查网络,-662")
+                    time.sleep(15)
+                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
+                    # raise BadLoginException("请检查网络，-662")
 
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     if _time >= 5:
@@ -235,6 +251,7 @@ class LoginMixin(BaseMixin):
                         print("—申诉题目:", _id)
                         cs.send_error(_id)
                     _time = + 1
+                    print("验证码登陆验证重来！")
                     time.sleep(4)
                     # 如果还有验证码就返回重试
                     AutoCaptcha()
@@ -375,7 +392,6 @@ class LoginMixin(BaseMixin):
         :return:
         """
 
-
         ORIGIN_MODE = True  # css炸裂之前的版本，设置为True后应付CSS炸裂之后的版本
 
         if ORIGIN_MODE:
@@ -447,13 +463,13 @@ class LoginMixin(BaseMixin):
             self.d.drag(827, 488, 827, 80, 0.1)
             self._move_check()
             self.d.drag(827, 488, 827, 80, 0.1)
-            self.click(431,91)
+            self.click(431, 91)
             self._move_check()
             self.d.clear_text()
             self._move_check()
             self.d.send_keys(str(auth_name))
             self._move_check()
-            self.click(460,217)
+            self.click(460, 217)
             self._move_check()
             self.d.clear_text()
             self._move_check()
@@ -462,7 +478,6 @@ class LoginMixin(BaseMixin):
             self.click(469, 364)  # 提交实名
             time.sleep(3)
             self.click(475, 407)
-
 
     @timeout(300, "login_auth登录超时，超过5分钟")
     @DEBUG_RECORD
@@ -482,7 +497,6 @@ class LoginMixin(BaseMixin):
                 birthday = str(random.randint(1970, 1999))
                 auth_name, auth_id = random_name(), validator.fake_id(birthday=birthday)
                 self.auth(auth_name=auth_name, auth_id=auth_id)
-
 
     @DEBUG_RECORD
     def change_acc(self):  # 切换账号
