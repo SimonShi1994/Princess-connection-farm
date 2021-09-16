@@ -222,4 +222,4 @@ class FightingLoseZhuXian(FightingLoseBase):
 
     def goto_zhuxian(self, zhuxian_type: Union[Type["ZhuXianHard"], Type["ZhuXianNormal"]]) -> Union[
         "ZhuXianHard", "ZhuXianNormal"]:
-        return self.goto(zhuxian_type, self.fun_click(814, 493))  # 前往主线关卡
+        return self.goto(zhuxian_type, self.fun_click(806, 489))  # 前往主线关卡

@@ -249,6 +249,24 @@ def get_port(PID):
         # print(cd[-1])
         # print(cd[0])
         if cd[-1] == "0.0.0.0" or cd[-1] == "127.0.0.1":
+
+            if not emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
+                # print("失效", int(cd[0]))
+                i += 1
+                continue
+
+            if "failed" in os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(
+                    ' '):
+                pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip + ':' + str(cd[0])}]失败，"
+                                                                  f"不是这个模拟器,继续查找中...")
+                if "failed" in os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip2 + ':' + str(cd[0])).read().split(
+                        ' '):
+                    pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip2 + ':' + str(cd[0])}]失败，"
+                                                                      f"不是这个模拟器,继续查找中...")
+                # os.system("taskkill /im adb.exe /f")
+                i += 1
+                continue
+
             if emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
                 # print(cd)
                 if emulators_port_list:
@@ -262,23 +280,6 @@ def get_port(PID):
                     por = cd[0]
                     # print(por)
                     break
-
-            elif not emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
-                # print("失效", int(cd[0]))
-                i += 1
-                continue
-
-            elif "failed" in os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(
-                    ' '):
-                pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip + ':' + str(cd[0])}]失败，"
-                                                                  f"不是这个模拟器,继续查找中...")
-                if "failed" in os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip2 + ':' + str(cd[0])).read().split(
-                        ' '):
-                    pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip2 + ':' + str(cd[0])}]失败，"
-                                                                      f"不是这个模拟器,继续查找中...")
-                # os.system("taskkill /im adb.exe /f")
-                i += 1
-                continue
         else:
             i += 1
     # print(por)
