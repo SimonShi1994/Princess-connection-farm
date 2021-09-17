@@ -29,7 +29,7 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         self.norm_hdl_std = logging.StreamHandler(stdout)
         self.norm_hdl_std.setLevel('INFO')  # 设置Handler级别
 
-        self.norm_hdl = logging.FileHandler(os.path.join(self.dst_folder, '%s.log' % (acc)), encoding='utf-8')
+        self.norm_hdl = logging.FileHandler(os.path.join(self.dst_folder, '%s.log' % acc), encoding='utf-8')
         self.norm_hdl.setLevel('INFO')
 
         self.norm_fomatter = logging.Formatter('%(asctime)s\t%(name)s\t--%(levelname)s\t%(message)s')  # 设置输出格式

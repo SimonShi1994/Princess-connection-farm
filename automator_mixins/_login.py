@@ -227,11 +227,13 @@ class LoginMixin(BaseMixin):
                 sc2 = self.getscreen()
                 p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
                 if p <= 0.99:
+                    nonlocal state
                     self.d(text="确认").click()
                     state = True
                 else:
                     state = False
 
+                # 这里是验证码登录后
                 toast_message = self.d.toast.get_message()
                 # print(toast_message)
                 if toast_message == "请检查网络,-662":
@@ -239,6 +241,10 @@ class LoginMixin(BaseMixin):
                     time.sleep(15)
                     self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
                     # raise BadLoginException("请检查网络，-662")
+                elif toast_message == "密码错误":
+                    raise BadLoginException("密码错误！")
+                elif "账号异常" in str(toast_message).split(" "):
+                    raise BadLoginException("账号异常！")
 
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     if _time >= 5:
