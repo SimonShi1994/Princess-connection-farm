@@ -230,7 +230,8 @@ def get_process_unique_id(p):
 
 def get_port(PID):
     """通过pid获取端口号"""
-    i = 1
+    # print("get_port run now!")
+    i = 0
     por = 65599
     cmd = 'netstat -ano | findstr' + ' ' + str(PID)
     # print(cmd)
@@ -248,22 +249,34 @@ def get_port(PID):
         cd = ab.split(' ')
         # print(cd[-1])
         # print(cd[0])
-        if cd[-1] == "0.0.0.0" or cd[-1] == "127.0.0.1":
 
-            if not emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
-                # print("失效", int(cd[0]))
+        if (i < len(first_line)) and (cd[-1] == "0.0.0.0" or cd[-1] == "127.0.0.1"):
+            # print(cd[0])
+            try:
+                if not emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
+                    # print("失效", int(cd[0]))
+                    i += 1
+                    continue
+            except ValueError as e:
                 i += 1
                 continue
 
-            if "failed" in os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(
-                    ' '):
-                pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip + ':' + str(cd[0])}]失败，"
+            adb_connect_info = os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(
+                ' ')
+            error_str = ["failed", "10068"]
+            # if "failed" in os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(
+            #         ' '):
+            #     pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip + ':' + str(cd[0])}]失败，"
+            #                                                       f"不是这个模拟器,继续查找中...")
+            #     if "failed" in os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip2 + ':' + str(cd[0])).read().split(
+            #             ' '):
+            #         pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip2 + ':' + str(cd[0])}]失败，"
+            #                                                           f"不是这个模拟器,继续查找中...")
+            # os.system("taskkill /im adb.exe /f")
+            # print(adb_connect_info)
+            if error_str in adb_connect_info:
+                pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip2 + ':' + str(cd[0])}]失败，"
                                                                   f"不是这个模拟器,继续查找中...")
-                if "failed" in os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip2 + ':' + str(cd[0])).read().split(
-                        ' '):
-                    pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip2 + ':' + str(cd[0])}]失败，"
-                                                                      f"不是这个模拟器,继续查找中...")
-                # os.system("taskkill /im adb.exe /f")
                 i += 1
                 continue
 
@@ -280,8 +293,11 @@ def get_port(PID):
                     por = cd[0]
                     # print(por)
                     break
-        else:
+        elif i < len(first_line):
             i += 1
+        else:
+            # print("模拟器adb端口获取列表为空")
+            break
     # print(por)
     return por
 
@@ -299,19 +315,22 @@ def check_known_emulators():
             continue
         filtered_emulator.append(unique_id)
         # print(unique_id)
+        # for t, e in _EMULATORS.items():
         for t, e in _EMULATORS.items():
             if e.unique_id == unique_id:
                 # print(e)
                 # result = get_ports(e)
                 ps = get_processes(e)
                 # print(ps)
-                for i in range(0, len(ps)):
-                    if ps[i].status() == "stopped":
-                        # print("进程不存活")
-                        continue
-                    if str(get_port(ps[i].pid)) not in result:
-                        print("检测到【" + e.name + "】模拟器")
-                        result.append(get_port(ps[i].pid))
+                if not result:
+                    for i in range(0, len(ps)):
+                        if ps[i].status() == "stopped":
+                            # print("进程不存活")
+                            continue
+                        if str(get_port(ps[i].pid)) not in result:
+                            print("检测到【" + e.name + "】模拟器")
+                            result.append(get_port(ps[i].pid))
+                            # print(result)
                     # result = [5565]
                     # a = get_processes(e)
                     # print(port(24664))

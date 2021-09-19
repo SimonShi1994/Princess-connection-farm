@@ -33,7 +33,7 @@ class CaptionSkip:
         self.img_send_error = 'http://' + self.host_result + '/SendError.aspx'
         self.img_getpoint = 'http://' + self.host_result + '/GetPoint.aspx'
         self.error_feature = ['#', '', ' ']
-        self.no_result = ["#答案不确定", "超时", "不扣分", "#"]
+        self.no_result = ["#答案不确定", "超时", "不扣分", "#", '#编号不存在']
         self.img_hear_dict = {
             'Content-Type': 'application/x-www-form-urlencoded',
         }
@@ -74,7 +74,7 @@ class CaptionSkip:
             self.img_send_error = 'http://' + self.host_result + '/SendError.aspx'
             self.img_getpoint = 'http://' + self.host_result + '/GetPoint.aspx'
         except:
-            time.sleep(2)
+            time.sleep(1)
             return self.get_host(num=1)
 
     @timeout(60, "验证码验证超时：超过60秒")
@@ -136,11 +136,12 @@ class CaptionSkip:
             print(">>等待验证码识别返回值")
         while True:
             # 获取答案
-            time.sleep(random.uniform(0.8, 2.88))
+            time.sleep(random.uniform(0.3, 0.8))
             answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
-            self._count_times += 1
+            # print(answer_result.text)
             count_len = len(answer_result.text)
-            if str(answer_result.text) not in self.error_feature:
+            if str(answer_result.text) not in self.error_feature and str(answer_result.text) != "#答案不确定":
+                self._count_times += 1
                 # print("开始处理")
                 if question_type is "X6001" or question_type is "T6001":
                     # 466,365
@@ -181,7 +182,7 @@ class CaptionSkip:
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
 
-            elif answer_result.text in self.no_result or self._count_times >= 7:
+            elif answer_result.text == "#答案不确定" or answer_result.text in self.no_result or self._count_times >= 7:
                 # 答案不确定(不扣分)
                 if debug:
                     print(">刷新验证码")
