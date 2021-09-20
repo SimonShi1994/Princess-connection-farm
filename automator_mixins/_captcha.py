@@ -26,14 +26,14 @@ class CaptionSkip:
         self.question_type = 0
         self.conversation = requests.Session()
         self.conversation.keep_alive = False
-        self.conversation.mount('http://', HTTPAdapter(max_retries=5))
-        self.conversation.mount('https://', HTTPAdapter(max_retries=5))
+        self.conversation.mount('http://', HTTPAdapter(max_retries=2))
+        self.conversation.mount('https://', HTTPAdapter(max_retries=2))
         self.img_post_url = 'http://' + self.host_result + '/UploadBase64.aspx'
         self.img_answer = 'http://' + self.host_result + '/GetAnswer.aspx'
         self.img_send_error = 'http://' + self.host_result + '/SendError.aspx'
         self.img_getpoint = 'http://' + self.host_result + '/GetPoint.aspx'
         self.error_feature = ['#', '', ' ']
-        self.no_result = ["#答案不确定", "超时", "不扣分", "#"]
+        self.no_result = ["#答案不确定", "超时", "不扣分", "#", '#编号不存在']
         self.img_hear_dict = {
             'Content-Type': 'application/x-www-form-urlencoded',
         }
@@ -74,7 +74,7 @@ class CaptionSkip:
             self.img_send_error = 'http://' + self.host_result + '/SendError.aspx'
             self.img_getpoint = 'http://' + self.host_result + '/GetPoint.aspx'
         except:
-            time.sleep(2)
+            time.sleep(1)
             return self.get_host(num=1)
 
     @timeout(60, "验证码验证超时：超过60秒")
@@ -136,17 +136,19 @@ class CaptionSkip:
             print(">>等待验证码识别返回值")
         while True:
             # 获取答案
-            time.sleep(random.uniform(0.8, 2.88))
+            time.sleep(random.uniform(0.3, 0.8))
             answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
-            self._count_times += 1
+            # print(answer_result.text)
             count_len = len(answer_result.text)
-            if str(answer_result.text) not in self.error_feature:
+            if str(answer_result.text) not in self.error_feature and str(answer_result.text) != "#答案不确定":
+                self._count_times += 1
                 # print("开始处理")
-                if question_type is "X6001" or question_type is "T6001":
+                if question_type == "X6001" or question_type == "T6001":
                     # 466,365
                     answer_result = answer_result.text.split(',')
-                    if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
-                        # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
+                    # print(answer_result)
+                    if not (94 < int(answer_result[0]) < 560) and not (128 < int(answer_result[1]) < 441):
+                        # 左上 94,128 右下 560,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
                             print(">刷新验证码")
@@ -154,7 +156,7 @@ class CaptionSkip:
                         answer_result = [162, 420]
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
-                elif question_type is "X8006" or question_type is "T8006":
+                elif question_type == "X8006" or question_type == "T8006":
                     # 滑块
                     answer_result = answer_result.text.split(',')
                     if not (266 < int(answer_result[0]) < 696) and not (338 < int(answer_result[1]) < 434):
@@ -166,7 +168,7 @@ class CaptionSkip:
                         answer_result = [162, 420]
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
-                elif question_type is "X6004" or question_type is "T6004":
+                elif question_type == "X6004" or question_type == "T6004":
                     # 多坐标处理
                     # 464,364|551,376|506,271|390,233
                     answer_result = answer_result.text.split('|')
@@ -181,7 +183,7 @@ class CaptionSkip:
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
 
-            elif answer_result.text in self.no_result or self._count_times >= 7:
+            elif answer_result.text == "#答案不确定" or answer_result.text in self.no_result or self._count_times >= 7:
                 # 答案不确定(不扣分)
                 if debug:
                     print(">刷新验证码")

@@ -14,7 +14,9 @@ from ._base import BaseMixin
 from ._base import DEBUG_RECORD
 from ._captcha import CaptionSkip
 
-class BadLoginException(Exception):pass
+
+class BadLoginException(Exception): pass
+
 
 class LoginMixin(BaseMixin):
     """
@@ -72,11 +74,11 @@ class LoginMixin(BaseMixin):
                 time.sleep(0.8)
                 continue
             if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
-                self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
                 time.sleep(0.8)
+                self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
                 continue
             if not self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
-                time.sleep(0.8)
+                time.sleep(0.2)
             else:
                 break
         else:
@@ -87,19 +89,20 @@ class LoginMixin(BaseMixin):
         self.d(resourceId="com.bilibili.priconne:id/et_gsc_account_pwd").click()
         self.d.clear_text()
         self.d.send_keys(str(pwd))
-        time.sleep(random.uniform(0.2, 2))
+        time.sleep(random.uniform(0.2, 1))
         self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
         # time.sleep(0.5)
         toast_message = self.d.toast.get_message()
         # print(toast_message)
         if toast_message == "密码错误":
             raise BadLoginException("密码错误！")
-        elif toast_message == "账号异常":
+        elif "账号异常" in str(toast_message).split(" "):
             raise BadLoginException("账号异常！")
+
         while True:
             # 快速响应
             # 很容易在这里卡住
-            time.sleep(1)
+            # time.sleep(0.4)
             sc = self.getscreen()
             if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
                 self.click(MAIN_BTN["xiazai"])
@@ -130,7 +133,7 @@ class LoginMixin(BaseMixin):
                     if self.d(description="请滑动阅读协议内容").exists():
                         # 雷电三
                         self.d(description="同意").click()
-                    time.sleep(6)
+                    # time.sleep(6)
                 if debug:
                     print("结束认证")
 
@@ -142,16 +145,16 @@ class LoginMixin(BaseMixin):
             _id = 0
             _pop = False
 
-            def AutoCaptcha():
+            # 初始化接码
+            cs = CaptionSkip()
 
-                # 初始化接码
-                cs = CaptionSkip()
+            def AutoCaptcha():
 
                 nonlocal _time
                 nonlocal _id
                 nonlocal _pop
 
-                time.sleep(5)
+                # time.sleep(1)
                 screen = self.getscreen()
                 screen = screen[1:575, 157:793]
                 # 原来的 456, 489
@@ -159,7 +162,7 @@ class LoginMixin(BaseMixin):
                 if self.d(textContains="请点击此处重试").exists():
                     print(f">>>{self.account}-请点击此处重试")
                     # 点重试
-                    self.click(482, 315, post_delay=3)
+                    self.click(482, 315)
 
                 elif self.d(textContains="异常").exists() or self.d(textContains="返回").exists():
                     print(f">>>{self.account}-网络异常，刷新验证码")
@@ -176,16 +179,23 @@ class LoginMixin(BaseMixin):
                         x = int(answer_result[i].split(',')[0]) + 157
                         y = int(answer_result[i].split(',')[1]) + 1
                         print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
-                        self.click(x, y, post_delay=1)
+                        self.click(x, y)
+                        if not answer_result == [162, 420]:
+                            self.d(text="确认").click()
+                            time.sleep(1.5)
 
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
+                    # print(answer_result,' ', _len,' ', _id)
                     x = int(answer_result[0]) + 157
                     y = int(answer_result[1]) + 1
                     print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
-                    self.click(x, y, post_delay=1)
+                    self.click(x, y)
+                    if not answer_result == [162, 420]:
+                        self.d(text="确认").click()
+                        time.sleep(1.5)
 
                 elif self.d(textContains="拖动滑块").exists():
                     print(f">>>{self.account}-检测到滑块题")
@@ -196,33 +206,54 @@ class LoginMixin(BaseMixin):
                     # print(type(x))
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 3.6)
+                    if not answer_result == [162, 420]:
+                        self.d(text="确认").click()
+                        time.sleep(1.5)
 
                 else:
-                    print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），有问题请加群带图联系开发者")
-                    return False
+                    print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），如有问题请加群带图联系开发者")
+                    # return False
 
-                sc1 = self.getscreen()
+            def due_AutoCaptcha():
 
-                def PopFun():
-                    time.sleep(1)
-                    sc2 = self.getscreen()
-                    p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
-                    if p <= 0.99:
-                        return True
-                    else:
-                        return False
+                nonlocal _time
+                nonlocal _id
+                nonlocal _pop
 
                 if _id == 0:
-                    time.sleep(4)
+                    # time.sleep(1)
                     # 检测到题目id为0就重新验证
                     AutoCaptcha()
 
-                state = self.lock_fun(PopFun, elseclick=START_UI["queren"], retry=8, is_raise=False)
+                # time.sleep(1)
+                # sc2 = self.getscreen()
+                # p = self.img_equal(sc1, sc2, at=START_UI["imgbox"])
+                # print(p)
+                # if p <= 0.99:
+                #     nonlocal state
+                #     self.d(text="确认").click()
+                #     state = True
+                # else:
+                #     state = False
 
-                # 这里是获取toast，看是否输错密码
+                # 这里是验证码登录后
                 toast_message = self.d.toast.get_message()
-                if toast_message is "密码错误":
-                    raise Exception("密码错误！")
+                # print(toast_message)
+
+                if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
+                    time.sleep(0.8)
+                    self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
+                    AutoCaptcha()
+
+                if toast_message == "请检查网络,-662":
+                    # print("请检查网络,-662")
+                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
+                    AutoCaptcha()
+                    # raise BadLoginException("请检查网络，-662")
+                elif toast_message == "密码错误":
+                    raise BadLoginException("密码错误！")
+                elif "账号异常" in str(toast_message).split(" "):
+                    raise BadLoginException("账号异常！")
 
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     if _time >= 5:
@@ -235,17 +266,18 @@ class LoginMixin(BaseMixin):
                         print("—申诉题目:", _id)
                         cs.send_error(_id)
                     _time = + 1
-                    time.sleep(4)
+                    print("验证码登陆验证重来！")
                     # 如果还有验证码就返回重试
                     AutoCaptcha()
-                return state
 
             manual_captcha = captcha_skip
             if captcha_skip is False:
-                for retry in range(3):
+                for retry in range(15):
                     if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
-                        state = AutoCaptcha()
-                        time.sleep(5)
+                        AutoCaptcha()
+                        due_AutoCaptcha()
+                        state = True  # 先这样，10s验证，state几乎已经不适用了
+                        # time.sleep(5)
                         if not state:
                             manual_captcha = True
                             break
@@ -253,8 +285,8 @@ class LoginMixin(BaseMixin):
                         SkipAuth()
                         flag = False
                         break
-                else:
-                    manual_captcha = True
+            else:
+                manual_captcha = True
             if manual_captcha:
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
@@ -306,7 +338,7 @@ class LoginMixin(BaseMixin):
                         r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
                         if self.lock_no_img(img=MAIN_BTN["guanbi"], elseclick=(int(r_list[0]), int(r_list[1])),
                                             side_check=self.juqing_kkr):
-                            time.sleep(6)
+                            # time.sleep(6)
                             continue
                     except:
                         pass
@@ -340,7 +372,7 @@ class LoginMixin(BaseMixin):
                     self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
                     break
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
-                    self.click(667, 65, post_delay=3)
+                    self.click(667, 65)
                     # 防止卡验证码
                     break
                 if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
@@ -352,7 +384,7 @@ class LoginMixin(BaseMixin):
                     if self.d(description="请滑动阅读协议内容").exists():
                         # 雷电三
                         self.d(description="同意").click()
-                    time.sleep(6)
+                    # time.sleep(6)
                 else:
                     self.click(945, 13)
                     self.click(678, 377)  # 下载
@@ -374,7 +406,6 @@ class LoginMixin(BaseMixin):
         :param auth_id:
         :return:
         """
-
 
         ORIGIN_MODE = True  # css炸裂之前的版本，设置为True后应付CSS炸裂之后的版本
 
@@ -447,13 +478,13 @@ class LoginMixin(BaseMixin):
             self.d.drag(827, 488, 827, 80, 0.1)
             self._move_check()
             self.d.drag(827, 488, 827, 80, 0.1)
-            self.click(431,91)
+            self.click(431, 91)
             self._move_check()
             self.d.clear_text()
             self._move_check()
             self.d.send_keys(str(auth_name))
             self._move_check()
-            self.click(460,217)
+            self.click(460, 217)
             self._move_check()
             self.d.clear_text()
             self._move_check()
@@ -462,7 +493,6 @@ class LoginMixin(BaseMixin):
             self.click(469, 364)  # 提交实名
             time.sleep(3)
             self.click(475, 407)
-
 
     @timeout(300, "login_auth登录超时，超过5分钟")
     @DEBUG_RECORD
@@ -482,7 +512,6 @@ class LoginMixin(BaseMixin):
                 birthday = str(random.randint(1970, 1999))
                 auth_name, auth_id = random_name(), validator.fake_id(birthday=birthday)
                 self.auth(auth_name=auth_name, auth_id=auth_id)
-
 
     @DEBUG_RECORD
     def change_acc(self):  # 切换账号
