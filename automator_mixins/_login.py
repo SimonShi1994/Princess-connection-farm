@@ -5,12 +5,12 @@ from id_validator import validator
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN, START_UI
 from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip, captcha_senderror, \
-    captcha_senderror_times, use_my_id, captcha_sleep_times
+    captcha_senderror_times, use_my_id
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import AutomatorRecorder
 from core.utils import random_name
-from ._tools import ToolsMixin
+from ._base import BaseMixin
 from ._base import DEBUG_RECORD
 from ._captcha import CaptionSkip
 
@@ -18,7 +18,7 @@ from ._captcha import CaptionSkip
 class BadLoginException(Exception): pass
 
 
-class LoginMixin(ToolsMixin):
+class LoginMixin(BaseMixin):
     """
     登录插片
     包含登录相关操作的脚本
@@ -180,11 +180,9 @@ class LoginMixin(ToolsMixin):
                         y = int(answer_result[i].split(',')[1]) + 1
                         print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
                         self.click(x, y)
-                        if answer_result == [255, 439]:
-                            print("平台识别不出来，刷新")
-                        self.d(text="确认").click()
-                        _time = + 1
-                        time.sleep(captcha_sleep_times)
+                        if not answer_result == [162, 420]:
+                            self.d(text="确认").click()
+                            time.sleep(1.5)
 
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
@@ -195,11 +193,9 @@ class LoginMixin(ToolsMixin):
                     print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y)
-                    if answer_result == [255, 439]:
-                        print("平台识别不出来，刷新")
-                    self.d(text="确认").click()
-                    _time = + 1
-                    time.sleep(captcha_sleep_times)
+                    if not answer_result == [162, 420]:
+                        self.d(text="确认").click()
+                        time.sleep(1.5)
 
                 elif self.d(textContains="拖动滑块").exists():
                     print(f">>>{self.account}-检测到滑块题")
@@ -210,11 +206,9 @@ class LoginMixin(ToolsMixin):
                     # print(type(x))
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 3.6)
-                    if answer_result == [255, 439]:
-                        print("平台识别不出来，刷新")
-                    self.d(text="确认").click()
-                    _time = + 1
-                    time.sleep(captcha_sleep_times)
+                    if not answer_result == [162, 420]:
+                        self.d(text="确认").click()
+                        time.sleep(1.5)
 
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），如有问题请加群带图联系开发者")
@@ -247,16 +241,13 @@ class LoginMixin(ToolsMixin):
                 # print(toast_message)
 
                 if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
-                    # time.sleep(0.8)
-                    self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click(timeout=1)
-                    time.sleep(captcha_sleep_times)
+                    time.sleep(0.8)
+                    self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
                     AutoCaptcha()
 
                 if toast_message == "请检查网络,-662":
                     # print("请检查网络,-662")
-                    if self.d(text="登录").exists():
-                        self.d(text="登录").click(timeout=2)
-                    time.sleep(captcha_sleep_times)
+                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
                     AutoCaptcha()
                     # raise BadLoginException("请检查网络，-662")
                 elif toast_message == "密码错误":
@@ -264,7 +255,6 @@ class LoginMixin(ToolsMixin):
                 elif "账号异常" in str(toast_message).split(" "):
                     raise BadLoginException("账号异常！")
 
-                # 下面代码暂时不管用
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     if _time >= 5:
                         print("重试次数太多啦，休息15s")
@@ -283,8 +273,7 @@ class LoginMixin(ToolsMixin):
             manual_captcha = captcha_skip
             if captcha_skip is False:
                 for retry in range(15):
-                    if self.d(text="Geetest").exists() or self.d(description="Geetest").exists() or \
-                            self.d(resourceId="com.bilibili.priconne:id/iv_gs_title_back").exists():
+                    if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                         AutoCaptcha()
                         due_AutoCaptcha()
                         state = True  # 先这样，10s验证，state几乎已经不适用了
@@ -296,7 +285,6 @@ class LoginMixin(ToolsMixin):
                         SkipAuth()
                         flag = False
                         break
-                    time.sleep(0.3)
             else:
                 manual_captcha = True
             if manual_captcha:
@@ -527,7 +515,9 @@ class LoginMixin(ToolsMixin):
 
     @DEBUG_RECORD
     def change_acc(self):  # 切换账号
-        self.get_zhuye().goto_zhucaidan().back_title().OK()
+        self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
+        self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)], at=(495, 353, 687, 388))
+        self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
         # 设备匿名
         self.phone_privacy()
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)

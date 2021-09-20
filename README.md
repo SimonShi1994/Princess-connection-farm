@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20211016
+# Princess connection 公主连结农场脚本v2.7.20210920
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -55,14 +55,14 @@
 - [x] 购买mana
 - [x] 购买经验
 - [x] 探索
-- [x] 调查
+- [ ] 圣迹调查
 - [ ] 收取女神祭
 
 5. 工具
 
 - [ ] 账号重命名
 - [x] box截图
-- [x] OCR获取账号信息
+- [ ] OCR获取账号信息
 - [ ] 卖出过量装备
 - [x] 暂停手操
 - [x] 库存识别 （仅限装备）
@@ -195,48 +195,6 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
-
-2021/10/16 By TheAutumnOfRice
-
-- 进一步修复UI
-- Config相关设置
-  - 增加Config人性化提示
-  - 增加force_timeout_reboot，默认开启，防止死循环
-  - 默认Config参数改动：
-    - 快速截图： 开启 —> 关闭
-    - 清除缓存： 开启 -> 关闭
-  
-- 修复调查本`r12`，允许神殿调查`r10`
-
-
-2021/10/14 By UVJkiNTQ
-
-- 修复UI改动导致的部分失效
-
-2021/10/7 By CyiceK
-
-- 自动搜寻模拟器支持re匹配，修复找不到Nox（夜神）模拟器的问题
-- 修复验证码无法刷新
-
-2021/10/2 By UVJkiNTQ
-
-- 新增26、27图
-
-2021/9/30 By CyiceK
-
-- 修复登陆u2控件验证码-662的红字retry，更新刷新验证码的位置
-
-2021/9/26 By UVJkiNTQ
-
-- 尝试修复行会捐赠、支援移位
-
-2021/9/25 By CyiceK
-
-- 增添重试后的验证码时延设置
-
-2021/9/21 By UVJkiNTQ
-- 修复行会点赞
-
 2021/9/14 By UVJkiNTQ
 
 - 修复战斗失败后未正常退出问题
