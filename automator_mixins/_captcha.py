@@ -143,11 +143,12 @@ class CaptionSkip:
             if str(answer_result.text) not in self.error_feature and str(answer_result.text) != "#答案不确定":
                 self._count_times += 1
                 # print("开始处理")
-                if question_type is "X6001" or question_type is "T6001":
+                if question_type == "X6001" or question_type == "T6001":
                     # 466,365
                     answer_result = answer_result.text.split(',')
-                    if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
-                        # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
+                    # print(answer_result)
+                    if not (94 < int(answer_result[0]) < 560) and not (128 < int(answer_result[1]) < 441):
+                        # 左上 94,128 右下 560,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
                             print(">刷新验证码")
@@ -155,7 +156,7 @@ class CaptionSkip:
                         answer_result = [162, 420]
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
-                elif question_type is "X8006" or question_type is "T8006":
+                elif question_type == "X8006" or question_type == "T8006":
                     # 滑块
                     answer_result = answer_result.text.split(',')
                     if not (266 < int(answer_result[0]) < 696) and not (338 < int(answer_result[1]) < 434):
@@ -167,7 +168,7 @@ class CaptionSkip:
                         answer_result = [162, 420]
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
-                elif question_type is "X6004" or question_type is "T6004":
+                elif question_type == "X6004" or question_type == "T6004":
                     # 多坐标处理
                     # 464,364|551,376|506,271|390,233
                     answer_result = answer_result.text.split('|')
