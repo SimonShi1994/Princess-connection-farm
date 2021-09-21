@@ -290,6 +290,7 @@ class LoginMixin(BaseMixin):
             if manual_captcha:
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     self.log.write_log("error", message='%s账号出现了验证码，请在%d秒内手动输入验证码' % (self.account, captcha_wait_time))
+                    Bot().server_bot(s_level='', message='%s账号出现了验证码，请手动输入验证码')
                     if captcha_popup:
                         TimeoutMsgBox("!", f"{self.address}出现验证码\n账号：{self.account}", geo="200x80",
                                       timeout=captcha_wait_time)
