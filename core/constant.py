@@ -288,7 +288,7 @@ HANGHUI_BTN = {
     # 返回键隔壁的“行会”字样
     "hanghui_title": p(img="img/hanghui.bmp", at=(63, 12, 123, 45)),
     # 成员信息
-    "chengyuanxinxi": p(237, 353, img="img/hanghui/chengyuanxinxi.bmp", at=(203, 339, 272, 359)),
+    "chengyuanxinxi": p(239, 356, img="img/hanghui/chengyuanxinxi.bmp", at=(203,345,271,366))),
     # 成员信息界面的“成员列表”按钮
     "chengyuanliebiao": p(img='img/chengyuanliebiao.bmp', at=(329, 15, 450, 42)),
     # 筛选条件（成员界面）
