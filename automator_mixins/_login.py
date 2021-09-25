@@ -5,7 +5,7 @@ from id_validator import validator
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN, START_UI
 from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip, captcha_senderror, \
-    captcha_senderror_times, use_my_id
+    captcha_senderror_times, use_my_id, captcha_sleep_times
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import AutomatorRecorder
@@ -182,7 +182,7 @@ class LoginMixin(BaseMixin):
                         self.click(x, y)
                         if not answer_result == [162, 420]:
                             self.d(text="确认").click()
-                            time.sleep(1.5)
+                            time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
@@ -195,7 +195,7 @@ class LoginMixin(BaseMixin):
                     self.click(x, y)
                     if not answer_result == [162, 420]:
                         self.d(text="确认").click()
-                        time.sleep(1.5)
+                        time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="拖动滑块").exists():
                     print(f">>>{self.account}-检测到滑块题")
@@ -208,7 +208,7 @@ class LoginMixin(BaseMixin):
                     self.d.drag_to(322, 388, x, 386, 3.6)
                     if not answer_result == [162, 420]:
                         self.d(text="确认").click()
-                        time.sleep(1.5)
+                        time.sleep(captcha_sleep_times)
 
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），如有问题请加群带图联系开发者")
@@ -242,12 +242,12 @@ class LoginMixin(BaseMixin):
 
                 if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
                     time.sleep(0.8)
-                    self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
+                    self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click(timeout=1)
                     AutoCaptcha()
 
                 if toast_message == "请检查网络,-662":
                     # print("请检查网络,-662")
-                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
+                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click(timeout=1)
                     AutoCaptcha()
                     # raise BadLoginException("请检查网络，-662")
                 elif toast_message == "密码错误":
@@ -273,7 +273,8 @@ class LoginMixin(BaseMixin):
             manual_captcha = captcha_skip
             if captcha_skip is False:
                 for retry in range(15):
-                    if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
+                    if self.d(text="Geetest").exists() or self.d(description="Geetest").exists() or \
+                            self.d(resourceId="com.bilibili.priconne:id/iv_gs_title_back").exists():
                         AutoCaptcha()
                         due_AutoCaptcha()
                         state = True  # 先这样，10s验证，state几乎已经不适用了
@@ -285,6 +286,7 @@ class LoginMixin(BaseMixin):
                         SkipAuth()
                         flag = False
                         break
+                    time.sleep(0.8)
             else:
                 manual_captcha = True
             if manual_captcha:

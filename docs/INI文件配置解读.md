@@ -55,6 +55,7 @@
 |captcha_level|接码平台的识别等级|str|特速双倍扣分哦|小速/特速|
 |captcha_userstr|接码密码串|str||10001\|QASWC~G3A9|
 |captcha_software_key|接码的软件KEY|str||1001\|4A96~F0EA|
+|captcha_sleep_times|验证码点击“确认”后的延迟|float|单位：秒|1.5|
 |captcha_senderror|                         自动申诉题目                         |bool|成功返回分值，失败扣除双倍|True|
 |captcha_senderror_times| 验证失败多少次后触发自动申诉题目 |int||2|
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|
