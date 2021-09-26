@@ -306,7 +306,7 @@ HANGHUI_BTN = {
     # 行会确认（这里兼顾了两个不同的ok，一个正中，一个偏右）
     "hanghui_ok": p(514, 371, img="img/hanghui/hanghui_ok.bmp", at=(243, 332, 708, 403)),
     # 请求捐赠装备
-    "qqjzzb": p(402, 430, img="img/hanghui/qqzjzb.bmp", at=(356, 422, 449, 441))),
+    "qqjzzb": p(402, 430, img="img/hanghui/qqzjzb.bmp", at=(356, 422, 449, 441)),
     # 发起捐赠请求
     "fqjzqq": p(585, 477, img="img/hanghui/fqjzqq.bmp", at=(521, 460, 651, 495)),
     # 确认发出请求
