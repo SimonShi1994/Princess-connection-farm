@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20210921
+# Princess connection 公主连结农场脚本v2.7.20210925
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -62,7 +62,7 @@
 
 - [ ] 账号重命名
 - [x] box截图
-- [ ] OCR获取账号信息
+- [x] OCR获取账号信息
 - [ ] 卖出过量装备
 - [x] 暂停手操
 - [x] 库存识别 （仅限装备）
@@ -195,6 +195,14 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/9/25 By CyiceK
+
+- 增添重试后的验证码时延设置
+
+2021/9/21 By UVJkiNTQ
+- 修复行会点赞
+
 2021/9/14 By UVJkiNTQ
 
 - 修复战斗失败后未正常退出问题
