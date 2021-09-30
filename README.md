@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20210926
+# Princess connection 公主连结农场脚本v2.7.20210930
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -195,6 +195,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/9/30 By CyiceK
+
+- 修复登陆u2控件验证码-662的红字retry，更新刷新验证码的位置
+
 2021/9/26 By UVJkiNTQ
 
 - 尝试修复行会捐赠、支援移位

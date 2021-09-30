@@ -153,7 +153,7 @@ class CaptionSkip:
                         if debug:
                             print(">刷新验证码")
                         # 刷新验证码
-                        answer_result = [162, 420]
+                        answer_result = [255, 439]
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
                 elif question_type == "X8006" or question_type == "T8006":
@@ -165,7 +165,7 @@ class CaptionSkip:
                         if debug:
                             print(">刷新验证码")
                         # 刷新验证码
-                        answer_result = [162, 420]
+                        answer_result = [255, 439]
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
                 elif question_type == "X6004" or question_type == "T6004":
@@ -179,7 +179,7 @@ class CaptionSkip:
                         if debug:
                             print(">刷新验证码")
                         # 刷新验证码
-                        answer_result = [162, 420]
+                        answer_result = [255, 439]
                         return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
 
@@ -188,7 +188,7 @@ class CaptionSkip:
                 if debug:
                     print(">刷新验证码")
                 # 刷新验证码
-                answer_result = [162, 420]
+                answer_result = [255, 439]
                 # answer_result = tmp_list.split(',')
                 return answer_result, count_len, 0
             # print(answer_result, '', answer_result.text, '', _count_times)
