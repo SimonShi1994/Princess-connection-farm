@@ -180,7 +180,7 @@ class LoginMixin(BaseMixin):
                         y = int(answer_result[i].split(',')[1]) + 1
                         print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
                         self.click(x, y)
-                        if not answer_result == [162, 420]:
+                        if not answer_result == [255, 439]:
                             self.d(text="确认").click()
                             time.sleep(captcha_sleep_times)
 
@@ -193,7 +193,7 @@ class LoginMixin(BaseMixin):
                     print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y)
-                    if not answer_result == [162, 420]:
+                    if not answer_result == [255, 439]:
                         self.d(text="确认").click()
                         time.sleep(captcha_sleep_times)
 
@@ -206,7 +206,7 @@ class LoginMixin(BaseMixin):
                     # print(type(x))
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 3.6)
-                    if not answer_result == [162, 420]:
+                    if not answer_result == [255, 439]:
                         self.d(text="确认").click()
                         time.sleep(captcha_sleep_times)
 
@@ -241,13 +241,16 @@ class LoginMixin(BaseMixin):
                 # print(toast_message)
 
                 if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
-                    time.sleep(0.8)
+                    # time.sleep(0.8)
                     self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click(timeout=1)
+                    time.sleep(captcha_sleep_times)
                     AutoCaptcha()
 
                 if toast_message == "请检查网络,-662":
                     # print("请检查网络,-662")
-                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click(timeout=1)
+                    if self.d(text="登录").exists():
+                        self.d(text="登录").click(timeout=2)
+                        time.sleep(captcha_sleep_times)
                     AutoCaptcha()
                     # raise BadLoginException("请检查网络，-662")
                 elif toast_message == "密码错误":
