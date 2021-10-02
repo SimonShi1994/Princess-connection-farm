@@ -10,6 +10,7 @@ from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import AutomatorRecorder
 from core.utils import random_name
+from core.bot import Bot
 from ._base import BaseMixin
 from ._base import DEBUG_RECORD
 from ._captcha import CaptionSkip
