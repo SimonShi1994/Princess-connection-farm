@@ -1,7 +1,6 @@
 """
 新的启动函数，支持Batch，schedule操作等。
 """
-import gc
 import multiprocessing
 import pathlib
 import sys
