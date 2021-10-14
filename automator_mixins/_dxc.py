@@ -240,7 +240,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             if self.is_exists(DXC_ELEMENT["zhiyuan_gouxuan"]):
                 pass
             elif self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,
-                                at=(45, 144, 163, 252)):
+                                at=(45, 144, 163, 252)) and assist_num <= 2:
                 # 如果第二个也等级不足就退出
                 if self.is_exists('img/dengjixianzhi.jpg', threshold=0.1, is_black=True, black_threshold=5900,
                                   at=(160, 126, 270, 232)):

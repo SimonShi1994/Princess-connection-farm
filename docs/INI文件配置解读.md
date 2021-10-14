@@ -44,6 +44,7 @@
 |       running_input          |           开启后，可以在运行时向控制台输入指令                   |  bool |          |      True  |
 |selected_emulator|使用的模拟器的名称|string||雷电|
 |enable_auto_find_emulator|启动自动模拟器搜索，理论支持各种模拟器共同使用|bool|建议关闭|False|
+|one_way_search_auto_find_emulator|是否用单向的方式搜寻模拟器|bool|单向不能混搭，但是搜寻速度更快|False|
 |emulators_port_interval|自动搜索模拟器端口区间|list||[5565,5566]|
 |emulators_port_list|自动搜索模拟器连接的端口list|list||[5565,5566]|
 |emulator_ports|（除雷电外的的）模拟器端口|list|雷电可以不写|[]|
@@ -55,6 +56,7 @@
 |captcha_level|接码平台的识别等级|str|特速双倍扣分哦|小速/特速|
 |captcha_userstr|接码密码串|str||10001\|QASWC~G3A9|
 |captcha_software_key|接码的软件KEY|str||1001\|4A96~F0EA|
+|captcha_sleep_times|验证码点击“确认”后的延迟|float|单位：秒|1.5|
 |captcha_senderror|                         自动申诉题目                         |bool|成功返回分值，失败扣除双倍|True|
 |captcha_senderror_times| 验证失败多少次后触发自动申诉题目 |int||2|
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|

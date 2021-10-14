@@ -255,11 +255,11 @@ HANGHUI_BTN = {
     # 加入行会
     "join_btn": p(854, 444, img='img/jiaru.bmp', at=(749, 427, 933, 460)),
     # 支援设定
-    "zhiyuansheding": p(83, 348, img="img/hanghui/zhiyuansheding.bmp", at=(48, 336, 120, 362)),
+    "zhiyuansheding": p(84, 357, img="img/hanghui/zhiyuansheding.bmp", at=(52 ,346, 119, 369)),
     # 地下城支援1
-    "zhiyuan_dxc1": p(105, 232, img="img/hanghui/zhiyuanjuese1.bmp", at=(65, 194, 142, 272)),
+    "zhiyuan_dxc1": p(78, 207, img="img/hanghui/zhiyuanjuese1.bmp", at=(43, 172, 114, 244)),
     # 地下城支援2
-    "zhiyuan_dxc2": p(102, 355, img="img/hanghui/zhiyuanjuese2.bmp", at=(64, 315, 140, 393)),
+    "zhiyuan_dxc2": p(78, 352, img="img/hanghui/zhiyuanjuese2.bmp", at=(44, 318, 113, 388)),
     # 支援取消
     "zhiyuanquxiao": p(img="img/hanghui/zhiyuanquxiao.bmp", at=(645, 438, 694, 466)),
     # 战力排序（支援界面）用于判断是否处在战力排序状态
@@ -288,7 +288,7 @@ HANGHUI_BTN = {
     # 返回键隔壁的“行会”字样
     "hanghui_title": p(img="img/hanghui.bmp", at=(63, 12, 123, 45)),
     # 成员信息
-    "chengyuanxinxi": p(237, 353, img="img/hanghui/chengyuanxinxi.bmp", at=(203, 339, 272, 359)),
+    "chengyuanxinxi": p(239, 356, img="img/hanghui/chengyuanxinxi.bmp", at=(203,345,271,366)),
     # 成员信息界面的“成员列表”按钮
     "chengyuanliebiao": p(img='img/chengyuanliebiao.bmp', at=(329, 15, 450, 42)),
     # 筛选条件（成员界面）
@@ -306,9 +306,9 @@ HANGHUI_BTN = {
     # 行会确认（这里兼顾了两个不同的ok，一个正中，一个偏右）
     "hanghui_ok": p(514, 371, img="img/hanghui/hanghui_ok.bmp", at=(243, 332, 708, 403)),
     # 请求捐赠装备
-    "qqjzzb": p(404, 431, img="img/hanghui/qqzjzb.bmp", at=(342, 419, 460, 440)),
+    "qqjzzb": p(402, 430, img="img/hanghui/qqzjzb.bmp", at=(356, 422, 449, 441)),
     # 发起捐赠请求
-    "fqjzqq": p(585, 478, img="img/hanghui/fqjzqq.bmp", at=(528, 466, 646, 485)),
+    "fqjzqq": p(585, 477, img="img/hanghui/fqjzqq.bmp", at=(521, 460, 651, 495)),
     # 确认发出请求
     "jzqq_ok": p(589, 433, img="img/ui/ok_btn_1.bmp", at=(487, 409, 691, 457)),
     # 稀有度
@@ -322,13 +322,13 @@ HANGHUI_BTN = {
     # 捐赠请求结果
     "jzqqjg": p(402, 432, img="img/hanghui/jzqqjg.bmp", at=(357, 422, 447, 436)),
     # 撤下支援 1
-    "zyjs_1": p(406, 252),
+    "zyjs_1": p(239, 255),
     # 撤下支援 2
-    "zyjs_2": p(407, 373),
+    "zyjs_2": p(239, 404),
     # 支援结束确认
     "zyjsqr": p(img="img/hanghui/zyjsqr.bmp", at=(419, 133, 540, 155)),
     # 支援结束确认_ok
-    "zyjsqr_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "zyjsqr_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(533, 348, 649, 390)),
     # 收取报酬
     "sqbc": p(img="img/hanghui/sqbc.bmp", at=(439, 32, 521, 52)),
 
@@ -755,6 +755,16 @@ HARD_COORD = {
         2: p(481,359),
         3: p(769,257),
     },
+    26: {
+        1: p(214,288),
+        2: p(475,235),
+        3: p(762,334),
+    },
+    27: {
+        1: p(212,270),
+        2: p(475,350),
+        3: p(765,282),
+    },  
 }
 
 SHOP_BTN = {
@@ -840,6 +850,8 @@ ZHUXIAN_ID = {
     23: p(img="img/zhuxian/23L.bmp", at=(109, 58, 177, 75)),
     24: p(img="img/zhuxian/24L.bmp",at=(91,59,193,73)),
     25:p(img="img/zhuxian/25L.bmp",at=(91,59,193,71)),
+    26:p(img="img/zhuxian/26L.bmp",at=(61,55,198,77)),
+    27:p(img="img/zhuxian/27L.bmp",at=(60,56,199,76)),
 
 }
 ZHUXIAN_XXXYY_ID = {
@@ -859,11 +871,16 @@ ZHUXIAN_LDWSQF_ID = {
     24:p(img="img/zhuxian/24R.bmp",at=(219,58,249,72)),
     25:p(img="img/zhuxian/25R.bmp",at=(216,59,250,73)),
 }
+ZHUXIAN_SBDDSL_ID = {
+    26:p(img="img/zhuxian/26R.bmp",at=(212,58,252,77)),
+    27:p(img="img/zhuxian/27R.bmp",at=(214,58,251,77)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
     (22, 23): ZHUXIAN_XXXYF_ID,
     (24, 25): ZHUXIAN_LDWSQF_ID,
+    (26, 27): ZHUXIAN_SBDDSL_ID,
 }
 
 NORMAL_COORD = {
@@ -1374,6 +1391,46 @@ NORMAL_COORD = {
             3: p(380,283),
             2: p(290,183),
             1: p(162,225),
+        }
+    },
+    26: {
+        "right": {
+            14: p(793,338),
+            13: p(723,253),
+            12: p(603,231),
+            11: p(516,313),
+            10: p(423,390),
+            9:  p(365,280),
+            8:  p(243,276),
+        },
+        "left": {
+            7: p(669,385),
+            6: p(576,301),
+            5: p(455,274),
+            4: p(411,390),
+            3: p(291,346),
+            2: p(248,229),
+            1: p(124,270),
+        }
+    },
+    27: {
+        "right": {
+            14: p(839,286),
+            13: p(738,342),
+            12: p(673,245),
+            11: p(556,249),
+            10: p(539,350),
+            9:  p(421,382),
+            8:  p(359,284),
+        },
+        "left": {
+            7: p(742,264),
+            6: p(659,348),
+            5: p(551,288),
+            4: p(444,361),
+            3: p(313,392),
+            2: p(220,299),
+            1: p(119,373),
         }
     },
 }
