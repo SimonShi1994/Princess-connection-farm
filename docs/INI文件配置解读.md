@@ -44,7 +44,6 @@
 |       running_input          |           开启后，可以在运行时向控制台输入指令                   |  bool |          |      True  |
 |selected_emulator|使用的模拟器的名称|string||雷电|
 |enable_auto_find_emulator|启动自动模拟器搜索，理论支持各种模拟器共同使用|bool|建议关闭|False|
-|one_way_search_auto_find_emulator|是否用单向的方式搜寻模拟器|bool|单向不能混搭，但是搜寻速度更快|False|
 |emulators_port_interval|自动搜索模拟器端口区间|list||[5565,5566]|
 |emulators_port_list|自动搜索模拟器连接的端口list|list||[5565,5566]|
 |emulator_ports|（除雷电外的的）模拟器端口|list|雷电可以不写|[]|

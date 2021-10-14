@@ -181,11 +181,9 @@ class LoginMixin(BaseMixin):
                         y = int(answer_result[i].split(',')[1]) + 1
                         print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
                         self.click(x, y)
-                        if answer_result == [255, 439]:
-                            print("平台识别不出来，刷新")
-                        self.d(text="确认").click()
-                        _time = + 1
-                        time.sleep(captcha_sleep_times)
+                        if not answer_result == [255, 439]:
+                            self.d(text="确认").click()
+                            time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
@@ -196,11 +194,9 @@ class LoginMixin(BaseMixin):
                     print(f">{self.account}-验证码坐标识别：", x, ',', y)
                     # print(type(x))
                     self.click(x, y)
-                    if answer_result == [255, 439]:
-                        print("平台识别不出来，刷新")
-                    self.d(text="确认").click()
-                    _time = + 1
-                    time.sleep(captcha_sleep_times)
+                    if not answer_result == [255, 439]:
+                        self.d(text="确认").click()
+                        time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="拖动滑块").exists():
                     print(f">>>{self.account}-检测到滑块题")
@@ -211,11 +207,9 @@ class LoginMixin(BaseMixin):
                     # print(type(x))
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 3.6)
-                    if answer_result == [255, 439]:
-                        print("平台识别不出来，刷新")
-                    self.d(text="确认").click()
-                    _time = + 1
-                    time.sleep(captcha_sleep_times)
+                    if not answer_result == [255, 439]:
+                        self.d(text="确认").click()
+                        time.sleep(captcha_sleep_times)
 
                 else:
                     print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），如有问题请加群带图联系开发者")
@@ -257,7 +251,7 @@ class LoginMixin(BaseMixin):
                     # print("请检查网络,-662")
                     if self.d(text="登录").exists():
                         self.d(text="登录").click(timeout=2)
-                    time.sleep(captcha_sleep_times)
+                        time.sleep(captcha_sleep_times)
                     AutoCaptcha()
                     # raise BadLoginException("请检查网络，-662")
                 elif toast_message == "密码错误":
@@ -265,7 +259,6 @@ class LoginMixin(BaseMixin):
                 elif "账号异常" in str(toast_message).split(" "):
                     raise BadLoginException("账号异常！")
 
-                # 下面代码暂时不管用
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     if _time >= 5:
                         print("重试次数太多啦，休息15s")
@@ -297,7 +290,7 @@ class LoginMixin(BaseMixin):
                         SkipAuth()
                         flag = False
                         break
-                    time.sleep(0.3)
+                    time.sleep(0.8)
             else:
                 manual_captcha = True
             if manual_captcha:

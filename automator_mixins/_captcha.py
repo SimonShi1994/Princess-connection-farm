@@ -151,7 +151,7 @@ class CaptionSkip:
                         # 左上 94,128 右下 560,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
-                            print(">[范围]刷新验证码")
+                            print(">刷新验证码")
                         # 刷新验证码
                         answer_result = [255, 439]
                         return answer_result, count_len, 0
@@ -163,7 +163,7 @@ class CaptionSkip:
                         # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
-                            print(">[范围]刷新验证码")
+                            print(">刷新验证码")
                         # 刷新验证码
                         answer_result = [255, 439]
                         return answer_result, count_len, 0
@@ -177,7 +177,7 @@ class CaptionSkip:
                         # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
-                            print(">[范围]刷新验证码")
+                            print(">刷新验证码")
                         # 刷新验证码
                         answer_result = [255, 439]
                         return answer_result, count_len, 0
@@ -186,10 +186,9 @@ class CaptionSkip:
             elif answer_result.text == "#答案不确定" or answer_result.text in self.no_result or self._count_times >= 7:
                 # 答案不确定(不扣分)
                 if debug:
-                    print(">[不确定]刷新验证码")
+                    print(">刷新验证码")
                 # 刷新验证码
                 answer_result = [255, 439]
-                self._count_times = 0
                 # answer_result = tmp_list.split(',')
                 return answer_result, count_len, 0
             # print(answer_result, '', answer_result.text, '', _count_times)
