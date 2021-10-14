@@ -15,7 +15,7 @@ from core.utils import is_ocr_running
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20211007"
+script_version = "Ver 2.7.20211014"
 
 
 def GetLastSchedule():

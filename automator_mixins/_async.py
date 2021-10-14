@@ -87,7 +87,7 @@ class AsyncMixin(ToolsMixin):
                 if time.time() - self.last_screen_time > async_screenshot_freq:
                     continue
                 time_start = time.time()
-                if self.is_exists(screen=screenshot, img='img/error/connecting.bmp', at=(748, 20, 931, 53)):
+                if self.is_exists(screen=screenshot, img='img/error/connecting.bmp', at=(774, 476, 867, 506)):
                     cumulative_time = 0.1
                     # 卡连接
                     time.sleep(1)

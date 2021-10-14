@@ -182,7 +182,7 @@ JJC_BTN = {
 
 }
 JUQING_BTN = {
-    "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(901, 25, 934, 56)),
+    "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(903, 26, 931, 55)),
     "tiaoguo_1": p(804, 38, img="img/juqing/tiaoguo_1.bmp", at=(765, 24, 849, 65)),
     "tiaoguo_2": p(589, 367, img="img/juqing/tiaoguo_2.bmp", at=(567, 356, 611, 379))
 }
@@ -362,8 +362,8 @@ ZHUCAIDAN_BTN = {
 
 }
 FIGHT_BTN = {
-    "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(895, 404, 925, 441)),
-    "auto_off": p(914, 421, img="img/fight/auto_off.bmp", at=(895, 407, 929, 441)),
+    "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(892, 410, 930, 434)),
+    "auto_off": p(914, 421, img="img/fight/auto_off.bmp", at=(894, 411, 931, 433)),
     "speed_1": p(910, 490, img="img/fight/speed_1.bmp", at=(894, 476, 932, 511)),
     "speed_0": p(910, 490, img="img/fight/speed_0.bmp", at=(895, 478, 928, 510)),
     "speed_2": p(911, 495, img="img/fight/speed_2.bmp", at=(893, 477, 931, 511)),
@@ -460,7 +460,7 @@ JUESE_BTN = {
         8: p(476, 430),
         9: p(789, 427),
     },
-    "rank_tisheng": p(246, 333, img="img/juese/rank_tisheng.bmp", at=(204, 323, 289, 335)),
+    "rank_tisheng": p(246, 333, img="img/juese/rank_tisheng.bmp", at=(214, 327, 283, 340))),
     "rank_tisheng_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
     "rank_tisheng_ok_noequ": p(588, 369, img="img/juese/ok_btn.bmp", at=(567, 358, 611, 380)),  # 不需要消耗时，强化的OK在上头
     "rank_tisheng_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
@@ -778,12 +778,12 @@ SHOP_BTN = {
 MAOXIAN_BTN = {
     "bianzusheding": p(img="img/maoxian/bianzusheding.bmp", at=(373, 124, 590, 164)),
     "bianzusheding_ok": p(436, 162),
-    "normal_on": p(581,85,img="img/maoxian/normal_on.bmp",at=(542,74,623,95)),
-    "normal_off":p(578,84,img="img/maoxian/normal_off.bmp",at=(544,73,617,95)),
-    "hard_on": p(698,84,img="img/maoxian/hard_on.bmp",at=(671,73,730,93)),
-    "hard_off": p(699,84,img="img/maoxian/hard_off.bmp",at=(672,76,729,92)),
-    "vh_off":p(816,85,img="img/maoxian/vh_off.bmp",at=(773,75,867,93)),
-    "vh_on":p(819,85,img="img/maoxian/vh_on.bmp",at=(777,75,866,94)),
+    "normal_on": p(581,85,img="img/maoxian/normal_on.bmp",at=(550,73,616,95)),
+    "normal_off":p(578,84,img="img/maoxian/normal_off.bmp",at=(548,74,615,94)),
+    "hard_on": p(698,84,img="img/maoxian/hard_on.bmp",at=(665,73,737,95)),
+    "hard_off": p(699,84,img="img/maoxian/hard_off.bmp",at=(670,75,731,92)),
+    "vh_off":p(816,85,img="img/maoxian/vh_off.bmp",at=(786,73,857,95)),
+    "vh_on":p(819,85,img="img/maoxian/vh_on.bmp",at=(786,75,860,95)),
     "hard_0_3": p(img="img/maoxian/hard_0_3.bmp", at=(887, 402, 919, 422)),  # 剩余挑战次数0/3
     "ditu": p(img="img/maoxian/ditu.bmp", at=(906, 64, 930, 106)),
     "tili_bar": p(at=(529, 32, 637, 38), fc=(255, 215, 99), bc=(90, 101, 115)),
