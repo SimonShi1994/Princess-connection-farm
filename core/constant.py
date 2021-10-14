@@ -192,7 +192,7 @@ JJC_BTN = {
 
 }
 JUQING_BTN = {
-    "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(901, 25, 934, 56)),
+    "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(903, 26, 931, 55)),
     "tiaoguo_1": p(804, 38, img="img/juqing/tiaoguo_1.bmp", at=(765, 24, 849, 65)),
     "tiaoguo_2": p(589, 367, img="img/juqing/tiaoguo_2.bmp", at=(567, 356, 611, 379))
 }
@@ -471,7 +471,7 @@ JUESE_BTN = {
         8: p(476, 430),
         9: p(789, 427),
     },
-    "rank_tisheng": p(246, 333, img="img/juese/rank_tisheng.bmp", at=(204, 323, 289, 335)),
+    "rank_tisheng": p(246, 333, img="img/juese/rank_tisheng.bmp", at=(214, 327, 283, 340))),
     "rank_tisheng_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
     "rank_tisheng_ok_noequ": p(588, 369, img="img/juese/ok_btn.bmp", at=(567, 358, 611, 380)),  # 不需要消耗时，强化的OK在上头
     "rank_tisheng_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
