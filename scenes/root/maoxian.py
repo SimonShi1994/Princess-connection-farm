@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from scenes.zhuxian.zhuxian_base import ZhuXianBase
     from scenes.maoxian.tansuo import TanSuoMenu
     from scenes.dxc.dxc_select import DXCSelectA, DXCSelectB
+    from scenes.maoxian.diaocha import DiaoChaMenu
 
 class MaoXian(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
@@ -58,3 +59,7 @@ class MaoXian(SevenBTNMixin):
                 return PS
             else:
                 raise LockTimeoutError("进入地下城失败！")
+
+    def goto_diaocha(self)->"DiaoChaMenu":
+        from scenes.maoxian.diaocha import DiaoChaMenu
+        return self.goto(DiaoChaMenu,self.fun_click(MAIN_BTN["diaocha"]))

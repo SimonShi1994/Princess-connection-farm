@@ -142,13 +142,13 @@ class RoutineMixin(ShuatuBaseMixin):
         # 2020-08-06 TheAutumnOfRice: 检查完毕
         self.lock_home()
         self.click_btn(MAIN_BTN["liwu"], until_appear=LIWU_BTN["shouqulvli"], retry=8)
-        state = self.lock_img({LIWU_BTN["ok"]: True, LIWU_BTN["meiyouliwu"]: False},
+        state = self.lock_img({LIWU_BTN["yijianshouqu"]: True, LIWU_BTN["meiyouliwu"]: False},
                               elseclick=LIWU_BTN["quanbushouqu"], retry=2, elsedelay=8)
         if state:
-            s = self.lock_img({LIWU_BTN["ok2"]: 1, LIWU_BTN["chiyoushangxian"]: 2},
+            s = self.lock_img({LIWU_BTN["shouqule"]: 1, LIWU_BTN["chiyoushangxian"]: 2},
                               elseclick=LIWU_BTN["ok"], elsedelay=8)
             if s == 1:
-                self.click_btn(LIWU_BTN["ok2"])
+                self.click_btn(LIWU_BTN["ok2"],until_disappear=LIWU_BTN["shouqule"])
                 self.lock_home()
             else:
                 self.log.write_log("warning", "收取体力达到上限！")
@@ -570,69 +570,94 @@ class RoutineMixin(ShuatuBaseMixin):
         ts["tansuo"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
+    #
+    # def shengji(self, mode=0, times=5, tili=False):
+    #     """
+    #         mode = 0 刷1+2（适合大号）
+    #         mode = 1 只刷1（适合小号日常）
+    #         mode = 2 只刷2（适合活动关）
+    #     """
+    #
+    #     def tryfun_shengji():
+    #         def sj1():
+    #             self.click(541, 260)
+    #             time.sleep(3)
+    #             self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
+    #             self.clearFCHeader("KarinFC")
+    #             time.sleep(0.5)
+    #
+    #         def sj2():
+    #             self.click(539, 146)
+    #             time.sleep(3)
+    #             self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
+    #             self.clearFCHeader("KarinFC")
+    #             time.sleep(0.5)
+    #
+    #         if mode == 0:
+    #             sj1()
+    #             sj2()
+    #         elif mode == 1:
+    #             sj1()
+    #         else:
+    #             sj2()
+    #
+    #     ts = self.AR.get("time_status", UDD["time_status"])
+    #     if not diffday(time.time(), ts["shengji"]):
+    #         self.log.write_log("info", "今天已经圣迹调查过了！")
+    #         return
+    #
+    #     if tili:
+    #         self.start_shuatu()
+    #     if not self.check_shuatu():
+    #         return
+    #
+    #     def KarinFun():
+    #         self.ES.clear("KarinFC")
+    #         self.chulijiaocheng(None)
+    #         raise RetryNow(name="Karin")
+    #
+    #     def KarinFC(FC):
+    #         FC.getscreen().exist(MAIN_BTN["karin_middle"], KarinFun)
+    #
+    #     self.setFCHeader("KarinFC", KarinFC)
+    #
+    #     @PCRRetry(name="Karin")
+    #     def KarinLoop():
+    #         self.lock_home()
+    #         self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
+    #         self.setFCHeader("KarinFC", KarinFC)
+    #         self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
+    #         tryfun_shengji()
+    #
+    #     KarinLoop()
+    #
+    #     ts["shengji"] = time.time()
+    #     self.AR.set("time_status", ts)
+    #     self.lock_home()
 
-    def shengji(self, mode=0, times=5, tili=False):
+
+    def shengjidiaocha(self,team_order="zhanli"):
         """
-            mode = 0 刷1+2（适合大号）
-            mode = 1 只刷1（适合小号日常）
-            mode = 2 只刷2（适合活动关）
+        圣迹调查
+        全刷，不能扫荡则以team_order战斗
         """
-
-        def tryfun_shengji():
-            def sj1():
-                self.click(541, 260)
-                time.sleep(3)
-                self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
-                self.clearFCHeader("KarinFC")
-                time.sleep(0.5)
-
-            def sj2():
-                self.click(539, 146)
-                time.sleep(3)
-                self.zhandouzuobiao(30, 30, times, use_saodang=True, buy_tili=tili)
-                self.clearFCHeader("KarinFC")
-                time.sleep(0.5)
-
-            if mode == 0:
-                sj1()
-                sj2()
-            elif mode == 1:
-                sj1()
-            else:
-                sj2()
-
-        ts = self.AR.get("time_status", UDD["time_status"])
-        if not diffday(time.time(), ts["shengji"]):
-            self.log.write_log("info", "今天已经圣迹调查过了！")
-            return
-
-        if tili:
-            self.start_shuatu()
         if not self.check_shuatu():
             return
 
-        def KarinFun():
-            self.ES.clear("KarinFC")
-            self.chulijiaocheng(None)
-            raise RetryNow(name="Karin")
+        S = self.get_zhuye().goto_maoxian().goto_diaocha().goto_shengji()
+        S.doit(team_order)
+        self.lock_home()
 
-        def KarinFC(FC):
-            FC.getscreen().exist(MAIN_BTN["karin_middle"], KarinFun)
+    def shendianjidiaocha(self,team_order="zhanli"):
+        """
+        神殿调查
+        全刷，不能扫荡则以team_order战斗
+        """
+        if not self.check_shuatu():
+            return
 
-        self.setFCHeader("KarinFC", KarinFC)
-
-        @PCRRetry(name="Karin")
-        def KarinLoop():
-            self.lock_home()
-            self.click_btn(MAIN_BTN["maoxian"], elsedelay=4, until_appear=MAIN_BTN["zhuxian"])
-            self.setFCHeader("KarinFC", KarinFC)
-            self.click_btn(MAIN_BTN["shengji"], elsedelay=4, until_appear=MAIN_BTN["shengjiguanqia"])
-            tryfun_shengji()
-
-        KarinLoop()
-
-        ts["shengji"] = time.time()
-        self.AR.set("time_status", ts)
+        S = self.get_zhuye().goto_maoxian().goto_diaocha().goto_shendian()
+        S.doit(team_order)
         self.lock_home()
 
     def shouqunvshenji(self):
