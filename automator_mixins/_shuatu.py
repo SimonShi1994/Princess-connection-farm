@@ -192,7 +192,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             nowA,nowB = self.add_map_id(mode,nowA,nowB)
 
         self.log.write_log("info",f"即将推图：{lst}")
-        self.shuatu_daily_ocr(lst,zero_star_action="do",lose_action="exit",win_without_threestar_is_lose=False,team_order="none",zhiyuan_mode=zhiyuan_mode,_use_daily=False,var=var)
+        self.shuatu_daily_ocr(lst,zero_star_action="do",lose_action="exit",win_without_threestar_is_lose=False,zhiyuan_mode=zhiyuan_mode,_use_daily=False,var=var)
 
 
     def jierentuitu_normal(self,max_tu,zhiyuan_mode=-1,max_do=2,var={}):
