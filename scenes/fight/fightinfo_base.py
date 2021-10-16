@@ -1,5 +1,6 @@
 import time
 from math import inf
+from typing import Union
 
 import numpy as np
 
@@ -19,6 +20,11 @@ class FightInfoBase(PCRMsgBoxBase):
         self.initFC = None
         # 检测编组设定
         self.feature = self.fun_feature_exist(FIGHT_BTN["baochou"])
+
+    def exit_me(self):
+        def exit_fun():
+            self.fclick(1,1)
+        self.exit(exit_fun)
 
     def get_upperright_stars(self, screen=None):
         """
@@ -151,3 +157,152 @@ class FightInfoBase(PCRMsgBoxBase):
 
     def goto_tiaozhan(self) -> FightBianZuZhuXian:
         return self.goto(FightBianZuZhuXian, self.fun_click(FIGHT_BTN["tiaozhan2"]))
+
+
+    def easy_shoushua(self,
+                      team_order,
+                      one_tili:int = 0,
+                      check_cishu=False,
+                      max_speed=1,
+                      ):
+        """
+        team_order:  见select_team
+        one_tili:
+            0 - 不进行体力检查
+            (int) - 一次消耗的体力次数，会进行体力检查。 （一次刷不了则退出）
+        check_cishu:
+            False - 不进行次数检查
+            True - 进行次数检查 （0/N则退出）
+        max_speed:
+            1 - 两倍速
+            2 - 四倍速可用
+        <return>
+            0: 挑战成功
+            1: 挑战失败
+        <return scene>
+            会关闭FightInfo窗口，回到选关页面。
+        """
+        screen = self.getscreen()
+        if check_cishu:
+            # 次数检查
+            cishu_left = self.get_cishu(screen)
+            if cishu_left == 0:
+                self.log.write_log("warning", "次数不足，无法挑战！")
+                self.exit_me()
+                return 2
+
+        if one_tili > 0:
+            # 体力检查
+            tili_left = self.get_tili_left(screen)
+            if tili_left < one_tili:
+                self.log.write_log("warning", "体力不足，无法挑战！")
+                self.exit_me()
+                self._a.stop_shuatu()
+                return 1
+
+        quan = self.get_saodangquan(screen)
+        if quan == 0 :
+            self.log.write_log("warning", "无扫荡券，无法扫荡！")
+            self.exit_me()
+            return 4
+
+        T = self.goto_tiaozhan()
+        T.select_team(team_order)
+        F = T.goto_fight()
+        F.set_auto(1)
+        F.set_speed(max_speed,max_speed,self.last_screen)
+        D = F.get_during()
+        while True:
+            out = D.check()
+            if isinstance(out,D.FightingWinZhuXian):
+                self.log.write_log("info",f"战胜了！")
+                out.next()
+                A = out.get_after()
+                while True:
+                    out = A.check()
+                    if isinstance(out,A.FightingWinZhuXian2):
+                        out.next()
+                        return 0
+            elif isinstance(out,D.FightingLoseZhuXian):
+                self.log.write_log("info",f"战败了！")
+                out.exit(self.fun_click(814,493))
+                return 1
+
+    def easy_saodang(self,
+                     target_cishu:Union[int,str]="max",
+                     one_tili:int=0,
+                     check_cishu=False,
+                     ):
+        """
+        target_cishu: 目标次数， max则满。
+        one_tili:
+            0 - 不进行体力检查
+            (int) - 一次消耗的体力次数，会进行体力检查。 （一次刷不了则退出）
+        check_cishu:
+            False - 不进行次数检查
+            True - 进行次数检查 （0/N则退出）
+        <return>
+            0: 正常扫荡结束
+            1: 体力不足
+            2：次数不足
+            3: 未三星
+            4: 扫荡券不足
+        <return scene>
+            会关闭FightInfo窗口，回到选关页面。
+        """
+        screen = self.getscreen()
+        exitflag = 0
+        stars = self.get_upperright_stars(screen)
+        if stars < 3:
+            self.log.write_log("warning", "未三星，无法扫荡！")
+            self.exit_me()
+            return 3
+
+        quan = self.get_saodangquan(screen)
+        if quan == 0 :
+            self.log.write_log("warning", "无扫荡券，无法扫荡！")
+            self.exit_me()
+            return 4
+        elif isinstance(target_cishu,int) and quan<target_cishu:
+            self.log.write_log("warning", f"扫荡券只能扫荡{quan}次！")
+            exitflag = 4
+
+
+        if check_cishu:
+            # 次数检查
+            cishu_left = self.get_cishu(screen)
+            if cishu_left == 0:
+                self.log.write_log("warning","次数不足，无法扫荡！")
+                self.exit_me()
+                return 2
+            elif isinstance(target_cishu,int) and cishu_left<target_cishu:
+                self.log.write_log("warning", f"次数不足，只能扫荡{cishu_left}次！")
+                exitflag = 2
+
+        if one_tili>0:
+            # 体力检查
+            tili_left = self.get_tili_left(screen)
+            if tili_left<one_tili:
+                self.log.write_log("warning","体力不足，无法扫荡！")
+                self.exit_me()
+                self._a.stop_shuatu()
+                return 1
+            if isinstance(target_cishu,int):
+                all_tili = one_tili * target_cishu
+                if tili_left<all_tili:
+                    self.log.write_log("warning", f"体力不足，只能扫荡{all_tili//tili_left}次！")
+                    exitflag = 1
+
+        if isinstance(target_cishu,int) and exitflag==0:
+            self.set_saodang_cishu(target_cishu)
+        else:
+            self.set_saodang_to_max()
+
+        S = self.goto_saodang()
+        J = S.OK()
+        ML = J.OK()
+        ML.exit_all(False)
+        self.fclick(1,1)
+        if exitflag == 1:
+            self._a.stop_shuatu()
+        return exitflag

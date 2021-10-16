@@ -3,7 +3,6 @@ from ..fight.fightinfo_base import FightInfoBase
 from ..root.seven_btn import SevenBTNMixin
 from ..scene_base import PossibleSceneList
 
-
 class TanSuoMenu(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

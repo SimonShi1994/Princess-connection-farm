@@ -10,7 +10,7 @@ from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import AutomatorRecorder
 from core.utils import random_name
-from ._base import BaseMixin
+from ._tools import ToolsMixin
 from ._base import DEBUG_RECORD
 from ._captcha import CaptionSkip
 
@@ -18,7 +18,7 @@ from ._captcha import CaptionSkip
 class BadLoginException(Exception): pass
 
 
-class LoginMixin(BaseMixin):
+class LoginMixin(ToolsMixin):
     """
     登录插片
     包含登录相关操作的脚本
@@ -527,9 +527,7 @@ class LoginMixin(BaseMixin):
 
     @DEBUG_RECORD
     def change_acc(self):  # 切换账号
-        self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
-        self.lock_img('img/ok.bmp', ifclick=[(591, 369)], elseclick=[(165, 411)], at=(495, 353, 687, 388))
-        self.lock_no_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513), (165, 411), (591, 369)])
+        self.get_zhuye().goto_zhucaidan().back_title().OK()
         # 设备匿名
         self.phone_privacy()
         # pcr_log(self.account).write_log(level='info', message='%s账号完成任务' % self.account)
