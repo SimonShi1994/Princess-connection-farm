@@ -153,20 +153,10 @@ MAIN_BTN = {
     "zdjjc": p(578, 402),
     "gzjjc": p(820, 395),
 
-    # 圣迹调查 （可能不用了）
-    # "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)),  # 圣迹调查
-    # "shengji": p(736, 267, img="img/shengji/shengjidiaocha.bmp", at=(700, 225, 777, 302)),
+    # 圣迹调查
+    "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)),  # 圣迹调查
+    "shengji": p(736, 267, img="img/shengji/shengjidiaocha.bmp", at=(700, 225, 777, 302)),
     "karin_middle": p(img="img/girl/karin_middle.bmp", at=(410, 309, 572, 390)),
-
-    # 调查本
-    "diaocha":p(740,275),
-    "shengjidiaocha":p(572,202,img="img/diaocha/shengjidiaocha.bmp",at=(528,133,628,260)),
-    "shendiandiaocha":p(814,213),
-    "shengji_title":p(img="img/diaocha/shengji_title.bmp",at=(61,11,163,47)),
-    "shendian_title":p(img="img/diaocha/shendian_title.bmp",at=(62,12,161,44)),
-
-
-
 
     # 右侧的kkr
     "right_kkr": p(img="img/home/right_kkr.bmp", at=(266, 74, 933, 463)),
@@ -210,8 +200,7 @@ LIWU_BTN = {
     "chiyoushangxian": p(img="img/home/chiyoushangxian.bmp", at=(433, 134, 529, 159)),
     "chiyoushangxian_ok": p(481, 371),
     "meiyouliwu": p(img="img/home/meiyouliwu.bmp", at=(381, 239, 571, 274)),
-    "yijianshouqu":p(img="img/home/yiijianshouqu_text.bmp",at=(382,65,572,89)),
-    "shouqule":p(img="img/home/text_shouqule.bmp",at=(412,66,542,87)),
+
 }
 RENWU_BTN = {
     "quanbushouqu_off": p(844, 439, img="img/home/quanbushouqu_off.bmp", at=(747, 421, 939, 455)),
@@ -270,11 +259,11 @@ HANGHUI_BTN = {
     # 加入行会
     "join_btn": p(854, 444, img='img/jiaru.bmp', at=(749, 427, 933, 460)),
     # 支援设定
-    "zhiyuansheding": p(84, 357, img="img/hanghui/zhiyuansheding.bmp", at=(52 ,346, 119, 369)),
+    "zhiyuansheding": p(83, 348, img="img/hanghui/zhiyuansheding.bmp", at=(48, 336, 120, 362)),
     # 地下城支援1
-    "zhiyuan_dxc1": p(78, 207, img="img/hanghui/zhiyuanjuese1.bmp", at=(43, 172, 114, 244)),
+    "zhiyuan_dxc1": p(105, 232, img="img/hanghui/zhiyuanjuese1.bmp", at=(65, 194, 142, 272)),
     # 地下城支援2
-    "zhiyuan_dxc2": p(78, 352, img="img/hanghui/zhiyuanjuese2.bmp", at=(44, 318, 113, 388)),
+    "zhiyuan_dxc2": p(102, 355, img="img/hanghui/zhiyuanjuese2.bmp", at=(64, 315, 140, 393)),
     # 支援取消
     "zhiyuanquxiao": p(img="img/hanghui/zhiyuanquxiao.bmp", at=(645, 438, 694, 466)),
     # 战力排序（支援界面）用于判断是否处在战力排序状态
@@ -321,9 +310,9 @@ HANGHUI_BTN = {
     # 行会确认（这里兼顾了两个不同的ok，一个正中，一个偏右）
     "hanghui_ok": p(514, 371, img="img/hanghui/hanghui_ok.bmp", at=(243, 332, 708, 403)),
     # 请求捐赠装备
-    "qqjzzb": p(402, 430, img="img/hanghui/qqzjzb.bmp", at=(356, 422, 449, 441)),
+    "qqjzzb": p(404, 431, img="img/hanghui/qqzjzb.bmp", at=(342, 419, 460, 440)),
     # 发起捐赠请求
-    "fqjzqq": p(585, 477, img="img/hanghui/fqjzqq.bmp", at=(521, 460, 651, 495)),
+    "fqjzqq": p(585, 478, img="img/hanghui/fqjzqq.bmp", at=(528, 466, 646, 485)),
     # 确认发出请求
     "jzqq_ok": p(589, 433, img="img/ui/ok_btn_1.bmp", at=(487, 409, 691, 457)),
     # 稀有度
@@ -337,13 +326,13 @@ HANGHUI_BTN = {
     # 捐赠请求结果
     "jzqqjg": p(402, 432, img="img/hanghui/jzqqjg.bmp", at=(357, 422, 447, 436)),
     # 撤下支援 1
-    "zyjs_1": p(239, 255),
+    "zyjs_1": p(406, 252),
     # 撤下支援 2
-    "zyjs_2": p(239, 404),
+    "zyjs_2": p(407, 373),
     # 支援结束确认
     "zyjsqr": p(img="img/hanghui/zyjsqr.bmp", at=(419, 133, 540, 155)),
     # 支援结束确认_ok
-    "zyjsqr_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(533, 348, 649, 390)),
+    "zyjsqr_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     # 收取报酬
     "sqbc": p(img="img/hanghui/sqbc.bmp", at=(439, 32, 521, 52)),
 
@@ -377,8 +366,8 @@ ZHUCAIDAN_BTN = {
 
 }
 FIGHT_BTN = {
-    "auto_on": p(img="img/fight/auto_on.bmp",at=(897,408,929,437)),
-    "auto_off":p(911,423,img="img/fight/auto_off.bmp",at=(893,404,931,439)),
+    "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(892, 410, 930, 434)),
+    "auto_off": p(914, 421, img="img/fight/auto_off.bmp", at=(894, 411, 931, 433)),
     "speed_1": p(910, 490, img="img/fight/speed_1.bmp", at=(894, 476, 932, 511)),
     "speed_0": p(910, 490, img="img/fight/speed_0.bmp", at=(895, 478, 928, 510)),
     "speed_2": p(911, 495, img="img/fight/speed_2.bmp", at=(893, 477, 931, 511)),
@@ -518,7 +507,7 @@ DXC_ELEMENT = {
     "shop": p(at=(889, 9, 938, 66)),
     "map": p(at=(7, 66, 954, 391)),
     "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
-    "shouqubaochou_ok": p(480, 477, img="img/ui/queren.bmp", at=(450, 465, 509, 489)),
+    "shouqubaochou_ok": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
     "qianwangdixiacheng": p(805, 495),
     "qyxzqr": p(img="img/dxc/qyxzqr.bmp", at=(415, 135, 540, 157)),
     "quyuxuanzequeren_ok": p(585, 371, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
@@ -770,16 +759,6 @@ HARD_COORD = {
         2: p(481,359),
         3: p(769,257),
     },
-    26: {
-        1: p(214,288),
-        2: p(475,235),
-        3: p(762,334),
-    },
-    27: {
-        1: p(212,270),
-        2: p(475,350),
-        3: p(765,282),
-    },  
 }
 
 SHOP_BTN = {
@@ -793,12 +772,12 @@ SHOP_BTN = {
 MAOXIAN_BTN = {
     "bianzusheding": p(img="img/maoxian/bianzusheding.bmp", at=(373, 124, 590, 164)),
     "bianzusheding_ok": p(436, 162),
-    "normal_on": p(581,83,img="img/maoxian/normal_on.bmp",at=(548,75,615,92)),
-    "normal_off":p(578,84,img="img/maoxian/normal_off.bmp",at=(544,73,617,95)),
-    "hard_on": p(701,84,img="img/maoxian/hard_on.bmp",at=(668,75,732,95)),
-    "hard_off": p(699,83,img="img/maoxian/hard_off.bmp",at=(665,73,737,94)),
-    "vh_on":p(820,84,img="img/maoxian/vh_on.bmp",at=(784,74,858,94)),
-    "vh_off":p(814,84,img="img/maoxian/vh_off.bmp",at=(783,73,858,94)),
+    "normal_on": p(581,85,img="img/maoxian/normal_on.bmp",at=(550,73,616,95)),
+    "normal_off":p(578,84,img="img/maoxian/normal_off.bmp",at=(548,74,615,94)),
+    "hard_on": p(698,84,img="img/maoxian/hard_on.bmp",at=(665,73,737,95)),
+    "hard_off": p(699,84,img="img/maoxian/hard_off.bmp",at=(670,75,731,92)),
+    "vh_off":p(816,85,img="img/maoxian/vh_off.bmp",at=(786,73,857,95)),
+    "vh_on":p(819,85,img="img/maoxian/vh_on.bmp",at=(786,75,860,95)),
     "hard_0_3": p(img="img/maoxian/hard_0_3.bmp", at=(887, 402, 919, 422)),  # 剩余挑战次数0/3
     "ditu": p(img="img/maoxian/ditu.bmp", at=(906, 64, 930, 106)),
     "tili_bar": p(at=(529, 32, 637, 38), fc=(255, 215, 99), bc=(90, 101, 115)),
@@ -865,8 +844,6 @@ ZHUXIAN_ID = {
     23: p(img="img/zhuxian/23L.bmp", at=(109, 58, 177, 75)),
     24: p(img="img/zhuxian/24L.bmp",at=(91,59,193,73)),
     25:p(img="img/zhuxian/25L.bmp",at=(91,59,193,71)),
-    26:p(img="img/zhuxian/26L.bmp",at=(61,55,198,77)),
-    27:p(img="img/zhuxian/27L.bmp",at=(60,56,199,76)),
 
 }
 ZHUXIAN_XXXYY_ID = {
@@ -886,16 +863,11 @@ ZHUXIAN_LDWSQF_ID = {
     24:p(img="img/zhuxian/24R.bmp",at=(219,58,249,72)),
     25:p(img="img/zhuxian/25R.bmp",at=(216,59,250,73)),
 }
-ZHUXIAN_SBDDSL_ID = {
-    26:p(img="img/zhuxian/26R.bmp",at=(212,58,252,77)),
-    27:p(img="img/zhuxian/27R.bmp",at=(214,58,251,77)),
-}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
     (22, 23): ZHUXIAN_XXXYF_ID,
     (24, 25): ZHUXIAN_LDWSQF_ID,
-    (26, 27): ZHUXIAN_SBDDSL_ID,
 }
 
 NORMAL_COORD = {
@@ -1408,62 +1380,22 @@ NORMAL_COORD = {
             1: p(162,225),
         }
     },
-    26: {
-        "right": {
-            14: p(793,338),
-            13: p(723,253),
-            12: p(603,231),
-            11: p(516,313),
-            10: p(423,390),
-            9:  p(365,280),
-            8:  p(243,276),
-        },
-        "left": {
-            7: p(669,385),
-            6: p(576,301),
-            5: p(455,274),
-            4: p(411,390),
-            3: p(291,346),
-            2: p(248,229),
-            1: p(124,270),
-        }
-    },
-    27: {
-        "right": {
-            14: p(839,286),
-            13: p(738,342),
-            12: p(673,245),
-            11: p(556,249),
-            10: p(539,350),
-            9:  p(421,382),
-            8:  p(359,284),
-        },
-        "left": {
-            7: p(742,264),
-            6: p(659,348),
-            5: p(551,288),
-            4: p(444,361),
-            3: p(313,392),
-            2: p(220,299),
-            1: p(119,373),
-        }
-    },
 }
 RANKS_DICT = {
-    1: p(img="img/ranks/1.bmp",at=(217,110,275,135)),
-    2: p(img="img/ranks/2.bmp",at=(217,112,278,135)),
-    3: p(img="img/ranks/3.bmp",at=(213,110,279,137)),
-    4: p(img="img/ranks/4.bmp",at=(216,112,277,135)),
-    5: p(img="img/ranks/5.bmp",at=(215,111,277,135)),
-    6: p(img="img/ranks/6.bmp",at=(219,111,279,138)),
-    7: p(img="img/ranks/7.bmp",at=(213,109,279,137)),
-    8: p(img="img/ranks/8.bmp",at=(218,111,278,135)),
-    9: p(img="img/ranks/9.bmp",at=(216,110,277,137)),
-    10: p(img="img/ranks/10.bmp",at=(213,113,282,137)),
-    11: p(img="img/ranks/11.bmp",at=(214,111,280,135)),
-    12: p(img="img/ranks/12.bmp",at=(210,110,281,134)),
-    13: p(img="img/ranks/13.bmp",at=(212,110,282,136)),
-    14: p(img="img/ranks/14.bmp",at=(211,111,282,136)),
+    1: p(img="img/ranks/1.bmp", at=(204, 110, 287, 136)),
+    2: p(img="img/ranks/2.bmp", at=(205, 111, 287, 134)),
+    3: p(img="img/ranks/3.bmp", at=(203, 111, 289, 138)),
+    4: p(img="img/ranks/4.bmp", at=(204, 110, 289, 137)),
+    5: p(img="img/ranks/5.bmp", at=(205, 112, 288, 135)),
+    6: p(img="img/ranks/6.bmp", at=(204, 112, 288, 137)),
+    7: p(img="img/ranks/7.bmp", at=(204, 110, 287, 136)),
+    8: p(img="img/ranks/8.bmp", at=(204, 109, 287, 138)),
+    9: p(img="img/ranks/9.bmp", at=(203, 110, 289, 136)),
+    10: p(img="img/ranks/10.bmp", at=(202, 113, 293, 134)),
+    11: p(img="img/ranks/11.bmp", at=(202, 110, 291, 135)),
+    12: p(img="img/ranks/12.bmp", at=(201, 112, 290, 134)),
+    13: p(img="img/ranks/13.bmp", at=(202, 114, 291, 133)),
+    14: p(img="img/ranks/14.bmp",at=(204,113,292,133)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict

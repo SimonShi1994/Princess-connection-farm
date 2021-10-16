@@ -24,7 +24,6 @@ log
 outputs/
 *.cmd
 debug_imgs/
-*bmp
 xls/
 PCRError/
 pcrdata/data.db
