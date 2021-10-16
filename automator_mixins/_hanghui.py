@@ -262,18 +262,17 @@ class HanghuiMixin(ToolsMixin):
             self.lock_home()
             return
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5)
-        self.lock_no_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)), elseclick=[(230, 351)],
-                         retry=5)
+        self.click_btn(HANGHUI_BTN["chengyuanxinxi"], elsedelay=5, timeout=20)
         if sortflag == 1:
-            self.lock_img('img/ok.bmp', elseclick=[(720, 97)], retry=3)  # 点击排序
-            self.lock_no_img('img/ok.bmp', elseclick=[(289, 303), (587, 372)],
+            self.lock_img('img/queren.jpg', elseclick=[(720, 97)], retry=3)  # 点击排序
+            self.lock_no_img('img/queren.jpg', elseclick=[(289, 303), (587, 372)],
                              elsedelay=self.change_time, retry=3)  # 按战力降序 这里可以加一步调降序
             if self.is_exists('img/dianzan.bmp'):
-                click_list = [(818, 198), (826, 316), (826, 428)]
+                click_list = [(826, 198), (826, 316), (826, 428)]
                 for i in click_list:
                     if self.lock_img('img/dianzan.bmp', ifclick=[i], elseclick=[(480, 374)], retry=10):
-                        if self.lock_img('img/ok.bmp', retry=8):
-                            self.lock_no_img('img/ok.bmp', elseclick=[(480, 374)], retry=10)
+                        if self.lock_img('img/queren.jpg', retry=8):
+                            self.lock_no_img('img/queren.jpg', elseclick=[(480, 374)], retry=10)
                             continue
                         else:
                             self.log.write_log("warning", "已经没有点赞次数了")
@@ -291,8 +290,8 @@ class HanghuiMixin(ToolsMixin):
                 click_list = [(818, 198), (826, 316), (826, 428)]
                 for i in click_list:
                     if self.lock_img('img/dianzan.bmp', ifclick=[i], elseclick=[(480, 374)], retry=10):
-                        if self.lock_img('img/ok.bmp', retry=8):
-                            self.lock_no_img('img/ok.bmp', elseclick=[(480, 374)], retry=10)
+                        if self.lock_img('img/queren.jpg', retry=8):
+                            self.lock_no_img('img/queren.jpg', elseclick=[(480, 374)], retry=10)
                             continue
                         else:
                             self.log.write_log("warning", "已经没有点赞次数了")
@@ -305,7 +304,7 @@ class HanghuiMixin(ToolsMixin):
             # 点赞 职务降序（默认） 第二/第三个人，副会长
         self.click(479, 381)
         screen_shot_ = self.getscreen()
-        self.click_img(screen_shot_, 'img/ok.bmp')
+        self.click_img(screen_shot_, 'img/queren.jpg')
         # 保存点赞时间
         ts["dianzan"] = time.time()
         self.AR.set("time_status", ts)
