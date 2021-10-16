@@ -377,8 +377,8 @@ ZHUCAIDAN_BTN = {
 
 }
 FIGHT_BTN = {
-    "auto_on": p(img="img/fight/auto_on.bmp",at=(897,408,929,437)),
-    "auto_off":p(911,423,img="img/fight/auto_off.bmp",at=(893,404,931,439)),
+    "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(892, 410, 930, 434)),
+    "auto_off": p(914, 421, img="img/fight/auto_off.bmp", at=(894, 411, 931, 433)),
     "speed_1": p(910, 490, img="img/fight/speed_1.bmp", at=(894, 476, 932, 511)),
     "speed_0": p(910, 490, img="img/fight/speed_0.bmp", at=(895, 478, 928, 510)),
     "speed_2": p(911, 495, img="img/fight/speed_2.bmp", at=(893, 477, 931, 511)),
@@ -793,12 +793,12 @@ SHOP_BTN = {
 MAOXIAN_BTN = {
     "bianzusheding": p(img="img/maoxian/bianzusheding.bmp", at=(373, 124, 590, 164)),
     "bianzusheding_ok": p(436, 162),
-    "normal_on": p(581,83,img="img/maoxian/normal_on.bmp",at=(548,75,615,92)),
-    "normal_off":p(578,84,img="img/maoxian/normal_off.bmp",at=(544,73,617,95)),
-    "hard_on": p(701,84,img="img/maoxian/hard_on.bmp",at=(668,75,732,95)),
-    "hard_off": p(699,83,img="img/maoxian/hard_off.bmp",at=(665,73,737,94)),
-    "vh_on":p(820,84,img="img/maoxian/vh_on.bmp",at=(784,74,858,94)),
-    "vh_off":p(814,84,img="img/maoxian/vh_off.bmp",at=(783,73,858,94)),
+    "normal_on": p(581, 85, img="img/maoxian/normal_on.bmp", at=(550, 73, 616, 95)),
+    "normal_off": p(578, 84, img="img/maoxian/normal_off.bmp", at=(548, 74, 615, 94)),
+    "hard_on": p(698, 84, img="img/maoxian/hard_on.bmp", at=(665, 73, 737, 95)),
+    "hard_off": p(699, 84, img="img/maoxian/hard_off.bmp", at=(670, 75, 731, 92)),
+    "vh_off": p(816, 85, img="img/maoxian/vh_off.bmp", at=(786, 73, 857, 95)),
+    "vh_on": p(819, 85, img="img/maoxian/vh_on.bmp", at=(786, 75, 860, 95)),
     "hard_0_3": p(img="img/maoxian/hard_0_3.bmp", at=(887, 402, 919, 422)),  # 剩余挑战次数0/3
     "ditu": p(img="img/maoxian/ditu.bmp", at=(906, 64, 930, 106)),
     "tili_bar": p(at=(529, 32, 637, 38), fc=(255, 215, 99), bc=(90, 101, 115)),

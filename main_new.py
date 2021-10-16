@@ -12,11 +12,12 @@ from core.launcher import EMULATOR_DICT
 from core.pcr_config import *
 from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
 from core.utils import is_ocr_running
+import cv2
 
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20211016"
+script_version = "Ver 2.7.20211016.4"
 
 
 
@@ -405,6 +406,16 @@ def CheckConstantImgs():
                     if not os.path.exists(v.img):
                         print("  - 文件缺失：", v.img)
                         BADIMG.append(v.img)
+                    else:
+                        if v.at is not None:
+                            img = cv2.imread(v.img)
+                            h, w, _ = img.shape
+                            x1,y1,x2,y2 = v.at
+                            hh = y2-y1+1
+                            ww = x2-x1+1
+                            if h>hh or w>ww:
+                                print(" - AT范围错误，图片的(h,w)为",(h,w),"但给出的范围为",(hh,ww),k,v)
+
 
     print("* 检查本地图片")
     for obj in dir(constant):
