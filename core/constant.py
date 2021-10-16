@@ -272,9 +272,17 @@ HANGHUI_BTN = {
     # 支援设定
     "zhiyuansheding": p(84, 357, img="img/hanghui/zhiyuansheding.bmp", at=(52 ,346, 119, 369)),
     # 地下城支援1
-    "zhiyuan_dxc1": p(78, 207, img="img/hanghui/zhiyuanjuese1.bmp", at=(43, 172, 114, 244)),
+    "zhiyuan_dxc1": p(78, 208, img="img/hanghui/zhiyuanjuese.bmp", at=(52, 182, 103, 233)),
     # 地下城支援2
-    "zhiyuan_dxc2": p(78, 352, img="img/hanghui/zhiyuanjuese2.bmp", at=(44, 318, 113, 388)),
+    "zhiyuan_dxc2": p(78, 353, img="img/hanghui/zhiyuanjuese.bmp", at=(52, 327, 103, 378)),
+    # 团队露娜塔支援1
+    "zhiyuan_lnt1": p(381, 208, img="img/hanghui/zhiyuanjuese.bmp", at=(355, 182, 406, 233)),
+    # 团队露娜塔支援2
+    "zhiyuan_lnt2": p(381, 353, img="img/hanghui/zhiyuanjuese.bmp", at=(355, 327, 406, 378)),
+    # 主线支援1
+    "zhiyuan_zx1": p(684, 208, img="img/hanghui/zhiyuanjuese.bmp", at=(658, 182, 709, 233)),
+    # 主线支援2
+    "zhiyuan_zx2": p(684, 353, img="img/hanghui/zhiyuanjuese.bmp", at=(658, 327, 709, 378)),
     # 支援取消
     "zhiyuanquxiao": p(img="img/hanghui/zhiyuanquxiao.bmp", at=(645, 438, 694, 466)),
     # 战力排序（支援界面）用于判断是否处在战力排序状态
