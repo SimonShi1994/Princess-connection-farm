@@ -209,7 +209,7 @@ LIWU_BTN = {
     "ok2": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
     "chiyoushangxian": p(img="img/home/chiyoushangxian.bmp", at=(433, 134, 529, 159)),
     "chiyoushangxian_ok": p(481, 371),
-    "meiyouliwu": p(img="img/home/meiyouliwu.bmp",at=(334,240,512,270)),
+    "meiyouliwu": p(img="img/home/meiyouliwu.bmp",at=(342,243,512,272)),
     "yijianshouqu":p(img="img/home/yiijianshouqu_text.bmp",at=(382,65,572,89)),
     "shouqule":p(img="img/home/text_shouqule.bmp",at=(412,66,542,87)),
 }
