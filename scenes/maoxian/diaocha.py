@@ -48,8 +48,9 @@ class DiaoChaXuanGuanBase(SevenBTNMixin):
             try:
                 DC:DiaoChaInfoBox = self.goto(DiaoChaInfoBox,gotofun=self.fun_click(xx,yy),use_in_feature_only=True, retry=2,interval=2)
                 DC.shua(team_order)
+                self.fclick(1, 1)
             except LockMaxRetryError:
-                pass
+                self.fclick(1,1)
 
 
 class ShengJiDiaoCha(DiaoChaXuanGuanBase):

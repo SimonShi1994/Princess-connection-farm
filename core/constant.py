@@ -138,6 +138,10 @@ MAIN_BTN = {
     "setting_pic": p(158, 225, img="img/home/setting.bmp", at=(44, 198, 254, 257)),
     "tansuo": p(738, 137),
 
+    # 换号确认
+    "huidaobiaotihuamian":p(165,409),
+    "changeacc_queren":p(587,369,img="img/ui/queren_blue.bmp",at=(560,355,614,384)),
+    "querenhuamian_title":p(img="img/home/querenhuamian_title.bmp",at=(437,131,522,159)),
     # 探索
     "jingyanzhiguanqia": p(591, 237, img="img/tansuo/jingyan.bmp", at=(529, 160, 605, 236)),  # 经验值关卡
     "managuanqia": p(801, 221),  # 玛娜关卡
@@ -471,7 +475,7 @@ JUESE_BTN = {
         8: p(476, 430),
         9: p(789, 427),
     },
-    "rank_tisheng": p(246, 333, img="img/juese/rank_tisheng.bmp", at=(214, 327, 283, 340))),
+    "rank_tisheng": p(246, 333, img="img/juese/rank_tisheng.bmp", at=(214, 327, 283, 340)),
     "rank_tisheng_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
     "rank_tisheng_ok_noequ": p(588, 369, img="img/juese/ok_btn.bmp", at=(567, 358, 611, 380)),  # 不需要消耗时，强化的OK在上头
     "rank_tisheng_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
@@ -639,7 +643,7 @@ DXC_COORD = {
         5: p(502, 259),
     }
 }
-MAX_MAP = 21
+MAX_MAP = 27
 HARD_COORD = {
     1: {
         1: p(250, 340),

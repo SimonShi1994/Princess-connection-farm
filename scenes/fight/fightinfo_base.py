@@ -300,7 +300,8 @@ class FightInfoBase(PCRMsgBoxBase):
 
         S = self.goto_saodang()
         J = S.OK()
-        J.OK()
+        ML = J.OK()
+        ML.exit_all(False)
         self.fclick(1,1)
         if exitflag == 1:
             self._a.stop_shuatu()

@@ -35,12 +35,14 @@
 | anticlockwise_rotation_times |      根据baidu_ocr.bmp需要逆时针旋转90°多少次截图才正向      |  int   |          |        1        |
 |    async_screenshot_freq     |                     异步截图一次休眠时间                     |  int   |          |        5        |
 |     bad_connecting_time      |                      异步判断异常的时间                      |  int   |          |       30        |
-|        fast_screencut        |                       mincap 快速截图                        |  bool  |          |      True       |
+|        fast_screencut        |                       mincap 快速截图，但该截图可能不稳定，默认关闭                        |  bool  |          |      True       |
 |     fast_screencut_delay     | 由于截图太快造成脚本崩溃，可以使用这个加上全局的截图delay，模拟卡顿。 | float  |          |       0.5       |
 |    fast_screencut_timeout    |                      等待服传输数据超时                      | float  |          |       10        |
 |         end_shutdown         |                   非常“危险”的Windows功能:自动关机           |  bool  |          |      True       |
 |       lockimg_timeout        |               90秒如果还在lockimg，则跳出重启                |  int   |          |       90        |
 |         enable_pause         |              开启后，可以按下Shift+P暂停脚本。                |  bool  |          |     True       |
+|max_reboot|最大出错重试次数|int||3|
+|force_timeout_reboot|强制超时重启|bool|如果出现线程扰乱，可以关闭该项，但可能造成永久性卡死|True|
 |       running_input          |           开启后，可以在运行时向控制台输入指令                   |  bool |          |      True  |
 |selected_emulator|使用的模拟器的名称|string||雷电|
 |enable_auto_find_emulator|启动自动模拟器搜索，理论支持各种模拟器共同使用|bool|建议关闭|False|
@@ -61,7 +63,7 @@
 |captcha_senderror_times| 验证失败多少次后触发自动申诉题目 |int||2|
 |captcha_skip|出现验证码是否直接跳过该账号|bool||True|
 |captcha_wait_time|出现验证码后等待用户输入的时间|int||60|
-|clear_traces_and_cache|是否启用PCR干净模式|bool||True|
+|clear_traces_and_cache|是否启用PCR干净模式|bool||False|
 |use_my_id|是否使用自己提供的身份证|bool|                             |True|
 |auto_start_app|执行first/continue后是否自动打开app.py|bool||True|
 |inline_app|是否采用内部方式打开app（无窗口，无输出）|bool||True|

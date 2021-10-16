@@ -65,6 +65,9 @@ class PCRSceneBase:
         self.ocr_center = self._a.ocr_center
         self.ocr_int = self._a.ocr_int
         self.ocr_A_B = self._a.ocr_A_B
+        self.start_shuatu = self._a.start_shuatu
+        self.check_shuatu = self._a.check_shuatu
+        self.stop_shuatu = self._a.stop_shuatu
 
     def fun_feature_exist(self, element: PCRelement):
         def fun(screen):
@@ -79,12 +82,20 @@ class PCRSceneBase:
         return fun
 
     @property
-    def last_screen(self):
+    def last_s_shuatucreen(self):
         return self._a.last_screen
 
     @property
     def log(self):
         return self._a.log
+
+    @property
+    def last_screen(self):
+        return self._a.last_screen
+
+    @property
+    def d(self):
+        return self._a.d
 
     @property
     def debug_record(self):

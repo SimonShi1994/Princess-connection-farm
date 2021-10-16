@@ -55,7 +55,7 @@
 - [x] 购买mana
 - [x] 购买经验
 - [x] 探索
-- [ ] 圣迹调查
+- [x] 调查
 - [ ] 收取女神祭
 
 5. 工具
@@ -195,6 +195,19 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/10/16 By TheAutumnOfRice
+
+- 进一步修复UI
+- Config相关设置
+  - 增加Config人性化提示
+  - 增加force_timeout_reboot，默认开启，防止死循环
+  - 默认Config参数改动：
+    - 快速截图： 开启 —> 关闭
+    - 清除缓存： 开启 -> 关闭
+  
+- 修复调查本`r12`，允许神殿调查`r10`
+
 
 2021/10/14 By UVJkiNTQ
 

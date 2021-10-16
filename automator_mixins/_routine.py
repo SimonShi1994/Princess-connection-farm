@@ -648,7 +648,7 @@ class RoutineMixin(ShuatuBaseMixin):
         S.doit(team_order)
         self.lock_home()
 
-    def shendianjidiaocha(self,team_order="zhanli"):
+    def shendiandiaocha(self,team_order="zhanli"):
         """
         神殿调查
         全刷，不能扫荡则以team_order战斗
