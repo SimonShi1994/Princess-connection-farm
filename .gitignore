@@ -23,6 +23,8 @@ log
 /error_screenshot/
 outputs/
 *.cmd
+debug_imgs/
+*bmp
 xls/
 PCRError/
 pcrdata/data.db

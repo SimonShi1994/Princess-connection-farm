@@ -1,3 +1,4 @@
+import datetime
 import subprocess
 import traceback
 
@@ -15,7 +16,8 @@ from core.utils import is_ocr_running
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20211007"
+script_version = "Ver 2.7.20211016"
+
 
 
 def GetLastSchedule():
@@ -103,6 +105,16 @@ def ContinueSchedule():
     SCH.run_continue()
     RunningInput()
 
+def GetDataCenterTime():
+    from DataCenter import LoadPCRData
+    try:
+        data = LoadPCRData()
+    except:
+        return None
+    if data is None:
+        return None
+    else:
+        return datetime.datetime.fromtimestamp(data.last_update_time).strftime("%Y-%m-%d %H:%M:%S")
 
 def FirstBatch(batch):
     global PCR
@@ -259,11 +271,11 @@ def ShowGuide():
 
 
 def ShowServerChan():
-    print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
-    print("  - 日志记录过滤等级 log_lev：", log_lev)
-    print("  - 日志记录最大累积条数 log_cache：", log_cache)
     if s_sckey != "":
         print("* Server酱已配置！")
+        print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
+        print("  - 日志记录过滤等级 log_lev：", log_lev)
+        print("  - 日志记录最大累积条数 log_cache：", log_cache)
     else:
         print("* Server酱未配置，可前往config.ini - s_sckey进行设置")
     if qqbot_key != "":
@@ -273,13 +285,16 @@ def ShowServerChan():
         print("QQbot群聊的开关 qqbot_group_send_switch：", qqbot_group_send_switch)
         print("设置发送的QQ号/群号 qq：", qq)
         print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
-        print("  - 记录过滤等级 log_lev：", log_lev)
-        print("  - 记录最大累积条数 log_cache：", log_cache)
+        print("  - 日志记录过滤等级 log_lev：", log_lev)
+        print("  - 日志记录最大累积条数 log_cache：", log_cache)
     else:
         print("* QQbot未配置，可前往config.ini - qqbot_key进行设置")
     if tg_token != "":
         print("* TGbot已配置！")
         print("  - 是否消息铃声静音 tg_mute：", tg_mute)
+        print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
+        print("  - 日志记录过滤等级 log_lev：", log_lev)
+        print("  - 日志记录最大累积条数 log_cache：", log_cache)
     else:
         print("* TGbot未配置，可前往config.ini - tg_token进行设置")
 
@@ -336,6 +351,7 @@ def ShowPCRPerformance():
         print("* 图像匹配超时报错已屏蔽")
     print("* Shift+P脚本暂停 enable_pause：", "已开启" if enable_pause else "未开启")
     print("* 最大重启重试次数 max_reboot：", max_reboot)
+    print("* 强制重启模式 force_timeout_reboot：", "已开启" if force_timeout_reboot else "未开启")
     print("* 运行时实时控制 running_input：", "已开启" if running_input else "未开启")
     print("* 不使用自动打码 captcha_skip：", "已开启" if captcha_skip else "未开启")
     if not captcha_skip:
@@ -350,8 +366,12 @@ def ShowPCRPerformance():
     print("* 缓存清理 clear_traces_and_cache：", "已开启" if clear_traces_and_cache else "未开启")
 
 def ShowTaskInfo():
-    print("* 如果有OCR版本，强制使用OCR版本的任务。", "已开启" if force_as_ocr_as_possible else "未开启")
-
+    print("* 如果有OCR版本，强制使用OCR版本的任务 force_as_ocr_as_possible：", "已开启" if force_as_ocr_as_possible else "未开启")
+    data = GetDataCenterTime()
+    if data is None:
+        print("* 干炸里脊数据库版本：未找到数据库或数据库异常！请更新数据库！")
+    else:
+        print("* 干炸里脊数据库版本：",data)
 
 def ShowDebugInfo():
     print("* 输出Debug信息 debug：", "已开启" if debug else "未开启")
@@ -492,8 +512,6 @@ if __name__ == "__main__":
         print("app 启动app.py", end=" ")
         print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
         print("[内部模式：", "已开启" if inline_app else "未开启", "]")
-        if force_as_ocr_as_possible:
-            print("注意：你正在强制OCR模式下运行(force_as_ocr_as_possible)，app必须开启！")
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("edit 进入编辑模式                  qq QQ群")
@@ -502,8 +520,45 @@ if __name__ == "__main__":
         print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
-        print("Tips: config.ini会在启动main_new后自动生成或更新，如果修改了config.ini，重启程序后生效。")
-        print("Tips: 目前基本上所有的非OCR版本都很难用了，请尽量手动切换为OCR任务！")
+        print("提示： config.ini会在启动main_new后自动生成或更新，如果修改了config.ini，重启程序后生效。")
+        if end_shutdown:
+            if not running_input:
+                print("警告： 你设置了自动关机（end_shutdown）脚本运行结束后，会强制自动关机！")
+            else:
+                print("提示： 你设置了自动关机（end_shutdown），但开启了实时控制（running_input），所以除非手动输入join-shutdown，并不会自动关机。")
+        if force_as_ocr_as_possible:
+            print("提示： 你正在强制OCR模式下运行(force_as_ocr_as_possible)，app必须开启！")
+        else:
+            print("警告： 你没有开启强制OCR模式(force_as_ocr_as_possible),目前基本上所有的非OCR版本都很难用了，请尽量使用OCR模式！")
+        if clear_traces_and_cache:
+            print("警告： 你正在PCR干净模式下运行(clear_traces_and_cache)，这会导致退出账号后自动清理缓存，这将有利于减少验证码，但大大增加进号过剧情所用时间！")
+        if enable_auto_find_emulator:
+            print("警告： 你开起了自动寻找模拟器（enable_auto_find_emulator），这会大大增加模拟器寻找时间。如果不想使用模拟器混搭，不需要开启该项。")
+        if fast_screencut:
+            print("警告： 你正在快速截图（fast_screencut）模式下运行，这会大大增加截图速度，但可能降低脚本稳定性。如果出现奇怪的脚本错乱，试试关闭快速截图。")
+        else:
+            print("提示： 你没有开启快速截图（fast_screencut），这使得截图速度大大降低，但能确保稳定性提升。")
+        if not captcha_skip:
+            print("提示： 自动过验证码（captcha_skip）已经启用，输入info查看更多配置信息！")
+        else:
+            print("提示： 你没有开启自动过验证码（captcha_skip），如果出现验证码，需要手动点掉！")
+        if not trace_exception_for_debug:
+            print("提示： 你没有打开错误追踪(trace_exception_for_debug)，这将不会在出错后显示错误位置，如果需要反馈错误，请打开该选项！")
+        if emulator_console!="":
+            print("提示： 你启用了模拟器自动控制（emulator_console），如果想要关闭，可以将该项字符串清空。")
+        if enable_pause:
+            print("警告： 你开起了全局的暂停控制（enable_pause），你在任何窗口按下Shift+P都可能导致脚本的暂停！")
+        if running_input:
+            print("警告： 你开起了运行时控制（running_input），虽然它功能强大又极其方便，但可能导致如果不按回车键脚本就不运行的情况！"
+                  "但你仍可以随时输入join来避免这种状况。")
+        DataCenterTime = GetDataCenterTime()
+        if DataCenterTime is None:
+            print("警告： 干炸里脊数据库异常或不存在，请进入数据中心data，然后输入update更新数据库！")
+
+
+        print('----------------------------------------')
+        if DataCenterTime is not None:
+            print("干炸里脊数据库更新时间：",DataCenterTime)
         if last_schedule != "":
             print("当前绑定计划：", last_schedule)
     while True:

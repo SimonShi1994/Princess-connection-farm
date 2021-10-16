@@ -638,6 +638,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         self.switch = 0
 
     def check_shuatu(self):
+        # 能刷图，返回True
         return self.switch == 0
 
     @DEBUG_RECORD

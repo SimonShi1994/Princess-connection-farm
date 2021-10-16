@@ -1032,7 +1032,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         :param _use_daily: 开启后，统计体力使用次数以及每个图刷过的次数（兼容shuatuNN）
         """
-        self.check_ocr_running()
+        self.check_ocr_running()  # 必须要OCR！
         # 每日更新
         from core.utils import diffday
         mv = movevar(var)
@@ -1045,6 +1045,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             ds = var
 
         def record_ds(ds):
+            # 记录每日推图所用体力，推图记录之类。
             if _use_daily:
                 t1 = time.time()
                 t2 = ds["last_time"]
@@ -1107,6 +1108,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         if not self.check_shuatu():
             return
 
+        #   ======== 开始刷图 =========  #
         S = self.get_zhuye()
         S = S.goto_maoxian()
         last_a = -1
@@ -1120,6 +1122,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             # x,y：坐标
             # d：拖动状态
             # Enter
+            # ======== 进图 =========== #
             if m != last_m or a != last_a:
                 if m == "N":
                     S = S.goto_normal()
@@ -1144,9 +1147,21 @@ class ShuatuMixin(ShuatuBaseMixin):
 
             @PCRRetry(name="DOIT")
             def DOIT():
-                nonlocal t
+                """
+                进图大循环。此处PCRRetry相当于一个label，可以被goto。
+                循环：
+                    点 (x,y) ->
+                    扫荡或者刷图
+                遇到剧情或者商店，或者买体力，则回到一开始的位置重新进(x,y)：
+                    raise ContinueNow("DOIT")  :回到开始，但是不计算重试次数。
+                    raise RetryNow("DOIT")： 回到开始，但是重试计数器+1，如果再PCRRetry中增加max_retry，则可以控制结束次数。
+                与外接的信息交换：
+                    return "continue" ：跳过这关，不刷。
+                    return "return"：结束刷图
+                """
+                nonlocal t  # 该关剩余次数
                 if t == 0:
-                    return "continue"
+                    return "continue"  # 这关不用再刷了。
                 M: FightInfoZhuXian = S.click_xy_and_open_fightinfo(x, y)
                 if M is None:
                     if can_not_enter_action == "exit":
@@ -1157,7 +1172,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     elif can_not_enter_action == "skip":
                         self.log.write_log("info", f"无法进入图{m}{a}-{b}！跳过该图。")
                         return "continue"
-                S.clear_initFC()
+                S.clear_initFC()  # 清除可可罗的检测
                 sc = self.getscreen()
                 stars = M.get_upperright_stars(sc)
                 if stars == 3:
@@ -1170,8 +1185,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             # 不能扫荡，没有次数
                             ds["hard"][f"{a}-{b}"] = 3
                             record_ds(ds)
-                            for _ in range(6):
-                                self.click(1,1)
+                            self.fclick(1,1)
                             self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
                             return "continue"
                         max_cishu = min(cishu, max_cishu)
@@ -1196,8 +1210,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                         # 体力不足：可以选择买体力倒是。
                         if ds["buy_tili"] < daily_tili:
                             # 可以！买体力！
-                            for _ in range(6):
-                                self.click(1, 1)
+                            self.fclick(1,1)
                             bought_tili = True
                             S.goto_buytili().OK().OK()
                             ds["buy_tili"] += 1
@@ -1231,30 +1244,10 @@ class ShuatuMixin(ShuatuBaseMixin):
                     ds[mode][f"{a}-{b}"] += true_cishu
                     record_ds(ds)
                     MsgList = SD.OK()  # 扫荡后的一系列MsgBox
-                    while True:
-                        out = MsgList.check()
-                        if out is None:  # 无msgbox
-                            break
-                        if isinstance(out, MsgList.XianDingShangDianBox):
-                            # 限定商店
-                            if xianding:
-                                shop = out.Go()
-                                shop.buy_all()
-                                shop.back()
-                                break
-                            else:
-                                out.Cancel()
-                        if isinstance(out,MsgList.TuanDuiZhanBox):
-                            out.OK()
-                        if isinstance(out,MsgList.LevelUpBox):
-                            out.OK()
-                            self.start_shuatu()  # 体力又有了！
-                        if isinstance(out,MsgList.ChaoChuShangXianBox):
-                            out.OK()
+                    MsgList.exit_all(xianding)  # 退出全部
                     # 扫荡结束
                     # 保险起见
-                    for _ in range(6):
-                        self.click(1,1)
+                    self.fclick(1,1)
                     if true_cishu<t:
                         self.log.write_log("info", f"{m}{a}-{b}刷图剩余次数：{t - true_cishu}")
                         t -= true_cishu
@@ -1455,7 +1448,9 @@ class ShuatuMixin(ShuatuBaseMixin):
                         t -= 1
                     raise ContinueNow("DOIT")  # 把t次刷完
 
+            self.fclick(1, 1)
             cmd = DOIT()
+            self.fclick(1,1)
             if cmd == "continue":
                 continue
             elif cmd == "return":

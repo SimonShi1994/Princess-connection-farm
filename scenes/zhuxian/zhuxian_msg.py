@@ -98,7 +98,7 @@ class XianDingShangDianBox(PCRMsgBoxBase):
 
 
 class AfterSaoDangScene(PossibleSceneList):
-    def __init__(self, a, *args, **kwargs):
+    def __init__(self, a):
         msgbox_list = [
             ChaoChuShangXianBox(a),
             LevelUpBox(a),
@@ -110,6 +110,33 @@ class AfterSaoDangScene(PossibleSceneList):
         self.TuanDuiZhanBox = TuanDuiZhanBox
         self.XianDingShangDianBox = XianDingShangDianBox
         super().__init__(a,msgbox_list)
+
+    def exit_all(self,xianding=False):
+        """
+        扫荡后关闭所有对话框
+        xianding：是否进入限定商店。
+        """
+        while True:
+            out = self.check()
+            if out is None:  # 无msgbox
+                break
+            if isinstance(out, self.XianDingShangDianBox):
+                # 限定商店
+                if xianding:
+                    shop = out.Go()
+                    shop.buy_all()
+                    shop.back()
+                    break
+                else:
+                    out.Cancel()
+            if isinstance(out, self.TuanDuiZhanBox):
+                out.OK()
+            if isinstance(out, self.LevelUpBox):
+                out.OK()
+                self._a.start_shuatu()  # 体力又有了！
+            if isinstance(out, self.ChaoChuShangXianBox):
+                out.OK()
+
 
 class BuyTiliBox(PCRMsgBoxBase):
     def __init__(self,*args,**kwargs):

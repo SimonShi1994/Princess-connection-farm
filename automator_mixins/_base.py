@@ -443,7 +443,7 @@ class BaseMixin:
 
 
     def fclick(self, *args, pre_delay=0., post_delay=0., times=5):
-        # 狂点模式
+        # FengKuang（Fuck）Click狂点模式
         time.sleep(pre_delay)
         for _ in range(times):
             self.click(*args)

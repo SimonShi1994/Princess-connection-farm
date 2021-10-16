@@ -13,7 +13,7 @@ import adbutils
 import requests
 import uiautomator2
 
-from core.pcr_config import adb_dir, debug, disable_timeout_raise, u2_record_size, u2_record_filter
+from core.pcr_config import adb_dir, debug, disable_timeout_raise, u2_record_size, u2_record_filter,force_timeout_reboot
 
 
 def _async_raise(tid, exctype):
@@ -39,58 +39,61 @@ class TimeoutError(Exception):
 
 def timeout(seconds, error_info):
     def deco(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            res = [TimeoutError('函数 [%s] 超时 [%s 秒] ！ %s' % (func.__name__, seconds, error_info))]
+        if force_timeout_reboot:
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                res = [TimeoutError('函数 [%s] 超时 [%s 秒] ！ %s' % (func.__name__, seconds, error_info))]
 
-            def newFunc():
+                def newFunc():
+                    try:
+                        try:
+                            from automator_mixins._async import block_sw
+                            if block_sw == 1:
+                                # print("time_out的脚本暂停中~")
+                                while block_sw == 1:
+                                    from automator_mixins._async import block_sw
+                                    time.sleep(1)
+                                return deco
+                        except Exception as error:
+                            print('暂停-错误:', error)
+                        res[0] = func(*args, **kwargs)
+                    except Exception as e:
+                        res[0] = e
+
+                t = Thread(target=newFunc)
+                t.daemon = True
                 try:
-                    try:
-                        from automator_mixins._async import block_sw
-                        if block_sw == 1:
-                            # print("time_out的脚本暂停中~")
-                            while block_sw == 1:
-                                from automator_mixins._async import block_sw
-                                time.sleep(1)
-                            return deco
-                    except Exception as error:
-                        print('暂停-错误:', error)
-                    res[0] = func(*args, **kwargs)
+                    t.start()
+                    t.join(seconds)
                 except Exception as e:
-                    res[0] = e
+                    print('error starting thread')
+                    raise e
+                ret = res[0]
+                try:
+                    from automator_mixins._async import block_sw
+                    if block_sw == 1:
+                        # print("time_out2的脚本暂停中~")
+                        while block_sw == 1:
+                            from automator_mixins._async import block_sw
+                            time.sleep(1)
+                        return deco
+                except Exception as error:
+                    print('暂停-错误:', error)
+                if isinstance(ret, BaseException):
+                    if debug:
+                        print("!!!", id(ret), type(ret), ret)
+                    if isinstance(ret, TimeoutError):
+                        try:
+                            _async_raise(t.ident, SystemExit)
+                        except:
+                            pass
+                    raise ret
+                return ret
 
-            t = Thread(target=newFunc)
-            t.daemon = True
-            try:
-                t.start()
-                t.join(seconds)
-            except Exception as e:
-                print('error starting thread')
-                raise e
-            ret = res[0]
-            try:
-                from automator_mixins._async import block_sw
-                if block_sw == 1:
-                    # print("time_out2的脚本暂停中~")
-                    while block_sw == 1:
-                        from automator_mixins._async import block_sw
-                        time.sleep(1)
-                    return deco
-            except Exception as error:
-                print('暂停-错误:', error)
-            if isinstance(ret, BaseException):
-                if debug:
-                    print("!!!", id(ret), type(ret), ret)
-                if isinstance(ret, TimeoutError):
-                    try:
-                        _async_raise(t.ident, SystemExit)
-                    except:
-                        pass
-                raise ret
-            return ret
-
-        if not disable_timeout_raise:
-            return wrapper
+            if not disable_timeout_raise:
+                return wrapper
+            else:
+                return func
         else:
             return func
 

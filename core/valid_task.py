@@ -501,6 +501,12 @@ class TeamInputer(InputBoxBase):
                 return f"队号A-B中队伍B必须为1~3的整数，但{i}不满足要求"
         return ""
 
+TeamOrderInputer= StrInputer(desc="none - 不改变队伍，使用上次队伍。\n"
+                                             "zhanli - 按照战力排序取前五。\n"
+                                             "dengji - 按照等级排序取前五。\n"
+                                             "xingji - 按照星级排序取前五。\n"
+                                             "(A)-(B) - 使用队伍编组A-B，且1<=A<=5,1<=B<=3。\n"
+                                             "Example:  3-1  # 编组3队伍1.")
 
 """
 class MeiRiHTuInputer(ShuatuBaseBox):
@@ -741,21 +747,15 @@ VALID_TASK = ValidTask() \
                                        "mode 1: 刷最上关卡，若无法点进则刷次上关卡（适合小号推探索图）\n"
                                        "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）"),
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
-                    inputbox=StrInputer(desc="none - 不改变队伍，使用上次队伍。\n"
-                                             "zhanli - 按照战力排序取前五。\n"
-                                             "dengji - 按照等级排序取前五。\n"
-                                             "xingji - 按照星级排序取前五。\n"
-                                             "(A)-(B) - 使用队伍编组A-B，且1<=A<=5,1<=B<=3。\n"
-                                             "Example:  3-1  # 编组3队伍1.")),
+                    inputbox=TeamOrderInputer),
           ]) \
-    .add("r10", "shengji", "圣迹调查【别用】", "进行圣迹调查",
-         [TaskParam("mode", int, "模式", "只能为0~2的整数\n"
-                                       "mode 0: 刷1+2\n"
-                                       "mode 1: 只刷1\n"
-                                       "mode 2: 只刷2"),
-          TaskParam("times", int, "次数", "只能为1~5的整数"),
-          TaskParam("tili", bool, "体力不足时是否购买体力")]) \
+    .add("r10", "shengjidiaocha", "圣迹调查", "进行圣迹调查",
+        [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
+                    inputbox=TeamOrderInputer)]) \
     .add("r11", "shouqunvshenji", "收取女神祭", "收取女神祭") \
+    .add("r12", "shendiandiaocha", "神殿调查", "进行神殿调查",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
+                    inputbox=TeamOrderInputer)]) \
     .add("f1", "tianjiahaoyou", "添加好友", "按照ID添加好友。", [
     TaskParam("friend_id", str, "好友ID", "要添加的好友的数字ID")]) \
     .add("f2", "tongguoshenqing", "通过申请", "处理全部的好友申请，可以指定按前缀过滤。",
