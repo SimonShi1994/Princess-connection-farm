@@ -93,10 +93,27 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     # print(dixiacheng_floor, ' ', dixiacheng_floor_times)
                     if dixiacheng_floor > 1 and dixiacheng_floor_times <= 1:
                         pcr_log(self.account).write_log(level='info', message='%s 已经打过地下城，执行撤退' % self.account)
-                        if self.is_exists('img/dxc/chetui.bmp'):
-                            self.click(876, 427, pre_delay=self.change_time)
-                            self.click(588, 371, pre_delay=1 + self.change_time)
-                            self.lock_home()
+                        while True:  # 撤退地下城
+                            time.sleep(self.change_time)
+                            self.click(1, 1)  # 跳过结算
+                            screen_shot_ = self.getscreen()
+                            if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(830, 407, 929, 448)):
+                                self.lock_img('img/ui/queren_blue.bmp', elseclick=[(876, 427)], elsedelay=2.8)
+                                self.click_btn(DXC_ELEMENT["d1_queren_blue"],
+                                               until_disappear=DXC_ELEMENT["d1_queren_blue"])
+                                continue
+                            elif self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
+                                break
+                            elif self.is_exists("img/yunhai.bmp", screen=screen_shot_, threshold=0.975):
+                                self.enter_dxc(1)
+                                break
+                            else:
+                                self.click(1, 1, pre_delay=self.change_time)  # 取消显示结算动画
+                                self.click(10, 242)  # 左点
+                        # if self.is_exists('img/dxc/chetui.bmp'):
+                        #     self.click(878, 432, pre_delay=self.change_time)
+                        #     self.click(588, 371, pre_delay=1 + self.change_time)
+                            # self.lock_home()
                             # self.dixiacheng_ocr(skip, assist_num, stuck_today, stuck_notzhandoukaishi)
                             break
                     elif dixiacheng_floor >= 1 and dixiacheng_floor_times <= 1:
@@ -147,11 +164,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 return
             try:
                 if self.is_exists('img/yunhai.bmp') and dixiacheng_times == 1:
-                    self.dxc_switch = 0
-                    # 识别到后满足条件，开锁
                     self.click(130, 259, post_delay=self.change_time)
                     # 保险
                     self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259)], threshold=0.975)
+                    self.dxc_switch = 0
+                    # 识别到后满足条件，开锁
                 elif self.is_exists('img/yunhai.bmp') and dixiacheng_times == 0:
                     self.dxc_switch = 1
                     pcr_log(self.account).write_log(level='info', message='%s今天已经打过地下城' % self.account)
@@ -193,7 +210,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.lock_no_img('img/yunhai.bmp', elseclick=[(130, 259), (592, 369)], threshold=0.97)
             while True:
                 time.sleep(0.5)
-                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448), threshold=0.97)
+                self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448))
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(830, 407, 929, 448))
                 if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448)):
                     self.lock_img('img/tiaozhan.bmp', ifclick=[(833, 456)], elseclick=[(667, 360), (667, 330)],
@@ -310,7 +327,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 screen_shot_ = self.getscreen()
                 if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(830, 407, 929, 448)):
                     self.lock_img('img/ui/queren_blue.bmp', elseclick=[(876, 427)], elsedelay=2.8)
-                    self.click_btn(DXC_ELEMENT["d1_quanbu_blue"], until_disappear=DXC_ELEMENT["d1_quanbu_blue"])
+                    self.click_btn(DXC_ELEMENT["d1_queren_blue"], until_disappear=DXC_ELEMENT["d1_queren_blue"])
                     continue
                 elif self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
                     break
@@ -340,7 +357,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(830, 407, 929, 448))
             time.sleep(2 + self.change_time)
             screen_shot = self.getscreen()
-            self.click_img(screen_shot, 'img/ui/quanbu_blue.bmp')
+            self.click_img(screen_shot, 'img/ui/d1_queren_blue.bmp')
             self.lock_home()
 
     def dixiacheng(self, skip):
