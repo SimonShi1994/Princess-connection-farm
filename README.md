@@ -196,6 +196,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2021/10/17 By UVJkiNTQ
+
+- 修复体力及mana购买，修复普通商店购买
+
 2021/10/16 By TheAutumnOfRice
 
 - 进一步修复UI
