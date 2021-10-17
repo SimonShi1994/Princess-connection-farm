@@ -108,9 +108,9 @@ MAIN_BTN = {
     # 体力购买
     "tili_plus": p(320, 31),
     # 体力购买ok
-    "tili_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "tili_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     # 体力购买完成ok
-    "tili_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
+    "tili_ok2": p(480, 369, img="img/ui/queren.bmp", at=(382, 351, 578, 390)),
 
     # mana购买
     "mana_plus": p(189, 62),
@@ -119,7 +119,7 @@ MAIN_BTN = {
     # mana购买界面的空白（用于判断是否进行了1次购买，能否进行十连）
     "mana_blank": p(img="img/home/mana_blank.bmp", at=(740, 460, 895, 497)),
     # mana购买确认
-    "mana_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "mana_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     # mana购买1次
     "mana_one": p(582, 471),
     # mana购买10次
@@ -823,9 +823,9 @@ MAOXIAN_BTN = {
     "zaicitiaozhan": p(658, 489, img="img/maoxian/zaicitiaozhan.bmp", at=(592, 475, 723, 505)),
     "chongshi_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "no_tili": p(img="img/maoxian/no_tili.bmp", at=(429, 242, 518, 287)),
-    "buytili_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "buytili_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     "buytili_quxiao": p(371, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
-    "buytili_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
+    "buytili_ok2": p(480, 369, img="img/ui/queren.bmp", at=(382, 351, 578, 390)),
     "tlhf": p(img="img/maoxian/tlhf.bmp", at=(434, 137, 524, 157)),
     "tili_success": p(img="img/maoxian/tili_success.bmp", at=(262, 274, 404, 335)),
     "no_cishu": p(img="img/maoxian/no_cishu.bmp", at=(400, 229, 541, 289)),
