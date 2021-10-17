@@ -409,7 +409,7 @@ FIGHT_BTN = {
     "cat_zhanli": p(290, 141, name="战力"),
     "cat_rank": p(511, 142, name="RANK"),
     "cat_star": p(731, 139, name="星数"),
-    "cat_ok": p(587, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),  # 分类界面：OK
+    "cat_ok": p(587, 478, img="img/ui/queren_blue.bmp", at=(559, 463, 613, 492)),  # 分类界面：OK
     "my_team": p(867, 88),  # 我的队伍
     "team_h": {
         # 编组1，编组2，。。。，编组5
