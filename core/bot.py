@@ -318,3 +318,4 @@ class Bot:
             print('TG推送服务器错误', e)
             # time.sleep(600)
             # self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
+

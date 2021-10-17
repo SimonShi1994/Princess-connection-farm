@@ -162,7 +162,8 @@ class LoginMixin(ToolsMixin):
                 if self.d(textContains="请点击此处重试").exists():
                     print(f">>>{self.account}-请点击此处重试")
                     # 点重试
-                    self.click(482, 315)
+                    # self.click(482, 315)
+                    self.d(text="请点击此处重试").click()
 
                 elif self.d(textContains="异常").exists() or self.d(textContains="返回").exists():
                     print(f">>>{self.account}-网络异常，刷新验证码")
@@ -188,6 +189,12 @@ class LoginMixin(ToolsMixin):
 
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
+
+                    while True:
+                        # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
+                        if self.is_exists(START_UI["anying"]):
+                            break
+
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
                     # print(answer_result,' ', _len,' ', _id)
                     x = int(answer_result[0]) + 157
@@ -296,7 +303,6 @@ class LoginMixin(ToolsMixin):
                         SkipAuth()
                         flag = False
                         break
-                    time.sleep(0.3)
             else:
                 manual_captcha = True
             if manual_captcha:

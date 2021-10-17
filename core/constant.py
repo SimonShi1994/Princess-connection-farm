@@ -53,6 +53,7 @@ def p(x=None, y=None, name=None, img=None, at=None, **kwargs):
 START_UI = {
     "queren": p(572, 464, img="img/ui/caption_queding.bmp", at=(514, 440, 634, 487)),
     "imgbox": p(at=(354, 152, 613, 366)),
+    "anying": p(img="img/ui/anying.bmp"),
 }
 
 
@@ -558,6 +559,7 @@ DXC_ELEMENT = {
     "zhiyuan_white": p(477, 86, img="img/dxc/zhiyuan_white.bmp", at=(433, 75, 524, 99)),
     "zhiyuan_blue": p(477, 86, img="img/dxc/zhiyuan_blue.bmp", at=(430, 73, 521, 104)),
     "ok_btn_1": p(588, 371, img="img/ui/ok_btn_1.bmp"),
+    "d1_quanbu_blue": p(588, 371, img="img/dxc/quanbu_blue.bmp"),
     "sheding": p(478, 443, img="img/dxc/sheding.bmp"),
 }
 DXC_NUM = {

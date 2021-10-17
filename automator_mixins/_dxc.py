@@ -71,27 +71,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 # 过剧情
                 self.lock_img('img/dxc/chetui.bmp', side_check=self.juqing_kkr, at=(830, 407, 929, 448),
                               threshold=0.98, retry=3)
-        # while True:
-        #     self.enter_dxc()
-        #     # 进入流程先锁上地下城执行函数
-        #     self.dxc_switch = 1
-        #     self.click(480, 505, pre_delay=self.change_time, post_delay=self.change_time)
-        #     if self.is_exists('img/dixiacheng.jpg', at=(837, 92, 915, 140)):
-        #         self.lock_no_img('img/dixiacheng.jpg', elseclick=(900, 138), elsedelay=self.change_time, retry=10)
-        #         self.click(1, 1, pre_delay=3.5)
-        #         # 防止一进去就是塔币教程
-        #         if self.is_exists('img/dxc/chetui.bmp'):
-        #             time.sleep(1.2)
-        #             self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(779, 421, 833, 440),
-        #                           threshold=0.98)
-        #             break
-        #         if self.is_exists('img/yunhai.bmp'):
-        #             break
-        #         else:
-        #             for _ in range(5):
-        #                 # 我不信滑5下还滑不到头=。=
-        #                 self.Drag_Left(origin=True)
-        #         # self.dxc_kkr()
+
         tmp_cout = 0
         while tmp_cout <= 2:
             try:
@@ -178,8 +158,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     return
                 if self.dxc_switch == 0:
                     # 不加可能会导致卡顿找不到图片
-                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(130, 259)])
-                    self.lock_no_img('img/ui/ok_btn_1.bmp', elseclick=[(592, 369)])  # 锁定OK
+                    self.lock_img('img/ui/queren_blue.bmp', elseclick=[(130, 259)])
+                    self.lock_no_img('img/ui/queren_blue.bmp', elseclick=[(592, 369)])  # 锁定OK
                 else:
                     pcr_log(self.account).write_log(level='warning', message='识别不到次数！')
                     # LOG().Account_undergroundcity(self.account)
@@ -281,9 +261,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             while True:
                 if self.is_exists(FIGHT_BTN["caidan"]):
                     break
-                self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(833, 470)], ifbefore=self.change_time + 1,
+                self.lock_img('img/ui/queren_blue.bmp', elseclick=[(833, 470)], ifbefore=self.change_time + 1,
                               ifdelay=self.change_time, retry=10)
-                self.lock_no_img('img/ui/ok_btn_1.bmp', elseclick=[(588, 480)])
+                self.lock_no_img('img/ui/queren_blue.bmp', elseclick=[(588, 480)])
                 break
 
             if skip:  # 直接放弃战斗
@@ -329,8 +309,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.click(1, 1)  # 跳过结算
                 screen_shot_ = self.getscreen()
                 if self.is_exists('img/dxc/chetui.bmp', screen=screen_shot_, at=(830, 407, 929, 448)):
-                    self.lock_img('img/ui/ok_btn_1.bmp', elseclick=[(876, 427)], elsedelay=2.8)
-                    self.click_btn(DXC_ELEMENT["ok_btn_1"], until_disappear=DXC_ELEMENT["ok_btn_1"])
+                    self.lock_img('img/ui/queren_blue.bmp', elseclick=[(876, 427)], elsedelay=2.8)
+                    self.click_btn(DXC_ELEMENT["d1_quanbu_blue"], until_disappear=DXC_ELEMENT["d1_quanbu_blue"])
                     continue
                 elif self.is_exists(DXC_ELEMENT["sytzcs"], screen=screen_shot_):
                     break
@@ -360,7 +340,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(830, 407, 929, 448))
             time.sleep(2 + self.change_time)
             screen_shot = self.getscreen()
-            self.click_img(screen_shot, 'img/ui/ok_btn_1.bmp')
+            self.click_img(screen_shot, 'img/ui/quanbu_blue.bmp')
             self.lock_home()
 
     def dixiacheng(self, skip):
