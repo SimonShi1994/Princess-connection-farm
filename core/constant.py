@@ -108,9 +108,9 @@ MAIN_BTN = {
     # 体力购买
     "tili_plus": p(320, 31),
     # 体力购买ok
-    "tili_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "tili_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     # 体力购买完成ok
-    "tili_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
+    "tili_ok2": p(480, 369, img="img/ui/queren.bmp", at=(382, 351, 578, 390)),
 
     # mana购买
     "mana_plus": p(189, 62),
@@ -119,7 +119,7 @@ MAIN_BTN = {
     # mana购买界面的空白（用于判断是否进行了1次购买，能否进行十连）
     "mana_blank": p(img="img/home/mana_blank.bmp", at=(740, 460, 895, 497)),
     # mana购买确认
-    "mana_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "mana_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     # mana购买1次
     "mana_one": p(582, 471),
     # mana购买10次
@@ -272,9 +272,17 @@ HANGHUI_BTN = {
     # 支援设定
     "zhiyuansheding": p(84, 357, img="img/hanghui/zhiyuansheding.bmp", at=(52 ,346, 119, 369)),
     # 地下城支援1
-    "zhiyuan_dxc1": p(78, 207, img="img/hanghui/zhiyuanjuese1.bmp", at=(43, 172, 114, 244)),
+    "zhiyuan_dxc1": p(78, 208, img="img/hanghui/zhiyuanjuese.bmp", at=(52, 182, 103, 233)),
     # 地下城支援2
-    "zhiyuan_dxc2": p(78, 352, img="img/hanghui/zhiyuanjuese2.bmp", at=(44, 318, 113, 388)),
+    "zhiyuan_dxc2": p(78, 353, img="img/hanghui/zhiyuanjuese.bmp", at=(52, 327, 103, 378)),
+    # 团队露娜塔支援1
+    "zhiyuan_lnt1": p(381, 208, img="img/hanghui/zhiyuanjuese.bmp", at=(355, 182, 406, 233)),
+    # 团队露娜塔支援2
+    "zhiyuan_lnt2": p(381, 353, img="img/hanghui/zhiyuanjuese.bmp", at=(355, 327, 406, 378)),
+    # 主线支援1
+    "zhiyuan_zx1": p(684, 208, img="img/hanghui/zhiyuanjuese.bmp", at=(658, 182, 709, 233)),
+    # 主线支援2
+    "zhiyuan_zx2": p(684, 353, img="img/hanghui/zhiyuanjuese.bmp", at=(658, 327, 709, 378)),
     # 支援取消
     "zhiyuanquxiao": p(img="img/hanghui/zhiyuanquxiao.bmp", at=(645, 438, 694, 466)),
     # 战力排序（支援界面）用于判断是否处在战力排序状态
@@ -401,7 +409,7 @@ FIGHT_BTN = {
     "cat_zhanli": p(290, 141, name="战力"),
     "cat_rank": p(511, 142, name="RANK"),
     "cat_star": p(731, 139, name="星数"),
-    "cat_ok": p(587, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),  # 分类界面：OK
+    "cat_ok": p(587, 478, img="img/ui/queren_blue.bmp", at=(559, 463, 613, 492)),  # 分类界面：OK
     "my_team": p(867, 88),  # 我的队伍
     "team_h": {
         # 编组1，编组2，。。。，编组5
@@ -815,9 +823,9 @@ MAOXIAN_BTN = {
     "zaicitiaozhan": p(658, 489, img="img/maoxian/zaicitiaozhan.bmp", at=(592, 475, 723, 505)),
     "chongshi_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "no_tili": p(img="img/maoxian/no_tili.bmp", at=(429, 242, 518, 287)),
-    "buytili_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "buytili_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     "buytili_quxiao": p(371, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
-    "buytili_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
+    "buytili_ok2": p(480, 369, img="img/ui/queren.bmp", at=(382, 351, 578, 390)),
     "tlhf": p(img="img/maoxian/tlhf.bmp", at=(434, 137, 524, 157)),
     "tili_success": p(img="img/maoxian/tili_success.bmp", at=(262, 274, 404, 335)),
     "no_cishu": p(img="img/maoxian/no_cishu.bmp", at=(400, 229, 541, 289)),
