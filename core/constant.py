@@ -56,25 +56,24 @@ START_UI = {
     "anying": p(img="img/ui/anying.bmp"),
 }
 
-
 HAOYOU_BTN = {
-    "hysqqr":p(img="img/haoyou/hysqqr.bmp",at=(414,28,542,56)),  # 战斗中的
-    "hysqqr_gl":p(img="img/haoyou/hysqqr.bmp",at=(414, 132, 542, 160)),  # 好友管理中的
-    "lvmaoicon":p(img="img/haoyou/lvmaoicon.bmp",at=(696,197,730,234)),
-    "haoyouguanli_icon":p(img="img/haoyou/haoyouguanli_icon.bmp",at=(66,17,155,44)),
-    "xunzhaohaoyou":p(722,29),
-    "sousuosheding":p(839,90,img="img/haoyou/sousuosheding.bmp",at=(807,79,869,97)),
-    "wanjiaidsousuo":p(img="img/haoyou/wanjiaidsousuo.bmp",at=(422,132,533,157)),
-    "jianjie":p(img="img/haoyou/jianjie.bmp",at=(454,28,499,55)),
-    "info_btn":p(454,176),
-    "name_box":p(at=(385,149,595,172)),
-    "hanghui_box":p(at=(531,237,695,255)),
-    "accept_btn":p(843,198),# 同意
-    "reject_btn":p(733,198), # 拒
-    "hysqtgqr":p(img="img/haoyou/hysqtgqr.bmp",at=(393,135,558,153)),  # 好友申请通过确认
-    "hysqjjqr":p(img="img/haoyou/hysqjjqr.bmp",at=(394,133,559,158)),
-    "haoyou_sup":p(img="img/haoyou/haoyou_sup.bmp",at=(69,123,146,138)),
-    "sqhy":p(img="img/haoyou/sqhy.bmp",at=(434,133,524,160)),
+    "hysqqr": p(img="img/haoyou/hysqqr.bmp", at=(414, 28, 542, 56)),  # 战斗中的
+    "hysqqr_gl": p(img="img/haoyou/hysqqr.bmp", at=(414, 132, 542, 160)),  # 好友管理中的
+    "lvmaoicon": p(img="img/haoyou/lvmaoicon.bmp", at=(696, 197, 730, 234)),
+    "haoyouguanli_icon": p(img="img/haoyou/haoyouguanli_icon.bmp", at=(66, 17, 155, 44)),
+    "xunzhaohaoyou": p(722, 29),
+    "sousuosheding": p(839, 90, img="img/haoyou/sousuosheding.bmp", at=(807, 79, 869, 97)),
+    "wanjiaidsousuo": p(img="img/haoyou/wanjiaidsousuo.bmp", at=(422, 132, 533, 157)),
+    "jianjie": p(img="img/haoyou/jianjie.bmp", at=(454, 28, 499, 55)),
+    "info_btn": p(454, 176),
+    "name_box": p(at=(385, 149, 595, 172)),
+    "hanghui_box": p(at=(531, 237, 695, 255)),
+    "accept_btn": p(843, 198),  # 同意
+    "reject_btn": p(733, 198),  # 拒
+    "hysqtgqr": p(img="img/haoyou/hysqtgqr.bmp", at=(393, 135, 558, 153)),  # 好友申请通过确认
+    "hysqjjqr": p(img="img/haoyou/hysqjjqr.bmp", at=(394, 133, 559, 158)),
+    "haoyou_sup": p(img="img/haoyou/haoyou_sup.bmp", at=(69, 123, 146, 138)),
+    "sqhy": p(img="img/haoyou/sqhy.bmp", at=(434, 133, 524, 160)),
 }
 
 # 主页面的按钮对象
@@ -140,9 +139,9 @@ MAIN_BTN = {
     "tansuo": p(738, 137),
 
     # 换号确认
-    "huidaobiaotihuamian":p(165,409),
-    "changeacc_queren":p(587,369,img="img/ui/queren_blue.bmp",at=(560,355,614,384)),
-    "querenhuamian_title":p(img="img/home/querenhuamian_title.bmp",at=(437,131,522,159)),
+    "huidaobiaotihuamian": p(165, 409),
+    "changeacc_queren": p(587, 369, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
+    "querenhuamian_title": p(img="img/home/querenhuamian_title.bmp", at=(437, 131, 522, 159)),
     # 探索
     "jingyanzhiguanqia": p(591, 237, img="img/tansuo/jingyan.bmp", at=(529, 160, 605, 236)),  # 经验值关卡
     "managuanqia": p(801, 221),  # 玛娜关卡
@@ -160,14 +159,11 @@ MAIN_BTN = {
     "karin_middle": p(img="img/girl/karin_middle.bmp", at=(410, 309, 572, 390)),
 
     # 调查本
-    "diaocha":p(740,275),
-    "shengjidiaocha":p(572,202,img="img/diaocha/shengjidiaocha.bmp",at=(528,133,628,260)),
-    "shendiandiaocha":p(814,213),
-    "shengji_title":p(img="img/diaocha/shengji_title.bmp",at=(61,11,163,47)),
-    "shendian_title":p(img="img/diaocha/shendian_title.bmp",at=(62,12,161,44)),
-
-
-
+    "diaocha": p(740, 275),
+    "shengjidiaocha": p(572, 202, img="img/diaocha/shengjidiaocha.bmp", at=(528, 133, 628, 260)),
+    "shendiandiaocha": p(814, 213),
+    "shengji_title": p(img="img/diaocha/shengji_title.bmp", at=(61, 11, 163, 47)),
+    "shendian_title": p(img="img/diaocha/shendian_title.bmp", at=(62, 12, 161, 44)),
 
     # 右侧的kkr
     "right_kkr": p(img="img/home/right_kkr.bmp", at=(266, 74, 933, 463)),
@@ -210,9 +206,9 @@ LIWU_BTN = {
     "ok2": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),
     "chiyoushangxian": p(img="img/home/chiyoushangxian.bmp", at=(433, 134, 529, 159)),
     "chiyoushangxian_ok": p(481, 371),
-    "meiyouliwu": p(img="img/home/meiyouliwu.bmp",at=(342,243,512,272)),
-    "yijianshouqu":p(img="img/home/yiijianshouqu_text.bmp",at=(382,65,572,89)),
-    "shouqule":p(img="img/home/text_shouqule.bmp",at=(412,66,542,87)),
+    "meiyouliwu": p(img="img/home/meiyouliwu.bmp", at=(342, 243, 512, 272)),
+    "yijianshouqu": p(img="img/home/yiijianshouqu_text.bmp", at=(382, 65, 572, 89)),
+    "shouqule": p(img="img/home/text_shouqule.bmp", at=(412, 66, 542, 87)),
 }
 RENWU_BTN = {
     "quanbushouqu_off": p(844, 439, img="img/home/quanbushouqu_off.bmp", at=(747, 421, 939, 455)),
@@ -271,7 +267,7 @@ HANGHUI_BTN = {
     # 加入行会
     "join_btn": p(854, 444, img='img/jiaru.bmp', at=(749, 427, 933, 460)),
     # 支援设定
-    "zhiyuansheding": p(84, 357, img="img/hanghui/zhiyuansheding.bmp", at=(52 ,346, 119, 369)),
+    "zhiyuansheding": p(84, 357, img="img/hanghui/zhiyuansheding.bmp", at=(52, 346, 119, 369)),
     # 地下城支援1
     "zhiyuan_dxc1": p(78, 208, img="img/hanghui/zhiyuanjuese.bmp", at=(52, 182, 103, 233)),
     # 地下城支援2
@@ -312,7 +308,7 @@ HANGHUI_BTN = {
     # 返回键隔壁的“行会”字样
     "hanghui_title": p(img="img/hanghui.bmp", at=(63, 12, 123, 45)),
     # 成员信息
-    "chengyuanxinxi": p(239, 356, img="img/hanghui/chengyuanxinxi.bmp", at=(203,345,271,366)),
+    "chengyuanxinxi": p(239, 356, img="img/hanghui/chengyuanxinxi.bmp", at=(203, 345, 271, 366)),
     # 成员信息界面的“成员列表”按钮
     "chengyuanliebiao": p(img='img/chengyuanliebiao.bmp', at=(329, 15, 450, 42)),
     # 筛选条件（成员界面）
@@ -530,7 +526,7 @@ DXC_ELEMENT = {
     "shouqubaochou_ok": p(480, 477, img="img/ui/queren.bmp", at=(450, 465, 509, 489)),
     "qianwangdixiacheng": p(805, 495),
     "qyxzqr": p(img="img/dxc/qyxzqr.bmp", at=(415, 135, 540, 157)),
-    "quyuxuanzequeren_ok":p(587,370,img="img/ui/queren_blue.bmp",at=(560, 355, 614, 384)),
+    "quyuxuanzequeren_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
@@ -653,7 +649,7 @@ DXC_COORD = {
         5: p(502, 259),
     }
 }
-MAX_MAP = 27
+MAX_MAP = 28
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -771,25 +767,30 @@ HARD_COORD = {
         3: p(765, 251),
     },
     24: {
-        1: p(216,293),
-        2: p(476,361),
-        3: p(766,262),
+        1: p(216, 293),
+        2: p(476, 361),
+        3: p(766, 262),
     },
     25: {
-        1: p(218,297),
-        2: p(481,359),
-        3: p(769,257),
+        1: p(218, 297),
+        2: p(481, 359),
+        3: p(769, 257),
     },
     26: {
-        1: p(214,288),
-        2: p(475,235),
-        3: p(762,334),
+        1: p(214, 288),
+        2: p(475, 235),
+        3: p(762, 334),
     },
     27: {
-        1: p(212,270),
-        2: p(475,350),
-        3: p(765,282),
-    },  
+        1: p(212, 270),
+        2: p(475, 350),
+        3: p(765, 282),
+    },
+    28: {
+        1: p(243, 226),
+        2: p(491, 338),
+        3: p(779, 270),
+    },
 }
 
 SHOP_BTN = {
@@ -845,9 +846,9 @@ MAOXIAN_BTN = {
     "query_box": p(at=(263, 193, 698, 315)),  # 弹出提示框的位置
     "saodang_jieguo": p(img="img/maoxian/saodang_jieguo.bmp", at=(435, 28, 521, 56)),  # 扫荡结果：扫荡跳过界面上面的标题:
     "duiwu_win": p(img="img/maoxian/duiwu_win.bmp", at=(897, 77, 922, 105)),  # Normal/Hard胜利时，“队伍”图标偏下
-    "duiwu_loss": p(img="img/maoxian/duiwu_loss.bmp", at=(832,17,869,53)),  # Normal/Hard失败时，“队伍”图标偏上
+    "duiwu_loss": p(img="img/maoxian/duiwu_loss.bmp", at=(832, 17, 869, 53)),  # Normal/Hard失败时，“队伍”图标偏上
 
-    "no_tili_right":p(img="img/maoxian/no_tili_right.bmp",at=(711,404,734,421)),  # 没有体力的红杠杠 --
+    "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
 }
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(77, 61, 141, 72)),
@@ -873,10 +874,11 @@ ZHUXIAN_ID = {
     21: p(img="img/zhuxian/21L.bmp", at=(87, 61, 196, 72)),
     22: p(img="img/zhuxian/22L.bmp", at=(109, 58, 175, 73)),
     23: p(img="img/zhuxian/23L.bmp", at=(109, 58, 177, 75)),
-    24: p(img="img/zhuxian/24L.bmp",at=(91,59,193,73)),
-    25:p(img="img/zhuxian/25L.bmp",at=(91,59,193,71)),
-    26:p(img="img/zhuxian/26L.bmp",at=(61,55,198,77)),
-    27:p(img="img/zhuxian/27L.bmp",at=(60,56,199,76)),
+    24: p(img="img/zhuxian/24L.bmp", at=(91, 59, 193, 73)),
+    25: p(img="img/zhuxian/25L.bmp", at=(91, 59, 193, 71)),
+    26: p(img="img/zhuxian/26L.bmp", at=(61, 55, 198, 77)),
+    27: p(img="img/zhuxian/27L.bmp", at=(60, 56, 199, 76)),
+    28: p(img="img/zhuxian/28L.bmp",at=(60, 57, 201, 78)),
 
 }
 ZHUXIAN_XXXYY_ID = {
@@ -893,19 +895,25 @@ ZHUXIAN_XXXYF_ID = {
     23: p(img="img/zhuxian/23R.bmp", at=(198, 58, 230, 74)),
 }
 ZHUXIAN_LDWSQF_ID = {
-    24:p(img="img/zhuxian/24R.bmp",at=(219,58,249,72)),
-    25:p(img="img/zhuxian/25R.bmp",at=(216,59,250,73)),
+    24: p(img="img/zhuxian/24R.bmp", at=(219, 58, 249, 72)),
+    25: p(img="img/zhuxian/25R.bmp", at=(216, 59, 250, 73)),
 }
 ZHUXIAN_SBDDSL_ID = {
-    26:p(img="img/zhuxian/26R.bmp",at=(212,58,252,77)),
-    27:p(img="img/zhuxian/27R.bmp",at=(214,58,251,77)),
+    26: p(img="img/zhuxian/26R.bmp", at=(212, 58, 252, 77)),
+    27: p(img="img/zhuxian/27R.bmp", at=(214, 58, 251, 77)),
 }
+#ZHUXIAN_DSTEHSA_ID = {
+#    28: p(img="img/zhuxian/28R.bmp", at=(217, 59, 254, 77)),
+#
+#}
+
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
     (22, 23): ZHUXIAN_XXXYF_ID,
     (24, 25): ZHUXIAN_LDWSQF_ID,
     (26, 27): ZHUXIAN_SBDDSL_ID,
+#    28: ZHUXIAN_DSTEHSA_ID,
 }
 
 NORMAL_COORD = {
@@ -1380,100 +1388,121 @@ NORMAL_COORD = {
     },
     24: {
         "right": {
-            14: p(769,238),
-            13: p(710,352),
-            12: p(585,391),
-            11: p(491,299),
-            10: p(426,401),
-            9:  p(300,366),
-            8:  p(336,236),
+            14: p(769, 238),
+            13: p(710, 352),
+            12: p(585, 391),
+            11: p(491, 299),
+            10: p(426, 401),
+            9: p(300, 366),
+            8: p(336, 236),
         },
         "left": {
-            7: p(645,244),
-            6: p(554,337),
-            5: p(456,256),
-            4: p(324,309),
-            3: p(420,385),
-            2: p(293,428),
-            1: p(171,394),
+            7: p(645, 244),
+            6: p(554, 337),
+            5: p(456, 256),
+            4: p(324, 309),
+            3: p(420, 385),
+            2: p(293, 428),
+            1: p(171, 394),
         }
     },
     25: {
         "right": {
-            14: p(751,328),
-            13: p(629,263),
-            12: p(600,401),
-            11: p(441,403),
-            10: p(494,274),
-            9:  p(347,282),
-            8:  p(255,398),
+            14: p(751, 328),
+            13: p(629, 263),
+            12: p(600, 401),
+            11: p(441, 403),
+            10: p(494, 274),
+            9: p(347, 282),
+            8: p(255, 398),
         },
         "left": {
-            7: p(666,252),
-            6: p(516,296),
-            5: p(418,404),
-            4: p(253,350),
-            3: p(380,283),
-            2: p(290,183),
-            1: p(162,225),
+            7: p(666, 252),
+            6: p(516, 296),
+            5: p(418, 404),
+            4: p(253, 350),
+            3: p(380, 283),
+            2: p(290, 183),
+            1: p(162, 225),
         }
     },
     26: {
         "right": {
-            14: p(793,338),
-            13: p(723,253),
-            12: p(603,231),
-            11: p(516,313),
-            10: p(423,390),
-            9:  p(365,280),
-            8:  p(243,276),
+            14: p(793, 338),
+            13: p(723, 253),
+            12: p(603, 231),
+            11: p(516, 313),
+            10: p(423, 390),
+            9: p(365, 280),
+            8: p(243, 276),
         },
         "left": {
-            7: p(669,385),
-            6: p(576,301),
-            5: p(455,274),
-            4: p(411,390),
-            3: p(291,346),
-            2: p(248,229),
-            1: p(124,270),
+            7: p(669, 385),
+            6: p(576, 301),
+            5: p(455, 274),
+            4: p(411, 390),
+            3: p(291, 346),
+            2: p(248, 229),
+            1: p(124, 270),
         }
     },
     27: {
         "right": {
-            14: p(839,286),
-            13: p(738,342),
-            12: p(673,245),
-            11: p(556,249),
-            10: p(539,350),
-            9:  p(421,382),
-            8:  p(359,284),
+            14: p(839, 286),
+            13: p(738, 342),
+            12: p(673, 245),
+            11: p(556, 249),
+            10: p(539, 350),
+            9: p(421, 382),
+            8: p(359, 284),
         },
         "left": {
-            7: p(742,264),
-            6: p(659,348),
-            5: p(551,288),
-            4: p(444,361),
-            3: p(313,392),
-            2: p(220,299),
-            1: p(119,373),
+            7: p(742, 264),
+            6: p(659, 348),
+            5: p(551, 288),
+            4: p(444, 361),
+            3: p(313, 392),
+            2: p(220, 299),
+            1: p(119, 373),
+        }
+    },
+    28: {
+        "right": {
+            14: p(832, 269),
+            13: p(729, 350),
+            12: p(645, 257),
+            11: p(568, 355),
+            10: p(493, 241),
+            9: p(355, 245),
+            8: p(256, 367),
+        },
+        "left": {
+            7: p(667, 260),
+            6: p(543, 276),
+            5: p(436, 351),
+            4: p(415, 226),
+            3: p(301, 303),
+            2: p(187, 224),
+            1: p(125, 319),
         }
     },
 }
 RANKS_DICT = {
-    1: p(img="img/ranks/1.bmp",at=(217,110,275,135)),
-    2: p(img="img/ranks/2.bmp",at=(217,112,278,135)),
-    3: p(img="img/ranks/3.bmp",at=(213,110,279,137)),
-    4: p(img="img/ranks/4.bmp",at=(216,112,277,135)),
-    5: p(img="img/ranks/5.bmp",at=(215,111,277,135)),
-    6: p(img="img/ranks/6.bmp",at=(219,111,279,138)),
-    7: p(img="img/ranks/7.bmp",at=(213,109,279,137)),
-    8: p(img="img/ranks/8.bmp",at=(218,111,278,135)),
-    9: p(img="img/ranks/9.bmp",at=(216,110,277,137)),
-    10: p(img="img/ranks/10.bmp",at=(213,113,282,137)),
-    11: p(img="img/ranks/11.bmp",at=(214,111,280,135)),
-    12: p(img="img/ranks/12.bmp",at=(210,110,281,134)),
-    13: p(img="img/ranks/13.bmp",at=(212,110,282,136)),
-    14: p(img="img/ranks/14.bmp",at=(211,111,282,136)),
+    1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),
+    2: p(img="img/ranks/2.bmp", at=(217, 112, 278, 135)),
+    3: p(img="img/ranks/3.bmp", at=(213, 110, 279, 137)),
+    4: p(img="img/ranks/4.bmp", at=(216, 112, 277, 135)),
+    5: p(img="img/ranks/5.bmp", at=(215, 111, 277, 135)),
+    6: p(img="img/ranks/6.bmp", at=(219, 111, 279, 138)),
+    7: p(img="img/ranks/7.bmp", at=(213, 109, 279, 137)),
+    8: p(img="img/ranks/8.bmp", at=(218, 111, 278, 135)),
+    9: p(img="img/ranks/9.bmp", at=(216, 110, 277, 137)),
+    10: p(img="img/ranks/10.bmp", at=(213, 113, 282, 137)),
+    11: p(img="img/ranks/11.bmp", at=(214, 111, 280, 135)),
+    12: p(img="img/ranks/12.bmp", at=(210, 110, 281, 134)),
+    13: p(img="img/ranks/13.bmp", at=(212, 110, 282, 136)),
+    14: p(img="img/ranks/14.bmp", at=(211, 111, 282, 136)),
+    15: p(img="img/ranks/15.bmp", at=(210, 110, 284, 137)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
