@@ -891,11 +891,11 @@ ZHUXIAN_KSTLYSL_ID = {
     21: p(img="img/zhuxian/21R.bmp", at=(217, 59, 244, 71)),
 }
 ZHUXIAN_XXXYF_ID = {
-    22: p(img="img/zhuxian/22R.bmp", at=(200, 59, 229, 77)),
-    23: p(img="img/zhuxian/23R.bmp", at=(198, 58, 230, 74)),
+    22: p(img="img/zhuxian/22R.bmp",at=(196, 59, 232, 76)),
+    23: p(img="img/zhuxian/23R.bmp", at=(195, 59, 233, 78)),
 }
 ZHUXIAN_LDWSQF_ID = {
-    24: p(img="img/zhuxian/24R.bmp", at=(219, 58, 249, 72)),
+    24: p(img="img/zhuxian/24R.bmp",at=(212, 60, 254, 78)),
     25: p(img="img/zhuxian/25R.bmp", at=(216, 59, 250, 73)),
 }
 ZHUXIAN_SBDDSL_ID = {
