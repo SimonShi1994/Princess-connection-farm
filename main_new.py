@@ -17,7 +17,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20211017"
+script_version = "Ver 2.7.20211023"
 
 
 

@@ -196,6 +196,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2021/10/23 By UVJkiNTQ
+
+- 更新28图，Rank15
+
 2021/10/17 By CyiceK
 
 - 修复d1地下城UI变动bug
