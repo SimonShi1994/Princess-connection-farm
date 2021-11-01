@@ -357,7 +357,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             self.click_img(screen_shot, 'img/dxc/chetui.bmp', at=(830, 407, 929, 448))
             time.sleep(2 + self.change_time)
             screen_shot = self.getscreen()
-            self.click_img(screen_shot, 'img/ui/d1_queren_blue.bmp')
+            self.click_img(screen_shot, 'img/ui/queren_blue.bmp')
             self.lock_home()
 
     def dixiacheng(self, skip):
