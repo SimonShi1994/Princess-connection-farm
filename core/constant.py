@@ -1502,7 +1502,7 @@ RANKS_DICT = {
     12: p(img="img/ranks/12.bmp", at=(210, 110, 281, 134)),
     13: p(img="img/ranks/13.bmp", at=(212, 110, 282, 136)),
     14: p(img="img/ranks/14.bmp", at=(211, 111, 282, 136)),
-    15: p(img="img/ranks/15.bmp", at=(210, 110, 284, 137)),
+    15: p(img="img/ranks/15.bmp",at=(216,111,281,135)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
