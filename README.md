@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20211017
+# Princess connection 公主连结农场脚本v2.7.20211101
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -195,6 +195,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2021/11/1 By TheAutumnOfRice
+
+- 修复Rank15图片被误识别为Rank13的问题
+- 给主界面增加了一点颜色
 
 2021/10/30 By UVJkiNTQ
 

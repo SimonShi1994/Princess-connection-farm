@@ -6,9 +6,9 @@ from rich.text import Text
 
 
 class RText(Text):
-    def __init__(self, *args, sep=' '):
+    def __init__(self, *args, sep=' ',end="\n"):
         self.txt = sep.join([str(a) for a in args])
-        super().__init__(self.txt)
+        super().__init__(self.txt,end=end)
         self.sty()
 
     def sty(self):
@@ -24,10 +24,17 @@ class RSubTitle(RText):
     def sty(self):
         self.stylize(Style(color="cyan", bold=True))
 
+class RTrue(RText):
+    def sty(self):
+        self.stylize(Style(color="green", bold=True))
+
+class RFalse(RText):
+    def sty(self):
+        self.stylize(Style(color="red", bold=False))
 
 class RValue(RText):
     def sty(self):
-        self.stylize(Style(color="yellow", italic=True))
+        self.stylize(Style(color="bright_yellow", italic=True))
 
 class RComment(RText):
     def sty(self):
