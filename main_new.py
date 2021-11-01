@@ -12,6 +12,21 @@ from core.launcher import EMULATOR_DICT
 from core.pcr_config import *
 from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
 from core.utils import is_ocr_running
+from core.richutils import RTitle as RError, RValue as RWarn
+from rich import print as rprint
+
+def wprint(*args,**kwargs):
+    rprint(RWarn(*args,**kwargs))
+
+def eprint(*args,**kwargs):
+    rprint(RError(*args,**kwargs))
+
+def RTrue(s):
+    return f"[green]{s}[/green]"
+
+def RFalse(s):
+    return f"[red]{s}[/red]"
+
 import cv2
 
 PCR: Optional[PCRInitializer] = None
@@ -64,21 +79,21 @@ def BindSchedule(schedule):
 def RunningInput():
     if not running_input:
         if last_schedule == "":
-            print("* 由于没有指定schedule，running_input自动开启。")
-            print("* 可以在添加任务后，输入join屏蔽实时控制。")
-            print("* 输入help，查看实时控制帮助。")
+            wprint("* 由于没有指定schedule，running_input自动开启。")
+            wprint("* 可以在添加任务后，输入join屏蔽实时控制。")
+            wprint("* 输入help，查看实时控制帮助。")
         else:
-            print("* 实时控制已屏蔽，可以在config.ini - running_input中进行设置。")
+            wprint("* 实时控制已屏蔽，可以在config.ini - running_input中进行设置。")
             if end_shutdown:
-                print("* end_shutdown配置启动，全部任务结束后，将自动关机。")
+                eprint("* end_shutdown配置启动，全部任务结束后，将自动关机。")
                 JoinShutdown()
             else:
-                print("* 全部任务结束后，将自动退出。")
+                wprint("* 全部任务结束后，将自动退出。")
                 JoinExit()
     else:
-        print("* 实时控制已经开启，可以在config.ini - running_input中进行设置。")
-        print("* Tips：如果出现了子进程长时间未响应的情况，请输入join或在配置中关闭running_input。")
-        print("* 输入help，查看实时控制帮助。")
+        wprint("* 实时控制已经开启，可以在config.ini - running_input中进行设置。")
+        wprint("* Tips：如果出现了子进程长时间未响应的情况，请输入join或在配置中关闭running_input。")
+        wprint("* 输入help，查看实时控制帮助。")
 
 
 def FirstSchedule():
@@ -178,7 +193,7 @@ def CheckTuitu():
 def CheckState():
     global SCH, last_schedule
     if last_schedule == "":
-        print("没有绑定具体的计划文件。")
+        eprint("没有绑定具体的计划文件。")
         return
     if SCH is None:
         mysch = Schedule(last_schedule, None)
@@ -214,7 +229,7 @@ def ReconnectPCR():
 def ClearError(name):
     global last_schedule
     if last_schedule == "":
-        print("没有绑定具体的计划文件。")
+        eprint("没有绑定具体的计划文件。")
         return
     mysch = Schedule(last_schedule, None)
     mysch.clear_error(name)
@@ -223,7 +238,7 @@ def ClearError(name):
 def Restart(name):
     global last_schedule
     if last_schedule == "":
-        print("没有绑定具体的计划文件。")
+        eprint("没有绑定具体的计划文件。")
         return
     mysch = Schedule(last_schedule, None)
     mysch.restart(name)
@@ -242,7 +257,7 @@ def StopSchedule(force=False):
 def JoinExit(nowait=False):
     global SCH
     if SCH is None:
-        print("还没有任何Schedule")
+        eprint("还没有任何Schedule")
         return
     SCH.join(nowait)
     SCH.stop()
@@ -252,7 +267,7 @@ def JoinExit(nowait=False):
 def JoinShutdown(nowait=False):
     global SCH
     if SCH is None:
-        print("还没有任何Schedule")
+        eprint("还没有任何Schedule")
         return
     SCH.join(nowait)
     SCH.stop()
@@ -272,6 +287,7 @@ def ShowGuide():
 
 
 def ShowServerChan():
+    print = rprint
     if s_sckey != "":
         print("* Server酱已配置！")
         print("  - 运行状态消息发送间隔(s) sentstate schedule：", sentstate)
@@ -301,9 +317,10 @@ def ShowServerChan():
 
 
 def ShowAutoConsole():
+    print = rprint
     print("* ADB文件路径 adb_dir：", os.path.abspath(adb_dir))
     print("* 忽略端口号 ignore_serials：", ignore_serials)
-    print("* 自动添加至环境变量 add_adb_to_path：", "已开启" if add_adb_to_path else "未开启")
+    print("* 自动添加至环境变量 add_adb_to_path：", RTrue("已开启") if add_adb_to_path else RFalse("未开启"))
     if emulator_console != "":
         print("* 模拟器自动控制已配置！")
         print("  - 模拟器选择 selected_emulator：", selected_emulator)
@@ -311,21 +328,22 @@ def ShowAutoConsole():
             launcher = EMULATOR_DICT[selected_emulator]()
             print("  - 控制器所在路径 emulator_console：", emulator_console)
             print("  - 自启动模拟器编号 emulator_id：", emulator_id)
-            print("  - 自动分配模拟器地址 auto_emulator_address：", "已开启" if auto_emulator_address else "未开启")
+            print("  - 自动分配模拟器地址 auto_emulator_address：", RTrue("已开启") if auto_emulator_address else RFalse("未开启"))
             for i in emulator_id:
                 print("  - ID: ", i, " Serial:", launcher.id_to_serial(i))
-            print("  - 闲置自动关闭模拟器 quit_emulator_when_free：", "已开启" if quit_emulator_when_free else "未开启")
+            print("  - 闲置自动关闭模拟器 quit_emulator_when_free：", RTrue("已开启") if quit_emulator_when_free else RFalse("未开启"))
             if quit_emulator_when_free:
                 print("  - - 最大闲置时间 max_free_time：", max_free_time)
         else:
-            print("  !! 错误，不支持的模拟器。当前仅支持：雷电")
+            eprint("  !! 错误，不支持的模拟器。当前仅支持：雷电")
     else:
         print("* 模拟器自动控制未配置，前往config.ini - emulator_console进行配置")
-    print("* 自动启动app.py auto_start_app：", "已开启" if auto_start_app else "未开启")
-    print("* 内部方式启动app：", "已开启" if inline_app else "未开启")
+    print("* 自动启动app.py auto_start_app：", RTrue("已开启") if auto_start_app else RFalse("未开启"))
+    print("* 内部方式启动app：", RTrue("已开启") if inline_app else RFalse("未开启"))
 
 
 def ShowOCR():
+    print = rprint
     print("* OCR模式 ocr_mode：", ocr_mode)
     if baidu_apiKey != "":
         print("* BaiduAPI 已配置！")
@@ -333,15 +351,16 @@ def ShowOCR():
         print("* BaiduAPI 未配置，前往config.ini - baidu_apiKey进行配置")
     print("* 本地OCR状态：", end="")
     if is_ocr_running():
-        print("运行中")
+        wprint("运行中")
     else:
         print("未运行")
 
 
 def ShowPCRPerformance():
-    print("* 快速截图 fast_screencut：", "已开启" if fast_screencut else "未开启")
+    print = rprint
+    print("* 快速截图 fast_screencut：", RTrue("已开启") if fast_screencut else RFalse("未开启"))
     if fast_screencut:
-        print("  - 强制快速截图 force_fast_screencut：", "已开启" if force_fast_screencut else "未开启")
+        print("  - 强制快速截图 force_fast_screencut：", RTrue("已开启") if force_fast_screencut else RFalse("未开启"))
         print("  - 截图强制延迟 fast_screencut_delay：", fast_screencut_delay)
         print("  - 最长等待时间 fast_screencut_timeout：", fast_screencut_timeout)
     print("* 异步检测间隔 async_screenshot_freq：", async_screenshot_freq)
@@ -350,24 +369,25 @@ def ShowPCRPerformance():
         print("* 图像匹配最长等待时间 lockimg_timeout：", lockimg_timeout)
     else:
         print("* 图像匹配超时报错已屏蔽")
-    print("* Shift+P脚本暂停 enable_pause：", "已开启" if enable_pause else "未开启")
+    print("* Shift+P脚本暂停 enable_pause：", RTrue("已开启") if enable_pause else RFalse("未开启"))
     print("* 最大重启重试次数 max_reboot：", max_reboot)
-    print("* 强制重启模式 force_timeout_reboot：", "已开启" if force_timeout_reboot else "未开启")
-    print("* 运行时实时控制 running_input：", "已开启" if running_input else "未开启")
-    print("* 不使用自动打码 captcha_skip：", "已开启" if captcha_skip else "未开启")
+    print("* 强制重启模式 force_timeout_reboot：", RTrue("已开启") if force_timeout_reboot else RFalse("未开启"))
+    print("* 运行时实时控制 running_input：", RTrue("已开启") if running_input else RFalse("未开启"))
+    print("* 不使用自动打码 captcha_skip：", RTrue("已开启") if captcha_skip else RFalse("未开启"))
     if not captcha_skip:
         print("  - 自动打码已启用！")
         if captcha_userstr == "":
             print("  - ！！！警告：没有输入打码平台用户名 captcha_userstr！！！")
         else:
             print("  - 已经接入打码平台 captcha_userstr！")
-        print("  - 错误打码时自动申诉 captcha_senderror：", "已开启" if captcha_senderror else "未开启")
+        print("  - 错误打码时自动申诉 captcha_senderror：", RTrue("已开启") if captcha_senderror else RFalse("未开启"))
     print("* 出现验证码后等待时间 captcha_wait_time：", captcha_wait_time)
-    print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", "已开启" if captcha_popup else "未开启")
-    print("* 缓存清理 clear_traces_and_cache：", "已开启" if clear_traces_and_cache else "未开启")
+    print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", RTrue("已开启") if captcha_popup else RFalse("未开启"))
+    print("* 缓存清理 clear_traces_and_cache：", RTrue("已开启") if clear_traces_and_cache else RFalse("未开启"))
 
 def ShowTaskInfo():
-    print("* 如果有OCR版本，强制使用OCR版本的任务 force_as_ocr_as_possible：", "已开启" if force_as_ocr_as_possible else "未开启")
+    print = rprint
+    print("* 如果有OCR版本，强制使用OCR版本的任务 force_as_ocr_as_possible：", RTrue("已开启") if force_as_ocr_as_possible else RFalse("未开启"))
     data = GetDataCenterTime()
     if data is None:
         print("* 干炸里脊数据库版本：未找到数据库或数据库异常！请更新数据库！")
@@ -375,11 +395,12 @@ def ShowTaskInfo():
         print("* 干炸里脊数据库版本：",data)
 
 def ShowDebugInfo():
-    print("* 输出Debug信息 debug：", "已开启" if debug else "未开启")
-    print("* 忽略警告信息 ignore_warning：", "已开启" if ignore_warning else "未开启")
-    print("* 保存错误堆栈 trace_exception_for_debug:", "已开启" if trace_exception_for_debug else "未开启")
-    print("* 保存baiduocr的图片 baidu_ocr_img：", "已开启" if baidu_ocr_img else "未开启")
-    print("* 屏蔽图像匹配超时报错 disable_timeout_raise：", "已开启" if disable_timeout_raise else "未开启")
+    print = rprint
+    print("* 输出Debug信息 debug：", RTrue("已开启") if debug else RFalse("未开启"))
+    print("* 忽略警告信息 ignore_warning：", RTrue("已开启") if ignore_warning else RFalse("未开启"))
+    print("* 保存错误堆栈 trace_exception_for_debug:", RTrue("已开启") if trace_exception_for_debug else RFalse("未开启"))
+    print("* 保存baiduocr的图片 baidu_ocr_img：", RTrue("已开启") if baidu_ocr_img else RFalse("未开启"))
+    print("* 屏蔽图像匹配超时报错 disable_timeout_raise：", RTrue("已开启") if disable_timeout_raise else RFalse("未开启"))
     print("* U2指令记录队列大小 u2_record_size：", u2_record_size)
     print("* U2指令过滤列表 u2_record_filter:", u2_record_filter)
     print("* Automator指令记录队列大小 debug_record_size: ", debug_record_size)
@@ -404,7 +425,7 @@ def CheckConstantImgs():
                         continue
                     ALLIMG.append(v.img)
                     if not os.path.exists(v.img):
-                        print("  - 文件缺失：", v.img)
+                        eprint("  - 文件缺失：", v.img)
                         BADIMG.append(v.img)
                     else:
                         if v.at is not None:
@@ -414,7 +435,7 @@ def CheckConstantImgs():
                             hh = y2-y1+1
                             ww = x2-x1+1
                             if h>hh or w>ww:
-                                print(" - AT范围错误，图片的(h,w)为",(h,w),"但给出的范围为",(hh,ww),k,v)
+                                eprint(" - AT范围错误，图片的(h,w)为",(h,w),"但给出的范围为",(hh,ww),k,v)
 
 
     print("* 检查本地图片")
@@ -422,9 +443,9 @@ def CheckConstantImgs():
         if type(constant.__dict__[obj]) is dict and not obj.startswith("__"):
             CheckDict(constant.__dict__[obj])
     if len(BADIMG) == 0:
-        print("* 全部图片检测完毕")
+        wprint("* 全部图片检测完毕")
     else:
-        print("* 存在缺失的图片，脚本可能无法正常运行。")
+        eprint("* 存在缺失的图片，脚本可能无法正常运行。")
 
 
 def ShowInfo():
@@ -454,7 +475,7 @@ def PrintQQ():
 
 def Start_App():
     if is_ocr_running():
-        print("app 已经启动！")
+        wprint("app 已经启动！")
         return
     if not inline_app:
         subprocess.Popen([sys.executable, "app.py"], creationflags=subprocess.CREATE_NEW_CONSOLE)
@@ -467,7 +488,7 @@ def Start_App():
         if is_ocr_running():
             print("app启动完毕！")
             return
-    print("app可能启动失败。")
+    eprint("app可能启动失败。")
 
 
 def get_arg(argv, key, default):
@@ -516,8 +537,8 @@ if __name__ == "__main__":
             update_info = "最新版本为 {当前无法连接到github！}"
 
         print("------------- 用户脚本控制台 --------------")
-        print(f"当前版本为 {script_version}")
-        print(update_info)
+        rprint(f"当前版本为 {script_version}")
+        rprint(update_info)
         print("----------------------------------------")
         print("init 初始化模拟器环境&转化txt为json      ")
         print("app 启动app.py", end=" ")
@@ -531,47 +552,47 @@ if __name__ == "__main__":
         print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
-        print("提示： config.ini会在启动main_new后自动生成或更新，如果修改了config.ini，重启程序后生效。")
+        wprint("提示： config.ini会在启动main_new后自动生成或更新，如果修改了config.ini，重启程序后生效。")
         if end_shutdown:
             if not running_input:
-                print("警告： 你设置了自动关机（end_shutdown）脚本运行结束后，会强制自动关机！")
+                eprint("警告： 你设置了自动关机（end_shutdown）脚本运行结束后，会强制自动关机！")
             else:
-                print("提示： 你设置了自动关机（end_shutdown），但开启了实时控制（running_input），所以除非手动输入join-shutdown，并不会自动关机。")
+                wprint("提示： 你设置了自动关机（end_shutdown），但开启了实时控制（running_input），所以除非手动输入join-shutdown，并不会自动关机。")
         if force_as_ocr_as_possible:
-            print("提示： 你正在强制OCR模式下运行(force_as_ocr_as_possible)，app必须开启！")
+            wprint("提示： 你正在强制OCR模式下运行(force_as_ocr_as_possible)，app必须开启！")
         else:
-            print("警告： 你没有开启强制OCR模式(force_as_ocr_as_possible),目前基本上所有的非OCR版本都很难用了，请尽量使用OCR模式！")
+            eprint("警告： 你没有开启强制OCR模式(force_as_ocr_as_possible),目前基本上所有的非OCR版本都很难用了，请尽量使用OCR模式！")
         if clear_traces_and_cache:
-            print("警告： 你正在PCR干净模式下运行(clear_traces_and_cache)，这会导致退出账号后自动清理缓存，这将有利于减少验证码，但大大增加进号过剧情所用时间！")
+            eprint("警告： 你正在PCR干净模式下运行(clear_traces_and_cache)，这会导致退出账号后自动清理缓存，这将有利于减少验证码，但大大增加进号过剧情所用时间！")
         if enable_auto_find_emulator:
-            print("警告： 你开起了自动寻找模拟器（enable_auto_find_emulator），这会大大增加模拟器寻找时间。如果不想使用模拟器混搭，不需要开启该项。")
+            eprint("警告： 你开起了自动寻找模拟器（enable_auto_find_emulator），这会大大增加模拟器寻找时间。如果不想使用模拟器混搭，不需要开启该项。")
         if fast_screencut:
-            print("警告： 你正在快速截图（fast_screencut）模式下运行，这会大大增加截图速度，但可能降低脚本稳定性。如果出现奇怪的脚本错乱，试试关闭快速截图。")
+            eprint("警告： 你正在快速截图（fast_screencut）模式下运行，这会大大增加截图速度，但可能降低脚本稳定性。如果出现奇怪的脚本错乱，试试关闭快速截图。")
         else:
-            print("提示： 你没有开启快速截图（fast_screencut），这使得截图速度大大降低，但能确保稳定性提升。")
+            wprint("提示： 你没有开启快速截图（fast_screencut），这使得截图速度大大降低，但能确保稳定性提升。")
         if not captcha_skip:
-            print("提示： 自动过验证码（captcha_skip）已经启用，输入info查看更多配置信息！")
+            wprint("提示： 自动过验证码（captcha_skip）已经启用，输入info查看更多配置信息！")
         else:
-            print("提示： 你没有开启自动过验证码（captcha_skip），如果出现验证码，需要手动点掉！")
+            wprint("提示： 你没有开启自动过验证码（captcha_skip），如果出现验证码，需要手动点掉！")
         if not trace_exception_for_debug:
-            print("提示： 你没有打开错误追踪(trace_exception_for_debug)，这将不会在出错后显示错误位置，如果需要反馈错误，请打开该选项！")
+            wprint("提示： 你没有打开错误追踪(trace_exception_for_debug)，这将不会在出错后显示错误位置，如果需要反馈错误，请打开该选项！")
         if emulator_console!="":
-            print("提示： 你启用了模拟器自动控制（emulator_console），如果想要关闭，可以将该项字符串清空。")
+            wprint("提示： 你启用了模拟器自动控制（emulator_console），如果想要关闭，可以将该项字符串清空。")
         if enable_pause:
-            print("警告： 你开起了全局的暂停控制（enable_pause），你在任何窗口按下Shift+P都可能导致脚本的暂停！")
+            eprint("警告： 你开起了全局的暂停控制（enable_pause），你在任何窗口按下Shift+P都可能导致脚本的暂停！")
         if running_input:
-            print("警告： 你开起了运行时控制（running_input），虽然它功能强大又极其方便，但可能导致如果不按回车键脚本就不运行的情况！"
+            eprint("警告： 你开起了运行时控制（running_input），虽然它功能强大又极其方便，但可能导致如果不按回车键脚本就不运行的情况！"
                   "但你仍可以随时输入join来避免这种状况。")
         DataCenterTime = GetDataCenterTime()
         if DataCenterTime is None:
-            print("警告： 干炸里脊数据库异常或不存在，请进入数据中心data，然后输入update更新数据库！")
+            eprint("警告： 干炸里脊数据库异常或不存在，请进入数据中心data，然后输入update更新数据库！")
 
 
         print('----------------------------------------')
         if DataCenterTime is not None:
-            print("干炸里脊数据库更新时间：",DataCenterTime)
+            rprint("干炸里脊数据库更新时间：",DataCenterTime)
         if last_schedule != "":
-            print("当前绑定计划：", last_schedule)
+            rprint("当前绑定计划：", RWarn(last_schedule))
     while True:
         try:
             cmd = input(f"Main[{last_schedule}]> ")
@@ -875,8 +896,8 @@ if __name__ == "__main__":
             elif order == "exit":
                 break
             else:
-                print("未知的命令")
+                eprint("未知的命令")
         except Exception as e:
             if trace_exception_for_debug:
                 traceback.print_exc()
-            print("出现错误:", e)
+            eprint("出现错误:", e)

@@ -199,6 +199,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 2021/11/1 By TheAutumnOfRice
 
 - 修复Rank15图片被误识别为Rank13的问题
+- 给主界面增加了一点颜色
 
 2021/10/30 By UVJkiNTQ
 
