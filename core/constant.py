@@ -54,6 +54,8 @@ START_UI = {
     "queren": p(572, 464, img="img/ui/caption_queding.bmp", at=(514, 440, 634, 487)),
     "imgbox": p(at=(354, 152, 613, 366)),
     "anying": p(img="img/ui/anying.bmp"),
+    "xuanzedian": p(img="img/ui/xuanzedian.bmp"),
+    "wenzidianji": p(img="img/ui/wenzidianji.bmp"),
 }
 
 HAOYOU_BTN = {

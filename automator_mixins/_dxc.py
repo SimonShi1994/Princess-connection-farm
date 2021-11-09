@@ -38,6 +38,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         self.lock_home()
 
+        for _ in range(3):
+            self.click(10, 242)
+
         out = self.enter_dxc(1)
         if not out:
             pcr_log(self.account).write_log("info", f"{self.account}-已经刷过地下城！")

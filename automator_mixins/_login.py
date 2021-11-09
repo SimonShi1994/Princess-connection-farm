@@ -155,10 +155,19 @@ class LoginMixin(ToolsMixin):
                 nonlocal _pop
 
                 # time.sleep(1)
-                screen = self.getscreen()
-                screen = screen[1:575, 157:793]
-                # 原来的 456, 489
-                # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
+                while True:
+                    # 这里是判断验证码动画是否加载完毕和截图到达指定位置
+                    # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
+                    if self.is_exists(START_UI["anying"]) and self.is_exists(START_UI["wenzidianji"], at=(342, 94, 622, 162)):
+                        if not self.is_exists(START_UI["xuanzedian"]):
+                            screen = self.getscreen()
+                            screen = screen[1:575, 157:793]
+                            # 原来的 456, 489
+                            # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
+                            break
+                    elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
+                        break
+
                 if self.d(textContains="请点击此处重试").exists():
                     print(f">>>{self.account}-请点击此处重试")
                     # 点重试
@@ -189,11 +198,6 @@ class LoginMixin(ToolsMixin):
 
                 elif self.d(textContains="请点击").exists():
                     print(f">>>{self.account}-检测到图形题")
-
-                    while True:
-                        # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
-                        if self.is_exists(START_UI["anying"]):
-                            break
 
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
                     # print(answer_result,' ', _len,' ', _id)
