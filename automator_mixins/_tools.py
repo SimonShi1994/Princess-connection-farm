@@ -12,7 +12,7 @@ import pandas as pd
 
 from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE_BTN, DXC_ELEMENT
+from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE_BTN, DXC_ELEMENT, JUQING_BTN, p
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -947,3 +947,39 @@ class ToolsMixin(BaseMixin):
         mv.clearflags()
         output_dict(self.AR.get("juese_info", UDD["juese_info"]))
         self.lock_home()
+
+    def guojuqing(self, story_type):
+        while True:
+            screen = self.getscreen()
+            lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp", at=(233, 98, 285, 319), screen=screen)
+            print(lst)
+            # 选择无语音选项
+            if self.is_exists(JUQING_BTN["wuyuyin"], screen=screen):
+                self.click_btn(JUQING_BTN["wuyuyin"], until_disappear=(JUQING_BTN["wuyuyin"]))
+                continue
+            # 选择快进剧情
+            if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen):
+                self.click_btn(JUQING_BTN["caidanyuan"], until_appear=(JUQING_BTN["tiaoguo_1"]))
+                # 快进确认弹出
+                self.click_btn(JUQING_BTN["tiaoguo_1"], until_appear=(JUQING_BTN["tiaoguo_2"]))
+                continue
+            # 确认快进，包括视频和剧情
+            if self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen):
+                self.click_btn(JUQING_BTN["tiaoguo_2"], until_appear=(JUQING_BTN["caidanyuan"]))
+                continue
+            # 选择支固定选红色
+            if len(lst) > 0:
+                self.click(int(lst[0]), int(lst[1]))
+                continue
+            # 主线剧情退出检测
+            if self.is_exists(JUQING_BTN["guanbi"], screen=screen) and story_type == "zhuxian":
+                self.click_btn(JUQING_BTN["guanbi"], until_appear=p(img="img/juqing/in_join.bmp"))
+                time.sleep(3)
+                print("完成了这段剧情")
+                break
+            # 兼容信赖度退出检测，不是很稳定，因为点无语音的时候背景也有
+            if story_type == "xianlai" and self.is_exists("img/juqing/new_content.bmp", screen=screen, threshold=0.7):
+                print("完成了这段剧情")
+                break
+            else:
+                self.fclick(479, 260)
