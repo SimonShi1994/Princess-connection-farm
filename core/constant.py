@@ -793,6 +793,11 @@ HARD_COORD = {
         2: p(491, 338),
         3: p(779, 270),
     },
+    29: {
+        1: p(175, 330),
+        2: p(446, 199),
+        3: p(779, 324),
+    },
 }
 
 SHOP_BTN = {
@@ -806,12 +811,12 @@ SHOP_BTN = {
 MAOXIAN_BTN = {
     "bianzusheding": p(img="img/maoxian/bianzusheding.bmp", at=(373, 124, 590, 164)),
     "bianzusheding_ok": p(436, 162),
-    "normal_on": p(581, 85, img="img/maoxian/normal_on.bmp", at=(550, 73, 616, 95)),
-    "normal_off": p(578, 84, img="img/maoxian/normal_off.bmp", at=(548, 74, 615, 94)),
-    "hard_on": p(698, 84, img="img/maoxian/hard_on.bmp", at=(665, 73, 737, 95)),
-    "hard_off": p(699, 84, img="img/maoxian/hard_off.bmp", at=(670, 75, 731, 92)),
-    "vh_off": p(816, 85, img="img/maoxian/vh_off.bmp", at=(786, 73, 857, 95)),
-    "vh_on": p(819, 85, img="img/maoxian/vh_on.bmp", at=(786, 75, 860, 95)),
+    "normal_on": p(582, 83, img="img/maoxian/normal_on.bmp", at=(558, 74, 607, 95)),
+    "normal_off": p(581, 84, img="img/maoxian/normal_off.bmp", at=(555, 74, 609, 95)),
+    "hard_on": p(701, 84, img="img/maoxian/hard_on.bmp", at=(671, 72, 731, 95)),
+    "hard_off": p(700, 79, img="img/maoxian/hard_off.bmp", at=(676, 74, 726, 94)),
+    "vh_off": p(820, 83, img="img/maoxian/vh_off.bmp", at=(798, 74, 844, 93)),
+    "vh_on": p(820, 85, img="img/maoxian/vh_on.bmp",at=(793, 74, 848, 96)),
     "hard_0_3": p(img="img/maoxian/hard_0_3.bmp", at=(887, 402, 919, 422)),  # 剩余挑战次数0/3
     "ditu": p(img="img/maoxian/ditu.bmp", at=(906, 64, 930, 106)),
     "tili_bar": p(at=(529, 32, 637, 38), fc=(255, 215, 99), bc=(90, 101, 115)),
@@ -880,8 +885,8 @@ ZHUXIAN_ID = {
     25: p(img="img/zhuxian/25L.bmp", at=(91, 59, 193, 71)),
     26: p(img="img/zhuxian/26L.bmp", at=(61, 55, 198, 77)),
     27: p(img="img/zhuxian/27L.bmp", at=(60, 56, 199, 76)),
-    28: p(img="img/zhuxian/28L.bmp",at=(60, 57, 201, 78)),
-
+    28: p(img="img/zhuxian/28L.bmp", at=(60, 57, 201, 78)),
+    29: p(img="img/zhuxian/29L.bmp", at=(61, 58, 198, 76)),
 }
 ZHUXIAN_XXXYY_ID = {
     # 小行星原野你长得太像了，无奈增加二级分类
@@ -904,10 +909,10 @@ ZHUXIAN_SBDDSL_ID = {
     26: p(img="img/zhuxian/26R.bmp", at=(212, 58, 252, 77)),
     27: p(img="img/zhuxian/27R.bmp", at=(214, 58, 251, 77)),
 }
-#ZHUXIAN_DSTEHSA_ID = {
-#    28: p(img="img/zhuxian/28R.bmp", at=(217, 59, 254, 77)),
-#
-#}
+ZHUXIAN_DSTEHSA_ID = {
+    28: p(img="img/zhuxian/28R.bmp", at=(217, 59, 254, 77)),
+    29: p(img="img/zhuxian/29R.bmp", at=(218, 60, 253, 77)),
+}
 
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -915,7 +920,7 @@ ZHUXIAN_SECOND_ID = {
     (22, 23): ZHUXIAN_XXXYF_ID,
     (24, 25): ZHUXIAN_LDWSQF_ID,
     (26, 27): ZHUXIAN_SBDDSL_ID,
-#    28: ZHUXIAN_DSTEHSA_ID,
+    (28, 29): ZHUXIAN_DSTEHSA_ID,
 }
 
 NORMAL_COORD = {
@@ -1488,6 +1493,26 @@ NORMAL_COORD = {
             1: p(125, 319),
         }
     },
+    29: {
+        "right": {
+            14: p(831, 274),
+            13: p(715, 305),
+            12: p(645, 216),
+            11: p(525, 216),
+            10: p(452, 313),
+            9: p(369, 239),
+            8: p(274, 319),
+        },
+        "left": {
+            7: p(674, 235),
+            6: p(624, 350),
+            5: p(491, 315),
+            4: p(388, 239),
+            3: p(287, 311),
+            2: p(247, 204),
+            1: p(123, 231),
+        }
+    },
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),
@@ -1504,7 +1529,7 @@ RANKS_DICT = {
     12: p(img="img/ranks/12.bmp", at=(210, 110, 281, 134)),
     13: p(img="img/ranks/13.bmp", at=(212, 110, 282, 136)),
     14: p(img="img/ranks/14.bmp", at=(211, 111, 282, 136)),
-    15: p(img="img/ranks/15.bmp",at=(216,111,281,135)),
+    15: p(img="img/ranks/15.bmp", at=(216, 111, 281, 135)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
