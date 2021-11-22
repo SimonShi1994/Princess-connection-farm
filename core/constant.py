@@ -56,6 +56,7 @@ START_UI = {
     "anying": p(img="img/ui/anying.bmp"),
     "xuanzedian": p(img="img/ui/xuanzedian.bmp"),
     "wenzidianji": p(img="img/ui/wenzidianji.bmp"),
+    "yanzhengshibai": p(img="img/ui/yanzhengshibai.bmp"),
 }
 
 HAOYOU_BTN = {

@@ -15,6 +15,7 @@ from ._tools import ToolsMixin
 
 block_sw = 0
 async_block_sw = 0
+async_blocking_sw = 0
 
 
 class AsyncMixin(ToolsMixin):
@@ -245,6 +246,7 @@ class AsyncMixin(ToolsMixin):
         :return:
         """
         global block_sw
+        global async_blocking_sw
         if not enable_pause:
             return
         # print(Multithreading({}).is_stopped())
@@ -257,6 +259,7 @@ class AsyncMixin(ToolsMixin):
             block_sw = 0
             print("恢复运行")
             await asyncio.sleep(0.8)
+            async_blocking_sw = 0
 
     def start_th(self):
         Multithreading({}).resume()
@@ -273,6 +276,7 @@ class AsyncMixin(ToolsMixin):
 
     def start_async(self):
         global async_block_sw
+        global async_blocking_sw
         # 随着账号开启而开启
         account = self.account
         # self.c_async(self, account, self.screenshot(), sync=False)  # 异步眨眼截图,开异步必须有这个
@@ -282,7 +286,10 @@ class AsyncMixin(ToolsMixin):
         if not async_block_sw:
             async_block_sw = 1
             # 马上锁上，仅运行一次，非随账号运行
-            self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
+            if async_blocking_sw == 0:
+                # 用于判断堵塞的异步开关
+                async_blocking_sw = 1
+                self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
             if sent_state_img:
                 self.c_async(self, account, self.c_img_server_bot(), sync=False)  # 异步server截图发送播报
                 # self.c_async(self, account, self.bot_get_command(), sync=False)  # 异步获取远端命令

@@ -287,7 +287,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 break
 
             if skip:  # 直接放弃战斗
-                self.lock_img(FIGHT_BTN["caidan"], elseclick=[(1, 1)], retry=5)
+                self.lock_img(FIGHT_BTN["caidan"], elseclick=[(1, 1)])
                 self.click_btn(FIGHT_BTN["caidan"], wait_self_before=True, until_appear=FIGHT_BTN["fangqi_1"],
                                elsedelay=0.1)
                 self.click_btn(FIGHT_BTN["fangqi_1"], until_appear=FIGHT_BTN["fangqi_2"])
