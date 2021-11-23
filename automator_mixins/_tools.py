@@ -860,8 +860,8 @@ class ToolsMixin(BaseMixin):
             self.click(929, 269)
             for _ in range(10):
                 m = self.wait_for_change(screen=sc, at=name_at, delay=1, threshold=0.84, max_retry=1)
-                if self.is_exists(JUESE_BTN["fhqhdj_ok"], screen=self.last_screen):
-                    self.click_btn(JUESE_BTN["fhqhdj_ok"])
+                if self.is_exists(JUESE_BTN["return_ok"], screen=self.last_screen):
+                    self.click_btn(JUESE_BTN["return_ok"])
                     time.sleep(0.5)
                     sc = self.getscreen()
                 elif m:
@@ -983,3 +983,20 @@ class ToolsMixin(BaseMixin):
                 break
             else:
                 self.fclick(479, 260)
+
+    def check_color(self, fc, bc, xcor, ycor, color_type="gbr", screen=None):
+        if screen is None:
+            screen = self.getscreen()
+        if color_type == "rgb":
+            fc[0], fc[1], fc[2] = fc[2], fc[0], fc[1]
+            bc[0], bc[1], bc[2] = bc[2], bc[0], bc[1]
+        fc = np.array(fc)
+        bc = np.array(bc)
+        c = screen[ycor, xcor]
+        tf = ((c - fc) ** 2).sum()
+        tb = ((c - bc) ** 2).sum()
+        if tf < tb:
+            return True
+        else:
+            return False
+
