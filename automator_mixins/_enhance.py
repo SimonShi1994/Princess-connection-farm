@@ -1,9 +1,8 @@
-import time
 from core.pcr_config import debug
-from core.constant import JUESE_BTN, HAOYOU_BTN, FIGHT_BTN
+from core.constant import JUESE_BTN, FIGHT_BTN
 from automator_mixins._shuatu_base import ShuatuBaseMixin
 from scenes.dxc.dxc_fight import FightingWinDXC, FightingLossDXC
-from scenes.scene_base import PossibleSceneList, PCRMsgBoxBase
+from scenes.scene_base import PossibleSceneList
 from scenes.dxc.dxc_fight import FightBianzuDXC
 from scenes.fight.fightinfo_zhuxian import FightInfoBase
 from scenes.fight.fighting_zhuxian import FightingWinZhuXian2, HaoYouMsg
@@ -25,7 +24,8 @@ class DuringFighting(PossibleSceneList):
 
 class EnhanceMixin(ShuatuBaseMixin):
 
-    def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, charlist=[]):
+    def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, charlist=[],
+                       team_order="zhanli", getzhiyuan=True, is_full=2):
         # 计数器
         charcount = 0
         for charcount in range(0, 15):
@@ -39,29 +39,36 @@ class EnhanceMixin(ShuatuBaseMixin):
             if charname in charlist:
                 # 升星
                 if do_kaihua:
+                    if debug:
+                        print("升星任务开始")
                     if ekh.get_starup_status():
                         ekh.cainengkaihua()
                 ekh.goto_base()
-                print("前往base")
-                print("升星完成")
+                if debug:
+                    print("升星完成，前往base")
+
                 # 装备级等级强化
                 while True:
                     ecb = CharBase(self)
                     ers = ecb.get_equip_status()
                     ehs = ecb.get_enhance_status()
                     if debug:
+                        print("等级装备强化任务开始")
                         print('角色状态：%s' % ehs)
 
                     if ers == 2:
                         # 先处理升rank
                         if do_rank:
                             # rank提升开
+                            if debug:
+                                print("rank提升开始")
                             self.click_btn(JUESE_BTN["rank_on"], until_appear=JUESE_BTN["rank_up_ok"])
                             self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["rank_up_complete"])
                             for _ in range(2):
                                 self.fclick(1, 1)
+                                if debug:
+                                    print("rank提升完成")
                                 continue
-                            # self.click_btn(JUESE_BTN["rank_up_complete"], until_appear=JUESE_BTN["equip_selected"])
                         else:
                             # rank提升关闭，那就有装备就穿，等级拉满。由于提示升rank，不会缺装备
                             if ehs > 1:
@@ -70,11 +77,15 @@ class EnhanceMixin(ShuatuBaseMixin):
                                 if ehs == 4:
                                     continue
                             # 拉满了跑路
+                            if debug:
+                                print("rank任务完成")
                             break
                         continue
 
                     if ehs == 0:
                         # 穿满强化满等级满
+                        if debug:
+                            print("穿满，无动作")
                         break
                     if ehs == 1:
                         # 自动强化亮，判断是否缺装备。因为没强化满也会亮
@@ -91,11 +102,14 @@ class EnhanceMixin(ShuatuBaseMixin):
                                         self.log.write_log("error", "没体力了！")
                                         return False
                                     fi.goto_tiaozhan()
+                                    if debug:
+                                        print("开始刷图补装备")
 
                                     # 支援
                                     fb = FightBianzuDXC(self)
-                                    fb.select_team(team_order="1-1", change=2)
-                                    fb.get_zhiyuan(assist_num=1, force_haoyou=False, if_full=4)
+                                    fb.select_team(team_order, change=2)
+                                    if getzhiyuan:
+                                        fb.get_zhiyuan(assist_num=1, force_haoyou=False, if_full=is_full)
                                     zd = fb.goto_zhandou()
                                     zd.set_auto(True)
                                     zd.set_speed(1, max_level=1)
@@ -150,7 +164,8 @@ class EnhanceMixin(ShuatuBaseMixin):
                                     # 保险起见
                                     for _ in range(6):
                                         self.click(1, 1)
-                                    print("扫荡完毕")
+                                    if debug:
+                                        print("刷图/扫荡完毕")
                             continue
                         else:
                             break
@@ -159,11 +174,13 @@ class EnhanceMixin(ShuatuBaseMixin):
                         self.click_btn(JUESE_BTN["zdqh_1"], until_appear=JUESE_BTN["zdqh_ok"])
                         self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
                         continue
-                print("等级装备完成")
+                if debug:
+                    print("等级装备强化任务开始")
                 # 专武
                 if do_zhuanwu:
                     ecb.goto_zhuanwu()
-                    print("专武界面")
+                    if debug:
+                        print("专武任务开始")
                     ezw = CharZhuanwu(self)
                     while True:
                         zws = ezw.get_zhuanwu_status()
@@ -180,10 +197,16 @@ class EnhanceMixin(ShuatuBaseMixin):
                         if zws == 0 or zws == 1:
                             break
                     ezw.goto_base()
+                    if debug:
+                        print("专武任务完成")
+                if debug:
+                    print("此角色升级任务已完成")
                 ecb = CharBase(self)
                 ecb.next_char()
                 charcount = charcount + 1
             else:
+                if debug:
+                    print("此角色无动作")
                 ekh.goto_base()
                 ecb = CharBase(self)
                 ecb.next_char()

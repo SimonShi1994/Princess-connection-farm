@@ -1,8 +1,7 @@
 import time
 from core.constant import JUESE_BTN, RANKS_DICT
 from scenes.scene_base import PCRMsgBoxBase
-from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, make_it_as_juese_as_possible, \
-    get_time_str, checkNameValid
+from core.utils import make_it_as_juese_as_possible, checkNameValid
 import cv2
 from core.cv import UIMatcher
 import os
