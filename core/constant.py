@@ -197,8 +197,15 @@ JJC_BTN = {
 }
 JUQING_BTN = {
     "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(903, 26, 931, 55)),
+    "xinneirong": p(img="img/ui/xinneirong.bmp", at=(462, 70, 495, 87)),
+    "zhuxianjuqing": p(836, 111, img="img/juqing/zhuxianjuqing.bmp", at=(811, 98, 861, 122)),
     "tiaoguo_1": p(804, 38, img="img/juqing/tiaoguo_1.bmp", at=(765, 24, 849, 65)),
-    "tiaoguo_2": p(589, 367, img="img/juqing/tiaoguo_2.bmp", at=(567, 356, 611, 379))
+    "tiaoguo_2": p(589, 367, img="img/juqing/tiaoguo_2.bmp", at=(567, 356, 611, 379)),
+    "new_content": p(img="img/juqing/new_content.bmp", at=(479, 71, 527, 82)),
+    "wanfa": p(img="img/juqing/wanfa.bmp", at=(906, 17, 918, 42)),
+    "quxiao": p(334, 372, img="img/hanghui/quxiao.bmp", at=(313, 361, 355, 382)),
+    "wuyuyin": p(481, 362, img="img/juqing/wuyuyin.bmp", at=(453, 353, 508, 371)),
+    "guanbi": p(476, 432, img="img/juqing/guanbi.bmp", at=(454, 418, 498, 445)),
 }
 
 LIWU_BTN = {
@@ -483,12 +490,49 @@ JUESE_BTN = {
         8: p(476, 430),
         9: p(789, 427),
     },
+    "zdqh_0": p(368, 436, img="img/juese/zdqh_0.bmp", at=(422, 407, 440, 423)),
+    "zdqh_1": p(368, 436, img="img/juese/zdqh_1.bmp", at=(418, 406, 439, 424)),
+    "zdqh_2": p(img="img/juese/zdqh_2.bmp", at=(310,444,431,467)),
+    "enter_shuatu": p(669, 230, img="img/juese/enter_shuatu.bmp", at=(657, 202, 680, 258)),
+    "equip_selected": p(527, 73, img="img/juese/equip_selected.bmp", at=(511, 63, 549, 86)),
+    "equip_unselected": p(527, 73, img="img/juese/equip_unselected.bmp", at=(491,65,547,85)),
+    "char_lv_selected": p(611, 74, img="img/juese/char_lv_selected.bmp", at=(579, 63, 645, 85)),
+    "char_lv_unselected": p(611, 74, img="img/juese/char_lv_unselected.bmp", at=(572,64,627,86)),
+    "skill_lv_selected": p(697, 74, img="img/juese/skill_lv_selected.bmp", at=(664, 63, 734, 87)),
+    "skill_lv_unselected": p(697, 74, img="img/juese/skill_lv_unselected.bmp", at=(658,64,714,86)),
+    "tuijiancaidan": p(479,42,img="img/juese/tuijiancaidan.bmp",at=(413, 31, 544, 53)),
+    "kaihua_unselected": p(782, 75, img="img/juese/kaihua_unselected.bmp",at=(749,64,819,85)),
+    "kaihua_selected": p(782, 75, img="img/juese/kaihua_selected.bmp", at=(752, 63, 818, 87)),
+    "kaihua_max": p(img="img/juese/kaihua_max.bmp",at=(590,319,807,339)),
+    "kaihua_not_enough": p(img="img/juese/kaihua_not_enough.bmp",at=(651,385,751,403)),
+    "do_kaihua": p(802,433,img="img/juese/do_kaihua.bmp",at=(765,425,850,444)),
+    "kaihua_confirm": p(587,473, img="img/juese/kaihua_confirm.bmp",at=(543,462,633,490)),
+    "kaihua_complete": p(476, 475, img="img/juese/queren_white.bmp",at=(451, 463, 501, 487)),
+    "zhuanwu_selected": p(869, 75, img="img/juese/zhuanwu_selected.bmp", at=(839, 66, 900, 86)),
+    "zhuanwu_unselected": p(869, 75, img="img/juese/zhuanwu_unselected.bmp", at=(831,64,886,85)),
+    "kaihua_enough": p(img="img/juese/kaihua_enough.bmp",at=(665,280,729,302)),
+    "zhuanwu_lock": p(img="img/juese/zhuanwu_lock.bmp",at=(662,172,734,243)),
+    "zhuanwu_equipable": p(img="img/juese/zhuanwu_equipable.bmp",at=(261,126,266,130)),
+    "wear": p(802,435,img="img/juese/wear.bmp",at=(777,421,836,449)),
+    "wear_confirm": p(587,476,img="img/juese/wear_confirm.bmp",at=(561,462,615,491)),
+    "unlock_ceiling_confirm": p(585,476,img="img/juese/unlock_ceiling_confirm.bmp",at=(538,460,636,492)),
+    "unlock_ceiling": p(585, 435, img="img/juese/unlock_ceiling.bmp", at=(545, 424, 630, 446)),
+    "unlock_ceiling_off": p(img="img/juese/unlock_ceiling_off.bmp",at=(532,419,646,453)),
+    "levelup_zhuanwu": p(805,435,img="img/juese/levelup_zhuanwu.bmp",at=(779,422,833,448)),
+    "qhscxz": p(img="img/juese/qhscxz.bmp",at=(65,69,164,90)), #强化素材选择
+    "bnjxqh": p(img="img/juese/bnjxqh.bmp",at=(594,419,805,443)), #不能继续强化
+    "sucaibuzu":p(img="img/juese/sucaibuzu.bmp",at=(447,420,514,441)),
+    "zhuanwuqianghua":p(804,471,img="img/juese/zhuanwuqianghua.bmp",at=(781,461,831,488)),
+    "rank_on": p(245, 332, img="img/juese/rank_on.bmp", at=(209, 326, 282, 343)),
+    "rank_up_ok": p(587, 478, img="img/juese/rank_up_ok.bmp", at=(566, 467, 608, 488)),
+    "rank_up_complete": p(476, 367, img="img/juese/queren_white.bmp", at=(451, 355, 501, 379)),
+    "yjzb_off": p(img="img/juese/yjzb_off.bmp", at=(207, 319, 288, 349)),
+    "zdqh_ok": p(580, 480, img="img/juese/zdqh_ok.bmp", at=(563, 462, 612, 490)),
     "rank_tisheng": p(246, 333, img="img/juese/rank_tisheng.bmp", at=(214, 327, 283, 340)),
     "rank_tisheng_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
     "rank_tisheng_ok_noequ": p(588, 369, img="img/juese/ok_btn.bmp", at=(567, 358, 611, 380)),  # 不需要消耗时，强化的OK在上头
     "rank_tisheng_ok2": p(480, 371, img="img/ui/ok_btn_2.bmp", at=(382, 351, 578, 390)),
     "yjzb": p(241, 330, img="img/juese/yjzb.bmp", at=(197, 323, 294, 345)),
-    "yjzb_off": p(img="img/juese/yjzb_off.bmp", at=(198, 323, 292, 346)),
     "zdqh": p(368, 436, img="img/juese/zdqh.bmp", at=(313, 418, 418, 450)),
     "tjqhcd": p(img="img/juese/tjqhcd.bmp", at=(414, 31, 541, 49)),
     "sort_down": p(744, 28, img="img/juese/sort_down.bmp", at=(753, 18, 798, 38)),
@@ -500,7 +544,7 @@ JUESE_BTN = {
         2: p(612, 256),
         3: p(637, 257),
     },
-    "fhqhdj_ok": p(480, 479, img="img/ui/ok_btn_2.bmp", at=(382, 459, 578, 498)),  # 返还强化道具
+    "return_ok": p(476, 475, img="img/juese/queren_white.bmp", at=(451, 463, 501, 487)),  # 返还强化道具
 
 }
 MAX_DXC = 5  # 一共出了多少个地下城关
@@ -817,7 +861,7 @@ MAOXIAN_BTN = {
     "hard_on": p(701, 84, img="img/maoxian/hard_on.bmp", at=(671, 72, 731, 95)),
     "hard_off": p(700, 79, img="img/maoxian/hard_off.bmp", at=(676, 74, 726, 94)),
     "vh_off": p(820, 83, img="img/maoxian/vh_off.bmp", at=(798, 74, 844, 93)),
-    "vh_on": p(820, 85, img="img/maoxian/vh_on.bmp",at=(793, 74, 848, 96)),
+    "vh_on": p(820, 85, img="img/maoxian/vh_on.bmp", at=(793, 74, 848, 96)),
     "hard_0_3": p(img="img/maoxian/hard_0_3.bmp", at=(887, 402, 919, 422)),  # 剩余挑战次数0/3
     "ditu": p(img="img/maoxian/ditu.bmp", at=(906, 64, 930, 106)),
     "tili_bar": p(at=(529, 32, 637, 38), fc=(255, 215, 99), bc=(90, 101, 115)),
@@ -899,11 +943,11 @@ ZHUXIAN_KSTLYSL_ID = {
     21: p(img="img/zhuxian/21R.bmp", at=(217, 59, 244, 71)),
 }
 ZHUXIAN_XXXYF_ID = {
-    22: p(img="img/zhuxian/22R.bmp",at=(196, 59, 232, 76)),
+    22: p(img="img/zhuxian/22R.bmp", at=(196, 59, 232, 76)),
     23: p(img="img/zhuxian/23R.bmp", at=(195, 59, 233, 78)),
 }
 ZHUXIAN_LDWSQF_ID = {
-    24: p(img="img/zhuxian/24R.bmp",at=(212, 60, 254, 78)),
+    24: p(img="img/zhuxian/24R.bmp", at=(212, 60, 254, 78)),
     25: p(img="img/zhuxian/25R.bmp", at=(216, 59, 250, 73)),
 }
 ZHUXIAN_SBDDSL_ID = {
