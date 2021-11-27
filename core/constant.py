@@ -507,7 +507,7 @@ JUESE_BTN = {
     "kaihua_not_enough": p(img="img/juese/kaihua_not_enough.bmp",at=(651,385,751,403)),
     "do_kaihua": p(802,433,img="img/juese/do_kaihua.bmp",at=(765,425,850,444)),
     "kaihua_confirm": p(587,473, img="img/juese/kaihua_confirm.bmp",at=(543,462,633,490)),
-    "kaihua_complete": p(476, 475, img="img/juese/queren_white.bmp",at=(451, 463, 501, 487)),
+    "kaihua_complete": p(417,462,img="img/juese/kaihua_complete.bmp",at=(416,30,542,53)),
     "zhuanwu_selected": p(869, 75, img="img/juese/zhuanwu_selected.bmp", at=(839, 66, 900, 86)),
     "zhuanwu_unselected": p(869, 75, img="img/juese/zhuanwu_unselected.bmp", at=(831,64,886,85)),
     "kaihua_enough": p(img="img/juese/kaihua_enough.bmp",at=(665,280,729,302)),
@@ -518,6 +518,7 @@ JUESE_BTN = {
     "unlock_ceiling_confirm": p(585,476,img="img/juese/unlock_ceiling_confirm.bmp",at=(538,460,636,492)),
     "unlock_ceiling": p(585, 435, img="img/juese/unlock_ceiling.bmp", at=(545, 424, 630, 446)),
     "unlock_ceiling_off": p(img="img/juese/unlock_ceiling_off.bmp",at=(532,419,646,453)),
+    "unlock_ceiling_need_lv": p(img="img/juese/unlock_ceiling_need_lv.bmp",at=(388,420,455,443)),
     "levelup_zhuanwu": p(805,435,img="img/juese/levelup_zhuanwu.bmp",at=(779,422,833,448)),
     "qhscxz": p(img="img/juese/qhscxz.bmp",at=(65,69,164,90)), #强化素材选择
     "bnjxqh": p(img="img/juese/bnjxqh.bmp",at=(594,419,805,443)), #不能继续强化

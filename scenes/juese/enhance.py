@@ -233,11 +233,17 @@ class CharZhuanwu(PCRMsgBoxBase):
                 if debug:
                     print("素材不足")
                 break
-            if a < tozhuanwulv:
-                self.click(585,476)
+            if a <= tozhuanwulv:
+                if self.is_exists(JUESE_BTN["unlock_ceiling_need_lv"]):
+                    self.fclick(1, 1)
+                    break
+                if debug:
+                    print("解锁上限")
+                self.click(585, 476)
                 # 点击解锁上限
                 time.sleep(5)
                 if self.is_exists(JUESE_BTN["unlock_ceiling_off"], method="sq"):
+                    self.fclick(1, 1)
                     break
                 continue
             else:
