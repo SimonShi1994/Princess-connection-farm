@@ -27,7 +27,7 @@ class DuringFighting(PossibleSceneList):
 class EnhanceMixin(ShuatuBaseMixin):
 
     def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, charlist=[],
-                       team_order="zhanli", getzhiyuan=True, is_full=2):
+                       team_order="zhanli", getzhiyuan=True, is_full=2, tozhuanwulv=150):
         # 计数器
         charcount = 0
         self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
@@ -201,7 +201,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                             ezw.wear_zhuanwu()
                             continue
                         if zws == 3 or zws == 5:
-                            ezw.unlock_ceiling()
+                            ezw.unlock_ceiling(tozhuanwulv=tozhuanwulv)
                             continue
                         if zws == 4:
                             ezw.levelup_zhuanwu()
