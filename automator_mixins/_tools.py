@@ -985,6 +985,8 @@ class ToolsMixin(BaseMixin):
                 self.fclick(479, 260)
 
     def check_color(self, fc, bc, xcor, ycor, color_type="gbr", screen=None):
+        # 主要用于检测点的颜色是否为前景色，通过比较RGB值与前景色/背景色的距离
+        # fc:前景色 bc:背景色 xcor:点坐标x ycor:点坐标y color_type:颜色格式
         if screen is None:
             screen = self.getscreen()
         if color_type == "rgb":

@@ -198,7 +198,7 @@ JJC_BTN = {
 JUQING_BTN = {
     "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(903, 26, 931, 55)),
     "xinneirong": p(img="img/ui/xinneirong.bmp", at=(462, 70, 495, 87)),
-    "zhuxianjuqing": p(836, 111, img="img/juqing/zhuxianjuqing.bmp", at=(811, 98, 861, 122)),
+    "zhuxianjuqing": p(836, 111, img="img/juqing/zhuxianjuqing.bmp",at=(812,97,858,125)),
     "tiaoguo_1": p(804, 38, img="img/juqing/tiaoguo_1.bmp", at=(765, 24, 849, 65)),
     "tiaoguo_2": p(589, 367, img="img/juqing/tiaoguo_2.bmp", at=(567, 356, 611, 379)),
     "new_content": p(img="img/juqing/new_content.bmp", at=(479, 71, 527, 82)),

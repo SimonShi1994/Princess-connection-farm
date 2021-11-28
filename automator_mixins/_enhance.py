@@ -28,7 +28,20 @@ class EnhanceMixin(ShuatuBaseMixin):
 
     def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, charlist=[],
                        team_order="zhanli", getzhiyuan=True, is_full=2, tozhuanwulv=150):
+        '''
+        角色升级任务，包含了装备、升星、专武
+        do_rank:rank升级
+        do_shuatu:刷图补装备
+        do_kaihua:升星
+        do_zhuanwu:处理专武，默认拉满
+        charlist:list对象,需要执行该任务的角色
+        team_order:刷图无法扫荡时，使用的挑战队伍。zhanli、dengji、队伍序号、星数，详见FightBianZuBase
+        getzhiyuan:是否借人
+        is_full:借人人满时换下的角色位置
+        tozhuanwulv:专武提升上限
+        '''
         # 计数器
+        self.lock_home()
         charcount = 0
         self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
         time.sleep(5)
@@ -133,6 +146,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                         elif isinstance(out, during.FightingWinDXC):
                                             out.ok()
                                             fw = FightingWinZhuXian2(self).enter()
+                                            time.sleep(4)
                                             fw.next()
                                             return True
                                         elif isinstance(out, during.FightingLossDXC):
@@ -143,6 +157,14 @@ class EnhanceMixin(ShuatuBaseMixin):
 
                                 else:
                                     sc = self.getscreen()
+                                    cishu = fi.get_cishu()
+                                    if cishu == 0:
+                                        for _ in range(6):
+                                            self.click(1, 1)
+                                        break
+                                    if 3 >= cishu > 0:
+                                        fi.set_saodang_to_max()
+                                        self.stop_shuatu()
                                     tili_left = fi.get_tili_left(sc)
                                     if tili_left > 64:
                                         fi.set_saodang_cishu(6)
@@ -223,3 +245,5 @@ class EnhanceMixin(ShuatuBaseMixin):
                 ecb = CharBase(self)
                 ecb.next_char()
                 charcount = charcount + 1
+
+        self.lock_home()

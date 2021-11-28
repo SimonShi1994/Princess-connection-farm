@@ -130,7 +130,7 @@ class CharKaihua(PCRMsgBoxBase):
     def cainengkaihua(self):
         self.click_btn(JUESE_BTN["do_kaihua"], until_appear=JUESE_BTN["kaihua_confirm"])
         self.click_btn(JUESE_BTN["kaihua_confirm"], until_appear=JUESE_BTN["kaihua_complete"])
-        self.click_btn(JUESE_BTN["kaihua_complete"], until_appear=JUESE_BTN["kaihua_selected"])
+        self.fclick(1, 1)
 
     def get_name(self, screen=None):
         if screen is None:
