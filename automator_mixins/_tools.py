@@ -860,8 +860,8 @@ class ToolsMixin(BaseMixin):
             self.click(929, 269)
             for _ in range(10):
                 m = self.wait_for_change(screen=sc, at=name_at, delay=1, threshold=0.84, max_retry=1)
-                if self.is_exists(JUESE_BTN["fhqhdj_ok"], screen=self.last_screen):
-                    self.click_btn(JUESE_BTN["fhqhdj_ok"])
+                if self.is_exists(JUESE_BTN["return_ok"], screen=self.last_screen):
+                    self.click_btn(JUESE_BTN["return_ok"])
                     time.sleep(0.5)
                     sc = self.getscreen()
                 elif m:
@@ -983,3 +983,22 @@ class ToolsMixin(BaseMixin):
                 break
             else:
                 self.fclick(479, 260)
+
+    def check_color(self, fc, bc, xcor, ycor, color_type="gbr", screen=None):
+        # 主要用于检测点的颜色是否为前景色，通过比较RGB值与前景色/背景色的距离
+        # fc:前景色 bc:背景色 xcor:点坐标x ycor:点坐标y color_type:颜色格式
+        if screen is None:
+            screen = self.getscreen()
+        if color_type == "rgb":
+            fc[0], fc[1], fc[2] = fc[2], fc[0], fc[1]
+            bc[0], bc[1], bc[2] = bc[2], bc[0], bc[1]
+        fc = np.array(fc)
+        bc = np.array(bc)
+        c = screen[ycor, xcor]
+        tf = ((c - fc) ** 2).sum()
+        tb = ((c - bc) ** 2).sum()
+        if tf < tb:
+            return True
+        else:
+            return False
+

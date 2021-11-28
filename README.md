@@ -196,6 +196,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2021/11/27 By UVJkiNTQ
+
+- 增加角色升级插片及场景
+- 更新剧情插片
+- 新增主线剧情任务t8
+
 2021/11/16 By UVJkiNTQ
 
 - 修复主线难度选择

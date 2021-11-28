@@ -894,7 +894,8 @@ VALID_TASK = ValidTask() \
     .add("s11-h", "jierentuitu_hard", "借人推困难图", "借好友或别人的进行推普通图。",
          [TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max"),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
-          TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)])
+          TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)])\
+    .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。",)
 
 customtask_addr = "customtask"
 
