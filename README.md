@@ -200,6 +200,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 - 增加角色升级插片及场景
 - 更新剧情插片
+- 新增主线剧情任务t8
 
 2021/11/16 By UVJkiNTQ
 
