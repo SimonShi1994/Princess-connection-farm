@@ -165,17 +165,18 @@ class EnhanceMixin(ShuatuBaseMixin):
                                     if 3 >= cishu > 0:
                                         fi.set_saodang_to_max()
                                         self.stop_shuatu()
-                                    tili_left = fi.get_tili_left(sc)
-                                    if tili_left > 64:
-                                        fi.set_saodang_cishu(6)
-                                    if tili_left < 65:
-                                        if tili_left < 13:
-                                            for _ in range(6):
-                                                self.click(1, 1)
-                                            print("没有体力了，退出")
-                                            break
-                                        fi.set_saodang_to_max()
-                                        self.stop_shuatu()
+                                    if cishu > 3:
+                                        tili_left = fi.get_tili_left(sc)
+                                        if tili_left > 64:
+                                            fi.set_saodang_cishu(6)
+                                        if tili_left < 65:
+                                            if tili_left < 13:
+                                                for _ in range(6):
+                                                    self.click(1, 1)
+                                                print("没有体力了，退出")
+                                                break
+                                            fi.set_saodang_to_max()
+                                            self.stop_shuatu()
                                     sd = fi.goto_saodang()
                                     sd = sd.OK()
                                     MsgList = sd.OK()  # 扫荡后的一系列MsgBox
