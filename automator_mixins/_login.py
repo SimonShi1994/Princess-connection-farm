@@ -158,14 +158,18 @@ class LoginMixin(ToolsMixin):
                 while True:
                     # 这里是判断验证码动画是否加载完毕和截图到达指定位置
                     # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
-                    if self.is_exists(START_UI["anying"]) and self.is_exists(START_UI["wenzidianji"], at=(342, 94, 622, 162)):
-                        if not self.is_exists(START_UI["xuanzedian"]):
+                    self.getscreen()
+                    if self.is_exists(START_UI["anying"]) and self.is_exists(START_UI["wenzidianji"],
+                                                                             at=(342, 94, 622, 162)):
+                        if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(START_UI["yanzhengshibai"],
+                                                                                             at=(618, 399, 659, 440)):
                             screen = self.getscreen()
                             screen = screen[1:575, 157:793]
                             # 原来的 456, 489
                             # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
                             break
                     elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
+                        screen = self.getscreen()
                         break
 
                 if self.d(textContains="请点击此处重试").exists():
@@ -191,6 +195,7 @@ class LoginMixin(ToolsMixin):
                         print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
                         self.click(x, y)
                         if answer_result == [255, 439]:
+                            self.click(230, 500)
                             print("平台识别不出来，刷新")
                         self.d(text="确认").click()
                         _time = + 1
@@ -207,6 +212,7 @@ class LoginMixin(ToolsMixin):
                     # print(type(x))
                     self.click(x, y)
                     if answer_result == [255, 439]:
+                        self.click(230, 500)
                         print("平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
@@ -222,6 +228,7 @@ class LoginMixin(ToolsMixin):
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 3.6)
                     if answer_result == [255, 439]:
+                        self.click(230, 500)
                         print("平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
@@ -293,7 +300,7 @@ class LoginMixin(ToolsMixin):
 
             manual_captcha = captcha_skip
             if captcha_skip is False:
-                for retry in range(15):
+                while True:
                     if self.d(text="Geetest").exists() or self.d(description="Geetest").exists() or \
                             self.d(resourceId="com.bilibili.priconne:id/iv_gs_title_back").exists():
                         AutoCaptcha()

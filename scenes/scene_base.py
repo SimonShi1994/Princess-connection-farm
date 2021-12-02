@@ -68,6 +68,7 @@ class PCRSceneBase:
         self.start_shuatu = self._a.start_shuatu
         self.check_shuatu = self._a.check_shuatu
         self.stop_shuatu = self._a.stop_shuatu
+        self.check_color = self._a.check_color
 
     def fun_feature_exist(self, element: PCRelement):
         def fun(screen):
