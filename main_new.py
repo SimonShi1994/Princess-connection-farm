@@ -32,7 +32,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20211127"
+script_version = "Ver 2.7.20211202"
 
 
 
@@ -586,8 +586,6 @@ if __name__ == "__main__":
         DataCenterTime = GetDataCenterTime()
         if DataCenterTime is None:
             eprint("警告： 干炸里脊数据库异常或不存在，请进入数据中心data，然后输入update更新数据库！")
-
-
         print('----------------------------------------')
         if DataCenterTime is not None:
             rprint("干炸里脊数据库更新时间：",DataCenterTime)

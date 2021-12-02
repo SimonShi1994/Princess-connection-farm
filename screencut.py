@@ -155,6 +155,15 @@ class AutomatorDebuger(Automator):
         self.init_account(account, "users")
         self.start_shuatu()
 
+    def Login(self, account, password=None):
+        self.Account(account)
+        if password is None:
+            d = self.AR.getuser()
+            self.login_auth(account, d["password"])
+        else:
+            self.login_auth(account, password)
+        self.init_home()
+
     def Shot(self, file="test.bmp", show=True):
         self.getscreen(file)
         # AutoRotate
@@ -321,6 +330,7 @@ class AutomatorDebuger(Automator):
 if __name__ == "__main__":
     # WindowMode()  # 用窗口模式启动matplotlib，如果是pycharm打开需要用这个
     a = AutomatorDebuger()
+    self = a
     # a.Init()  # 初始化连接，打开安卓上的u2。只要运行一次即可。
     # a.Connect()  # 默认连接Connect(addr="emulator-5554")
     # a.Shot()  # 截图，存到"test.bmp"
@@ -342,6 +352,9 @@ if __name__ == "__main__":
                 print("prob screen [template]: 检验template在screen中的最大匹配度(0~1)，默认template为test.bmp")
                 print("equal file1 file2: 检查两个图片的相似度")
                 print("where screen template threshold：以threshold为阈值，求template在screen中的未知（中点和x1,y1,x2,y2）")
+                print("login account [password]  在开始界面进行登录，如果不输入password，则默认使用users中储存的密码。")
+                print("input string 清空当前输入并且输入string")
+                print("exec 进入编程调试模式")
                 print("----")
                 print("在图片显示界面：")
                 print("单击左键： 显示当前点击位置的坐标")
@@ -388,6 +401,36 @@ if __name__ == "__main__":
                     a.img_where_all(screen=ImgBox(filepath=cmds[1]).IMG, img=cmds[2], threshold=float(cmds[3]))
                 else:
                     print("Wrong Order!")
+            elif order == "login":
+                if len(cmds) == 2:
+                    a.Login(cmds[1])
+                elif len(cmds) == 3:
+                    a.Login(cmds[1],cmds[2])
+                else:
+                    print("Wrong Order!")
+            elif order == "input":
+                if len(cmds) == 2:
+                    a.input(cmd[6:],clear=True)
+                else:
+                    print("Wrong Order!")
+            elif order == "exec":
+                print("--------- EXEC调试模式 ----------")
+                print("直接输入 回车 : 退出调试模式")
+                print("输入其它： 执行exec指令")
+                print("输入dir(self)或者dir(a)查看全部AutomatorDebuger可用指令")
+                print("输入help(...)可查看帮助")
+                print("输入dir查看全部可用元素。")
+                print("输入self.XXX或a.XXX可以执行指令。")
+                print("--------------------------------")
+                while True:
+                    cmd = input("")
+                    if cmd == "":
+                        break
+                    else:
+                        try:
+                            print(eval(cmd))
+                        except:
+                            exec(cmd)
             else:
                 print("Wrong Order!")
         except Exception as e:

@@ -713,7 +713,7 @@ class ToolsMixin(BaseMixin):
         for p in P.iterdir():
             if p.suffix == ".bmp":
                 bmp2 = cv2.imdecode(np.fromfile(str(p), dtype=np.uint8), -1)
-                if self.img_equal(screen, bmp2, similarity=0.5) > 0.98:
+                if self.img_equal(screen, bmp2, similarity=0.1) > 0.98:
                     if debug:
                         print("找到相似图片：", p)
                     if p.stem in target_list:
@@ -760,8 +760,7 @@ class ToolsMixin(BaseMixin):
             return screen
 
         def get_stars(screen=None):
-            if screen is None:
-                screen = self.getscreen()
+            screen = get_valid_screen(screen)
             from core.constant import PCRelement as p
             five_stars = {
                 1: p(170, 337),
@@ -773,25 +772,22 @@ class ToolsMixin(BaseMixin):
             return int(self.count_stars(five_stars, screen))
 
         def get_level(screen=None):
-            if screen is None:
-                screen = self.getscreen()
+            screen = get_valid_screen(screen)
             at = (259, 416, 291, 433)
             return make_it_as_number_as_possible(self.ocr_center(*at, screen))
 
         def get_haogan(screen=None):
-            if screen is None:
-                screen = self.getscreen()
+            screen = get_valid_screen(screen)
             at = (271, 390, 291, 405)
             return make_it_as_number_as_possible(self.ocr_center(*at, screen))
 
         def get_zhanli(screen=None):
-            if screen is None:
-                screen = self.getscreen()
+            screen = get_valid_screen(screen)
             at = (830, 261, 894, 275)
             return make_it_as_number_as_possible(self.ocr_center(*at, screen))
 
         def get_name(screen=None):
-            get_valid_screen(screen)
+            screen = get_valid_screen(screen)
             data = self._load_data_cache()
             at = (483, 119, 760, 141)
             ori_out = self.ocr_center(*at, screen)
@@ -806,17 +802,17 @@ class ToolsMixin(BaseMixin):
                     break
 
             out = make_it_as_juese_as_possible(ori_out)
-            out = self._check_img_in_list_or_dir(out, (482, 114, 750, 261), "ocrfix/juese", "C_ID", screen)
             if out == "公主宝珠":
                 for _ in range(5):
                     self.click(121, 172)
                 time.sleep(1)
                 return get_name()
+            out = self._check_img_in_list_or_dir(out, (482, 114, 750, 261), "ocrfix/juese", "C_ID", screen)
+
             return out
 
         def get_rank(screen=None):
-            if screen is None:
-                screen = self.getscreen()
+            screen = get_valid_screen(screen)
             out = self.check_dict_id(RANKS_DICT, screen, diff_threshold=0.001)
             for _ in range(3):
                 if out is None:
@@ -828,8 +824,7 @@ class ToolsMixin(BaseMixin):
             return int(out)
 
         def get_six_clothes(screen=None):
-            if screen is None:
-                screen = self.getscreen()
+            screen = get_valid_screen(screen)
             Six_Points = [
                 (101, 111),
                 (336, 112),

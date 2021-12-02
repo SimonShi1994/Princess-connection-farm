@@ -163,7 +163,7 @@ class CharKaihua(PCRMsgBoxBase):
         for p in P.iterdir():
             if p.suffix == ".bmp":
                 bmp2 = cv2.imdecode(np.fromfile(str(p), dtype=np.uint8), -1)
-                if self.img_equal(screen, bmp2, similarity=0.5) > 0.98:
+                if self.img_equal(screen, bmp2, similarity=0.1) > 0.98:
                     if debug:
                         print("找到相似图片：", p)
                     if p.stem in target_list:

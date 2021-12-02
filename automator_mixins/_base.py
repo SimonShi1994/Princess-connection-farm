@@ -424,6 +424,17 @@ class BaseMixin:
         return FC
 
     @DEBUG_RECORD
+    def input(self, s:str="", clear=False):
+        """
+        输入一段文字，clear：是否清除文字
+        """
+        if clear:
+            self.d.clear_text()
+            self._move_check()
+        if len(s)>0:
+            self.d.send_keys(s)
+
+    @DEBUG_RECORD
     def click_img(self, screen, img, threshold=0.84, at=None, pre_delay=0., post_delay=0., method=cv2.TM_CCOEFF_NORMED):
         """
         try to click the img

@@ -32,7 +32,7 @@ class RoutineMixin(ShuatuBaseMixin):
             # 两次是因为有个家具介绍 关闭 确认
             self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
                           side_check=self.juqing_kkr, retry=5, is_raise=False)
-
+        self.start_shuatu()
         if auto_update:
             i = 0
             while i <= 3:
@@ -167,6 +167,7 @@ class RoutineMixin(ShuatuBaseMixin):
             # 全部收取亮着
             self.click_btn(RENWU_BTN["quanbushouqu"], until_appear=RENWU_BTN["guanbi"], elsedelay=5, timeout=10,
                            is_raise=False)
+        self.start_shuatu()
         self.lock_home()
 
     def goumaitili(self, times, var={}, limit_today=False):  # 购买体力
@@ -198,12 +199,14 @@ class RoutineMixin(ShuatuBaseMixin):
                 break
 
             self.lock_no_img(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_ok"], elsedelay=2)
+            self.start_shuatu()
             state = self.lock_img(MAIN_BTN["tili_ok2"], retry=3)
             # TODO 宝石不够时的判断
             var["cur"] += 1
             mv.save()
             self.lock_no_img(MAIN_BTN["tili_ok2"], elseclick=MAIN_BTN["tili_ok2"], elsedelay=1)
         del var["cur"]
+
         mv.save()
 
     def goumaimana(self, times, mode=1, var={}, limit_today=False):
@@ -676,4 +679,5 @@ class RoutineMixin(ShuatuBaseMixin):
         self.click_btn(MAIN_BTN["nsj"], until_appear=MAIN_BTN["wanfa"], side_check=self.right_kkr)
         for _ in range(10):
             self.click(833, 437)  # 收取！
+        self.start_shuatu()
         self.lock_home()
