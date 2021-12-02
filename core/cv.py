@@ -204,7 +204,7 @@ class UIMatcher:
                     _at = (x1 + j, y1 + i, x1 + j + tw - 1, y1 + i + th - 1)
                     l += [(res[i, j], _x, _y, _at)]
                     if debug:
-                        print(f"p({_x},{_y},img=\"{template_path}\",at={_at}), \nCCOEFF=", res[i, j])
+                        print(f"p({_x},{_y},img=\"{template_path if type(template_path) is str else '...'}\",at={_at}), \nCCOEFF=", res[i, j])
         return sorted(l, reverse=True)
 
     @classmethod
