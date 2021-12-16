@@ -108,6 +108,7 @@ class HaoYouMsg(PCRMsgBoxBase):
     def __init__(self,a):
         super().__init__(a)
         self.feature = self.fun_feature_exist(HAOYOU_BTN["hysqqr"])
+
     def exit_with_off(self):
         self.click(396,383,post_delay=2)
         self.exit(self.fun_click(369,476))
@@ -171,6 +172,7 @@ class FightingWinZhuXian(FightingWinBase):
 
 class AfterFightingWin(PossibleSceneList):
     from scenes.zhuxian.zhuxian_msg import XianDingShangDianBox, LevelUpBox, TuanDuiZhanBox, ChaoChuShangXianBox
+
     def __init__(self, a, *args, **kwargs):
         self.AfterFightKKR = AfterFightKKR
         self.FightingWinZhuXian2 = FightingWinZhuXian2
@@ -206,11 +208,13 @@ class FightingWinZhuXian2(FightingWinBase):
 
     def win_feature(self, screen):
         from core.constant import p
-        xiayibu = self.is_exists(p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502)), screen=screen)
+        huodedaoju = self.is_exists(p(img="img/fight/huodedaoju.bmp", at=(442, 135, 514, 160)), screen=screen)
+        xiayibu = self.is_exists(p(img="img/fight/xiayibu.bmp", at=(794, 475, 865, 502)), screen=screen)
         jrtssy = self.is_exists(MAIN_BTN["jrtssy2"], screen=screen)
-        return xiayibu or jrtssy
+        return huodedaoju or (xiayibu or jrtssy)
 
     def next(self):
+        time.sleep(5)
         self.click(829, 485, post_delay=1)
 
 
