@@ -475,6 +475,23 @@ FIGHT_BTN = {
     "zhandou_failed": p(img="img/fight/zhandou_failed.bmp"),
 }
 
+SHOP_BTN = {
+    "mana_ball": p(img="img/shop/mana_ball.bmp", at=(744, 13, 762, 34)),
+    "dxc_coin": p(img="img/shop/dxc_coin.bmp", at=(744, 14, 762, 33)),
+    "jjc_coin": p(img="img/shop/jjc_coin.bmp", at=(744, 14, 763, 32)),
+    "pjjc_coin": p(img="img/shop/pjjc_coin.bmp", at=(744, 14, 765, 33)),
+    "clan_coin": p(img="img/shop/clan_coin.bmp", at=(744, 14, 763, 33)),
+    "nvshenshi": p(img="img/shop/nvshenshi.bmp", at=(527, 13, 544, 33)),
+    "xianding_cishu": p(img="img/shop/xianding_cishu.bmp", at=(252, 427, 299, 447)),
+    "xianding_close": p(img="img/shop/xianding_close.bmp", at=(516, 213, 666, 244)),
+    "dxc_btn": p(363, 68, img="img/shop/dxc_btn.bmp", at=(314, 56, 400, 80)),
+    "jjc_btn": p(447, 68, img="img/shop/jjc_btn.bmp", at=(411, 57, 485, 78)),
+    "pjjc_btn": p(543, 68, img="img/shop/pjjc_btn.bmp", at=(500, 56, 588, 78)),
+    "clan_btn": p(640, 65, img="img/shop/clan_btn.bmp", at=(602, 57, 666, 79)),
+    "nvshen_btn": p(829, 65, img="img/shop/nvshen_btn.bmp", at=(776, 57, 864, 77)),
+
+}
+
 JUESE_BTN = {
     "duiwu": p(img="img/juese/duiwu.bmp", at=(853, 15, 929, 35)),
     "mana_ball": p(img="img/juese/mana_ball.bmp", at=(609, 21, 620, 34)),
@@ -697,7 +714,7 @@ DXC_COORD = {
         5: p(502, 259),
     }
 }
-MAX_MAP = 28
+MAX_MAP = 30
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -844,6 +861,11 @@ HARD_COORD = {
         2: p(446, 199),
         3: p(779, 324),
     },
+    30: {
+        1: p(175, 253),
+        2: p(479, 228),
+        3: p(775, 324),
+    },
 }
 
 SHOP_BTN = {
@@ -933,6 +955,7 @@ ZHUXIAN_ID = {
     27: p(img="img/zhuxian/27L.bmp", at=(60, 56, 199, 76)),
     28: p(img="img/zhuxian/28L.bmp", at=(60, 57, 201, 78)),
     29: p(img="img/zhuxian/29L.bmp", at=(61, 58, 198, 76)),
+    30: p(img="img/zhuxian/30L.bmp", at=(60, 55, 178, 77)),
 }
 ZHUXIAN_XXXYY_ID = {
     # 小行星原野你长得太像了，无奈增加二级分类
@@ -959,6 +982,10 @@ ZHUXIAN_DSTEHSA_ID = {
     28: p(img="img/zhuxian/28R.bmp", at=(217, 59, 254, 77)),
     29: p(img="img/zhuxian/29R.bmp", at=(218, 60, 253, 77)),
 }
+# ZHUXIAN_FTLDY_ID = {
+#     30: p(img="img/zhuxian/30R.bmp", at=(196, 60, 230, 76)),
+#     31: p(img="img/zhuxian/31R.bmp", at=(218, 60, 253, 77)),
+# }
 
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -967,6 +994,7 @@ ZHUXIAN_SECOND_ID = {
     (24, 25): ZHUXIAN_LDWSQF_ID,
     (26, 27): ZHUXIAN_SBDDSL_ID,
     (28, 29): ZHUXIAN_DSTEHSA_ID,
+    # (30, 31): ZHUXIAN_FTLDY_ID,
 }
 
 NORMAL_COORD = {
@@ -1559,6 +1587,26 @@ NORMAL_COORD = {
             1: p(123, 231),
         }
     },
+    30: {
+        "right": {
+            14: p(841, 224),
+            13: p(775, 348),
+            12: p(678, 253),
+            11: p(554, 313),
+            10: p(423, 350),
+            9: p(241, 328),
+            8: p(282, 206),
+        },
+        "left": {
+            7: p(642, 257),
+            6: p(510, 206),
+            5: p(502, 346),
+            4: p(338, 344),
+            3: p(369, 245),
+            2: p(227, 284),
+            1: p(125, 359),
+        }
+    }
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),
@@ -1601,8 +1649,7 @@ USER_DEFAULT_DICT = {
         "tansuo": 0,  # 上次探索时间
         "maizhuangbei": 0,  # 上次卖装备时间
         "shengji": 0,  # 上次圣迹调查时间
-    }
-    ,
+    },
     "daily_status": {
         # 每日刷图
         "buy_tili": 0,  # 当日买体力次数

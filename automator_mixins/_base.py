@@ -653,7 +653,7 @@ class BaseMixin:
         """
         判断是否在黑屏Loading 或者 右上角Connecting
         """
-        if self.is_exists(img='img/error/connecting.bmp', at=(748, 20, 931, 53), screen=screen):
+        if self.is_exists(img='img/error/connecting.bmp', at=(749, 20, 934, 52), screen=screen):
             return False
         sc_cut = UIMatcher.img_cut(screen, MAIN_BTN["loading_left"].at)
         if (sc_cut == 1).all():
@@ -675,7 +675,7 @@ class BaseMixin:
         last_time = time.time()
         while True:
             self._move_check()
-            if self.is_exists(img='img/error/connecting.bmp', at=(748, 20, 931, 53), screen=sc):
+            if self.is_exists(img='img/error/connecting.bmp', at=(749, 20, 934, 52), screen=sc):
                 time.sleep(delay)
                 sc = self.getscreen()
                 continue
