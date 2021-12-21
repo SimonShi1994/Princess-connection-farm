@@ -26,7 +26,7 @@ class DuringFighting(PossibleSceneList):
 
 class EnhanceMixin(ShuatuBaseMixin):
 
-    def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, charlist=[],
+    def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, charlist=None,
                        team_order="zhanli", getzhiyuan=True, is_full=2, tozhuanwulv=150):
         '''
         角色升级任务，包含了装备、升星、专武
@@ -41,11 +41,13 @@ class EnhanceMixin(ShuatuBaseMixin):
         tozhuanwulv:专武提升上限
         '''
         # 计数器
+        if charlist is None:
+            charlist = []
         self.lock_home()
         charcount = 0
         self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
         time.sleep(5)
-        self.fclick(169,140)
+        self.fclick(169, 140)
         time.sleep(2)
         self.fclick(169, 140)
 
@@ -111,98 +113,105 @@ class EnhanceMixin(ShuatuBaseMixin):
                         if debug:
                             print("穿满，无动作")
                         break
+
                     if ehs == 1:
                         # 自动强化亮，判断是否缺装备。因为没强化满也会亮
-                        if self.is_exists(img="img/juese/reachable.bmp", at=(82, 150, 434, 347)):
-                            if do_shuatu:
-                                self.click_btn(JUESE_BTN["zdqh_0"], until_appear=JUESE_BTN["tuijiancaidan"])
-                                self.click_btn(JUESE_BTN["enter_shuatu"], until_appear=FIGHT_BTN["baochou"])
-                                fi = FightInfoBase(self)
-                                sc = self.getscreen()
-                                stars = fi.get_upperright_stars(sc)
-                                if stars < 3:
-                                    tili_left = fi.get_tili_left(sc)
-                                    if tili_left < 12:
-                                        self.log.write_log("error", "没体力了！")
-                                        return False
-                                    fi.goto_tiaozhan()
-                                    if debug:
-                                        print("开始刷图补装备")
-
-                                    # 支援
-                                    fb = FightBianzuDXC(self)
-                                    fb.select_team(team_order, change=2)
-                                    if getzhiyuan:
-                                        fb.get_zhiyuan(assist_num=1, force_haoyou=False, if_full=is_full)
-                                    zd = fb.goto_zhandou()
-                                    zd.set_auto(True)
-                                    zd.set_speed(1, max_level=1)
-                                    during = DuringFighting(self)
-                                    while True:
-                                        out = during.check(timeout=300, double_check=3)
-                                        if isinstance(out, during.HaoYouMsg):
-                                            out.exit_with_off()
-                                            continue
-                                        elif isinstance(out, during.FightingWinDXC):
-                                            out.ok()
-                                            fw = FightingWinZhuXian2(self).enter()
-                                            time.sleep(4)
-                                            fw.next()
-                                            return True
-                                        elif isinstance(out, during.FightingLossDXC):
-                                            out.ok()
-                                            return True
-                                        else:
-                                            continue
-
-                                else:
-                                    sc = self.getscreen()
-                                    cishu = fi.get_cishu()
-                                    if cishu == 0:
-                                        for _ in range(6):
-                                            self.click(1, 1)
-                                        break
-                                    if 3 >= cishu > 0:
-                                        fi.set_saodang_to_max()
-                                        self.stop_shuatu()
-                                    if cishu > 3:
-                                        tili_left = fi.get_tili_left(sc)
-                                        if tili_left > 64:
-                                            fi.set_saodang_cishu(6)
-                                        if tili_left < 65:
-                                            if tili_left < 13:
-                                                for _ in range(6):
-                                                    self.click(1, 1)
-                                                print("没有体力了，退出")
-                                                break
-                                            fi.set_saodang_to_max()
-                                            self.stop_shuatu()
-                                    sd = fi.goto_saodang()
-                                    sd = sd.OK()
-                                    MsgList = sd.OK()  # 扫荡后的一系列MsgBox
-                                    while True:
-                                        out = MsgList.check()
-                                        if out is None:  # 无msgbox
-                                            break
-                                        if isinstance(out, MsgList.XianDingShangDianBox):
-                                            # 限定商店
-                                            out.Cancel()
-                                        if isinstance(out, MsgList.TuanDuiZhanBox):
-                                            out.OK()
-                                        if isinstance(out, MsgList.LevelUpBox):
-                                            out.OK()
-                                            self.start_shuatu()  # 体力又有了！
-                                        if isinstance(out, MsgList.ChaoChuShangXianBox):
-                                            out.OK()
-                                    # 扫荡结束
-                                    # 保险起见
+                        if self.is_exists(img="img/juese/reachable.bmp", at=(82, 150, 434, 347)) and do_shuatu is True:
+                            time.sleep(2)
+                            self.click_btn(JUESE_BTN["zdqh_0"], until_appear=JUESE_BTN["tuijiancaidan"])
+                            time.sleep(2)
+                            self.click_btn(JUESE_BTN["enter_shuatu"], until_appear=FIGHT_BTN["baochou"])
+                            fi = FightInfoBase(self)
+                            sc = self.getscreen()
+                            stars = fi.get_upperright_stars(sc)
+                            if stars < 3:
+                                tili_left = fi.get_tili_left(sc)
+                                if tili_left < 12:
+                                    do_shuatu = False
+                                    print("没有体力了，退出")
                                     for _ in range(6):
                                         self.click(1, 1)
-                                    if debug:
-                                        print("刷图/扫荡完毕")
+                                    break
+                                fi.goto_tiaozhan()
+                                if debug:
+                                    print("开始刷图补装备")
+
+                                # 支援
+                                fb = FightBianzuDXC(self)
+                                fb.select_team(team_order, change=3)
+                                if getzhiyuan:
+                                    fb.get_zhiyuan(assist_num=1, force_haoyou=False, if_full=is_full)
+                                zd = fb.goto_zhandou()
+                                zd.set_auto(True)
+                                zd.set_speed(1, max_level=1)
+                                during = DuringFighting(self)
+                                while True:
+                                    out = during.check(timeout=300, double_check=3)
+                                    if isinstance(out, during.HaoYouMsg):
+                                        out.exit_with_off()
+                                        continue
+                                    elif isinstance(out, during.FightingWinDXC):
+                                        out.ok()
+                                        fw = FightingWinZhuXian2(self).enter()
+                                        time.sleep(5)
+                                        fw.next()
+                                        return True
+                                    elif isinstance(out, during.FightingLossDXC):
+                                        out.ok()
+                                        return True
+                                    else:
+                                        continue
+
+                            else:
+                                sc = self.getscreen()
+                                cishu = fi.get_cishu()
+                                if cishu == 0:
+                                    for _ in range(6):
+                                        self.click(1, 1)
+                                    break
+                                if 3 >= cishu > 0:
+                                    fi.set_saodang_to_max()
+                                    self.stop_shuatu()
+                                if cishu > 3:
+                                    tili_left = fi.get_tili_left(sc)
+                                    if tili_left > 64:
+                                        fi.set_saodang_cishu(6)
+                                    if tili_left < 65:
+                                        if tili_left < 13:
+                                            for _ in range(6):
+                                                self.click(1, 1)
+                                            print("没有体力了，退出")
+                                            break
+                                            # 这个break导致一直next_char
+                                        fi.set_saodang_to_max()
+                                        self.stop_shuatu()
+                                sd = fi.goto_saodang()
+                                sd = sd.OK()
+                                MsgList = sd.OK()  # 扫荡后的一系列MsgBox
+                                while True:
+                                    out = MsgList.check()
+                                    if out is None:  # 无msgbox
+                                        break
+                                    if isinstance(out, MsgList.XianDingShangDianBox):
+                                        # 限定商店
+                                        out.Cancel()
+                                    if isinstance(out, MsgList.TuanDuiZhanBox):
+                                        out.OK()
+                                    if isinstance(out, MsgList.LevelUpBox):
+                                        out.OK()
+                                        self.start_shuatu()  # 体力又有了！
+                                    if isinstance(out, MsgList.ChaoChuShangXianBox):
+                                        out.OK()
+                                # 扫荡结束
+                                # 保险起见
+                                for _ in range(6):
+                                    self.click(1, 1)
+                                if debug:
+                                    print("刷图/扫荡完毕")
                             continue
                         else:
                             break
+
                     if ehs > 2:
                         # 自动强化有红点，等级不满或者没穿满，直接穿上且升级
                         time.sleep(1)
@@ -239,6 +248,8 @@ class EnhanceMixin(ShuatuBaseMixin):
                 ecb = CharBase(self)
                 ecb.next_char()
                 charcount = charcount + 1
+                if debug:
+                    print('计数：%s' % charcount)
             else:
                 if debug:
                     print("此角色无动作")
@@ -246,5 +257,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                 ecb = CharBase(self)
                 ecb.next_char()
                 charcount = charcount + 1
+                if debug:
+                    print('计数：%s' % charcount)
 
         self.lock_home()

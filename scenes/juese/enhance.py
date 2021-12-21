@@ -98,13 +98,14 @@ class CharBase(PCRMsgBoxBase):
         at = (201, 77, 298, 98)
         sc1 = self.getscreen()
         while True:
-            time.sleep(1)
             self.click(940, 268)
+            time.sleep(2)
             sc2 = self.getscreen()
             p = self.img_equal(sc1, sc2, at=at)
-            if p > 0.95:
+            if p < 0.95:
                 break
-            sc1 = sc2
+            else:
+                sc1 = sc2
         time.sleep(2)
 
 
@@ -225,7 +226,7 @@ class CharZhuanwu(PCRMsgBoxBase):
         self.click_btn(JUESE_BTN["wear_confirm"])
         time.sleep(2)
 
-    def unlock_ceiling(self, tozhuanwulv=150):
+    def unlock_ceiling(self, tozhuanwulv=100):
         self.click_btn(JUESE_BTN["unlock_ceiling"], until_appear=JUESE_BTN["unlock_ceiling_confirm"])
         while True:
             a = self.get_zhuanwu_uplimit_during_unlock()
@@ -233,6 +234,7 @@ class CharZhuanwu(PCRMsgBoxBase):
                 if debug:
                     print("素材不足")
                 break
+
             if a <= tozhuanwulv:
                 if self.is_exists(JUESE_BTN["unlock_ceiling_need_lv"]):
                     self.fclick(1, 1)
