@@ -33,7 +33,7 @@ class CaptionSkip:
         self.img_send_error = 'http://' + self.host_result + '/SendError.aspx'
         self.img_getpoint = 'http://' + self.host_result + '/GetPoint.aspx'
         self.error_feature = ['#', '', ' ']
-        self.no_result = ["#答案不确定", "超时", "不扣分", "#", '#编号不存在', '#Tid不正确(#题分不足)']
+        self.no_result = ["#答案不确定", "#超时", "不扣分", "#", '#编号不存在', '#Tid不正确(#题分不足)']
         self.img_hear_dict = {
             'Content-Type': 'application/x-www-form-urlencoded',
         }
