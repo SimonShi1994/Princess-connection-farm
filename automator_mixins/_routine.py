@@ -99,16 +99,12 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_home()
 
     def mianfeishilian(self):
-        # 免费十连
-        # 2020/9/20 CyiceK进行了稳定性修复
+        # 免费十连，2021/12/21
         self.lock_home()
-        # self.lock_img(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
-        # 点进扭蛋界面
-
-        self.click_btn(MAIN_BTN["niudan"], until_disappear=MAIN_BTN["liwu"])
+        self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["xiangqing"])
         while True:
             # 跳过抽奖提示
-            time.sleep(4)
+            time.sleep(2)
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/niudan_sheding.jpg'):
                 self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
@@ -119,24 +115,21 @@ class RoutineMixin(ShuatuBaseMixin):
                 time.sleep(2)
                 break
 
-        screen_shot_ = self.getscreen()
-        if self.is_exists(screen=screen_shot_, img=NIUDAN_BTN["mianfeishilian"]):  # 仅当有免费十连时抽取免费十连
-            self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
-            self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
-            time.sleep(1.5)
-            self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
-            # self.click(872, 355)  # 点击十连
-            # time.sleep(1)
-            # self.click(592, 369)  # 确认
-
         while True:
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/liwu.bmp', at=(891, 413, 930, 452)):
+            if self.is_exists(NIUDAN_BTN["mianfeishilian"]):  # 仅当有免费十连时抽取免费十连
+                self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
+                self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
+                time.sleep(1.5)
+                self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
+                time.sleep(2)
+                if self.is_exists(img="img/ui/quxiao2.bmp", at=(300, 428, 439, 458)):
+                    self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["xiangqing"])
+                    continue
+                else:
+                    break
+            else:
                 break
-            # if self.is_exists(screen=screen_shot_, img=JIAYUAN_BTN["zhuye"]):
-            #   self.click(131, 533)
-            # 首页锁定，保证回到首页
-            self.lock_home()
+        self.lock_home()
 
     def shouqu(self):  # 收取全部礼物
         # 2020-08-06 TheAutumnOfRice: 检查完毕
