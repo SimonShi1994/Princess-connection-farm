@@ -96,8 +96,10 @@ class LoginMixin(ToolsMixin):
         # print(toast_message)
         if toast_message == "密码错误":
             raise BadLoginException("密码错误！")
-        elif "账号异常" in str(toast_message).split(" "):
+        elif toast_message == "系统检测到您的账号异常，请前往网页主站重新登录并进行验证":
             raise BadLoginException("账号异常！")
+        # else:
+        #     print(f"toast_message:{toast_message}")
 
         while True:
             # 快速响应
@@ -283,28 +285,32 @@ class LoginMixin(ToolsMixin):
                     raise BadLoginException("账号异常！")
 
                 # 下面代码暂时不管用
-                if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
-                    if _time >= 5:
-                        print("重试次数太多啦，休息15s")
-                        time.sleep(15)
-                        _time = 0
-                        AutoCaptcha()
-                    # 如果次数大于两次，则申诉题目
-                    elif _time > captcha_senderror_times and captcha_senderror:
-                        print("—申诉题目:", _id)
-                        cs.send_error(_id)
-                    _time = + 1
-                    print("验证码登陆验证重来！")
-                    # 如果还有验证码就返回重试
-                    AutoCaptcha()
+                # if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
+                #     if _time >= 5:
+                #         print("重试次数太多啦，休息15s")
+                #         time.sleep(15)
+                #         _time = 0
+                #         AutoCaptcha()
+                #     # 如果次数大于两次，则申诉题目
+                #     elif _time > captcha_senderror_times and captcha_senderror:
+                #         print("—申诉题目:", _id)
+                #         cs.send_error(_id)
+                #     _time = + 1
+                #     print("验证码登陆验证重来！")
+                #     # 如果还有验证码就返回重试
+                #     AutoCaptcha()
 
             manual_captcha = captcha_skip
             if captcha_skip is False:
                 while True:
                     if self.d(text="Geetest").exists() or self.d(description="Geetest").exists() or \
-                            self.d(resourceId="com.bilibili.priconne:id/iv_gs_title_back").exists():
-                        AutoCaptcha()
-                        due_AutoCaptcha()
+                            self.d(resourceId="com.bilibili.priconne:id/iv_gs_title_close").exists():
+                        try:
+                            AutoCaptcha()
+                            due_AutoCaptcha()
+                        except Exception as e:
+                            print(f"自动过验证码发生报错:{e}")
+                            continue
                         state = True  # 先这样，10s验证，state几乎已经不适用了
                         # time.sleep(5)
                         if not state:
