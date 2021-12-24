@@ -669,8 +669,20 @@ class RoutineMixin(ShuatuBaseMixin):
         收取女神祭
         """
         self.lock_home()
-        self.click_btn(MAIN_BTN["nsj"], until_appear=MAIN_BTN["wanfa"], side_check=self.right_kkr)
-        for _ in range(10):
-            self.click(833, 437)  # 收取！
+        # enter
+        self.click(541, 427)
+        time.sleep(2)
+        self.fclick(1, 1)
+        self.fclick(1, 1)
+        # 收取女神宝库
+        self.click(709, 437)
+        time.sleep(2)
+        self.fclick(1, 1)
+        # 前往庆典任务
+        self.click(878, 80)
+        # 收取庆典任务奖励
+        time.sleep(2)
+        self.click(854, 437)
+        self.fclick(1, 1)
         self.start_shuatu()
         self.lock_home()

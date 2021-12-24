@@ -32,8 +32,8 @@ class ShopMixin(ToolsMixin):
                 if self.check_color(fc, bc, xcor, ycor, color_type="rgb"):
                     if buy_count > 0:
                         self.buy_press()
-                        break
-                break
+                        return
+                return
 
             for frag_ in fraglist[:]:
                 imgpath_ = self.get_frag_img_path(charname=frag_)
