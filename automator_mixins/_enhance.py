@@ -116,7 +116,8 @@ class EnhanceMixin(ShuatuBaseMixin):
 
                     if ehs == 1:
                         # 自动强化亮，判断是否缺装备。因为没强化满也会亮
-                        if self.is_exists(img="img/juese/reachable.bmp", at=(82, 150, 434, 347)) and do_shuatu is True:
+                        if self.is_exists(img="img/juese/reachable.bmp", at=(82, 150, 434, 347)) and do_shuatu is True\
+                                and self.check_shuatu() is True:
                             time.sleep(2)
                             self.click_btn(JUESE_BTN["zdqh_0"], until_appear=JUESE_BTN["tuijiancaidan"])
                             time.sleep(2)
@@ -127,7 +128,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                             if stars < 3:
                                 tili_left = fi.get_tili_left(sc)
                                 if tili_left < 12:
-                                    do_shuatu = False
+                                    self.stop_shuatu()
                                     print("没有体力了，退出")
                                     for _ in range(6):
                                         self.click(1, 1)
