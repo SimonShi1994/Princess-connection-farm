@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20211225
+# Princess connection 公主连结农场脚本v2.7.20211226
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -196,11 +196,9 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2021/12/25 By UVJkiNTQ
+2021/12/26 By TheAutumnOfRice
 
-- 加入碎片购买，任务编号t9
-- 重写角色升级s8
-- 修复女神祭领取
+- 试图修复圣迹调查的卡剧情问题
 
 2021/12/21 By UVJkiNTQ
 
