@@ -160,6 +160,7 @@ MAIN_BTN = {
     # "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)),  # 圣迹调查
     # "shengji": p(736, 267, img="img/shengji/shengjidiaocha.bmp", at=(700, 225, 777, 302)),
     "karin_middle": p(img="img/girl/karin_middle.bmp", at=(410, 309, 572, 390)),
+    "kailu_middle":p(img="img/girl/kailu_middle.bmp",at=(616,303,685,336)),
 
     # 调查本
     "diaocha": p(740, 275),
