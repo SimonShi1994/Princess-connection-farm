@@ -639,12 +639,13 @@ class RoutineMixin(ShuatuBaseMixin):
     #     self.AR.set("time_status", ts)
     #     self.lock_home()
 
-
+    @PCRRetry(name="restart")
     def shengjidiaocha(self,team_order="zhanli"):
         """
         圣迹调查
         全刷，不能扫荡则以team_order战斗
         """
+        self.clear_all_initFC()
         if not self.check_shuatu():
             return
 
@@ -652,11 +653,13 @@ class RoutineMixin(ShuatuBaseMixin):
         S.doit(team_order)
         self.lock_home()
 
+    @PCRRetry(name="restart")
     def shendiandiaocha(self,team_order="zhanli"):
         """
         神殿调查
         全刷，不能扫荡则以team_order战斗
         """
+        self.clear_all_initFC()
         if not self.check_shuatu():
             return
 
