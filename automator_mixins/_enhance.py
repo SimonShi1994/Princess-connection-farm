@@ -41,6 +41,7 @@ class EnhanceMixin(ShuatuBaseMixin):
         tozhuanwulv:专武提升上限
         '''
         # 计数器
+        self.clear_all_initFC()
         if charlist is None:
             charlist = []
         self.lock_home()

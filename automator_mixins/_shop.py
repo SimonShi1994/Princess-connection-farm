@@ -77,7 +77,7 @@ class ShopMixin(ToolsMixin):
         obj.move(584, 110)
         time.sleep(0.8)
         obj.up(584, 110)
-        time.sleep(1)
+        time.sleep(3)
 
     def buy_all_frag(self, dxc_fraglist=None, jjc_fraglist=None, pjjc_fraglist=None, clan_fraglist=None):
         self.lock_home()
