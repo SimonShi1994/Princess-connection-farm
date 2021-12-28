@@ -155,6 +155,10 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         before_ = True
         retry = 0
         while retry <= max_retry:
+            # 防止泄露全局影响
+            self.ES.FCs.clear()  # 清除全部ES
+            self.headers_group.clear()  # 清除全部header
+            self.register_basic_ES()
             try:
                 if before_:
                     self.task_current("登录")

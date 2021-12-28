@@ -200,7 +200,7 @@ class AutomatorDebuger(Automator):
                 y2, y1 = plt.ylim()
                 x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
                 addr = e.get()
-                print(f"p(img=\"{addr}\",at=({x1},{y1},{x2},{y2})),")
+                print(f"p({(x1+x2)//2},{(y1+y2)//2},img=\"{addr}\",at=({x1},{y1},{x2},{y2}))")
                 img.cut(x1, y1, x2, y2).save(addr)
                 try:
                     img.cut(x1, y1, x2, y2).save(addr)
