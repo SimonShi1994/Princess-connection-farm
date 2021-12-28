@@ -14,10 +14,10 @@ class DiaoChaMenu(SevenBTNMixin):
 
     def goto_shengji(self) -> "ShengJiDiaoCha":
         return self.goto(ShengJiDiaoCha, gotofun=self.fun_click(MAIN_BTN["jingyanzhiguanqia"]),
-                         use_in_feature_only=True)
+                         use_in_feature_only=False)
 
     def goto_shendian(self) -> "ShenDianDiaoCha":
-        return self.goto(ShenDianDiaoCha, gotofun=self.fun_click(MAIN_BTN["shendiandiaocha"]), use_in_feature_only=True)
+        return self.goto(ShenDianDiaoCha, gotofun=self.fun_click(MAIN_BTN["shendiandiaocha"]), use_in_feature_only=False)
 
 
 class DiaoChaInfoBox(FightInfoBase):
@@ -48,7 +48,7 @@ class DiaoChaXuanGuanBase(SevenBTNMixin):
                 break
             try:
                 DC: DiaoChaInfoBox = self.goto(DiaoChaInfoBox, gotofun=self.fun_click(xx, yy), use_in_feature_only=True,
-                                               retry=2, interval=2)
+                                               retry=2, interval=2, before_clear=False)
                 DC.shua(team_order)
                 self.fclick(1, 1)
             except LockMaxRetryError:

@@ -174,7 +174,7 @@ class BaseMixin:
 
         self.ES = ExceptionSet(self)
         self.headers_group = {}
-        self.register_basic_ES()
+        # self.register_basic_ES()
 
     def register_basic_ES(self):
         # Loading时，啥事不干（防止卡住，只检测last_screen）
