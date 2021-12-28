@@ -199,6 +199,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 2021/12/28 By TheAutumnOfRice
 
 - 修复重启造成的全局设定混乱情况
+- 试图修复圣迹调查的剧情跳过
 
 2021/12/26 By TheAutumnOfRice
 
