@@ -201,7 +201,6 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - 加入碎片购买，任务编号t9
 - 修复女神祭领取 r11
 - 重写角色自动升级 s8
-- 部分UI变动
 
 2021/12/28 By TheAutumnOfRice
 
