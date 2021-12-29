@@ -41,11 +41,10 @@ class EnhanceMixin(ShuatuBaseMixin):
         tozhuanwulv:专武提升上限
         '''
         # 计数器
-        self.clear_all_initFC()
         if charlist is None:
             charlist = []
         self.lock_home()
-        charcount = 0
+        self.clear_all_initFC()
         self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
         time.sleep(5)
         self.fclick(169, 140)
@@ -235,8 +234,11 @@ class EnhanceMixin(ShuatuBaseMixin):
                             ezw.wear_zhuanwu()
                             continue
                         if zws == 3 or zws == 5:
-                            ezw.unlock_ceiling(tozhuanwulv=tozhuanwulv)
-                            continue
+                            c = ezw.unlock_ceiling(tozhuanwulv=tozhuanwulv)
+                            if c != 2:
+                                continue
+                            else:
+                                break
                         if zws == 4:
                             ezw.levelup_zhuanwu()
                             continue
@@ -246,7 +248,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                     if debug:
                         print("专武任务完成")
                 if debug:
-                    print("此角色升级任务已完成")
+                    print("此角色强化任务已完成")
                 ecb = CharBase(self)
                 ecb.next_char()
                 charcount = charcount + 1

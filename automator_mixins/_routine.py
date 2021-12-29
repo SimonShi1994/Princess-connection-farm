@@ -116,6 +116,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 break
 
         while True:
+            time.sleep(2)
             if self.is_exists(NIUDAN_BTN["mianfeishilian"]):  # 仅当有免费十连时抽取免费十连
                 self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
                 self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])

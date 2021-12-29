@@ -1,9 +1,21 @@
 import time
 from automator_mixins._tools import ToolsMixin
 from DataCenter import LoadPCRData
+from core.cv import UIMatcher
+import cv2
 
 
 class ShopMixin(ToolsMixin):
+
+    def show_coin(self, screen=None):
+        # 获取代币数量，用于判断是否足够购买
+        pass
+        self.check_ocr_running()
+        if screen is None:
+            screen = self.getscreen()
+        at = (789, 16, 918, 32)
+        out = self.ocr_int(*at, screen_shot=screen)
+        return out
 
     def buy_press(self):
         self.click(791, 435)
@@ -49,6 +61,7 @@ class ShopMixin(ToolsMixin):
                         continue
                 else:
                     self.dragdown()
+                    time.sleep(3)
                     drag_count = drag_count + 1
                     continue
 
@@ -61,13 +74,21 @@ class ShopMixin(ToolsMixin):
 
     def click_frag(self, imgpath):
         # 寻找单个碎片，确认碎片图片中心点
-        r_list = self.img_where_all(img=imgpath, at=(241, 105, 925, 392))
+        screen = self.getscreen()
+        # at = (241, 105, 925, 392)
+        at = (278, 109, 890, 269)
+        r_list = UIMatcher.img_where(screen, imgpath, threshold=0.8, at=at,
+                                     method=cv2.TM_CCOEFF_NORMED, is_black=False, black_threshold=1500)
+        # r_list = self.img_where_all(img=imgpath, at=(241, 105, 925, 392))
         # 根据偏移，点击勾选碎片
-        if len(r_list) > 2:
-            x_arg = int(r_list[0]) + 57
-            y_arg = int(r_list[1]) - 16
-            self.click(x_arg, y_arg)
-            return 0
+        if r_list is not False:
+            if len(r_list) == 2:
+                x_arg = int(r_list[0]) + 57
+                y_arg = int(r_list[1]) - 16
+                self.click(x_arg, y_arg)
+                return 0
+            else:
+                return 2
         else:
             return 2
 
@@ -77,7 +98,7 @@ class ShopMixin(ToolsMixin):
         obj.move(584, 110)
         time.sleep(0.8)
         obj.up(584, 110)
-        time.sleep(3)
+
 
     def buy_all_frag(self, dxc_fraglist=None, jjc_fraglist=None, pjjc_fraglist=None, clan_fraglist=None):
         self.lock_home()
@@ -87,24 +108,44 @@ class ShopMixin(ToolsMixin):
         # 地下城碎片
         self.click(359, 65)
         time.sleep(2)
-        self.tick_frag(fraglist=dxc_fraglist)
+        coin = self.show_coin()
+        a = len(dxc_fraglist)
+        if coin < 800 * a:
+            pass
+        else:
+            self.tick_frag(fraglist=dxc_fraglist)
         print("地下城购买完毕")
         time.sleep(2)
         # JJC碎片
         self.click(454, 65)
         time.sleep(2)
-        self.tick_frag(fraglist=jjc_fraglist)
+        coin = self.show_coin()
+        a = len(dxc_fraglist)
+        if coin < 800 * a:
+            pass
+        else:
+            self.tick_frag(fraglist=jjc_fraglist)
         print("JJC购买完毕")
         time.sleep(2)
         # PJJC碎片
         self.click(543, 65)
         time.sleep(2)
-        self.tick_frag(fraglist=pjjc_fraglist)
+        coin = self.show_coin()
+        a = len(dxc_fraglist)
+        if coin < 800 * a:
+            pass
+        else:
+            self.tick_frag(fraglist=pjjc_fraglist)
         print("PJJC购买完毕")
         time.sleep(2)
         # 行会碎片
         self.click(640, 65)
         time.sleep(2)
-        self.tick_frag(fraglist=clan_fraglist)
+        coin = self.show_coin()
+        a = len(dxc_fraglist)
+        if coin < 800 * a:
+            pass
+        else:
+            self.tick_frag(fraglist=clan_fraglist)
         print("行会购买完毕")
         self.lock_home()
