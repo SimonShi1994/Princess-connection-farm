@@ -380,6 +380,9 @@ class ExceptionSet:
         if group in self.FCs:
             del self.FCs[group]
 
+    def clear_all(self):
+        self.FCs.clear()
+
     def run(self):
         for FC in self.FCs.values():
             FC.run()
