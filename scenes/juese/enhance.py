@@ -250,7 +250,8 @@ class CharZhuanwu(PCRMsgBoxBase):
                 continue
             else:
                 self.fclick(1, 1)
-                break
+                print("已达到目标专武等级")
+                return 2
 
     def levelup_zhuanwu(self):
         while True:
