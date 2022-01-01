@@ -303,7 +303,7 @@ HANGHUI_BTN = {
     # 降序（支援界面）
     "jiangxu_juese": p(863, 90, img="img/hanghui/jiangxu_juese.bmp", at=(828, 78, 903, 99)),
     # 筛选条件（支援界面）
-    "shaixuantiaojian_juese": p(788, 88, img="img/hanghuni/shaixuantiaojian_juese.bmp", at=(777, 78, 800, 99)),
+    "shaixuantiaojian_juese": p(788, 88, img="img/hanghui/shaixuantiaojian_juese.bmp", at=(777, 78, 800, 99)),
     # 角色战力”确认“蓝点
     "zhanli_juese": p(289, 141, img="img/hanghui/landian_true.bmp", at=(266, 118, 311, 164)),
     # 角色筛选条件界面确认
