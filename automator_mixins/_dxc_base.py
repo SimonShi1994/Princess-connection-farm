@@ -140,6 +140,7 @@ class DXCBaseMixin(FightBaseMixin):
         self.lock_home()
         # 进入冒险
         self.lock_img(MAIN_BTN["dxc"], elseclick=MAIN_BTN["maoxian"], elsedelay=0.5)
+
         # 进入地下城
         state = self.click_btn(MAIN_BTN["dxc"], elsedelay=0.5,
                                until_appear={DXC_ELEMENT["dxc_choose_shop"]: 1, DXC_ELEMENT["dxc_shop_btn"]: 2},

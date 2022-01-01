@@ -362,6 +362,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             screen_shot = self.getscreen()
             self.click_img(screen_shot, 'img/ui/queren_blue.bmp')
             self.lock_home()
+        self.log.write_log("info","地下城1OCR版已经完成任务！")
 
     def dixiacheng(self, skip):
         """

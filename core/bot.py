@@ -1,13 +1,18 @@
 import base64
 import time
 
+import urllib.request
+import json
+import os
+from PIL import Image
+from io import BytesIO
 import cv2
 import psutil
 import requests
 from requests.adapters import HTTPAdapter
 
 from core.pcr_config import s_sckey, log_lev, log_cache, qqbot_key, qqbot_select, qq, qqbot_private_send_switch, \
-    qqbot_group_send_switch, tg_token, tg_mute, debug, proxy_http, proxy_https
+    qqbot_group_send_switch, tg_token, tg_mute, debug, proxy_http, proxy_https, wework_corpid, wework_corpsecret
 
 BOT_PROXY = {
     "http": proxy_http if len(proxy_http) > 0 else None,
@@ -27,6 +32,9 @@ class Bot:
         self.cpu_info = None
         self.memory_info = None
         self.img_url = None
+        wework_url = "https://qyapi.weixin.qq.com"
+        self.corpid = wework_corpid
+        self.corpsecret = wework_corpsecret
         self.qqbot_select = qqbot_select
         self.req_post = requests.Session()
         self.req_post.mount('http://', HTTPAdapter(max_retries=5))
@@ -107,6 +115,16 @@ class Bot:
                     self.qq_bot(s_level, message=message, acc_state=acc_state)
                 if len(tg_token) != 0:
                     self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
+                if len(wework_corpid) != 0 and len(wework_corpsecret) != 0:
+                    qywx = Qywx(s_level, acc_state)
+                    if not message == '':
+                        qywx.send_msg_message(message)
+                    if img is not None:
+                        upload_file = Image.open(BytesIO(img.read()))
+                        upload_file = upload_file.convert("RGB")
+                        # print(tr.run(img.copy().convert("L"), flag=tr.FLAG_ROTATED_RECT))
+                        result_img = upload_file.copy().convert("L")
+                        qywx.send_image_message(result_img)
                 if s_level not in self.lev_dic['3']:
                     # 发送完后清空消息队列
                     self.acc_message[s_level] = []
@@ -319,3 +337,149 @@ class Bot:
             # time.sleep(600)
             # self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
 
+
+class Qywx(Bot):
+    """
+        # Copy from:https://github.com/huangantai/QywxPython/blob/master/qywx.py
+        # Author: huangantai
+        # modify by CyiceK
+        #-----------发送企业微信的消息格式------------
+        #图片（image）:1MB，支持JPG,PNG格式
+        #语音（voice）：2MB，播放长度不超过60s，支持AMR格式
+        #视频（video）：10MB，支持MP4格式
+        #普通文件（file）：20MB
+        #--------------------------------
+    """
+
+    def __init__(self, s_level, acc_state):
+        super().__init__()
+        self.message = ''
+        self.info_format = f"""
+                                *>>>公主连结农场脚本【{s_level}】<<<*\n
+                               欢迎您使用~\n
+                               *#### 当前系统运行信息 ####*\n- {self.cpu_info}\n- {self.memory_info}\n——————————————————\n
+                               目前农场信息：\n
+                               \n{self.message}\n
+                               目前状态信息：\n
+                               \n{acc_state}\n
+                               [来自GITHUB一款开源脚本 (// . //)](https://github.com/SimonShi1994/Princess-connection-farm)\n
+                """
+
+    def send_message(self, msg, msgtype, agid):
+        upload_token = self.get_upload_token(self.corpid, self.corpsecret)
+        if msgtype == "text":
+            self.message = msg
+            data = self.msg_messages(self.info_format, agid, msgtype='text', msgid="content")
+        elif msgtype == "image":
+            media_id = self.net_get_media_ID(msg, upload_token, msgtype="image")
+            data = self.msg_messages(media_id, agid, msgtype='image', msgid="media_id")
+        elif msgtype == "voice":
+            media_id = self.get_media_ID(msg, upload_token, msgtype="voice")
+            data = self.msg_messages(media_id, agid, msgtype='voice', msgid="media_id")
+        elif msgtype == "video":
+            media_id = self.get_media_ID(msg, upload_token, msgtype="video")
+            data = self.msg_messages(media_id, agid, msgtype='video', msgid="media_id")
+        elif msgtype == "file":
+            media_id = self.get_media_ID(msg, upload_token, msgtype="file")
+            data = self.msg_messages(media_id, agid, msgtype='file', msgid="media_id")
+        else:
+            raise Exception("msgtype参数错误，参数只能是image或text或voice或video或file")
+        url = "https://qyapi.weixin.qq.com"
+        token = self.get_token(url, self.corpid, self.corpsecret)
+        send_url = '%s/cgi-bin/message/send?access_token=%s' % (url, token)
+        respone = urllib.request.urlopen(urllib.request.Request(url=send_url, data=data)).read()
+        x = json.loads(respone.decode())['errcode']
+        if x == 0:
+            print("{} 发送成功".format(msg))
+        else:
+            print("{} 发送失败".format(msg))
+
+    def send_msg_message(self, msg, agid=1000002):
+        try:
+            self.send_message(msg, 'text', agid)
+        except Exception as e:
+            pass
+
+    def send_image_message(self, path, agid=1000002):
+        if path.endswith("jpg") == False and path.endswith("png") == False:
+            raise Exception("图片只能为jpg或png格式")
+        if os.path.getsize(path) > 1048576:
+            raise Exception("图片大小不能超过1MB")
+        try:
+            self.send_message(path, 'image', agid)
+        except Exception as e:
+            pass
+
+    def send_voice_message(self, path, agid=1000002):
+        if path.endswith("amr") == False:
+            raise Exception("语音文件只能为amr格式，并且不能大于2MB，不能超过60s")
+        if os.path.getsize(path) > 2097152:
+            raise Exception("语音文件大小不能超过2MB，并且不能超过60s，只能为amr格式")
+        try:
+            self.send_message(path, 'voice', agid)
+        except Exception as e:
+            pass
+
+    def send_video_message(self, path, agid=1000002):
+        if path.endswith("mp4") == False:
+            raise Exception("视频文件只能为mp4格式，并且不能大于10MB")
+        if os.path.getsize(path) > 10485760:
+            raise Exception("视频文件大小不能超过10MB,只能为mp4格式")
+        try:
+            self.send_message(path, 'video', agid)
+        except Exception as e:
+            pass
+
+    def send_file_message(self, path, agid=1000002):
+        if os.path.getsize(path) > 20971520:
+            raise Exception("文件大小不能超过20MB")
+        try:
+            self.send_message(path, 'file', agid)
+        except Exception as e:
+            pass
+
+    def get_token(self, url, corpid, corpsecret):
+        token_url = '%s/cgi-bin/gettoken?corpid=%s&corpsecret=%s' % (url, corpid, corpsecret)
+        token = json.loads(urllib.request.urlopen(token_url).read().decode())['access_token']
+        return token
+
+    def get_upload_token(self, corid, corsec):
+        gurl = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={}&corpsecret={}".format(corid, corsec)
+        r = requests.get(gurl)
+        dict_result = (r.json())
+        return dict_result['access_token']
+
+    def net_get_media_ID(self, media_bit, token, msgtype="image"):
+        """上传资源到企业微信的存储上,msgtype有image,voice,video,file"""
+        media_url = "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={}&type={}".format(token,
+                                                                                                      msgtype)
+        files = {msgtype: media_bit}
+        r = requests.post(media_url, files=files)
+        re = json.loads(r.text)
+        return re['media_id']
+
+    def get_media_ID(self, path, token, msgtype="image"):
+        """上传资源到企业微信的存储上,msgtype有image,voice,video,file"""
+        media_url = "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token={}&type={}".format(token,
+                                                                                                      msgtype)
+        with open(path, 'rb') as f:
+            files = {msgtype: f}
+            r = requests.post(media_url, files=files)
+            re = json.loads(r.text)
+            return re['media_id']
+
+    def msg_messages(self, msg, agid, msgtype='text', msgid="content"):
+        """
+            msgtype有text,image,voice,video,file；如果msgytpe为text,msgid为content，如果是其他，msgid为media_id。
+            msg为消息的实际内容，如果是文本消息，则为字符串，如果是其他类型，则传递media_id的值。
+
+            """
+        values = {
+            "touser": '@all',
+            "msgtype": msgtype,
+            "agentid": agid,
+            msgtype: {msgid: msg},
+            "safe": 0
+        }
+        msges = (bytes(json.dumps(values), 'utf-8'))
+        return msges

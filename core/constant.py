@@ -160,7 +160,7 @@ MAIN_BTN = {
     # "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)),  # 圣迹调查
     # "shengji": p(736, 267, img="img/shengji/shengjidiaocha.bmp", at=(700, 225, 777, 302)),
     "karin_middle": p(img="img/girl/karin_middle.bmp", at=(410, 309, 572, 390)),
-    "kailu_middle":p(img="img/girl/kailu_middle.bmp",at=(616,303,685,336)),
+    "kailu_middle": p(img="img/girl/kailu_middle.bmp", at=(616, 303, 685, 336)),
 
     # 调查本
     "diaocha": p(740, 275),
@@ -257,7 +257,10 @@ NIUDAN_BTN = {
     "niudanjieguo_ok": p(481, 443, img="img/ui/ok_btn_2.bmp", at=(383, 423, 597, 462)),
     "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(610, 320, 750, 450)),
     "niudan_shilian": p(872, 355),
-    "mianfeishilian": p(img='img/niudan/mianfeishilian.bmp', at=(819, 300, 919, 319)),
+    "mianfeishilian": p(img="img/niudan/mianfeishilian.bmp",at=(829,322,909,384)),
+	"xiangqing": p(883, 279, img="img/niudan/xiangqing.bmp", at=(865, 268, 906, 286)),
+	"juesexiangqing": p(70, 445, img="img/niudan/juesexiangqing.bmp", at=(35, 433, 106, 458)),
+	"mianfeishilian": p(img='img/niudan/mianfeishilian.bmp', at=(819, 300, 919, 319)),
     "xiangqing": p(883, 279, img="img/niudan/xiangqing.bmp", at=(865, 268, 906, 286)),
     "again": p(588,441,img="img/niudan/again.bmp",at=(538,424,638,458)),
     "jiaohuanliebiao": p(852,442,img="img/niudan/jiaohuanliebiao.bmp",at=(817,431,887,453)),

@@ -99,9 +99,9 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_home()
 
     def mianfeishilian(self):
-        # 免费十连，2021/12/21
+        # 免费十连，2022/1/1
         self.lock_home()
-        self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["xiangqing"])
+        self.click_btn(MAIN_BTN["niudan"], until_disappear=MAIN_BTN["liwu"])
         while True:
             # 跳过抽奖提示
             time.sleep(2)
@@ -116,7 +116,6 @@ class RoutineMixin(ShuatuBaseMixin):
                 break
 
         while True:
-            time.sleep(2)
             if self.is_exists(NIUDAN_BTN["mianfeishilian"]):  # 仅当有免费十连时抽取免费十连
                 self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
                 self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
@@ -124,11 +123,12 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
                 time.sleep(2)
                 if self.is_exists(img="img/ui/quxiao2.bmp", at=(300, 428, 439, 458)):
-                    self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["xiangqing"])
+                    self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["juesexiangqing"])
                     continue
                 else:
                     break
             else:
+                self.log.write_log("warning", "图片查找不到限定")
                 break
         self.lock_home()
 

@@ -3,6 +3,7 @@
 # Princess connection 公主连结农场脚本v2.7.20220101
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
+祝大家2022，新年快乐！
 
 ## :bookmark_tabs:简介
 
@@ -56,7 +57,7 @@
 - [x] 购买经验
 - [x] 探索
 - [x] 调查
-- [ ] 收取女神祭
+- [x] 收取女神祭
 
 5. 工具
 
@@ -74,12 +75,12 @@
 - [x] 副本扫荡
 - [ ] 初始化
 - [ ] 自动推图
-- [ ] 自动升级  
+- [x] 自动升级  
 - [x] 借人推图
 
 ## :globe_with_meridians:环境
 
-- 需要 Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
+- 需要 3.9>Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
 - **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
@@ -118,6 +119,7 @@
 | QQpush QQ:cold_sweat: | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
 | Wechat 微信（:hand:） | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
 |    Wework 企业微信    | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | APP Bark_IOS Wework群机器人 钉钉群机器人 飞书群机器人 |
+|      Wework 本地      | :x:          | :x:                | :heavy_check_mark:       | :x:                | :x:                                                   |
 |    TG 电报（:+1:）    | :x:          | :heavy_check_mark: | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
 |     QQBot[开发中]     |              |                    |                          |                    |                                                       |
 
@@ -164,7 +166,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice) 对本项目的倾力帮助。
+2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice) 、UVJkiNTQ(https://github.com/UVJkiNTQ)对本项目的倾力帮助。
 
 3. **来个 star 吧(*/ω＼*)，有问题请提交issue**
 
@@ -195,6 +197,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2022/01/01 By CyiceK
+
+- 修复更新程序未结束导致无法覆盖adb.exe问题
+- 支持模拟器内装有bilibili客户端，不影响登陆
+- 修复免费10连抽取的图片bug
 
 2022/01/01 By UVJkiNTQ
 

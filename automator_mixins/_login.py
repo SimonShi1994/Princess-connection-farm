@@ -65,6 +65,10 @@ class LoginMixin(ToolsMixin):
         for retry in range(300):
             self._move_check()
             self.click(945, 13)  # 防止卡住
+            if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_other").exists():
+                self.d(resourceId="com.bilibili.priconne:id/tv_gsc_other").click()
+                time.sleep(0.8)
+                continue
             if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
                 self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
                 time.sleep(0.8)
@@ -391,6 +395,10 @@ class LoginMixin(ToolsMixin):
                 # if self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").exists():
                 #     self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").click()
 
+                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_other").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_other").click()
+                    time.sleep(2)
+                    continue
                 if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
                     self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
                     time.sleep(2)

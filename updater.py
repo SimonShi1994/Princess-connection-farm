@@ -258,6 +258,7 @@ class Pcr_Downloader:
         update_way = input('请选择更新方式：')
         if '1' <= cmd <= 'A' and '1' <= update_way <= '2':
             print('下载中>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
+            os.system("taskkill /im adb.exe /f")
             return cmd, update_way
         else:
             print('输入数字有误')
