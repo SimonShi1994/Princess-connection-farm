@@ -259,6 +259,11 @@ NIUDAN_BTN = {
     "niudan_shilian": p(872, 355),
     "mianfeishilian": p(img='img/niudan/mianfeishilian.bmp', at=(819, 300, 919, 319)),
     "xiangqing": p(883, 279, img="img/niudan/xiangqing.bmp", at=(865, 268, 906, 286)),
+    "again": p(588,441,img="img/niudan/again.bmp",at=(538,424,638,458)),
+    "jiaohuanliebiao": p(852,442,img="img/niudan/jiaohuanliebiao.bmp",at=(817,431,887,453)),
+    "juesejiaohuan": p(477,42,img="img/niudan/juesejiaohuan.bmp",at=(435,28,520,56)),
+    "weijiefang": p(454,253,img="img/niudan/weijiefang.bmp",at=(420,242,488,265)),
+    "new_char": p(454,253, img="img/niudan/new_char.bmp"), # 占位，位置不确定，一般直接引用
 
 }
 
@@ -511,6 +516,7 @@ JUESE_BTN = {
     "zdqh_0": p(368, 436, img="img/juese/zdqh_0.bmp", at=(422, 407, 440, 423)),
     "zdqh_1": p(368, 436, img="img/juese/zdqh_1.bmp", at=(418, 406, 439, 424)),
     "zdqh_2": p(img="img/juese/zdqh_2.bmp", at=(310, 444, 431, 467)),
+    "reachable": p(img="img/juese/reachable.bmp", at=(372, 158, 395, 170)),  # 占位，位置不确定，一般直接引用
     "enter_shuatu": p(669, 230, img="img/juese/enter_shuatu.bmp", at=(657, 202, 680, 258)),
     "equip_selected": p(527, 73, img="img/juese/equip_selected.bmp", at=(511, 63, 549, 86)),
     "equip_unselected": p(527, 73, img="img/juese/equip_unselected.bmp", at=(491, 65, 547, 85)),
@@ -556,6 +562,8 @@ JUESE_BTN = {
     "tjqhcd": p(img="img/juese/tjqhcd.bmp", at=(414, 31, 541, 49)),
     "sort_down": p(744, 28, img="img/juese/sort_down.bmp", at=(753, 18, 798, 38)),
     "sort_up": p(755, 28, img="img/juese/sort_up.bmp", at=(756, 17, 798, 36)),
+    "sort_by": p(715,26,img="img/juese/sort_by.bmp",at=(703, 15, 726, 36)),
+    "fenlei": p(483,41,img="img/juese/fenlei.bmp",at=(458,29,508,54)),
     "sort_level": p(629, 27, img="img/juese/sort_level.bmp", at=(611, 16, 647, 36)),
     "tuijianguanqia": p(img="img/juese/tuijianguanqia.bmp", at=(280, 90, 327, 102)),
     "firstqianghua_stars": {

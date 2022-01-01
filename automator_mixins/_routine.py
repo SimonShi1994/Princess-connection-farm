@@ -116,6 +116,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 break
 
         while True:
+            time.sleep(2)
             if self.is_exists(NIUDAN_BTN["mianfeishilian"]):  # 仅当有免费十连时抽取免费十连
                 self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
                 self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
@@ -279,6 +280,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_home()
         count = 0
         self.click(616, 434)
+
         while True:
             self.click(82, 84)
             screen_shot_ = self.getscreen()
@@ -292,6 +294,9 @@ class RoutineMixin(ShuatuBaseMixin):
             if count > 5:
                 break
         if count <= 5:
+            time.sleep(2)
+            self.click(279, 68)
+            time.sleep(1)
             self.click(386, 148)
             time.sleep(1)
             self.click(556, 148)
@@ -672,8 +677,33 @@ class RoutineMixin(ShuatuBaseMixin):
         收取女神祭
         """
         self.lock_home()
-        self.click_btn(MAIN_BTN["nsj"], until_appear=MAIN_BTN["wanfa"], side_check=self.right_kkr)
-        for _ in range(10):
-            self.click(833, 437)  # 收取！
+        # enter
+        self.click(541, 427)
+        time.sleep(2)
+        self.fclick(1, 1)
+        self.fclick(1, 1)
+        # 前往庆典任务
+        self.click(878, 80)
+        # 收取庆典任务奖励，每日
+        time.sleep(2)
+        self.click(854, 437)
+        self.fclick(1, 1)
+        # 收取庆典任务奖励，每周
+        self.click(510, 123)
+        time.sleep(1.5)
+        self.click(854, 437)
+        self.fclick(1, 1)
+        # 收取庆典任务奖励，挑战
+        self.click(626, 123)
+        time.sleep(1.5)
+        self.click(854, 437)
+        self.fclick(1, 1)
+        # 前往女神宝库
+        self.click(793, 80)
+        time.sleep(1.5)
+        # 收取女神宝库
+        self.click(709, 437)
+        time.sleep(2)
+        self.fclick(1, 1)
         self.start_shuatu()
         self.lock_home()
