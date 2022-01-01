@@ -849,10 +849,33 @@ VALID_TASK = ValidTask() \
           TaskParam("do_tuitu", bool, "是否推图", "若关卡能挑战但未三星，是否允许手刷推图。", False),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs)]) \
     .add("nothing", "do_nothing", "啥事不干", "啥事不干，调试用") \
-    .add("s8", "shengjijuese", "自动升级【别用】", "此功能为自动升级角色功能",
-         [TaskParam("buy_tili", int, "体力次数", "如果要通过刷图来获取装备，最多买体力次数"),
-          TaskParam("do_rank", bool, "是否升rank", "是否自动升rank"),
-          TaskParam("do_shuatu", bool, "是否刷图", "是否在装备可以获得但不够时，通过刷图来获取装备")]) \
+    .add("s8", "zidongqianghua", "自动升级【已重写】", "此功能为自动升级角色功能",
+         [TaskParam("do_rank", bool, "是否升rank", "是否进行rank提升", True),
+          TaskParam("do_shuatu", bool, "是否推图", "是否推图获取装备", True),
+          TaskParam("getzhiyuan", bool, "是否借支援", "是否借人推图", False),
+          TaskParam("is_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 2),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="1-1",
+                    inputbox=team_order_inputer),
+          TaskParam("do_kaihua", bool, "是否升星", "若关卡能挑战但未三星，是否允许手刷推图。", False),
+          TaskParam("do_zhuanwu", bool, "是否进行专武任务", "是否进行专武任务，包括佩戴及升级", False),
+          TaskParam("sort", str, "角色强化选择排序方式", "角色选择按什么排序，默认使用等级\n"
+                    "level 表示等级\n"
+                    "zhanli 表示战力\n"
+                    "rank 表示品阶\n"
+                    "star 表示*数\n"
+                    "atk 表示物理攻击力\n"
+                    "def 表示物理防御力\n"
+                    "mat 表示魔法攻击力\n"
+                    "mdf 表示魔法防御力\n"
+                    "hp 表示血量\n"
+                    "love 表示亲密度\n"       
+                    "zhuanwu 表示专武\n"
+                    "fav 表示我的最爱\n"
+                    "six 表示六星已解放", "等级"),
+          TaskParam("count", int, "前N个", "选择遍历角色数量", 15),
+          TaskParam("charlist", list, "角色列表", "需要升级的角色",
+                    inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称")),
+          TaskParam("tozhuanwulv", int, "专武上限等级", "专武上限等级", 120)]) \
     .add("s9", "shuatu_daily_ocr", "OCR主线通用刷图推图", "使用OCR辅助的稳定的通用主线刷图/推图",
          [TaskParam("tu_order", list, "刷图顺序", "刷图/推图会依次按照该顺序",
                     inputbox=ListInputer(desc="一行一个字符串(A)-(B)-(T)或者H(A)-(B)-(T)\n"
@@ -895,7 +918,17 @@ VALID_TASK = ValidTask() \
          [TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max"),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)])\
-    .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。",)
+    .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。",) \
+    .add("t9", "buy_all_frag",  "碎片购买", "购买商店碎片",
+         [TaskParam("dxc_fraglist", list, "dxc碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入地下城商店角色碎片，一行一个角色名称")),
+          TaskParam("jjc_fraglist", list, "jjc碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入JJC商店角色碎片，一行一个角色名称")),
+          TaskParam("pjjc_fraglist", list, "pjjc碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入PJJC商店角色碎片，一行一个角色名称")),
+          TaskParam("clan_fraglist", list, "行会碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入行会商店角色碎片，一行一个角色名称")),
+          ])\
 
 customtask_addr = "customtask"
 

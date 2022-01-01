@@ -9,6 +9,7 @@ from scenes.dxc.dxc_fight import FightBianzuDXC
 from scenes.fight.fightinfo_zhuxian import FightInfoBase
 from scenes.fight.fighting_zhuxian import FightingWinZhuXian2, HaoYouMsg
 from scenes.juese.enhance import CharBase, CharKaihua, CharZhuanwu
+from scenes.juese.juese_base import CharMenu
 
 
 class DuringFighting(PossibleSceneList):
@@ -27,7 +28,7 @@ class DuringFighting(PossibleSceneList):
 class EnhanceMixin(ShuatuBaseMixin):
 
     def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, charlist=None,
-                       team_order="zhanli", getzhiyuan=True, is_full=2, tozhuanwulv=150):
+                       team_order="zhanli", getzhiyuan=True, is_full=2, tozhuanwulv=150, count=15, sort="level"):
         '''
         角色升级任务，包含了装备、升星、专武
         do_rank:rank升级
@@ -44,16 +45,23 @@ class EnhanceMixin(ShuatuBaseMixin):
         if charlist is None:
             charlist = []
         self.lock_home()
-        charcount = 0
+        self.clear_all_initFC()
         self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
         time.sleep(5)
-        self.fclick(169, 140)
+        self.fclick(1,1)
+        # 进入角色选择
+        cm = CharMenu(self)
+        cm.sort_by(sort)
         time.sleep(2)
-        self.fclick(169, 140)
+        cm.sort_down()
+        time.sleep(1)
+        cm.click_first()
+        self.fclick(1,1)
 
-        for charcount in range(0, 15):
+        for charcount in range(0, count):
             # 全角色任务
-            self.click_btn(JUESE_BTN["kaihua_unselected"], until_appear=JUESE_BTN["kaihua_selected"])
+            self.click_btn(JUESE_BTN["kaihua_unselected"])
+            self.lock_img(JUESE_BTN["char_lv_unselected"], elseclick=(784,76), elsedelay=0.2)
             time.sleep(1)
             # 获取名称
             ekh = CharKaihua(self)
@@ -116,7 +124,8 @@ class EnhanceMixin(ShuatuBaseMixin):
 
                     if ehs == 1:
                         # 自动强化亮，判断是否缺装备。因为没强化满也会亮
-                        if self.is_exists(img="img/juese/reachable.bmp", at=(82, 150, 434, 347)) and do_shuatu is True:
+                        if self.is_exists(img="img/juese/reachable.bmp", at=(82, 150, 434, 347)) and do_shuatu is True\
+                                and self.check_shuatu() is True:
                             time.sleep(2)
                             self.click_btn(JUESE_BTN["zdqh_0"], until_appear=JUESE_BTN["tuijiancaidan"])
                             time.sleep(2)
@@ -127,7 +136,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                             if stars < 3:
                                 tili_left = fi.get_tili_left(sc)
                                 if tili_left < 12:
-                                    do_shuatu = False
+                                    self.stop_shuatu()
                                     print("没有体力了，退出")
                                     for _ in range(6):
                                         self.click(1, 1)
@@ -159,6 +168,8 @@ class EnhanceMixin(ShuatuBaseMixin):
                                     elif isinstance(out, during.FightingLossDXC):
                                         out.ok()
                                         return True
+                                    # elif isinstance(out, next.TuanDuiZhanBox):
+                                    #     out.OK()
                                     else:
                                         continue
 
@@ -233,8 +244,11 @@ class EnhanceMixin(ShuatuBaseMixin):
                             ezw.wear_zhuanwu()
                             continue
                         if zws == 3 or zws == 5:
-                            ezw.unlock_ceiling(tozhuanwulv=tozhuanwulv)
-                            continue
+                            c = ezw.unlock_ceiling(tozhuanwulv=tozhuanwulv)
+                            if c != 2:
+                                continue
+                            else:
+                                break
                         if zws == 4:
                             ezw.levelup_zhuanwu()
                             continue
@@ -244,7 +258,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                     if debug:
                         print("专武任务完成")
                 if debug:
-                    print("此角色升级任务已完成")
+                    print("此角色强化任务已完成")
                 ecb = CharBase(self)
                 ecb.next_char()
                 charcount = charcount + 1
