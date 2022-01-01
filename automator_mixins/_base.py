@@ -1585,6 +1585,13 @@ class BaseMixin:
         out = make_it_as_number_as_possible(out)
         return int(out)
 
+    def ocr_int2(self, x1, y1, x2, y2, screen_shot=None):
+        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=2.0, credibility=0.97)
+        # if out == -1:
+            # raise OCRRecognizeError("整数OCR失败了！", outstr=str(out))
+        out = make_it_as_number_as_possible(out)
+        return out
+
     def ocr_A_B(self, x1, y1, x2, y2, screen_shot=None):
         def ABfun(s):
             assert s != "-1", "什么都没有检测到"
