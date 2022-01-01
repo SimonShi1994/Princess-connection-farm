@@ -57,7 +57,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             D = HARD_COORD[nowA]
             return D[nowB].x, D[nowB].y, 1, None
 
-    def kuaisujieren(self,max_do=2,max_map=999):
+    def kuaisujieren(self, max_do=2, max_map=999):
         """
         快速借人推图。
         进去主线Normal后，检测到N A-B则刷N A-1
@@ -71,35 +71,34 @@ class ShuatuMixin(ShuatuBaseMixin):
             now_id = max_map
 
         for now in range(max_do):
-            SN = S.enter_NAB(now_id,1)
-            SN:FightInfoZhuXianNormal
+            SN = S.enter_NAB(now_id, 1)
+            SN: FightInfoZhuXianNormal
             if SN is None:
                 raise Exception(f"出现了进不了图{now_id}-1的蜜汁错误。")
             if not SN.can_fight():
                 # 没体力
-                self.log.write_log("info","根本没有体力，借不了人！")
+                self.log.write_log("info", "根本没有体力，借不了人！")
                 self.lock_home()
                 return
             tz = SN.goto_tiaozhan()
-            out = tz.get_zhiyuan(1,force_haoyou=True)
-            if out==4:
-                self.log.write_log("info","没有好友了，借人结束。")
+            out = tz.get_zhiyuan(1, force_haoyou=True)
+            if out == 4:
+                self.log.write_log("info", "没有好友了，借人结束。")
                 break
-            elif out>0:
-                self.log.write_log("warning",f"发生奇妙错误： CODE{out}，借人结束。")
+            elif out > 0:
+                self.log.write_log("warning", f"发生奇妙错误： CODE{out}，借人结束。")
                 break
             ft = tz.goto_fight()
             ft.auto_and_fast()
             state = ft.wait_for_end_and_return_normal()
             if state["flag"] == "lose":
-                self.log.write_log("info","借人推图成功，可是没打过。")
+                self.log.write_log("info", "借人推图成功，可是没打过。")
             else:
                 self.log.write_log("info", "借人推图成功，且打过了！")
 
         self.lock_home()
 
-
-    def record_tuitu_state(self,mode,nowA,nowB,last=True):
+    def record_tuitu_state(self, mode, nowA, nowB, last=True):
         """
         记录推图状态
         mode:  0: Normal;   1: Hard
@@ -126,16 +125,18 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         self.AR.set("tuitu_status", data)
 
-    def add_map_id(self,mode,nowA,nowB):
+    def add_map_id(self, mode, nowA, nowB):
         """
         获得 mode下（0：普通 1：困难）， nowA-nowB关卡的下一关是什么
         """
+
         def GetMax(nowA):
             D = NORMAL_COORD[nowA]
             DR = D["right"]
             DL = D["left"]
             return max(max(DR), max(DL))
             # 下一张图
+
         if mode == 0:
             Max = GetMax(nowA)
             nowB += 1
@@ -149,8 +150,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 nowA += 1
         return nowA, nowB
 
-
-    def jierentuitu(self,mode,to,from_="new",zhiyuan_mode=-1,max_do=2,var={}):
+    def jierentuitu(self, mode, to, from_="new", zhiyuan_mode=-1, max_do=2, var={}):
         """
         借人推图。
         没有自动升级功能所以上自己的人可能不能三星过关。
@@ -173,34 +173,34 @@ class ShuatuMixin(ShuatuBaseMixin):
                 S.goto_hard()
             if mode == 0:
                 fromA, fromB = self.get_next_normal_id()
-                self.record_tuitu_state(mode,fromA,fromB,False)
+                self.record_tuitu_state(mode, fromA, fromB, False)
             else:
                 fromA, fromB = self.get_next_hard_id()
-                self.record_tuitu_state(mode,fromA,fromB,False)
+                self.record_tuitu_state(mode, fromA, fromB, False)
         else:
             fromA, fromB = self.parse_tu_str(from_)
         nowA, nowB = fromA, fromB
         # Make List.
         lst = []
         while nowA < toA or (nowA == toA and nowB <= toB):
-            if mode==0:
+            if mode == 0:
                 lst.append(f"{nowA}-{nowB}-1")
             else:
                 lst.append(f"H{nowA}-{nowB}-1")
-            if len(lst)>=max_do:
+            if len(lst) >= max_do:
                 break
-            nowA,nowB = self.add_map_id(mode,nowA,nowB)
+            nowA, nowB = self.add_map_id(mode, nowA, nowB)
 
-        self.log.write_log("info",f"即将推图：{lst}")
-        self.shuatu_daily_ocr(lst,zero_star_action="do",lose_action="exit",win_without_threestar_is_lose=False,zhiyuan_mode=zhiyuan_mode,_use_daily=False,var=var)
+        self.log.write_log("info", f"即将推图：{lst}")
+        self.shuatu_daily_ocr(lst, zero_star_action="do", lose_action="exit", win_without_threestar_is_lose=False,
+                              zhiyuan_mode=zhiyuan_mode, _use_daily=False, team_order="1-1", var=var)
 
-
-    def jierentuitu_normal(self,max_tu,zhiyuan_mode=-1,max_do=2,var={}):
+    def jierentuitu_normal(self, max_tu, zhiyuan_mode=-1, max_do=2, var={}):
         if not self.check_shuatu():
             return
         if max_tu == "max":
             max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
-        self.jierentuitu(0,max_tu,zhiyuan_mode=zhiyuan_mode,max_do=max_do,var=var)
+        self.jierentuitu(0, max_tu, zhiyuan_mode=zhiyuan_mode, max_do=max_do, var=var)
 
     def jierentuitu_hard(self, max_tu, zhiyuan_mode=-1, max_do=2, var={}):
         if not self.check_shuatu():
@@ -389,7 +389,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 enter_activity()
             if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
                 break
-        for i in range(1,5):
+        for i in range(1, 5):
             result = self.zhandouzuobiao(*GetXYTD_activity(activity_name=activity_name, mode=mode, num=i),
                                          buy_tili=buy_tili, duiwu=-2,
                                          bianzu=-2, juqing_in_fight=1, end_mode=1)
@@ -490,7 +490,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 return D[nowB].x, D[nowB].y, 1, None
 
         def Record(nowA, nowB, last=True):
-            self.record_tuitu_state(mode,nowA,nowB,last)
+            self.record_tuitu_state(mode, nowA, nowB, last)
 
         var.setdefault("buy_tili", 0)
         if var["buy_tili"] < buy_tili:
@@ -766,7 +766,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.log.write_log("error", "box拍摄失败！")
         self.lock_home()
 
-    def zidongtuitu_normal(self, buy_tili=3, max_tu="max", var={},auto_upgrade = 1):
+    def zidongtuitu_normal(self, buy_tili=3, max_tu="max", var={}, auto_upgrade=1):
         """
         装备号自动推图，没达到三星自动强化。
         体力用光/强化后仍然失败 - 退出
@@ -786,10 +786,9 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         if max_tu == "max":
             max_tu = f"{MAX_MAP}-{max(NORMAL_COORD[MAX_MAP]['right'])}"
-        self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var,auto_upgrade=auto_upgrade)
+        self.tuitu(0, max_tu, buy_tili=buy_tili, force_three_star=True, var=var, auto_upgrade=auto_upgrade)
 
-
-    def zidongtuitu_hard(self, buy_tili=3, max_tu="max", var={},auto_upgrade = 1):
+    def zidongtuitu_hard(self, buy_tili=3, max_tu="max", var={}, auto_upgrade=1):
         """
         装备号自动推HARD图，没达到三星自动强化。
         体力用光/强化后仍然失败 - 退出
@@ -809,7 +808,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         if max_tu == "max":
             max_tu = f"{MAX_MAP}-3"
-        self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, var=var,auto_upgrade = auto_upgrade)
+        self.tuitu(1, max_tu, buy_tili=buy_tili, force_three_star=True, var=var, auto_upgrade=auto_upgrade)
 
     def shuatu_daily(self, tu_order: list, daily_tili=0, xianding=False, do_tuitu=False, var={}):
         """
@@ -835,6 +834,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         # 每日更新
         from core.utils import diffday
         ds = self.AR.get("daily_status", UDD["daily_status"])
+
         def new_day(ds):
             t1 = time.time()
             t2 = ds["last_time"]
@@ -1185,21 +1185,21 @@ class ShuatuMixin(ShuatuBaseMixin):
                             # 不能扫荡，没有次数
                             ds["hard"][f"{a}-{b}"] = 3
                             record_ds(ds)
-                            self.fclick(1,1)
+                            self.fclick(1, 1)
                             self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
                             return "continue"
                         max_cishu = min(cishu, max_cishu)
                     self._zdzb_info = ""  # 记录失败原因
                     # 扫荡券判断：最多还能扫荡几次
                     quan = M.get_saodangquan(sc)
-                    if quan<max_cishu:
+                    if quan < max_cishu:
                         self._zdzb_info = "noquan"
-                        if quan==0:
+                        if quan == 0:
                             self.log.write_log("warning", "已经没有扫荡券了！终止刷图。")
                             self.lock_home()
                             return "return"
                         self.log.write_log("warning", f"扫荡券可能不足，只能支持刷{quan}次了。")
-                        max_cishu=quan
+                        max_cishu = quan
 
                     # 体力判断：最多还能进行几次
                     left_tili = M.get_tili_left(sc)
@@ -1210,7 +1210,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                         # 体力不足：可以选择买体力倒是。
                         if ds["buy_tili"] < daily_tili:
                             # 可以！买体力！
-                            self.fclick(1,1)
+                            self.fclick(1, 1)
                             bought_tili = True
                             S.goto_buytili().OK().OK()
                             ds["buy_tili"] += 1
@@ -1237,7 +1237,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     max_cishu = min(max_cishu, max_cishu_tili)
                     # 扫荡
                     true_cishu = max_cishu
-                    M.set_saodang_cishu(true_cishu, one_tili=one_tili, left_tili=left_tili,sc=self.last_screen)
+                    M.set_saodang_cishu(true_cishu, one_tili=one_tili, left_tili=left_tili, sc=self.last_screen)
                     SD = M.goto_saodang()  # 扫荡确认
                     SD = SD.OK()  # 扫荡结果
                     # 记录
@@ -1247,8 +1247,8 @@ class ShuatuMixin(ShuatuBaseMixin):
                     MsgList.exit_all(xianding)  # 退出全部
                     # 扫荡结束
                     # 保险起见
-                    self.fclick(1,1)
-                    if true_cishu<t:
+                    self.fclick(1, 1)
+                    if true_cishu < t:
                         self.log.write_log("info", f"{m}{a}-{b}刷图剩余次数：{t - true_cishu}")
                         t -= true_cishu
                         raise ContinueNow("DOIT")
@@ -1256,17 +1256,17 @@ class ShuatuMixin(ShuatuBaseMixin):
                         self.log.write_log("info", f"{m}{a}-{b}刷图成功！")
                 else:
                     # 特判
-                    if stars==0:
+                    if stars == 0:
                         if zero_star_action == "exit":
-                            self.log.write_log("info",f"{m}{a}-{b}尚未通关，终止刷图！")
+                            self.log.write_log("info", f"{m}{a}-{b}尚未通关，终止刷图！")
                             self.lock_home()
                             return "return"
                         elif zero_star_action == "skip":
                             self.log.write_log("info", f"{m}{a}-{b}尚未通关，跳过刷图！")
                             for _ in range(6):
-                                self.click(1,1)
+                                self.click(1, 1)
                             return "continue"
-                    if stars<3:
+                    if stars < 3:
                         if not_three_star_action == "exit":
                             self.log.write_log("info", f"{m}{a}-{b}尚未三星，终止刷图！")
                             self.lock_home()
@@ -1274,7 +1274,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                         elif not_three_star_action == "skip":
                             self.log.write_log("info", f"{m}{a}-{b}尚未三星，跳过刷图！")
                             for _ in range(6):
-                                self.click(1,1)
+                                self.click(1, 1)
                             return "continue"
                     # 次数判断：对Hard图
                     if m == "H":
@@ -1291,7 +1291,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     left_tili = M.get_tili_left(sc)
                     one_tili = LoadPCRData().get_map_tili(mode, a, b)
                     bought_tili = False
-                    if left_tili<one_tili:
+                    if left_tili < one_tili:
                         # 体力不足：可以选择买体力倒是。
                         if ds["buy_tili"] < daily_tili:
                             # 可以！买体力！
@@ -1314,50 +1314,49 @@ class ShuatuMixin(ShuatuBaseMixin):
                     # 体力次数都够了，进入挑战
                     TZ = M.goto_tiaozhan()
                     # 设置支援
-                    if zhiyuan_mode==0:
+                    if zhiyuan_mode == 0:
                         TZ.select_team(team_order)  # 不使用支援
-                    elif abs(zhiyuan_mode)==1:
+                    elif abs(zhiyuan_mode) == 1:
                         # 仅使用好友支援。
-                        if zhiyuan_mode<0:
+                        if zhiyuan_mode < 0:
                             TZ.clear_team()
                         else:
                             TZ.select_team(team_order)
                         has_haoyou = TZ.get_zhiyuan(force_haoyou=True)
-                        if has_haoyou>0:
-                            self.log.write_log("info",f"似乎没有好友能借 【CODE={has_haoyou}】，结束推图！")
+                        if has_haoyou > 0:
+                            self.log.write_log("info", f"似乎没有好友能借 【CODE={has_haoyou}】，结束推图！")
                             self.lock_home()
                             return "return"
                         else:
                             self.log.write_log("info", "好友借人成功！")
-                    elif abs(zhiyuan_mode)==2:
+                    elif abs(zhiyuan_mode) == 2:
                         # 好友支援，否则不支援
-                        if zhiyuan_mode<0:
+                        if zhiyuan_mode < 0:
                             TZ.clear_team()
                         else:
                             TZ.select_team(team_order)
                         has_haoyou = TZ.get_zhiyuan(force_haoyou=True)
-                        if has_haoyou>0:
+                        if has_haoyou > 0:
                             self.log.write_log("info", f"似乎没有好友能借 【CODE={has_haoyou}】，该自己推图了！")
-                            if TZ.get_fight_current_member_count()<5:
+                            if TZ.get_fight_current_member_count() < 5:
                                 TZ.select_team(team_order)  # 重选一次
                         else:
-                            self.log.write_log("info","好友借人成功！")
-                    elif abs(zhiyuan_mode)==3:
+                            self.log.write_log("info", "好友借人成功！")
+                    elif abs(zhiyuan_mode) == 3:
                         # 任意支援
                         if zhiyuan_mode < 0:
                             TZ.clear_team()
                         else:
                             TZ.select_team(team_order)
                         code = TZ.get_zhiyuan()
-                        if code>0:
+                        if code > 0:
                             self.log.write_log("warning", f"借人出现奇怪的错误 【CODE={code}】，不知所措，自己推图！")
                             if TZ.get_fight_current_member_count() < 5:
                                 TZ.select_team(team_order)  # 重选一次
                         else:
-                            self.log.write_log("info","任意借人成功！")
+                            self.log.write_log("info", "任意借人成功！")
                     else:
                         raise Exception("zhiyuan_mode只能为-3~3！")
-
 
                     F = TZ.goto_fight()
                     During = F.get_during()
@@ -1386,7 +1385,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             break
                         if isinstance(out, During.FightingDialog):
                             out.skip()
-                        if isinstance(out,During.HaoYouMsg):
+                        if isinstance(out, During.HaoYouMsg):
                             out.exit_with_off()
                     if state["flag"] == "win":
                         # 记录
@@ -1450,7 +1449,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
             self.fclick(1, 1)
             cmd = DOIT()
-            self.fclick(1,1)
+            self.fclick(1, 1)
             if cmd == "continue":
                 continue
             elif cmd == "return":
@@ -1518,7 +1517,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 L += [f"{i + 1}-{j}"]
         self.meiriHtu(L, daily_tili, False, do_tuitu, var)
 
-    def xiaohaoHtu_ocr(self, daily_tili, xianding, do_tuitu, zhiyuan_mode=0,var={}):
+    def xiaohaoHtu_ocr(self, daily_tili, xianding, do_tuitu, zhiyuan_mode=0, var={}):
         """
         小号每日打H本OCR。
         一个接一个打。
@@ -1531,7 +1530,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         for i in range(MAX_MAP):
             for j in [1, 2, 3]:
                 L += [f"{i + 1}-{j}"]
-        self.meiriHtu_ocr(L, daily_tili, xianding, do_tuitu,zhiyuan_mode, var)
+        self.meiriHtu_ocr(L, daily_tili, xianding, do_tuitu, zhiyuan_mode, var)
 
     def shengjijuese(self, buy_tili=0, do_rank=True, do_shuatu=True):
         self.lock_home()
