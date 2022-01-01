@@ -257,16 +257,14 @@ NIUDAN_BTN = {
     "niudanjieguo_ok": p(481, 443, img="img/ui/ok_btn_2.bmp", at=(383, 423, 597, 462)),
     "putong_wancheng": p(img="img/niudan/putong_wancheng.bmp", at=(610, 320, 750, 450)),
     "niudan_shilian": p(872, 355),
-    "mianfeishilian": p(img="img/niudan/mianfeishilian.bmp",at=(829,322,909,384)),
-	"xiangqing": p(883, 279, img="img/niudan/xiangqing.bmp", at=(865, 268, 906, 286)),
-	"juesexiangqing": p(70, 445, img="img/niudan/juesexiangqing.bmp", at=(35, 433, 106, 458)),
-	"mianfeishilian": p(img='img/niudan/mianfeishilian.bmp', at=(819, 300, 919, 319)),
+    "juesexiangqing": p(70, 445, img="img/niudan/juesexiangqing.bmp", at=(35, 433, 106, 458)),
+    "mianfeishilian": p(img="img/niudan/mianfeishilian.bmp", at=(829, 322, 909, 384)),
     "xiangqing": p(883, 279, img="img/niudan/xiangqing.bmp", at=(865, 268, 906, 286)),
-    "again": p(588,441,img="img/niudan/again.bmp",at=(538,424,638,458)),
-    "jiaohuanliebiao": p(852,442,img="img/niudan/jiaohuanliebiao.bmp",at=(817,431,887,453)),
-    "juesejiaohuan": p(477,42,img="img/niudan/juesejiaohuan.bmp",at=(435,28,520,56)),
-    "weijiefang": p(454,253,img="img/niudan/weijiefang.bmp",at=(420,242,488,265)),
-    "new_char": p(454,253, img="img/niudan/new_char.bmp"), # 占位，位置不确定，一般直接引用
+    "again": p(588, 441, img="img/niudan/again.bmp", at=(538, 424, 638, 458)),
+    "jiaohuanliebiao": p(852, 442, img="img/niudan/jiaohuanliebiao.bmp", at=(817, 431, 887, 453)),
+    "juesejiaohuan": p(477, 42, img="img/niudan/juesejiaohuan.bmp", at=(435, 28, 520, 56)),
+    "weijiefang": p(454, 253, img="img/niudan/weijiefang.bmp", at=(420, 242, 488, 265)),
+    "new_char": p(454, 253, img="img/niudan/new_char.bmp"),  # 占位，位置不确定，一般直接引用
 
 }
 
@@ -461,11 +459,11 @@ FIGHT_BTN = {
     "duiwubianzu": p(img="img/fight/duiwubianzu.bmp", at=(433, 31, 520, 53)),
     "xuanguan_quxiao": p(665, 455, img="img/ui/quxiao2.bmp", at=(597, 440, 736, 470)),  # 选关界面（选择使用扫荡券）右下角的取消
     "upperright_stars":  # “挑战”页面右上角的星星位置
-        {
-            1: p(762, 35),
-            2: p(825, 35),
-            3: p(889, 35),
-        },
+    {
+        1: p(762, 35),
+        2: p(825, 35),
+        3: p(889, 35),
+    },
     "tiaozhan": p(839, 456, img="img/ui/tiaozhan.bmp", at=(788, 444, 889, 467)),
     "tiaozhan2": p(839, 453, img="img/ui/tiaozhan2.bmp", at=(814, 440, 865, 466)),
     # 应对周年庆UI变动，删除xiayibu2 的 at=(785, 477, 870, 505)
@@ -498,6 +496,12 @@ SHOP_BTN = {
     "pjjc_btn": p(543, 68, img="img/shop/pjjc_btn.bmp", at=(500, 56, 588, 78)),
     "clan_btn": p(640, 65, img="img/shop/clan_btn.bmp", at=(602, 57, 666, 79)),
     "nvshen_btn": p(829, 65, img="img/shop/nvshen_btn.bmp", at=(776, 57, 864, 77)),
+    "xianding_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
+    "shop_left_kkr": p(img="img/girl/kkr_middle.bmp", at=(78, 311, 179, 339)),
+    "lijiguanbi": p(527, 438),
+    "querenchongzhi": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
+    "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
 
 }
 
@@ -565,8 +569,8 @@ JUESE_BTN = {
     "tjqhcd": p(img="img/juese/tjqhcd.bmp", at=(414, 31, 541, 49)),
     "sort_down": p(744, 28, img="img/juese/sort_down.bmp", at=(753, 18, 798, 38)),
     "sort_up": p(755, 28, img="img/juese/sort_up.bmp", at=(756, 17, 798, 36)),
-    "sort_by": p(715,26,img="img/juese/sort_by.bmp",at=(703, 15, 726, 36)),
-    "fenlei": p(483,41,img="img/juese/fenlei.bmp",at=(458,29,508,54)),
+    "sort_by": p(715, 26, img="img/juese/sort_by.bmp", at=(703, 15, 726, 36)),
+    "fenlei": p(483, 41, img="img/juese/fenlei.bmp", at=(458, 29, 508, 54)),
     "sort_level": p(629, 27, img="img/juese/sort_level.bmp", at=(611, 16, 647, 36)),
     "tuijianguanqia": p(img="img/juese/tuijianguanqia.bmp", at=(280, 90, 327, 102)),
     "firstqianghua_stars": {
@@ -880,14 +884,7 @@ HARD_COORD = {
     },
 }
 
-SHOP_BTN = {
-    "xianding_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
-    "shop_left_kkr": p(img="img/girl/kkr_middle.bmp", at=(78, 311, 179, 339)),
-    "lijiguanbi": p(527, 438),
-    "querenchongzhi": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
-    "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
-    "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
-}
+
 MAOXIAN_BTN = {
     "bianzusheding": p(img="img/maoxian/bianzusheding.bmp", at=(373, 124, 590, 164)),
     "bianzusheding_ok": p(436, 162),
