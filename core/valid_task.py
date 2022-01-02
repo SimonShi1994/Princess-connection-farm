@@ -666,7 +666,7 @@ VALID_TASK = ValidTask() \
     .add("h3", "yaoqinghanghui", "邀请行会", "邀请指定成员进入行会",
          [TaskParam("inviteUID", str, "UID", "被邀请者的UID号")]) \
     .add("h4", "jieshouhanghui", "接受行会", "接受行会的邀请信息") \
-    .add("h5", "joinhanghui", "加入行会", "主动搜索并加入行会",
+    .add("h5", "joinhanghui", "加入行会【不推荐使用】，建议使用h8", "主动搜索并加入行会",
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h6", "dianzan", "行会点赞", "给指定人点赞",
          [TaskParam("sortflag", int, "给谁点赞", "只能为0或者1的值\n0：给副会长点赞。\n1：给战力最高者点赞。", 0)]) \
