@@ -239,7 +239,8 @@ class EnhanceMixin(ShuatuBaseMixin):
                     ezw = CharZhuanwu(self)
                     while True:
                         zws = ezw.get_zhuanwu_status()
-                        print('专武状态：%s' % zws)
+                        if debug:
+                            print('专武状态：%s' % zws)
                         if zws == 2:
                             ezw.wear_zhuanwu()
                             continue
