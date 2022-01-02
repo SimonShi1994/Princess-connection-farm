@@ -159,7 +159,15 @@ class HanghuiMixin(ToolsMixin):
         print('>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
         self.lock_home()
         # 进入
-        self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["zujianhanghui"])
+        self.click_btn(MAIN_BTN["hanghui"])
+        while True:
+            if self.is_exists(HANGHUI_BTN["zujianhanghui"]):
+                break
+            if self.is_exists(HANGHUI_BTN["chengyuanxinxi"]):
+                print("已加入行会")
+                return
+            self.fclick(689, 460)
+            time.sleep(0.5)
         # 过剧情
         self.lock_img(img=HANGHUI_BTN["zujianhanghui"], side_check=self.juqing_kkr)
         # 点击设定
