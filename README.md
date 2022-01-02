@@ -197,6 +197,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/01/02 By UVJkiNTQ
+
+- 修复加入行会 h8，并添加了 已在行会 的检测
+- 添加一些任务说明
+
 2022/01/01 By CyiceK
 
 - 修复更新程序未结束导致无法覆盖adb.exe问题

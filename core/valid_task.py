@@ -672,7 +672,7 @@ VALID_TASK = ValidTask() \
          [TaskParam("sortflag", int, "给谁点赞", "只能为0或者1的值\n0：给副会长点赞。\n1：给战力最高者点赞。", 0)]) \
     .add("h7", "zhiyuan", "支援设定", "按照战力排行设定支援（最高的）",
          [TaskParam("zhiyuanjieshu", bool, "支援结束", "是否按下支援结束按钮并收取Mana。", False)]) \
-    .add("h8", "join_hanghui", "加入行会", "主动搜索并加入行会（全识图版）",
+    .add("h8", "join_hanghui", "加入行会", "主动搜索并加入行会（全识图版），已在行会会跳过",
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h9", "faqijuanzeng", "发起捐赠", "自动发起装备捐赠，需要自行截装备图。",
          [TaskParam("equip_img", str, "装备图片相对路径", "装备图片自行截图。\n"
@@ -874,7 +874,7 @@ VALID_TASK = ValidTask() \
                     "six 表示六星已解放", "等级"),
           TaskParam("count", int, "前N个", "选择遍历角色数量", 15),
           TaskParam("charlist", list, "角色列表", "需要升级的角色",
-                    inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称")),
+                    inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称（如有括号，使用中文括号），例如 凯露（夏日）")),
           TaskParam("tozhuanwulv", int, "专武上限等级", "专武上限等级", 120)]) \
     .add("s9", "shuatu_daily_ocr", "OCR主线通用刷图推图", "使用OCR辅助的稳定的通用主线刷图/推图",
          [TaskParam("tu_order", list, "刷图顺序", "刷图/推图会依次按照该顺序",
@@ -919,7 +919,7 @@ VALID_TASK = ValidTask() \
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)])\
     .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。",) \
-    .add("t9", "buy_all_frag",  "碎片购买", "购买商店碎片",
+    .add("t9", "buy_all_frag",  "碎片购买", "根据角色名称使用代币购买商店碎片",
          [TaskParam("dxc_fraglist", list, "dxc碎片", "需要购买的碎片名称",
                     inputbox=ListInputer(desc="请输入地下城商店角色碎片，一行一个角色名称")),
           TaskParam("jjc_fraglist", list, "jjc碎片", "需要购买的碎片名称",
