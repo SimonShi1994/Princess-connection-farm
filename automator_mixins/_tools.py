@@ -315,8 +315,8 @@ class ToolsMixin(BaseMixin):
                 if self.is_exists(JUESE_BTN["equip_unselected"], threshold=0.9):
                     break
                 else:
-                    self.fclick(784, 76)
-                    time.sleep(1)
+                    self.click(784, 76)
+                    time.sleep(1.5)
                     continue
             time.sleep(2)
             # 获取名称
