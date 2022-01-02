@@ -308,7 +308,7 @@ HANGHUI_BTN = {
     # 角色战力”确认“蓝点
     "zhanli_juese": p(289, 141, img="img/hanghui/landian_true.bmp", at=(266, 118, 311, 164)),
     # 角色筛选条件界面确认
-    "hanghui_ok_juese": p(591, 476, img="img/hanghui/hanghui_ok.bmp", at=(553, 461, 629, 490)),
+    "hanghui_ok_juese": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
     # 角色选择1
     "juese1": p(102, 162),
     # 角色选择2
