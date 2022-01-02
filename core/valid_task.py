@@ -778,7 +778,8 @@ VALID_TASK = ValidTask() \
           TaskParam("base_info", bool, "账号基础信息", "是否获取账号基本信息（等级/mana/宝石）"),
           TaskParam("introduction_info", bool, "简介基础信息", "是否获取账号简介基本信息（等级/全角色战力/所属行会/玩家ID）"),
           TaskParam("props_info", bool, "道具基础信息", "是否获取账号道具基本信息（扫荡券）"),
-          TaskParam("out_xls", bool, "是否输出为表格", "是否获取账号道具基本信息（扫荡券）"),
+          TaskParam("char_info", bool, "持有角色信息", "是否获取持有三星及以上角色信息，较费时"),
+          TaskParam("out_xls", bool, "是否输出为表格", "是否输出为表格"),
           TaskParam("s_sent", bool, "是否用Server酱发送（暂无）", "每个账号识别结果会直接一个个推送到你手机上"),
           ]) \
     .add("t4", "maizhuangbei", "小号卖装备【别用】", "卖出数量前三的装备（如果数量大于1000)(无需OCR）",

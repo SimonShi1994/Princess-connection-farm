@@ -532,6 +532,7 @@ JUESE_BTN = {
     "skill_lv_selected": p(697, 74, img="img/juese/skill_lv_selected.bmp", at=(664, 63, 734, 87)),
     "skill_lv_unselected": p(697, 74, img="img/juese/skill_lv_unselected.bmp", at=(658, 64, 714, 86)),
     "tuijiancaidan": p(479, 42, img="img/juese/tuijiancaidan.bmp", at=(413, 31, 544, 53)),
+    "star": p(246, 334, img="img/juese/star.bmp",at=(236, 329, 256, 340)),
     "kaihua_unselected": p(782, 75, img="img/juese/kaihua_unselected.bmp", at=(749, 64, 819, 85)),
     "kaihua_selected": p(782, 75, img="img/juese/kaihua_selected.bmp", at=(752, 63, 818, 87)),
     "kaihua_max": p(img="img/juese/kaihua_max.bmp", at=(590, 319, 807, 339)),
