@@ -278,7 +278,7 @@ HANGHUI_BTN = {
     # 加入行会设定输入框
     "input_join": p(370, 145, img="img/hanghui/input_join.bmp", at=(303, 86, 458, 124)),
     # 搜索（加入行会蓝条）
-    "sousuo_join": p(587, 482, img="img/hanghui/sousuo_join.bmp", at=(480, 447, 702, 507)),
+    "sousuo_join": p(589, 478, img="img/hanghui/sousuo_join.bmp", at=(480, 447, 702, 507)),
     # 进入行会（从搜索界面）
     "in_join": p(890, 155, img="img/hanghui/in_join.bmp", at=(878, 126, 902, 185)),
     # 加入行会
@@ -341,7 +341,7 @@ HANGHUI_BTN = {
     # 开除
     "kaichu": p(647, 170, img="img/hanghui/kaichu.bmp", at=(627, 159, 668, 182)),
     # 行会确认（这里兼顾了两个不同的ok，一个正中，一个偏右）
-    "hanghui_ok": p(514, 371, img="img/hanghui/hanghui_ok.bmp", at=(243, 332, 708, 403)),
+    "hanghui_ok": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
     # 请求捐赠装备
     "qqjzzb": p(402, 430, img="img/hanghui/qqzjzb.bmp", at=(356, 422, 449, 441)),
     # 发起捐赠请求
@@ -459,11 +459,11 @@ FIGHT_BTN = {
     "duiwubianzu": p(img="img/fight/duiwubianzu.bmp", at=(433, 31, 520, 53)),
     "xuanguan_quxiao": p(665, 455, img="img/ui/quxiao2.bmp", at=(597, 440, 736, 470)),  # 选关界面（选择使用扫荡券）右下角的取消
     "upperright_stars":  # “挑战”页面右上角的星星位置
-    {
-        1: p(762, 35),
-        2: p(825, 35),
-        3: p(889, 35),
-    },
+        {
+            1: p(762, 35),
+            2: p(825, 35),
+            3: p(889, 35),
+        },
     "tiaozhan": p(839, 456, img="img/ui/tiaozhan.bmp", at=(788, 444, 889, 467)),
     "tiaozhan2": p(839, 453, img="img/ui/tiaozhan2.bmp", at=(814, 440, 865, 466)),
     # 应对周年庆UI变动，删除xiayibu2 的 at=(785, 477, 870, 505)
@@ -883,7 +883,6 @@ HARD_COORD = {
         3: p(775, 324),
     },
 }
-
 
 MAOXIAN_BTN = {
     "bianzusheding": p(img="img/maoxian/bianzusheding.bmp", at=(373, 124, 590, 164)),
