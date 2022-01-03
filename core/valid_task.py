@@ -772,15 +772,15 @@ VALID_TASK = ValidTask() \
                                          "xingshu：按照星级降序\n"
                                          "zhanli：按照战力降序\n"
                                          "dengji:按照等级降序", "xingshu")]) \
-    .add("t3", "get_base_info", "OCR获取账号信息【别用】", "识别会单独消耗时间，大约几分钟\n利用OCR获取等级/名字/行会名/mana/宝石/战力/"
+    .add("t3", "get_base_info", "OCR获取账号信息【识别精度较低】", "识别会单独消耗时间，大约几分钟\n利用OCR获取等级/名字/行会名/mana/宝石/战力/"
                                              "扫荡券，并输出成xls表格到xls文件夹\n注意：请不要在生成表格的期间打开表格！",
          [TaskParam("acc_nature", int, "XLS输出格式", "0：小号、农场号\n1：大号"),
           TaskParam("base_info", bool, "账号基础信息", "是否获取账号基本信息（等级/mana/宝石）"),
           TaskParam("introduction_info", bool, "简介基础信息", "是否获取账号简介基本信息（等级/全角色战力/所属行会/玩家ID）"),
           TaskParam("props_info", bool, "道具基础信息", "是否获取账号道具基本信息（扫荡券）"),
-          TaskParam("char_info", bool, "持有角色信息", "是否获取持有三星及以上角色信息，较费时"),
+          TaskParam("char_info", bool, "持有角色信息", "是否获取持有三星及以上角色信息，较费时", False),
           TaskParam("out_xls", bool, "是否输出为表格", "是否输出为表格"),
-          TaskParam("s_sent", bool, "是否用Server酱发送（暂无）", "每个账号识别结果会直接一个个推送到你手机上"),
+          TaskParam("s_sent", bool, "是否用Server酱发送（暂无）", "每个账号识别结果会直接一个个推送到你手机上", False),
           ]) \
     .add("t4", "maizhuangbei", "小号卖装备【别用】", "卖出数量前三的装备（如果数量大于1000)(无需OCR）",
          [TaskParam("day_interval", int, "清理间隔", "请输入清理间隔天数", 30)]) \
