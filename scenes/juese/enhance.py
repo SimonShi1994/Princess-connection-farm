@@ -106,7 +106,6 @@ class CharBase(PCRMsgBoxBase):
                 break
             else:
                 sc1 = sc2
-
         time.sleep(2)
 
 
@@ -127,16 +126,16 @@ class CharKaihua(PCRMsgBoxBase):
             sc2 = self.getscreen()
             p = self.img_equal(sc1, sc2, at=at)
             if p < 0.95:
+                while True:
+                    time.sleep(2)
+                    if self.is_exists(JUESE_BTN["equip_unselected"], threshold=0.9):
+                        break
+                    else:
+                        self.fclick(784, 76)
+                        continue
                 break
             else:
                 sc1 = sc2
-        time.sleep(1)
-        while True:
-            if self.is_exists(JUESE_BTN["equip_unselected"], threshold=0.9):
-                break
-            else:
-                self.fclick(784, 76)
-                continue
 
     def goto_base(self) -> "CharBase":
         return self.goto(CharBase, self.fun_click(JUESE_BTN["equip_unselected"]))

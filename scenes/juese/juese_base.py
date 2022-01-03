@@ -1,13 +1,6 @@
 import time
 from core.constant import JUESE_BTN, RANKS_DICT
 from scenes.scene_base import PCRMsgBoxBase
-from core.utils import make_it_as_juese_as_possible, checkNameValid
-import cv2
-from core.cv import UIMatcher
-import os
-import pathlib
-from core.pcr_config import debug
-import numpy as np
 
 
 class CharMenu(PCRMsgBoxBase):
@@ -59,7 +52,7 @@ class CharMenu(PCRMsgBoxBase):
         else:
             self.click_btn(JUESE_BTN["sort_by"], until_appear=JUESE_BTN["fenlei"])
             time.sleep(1)
-            self.click(cor_dict.get(cat)[0],cor_dict.get(cat)[1])
+            self.click(cor_dict.get(cat)[0], cor_dict.get(cat)[1])
             # 点击分类类型
             time.sleep(2)
             self.click(597, 477)
