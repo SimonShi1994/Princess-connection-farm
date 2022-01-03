@@ -20,7 +20,7 @@ class HaoYouGuanLi(SevenBTNMixin):
         super().__init__(*args, **kwargs)
         self.scene_name = "HaoYouGuanLi"
         self.initFC = None
-        self.feature = self.fun_feature_exist(HAOYOU_BTN["haoyouguanli_icon"])
+        self.feature = self.fun_feature_exist(HAOYOU_BTN["hualin"])
 
     def search_friend(self,friend_id:str):
         """

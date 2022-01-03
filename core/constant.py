@@ -63,7 +63,8 @@ HAOYOU_BTN = {
     "hysqqr": p(img="img/haoyou/hysqqr.bmp", at=(414, 28, 542, 56)),  # 战斗中的
     "hysqqr_gl": p(img="img/haoyou/hysqqr.bmp", at=(414, 132, 542, 160)),  # 好友管理中的
     "lvmaoicon": p(img="img/haoyou/lvmaoicon.bmp", at=(696, 197, 730, 234)),
-    "haoyouguanli_icon": p(img="img/haoyou/haoyouguanli_icon.bmp", at=(66, 17, 155, 44)),
+    "haoyouguanli_icon": p(img="img/haoyou/haoyouguanli_icon.bmp", at=(65, 16, 156, 43)),
+    "hualin": p(74,368,img="img/haoyou/hualin.bmp",at=(57,359,91,377)), # 好友管理中的
     "xunzhaohaoyou": p(722, 29),
     "sousuosheding": p(839, 90, img="img/haoyou/sousuosheding.bmp", at=(807, 79, 869, 97)),
     "wanjiaidsousuo": p(img="img/haoyou/wanjiaidsousuo.bmp", at=(422, 132, 533, 157)),
