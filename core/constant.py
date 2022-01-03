@@ -66,6 +66,7 @@ HAOYOU_BTN = {
     "haoyouguanli_icon": p(img="img/haoyou/haoyouguanli_icon.bmp", at=(65, 16, 156, 43)),
     "hualin": p(74,368,img="img/haoyou/hualin.bmp",at=(57,359,91,377)), # 好友管理中的
     "xunzhaohaoyou": p(722, 29),
+    "haoyouguanli_w": p(831,214,img="img/haoyou/haoyouguanli_w.bmp",at=(787,200,875,228)),
     "sousuosheding": p(839, 90, img="img/haoyou/sousuosheding.bmp", at=(807, 79, 869, 97)),
     "wanjiaidsousuo": p(img="img/haoyou/wanjiaidsousuo.bmp", at=(422, 132, 533, 157)),
     "jianjie": p(img="img/haoyou/jianjie.bmp", at=(454, 28, 499, 55)),
