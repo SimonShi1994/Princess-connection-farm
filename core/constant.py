@@ -502,6 +502,7 @@ SHOP_BTN = {
     "querenchongzhi": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
     "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
+    "jiechusuoyou": p(596, 437, img="img/shop/jiechusuoyou.bmp", at=(562, 427, 630, 447)),
 
 }
 

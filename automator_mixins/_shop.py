@@ -1,8 +1,18 @@
 import time
+from core.pcr_config import debug
+from core.constant import SHOP_BTN
 from automator_mixins._tools import ToolsMixin
 from DataCenter import LoadPCRData
 from core.cv import UIMatcher
 import cv2
+
+
+def get_frag_img_path(charname):
+    data = LoadPCRData()
+    a = str(data.get_id(name=charname))
+    b = str("3" + a[0:4])
+    imgpath = "img/shop/frags/" + b + ".bmp"
+    return imgpath
 
 
 class ShopMixin(ToolsMixin):
@@ -15,6 +25,8 @@ class ShopMixin(ToolsMixin):
             screen = self.getscreen()
         at = (789, 16, 918, 32)
         out = self.ocr_int(*at, screen_shot=screen)
+        if debug:
+            print("持有代币：%s" % out)
         return out
 
     def buy_press(self):
@@ -34,29 +46,29 @@ class ShopMixin(ToolsMixin):
             return
         drag_count = 0
         buy_count = 0
-        fc = [82, 150, 255]
-        bc = [231, 277, 222]
-        xcor = 705
-        ycor = 437
         while True:
 
             if drag_count > 3:
-                if self.check_color(fc, bc, xcor, ycor, color_type="rgb"):
+                if self.is_exists(SHOP_BTN["jiechusuoyou"]):
                     if buy_count > 0:
                         self.buy_press()
                         return
+                else: return
                 return
 
             for frag_ in fraglist[:]:
-                imgpath_ = self.get_frag_img_path(charname=frag_)
+                imgpath_ = get_frag_img_path(charname=frag_)
                 a = self.click_frag(imgpath=imgpath_)
                 if a == 0:
                     buy_count += 1
                     fraglist.remove(frag_)
                     print(fraglist)
                     if len(fraglist) == 0:
-                        self.buy_press()
-                        return
+                        if self.is_exists(SHOP_BTN["jiechusuoyou"]):
+                            self.buy_press()
+                            return
+                        else:
+                            return
                     else:
                         continue
                 else:
@@ -64,13 +76,6 @@ class ShopMixin(ToolsMixin):
                     time.sleep(3)
                     drag_count = drag_count + 1
                     continue
-
-    def get_frag_img_path(self, charname):
-        data = LoadPCRData()
-        a = str(data.get_id(name=charname))
-        b = str("3" + a[0:4])
-        imgpath = "img/shop/frags/" + b + ".bmp"
-        return imgpath
 
     def click_frag(self, imgpath):
         # 寻找单个碎片，确认碎片图片中心点
@@ -99,7 +104,6 @@ class ShopMixin(ToolsMixin):
         time.sleep(0.8)
         obj.up(584, 110)
 
-
     def buy_all_frag(self, dxc_fraglist=None, jjc_fraglist=None, pjjc_fraglist=None, clan_fraglist=None):
         self.lock_home()
         # 进入商店
@@ -107,7 +111,8 @@ class ShopMixin(ToolsMixin):
         time.sleep(2)
         # 地下城碎片
         self.click(359, 65)
-        time.sleep(2)
+        self.click_btn(SHOP_BTN["dxc_btn"], until_appear=SHOP_BTN["dxc_coin"])
+        time.sleep(1)
         coin = self.show_coin()
         a = len(dxc_fraglist)
         if coin < 800 * a:
@@ -118,6 +123,7 @@ class ShopMixin(ToolsMixin):
         time.sleep(2)
         # JJC碎片
         self.click(454, 65)
+        self.click_btn(SHOP_BTN["jjc_btn"], until_appear=SHOP_BTN["jjc_coin"])
         time.sleep(2)
         coin = self.show_coin()
         a = len(dxc_fraglist)
@@ -129,6 +135,7 @@ class ShopMixin(ToolsMixin):
         time.sleep(2)
         # PJJC碎片
         self.click(543, 65)
+        self.click_btn(SHOP_BTN["pjjc_btn"], until_appear=SHOP_BTN["pjjc_coin"])
         time.sleep(2)
         coin = self.show_coin()
         a = len(dxc_fraglist)
@@ -140,6 +147,7 @@ class ShopMixin(ToolsMixin):
         time.sleep(2)
         # 行会碎片
         self.click(640, 65)
+        self.click_btn(SHOP_BTN["clan_btn"], until_appear=SHOP_BTN["clan_coin"])
         time.sleep(2)
         coin = self.show_coin()
         a = len(dxc_fraglist)

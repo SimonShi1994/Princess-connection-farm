@@ -294,9 +294,6 @@ class ToolsMixin(BaseMixin):
             time.sleep(2)
             screen_shot = self.getscreen()
             acc_info_dict["saodangquan"] = self.get_daoju_number(screen_shot, must_int=False)
-        acc_info_list.append(acc_info_dict)
-        self.lock_home()
-
         if char_info:
             self.lock_home()
             self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
@@ -343,8 +340,8 @@ class ToolsMixin(BaseMixin):
 
             out = ','.join(charlist)
             acc_info_dict["charlist"] = out
-            acc_info_list.append(acc_info_dict)
-
+        acc_info_list.append(acc_info_dict)
+        self.lock_home()
             # 表格数据整理和转换
         if out_xls:
             # 将字典列表转换为DataFrame
