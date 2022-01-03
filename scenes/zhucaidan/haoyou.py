@@ -9,10 +9,10 @@ class HaoYouRoot(SevenBTNMixin):
         super().__init__(*args, **kwargs)
         self.scene_name = "HaoYouRoot"
         self.initFC = None
-        self.feature = self.fun_feature_exist(HAOYOU_BTN["lvmaoicon"])
+        self.feature = self.fun_feature_exist(HAOYOU_BTN["hualin_root"])
 
     def goto_haoyouguanli(self)->"HaoYouGuanLi":
-        return self.goto(HaoYouGuanLi,self.fun_click(791, 213))
+        return self.goto(HaoYouGuanLi, self.fun_click(HAOYOU_BTN["haoyouguanli_guanli"]))
 
 
 class HaoYouGuanLi(SevenBTNMixin):
@@ -20,7 +20,7 @@ class HaoYouGuanLi(SevenBTNMixin):
         super().__init__(*args, **kwargs)
         self.scene_name = "HaoYouGuanLi"
         self.initFC = None
-        self.feature = self.fun_feature_exist(HAOYOU_BTN["haoyouguanli_icon"])
+        self.feature = self.fun_feature_exist(HAOYOU_BTN["hualin_guanli"])
 
     def search_friend(self,friend_id:str):
         """
