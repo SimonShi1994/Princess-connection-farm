@@ -666,13 +666,13 @@ VALID_TASK = ValidTask() \
     .add("h3", "yaoqinghanghui", "邀请行会", "邀请指定成员进入行会",
          [TaskParam("inviteUID", str, "UID", "被邀请者的UID号")]) \
     .add("h4", "jieshouhanghui", "接受行会", "接受行会的邀请信息") \
-    .add("h5", "joinhanghui", "加入行会", "主动搜索并加入行会",
+    .add("h5", "joinhanghui", "加入行会【不推荐使用】，建议使用h8", "主动搜索并加入行会",
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h6", "dianzan", "行会点赞", "给指定人点赞",
          [TaskParam("sortflag", int, "给谁点赞", "只能为0或者1的值\n0：给副会长点赞。\n1：给战力最高者点赞。", 0)]) \
     .add("h7", "zhiyuan", "支援设定", "按照战力排行设定支援（最高的）",
          [TaskParam("zhiyuanjieshu", bool, "支援结束", "是否按下支援结束按钮并收取Mana。", False)]) \
-    .add("h8", "join_hanghui", "加入行会", "主动搜索并加入行会（全识图版）",
+    .add("h8", "join_hanghui", "加入行会", "主动搜索并加入行会（全识图版），已在行会会跳过",
          [TaskParam("clubname", str, "行会名称", "要加入行会的名称")]) \
     .add("h9", "faqijuanzeng", "发起捐赠", "自动发起装备捐赠，需要自行截装备图。",
          [TaskParam("equip_img", str, "装备图片相对路径", "装备图片自行截图。\n"
@@ -772,14 +772,15 @@ VALID_TASK = ValidTask() \
                                          "xingshu：按照星级降序\n"
                                          "zhanli：按照战力降序\n"
                                          "dengji:按照等级降序", "xingshu")]) \
-    .add("t3", "get_base_info", "OCR获取账号信息【别用】", "识别会单独消耗时间，大约几分钟\n利用OCR获取等级/名字/行会名/mana/宝石/战力/"
+    .add("t3", "get_base_info", "OCR获取账号信息【识别精度较低】", "识别会单独消耗时间，大约几分钟\n利用OCR获取等级/名字/行会名/mana/宝石/战力/"
                                              "扫荡券，并输出成xls表格到xls文件夹\n注意：请不要在生成表格的期间打开表格！",
          [TaskParam("acc_nature", int, "XLS输出格式", "0：小号、农场号\n1：大号"),
           TaskParam("base_info", bool, "账号基础信息", "是否获取账号基本信息（等级/mana/宝石）"),
           TaskParam("introduction_info", bool, "简介基础信息", "是否获取账号简介基本信息（等级/全角色战力/所属行会/玩家ID）"),
           TaskParam("props_info", bool, "道具基础信息", "是否获取账号道具基本信息（扫荡券）"),
-          TaskParam("out_xls", bool, "是否输出为表格", "是否获取账号道具基本信息（扫荡券）"),
-          TaskParam("s_sent", bool, "是否用Server酱发送（暂无）", "每个账号识别结果会直接一个个推送到你手机上"),
+          TaskParam("char_info", bool, "持有角色信息", "是否获取持有三星及以上角色信息，较费时", False),
+          TaskParam("out_xls", bool, "是否输出为表格", "是否输出为表格"),
+          TaskParam("s_sent", bool, "是否用Server酱发送（暂无）", "每个账号识别结果会直接一个个推送到你手机上", False),
           ]) \
     .add("t4", "maizhuangbei", "小号卖装备【别用】", "卖出数量前三的装备（如果数量大于1000)(无需OCR）",
          [TaskParam("day_interval", int, "清理间隔", "请输入清理间隔天数", 30)]) \
@@ -874,7 +875,7 @@ VALID_TASK = ValidTask() \
                     "six 表示六星已解放", "等级"),
           TaskParam("count", int, "前N个", "选择遍历角色数量", 15),
           TaskParam("charlist", list, "角色列表", "需要升级的角色",
-                    inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称")),
+                    inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称（如有括号，使用中文括号），例如 凯露（夏日）")),
           TaskParam("tozhuanwulv", int, "专武上限等级", "专武上限等级", 120)]) \
     .add("s9", "shuatu_daily_ocr", "OCR主线通用刷图推图", "使用OCR辅助的稳定的通用主线刷图/推图",
          [TaskParam("tu_order", list, "刷图顺序", "刷图/推图会依次按照该顺序",
@@ -919,7 +920,7 @@ VALID_TASK = ValidTask() \
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)])\
     .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。",) \
-    .add("t9", "buy_all_frag",  "碎片购买", "购买商店碎片",
+    .add("t9", "buy_all_frag",  "碎片购买", "根据角色名称使用代币购买商店碎片",
          [TaskParam("dxc_fraglist", list, "dxc碎片", "需要购买的碎片名称",
                     inputbox=ListInputer(desc="请输入地下城商店角色碎片，一行一个角色名称")),
           TaskParam("jjc_fraglist", list, "jjc碎片", "需要购买的碎片名称",

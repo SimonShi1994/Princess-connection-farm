@@ -6,7 +6,7 @@ from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.safe_u2 import timeout
 from core.utils import diffday
-from ._tools import ToolsMixin
+from automator_mixins._tools import ToolsMixin
 
 
 class HanghuiMixin(ToolsMixin):
@@ -159,21 +159,30 @@ class HanghuiMixin(ToolsMixin):
         print('>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
         self.lock_home()
         # 进入
-        self.click_btn(MAIN_BTN["hanghui"], elsedelay=1, until_appear=HANGHUI_BTN["zujianhanghui"])
+        self.click_btn(MAIN_BTN["hanghui"])
+        while True:
+            if self.is_exists(HANGHUI_BTN["zujianhanghui"]):
+                break
+            if self.is_exists(HANGHUI_BTN["chengyuanxinxi"]):
+                print("已加入行会")
+                return
+            self.fclick(689, 460)
+            time.sleep(0.5)
         # 过剧情
         self.lock_img(img=HANGHUI_BTN["zujianhanghui"], side_check=self.juqing_kkr)
         # 点击设定
         self.click_btn(HANGHUI_BTN["sheding_join"], elsedelay=1, until_appear=HANGHUI_BTN["input_join"])
         time.sleep(1)
-        while 1:
+        while True:
             # 点搜索文本框
             self.click_btn(HANGHUI_BTN["input_join"], until_disappear=None)
             time.sleep(1)
             self.d.send_keys(clubname)
             time.sleep(1)
-            self.click(1, 1)  # 点1,1干嘛
+            self.fclick(470, 80)
             # 此处必须为0.99
-            if self.is_exists(HANGHUI_BTN["sousuo_join"], threshold=0.99):
+            time.sleep(1)
+            if self.is_exists(HANGHUI_BTN["sousuo_join"], threshold=0.98, method="sq"):
                 # 搜索按钮点亮，点击搜索
                 self.click_btn(HANGHUI_BTN["sousuo_join"], elsedelay=1)
                 break

@@ -23,6 +23,8 @@ from core.usercentre import get_all_group
 from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, make_it_as_juese_as_possible, \
     get_time_str, checkNameValid
 from ._base import BaseMixin
+from scenes.juese.enhance import CharKaihua
+from scenes.juese.juese_base import CharMenu
 
 
 class ToolsMixin(BaseMixin):
@@ -208,8 +210,8 @@ class ToolsMixin(BaseMixin):
         set_last_record()
         self.lock_home()
 
-    def get_base_info(self, base_info=False, introduction_info=False, props_info=False, out_xls=False, s_sent=False,
-                      acc_nature=0):
+    def get_base_info(self, base_info=False, introduction_info=False, props_info=False, char_info=False, out_xls=False,
+                      s_sent=False, acc_nature=0):
         """
         账号基本信息获取
         By:CyiceK
@@ -220,6 +222,7 @@ class ToolsMixin(BaseMixin):
         :param base_info: 是否读取主页面的基本信息
         :param introduction_info: 是否读取介绍的基本信息
         :param props_info: 是否读取道具的基本信息-扫荡券
+        :param char_info: 是否记录三星角色
         :return: acc_info_dict
         """
         # 笨方法转化时间戳"%Y-%m-%d-%H-%M-%S"
@@ -242,6 +245,7 @@ class ToolsMixin(BaseMixin):
             "jianjie_id": 'None',
             "zhanghao": self.account,
             "group": ','.join(get_all_group(self.account)),
+            "charlist": 'None',
             "saodangquan": 'None',
             "date": date,
         }
@@ -290,15 +294,61 @@ class ToolsMixin(BaseMixin):
             time.sleep(2)
             screen_shot = self.getscreen()
             acc_info_dict["saodangquan"] = self.get_daoju_number(screen_shot, must_int=False)
+        if char_info:
+            self.lock_home()
+            self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
+            time.sleep(5)
+            self.fclick(1, 1)
+            # 进入角色选择
+            cm = CharMenu(self)
+            cm.sort_by("star")
+            time.sleep(2)
+            cm.sort_down()
+            time.sleep(1)
+            cm.click_first()
+            self.fclick(1, 1)
+            time.sleep(2)
+            while True:
+                if self.is_exists(JUESE_BTN["equip_unselected"], threshold=0.9):
+                    break
+                else:
+                    self.click(784, 76)
+                    time.sleep(1.5)
+                    continue
+            time.sleep(2)
+            # 获取名称
+            ekh = CharKaihua(self)
+            charlist_ = []
+            while True:
+                a = self.img_where_all(JUESE_BTN["star"], at=(132, 311, 361, 359))
+                if self.is_exists(JUESE_BTN["star"], at=(209, 314, 359, 356)) or len(a) == 0:
+                    charname = ekh.get_name()
+                    if debug:
+                        print(charname)
+                    charlist_.append(charname)
+                    ekh.next_char()
+                    if self.is_exists(JUESE_BTN["equip_unselected"], threshold=0.9):
+                        continue
+                    else:
+                        self.fclick(784, 76)
+                        self.fclick(784, 76)
+                        continue
+                else:
+                    if debug:
+                        print("没有三星了")
+                        break
+
+            out = ','.join(charlist_)
+            acc_info_dict["charlist"] = out
         acc_info_list.append(acc_info_dict)
         self.lock_home()
-        # 表格数据整理和转换
+            # 表格数据整理和转换
         if out_xls:
             # 将字典列表转换为DataFrame
             pf = pd.DataFrame(list(acc_info_list))
             # 指定字段顺序
             order = ['dengji', 'jianjie_name', 'tili', 'mana', 'baoshi', 'jianjie_zhanli',
-                     'jianjie_hanghui', 'jianjie_id', 'zhanghao', 'group', 'saodangquan', 'date']
+                     'jianjie_hanghui', 'jianjie_id', 'zhanghao', 'group', 'charlist', 'saodangquan', 'date']
             pf = pf[order]
             # 将列名替换为中文
             columns_map = {
@@ -312,6 +362,7 @@ class ToolsMixin(BaseMixin):
                 'jianjie_id': '玩家ID',
                 'zhanghao': '账号',
                 'group': '所在组',
+                'charlist': '持有角色',
                 'saodangquan': '所拥有的扫荡券',
                 'date': '录入日期',
             }

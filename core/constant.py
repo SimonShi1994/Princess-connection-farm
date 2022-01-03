@@ -278,7 +278,7 @@ HANGHUI_BTN = {
     # 加入行会设定输入框
     "input_join": p(370, 145, img="img/hanghui/input_join.bmp", at=(303, 86, 458, 124)),
     # 搜索（加入行会蓝条）
-    "sousuo_join": p(587, 482, img="img/hanghui/sousuo_join.bmp", at=(480, 447, 702, 507)),
+    "sousuo_join": p(589, 478, img="img/hanghui/sousuo_join.bmp", at=(480, 447, 702, 507)),
     # 进入行会（从搜索界面）
     "in_join": p(890, 155, img="img/hanghui/in_join.bmp", at=(878, 126, 902, 185)),
     # 加入行会
@@ -308,7 +308,7 @@ HANGHUI_BTN = {
     # 角色战力”确认“蓝点
     "zhanli_juese": p(289, 141, img="img/hanghui/landian_true.bmp", at=(266, 118, 311, 164)),
     # 角色筛选条件界面确认
-    "hanghui_ok_juese": p(591, 476, img="img/hanghui/hanghui_ok.bmp", at=(553, 461, 629, 490)),
+    "hanghui_ok_juese": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
     # 角色选择1
     "juese1": p(102, 162),
     # 角色选择2
@@ -341,7 +341,7 @@ HANGHUI_BTN = {
     # 开除
     "kaichu": p(647, 170, img="img/hanghui/kaichu.bmp", at=(627, 159, 668, 182)),
     # 行会确认（这里兼顾了两个不同的ok，一个正中，一个偏右）
-    "hanghui_ok": p(514, 371, img="img/hanghui/hanghui_ok.bmp", at=(243, 332, 708, 403)),
+    "hanghui_ok": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
     # 请求捐赠装备
     "qqjzzb": p(402, 430, img="img/hanghui/qqzjzb.bmp", at=(356, 422, 449, 441)),
     # 发起捐赠请求
@@ -459,11 +459,11 @@ FIGHT_BTN = {
     "duiwubianzu": p(img="img/fight/duiwubianzu.bmp", at=(433, 31, 520, 53)),
     "xuanguan_quxiao": p(665, 455, img="img/ui/quxiao2.bmp", at=(597, 440, 736, 470)),  # 选关界面（选择使用扫荡券）右下角的取消
     "upperright_stars":  # “挑战”页面右上角的星星位置
-    {
-        1: p(762, 35),
-        2: p(825, 35),
-        3: p(889, 35),
-    },
+        {
+            1: p(762, 35),
+            2: p(825, 35),
+            3: p(889, 35),
+        },
     "tiaozhan": p(839, 456, img="img/ui/tiaozhan.bmp", at=(788, 444, 889, 467)),
     "tiaozhan2": p(839, 453, img="img/ui/tiaozhan2.bmp", at=(814, 440, 865, 466)),
     # 应对周年庆UI变动，删除xiayibu2 的 at=(785, 477, 870, 505)
@@ -502,6 +502,7 @@ SHOP_BTN = {
     "querenchongzhi": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
     "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
+    "jiechusuoyou": p(596, 437, img="img/shop/jiechusuoyou.bmp", at=(562, 427, 630, 447)),
 
 }
 
@@ -532,6 +533,7 @@ JUESE_BTN = {
     "skill_lv_selected": p(697, 74, img="img/juese/skill_lv_selected.bmp", at=(664, 63, 734, 87)),
     "skill_lv_unselected": p(697, 74, img="img/juese/skill_lv_unselected.bmp", at=(658, 64, 714, 86)),
     "tuijiancaidan": p(479, 42, img="img/juese/tuijiancaidan.bmp", at=(413, 31, 544, 53)),
+    "star": p(246, 334, img="img/juese/star.bmp",at=(236, 329, 256, 340)),
     "kaihua_unselected": p(782, 75, img="img/juese/kaihua_unselected.bmp", at=(749, 64, 819, 85)),
     "kaihua_selected": p(782, 75, img="img/juese/kaihua_selected.bmp", at=(752, 63, 818, 87)),
     "kaihua_max": p(img="img/juese/kaihua_max.bmp", at=(590, 319, 807, 339)),
@@ -883,7 +885,6 @@ HARD_COORD = {
         3: p(775, 324),
     },
 }
-
 
 MAOXIAN_BTN = {
     "bianzusheding": p(img="img/maoxian/bianzusheding.bmp", at=(373, 124, 590, 164)),
