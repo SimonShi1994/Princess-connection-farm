@@ -245,7 +245,7 @@ class ToolsMixin(BaseMixin):
             "jianjie_id": 'None',
             "zhanghao": self.account,
             "group": ','.join(get_all_group(self.account)),
-            "charname": 'None',
+            "charlist": 'None',
             "saodangquan": 'None',
             "date": date,
         }
@@ -318,14 +318,14 @@ class ToolsMixin(BaseMixin):
             time.sleep(2)
             # 获取名称
             ekh = CharKaihua(self)
-            charlist = []
+            charlist_ = []
             while True:
                 a = self.img_where_all(JUESE_BTN["star"], at=(132, 311, 361, 359))
                 if self.is_exists(JUESE_BTN["star"], at=(209, 314, 359, 356)) or len(a) == 0:
                     charname = ekh.get_name()
                     if debug:
                         print(charname)
-                    charlist.append(charname)
+                    charlist_.append(charname)
                     ekh.next_char()
                     if self.is_exists(JUESE_BTN["equip_unselected"], threshold=0.9):
                         continue
@@ -338,7 +338,7 @@ class ToolsMixin(BaseMixin):
                         print("没有三星了")
                         break
 
-            out = ','.join(charlist)
+            out = ','.join(charlist_)
             acc_info_dict["charlist"] = out
         acc_info_list.append(acc_info_dict)
         self.lock_home()
@@ -348,7 +348,7 @@ class ToolsMixin(BaseMixin):
             pf = pd.DataFrame(list(acc_info_list))
             # 指定字段顺序
             order = ['dengji', 'jianjie_name', 'tili', 'mana', 'baoshi', 'jianjie_zhanli',
-                     'jianjie_hanghui', 'jianjie_id', 'zhanghao', 'group', 'saodangquan', 'charlist', 'date']
+                     'jianjie_hanghui', 'jianjie_id', 'zhanghao', 'group', 'charlist', 'saodangquan', 'date']
             pf = pf[order]
             # 将列名替换为中文
             columns_map = {
@@ -362,8 +362,8 @@ class ToolsMixin(BaseMixin):
                 'jianjie_id': '玩家ID',
                 'zhanghao': '账号',
                 'group': '所在组',
-                'saodangquan': '所拥有的扫荡券',
                 'charlist': '持有角色',
+                'saodangquan': '所拥有的扫荡券',
                 'date': '录入日期',
             }
             pf.rename(columns=columns_map, inplace=True)
