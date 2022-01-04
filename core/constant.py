@@ -64,9 +64,10 @@ HAOYOU_BTN = {
     "hysqqr_gl": p(img="img/haoyou/hysqqr.bmp", at=(414, 132, 542, 160)),  # 好友管理中的
     "lvmaoicon": p(img="img/haoyou/lvmaoicon.bmp", at=(696, 197, 730, 234)),
     "haoyouguanli_icon": p(img="img/haoyou/haoyouguanli_icon.bmp", at=(65, 16, 156, 43)),
-    "hualin": p(74,368,img="img/haoyou/hualin.bmp",at=(57,359,91,377)), # 好友管理中的
+    "hualin_guanli": p(74, 368, img="img/haoyou/hualin.bmp", at=(57, 359, 91, 377)),  # 好友管理中的
     "xunzhaohaoyou": p(722, 29),
-    "haoyouguanli_w": p(831,214,img="img/haoyou/haoyouguanli_w.bmp",at=(787,200,875,228)),
+    "hualin_root": p(109, 368, img="img/haoyou/hualin_0.bmp", at=(92, 359, 127, 377)),  # 好友ROOT中的
+    "haoyouguanli_w": p(831, 214, img="img/haoyou/haoyouguanli_w.bmp", at=(787, 200, 875, 228)),
     "sousuosheding": p(839, 90, img="img/haoyou/sousuosheding.bmp", at=(807, 79, 869, 97)),
     "wanjiaidsousuo": p(img="img/haoyou/wanjiaidsousuo.bmp", at=(422, 132, 533, 157)),
     "jianjie": p(img="img/haoyou/jianjie.bmp", at=(454, 28, 499, 55)),
@@ -535,7 +536,7 @@ JUESE_BTN = {
     "skill_lv_selected": p(697, 74, img="img/juese/skill_lv_selected.bmp", at=(664, 63, 734, 87)),
     "skill_lv_unselected": p(697, 74, img="img/juese/skill_lv_unselected.bmp", at=(658, 64, 714, 86)),
     "tuijiancaidan": p(479, 42, img="img/juese/tuijiancaidan.bmp", at=(413, 31, 544, 53)),
-    "star": p(246, 334, img="img/juese/star.bmp",at=(236, 329, 256, 340)),
+    "star": p(246, 334, img="img/juese/star.bmp", at=(236, 329, 256, 340)),
     "kaihua_unselected": p(782, 75, img="img/juese/kaihua_unselected.bmp", at=(749, 64, 819, 85)),
     "kaihua_selected": p(782, 75, img="img/juese/kaihua_selected.bmp", at=(752, 63, 818, 87)),
     "kaihua_max": p(img="img/juese/kaihua_max.bmp", at=(590, 319, 807, 339)),

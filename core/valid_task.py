@@ -872,7 +872,7 @@ VALID_TASK = ValidTask() \
                     "love 表示亲密度\n"       
                     "zhuanwu 表示专武\n"
                     "fav 表示我的最爱\n"
-                    "six 表示六星已解放", "等级"),
+                    "six 表示六星已解放", "level"),
           TaskParam("count", int, "前N个", "选择遍历角色数量", 15),
           TaskParam("charlist", list, "角色列表", "需要升级的角色",
                     inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称（如有括号，使用中文括号），例如 凯露（夏日）")),
