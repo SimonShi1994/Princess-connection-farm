@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20220108
+# Princess connection 公主连结农场脚本v2.7.20220110
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 祝大家2022，新年快乐！
@@ -197,6 +197,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/01/10 By TheAutumnOfRice
+
+- initFC相关内核优化，支持给场景加sidecheck了
+- 修复JJC/PJJC卡编组设定的BUG
+- 修复调查卡剧情问题
 
 2022/01/08 By UVJkiNTQ
 

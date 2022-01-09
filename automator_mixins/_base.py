@@ -18,7 +18,7 @@ import uiautomator2 as u2
 from core import log_handler
 from core.MoveRecord import MoveSkipException
 from core.MoveRecord import moveset
-from core.constant import PCRelement, MAIN_BTN, JUQING_BTN, DXC_ELEMENT
+from core.constant import PCRelement, MAIN_BTN, JUQING_BTN, DXC_ELEMENT, MAOXIAN_BTN
 from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
 from core.log_handler import pcr_log
@@ -174,6 +174,7 @@ class BaseMixin:
 
         self.ES = ExceptionSet(self)
         self.headers_group = {}
+        self.default_header = True
         # self.register_basic_ES()
 
     def register_basic_ES(self):
@@ -385,11 +386,36 @@ class BaseMixin:
         if group_name in self.headers_group:
             del self.headers_group[group_name]
 
-    def getFC(self, header=True):
+    def noFC(self):
+        parent = self
+
+        class _no_FC:
+            def __init__(self):
+                self.original_state = parent.default_header
+
+            def __enter__(self):
+                parent.default_header = False
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                parent.default_header = self.original_state
+
+        return _no_FC()
+
+    def getFC(self, header=None):
         """
         获得包含自身实例及异常集的FunctionChecker
+        默认值为self.default_header，也就是True。
+        设置header=False时，并不会执行那些头。
+        你可以使用noFC来屏蔽某段语句的header
+        ！！
+        当你需要添加一个"头"的时候，header必须设置为False！
+        不然就会出现头调用头调用头调用头……的情况。
+        设置为False时，当检测到头对应的Checker为真，则DoFunction中所有的操作会屏蔽这个头，所以不用担心爆栈的情况。
+        更多关于什么是头，见pcr_checker.ElementChecker的注释部分。
         """
         FC = ElementChecker(self)
+        if header is None:
+            header = self.default_header
         if header:
             FC.add(Checker(self._move_check, name="_move_check"), clear=True)
             FC.bind_ES(self.ES, name="ExceptionSet")
@@ -1271,6 +1297,13 @@ class BaseMixin:
             self.lock_no_img('img/kekeluo.bmp', elseclick=[(1, 1)], at=(181, 388, 384, 451))
             return True
         return False
+
+    @DEBUG_RECORD
+    def bianzusheding_initFC(self):
+        def exit_bianzusheding():
+            self.click(476, 437)
+
+        return self.getFC(False).exist(MAOXIAN_BTN["bianzusheding"], exit_bianzusheding)
 
     @DEBUG_RECORD
     def right_kkr(self, screen=None):

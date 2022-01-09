@@ -154,7 +154,29 @@ if TYPE_CHECKING:
     from automator_mixins._base import BaseMixin
 
 class Checker:
-    def __init__(self, fun: Callable[[Any], bool], vardict: Optional[Dict[str, Any]] = None, funvar=None, name=None):
+    """
+    一个指令检查类：会执行fun函数的内容，并且返回一个值为真或假。
+    Example 1：
+        fun：截图->检查图片上有无可可萝  返回值：若有，则返回True；若无，则返回False
+        （这个例子被广泛应用在大多数场合）
+    当然也可以在fun里面进行一些交互操作，如：
+    Example 2：
+        fun：循环截图，如果检测到可可萝则点掉他，直到可可萝消失。 如果曾经检查到可可萝，返回True，否则返回False。
+        （这个可以制作sidecheck)
+    当然也可以制作返回制永远为True的，如：
+    Example 3：
+        fun：检查app是否启动，若未启动，raise一个错误。 返回：永远为True
+        （可以用于触发强制重启）
+    """
+
+    def __init__(self, fun: Callable[[Any], bool], vardict: Optional[Dict[str, Any]] = None,
+                 funvar: Optional[List[str]] = None, name=None):
+        """
+        :param fun:  返回bool的检查函数
+        :param vardict:   fun参数的default value dict
+        :param funvar:   指定fun函数需要额外给出的参数，若None，则用inspect自动检查
+        :param name: 调试用，命名这个Checker
+        """
         self.name = name
         if vardict is None:
             vardict = {}
@@ -203,10 +225,19 @@ class Checker:
         return self._fun(**p)
 
     def __call__(self, vardict: Optional[Dict] = None) -> bool:
+        """
+        执行这条Checker。
+        :param vardict: 环境参数，额外传入fun的参数。
+        :return: True或False
+        """
         return self._run(vardict)
 
     @staticmethod
     def true(name=None):
+        """
+        恒为真的Checker
+        """
+
         def f(*args, **kwargs):
             return True
 
@@ -241,8 +272,38 @@ class LockMaxRetryError(LockError):
 
 
 class FunctionChecker:
+    """
+    简称FC，一系列Checker按照顺序执行，并且根据Checker的返回制进行多种操作。
+    设定好一系列”当……就……“的指令集之后，可以用self.run来执行整个指令，并获得一个返回制。
+    或执行self.lock，在目标函数条件不满足时，反复执行self.run
+
+
+    -- vardict
+    FC自带vardict，是每个子Checker公用的存储空间。
+    Example:
+        截图后放入vardict，此后所有后续的Checker可以公用同一张截图避免重复截图。
+
+    -- checkers
+    一个列表：
+        List[Tuple[Checker, DoFunction]]
+    执行self.run时，按顺序依次执行各个Checker，若Checker为真（或self.target_flag)，则执行对应的DoFunction。
+    self.run的返回值见self.add函数中的rv参数。
+
+    -- last_time
+    这个FC开始被执行的起始时间戳。可用于计时。
+    Example：
+        30s内检测是否存在某按钮，若30s后仍然没有检测到按钮，则爆超时错误。
+    注：add函数中有特殊的clear参数可以重置时间戳，方便为暂停等功能做铺垫。
+
+    -- target_flag
+    在谁做什么的逻辑中，通常默认Checker为真，则做dofunction，所以target_flag默认为True；
+    但你也可以手动调整target_flag为False，甚至其它值，如果你一定要写返回制不为布尔类型的Checker的话。
+
+    """
+
     def __init__(self):
         self.vardict = {}  # 公共存储空间
+        self.fcdict = {}  # 私人存储空间，仅供FC的内部函数使用
         self.checkers = []  # Checkers序列
         self.last_time = 0  # 起始时间戳
         self.target_flag = True  # 需要Chechker为真
@@ -252,6 +313,15 @@ class FunctionChecker:
         return self
 
     def update_var(self, fun, varname, name="update_var", *args, **kwargs):
+        """
+        添加一个更新公共存储的命令。
+        执行fun(*args,**kwargs)，fun函数会有一个返回制，用该返回值来更新self.vardict[varname]。
+
+        Checker： 恒真
+        DoFunction： 用fun的返回制更新self.vardict
+        return self
+        """
+
         # 用fun的返回值更新vardict
         def f():
             self.vardict[varname] = fun(*args, **kwargs)
@@ -261,6 +331,15 @@ class FunctionChecker:
 
     def add(self, checker: Union[Checker, bool], dofunction: Optional[Callable] = None, rv=None, raise_=None,
             clear=False):
+        """
+        添加一个If Checker==self.target_flag Then dofunction的命令
+        :param checker: 进行检测的Checker
+        :param dofunction: Checker为真（self.target_flag)时，执行的函数（无传入参数）
+        :param rv: 非None时，若Checker为真，则终止self.run，并返回rv
+        :param raise_: 非None时，raise raise_
+        :param clear: 非None时，重置内部时间戳。
+        :return: self
+        """
         # 增加一个checker-dofunction
         assert rv is None or raise_ is None, "返回值和弹出异常只能存在一个！"
 
@@ -279,11 +358,32 @@ class FunctionChecker:
         return self
 
     def add_process(self, dofunction: Callable, name="process"):
+        """
+        添加一个过程，不做检查，直接执行dofunction
+        Checker: 恒真
+        DoFunction: 指定的dofunction
+        :return: self
+        """
         self.checkers += [(Checker.true(name), dofunction)]
         return self
 
     def add_intervalprocess(self, dofunction: Callable, retry=None, interval=1, name="interval_process",
                             raise_retry=False, ):
+        """
+        每过一段时间，执行一次dofunction。
+        Example:
+            被广泛应用在lockimg等函数中，由于对模拟器的操作有延迟，通常需要每过一段时间试者点击模拟器。
+            但是在这段时间需要持续观测模拟器的变化。若模拟器长时间没有变化，则需要再次尝试点击模拟器。
+            此时，检测操作为正常的Checker，但是点击操作需要用add_intervalprocess完成。
+
+        :param dofunction:  执行的函数。
+        :param retry: 最多重试几次。设为None时，不进行判断；设为整数时，当dofunction即将执行第retry+1次（但还未执行）时，
+                若raise_retry，则报LockMaxRetryError错，否则只是让self.lock返回False
+        :param interval: 重试间隔（秒）
+        :param name: 随便起名字
+        :param raise_retry: 见retry
+        :return:
+        """
         # 每隔interval执行一次的process，第一次不需等待
         # 重复执行次数（包括第一次）达到retry后，弹出错误
         # retry=0等价于retry=None （历史遗留原因）。
@@ -318,6 +418,14 @@ class FunctionChecker:
         return self
 
     def run(self):
+        """
+        执行Checker-Dofunction指令集。
+        :return:
+            若使用add设置了rv参数，返回对应的rv。
+            若触发ReturnValue(rv)异常，返回rv。
+            若interval_process超出重试次数且raise_retry为False，返回False。
+            否则，返回None
+        """
         # 跑Checker
         try:
             for c, f in self.checkers:
@@ -333,6 +441,20 @@ class FunctionChecker:
         return None
 
     def lock(self, delay=0.5, timeout=None, until=None, is_raise=True):
+        """
+        循环执行全部的Checker-Dofunction指令集，直到对应返回值出现。
+        返回值可以由add的rv参数产生，或任何ReturnValue(rv)的异常产生。
+        :param delay:  每遍循环之间的间隔。
+        :param timeout:
+            每一遍指令跑完后，检查当前时间和记录的时间戳之差，若超过timeout，则报错LockTimeoutError。
+            若timeout设置为0， 则不进行超时检查。
+            若timeout设置为None，则用config中的lockimg_timeout作为值。
+        :param until:
+            若until未设置，只要某次run产生了返回值（见self.run)，则终止lock，并返回该返回制。
+            若until设置非None，则必须要某次run产生的返回制和until相同，才终止。
+        :param is_raise: timeout超时时是否报错，若设置为False，则不报错，只返回None。
+        :return: 返回值或None
+        """
         # 锁Checker
         # 直到检测到ReturnValue，或者当until设置时，ReturnValue满足until条件
         self.last_time = time.time()
@@ -369,6 +491,13 @@ class FunctionChecker:
 
 
 class ExceptionSet:
+    """
+    异常集由很多FC组成。
+    每次异常集运行，都依次把各个FC运行一遍，仅此而已。
+    通过register函数可以在异常集中注册新的FC。
+    支持with，使得可以在一段中应用异常集。
+    """
+
     def __init__(self, a: "BaseMixin"):
         self._a = a
         self.FCs = collections.OrderedDict()
@@ -403,6 +532,24 @@ class ExceptionSet:
 
 
 class ElementChecker(FunctionChecker):
+    """
+    基于FC定制的，专为PCR打造的ElementChecker。
+    已经制作好了一大堆现成的指令集可以方便调用。
+
+    -- header：“头”
+        正常来说，你的每一条指令都会被嵌入“头”：
+        Example：
+            你以为的click_btn： 截图->检测按钮存在->点击按钮
+            实际上的click_btn：
+                头[截图->点掉可可萝Checker->等待Loading结束Checker] -> click_btn
+        所以插入“头”可以很方便地进行全局的检测操作。
+        这种含有头的FC，会被标记为header=True
+        而不含有头的FC，header=False
+        为了防止头套头的循环爆栈事件发生，加了这个header方便区分。
+        更多详见Automator.getFC(header)函数。
+
+    """
+
     def __init__(self, a: "BaseMixin"):
         super().__init__()
         self._a = a
@@ -461,11 +608,22 @@ class ElementChecker(FunctionChecker):
                  clear=clear)
         return self
 
-    def add_sidecheck(self, sidecheck, dofunction=None, rv=None, raise_=None, clear=True):
-        def named_sidecheck(screen):
-            return sidecheck(screen)
+    def add_sidecheck(self, sidecheck, dofunction=None, rv=None, raise_=None, clear=True, name="SideCheck"):
+        my_id = random.random()
+        self.fcdict[my_id] = False
 
-        return self.add(Checker(named_sidecheck, funvar=["screen"], name="SideCheck"), dofunction, rv, raise_, clear)
+        def named_sidecheck(screen):
+            # 防止重复执行该sidecheck
+            if not self.fcdict[my_id]:
+                self.fcdict[my_id] = True
+                out = sidecheck(screen)
+                self.fcdict[my_id] = False
+                return out
+            else:
+                # 占用中，就当没看见
+                return False
+
+        return self.add(Checker(named_sidecheck, funvar=["screen"], name=name), dofunction, rv, raise_, clear)
 
     def click(self, *args, pre_delay=0., post_delay=0., interval=0, retry=None, **kwargs):
         def f():
@@ -499,7 +657,7 @@ class ElementChecker(FunctionChecker):
             else:
                 return False
 
-        self.add(Checker(ClearTimeout), clear=True)
+        self.add(Checker(ClearTimeout, name="Reset Timer If Pause"), clear=True)
         self._a._last_lock_FC = self
         return super().lock(delay, timeout, until, is_raise)
 
@@ -525,6 +683,41 @@ class TooMuchRetry(Exception):
 
 
 class PCRRetry:
+    """
+    很方便的重试工具，和自带的retry很像，但是更加方便PCR。可以直接使用，也可以作为装饰器使用。(见retry_now）
+
+    Example 1:
+        @PCRRetry()
+        def DoRetry():
+            raise RetryNow()
+
+    如上例子所示，每当raise RetryNow被执行，都会跳转到最近的一个名称相同的PCRRetry装饰器处，可以重新执行该函数。
+
+    Example 2:
+        @PCRRetry(name="A")
+        def DoRetry():
+            raise RetryNow(name="A")
+
+    指定name后，RetryNow只会返回到最近的相同name的PCRRetry处。默认的name为None，不过这并不代表不进行name匹配检测，只不过匹配的name为None。
+
+    Example 3：
+        @PCRRetry(max_retry=3)
+        def DoRetry():
+            raise RetryNow()
+
+    指定max_retry后，最多重试这么多次，然后就会报一个TooMuchRetry的错误。
+
+    Example 4：
+        @PCRRetry(max_retry=3)
+        def DoRetry():
+            raise ContinueNow()
+
+    使用ContinueNow就和for循环中的continue类似，会回到对应PCRRetry处，但不会增加重试次数计数器。
+
+    没有出现在例子里的其他参数似乎都没啥用。
+
+    """
+
     def __init__(self,
                  name=None,
                  max_retry=inf,

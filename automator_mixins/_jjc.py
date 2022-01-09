@@ -20,22 +20,24 @@ class JJCMixin(FightBaseMixin):
         for _ in range(5):
             self.click(24, 84)
 
-        out = self.lock_img({
-            JJC_BTN["zdks"]: 1,
-            JJC_BTN["tzcs"]: 2,
-        }, is_raise=False, elseclick=JJC_BTN["player"], elsedelay=4, timeout=30)
-        if not out:
-            self.log.write_log("error", "无法进入战斗竞技场！")
-            self.lock_home()
-            return
-        if out == 2:
-            self.log.write_log("info", "战斗竞技场次数不足！")
-            self.lock_home()
-            return
-        self.click_btn(JJC_BTN["zdks"])
-        # 803 496
-        self.wait_for_loading(delay=2)
-        self.set_fight_speed(2, 2)
+        # 小心编组设定
+        with self.ES(self.bianzusheding_initFC()):
+            out = self.lock_img({
+                JJC_BTN["zdks"]: 1,
+                JJC_BTN["tzcs"]: 2,
+            }, is_raise=False, elseclick=JJC_BTN["player"], elsedelay=4, timeout=30)
+            if not out:
+                self.log.write_log("error", "无法进入战斗竞技场！")
+                self.lock_home()
+                return
+            if out == 2:
+                self.log.write_log("info", "战斗竞技场次数不足！")
+                self.lock_home()
+                return
+            self.click_btn(JJC_BTN["zdks"])
+            # 803 496
+            self.wait_for_loading(delay=2)
+            self.set_fight_speed(2, 2)
         self.lock_img(JJC_BTN["list"], timeout=180, elseclick=[(803, 496), (1, 1)], elsedelay=8)
         self.lock_home()
         # 做pjjc任务
@@ -49,22 +51,24 @@ class JJCMixin(FightBaseMixin):
         for _ in range(5):
             self.click(24, 84)
 
-        out = self.lock_img({
-            JJC_BTN["dwbz"]: 1,
-            JJC_BTN["tzcs"]: 2,
-        }, is_raise=False, elseclick=JJC_BTN["player"], elsedelay=4, timeout=30)
-        if not out:
-            self.log.write_log("error", "无法进入公主竞技场！")
-            self.lock_home()
-            return
-        if out == 2:
-            self.log.write_log("info", "公主竞技场次数不足！")
-            self.lock_home()
-            return
-        for _ in range(10):
-            self.click(843, 452, post_delay=0.5)
-        # 843, 452
-        self.wait_for_loading(delay=2)
-        self.set_fight_speed(2, 2)
+        # 小心编组设定
+        with self.ES(self.bianzusheding_initFC()):
+            out = self.lock_img({
+                JJC_BTN["dwbz"]: 1,
+                JJC_BTN["tzcs"]: 2,
+            }, is_raise=False, elseclick=JJC_BTN["player"], elsedelay=4, timeout=30)
+            if not out:
+                self.log.write_log("error", "无法进入公主竞技场！")
+                self.lock_home()
+                return
+            if out == 2:
+                self.log.write_log("info", "公主竞技场次数不足！")
+                self.lock_home()
+                return
+            for _ in range(10):
+                self.click(843, 452, post_delay=0.5)
+            # 843, 452
+            self.wait_for_loading(delay=2)
+            self.set_fight_speed(2, 2)
         self.lock_img(JJC_BTN["plist"], timeout=180 * 3, elseclick=[(803, 506), (1, 1)], elsedelay=8)
         self.lock_home()

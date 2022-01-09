@@ -66,6 +66,7 @@ class FightingDXC(FightingBase):
         while True:
             if time.time() - start_time > timeout:
                 raise LockTimeoutError("地下城战斗超时！")
+            time.sleep(1)
             During = DuringFightingDXC(self._a)
             out = During.check()
             if isinstance(out, During.FightingWinDXC):
