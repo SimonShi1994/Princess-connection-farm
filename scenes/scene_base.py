@@ -3,7 +3,7 @@ from math import inf
 from typing import Type, List, Union, TYPE_CHECKING
 
 from core.constant import PCRelement
-from core.pcr_checker import Checker, LockTimeoutError, LockMaxRetryError
+from core.pcr_checker import Checker, LockTimeoutError, LockMaxRetryError, ElementChecker
 
 if TYPE_CHECKING:
     from core.Automator import Automator
@@ -29,6 +29,10 @@ PCRSceneBase类也会提供Automator中的常用方法，如click, lock_img等�
     PCRSceneBase.initFC
     在场景刚进入时会挂载init_FC到特定Group中，直到一次有效的场景交互被成功执行，或手动调用
         PCRSceneBase.clear_initFC()
+
+20220109新增：有时候并不想用ExceptionSet而是setFCHeader
+只要你的initFC是function(FC)，那么就会自动传入setFCHeader
+否则老样子。
 
 """
 
@@ -139,18 +143,26 @@ class PCRSceneBase:
         self._a.clear_all_initFC(self.scene_name)
         self._a.scenes = [self]
         if self.initFC is not None:
-            self._a.ES.register(self.initFC, group=self.scene_name)
+            self.set_initFC()
+            # self._a.ES.register(self.initFC, group=self.scene_name)
         if self.feature is not None:
             self._a.getFC().getscreen().wait_for_loading(). \
                 add(Checker(featurein, name=f"{self.scene_name} - Feature In"), rv=True).lock(timeout=timeout)
         return self
 
     def clear_initFC(self):
-        self._a.ES.clear(self.scene_name)
+        if isinstance(self.initFC, ElementChecker):
+            self._a.ES.clear(self.scene_name)
+        else:
+            self._a.clearFCHeader(group_name=self.scene_name)
+
         return self
 
     def set_initFC(self):
-        self._a.ES.register(self.initFC, self.scene_name)
+        if isinstance(self.initFC, ElementChecker):
+            self._a.ES.register(self.initFC, self.scene_name)
+        else:
+            self._a.setFCHeader(group_name=self.scene_name, FCFun=self.initFC)
         return self
 
     def no_initFC(self):
