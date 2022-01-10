@@ -1368,6 +1368,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                         if time.time() - last_time > 300:
                             # TOO LONG
                             raise LockTimeoutError("战斗超时！")
+                        time.sleep(1)
                         out = During.check()
                         if out is None:
                             continue

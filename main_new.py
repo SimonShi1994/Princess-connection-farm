@@ -4,16 +4,17 @@ import traceback
 
 import requests
 from requests.adapters import HTTPAdapter
+from rich import print as rprint
 
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import check_known_emulators
 from core.initializer import PCRInitializer, Schedule
 from core.launcher import EMULATOR_DICT
 from core.pcr_config import *
+from core.richutils import RTitle as RError, RValue as RWarn
 from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
 from core.utils import is_ocr_running
-from core.richutils import RTitle as RError, RValue as RWarn
-from rich import print as rprint
+
 
 def wprint(*args,**kwargs):
     rprint(RWarn(*args,**kwargs))
@@ -32,7 +33,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20220108"
+script_version = "Ver 2.7.20220110"
 
 
 

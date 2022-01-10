@@ -42,6 +42,7 @@ class FightingZhuXian(FightingBase):
         while True:
             if time.time()-last_time > max_fight_time:
                 raise LockTimeoutError(f"战斗超时！超过{max_fight_time}秒。")
+            time.sleep(1)
             out = dur.check()
             if out is None:
                 continue

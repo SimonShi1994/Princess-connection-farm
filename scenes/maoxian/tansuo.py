@@ -1,7 +1,10 @@
+import time
+
 from core.constant import MAIN_BTN, MAOXIAN_BTN
 from ..fight.fightinfo_base import FightInfoBase
 from ..root.seven_btn import SevenBTNMixin
 from ..scene_base import PossibleSceneList
+
 
 class TanSuoMenu(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
@@ -116,6 +119,7 @@ class TanSuoInfoBox(FightInfoBase):
         F.set_speed(1)
         D = F.get_during()
         while True:
+            time.sleep(1)
             out = D.check()
             if isinstance(out, D.FightingWinZhuXian):
                 self.log.write_log("info", f"战胜于：{self.NAME}！")

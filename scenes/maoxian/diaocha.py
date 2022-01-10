@@ -1,8 +1,7 @@
-from core.constant import MAIN_BTN, MAOXIAN_BTN, DXC_ELEMENT
+from core.constant import MAIN_BTN, DXC_ELEMENT
 from core.pcr_checker import LockMaxRetryError, ContinueNow
 from ..fight.fightinfo_base import FightInfoBase
 from ..root.seven_btn import SevenBTNMixin
-from ..scene_base import PossibleSceneList
 
 
 class DiaoChaMenu(SevenBTNMixin):
@@ -10,7 +9,7 @@ class DiaoChaMenu(SevenBTNMixin):
         super().__init__(*args, **kwargs)
         self.scene_name = "DiaoChaMenu"
         self.feature = self.fun_feature_exist(MAIN_BTN["shengjidiaocha"])
-        self.initFC = self.getFC(False).getscreen().add_sidecheck(self._a.juqing_kkr)
+        self.initFC = lambda FC: FC.getscreen().add_sidecheck(self._a.juqing_kkr)
 
     def goto_shengji(self) -> "ShengJiDiaoCha":
         return self.goto(ShengJiDiaoCha, gotofun=self.fun_click(MAIN_BTN["jingyanzhiguanqia"]),
@@ -60,7 +59,7 @@ class ShengJiDiaoCha(DiaoChaXuanGuanBase):
         super().__init__(*args, **kwargs)
         self.scene_name = "ShengJiDiaoCha"
         self.feature = self.fun_feature_exist(MAIN_BTN["shengji_title"])
-        self.initFC = self.getFC(False).getscreen().add_sidecheck(self.shenji_sidecheck)
+        self.initFC = lambda FC: FC.getscreen().add_sidecheck(self.shenji_sidecheck)
 
     def shenji_sidecheck(self, screen):
         if self.is_exists(MAIN_BTN["karin_middle"], screen=screen) or self.is_exists(MAIN_BTN["kailu_middle"],
@@ -78,7 +77,7 @@ class ShenDianDiaoCha(DiaoChaXuanGuanBase):
         super().__init__(*args, **kwargs)
         self.scene_name = "ShenDianDiaoCha"
         self.feature = self.fun_feature_exist(MAIN_BTN["shendian_title"])
-        self.initFC = self.getFC(False).getscreen().add_sidecheck(self.shendian_sidecheck)
+        self.initFC = lambda FC: FC.getscreen().add_sidecheck(self.shendian_sidecheck)
 
     def shendian_sidecheck(self, screen):
         if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen):

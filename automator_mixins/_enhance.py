@@ -1,15 +1,15 @@
 import time
 
-from core.pcr_config import debug
-from core.constant import JUESE_BTN, FIGHT_BTN, MAIN_BTN
 from automator_mixins._shuatu_base import ShuatuBaseMixin
-from scenes.dxc.dxc_fight import FightingWinDXC, FightingLossDXC
-from scenes.scene_base import PossibleSceneList
+from core.constant import JUESE_BTN, FIGHT_BTN, MAIN_BTN
+from core.pcr_config import debug
 from scenes.dxc.dxc_fight import FightBianzuDXC
+from scenes.dxc.dxc_fight import FightingWinDXC, FightingLossDXC
 from scenes.fight.fightinfo_zhuxian import FightInfoBase
 from scenes.fight.fighting_zhuxian import FightingWinZhuXian2, HaoYouMsg
 from scenes.juese.enhance import CharBase, CharKaihua, CharZhuanwu
 from scenes.juese.juese_base import CharMenu
+from scenes.scene_base import PossibleSceneList
 
 
 class DuringFighting(PossibleSceneList):
@@ -155,6 +155,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                 zd.set_speed(1, max_level=1)
                                 during = DuringFighting(self)
                                 while True:
+                                    time.sleep(1)
                                     out = during.check(timeout=300, double_check=3)
                                     if isinstance(out, during.HaoYouMsg):
                                         out.exit_with_off()
