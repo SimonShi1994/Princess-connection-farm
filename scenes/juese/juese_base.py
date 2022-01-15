@@ -1,6 +1,36 @@
 import time
+import os
 from core.constant import JUESE_BTN, RANKS_DICT
 from scenes.scene_base import PCRMsgBoxBase
+import time
+from core.pcr_config import debug
+from core.constant import SHOP_BTN
+from DataCenter import LoadPCRData
+from core.cv import UIMatcher
+import cv2
+
+
+def get_plate_img_path(charname):
+    data = LoadPCRData()
+    a = str(data.get_id(name=charname))
+    '''
+    example: 
+    望返回值 102901
+    三星前 102911
+    三星后 102931
+    六星后 102961
+    '''
+    b = str(a[0:4] + "11")
+    c = str(a[0:4] + "31")
+    d = str(a[0:4] + "61")
+    imgpath_1 = "img/juese/plate/" + b + ".bmp"
+    imgpath_2 = "img/juese/plate/" + c + ".bmp"
+    imgpath_3 = "img/juese/plate/" + d + ".bmp"
+    imgpath = [imgpath_1, imgpath_2]
+    if os.path.exists(imgpath_3):
+        imgpath.append(imgpath_3)
+
+    return imgpath
 
 
 class CharMenu(PCRMsgBoxBase):
@@ -58,3 +88,34 @@ class CharMenu(PCRMsgBoxBase):
             self.click(597, 477)
             # 点击确认
 
+    def click_plate(self, imgpath, screen=None):
+        # 寻找角色，确认碎片图片中心点并点击
+        if screen is None:
+            screen = self.getscreen()
+        at=(24, 67, 919, 384)
+        r_list = UIMatcher.img_where(screen, imgpath, threshold=0.8, at=at,
+                                     method=cv2.TM_CCOEFF_NORMED, is_black=False, black_threshold=1500)
+        if r_list is not False:
+            if len(r_list) == 2:
+                x_arg = int(r_list[0])
+                y_arg = int(r_list[1])
+                self.click(x_arg, y_arg)
+                return True
+            else:
+                return False
+        else:
+            return False
+
+    def dragdown(self):
+        obj = self.d.touch.down(621, 364)
+        time.sleep(0.1)
+        obj.move(620, 70)
+        time.sleep(0.8)
+        obj.up(620, 70)
+
+    def check_buttom(self):
+        fc = [92, 156, 244]
+        bc = [158, 164, 176]
+        xcor = 922
+        ycor = 448
+        return self.check_color(fc, bc, xcor, ycor, color_type="rgb")

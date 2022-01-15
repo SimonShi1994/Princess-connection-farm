@@ -1,6 +1,7 @@
 import time
 from core.constant import JUESE_BTN, RANKS_DICT
 from scenes.scene_base import PCRMsgBoxBase
+from scenes.juese.juese_base import CharMenu
 from core.utils import make_it_as_juese_as_possible, checkNameValid
 import cv2
 from core.cv import UIMatcher
@@ -17,6 +18,9 @@ class CharBase(PCRMsgBoxBase):
         self.initFC = None
         # 检测角色强化装备页
         self.feature = self.fun_feature_exist(JUESE_BTN["equip_selected"])
+
+    def goto_menu(self) -> "CharMenu":
+        return self.goto(CharMenu, self.fun_click(JUESE_BTN["return_menu"]))
 
     def get_char_lv_status(self, screen=None):
         if screen is None:
@@ -327,3 +331,7 @@ class CharZhuanwu(PCRMsgBoxBase):
 
     def goto_base(self) -> "CharBase":
         return self.goto(CharBase, self.fun_click(JUESE_BTN["equip_unselected"]))
+
+    def goto_menu(self) -> "CharMenu":
+        return self.goto(CharMenu, self.fun_click(JUESE_BTN["return_menu"]))
+
