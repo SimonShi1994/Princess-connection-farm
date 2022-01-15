@@ -584,6 +584,8 @@ JUESE_BTN = {
         3: p(637, 257),
     },
     "return_ok": p(476, 475, img="img/juese/queren_white.bmp", at=(451, 463, 501, 487)),  # 返还强化道具
+    "return_menu": p(31, 30, img="img/juese/return_menu.bmp", at=(14, 16, 49, 44)),
+    "weijiesuo_w": p(102, 163, img="img/juese/weijiesuo_w.bmp", at=(60, 155, 144, 172)),  # 未获得角色
 
 }
 MAX_DXC = 5  # 一共出了多少个地下城关

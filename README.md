@@ -198,9 +198,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2022/01/14 By UVJkiNTQ
+2022/01/15 By UVJkiNTQ
 
 - 31图更新及Rank16
+- 新增角色插片部分场景，可以对Box界面识别和操作
+- 改进了角色强化流程，现在可以从Box进入
 
 2022/01/10 By TheAutumnOfRice
 
