@@ -7,8 +7,7 @@ from scenes.dxc.dxc_fight import FightBianzuDXC
 from scenes.dxc.dxc_fight import FightingWinDXC, FightingLossDXC
 from scenes.fight.fightinfo_zhuxian import FightInfoBase
 from scenes.fight.fighting_zhuxian import FightingWinZhuXian2, HaoYouMsg
-from scenes.juese.enhance import CharBase, CharKaihua, CharZhuanwu
-from scenes.juese.juese_base import CharMenu, get_plate_img_path
+from scenes.juese.juese_base import CharMenu, get_plate_img_path, CharBase, CharKaihua, CharZhuanwu
 from scenes.scene_base import PossibleSceneList
 
 
@@ -258,7 +257,8 @@ class EnhanceMixin(ShuatuBaseMixin):
                         if debug:
                             print("此角色强化任务已完成")
                         ecb = CharBase(self)
-                        ecb.goto_menu()
+                        cm = ecb.goto_menu()
+                        time.sleep(1)
 
             if len(charlist) == 0:
                 break
