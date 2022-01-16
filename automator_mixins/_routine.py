@@ -28,7 +28,7 @@ class RoutineMixin(ShuatuBaseMixin):
             if self.click_img(img="img/jiayuan/jiayuan_shengji.bmp", screen=screen_shot):
                 time.sleep(10)
 
-        for _ in range(2):
+        for _ in range(3):
             # 两次是因为有个家具介绍 关闭 确认
             self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
                           side_check=self.juqing_kkr, retry=5, is_raise=False)

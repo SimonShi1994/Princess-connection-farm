@@ -23,8 +23,7 @@ from core.usercentre import get_all_group
 from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, make_it_as_juese_as_possible, \
     get_time_str, checkNameValid
 from ._base import BaseMixin
-from scenes.juese.enhance import CharKaihua
-from scenes.juese.juese_base import CharMenu
+from scenes.juese.juese_base import CharMenu, CharKaihua
 
 
 class ToolsMixin(BaseMixin):
