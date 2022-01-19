@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20220114
+# Princess connection 公主连结农场脚本v2.7.20220115
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 祝大家2022，新年快乐！
@@ -185,7 +185,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - [x] 提高刷图效率
 - [ ] 刷活动本
 - [x] 女神祭
-- [ ] 跳过18图切图动画
+- [ ] 跳过18图切图动画 
 
 ## :mute:免责声明
 
@@ -197,6 +197,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/01/19 By UVJkiNTQ
+
+- 改进了Box识别流程，直接识别Box九宫格
 
 2022/01/15 By UVJkiNTQ
 

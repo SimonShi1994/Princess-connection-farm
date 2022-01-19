@@ -13,6 +13,15 @@ from core.utils import make_it_as_juese_as_possible, checkNameValid
 from scenes.scene_base import PCRMsgBoxBase
 
 
+def get_name_from_plate_path(img_path):
+    data = LoadPCRData()
+    id_1 = str(img_path)
+    id_2 = id_1[16:20]
+    c_id = id_2 + "01"
+    c_name = data.get_name(int(c_id))
+    return c_name
+
+
 def get_plate_img_path(charname):
     data = LoadPCRData()
     a = str(data.get_id(name=charname))
