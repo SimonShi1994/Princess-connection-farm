@@ -267,7 +267,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                 break
             else:
                 cm.dragdown()
-                if self.is_exists(img="img/juese/weijiesuo_w.bmp", at=(21, 144, 167, 463)):
+                if self.is_exists(JUESE_BTN["weijiesuo_w"], at=(21, 144, 167, 463)):
                     break
                 continue
 

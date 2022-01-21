@@ -198,6 +198,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2022/01/19 By UVJkiNTQ
+
+- 改进了Box识别流程，直接识别Box九宫格
+
 2022/01/15 By UVJkiNTQ
 
 - 31图更新及Rank16

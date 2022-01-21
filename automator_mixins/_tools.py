@@ -1,6 +1,5 @@
 import datetime
 import os
-import pathlib
 import random
 import time
 from typing import Optional
@@ -9,6 +8,8 @@ import cv2
 import numpy as np
 import openpyxl
 import pandas as pd
+import pathlib
+from scenes.juese.juese_base import get_name_from_plate_path
 
 from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
@@ -23,7 +24,7 @@ from core.usercentre import get_all_group
 from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, make_it_as_juese_as_possible, \
     get_time_str, checkNameValid
 from ._base import BaseMixin
-from scenes.juese.juese_base import CharMenu, CharKaihua
+from scenes.juese.juese_base import CharMenu
 
 
 class ToolsMixin(BaseMixin):
@@ -296,48 +297,36 @@ class ToolsMixin(BaseMixin):
         if char_info:
             self.lock_home()
             self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
-            time.sleep(5)
-            self.fclick(1, 1)
-            # 进入角色选择
+            at1 = (38, 79, 314, 206)
+            at2 = (334, 79, 610, 206)
+            at3 = (628, 79, 911, 206)
+            at4 = (38, 228, 314, 350)
+            at5 = (334, 228, 610, 350)
+            at6 = (633, 228, 911, 350)
+            at_list = [at1, at2, at3, at4, at5, at6]
+            charlist = []
+            P = pathlib.Path("img/juese/plate/")
             cm = CharMenu(self)
-            cm.sort_by("star")
-            time.sleep(2)
-            cm.sort_down()
-            time.sleep(1)
-            cm.click_first()
-            self.fclick(1, 1)
-            time.sleep(2)
+            cm.sort_by(cat="star")
             while True:
-                if self.is_exists(JUESE_BTN["equip_unselected"], threshold=0.9):
+                sc = self.getscreen()
+                for p in P.iterdir():
+                    p = str(p).replace('\\', '/')
+                    if p[-4:] == ".bmp":
+                        for area in at_list:
+                            if self.is_exists(img=p, at=area, screen=sc):
+                                name = get_name_from_plate_path(p)
+                                charlist.append(name)
+
+                if cm.check_buttom() is True:
                     break
                 else:
-                    self.click(784, 76)
-                    time.sleep(1.5)
-                    continue
-            time.sleep(2)
-            # 获取名称
-            ekh = CharKaihua(self)
-            charlist_ = []
-            while True:
-                a = self.img_where_all(JUESE_BTN["star"], at=(132, 311, 361, 359))
-                if self.is_exists(JUESE_BTN["star"], at=(209, 314, 359, 356)) or len(a) == 0:
-                    charname = ekh.get_name()
-                    if debug:
-                        print(charname)
-                    charlist_.append(charname)
-                    ekh.next_char()
-                    if self.is_exists(JUESE_BTN["equip_unselected"], threshold=0.9):
-                        continue
-                    else:
-                        self.fclick(784, 76)
-                        self.fclick(784, 76)
-                        continue
-                else:
-                    if debug:
-                        print("没有三星了")
+                    cm.dragdown()
+                    if self.is_exists(JUESE_BTN["weijiesuo_w"], at=(21, 144, 167, 463)):
                         break
+                    continue
 
-            out = ','.join(charlist_)
+            out = ','.join(charlist)
             acc_info_dict["charlist"] = out
         acc_info_list.append(acc_info_dict)
         self.lock_home()
