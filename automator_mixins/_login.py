@@ -164,7 +164,6 @@ class LoginMixin(ToolsMixin):
                 while True:
                     # 这里是判断验证码动画是否加载完毕和截图到达指定位置
                     # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
-                    self.getscreen()
                     if self.is_exists(START_UI["anying"]) and self.is_exists(START_UI["wenzidianji"],
                                                                              at=(342, 94, 622, 162)):
                         if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(START_UI["yanzhengshibai"],
