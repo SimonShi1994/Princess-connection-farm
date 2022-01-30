@@ -33,7 +33,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20220119"
+script_version = "Ver 2.7.20220130"
 
 
 
@@ -345,7 +345,10 @@ def ShowAutoConsole():
 
 def ShowOCR():
     print = rprint
-    print("* OCR模式 ocr_mode：", ocr_mode)
+    print("* 主OCR模式 ocr_mode_main：", ocr_mode_main)
+    print("* 次OCR模式 ocr_mode_secondary：", ocr_mode_secondary)
+    print("* 主次一致才输出：", RTrue("已开启") if force_primary_equals_secondary else RFalse("未开启"))
+    print("* 主次不一致用此OCR模式 force_primary_equals_secondary_use：", force_primary_equals_secondary_use)
     if baidu_apiKey != "":
         print("* BaiduAPI 已配置！")
     else:

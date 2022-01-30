@@ -23,7 +23,8 @@ from core.cv import UIMatcher
 from core.get_screen import ReceiveFromMinicap
 from core.log_handler import pcr_log
 from core.pcr_checker import ExceptionSet, ElementChecker, Checker, ReturnValue
-from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, ocr_mode
+from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, ocr_mode_main, \
+    ocr_mode_secondary, force_primary_equals_secondary, force_primary_equals_secondary_use, ocrspace_ocr_apikey
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
     force_fast_screencut, adb_dir, clear_traces_and_cache, debug_record_size, debug_record_filter
 from core.safe_u2 import SafeU2Handle, safe_u2_connect, timeout
@@ -204,7 +205,7 @@ class BaseMixin:
     def _raise(self, e: Type[PCRError], *args, screen_log=True, text_log=True, error_dir=None):
         raise e(*args, automator=self, screen_log=screen_log, text_log=text_log, error_dir=error_dir)
 
-    def check_ocr_running(self,is_raise= True):
+    def check_ocr_running(self, is_raise=True):
         try:
             requests.get(url="http://127.0.0.1:5000/ocr/", timeout=1)
             return True
@@ -450,14 +451,14 @@ class BaseMixin:
         return FC
 
     @DEBUG_RECORD
-    def input(self, s:str="", clear=False):
+    def input(self, s: str = "", clear=False):
         """
         输入一段文字，clear：是否清除文字
         """
         if clear:
             self.d.clear_text()
             self._move_check()
-        if len(s)>0:
+        if len(s) > 0:
             self.d.send_keys(s)
 
     @DEBUG_RECORD
@@ -477,7 +478,6 @@ class BaseMixin:
             return True
         else:
             return False
-
 
     def fclick(self, *args, pre_delay=0., post_delay=0., times=5):
         # FengKuang（Fuck）Click狂点模式
@@ -1138,7 +1138,7 @@ class BaseMixin:
         return r
 
     @DEBUG_RECORD
-    def click_gaoliang(self,screen=None):
+    def click_gaoliang(self, screen=None):
         if screen is None:
             screen = self.getscreen()
         num_of_white, _, x, y = UIMatcher.find_gaoliang(screen)
@@ -1326,7 +1326,7 @@ class BaseMixin:
         return flag
 
     @DEBUG_RECORD
-    def mid_right_kkr(self,screen=None):
+    def mid_right_kkr(self, screen=None):
         """
         处理中间和右边的kkr，一直点屏幕。
         """
@@ -1341,7 +1341,7 @@ class BaseMixin:
                 DXC_ELEMENT["dxc_kkr"],
             ]
             for f in ALL_FEATURES:
-                if self.is_exists(f,screen=screen):
+                if self.is_exists(f, screen=screen):
                     return True
             return False
 
@@ -1461,8 +1461,9 @@ class BaseMixin:
         return self.debug_record.get(running)
 
     @DEBUG_RECORD
-    def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91):
+    def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs', ):
         """
+        :param language: 所用语言
         :param credibility: 结果可信度阈值,目前仅有本地OCR2才用到
         :param size: 放大的大小
         :param x1: 左上坐标
@@ -1480,68 +1481,51 @@ class BaseMixin:
             pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
             return -1
 
-        if len(ocr_mode) == 0:
+        if len(ocr_mode_main) == 0:
             return -1
+        # if len(ocr_mode_secondary) == 0:
+        #     return -1
         # OCR识别任务分配
-        if ocr_mode == "智能":
-            baidu_ocr_ping = requests.get(url="https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic")
-            code = baidu_ocr_ping.status_code
-            if code == 200:
-                ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-                if ocr_text == -1:
-                    ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-            else:
-                ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-        elif ocr_mode == "网络":
-            ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-        elif ocr_mode == "本地":
-            ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-        elif ocr_mode == "本地2":
-            ocr_text = self.ocr_local2(x1, y1, x2, y2, screen_shot=screen_shot, size=size, credibility=credibility)
-        elif ocr_mode == "混合":
-            # 机器伪随机
-            ocr_way = random.randint(1, 3)
-            if ocr_way == 1:
-                ocr_text = self.baidu_ocr(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-            elif ocr_way == 2:
-                ocr_text = self.ocr_local(x1, y1, x2, y2, screen_shot=screen_shot, size=size)
-            elif ocr_way == 3:
-                ocr_text = self.ocr_local2(x1, y1, x2, y2, screen_shot=screen_shot, size=size, credibility=credibility)
+        ocr_register = {
+            "网络1": self.baidu_ocr,
+            "网络2": self.ocrspace_ocr,
+            "本地1": self.ocr_local,
+            "本地2": self.ocr_local2,
+            "本地3": self.ocr_local3,
+            "本地4": self.easyocr_ocr,
+        }
+        ocr_text = ocr_register.get(ocr_mode_main)(x1, y1, x2, y2, screen_shot, size, credibility, language)
+        if force_primary_equals_secondary:
+            for ocr_second in ocr_mode_secondary.split(','):
+                ocr_text2 = ocr_register.get(ocr_second)(x1, y1, x2, y2, screen_shot, size, credibility, language)
+                if ocr_text != ocr_text2:
+                    ocr_text = ocr_register.get(force_primary_equals_secondary_use)(x1, y1, x2, y2, screen_shot, size,
+                                                                                    credibility, language)
+        else:
+            if ocr_text == -1:
+                if len(ocr_mode_secondary) != 0:
+                    for ocr_second in ocr_mode_secondary.split(','):
+                        ocr_text = ocr_register.get(ocr_second)(x1, y1, x2, y2, screen_shot, size, credibility,
+                                                                language)
+                        if not ocr_text or ocr_text == -1:
+                            continue
+                        else:
+                            break
 
         # OCR返回的数据 纠错
         try:
             if ocr_text:
+                # if debug:
+                #     print(ocr_text)
                 return str(ocr_text)
             else:
                 return -1
         except:
             raise Exception("ocr-error", "OCR识别错误。")
 
-    def ocr_local(self, x1, y1, x2, y2, screen_shot=None, size=1.0):
-        if screen_shot is None:
-            screen_shot = self.getscreen()
-
-        try:
-            if screen_shot.shape[0] > screen_shot.shape[1]:
-                if anticlockwise_rotation_times >= 1:
-                    for _ in range(anticlockwise_rotation_times):
-                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
-            img_binary = cv2.imencode('.png', part)[1].tobytes()
-            files = {'file': ('tmp.png', img_binary, 'image/png')}
-            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
-            if debug:
-                print('本地OCR识别结果：%s' % local_ocr_text.text)
-            return local_ocr_text.text
-        except Exception as ocr_error:
-            pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
-            return -1
-
     # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
     # 使用Baidu OCR接口
-    def baidu_ocr(self, x1, y1, x2, y2, size=1.0, screen_shot=None):
+    def baidu_ocr(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
         # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
         # 默认原图大小（1.0）
         if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
@@ -1582,7 +1566,67 @@ class BaseMixin:
                                                                    '是否有误！')
             return -1
 
-    def ocr_local2(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91):
+    def ocrspace_ocr(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
+        if len(ocrspace_ocr_apikey) == 0:
+            pcr_log(self.account).write_log(level='error', message='读取ocrspace_ocr_apikey失败！')
+            return -1
+
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+        if screen_shot.shape[0] > screen_shot.shape[1]:
+            if anticlockwise_rotation_times >= 1:
+                for _ in range(anticlockwise_rotation_times):
+                    screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            # cv2.imwrite('fuck_rot90_test.bmp', screen_shot_)
+            # screen_shot_ = rot90(screen_shot_)  # 旋转90°
+            pass
+        part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+        part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+        img_binary = cv2.imencode('.png', part)[1].tobytes()
+
+        try:
+            files = {
+                'file': ('tmp.png', img_binary, 'image/png'),
+                # 'language': 'chs',
+            }
+            result = requests.post(url="http://127.0.0.1:5000/ocr/ocrspace_ocr/%s" % language, files=files)
+            # 原生输出有助于开发者
+            result = result.json().get('ParsedResults')[0].get('ParsedText')
+            if debug:
+                print('ocrspaceOCR识别结果：%s' % result)
+            if result:
+                return result
+            else:
+                return -1
+        except:
+            pcr_log(self.account).write_log(level='error', message='ocrspaceOCR识别失败！请检查ocrspace_ocr_apikey以及截图范围返回结果'
+                                                                   '是否有误！')
+            return -1
+
+    def ocr_local(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+
+        try:
+            if screen_shot.shape[0] > screen_shot.shape[1]:
+                if anticlockwise_rotation_times >= 1:
+                    for _ in range(anticlockwise_rotation_times):
+                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            img_binary = cv2.imencode('.png', part)[1].tobytes()
+            files = {'file': ('tmp.png', img_binary, 'image/png')}
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
+            if debug:
+                print('本地OCR识别结果：%s' % local_ocr_text.text)
+            return local_ocr_text.text
+        except Exception as ocr_error:
+            pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
+            return -1
+
+    def ocr_local2(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
         if screen_shot is None:
             screen_shot = self.getscreen()
 
@@ -1609,6 +1653,50 @@ class BaseMixin:
                 return -1
         except Exception as ocr_error:
             pcr_log(self.account).write_log(level='error', message='本地OCR-2识别失败，原因：%s' % ocr_error)
+            return -1
+
+    def ocr_local3(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+
+        try:
+            if screen_shot.shape[0] > screen_shot.shape[1]:
+                if anticlockwise_rotation_times >= 1:
+                    for _ in range(anticlockwise_rotation_times):
+                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            img_binary = cv2.imencode('.png', part)[1].tobytes()
+            files = {'file': ('tmp.png', img_binary, 'image/png')}
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr3/", files=files)
+            if debug:
+                print('本地OCR3识别结果：%s' % local_ocr_text.text)
+            return local_ocr_text.text
+        except Exception as ocr_error:
+            pcr_log(self.account).write_log(level='error', message='本地OCR3识别失败，原因：%s' % ocr_error)
+            return -1
+
+    def easyocr_ocr(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
+        if screen_shot is None:
+            screen_shot = self.getscreen()
+
+        try:
+            if screen_shot.shape[0] > screen_shot.shape[1]:
+                if anticlockwise_rotation_times >= 1:
+                    for _ in range(anticlockwise_rotation_times):
+                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
+            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            img_binary = cv2.imencode('.png', part)[1].tobytes()
+            files = {'file': img_binary}
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr4/", files=files)
+            if debug:
+                print('本地OCR4识别结果：%s' % local_ocr_text.text)
+            return local_ocr_text.text
+        except Exception as ocr_error:
+            pcr_log(self.account).write_log(level='error', message='本地OCR4识别失败，原因：%s' % ocr_error)
             return -1
 
     def ocr_int(self, x1, y1, x2, y2, screen_shot=None):

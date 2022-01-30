@@ -146,7 +146,7 @@ class DXCBaseMixin(FightBaseMixin):
                                until_appear={DXC_ELEMENT["dxc_choose_shop"]: 1, DXC_ELEMENT["dxc_shop_btn"]: 2},
                                side_check=self.juqing_kkr)
         if state == 1:
-            self.wait_for_stable(delay=3)
+            self.wait_for_stable(delay=3, similarity=0.96)
 
             def CishuCheck():
                 screen = self.last_screen

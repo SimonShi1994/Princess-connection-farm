@@ -24,6 +24,8 @@
 | proxy_http|推送使用的代理|str|||
 | proxy_https|推送使用的代理|str|||
 |           s_sckey            |                     s_sckey为Server酱API                     | string |          | SCU6390~94d830b |
+| wework_corpid | wework的pid | string | |  |
+| wework_corpsecret | wework的secret | string | |  |
 |         sentstate          |                 全体BOT播定时报脚本任务状态                 |  int   | 单位分钟 |        5        |
 | sent_state_img | 播报任务状态时是否推送运行截图 | bool |  | Flase |
 |           log_lev            | log_levBOT的日志等级，微信日志等级 仅有0/1/2/3，越小越详细，注意每天接口调用有上限！ |  int   |          |        1        |
@@ -31,8 +33,12 @@
 |         baidu_apiKey         |                  baidu_apiKey为百度ocr api                   | string |          | SCU6390~94d830b |
 |       baidu_secretKey        |                 baidu_secretKey为百度ocr api                 | string |          | SCU6390~94d830b |
 | baidu_QPS | baidu_QPS为百度并发限制连接数 | int | | 2 |
-| ocr_mode | OCR模式目前有智能/本地/网络/混合 4种不同的工作方式 | string | | 混合 |
-| anticlockwise_rotation_times |      根据baidu_ocr.bmp需要逆时针旋转90°多少次截图才正向      |  int   |          |        1        |
+| ocrspace_ocr_apikey | ocr.space的apikey | string | | SCU6390~94d830b |
+| force_primary_equals_secondary | 是否当主要OCR和次要OCR识别内容一致时才返回值 | bool | | False |
+| force_primary_equals_secondary_use | 比较全部值都无主次一致时使用该OCR | string | | 本地1 |
+| ocr_mode_main | 主要OCR | string | | 本地1 |
+| ocr_mode_secondary | 次要OCR[可选填] | string | 英文半角逗号分割 | 网络1,本地1 |
+| 'anticlockwise_rotation_times |      根据baidu_ocr.bmp需要逆时针旋转90°多少次截图才正向      |  int   |          |        1        |
 |    async_screenshot_freq     |                     异步截图一次休眠时间                     |  int   |          |        5        |
 |     bad_connecting_time      |                      异步判断异常的时间                      |  int   |          |       30        |
 |        fast_screencut        |                       mincap 快速截图，但该截图可能不稳定，默认关闭                        |  bool  |          |      True       |
@@ -70,6 +76,8 @@
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
 |wait_for_launch_time|自启动模拟器最大忍耐超时时间|int||600|
 |ignore_serials|不连接的模拟器|str||["emulator-5554"]|
+
+
 
 
 
