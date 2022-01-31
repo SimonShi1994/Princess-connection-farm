@@ -33,7 +33,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20220130"
+script_version = "Ver 2.7.20220131"
 
 
 
@@ -551,8 +551,8 @@ if __name__ == "__main__":
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("edit 进入编辑模式                  qq QQ群")
+        print("data 进入数据中心                 img 图坐标添加工具")
         print("adb 执行adb命令")
-        print("data 进入数据中心")
         print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
@@ -864,6 +864,9 @@ if __name__ == "__main__":
             elif order == "data":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("DataCenter.py", "r", encoding="utf-8").read())
+            elif order == "img":
+                assert SCH is None, "必须先停止正在运行的Schedule"
+                exec(open("img_helper.py", "r", encoding="utf-8").read())
             elif order == "screencut":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("screencut.py", "r", encoding="utf-8").read())

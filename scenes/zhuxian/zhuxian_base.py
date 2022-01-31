@@ -83,16 +83,21 @@ class ZhuXianBase(SevenBTNMixin):
         :return:
         1:  Normal图
         2： Hard图
+        3:  VH 图
         """
         sc = screen if screen is not None else self.getscreen()
         pn1 = self.img_prob(MAOXIAN_BTN["normal_on"], screen=sc)
         ph1 = self.img_prob(MAOXIAN_BTN["hard_on"], screen=sc)
+        pv1 = self.img_prob(MAOXIAN_BTN["vh_on"], screen=sc)
         if pn1 > 0.9:
-            self.maoxian_screen_state=1
+            self.maoxian_screen_state = 1
             return 1
         elif ph1 > 0.9:
-            self.maoxian_screen_state=2
+            self.maoxian_screen_state = 2
             return 2
+        elif pv1 > 0.9:
+            self.maoxian_screen_state = 3
+            return 3
         else:
             if is_raise:
                 self._raise(MaoxianRecognizeError, f"冒险识别失败！ Normal {pn1} Hard {ph1}")

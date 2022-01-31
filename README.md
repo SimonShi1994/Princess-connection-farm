@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20220130
+# Princess connection 公主连结农场脚本v2.7.20220131
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -182,7 +182,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - [x] 提高刷图效率
 - [ ] 刷活动本
 - [x] 女神祭
-- [ ] 跳过18图切图动画 
+- [ ] 跳过18图切图动画
 
 ## :mute:免责声明
 
@@ -194,6 +194,13 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/01/31 By TheAutumnOfRice
+
+- 新增32图
+- 修复Rank16图片显示模糊问题
+- 新增img_helper.py，向导式图号坐标编辑，可由img命令进入
+- 增加cv预处理接口，但似乎没什么用。
 
 2022/01/30 By CyiceK
 

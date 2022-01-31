@@ -8,6 +8,7 @@ import numpy as np
 from core.log_handler import pcr_log
 from core.pcr_config import debug, use_template_cache
 
+
 def cv_imread(file_path):  # 用于中文目录的imread函数
     """
     项目地址:https://github.com/bbpp222006/Princess-connection
@@ -204,8 +205,27 @@ class UIMatcher:
                     _at = (x1 + j, y1 + i, x1 + j + tw - 1, y1 + i + th - 1)
                     l += [(res[i, j], _x, _y, _at)]
                     if debug:
-                        print(f"p({_x},{_y},img=\"{template_path if type(template_path) is str else '...'}\",at={_at}), \nCCOEFF=", res[i, j])
+                        print(
+                            f"p({_x},{_y},img=\"{template_path if type(template_path) is str else '...'}\",at={_at}), \nCCOEFF=",
+                            res[i, j])
         return sorted(l, reverse=True)
+
+    @staticmethod
+    def filter_edge(img, output3D=True, **cannykwargs):
+        """
+        边缘检测
+        :param img:  输入图片
+        :param output3D: 设置为True，则对RGB分别边缘检测，输出RGB图；否则输出灰度图
+        :param cannykwargs: cv2.Canny的参数
+        :return: 边缘图片
+        """
+        cannykwargs.setdefault("threshold1", 100)
+        cannykwargs.setdefault("threshold2", 200)
+        if output3D:
+            edges = np.stack([cv2.Canny(img[:, :, i], **cannykwargs) for i in range(3)], axis=-1)
+        else:
+            edges = cv2.Canny(img, **cannykwargs)
+        return edges
 
     @classmethod
     def img_where(cls, screen, template_path, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED,
@@ -385,7 +405,20 @@ class UIMatcher:
         return None
 
 
-1
+class PreProcesses:
+    def __init__(self):
+        self.pp = []
+
+    def edge(self, **kwargs):
+        self.pp.append(lambda img: UIMatcher.filter_edge(img, **kwargs))
+        return self
+
+    def __call__(self, img):
+        if len(self.pp) > 0:
+            img = UIMatcher._get_template(img)
+        for p in self.pp:
+            img = p(img)
+        return img
 
 #
 # d = u2.connect()
