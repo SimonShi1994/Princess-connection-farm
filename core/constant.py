@@ -738,7 +738,7 @@ DXC_COORD = {
         5: p(502, 259),
     }
 }
-MAX_MAP = 31
+
 HARD_COORD = {
     1: {
         1: p(250, 340),
@@ -895,6 +895,29 @@ HARD_COORD = {
         2: p(483, 334),
         3: p(785, 317),
     },
+    32: {
+        1: p(185, 343, name="H32-1"),
+        2: p(494, 247, name="H32-2"),
+        3: p(784, 330, name="H32-3"),
+    },
+}
+
+VH_COORD = {
+    18: {
+        1: p(214, 260, name="VH18-1"),
+        2: p(479, 365, name="VH18-2"),
+        3: p(762, 291, name="VH18-3"),
+    },
+    19: {
+        1: p(218, 330, name="VH19-1"),
+        2: p(484, 278, name="VH19-2"),
+        3: p(765, 330, name="VH19-3"),
+    },
+    20: {
+        1: p(210, 270, name="VH20-1"),
+        2: p(478, 337, name="VH20-2"),
+    },
+
 }
 
 MAOXIAN_BTN = {
@@ -946,6 +969,9 @@ MAOXIAN_BTN = {
 
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
 }
+
+MAX_MAP = 32
+
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(77, 61, 141, 72)),
     2: p(img="img/zhuxian/2.bmp", at=(79, 60, 164, 73)),
@@ -978,7 +1004,11 @@ ZHUXIAN_ID = {
     29: p(img="img/zhuxian/29L.bmp", at=(61, 58, 198, 76)),
     30: p(img="img/zhuxian/30L.bmp", at=(60, 55, 178, 77)),
     31: p(img="img/zhuxian/31L.bmp", at=(60, 55, 175, 77)),
+    32: p(img="img/zhuxian/32L.bmp", at=(89, 58, 193, 73)),
 }
+
+# ZHUXIAN_SUB_ID
+
 ZHUXIAN_XXXYY_ID = {
     # 小行星原野你长得太像了，无奈增加二级分类
     18: p(img="img/zhuxian/18R.bmp", at=(195, 59, 224, 72)),
@@ -1008,7 +1038,9 @@ ZHUXIAN_FTLDY_ID = {
     30: p(img="img/zhuxian/30R.bmp", at=(196, 60, 230, 76)),
     31: p(img="img/zhuxian/31R.bmp", at=(191, 59, 229, 76)),
 }
-
+ZHUXIAN_FSJYSL_ID = {
+    32: p(img="img/zhuxian/32R.bmp", at=(217, 60, 247, 74)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
@@ -1017,6 +1049,7 @@ ZHUXIAN_SECOND_ID = {
     (26, 27): ZHUXIAN_SBDDSL_ID,
     (28, 29): ZHUXIAN_DSTEHSA_ID,
     (30, 31): ZHUXIAN_FTLDY_ID,
+    (32,): ZHUXIAN_FSJYSL_ID,
 }
 
 NORMAL_COORD = {
@@ -1648,7 +1681,27 @@ NORMAL_COORD = {
             2: p(247, 262),
             1: p(107, 233),
         }
-    }
+    },
+    32: {
+        "right": {
+            14: p(777, 274, name="32-14"),
+            13: p(625, 245, name="32-13"),
+            12: p(646, 382, name="32-12"),
+            11: p(500, 308, name="32-11"),
+            10: p(358, 371, name="32-10"),
+            9: p(209, 401, name="32-9"),
+            8: p(266, 259, name="32-8"),
+        },
+        "left": {
+            7: p(708, 304, name="32-7"),
+            6: p(555, 270, name="32-6"),
+            5: p(574, 415, name="32-5"),
+            4: p(428, 384, name="32-4"),
+            3: p(334, 284, name="32-3"),
+            2: p(252, 408, name="32-2"),
+            1: p(106, 385, name="32-1"),
+        },
+    },
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),
@@ -1666,7 +1719,7 @@ RANKS_DICT = {
     13: p(img="img/ranks/13.bmp", at=(212, 110, 282, 136)),
     14: p(img="img/ranks/14.bmp", at=(211, 111, 282, 136)),
     15: p(img="img/ranks/15.bmp", at=(216, 111, 281, 135)),
-    16: p(img="img/ranks/16.bmp", at=(210, 110, 281, 137)),
+    16: p(img="img/ranks/16.bmp", at=(216, 114, 279, 132)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict

@@ -47,3 +47,5 @@ flasgger==0.9.5 -i https://pypi.douban.com/simple
 ## python<3.8 protobuf==3.6.0
 protobuf==3.14.0
 
+## For img_helper
+pyperclip
