@@ -83,14 +83,19 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                                   threshold=0.98)
                     dixiacheng_floor = self.ocr_center(586, 421, 614, 438, size=1.5)
                     # print(dixiacheng_floor)
-                    dixiacheng_floor = int(dixiacheng_floor.split('/')[0])
+                    if dixiacheng_floor[1] == "1":
+                        dixiacheng_floor = int(dixiacheng_floor[0])
+                    else:
+                        dixiacheng_floor = int(dixiacheng_floor.split('/')[0])
                     dixiacheng_floor_times = self.ocr_center(789, 422, 820, 438, size=1.5)
                     # print(dixiacheng_floor_times)
 
                     # 本地OCR会把0识别成字母O。。。
                     dixiacheng_floor_times = dixiacheng_floor_times.replace('O', '0')
-
-                    dixiacheng_floor_times = int(dixiacheng_floor_times.split('/')[0])
+                    if dixiacheng_floor_times[1] == "1":
+                        dixiacheng_floor_times = int(dixiacheng_floor_times[0])
+                    else:
+                        dixiacheng_floor_times = int(dixiacheng_floor_times.split('/')[0])
                     tmp_cout = tmp_cout + 1
                     dixiacheng_times = dixiacheng_floor_times
                     # print(dixiacheng_floor, ' ', dixiacheng_floor_times)
@@ -146,10 +151,12 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
                     # 本地OCR会把0识别成字母O。。。
                     dixiacheng_times = dixiacheng_times.replace('O', '0')
-
-                    # {'log_id': ***, 'words_result_num': 1, 'words_result': [{'words': '0/1'}]}
-                    # print(dixiacheng_times)
-                    dixiacheng_times = int(dixiacheng_times.split('/')[0])
+                    if dixiacheng_times[1] == '1':
+                        dixiacheng_times = int(dixiacheng_times[0])
+                    else:
+                        # {'log_id': ***, 'words_result_num': 1, 'words_result': [{'words': '0/1'}]}
+                        # print(dixiacheng_times)
+                        dixiacheng_times = int(dixiacheng_times.split('/')[0])
                     if dixiacheng_times <= 1:
                         break
                     tmp_cout = tmp_cout + 1

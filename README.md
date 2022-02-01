@@ -1,9 +1,8 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20220115
+# Princess connection 公主连结农场脚本v2.7.20220131
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
-祝大家2022，新年快乐！
 
 ## :bookmark_tabs:简介
 
@@ -61,7 +60,7 @@
 
 5. 工具
 
-- [ ] 账号重命名
+- [x] 账号重命名
 - [x] box截图
 - [x] OCR获取账号信息
 - [ ] 卖出过量装备
@@ -84,7 +83,7 @@
 
 - **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
-- OCR 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 和 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
+- 【非强制性】本地OCR 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
 
 - 自行打开`requirements.txt`确认依赖无误
 
@@ -109,8 +108,6 @@
 **重要：模拟器分辨率要求540*960**
 
 **重要**：目前关于API部分已经移入 config.ini 中，如何填入请参考目录下的md文件，config.ini在运行main_new.py后自动生成
-
-如何申请百度文字识别apikey和Secret Key:(https://blog.csdn.net/biao197/article/details/102907492 )
 
 ## :loudspeaker:推送
 
@@ -166,7 +163,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice) 、UVJkiNTQ(https://github.com/UVJkiNTQ)对本项目的倾力帮助。
+2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice) 、UVJkiNTQ(https://github.com/UVJkiNTQ)、对本项目的倾力帮助。
 
 3. **来个 star 吧(*/ω＼*)，有问题请提交issue**
 
@@ -185,7 +182,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - [x] 提高刷图效率
 - [ ] 刷活动本
 - [x] 女神祭
-- [ ] 跳过18图切图动画 
+- [ ] 跳过18图切图动画
 
 ## :mute:免责声明
 
@@ -197,6 +194,26 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/01/31 By TheAutumnOfRice
+
+- 新增32图
+- 修复Rank16图片显示模糊问题
+- 新增img_helper.py，向导式图号坐标编辑，可由img命令进入
+- 增加cv预处理接口，但似乎没什么用。
+
+2022/01/30 By CyiceK
+
+- 依赖减肥，muggle_ocr非本地OCR的唯一解决方案，有更加轻便的OCR
+- 本地OCR非强制性安装，现在需在requirements.txt里取消#注释后再pip install
+- 老ocr_mode配置废弃，采用主次ocr_mode，切换更灵活、容错率更高
+- 增添主次OCR双向对比，结果相同才输出，不同用另一个用户指定的OCR
+- 增添ocr.space（网络2）、ddddocr（本地3）、easyocr（本地4）三种ocr方法
+- 修复openCV部分依赖版本过高问题
+- 修复_login.py在处理验证码时，识图失败导致一直卡住的bug
+- 修复d1在ocr处理上/识别成1导致无法识别次数的问题
+- 修复enter_dxc中wait_for_stable未添加阀值导致进错地下城的bug
+- 修复购买体力宝石不足时在宝石购买界面卡住
 
 2022/01/19 By UVJkiNTQ
 

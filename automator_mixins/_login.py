@@ -145,6 +145,7 @@ class LoginMixin(ToolsMixin):
 
         SkipAuth()
         flag = False
+        imgfindcaptcha_is_work = True
         if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
             flag = True
             _time = 1
@@ -159,22 +160,45 @@ class LoginMixin(ToolsMixin):
                 nonlocal _time
                 nonlocal _id
                 nonlocal _pop
+                nonlocal imgfindcaptcha_is_work
 
                 # time.sleep(1)
+                _try_count = 0
                 while True:
                     # 这里是判断验证码动画是否加载完毕和截图到达指定位置
                     # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
-                    if self.is_exists(START_UI["anying"]) and self.is_exists(START_UI["wenzidianji"],
-                                                                             at=(342, 94, 622, 162)):
-                        if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(START_UI["yanzhengshibai"],
-                                                                                             at=(618, 399, 659, 440)):
+                    self.getscreen()
+                    if imgfindcaptcha_is_work:
+                        if self.is_exists(START_UI["anying"]) and self.is_exists(START_UI["wenzidianji"],
+                                                                                 at=(342, 94, 622, 162)):
+                            if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(
+                                    START_UI["yanzhengshibai"],
+                                    at=(618, 399, 659, 440)):
+                                screen = self.getscreen()
+                                screen = screen[1:575, 157:793]
+                                # 原来的 456, 489
+                                # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
+                                break
+                        elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                             screen = self.getscreen()
-                            screen = screen[1:575, 157:793]
-                            # 原来的 456, 489
-                            # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
                             break
-                    elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
+                        else:
+                            time.sleep(1)
+                            if _try_count > 10:
+                                imgfindcaptcha_is_work = False
+                                self.log.write_log("warning", f"{self.account}，"
+                                                              f"10s过去了，你似乎不适用OpenCV来识别验证框（，"
+                                                              f"即将启用老方法,验证码延迟【1.5+captcha_sleep_times】生效")
+                                self.d(text="确认").click()
+                                time.sleep(1.5 + captcha_sleep_times)
+                                screen = self.getscreen()
+                                screen = screen[1:575, 157:793]
+                                break
+                            _try_count += 1
+                    else:
+                        time.sleep(1.5 + captcha_sleep_times)
                         screen = self.getscreen()
+                        screen = screen[1:575, 157:793]
                         break
 
                 if self.d(textContains="请点击此处重试").exists():

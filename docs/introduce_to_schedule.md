@@ -324,13 +324,27 @@ log_cache 则为日志缓冲条数，应用于`info, warning, error`，当达到
 
 ### 3.2 配置OCR
 
+2022/1/29 起，本地OCR非强制性安装，需要手动去requirements.txt下取消对应的注释 **#** 后再pip install
+
+OCR 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 和 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
+
+按需安装以上依赖
+
+OCR工作模式介绍：
+
+当主要OCR无法识别，次要OCR会出来工作，请主次不要相同，不然程序可能会导入重复的包，徒增内存占用
+
+1. ocr_mode_main:主要OCR
+2. ocr_mode_secondary:次要OCR[选填，可不填]
+
 OCR模式介绍：
 
-1. 混合：百度OCR/本地OCR 每次调用随机用一种
-2. 网络：仅用百度OCR
-3. 本地：仅用本地OCR
-4. 本地2：仅使用本地OCR，相对于原先本地OCR，或许会更好（误
-5. 智能：在网络稳定的情况下尽量使用百度OCR，反之使用本地OCR
+2. 网络1：使用百度OCR 【？】
+2. 网络2：使用ocr.space的OCR，中文精度较高，需注意分语言识别，目前chs简体中文对数字识别率低，eng/cht对数字识别率高，但脚本默认设置为chs，这点需要开发者自行调试language参数 【中文+ 数字-】
+3. 本地1：使用本地OCR1 muggle_ocr【中文- 数字++】
+4. 本地2：使用本地OCR2 https://github.com/myhub/tr.git 但脚本需要联网访问网络模型，相对于原先本地OCR，或许精度会更好（误 【中文- 数字+】
+6. 本地3：使用 ddddocr，比muggle_ocr/https://github.com/myhub/tr.git更加轻便 【中文-- 数字+】
+7. 本地4：使用easyocr，比muggle_ocr/https://github.com/myhub/tr.git更加轻便，比ddddocr维护团队大而且有着十分丰富的机器学习经验 【中文+ 数字+】
 
 
 
@@ -341,6 +355,16 @@ OCR模式介绍：
 将申请好后的apikey、Secret Key分别填入本项目目录下的config.ini中的**baidu_apiKey** 和 **baidu_secretKey**
 
 **baidu_QPS**填线的是QPS限制数，一般免费使用为2，付费为10。两者都享有 免费5w/天 的调用
+
+
+
+ocr.space：
+
+https://ocr.space/ocrapi/freekey
+
+到上面网站填写邮箱注册接收，收到验证邮件后点击验证邮箱链接，然后就会收到带有apiKey的邮件，填入config.ini中的ocrspace_ocr_apikey
+
+享受Free Plan的额度
 
 
 
