@@ -71,7 +71,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_img(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
         while True:
             # 跳过抽奖提示
-            time.sleep(4)
+            time.sleep(5)
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/niudan_sheding.jpg'):
                 self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
@@ -104,7 +104,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.click_btn(MAIN_BTN["niudan"], until_disappear=MAIN_BTN["liwu"])
         while True:
             # 跳过抽奖提示
-            time.sleep(2)
+            time.sleep(5)
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/niudan_sheding.jpg'):
                 self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)

@@ -413,6 +413,18 @@ class PreProcesses:
         self.pp.append(lambda img: UIMatcher.filter_edge(img, **kwargs))
         return self
 
+    def sharpening(self, img):
+        # 锐化处理，对文字可能伤害较大
+        kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)  # 锐化
+        part = cv2.filter2D(img, -1, kernel=kernel)
+        # part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
+        return part
+
+    def gussian_blur(self, img):
+        # 高斯滤波，处理噪点
+        part = cv2.GaussianBlur(img, (3, 3), 1)  # 高斯滤波
+        return part
+
     def __call__(self, img):
         if len(self.pp) > 0:
             img = UIMatcher._get_template(img)

@@ -256,11 +256,9 @@ class ToolsMixin(BaseMixin):
             self.lock_home()
             screen_shot = self.getscreen()
             # 体力 包括/
-            acc_info_dict["tili"] = self.ocr_center(243, 6, 305, 22, screen_shot=screen_shot, size=2.0) \
-                .replace('=', '').replace('-', '').replace('一', '').replace('_', '')
-            # 等级
-            acc_info_dict["dengji"] = make_it_as_number_as_possible(
-                self.ocr_center(29, 43, 60, 67, screen_shot=screen_shot, size=2.0))
+            acc_info_dict["tili"] = self.ocr_int(243, 6, 305, 22, screen_shot=screen_shot)
+            # 等级 make_it_as_number_as_possible
+            acc_info_dict["dengji"] = self.ocr_int(29, 43, 60, 67, screen_shot=screen_shot)
             # mana
             acc_info_dict["mana"] = make_it_as_number_as_possible(
                 self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot, size=2.0) \
@@ -276,14 +274,11 @@ class ToolsMixin(BaseMixin):
             self.lock_img(ZHUCAIDAN_BTN["jianjie_L"], elseclick=[(382, 230)])  # 锁定简介
             screen_shot = self.getscreen()
             acc_info_dict["jianjie_name"] = self.ocr_center(608, 151, 879, 178, screen_shot=screen_shot, size=2.0)
-            acc_info_dict["dengji"] = make_it_as_number_as_possible(
-                self.ocr_center(702, 184, 785, 205, screen_shot=screen_shot, size=2.0))
-            acc_info_dict["jianjie_zhanli"] = make_it_as_number_as_possible(
-                self.ocr_center(702, 214, 786, 235, screen_shot=screen_shot, size=2.0))
+            acc_info_dict["dengji"] = self.ocr_int(702, 184, 785, 205, screen_shot=screen_shot)
+            acc_info_dict["jianjie_zhanli"] = self.ocr_int(702, 214, 786, 235, screen_shot=screen_shot)
             acc_info_dict["jianjie_hanghui"] = self.ocr_center(703, 243, 918, 266, screen_shot=screen_shot,
                                                                size=2.0)
-            acc_info_dict["jianjie_id"] = make_it_as_number_as_possible(
-                self.ocr_center(598, 415, 768, 435, screen_shot=screen_shot, size=1.2))
+            acc_info_dict["jianjie_id"] = str(self.ocr_int(598, 415, 768, 435, screen_shot=screen_shot))
         if props_info:
             self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
             # 去道具
@@ -490,7 +485,7 @@ class ToolsMixin(BaseMixin):
         choose = choose[0]
         prob, x, y, (x1, y1, x2, y2) = choose
         num_at = (x2 + 647, 199, 720, 214)
-        out = self.ocr_center(*num_at)
+        out = self.ocr_center(*num_at, size=10.0, type="number")
         if out == -1:
             if must_int:
                 return None, out

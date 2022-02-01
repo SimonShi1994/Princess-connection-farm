@@ -33,8 +33,8 @@ class LoginMixin(ToolsMixin):
         协议：MIT License
         启动脚本，请确保已进入游戏页面。
         """
+        self.phone_privacy()
         while True:
-            self.phone_privacy()
             # 判断jgm进程是否在前台, 最多等待20秒，否则唤醒到前台
             if self.d.app_wait("com.bilibili.priconne", front=True, timeout=1):
                 if not self.appRunning:
@@ -43,6 +43,7 @@ class LoginMixin(ToolsMixin):
                 self.appRunning = True
                 break
             else:
+                time.sleep(random.uniform(1.5, 5.12))
                 self.app = self.d.session("com.bilibili.priconne")
                 self.appRunning = False
                 continue
@@ -190,7 +191,7 @@ class LoginMixin(ToolsMixin):
                                                               f"10s过去了，你似乎不适用OpenCV来识别验证框（，"
                                                               f"即将启用老方法,验证码延迟【1.5+captcha_sleep_times】生效")
                                 self.d(text="确认").click()
-                                time.sleep(1.5 + captcha_sleep_times)
+                                time.sleep(1.7 + captcha_sleep_times)
                                 screen = self.getscreen()
                                 screen = screen[1:575, 157:793]
                                 break

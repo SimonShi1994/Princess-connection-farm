@@ -81,13 +81,13 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 if self.is_exists('img/dxc/chetui.bmp', at=(830, 407, 929, 448)):
                     self.lock_img('img/dxc/chetui.bmp', side_check=self.dxc_kkr, at=(830, 407, 929, 448),
                                   threshold=0.98)
-                    dixiacheng_floor = self.ocr_center(586, 421, 614, 438, size=1.5)
+                    dixiacheng_floor = self.ocr_center(586, 421, 614, 438, size=10.0)
                     # print(dixiacheng_floor)
                     if dixiacheng_floor[1] == "1":
                         dixiacheng_floor = int(dixiacheng_floor[0])
                     else:
                         dixiacheng_floor = int(dixiacheng_floor.split('/')[0])
-                    dixiacheng_floor_times = self.ocr_center(789, 422, 820, 438, size=1.5)
+                    dixiacheng_floor_times = self.ocr_center(789, 422, 820, 438, size=10.0)
                     # print(dixiacheng_floor_times)
 
                     # 本地OCR会把0识别成字母O。。。

@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20220131
+# Princess connection 公主连结农场脚本v2.7.20220201
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -194,6 +194,14 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/02/01 By CyiceK
+
+- ocr_center接入cv预处理，部分函数功能整理合一
+- 修改了部分ocr识别范围
+- cv预处理增加锐化和高斯滤波
+- ocr_int增强，现在对数字识别更加准确（带有数字+符号识别的请调整size为10.0或者5.0，并开启锐化/高斯滤波测试看看？
+- 修复百度OCR导入时，queue未能正确添加的bug
 
 2022/01/31 By TheAutumnOfRice
 

@@ -486,7 +486,7 @@ FIGHT_BTN = {
 }
 
 SHOP_BTN = {
-    "goumaibaoshi": p(p(462,40,img="img/shop/goumaibaoshi.bmp",at=(420,30,504,51))),
+    "goumaibaoshi": p(462,40,img="img/shop/goumaibaoshi.bmp",at=(420,30,504,51)),
     "mana_ball": p(img="img/shop/mana_ball.bmp", at=(744, 13, 762, 34)),
     "dxc_coin": p(img="img/shop/dxc_coin.bmp", at=(744, 14, 762, 33)),
     "jjc_coin": p(img="img/shop/jjc_coin.bmp", at=(744, 14, 763, 32)),
