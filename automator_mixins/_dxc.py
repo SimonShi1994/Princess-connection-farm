@@ -235,7 +235,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             if self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
                               retry=3, wait_self_before=True):
                 if assist_num >= 3:
-                    print("开发者没有写大于支援位置3的暗点检测，需要到再在群里提吧（有点小麻烦")
+                    self.log.write_log('info',"开发者没有写大于支援位置3的暗点检测，需要到再在群里提吧（有点小麻烦")
                 pass
             # if self.lock_no_img(DXC_ELEMENT["zhiyuan_blue"], retry=1):
             else:

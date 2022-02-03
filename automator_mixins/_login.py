@@ -24,6 +24,11 @@ class LoginMixin(ToolsMixin):
     包含登录相关操作的脚本
     """
 
+    def __init__(self):
+        super().__init__()
+        if not self.log:
+            from ._tools import ToolsMixin
+
     @timeout(180, "start执行超时：超过3分钟")
     @DEBUG_RECORD
     def start(self):
@@ -129,10 +134,10 @@ class LoginMixin(ToolsMixin):
             for _ in range(2):
                 # 有两个协议需要同意
                 if debug:
-                    print("等待认证")
+                    self.log.write_log('debug', "等待认证")
                 while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                     if debug:
-                        print("发现协议")
+                        self.log.write_log('debug', "发现协议")
                     self._move_check()
                     self.d.touch.down(810, 378).sleep(1).up(810, 378)
                     if self.d(text="请滑动阅读协议内容").exists():
@@ -142,7 +147,7 @@ class LoginMixin(ToolsMixin):
                         self.d(description="同意").click()
                     # time.sleep(6)
                 if debug:
-                    print("结束认证")
+                    self.log.write_log('debug', "结束认证")
 
         SkipAuth()
         flag = False
@@ -154,7 +159,7 @@ class LoginMixin(ToolsMixin):
             _pop = False
 
             # 初始化接码
-            cs = CaptionSkip()
+            cs = CaptionSkip(self.log)
 
             def AutoCaptcha():
 
@@ -203,69 +208,69 @@ class LoginMixin(ToolsMixin):
                         break
 
                 if self.d(textContains="请点击此处重试").exists():
-                    print(f">>>{self.account}-请点击此处重试")
+                    self.log.write_log('info', f">>>{self.account}-请点击此处重试")
                     # 点重试
                     # self.click(482, 315)
                     self.d(text="请点击此处重试").click()
 
                 elif self.d(textContains="异常").exists() or self.d(textContains="返回").exists():
-                    print(f">>>{self.account}-网络异常，刷新验证码")
+                    self.log.write_log('info', f">>>{self.account}-网络异常，刷新验证码")
                     self.click(476, 262)
                     self.d(text="返回").click()
 
                 elif self.d(textContains="请在下图依次").exists():
-                    print(f">>>{self.account}-检测到图字结合题")
-                    print("当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
+                    self.log.write_log('info',f">>>{self.account}-检测到图字结合题")
+                    self.log.write_log('warning',"当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
                     # 这是关闭验证码 self.click(667, 65, post_delay=3)
                     # 结果出来为四个字的坐标
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6004")
                     for i in range(0, _len + 1):
                         x = int(answer_result[i].split(',')[0]) + 157
                         y = int(answer_result[i].split(',')[1]) + 1
-                        print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
+                        self.log.write_log('info',f">{self.account}-验证码第{i}坐标识别：{x},{y}")
                         self.click(x, y)
                         if answer_result == [255, 439]:
                             self.click(230, 500)
-                            print("平台识别不出来，刷新")
+                            self.log.write_log('info',"平台识别不出来，刷新")
                         self.d(text="确认").click()
                         _time = + 1
                         time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="请点击").exists():
-                    print(f">>>{self.account}-检测到图形题")
+                    self.log.write_log('info',f">>>{self.account}-检测到图形题")
 
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
                     # print(answer_result,' ', _len,' ', _id)
                     x = int(answer_result[0]) + 157
                     y = int(answer_result[1]) + 1
-                    print(f">{self.account}-验证码坐标识别：", x, ',', y)
+                    self.log.write_log('info',f">{self.account}-验证码坐标识别： {x},{y}")
                     # print(type(x))
                     self.click(x, y)
                     if answer_result == [255, 439]:
                         self.click(230, 500)
-                        print("平台识别不出来，刷新")
+                        self.log.write_log('info',"平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
                     time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="拖动滑块").exists():
-                    print(f">>>{self.account}-检测到滑块题")
+                    self.log.write_log('info',f">>>{self.account}-检测到滑块题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X8006")
                     x = int(answer_result[0]) + 157
                     y = int(answer_result[1]) + 1
-                    print(f">{self.account}-滑块坐标识别：", x, 386)
+                    self.log.write_log('info',f">{self.account}-滑块坐标识别：{x}, 386")
                     # print(type(x))
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 3.6)
                     if answer_result == [255, 439]:
                         self.click(230, 500)
-                        print("平台识别不出来，刷新")
+                        self.log.write_log('info',"平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
                     time.sleep(captcha_sleep_times)
 
                 else:
-                    print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），如有问题请加群带图联系开发者")
+                    self.log.write_log('info', f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），如有问题请加群带图联系开发者")
                     # return False
 
             def due_AutoCaptcha():
@@ -337,7 +342,7 @@ class LoginMixin(ToolsMixin):
                             AutoCaptcha()
                             due_AutoCaptcha()
                         except Exception as e:
-                            print(f"自动过验证码发生报错:{e}")
+                            self.log.write_log('error',f"自动过验证码发生报错:{e}")
                             continue
                         state = True  # 先这样，10s验证，state几乎已经不适用了
                         # time.sleep(5)
@@ -444,7 +449,7 @@ class LoginMixin(ToolsMixin):
                     break
                 if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                     if debug:
-                        print("发现协议")
+                        self.log.write_log('debug', "发现协议")
                     self.d.touch.down(810, 378).sleep(1).up(810, 378)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()

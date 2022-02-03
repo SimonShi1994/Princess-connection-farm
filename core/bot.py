@@ -20,6 +20,10 @@ BOT_PROXY = {
 }
 
 
+class SendFailed(Exception):
+    pass
+
+
 class Bot:
     """
     公有推送机器人的简单封装
@@ -32,7 +36,7 @@ class Bot:
         self.cpu_info = None
         self.memory_info = None
         self.img_url = None
-        wework_url = "https://qyapi.weixin.qq.com"
+        self.wework_url = "https://qyapi.weixin.qq.com"
         self.corpid = wework_corpid
         self.corpsecret = wework_corpsecret
         self.qqbot_select = qqbot_select
@@ -148,7 +152,7 @@ class Bot:
         try:
             self.req_post.post(self.server_nike_url, proxies=BOT_PROXY, params=info)
         except Exception as e:
-            print('wechat推送服务器错误', e)
+            raise SendFailed('wechat推送服务器错误', e)
             # self.wechat_bot(s_level, message=message, acc_state=acc_state)
             # pcr_log("__SERVER_BOT__").write_log("error", f"ServerBot发送失败：{e}")
 
@@ -244,14 +248,12 @@ class Bot:
                     tmp_dict = {'msg': sent, qq: self.qq}
                     self.req_post.post(self.qqbot_url2, proxies=BOT_PROXY, params=tmp_dict)
         except Exception as e:
-            print('QQBot推送服务器错误', e)
+            raise SendFailed('QQBot推送服务器错误', e)
             # self.qq_bot(s_level, message=message, acc_state=acc_state)
 
     def tg_bot(self, s_level, message='', acc_state='', img=None, img_title=''):
         # TG推送机器人 By:CyiceK
         # img传进来的是cv2格式
-        if debug:
-            print("Now TG BOT!")
         try:
             # Markdown
             # To escape characters '_', '*', '`', '[' outside of an entity, prepend the characters '\' before them.
@@ -324,16 +326,10 @@ class Bot:
                     'parse_mode': 'Markdown',
                     'disable_notification': tg_mute,
                 }
-                if debug:
-                    print("TG Ready to Send!")
-                    print("DATA:")
-                    print(tg_textinfo)
                 r = self.req_post.post('https://tgmessage-cyicek.vercel.app/api', proxies=BOT_PROXY, data=tg_textinfo)
-                if debug:
-                    print("Get:", r)
 
         except Exception as e:
-            print('TG推送服务器错误', e)
+            raise SendFailed('TG推送服务器错误', e)
             # time.sleep(600)
             # self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
 
@@ -390,9 +386,10 @@ class Qywx(Bot):
         respone = urllib.request.urlopen(urllib.request.Request(url=send_url, data=data)).read()
         x = json.loads(respone.decode())['errcode']
         if x == 0:
+            # TODO: Bot作为一个log的扩展插件，暂时无法接入log
             print("{} 发送成功".format(msg))
         else:
-            print("{} 发送失败".format(msg))
+            raise SendFailed("{} 发送失败".format(msg))
 
     def send_msg_message(self, msg, agid=1000002):
         try:

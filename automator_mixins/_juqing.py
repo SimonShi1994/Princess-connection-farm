@@ -19,6 +19,6 @@ class JuQingMixin(ToolsMixin):
                 self.click_btn(p(x_arg, y_arg), until_appear=(JUQING_BTN["quxiao"]))
                 self.guojuqing(story_type="zhuxian")
             else:
-                print("无新剧情")
+                self.log.write_log('info', "无新剧情")
                 break
         self.lock_home()

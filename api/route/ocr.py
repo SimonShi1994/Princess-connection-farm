@@ -131,7 +131,7 @@ def baidu_ocr():
     baidu_queue.put((img.read()))
     if img:
         # time.sleep(random.uniform(1.5, 2.05))
-        part = queue.get()
+        part = baidu_queue.get()
 
         @retry(stop_max_attempt_number=5)
         def sent_ocr():

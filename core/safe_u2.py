@@ -13,7 +13,11 @@ import adbutils
 import requests
 import uiautomator2
 
+from core import log_handler
 from core.pcr_config import adb_dir, debug, disable_timeout_raise, u2_record_size, u2_record_filter,force_timeout_reboot
+
+# log
+__log = log_handler.pcr_log("safe_u2")
 
 
 def _async_raise(tid, exctype):
@@ -55,7 +59,7 @@ def timeout(seconds, error_info):
                                     time.sleep(1)
                                 return deco
                         except Exception as error:
-                            print('暂停-错误:', error)
+                            __log.write_log('error', f'暂停-错误:{error}')
                         res[0] = func(*args, **kwargs)
                     except Exception as e:
                         res[0] = e
@@ -66,7 +70,7 @@ def timeout(seconds, error_info):
                     t.start()
                     t.join(seconds)
                 except Exception as e:
-                    print('error starting thread')
+                    __log.write_log('error','error starting thread')
                     raise e
                 ret = res[0]
                 try:
@@ -78,10 +82,10 @@ def timeout(seconds, error_info):
                             time.sleep(1)
                         return deco
                 except Exception as error:
-                    print('暂停-错误:', error)
+                    __log.write_log('error', f'暂停-错误: {error}')
                 if isinstance(ret, BaseException):
                     if debug:
-                        print("!!!", id(ret), type(ret), ret)
+                        __log.write_log('debug', f"!!!{id(ret)}{type(ret)}{ret}")
                     if isinstance(ret, TimeoutError):
                         try:
                             _async_raise(t.ident, SystemExit)
@@ -104,7 +108,7 @@ def run_adb(cmd: str, timeout=None):
     try:
         subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
     except Exception as e:
-        print("adb启动失败，", e, "试图修复。")
+        __log.write_log('error',f"adb启动失败,{e},试图修复。")
         os.system("taskkill /im adb.exe /f")
         subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
 

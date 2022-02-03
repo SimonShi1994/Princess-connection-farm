@@ -322,7 +322,7 @@ class CharKaihua(PCRMsgBoxBase):
                 bmp2 = cv2.imdecode(np.fromfile(str(p), dtype=np.uint8), -1)
                 if self.img_equal(screen, bmp2, similarity=0.1) > 0.98:
                     if debug:
-                        print("找到相似图片：", p)
+                        self.log.write_log('debug',f"找到相似图片：{p}")
                     if p.stem in target_list:
                         return p.stem
 
@@ -388,7 +388,7 @@ class CharZhuanwu(PCRMsgBoxBase):
             a = self.get_zhuanwu_uplimit_during_unlock()
             if self.is_exists(JUESE_BTN["sucaibuzu"]):
                 if debug:
-                    print("素材不足")
+                    self.log.write_log('debug',"素材不足")
                 self.fclick(1, 1)
                 break
 
@@ -397,7 +397,7 @@ class CharZhuanwu(PCRMsgBoxBase):
                     self.fclick(1, 1)
                     break
                 if debug:
-                    print("解锁上限")
+                    self.log.write_log('debug',"解锁上限")
                 self.click(585, 476)
                 # 点击解锁上限
                 time.sleep(5)

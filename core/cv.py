@@ -5,7 +5,7 @@ import pathlib
 import cv2
 import numpy as np
 
-from core.log_handler import pcr_log
+from core import log_handler
 from core.pcr_config import debug, use_template_cache
 
 
@@ -20,6 +20,9 @@ def cv_imread(file_path):  # 用于中文目录的imread函数
 
 
 class UIMatcher:
+    # log
+    _log = log_handler.pcr_log("cv")
+
     # template 缓存
     template_cache = dict()
 
@@ -123,7 +126,7 @@ class UIMatcher:
                 x1, y1, x2, y2 = at
                 screen = screen[y1:y2 + 1, x1:x2 + 1]
             except:
-                pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+                cls._log.write_log(level='debug', message="检测区域填写错误")
                 exit(-1)
         if screen.mean() < 1:  # 纯黑色与任何图相关度为1
             return 0
@@ -148,7 +151,7 @@ class UIMatcher:
             x1, y1, x2, y2 = at
             screen = screen[y1:y2 + 1, x1:x2 + 1]
         except:
-            pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+            UIMatcher._log.write_log(level='error', message="检测区域填写错误")
             exit(-1)
         return screen
 
@@ -177,7 +180,8 @@ class UIMatcher:
                     _at = (x1 + j, y1 + i, x1 + j + tw - 1, y1 + i + th - 1)
                     l += [_x, _y, _at]
                     if debug:
-                        print(f"p({_x},{_y},img=\"{template_path}\",at={_at}), \nCCOEFF=", res[i, j])
+                        cls._log.write_log('debug',
+                                           f"p({_x},{_y},img={template_path},at={_at}), \nCCOEFF={res[i, j]}")
         return l
 
     @classmethod
@@ -205,9 +209,8 @@ class UIMatcher:
                     _at = (x1 + j, y1 + i, x1 + j + tw - 1, y1 + i + th - 1)
                     l += [(res[i, j], _x, _y, _at)]
                     if debug:
-                        print(
-                            f"p({_x},{_y},img=\"{template_path if type(template_path) is str else '...'}\",at={_at}), \nCCOEFF=",
-                            res[i, j])
+                        cls._log.write_log('debug',
+                                           f"p({_x},{_y},img={template_path if type(template_path) is str else '...'},at={_at}), \nCCOEFF={res[i, j]}")
         return sorted(l, reverse=True)
 
     @staticmethod
@@ -251,7 +254,7 @@ class UIMatcher:
                 x1, y1, x2, y2 = at
                 screen = screen[y1:y2 + 1, x1:x2 + 1]
             except:
-                pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+                cls._log.write_log(level='error', message="检测区域填写错误")
                 exit(-1)
         else:
             x1, y1 = 0, 0
@@ -273,6 +276,8 @@ class UIMatcher:
             if is_black:
                 _, black_num, _, _ = cls.find_gaoliang(screen)
                 # print("暗点:", black_num, "-img:", template_path)
+                if debug:
+                    cls._log.write_log('debug', f"暗点:{black_num} -img:{template_path}")
                 if black_num > black_threshold:
                     return True
                 else:
@@ -281,28 +286,27 @@ class UIMatcher:
             x = x1 + max_loc[0] + tw // 2
             y = y1 + max_loc[1] + th // 2
             if debug:
-                print("{}--{}--({},{})".format(template_path, round(max_val, 3), x, y))
-                pcr_log('admin').write_log(level='debug',
-                                           message="{}--{}--({},{})".format(template_path, round(max_val, 3)
-                                                                            , x, y))
+                cls._log.write_log('debug', "{}--{}--({},{})".format(template_path, round(max_val, 3), x, y))
+                # cls._log.write_log(level='debug',
+                #                    message="{}--{}--({},{})".format(template_path, round(max_val, 3)
+                #                                                     , x, y))
                 pass
                 if at is None:
-                    pass
-                    print("{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0],
-                                                           y1 + max_loc[1],
-                                                           x1 + max_loc[0] + tw,
-                                                           y1 + max_loc[1] + th))
-                    pcr_log('admin').write_log(level='debug',
-                                               message="{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0],
-                                                                                        y1 + max_loc[1],
-                                                                                        x1 + max_loc[0] + tw,
-                                                                                        y1 + max_loc[1] + th))
+                    cls._log.write_log('debug', "{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0],
+                                                                                 y1 + max_loc[1],
+                                                                                 x1 + max_loc[0] + tw,
+                                                                                 y1 + max_loc[1] + th))
+                    # cls._log.write_log(level='debug',
+                    #                    message="{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0],
+                    #                                                             y1 + max_loc[1],
+                    #                                                             x1 + max_loc[0] + tw,
+                    #                                                             y1 + max_loc[1] + th))
             return x, y
         else:
             if debug:
-                print("{}--{}".format(template_path, round(max_val, 3)))
-                pcr_log('admin').write_log(level='debug',
-                                           message="{}--{}".format(template_path, round(max_val, 3)))
+                cls._log.write_log('debug', "{}--{}".format(template_path, round(max_val, 3)))
+                # cls._log.write_log(level='debug',
+                #                            message="{}--{}".format(template_path, round(max_val, 3)))
             return False
 
     @staticmethod
@@ -366,7 +370,7 @@ class UIMatcher:
                 x1, y1, x2, y2 = at
                 screen_short = screen_short[y1:y2, x1:x2]
             except:
-                pcr_log('admin').write_log(level='debug', message="检测区域填写错误")
+                cls._log.write_log(level='debug', message="检测区域填写错误")
                 exit(-1)
         else:
             x1, y1 = 0, 0

@@ -199,7 +199,7 @@ class ToolsMixin(BaseMixin):
             img = self.getscreen()
             cut_img = UIMatcher.img_cut(img, th_at)
             if debug:
-                print("VAR:", cut_img.var())
+                self.log.write_log('debug',"VAR:"+cut_img.var())
             if cut_img.var() > 1000:
                 # 有千位，卖
                 self.click_btn(ZHUCAIDAN_BTN["chushou2"], until_appear=ZHUCAIDAN_BTN["chushouwanbi"])
@@ -403,7 +403,7 @@ class ToolsMixin(BaseMixin):
         # part = screen_shot_[526:649, 494:524]
         ret = self.baidu_ocr(494, 526, 524, 649, 1)  # 获取体力区域的ocr结果
         if ret == -1:
-            print('体力识别失败！')
+            self.log.write_log('error','体力识别失败！')
             return -1
         else:
             return int(ret['words_result'][1]['words'].split('/')[0])
@@ -749,7 +749,7 @@ class ToolsMixin(BaseMixin):
                 bmp2 = cv2.imdecode(np.fromfile(str(p), dtype=np.uint8), -1)
                 if self.img_equal(screen, bmp2, similarity=0.1) > 0.98:
                     if debug:
-                        print("找到相似图片：", p)
+                        self.log.write_log('debug',f"找到相似图片：{p}" )
                     if p.stem in target_list:
                         return p.stem
 
@@ -874,13 +874,13 @@ class ToolsMixin(BaseMixin):
                 w, h = 60, 30
                 pic = UIMatcher.img_cut(value, (p[0], p[1], p[0] + w, p[1] + h))
                 if debug:
-                    print(pic.max())
+                    self.log.write_log('debug',pic.max())
                 if pic.max() > 150:
                     out += [True]
                 else:
                     out += [False]
             if debug:
-                print(out)
+                self.log.write_log('debug',out)
             return out
 
         def _next():
@@ -981,7 +981,7 @@ class ToolsMixin(BaseMixin):
         while True:
             screen = self.getscreen()
             lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp", at=(233, 98, 285, 319), screen=screen)
-            print(lst)
+            self.log.write_log('info ',f"{lst}")
             # 选择无语音选项
             if self.is_exists(JUQING_BTN["wuyuyin"], screen=screen):
                 self.click_btn(JUQING_BTN["wuyuyin"], until_disappear=(JUQING_BTN["wuyuyin"]))
@@ -1004,11 +1004,11 @@ class ToolsMixin(BaseMixin):
             if self.is_exists(JUQING_BTN["guanbi"], screen=screen) and story_type == "zhuxian":
                 self.click_btn(JUQING_BTN["guanbi"], until_appear=p(img="img/juqing/in_join.bmp"))
                 time.sleep(3)
-                print("完成了这段剧情")
+                self.log.write_log('info',"完成了这段剧情")
                 break
             # 兼容信赖度退出检测，不是很稳定，因为点无语音的时候背景也有
             if story_type == "xianlai" and self.is_exists("img/juqing/new_content.bmp", screen=screen, threshold=0.7):
-                print("完成了这段剧情")
+                self.log.write_log('info',"完成了这段剧情")
                 break
             else:
                 self.fclick(479, 260)
