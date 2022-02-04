@@ -3,6 +3,7 @@ import importlib
 from math import inf
 from typing import List, Type, Any, Optional, Union
 
+from core import log_handler
 from core.constant import NORMAL_COORD, HARD_COORD
 from core.pcr_config import debug
 
@@ -184,17 +185,18 @@ class ConstantInputer(InputBoxBase):
 
 class ValidTask:
     def __init__(self):
+        self.__log = log_handler.pcr_log("ValidTask")
         self.T = {}  # 存放合法Task记录
 
     def add_custom(self, pymodule: str):
         py = None
         try:
             if debug:
-                print("Loading pymodule:", pymodule)
+                self.__log.write_log('debug',f"Loading pymodule:{pymodule}")
             py = getcustomtask(pymodule)
         except Exception as e:
             if debug:
-                print("读取自定义模块失败！", e)
+                self.__log.write_log('debug',f"读取自定义模块失败！ {e}")
             return
         if not getattr(py, "__enable__", False):
             return
@@ -202,7 +204,7 @@ class ValidTask:
         custom_T = valid.T
         for abbr in custom_T:
             if debug:
-                print("添加自定义：", abbr)
+                self.__log.write_log('debug',f"添加自定义：{abbr}")
             for illegal in ["self", "var", "funcname", "pymodule"]:
                 assert illegal not in custom_T[abbr]["param_dict"], "自定义变量中不能出现" + illegal + "!"
             self.T[abbr] = custom_T[abbr].copy()

@@ -21,7 +21,6 @@ from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN, DXC_ELEMENT, MAOXIAN_BTN
 from core.cv import UIMatcher, PreProcesses
 from core.get_screen import ReceiveFromMinicap
-from core.log_handler import pcr_log
 from core.pcr_checker import ExceptionSet, ElementChecker, Checker, ReturnValue
 from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, ocr_mode_main, \
     ocr_mode_secondary, force_primary_equals_secondary, force_primary_equals_secondary_use, ocrspace_ocr_apikey
@@ -36,6 +35,7 @@ lock = threading.Lock()
 
 if ignore_warning:
     if debug:
+        # TODO：debug
         print("WARNING IGNORED.")
     import warnings
     import uiautomator2
@@ -221,20 +221,20 @@ class BaseMixin:
             from core.get_screen import ReceiveFromMinicap
             self.receive_minicap = ReceiveFromMinicap(self.address)
             self.receive_minicap.start()
-            print("Device:", self._d.serial, "快速截图已打开，测试中……")
+            self.log.write_log('info', f"Device:{self._d.serial}快速截图已打开，测试中……")
             for retry in range(3):
                 try:
                     data = self.receive_minicap.receive_img()
                     if data is None:
                         raise Exception("读取数据超过最大尝试次数")
                     self.fastscreencut_retry = 0
-                    print("Device:", self._d.serial, "快速截图运行正常。")
+                    self.log.write_log('info', f"Device:{self._d.serial}快速截图运行正常。")
                     break
                 except Exception as e:
                     self.receive_minicap.stop()
                     time.sleep(1)
                     if retry < 2:
-                        print("Device:", self._d.serial, f"尝试重新开启快速截图...{e}")
+                        self.log.write_log('info', f"Device:{self._d.serial}尝试重新开启快速截图...{e}")
                         self.receive_minicap = ReceiveFromMinicap(self.address)
                         self.receive_minicap.start()
             else:
@@ -242,7 +242,7 @@ class BaseMixin:
                 if force_fast_screencut:
                     raise FastScreencutException("快速截图打开失败！")
                 else:
-                    print("Device:", self._d.serial, f"快速截图打开失败！使用慢速截图。")
+                    self.log.write_log('error', f"Device:{self._d.serial}快速截图打开失败！使用慢速截图。")
 
     @DEBUG_RECORD
     def init_device(self, address):
@@ -274,6 +274,12 @@ class BaseMixin:
         :return:
         """
         self.send_move_method("forcekill", "")
+
+    def app_stop(self, app_packet_name):
+        """
+        关闭某一app
+        """
+        self._d.app_stop(app_packet_name)
 
     @staticmethod
     def _get_at(at):
@@ -308,11 +314,11 @@ class BaseMixin:
 
         def _ck():
             if self._move_method == "restart":
-                print(self.address, "- 重启")
+                self.log.write_log('info', f"{self.address} - 重启")
                 self._move_method = ""
                 raise Exception(self._move_msg)
             if self._move_method == "forcekill":
-                print(self.address, "- 强制停止")
+                self.log.write_log('info', f"{self.address}- 强制停止")
                 self._move_method = ""
                 raise ForceKillException()
             if self._move_method == "skip":
@@ -320,18 +326,18 @@ class BaseMixin:
 
                     next_id = self.ms.current_id + 1
                     if next_id in self._task_index:
-                        print(self.address, "- 跳过当前任务")
+                        self.log.write_log('info', f"{self.address}- 跳过当前任务")
                     else:
-                        print(self.address, "- 已经是最后一个任务了！")
+                        self.log.write_log('info', f"{self.address}- 已经是最后一个任务了！")
                 else:
                     if str(self._move_msg).isnumeric():
                         next_id = int(self._move_msg)
                     else:
                         next_id = "asduasiudhsaiuheuifhBUNENGTIAO"
                     if next_id in self._task_index:
-                        print(self.address, "- 跳转至：", self._move_msg)
+                        self.log.write_log('info', f"{self.address}- 跳转至：{self._move_msg}")
                     else:
-                        print(self.address, "- 不存在的任务，无法跳转！")
+                        self.log.write_log('info', f"{self.address}- 不存在的任务，无法跳转！")
                 self._move_method = ""
                 raise MoveSkipException(self._move_msg)
 
@@ -339,25 +345,25 @@ class BaseMixin:
             from automator_mixins._async import block_sw, enable_pause
             if enable_pause:
                 if block_sw == 1:
-                    print(self.address, "- 脚本暂停中~")
+                    self.log.write_log('info', f"{self.address}- 脚本暂停中~")
                     while block_sw == 1:
                         from automator_mixins._async import block_sw
                         time.sleep(1)
                         self._paused = True
                         _ck()
-                    print(self.address, "- 脚本恢复~")
+                    self.log.write_log('info', f"{self.address}- 脚本恢复~")
                     return True
             else:
                 if self.freeze:
-                    print(self.address, "- 脚本暂停中~")
+                    self.log.write_log('info', f"{self.address}- 脚本暂停中~")
                     while self.freeze:
                         time.sleep(1)
                         self._paused = True
                         _ck()
-                    print(self.address, "- 脚本恢复~")
+                    self.log.write_log('info', f"{self.address}- 脚本恢复~")
                     return True
         except Exception as error:
-            print('暂停-错误:', error)
+            self.log.write_log('error', f'暂停-错误:{error}')
             return True
         _ck()
 
@@ -636,7 +642,7 @@ class BaseMixin:
         img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY) / 255
         eqt = np.sum(np.abs(img1 - img2) < similarity) / img1.size
         if debug:
-            print("EQT:", eqt)
+            self.log.write_log('debug', "EQT:{eqt}")
         return eqt
 
     @DEBUG_RECORD
@@ -663,7 +669,7 @@ class BaseMixin:
             sc2 = preprocess(sc2)
             value = self.img_equal(sc, sc2, at, similarity)
             if debug:
-                print("Stable : ", value, " >? ", threshold)
+                self.log.write_log('debug', f"Stable : {value} >? {threshold}")
             if value > threshold:
                 return True
             sc = sc2
@@ -693,7 +699,7 @@ class BaseMixin:
             sc2 = preprocess(sc2)
             value = self.img_equal(sc, sc2, at, similarity)
             if debug:
-                print("Stable : ", value, " <? ", threshold)
+                self.log.write_log('debug', f"Stable : {value} <? {threshold}")
             if value < threshold:
                 return True
         return False
@@ -759,8 +765,8 @@ class BaseMixin:
             tu = max(pdict, key=lambda x: pdict[x])
             l = sorted(pdict.values(), reverse=True)
             if debug:
-                print(tu)
-                print(l)
+                self.log.write_log('debug', str(tu))
+                self.log.write_log('debug', str(l))
             if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
                 time.sleep(0.5)
                 continue
@@ -814,21 +820,21 @@ class BaseMixin:
             from automator_mixins._async import block_sw, enable_pause
             if enable_pause:
                 if block_sw == 1:
-                    print(self.address, "- 截图暂停中~")
+                    self.log.write_log('info', f"{self.address}- 截图暂停中~")
                     while block_sw == 1:
                         from automator_mixins._async import block_sw
                         time.sleep(1)
                         self._paused = True
-                    print(self.address, "- 截图恢复~")
+                    self.log.write_log('info', f"{self.address}- 截图恢复~")
             else:
                 if self.freeze:
-                    print(self.address, "- 截图暂停中~")
+                    self.log.write_log('info', f"{self.address}- 截图暂停中~")
                     while self.freeze:
                         time.sleep(1)
                         self._paused = True
-                    print(self.address, "- 截图恢复~")
+                    self.log.write_log('info', f"{self.address}- 截图恢复~")
         except Exception as error:
-            print('截图暂停-错误:', error)
+            self.log.write_log('error', f'截图暂停-错误: {error}')
 
         if self.debug_screen is None:
             if not force_slow and fast_screencut and self.fastscreencut_retry < 3:
@@ -862,9 +868,10 @@ class BaseMixin:
             output_screen = UIMatcher.AutoRotateClockWise90(self.last_screen)
             if debug:
                 if output_screen is None:
-                    print("ERROR！截图为空！")
+                    self.log.write_log('debug', "ERROR！截图为空！")
             if output_screen is not None and output_screen.shape != (540, 960, 3):
-                print("Warning: 截屏大小为", output_screen.shape, "应为 (540,960,3)， 可能模拟器分辨率没有被正确设置！")
+                self.log.write_log('waring', f"Warning: 截屏大小为{output_screen.shape} "
+                                             f"应为 (540,960,3)， 可能模拟器分辨率没有被正确设置！")
             return output_screen
         else:
             if isinstance(self.debug_screen, str):
@@ -1508,12 +1515,17 @@ class BaseMixin:
         return self.debug_record.get(running)
 
     @DEBUG_RECORD
-    def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs',
-                   preprocess=PreProcesses()):
+    def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text",
+                   before_preprocess=PreProcesses(), after_preprocess=PreProcesses(), apply_screen=True, blur=None):
         """
+        :param after_preprocess: 后cv预处理，在ocr外部处理，经过旋转（或许有）+裁剪，再处理
+        :param blur: 滤波/模糊 <str> 在被调用的ocr内部进行，在size之后，目前只有 "gussian" 高斯滤波
+        :param apply_screen: 是否只使用一个screen
+        :param before_preprocess: 前cv预处理，PreProcesses()在cv.py中，比screen_shot优先级要高,是最高优先级，在ocr外部处理
+        :param type: text/number number将会在被调用的ocr内部进行锐化+高斯滤波（有blur才行），在size之后，请先调整好size，建议10.0
         :param language: 所用语言
         :param credibility: 结果可信度阈值,目前仅有本地OCR2才用到
-        :param size: 放大的大小
+        :param size: 放大的大小，在被调用的ocr内部进行
         :param x1: 左上坐标
         :param y1: 左上坐标
         :param x2: 右下坐标
@@ -1526,7 +1538,7 @@ class BaseMixin:
         try:
             requests.get(url="http://127.0.0.1:5000/ocr/")
         except:
-            pcr_log(self.account).write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
+            self.log.write_log(level='error', message='无法连接到OCR,请尝试重新开启app.py')
             return -1
 
         if len(ocr_mode_main) == 0:
@@ -1542,52 +1554,10 @@ class BaseMixin:
             "本地3": self.ocr_local3,
             "本地4": self.easyocr_ocr,
         }
-        if screen_shot is None:
-            screen_shot = self.getscreen()
-        screen_shot = preprocess(screen_shot)
-        ocr_text = ocr_register.get(ocr_mode_main)(x1, y1, x2, y2, screen_shot, size, credibility, language)
-        if force_primary_equals_secondary:
-            for ocr_second in ocr_mode_secondary.split(','):
-                ocr_text2 = ocr_register.get(ocr_second)(x1, y1, x2, y2, screen_shot, size, credibility, language)
-                if ocr_text != ocr_text2:
-                    ocr_text = ocr_register.get(force_primary_equals_secondary_use)(x1, y1, x2, y2, screen_shot, size,
-                                                                                    credibility, language)
-        else:
-            if ocr_text == -1:
-                if len(ocr_mode_secondary) != 0:
-                    for ocr_second in ocr_mode_secondary.split(','):
-                        ocr_text = ocr_register.get(ocr_second)(x1, y1, x2, y2, screen_shot, size, credibility,
-                                                                language)
-                        if not ocr_text or ocr_text == -1:
-                            continue
-                        else:
-                            break
-
-        # OCR返回的数据 纠错
-        try:
-            if ocr_text:
-                # if debug:
-                #     print(ocr_text)
-                return str(ocr_text)
-            else:
-                return -1
-        except:
-            raise Exception("ocr-error", "OCR识别错误。")
-
-    # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
-    # 使用Baidu OCR接口
-    def baidu_ocr(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
-        # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
-        # 默认原图大小（1.0）
-        if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
-            pcr_log(self.account).write_log(level='error', message='读取SecretKey或apiKey失败！')
-            return -1
-
-        # 强制size为1.0，避免百度无法识图
-        size = 1.0
 
         if screen_shot is None:
             screen_shot = self.getscreen()
+        screen_shot = before_preprocess(screen_shot)
         # from numpy import rot90
         # screen_shot_ = rot90(screen_shot_)  # 旋转90°
         if baidu_ocr_img:
@@ -1600,8 +1570,52 @@ class BaseMixin:
             # cv2.imwrite('fuck_rot90_test.bmp', screen_shot_)
             # screen_shot_ = rot90(screen_shot_)  # 旋转90°
             pass
-        part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-        part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+        screen_shot = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
+        screen_shot = after_preprocess(screen_shot)
+
+        ocr_text = ocr_register.get(ocr_mode_main)(screen_shot, size, credibility, language, type, blur=blur)
+        if force_primary_equals_secondary:
+            for ocr_second in ocr_mode_secondary.split(','):
+                ocr_text2 = ocr_register.get(ocr_second)(screen_shot, size, credibility, language, type, blur=blur)
+                if ocr_text != ocr_text2:
+                    ocr_text = ocr_register.get(force_primary_equals_secondary_use)(screen_shot, size,
+                                                                                    credibility, language, type,
+                                                                                    blur=blur)
+        else:
+            if ocr_text == -1:
+                if len(ocr_mode_secondary) != 0:
+                    for ocr_second in ocr_mode_secondary.split(','):
+                        ocr_text = ocr_register.get(ocr_second)(screen_shot, size, credibility,
+                                                                language, type, blur=blur)
+                        if not ocr_text or ocr_text == -1:
+                            continue
+                        else:
+                            break
+
+        # OCR返回的数据 纠错
+        try:
+            if ocr_text:
+                if debug:
+                    self.log.write_log('debug', self.account + "的ocr_center识别结果:" + ocr_text)
+                return str(ocr_text)
+            else:
+                return -1
+        except:
+            self.log.write_log('error', "ocr-error" + "OCR识别错误。")
+            raise Exception("ocr-error", "OCR识别错误。")
+
+    # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
+    # 使用Baidu OCR接口
+    def baidu_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+        # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
+        # 默认原图大小（1.0）
+        if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
+            self.log.write_log(level='error', message='读取SecretKey或apiKey失败！')
+            return -1
+
+        # 强制size为1.0，避免百度无法识图
+        size = 1.0
+        part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
         partbin = cv2.imencode('.jpg', part)[1]  # 转成base64编码（误）
 
         try:
@@ -1610,32 +1624,26 @@ class BaseMixin:
             # 原生输出有助于开发者
             result = result.json().get('words_result')[0].get('words')
             if debug:
-                print('百度OCR识别结果：%s' % result)
+                self.log.write_log('debug', '百度OCR识别结果：%s' % result)
             return result
         except:
-            pcr_log(self.account).write_log(level='error', message='百度OCR识别失败！请检查apikey和secretkey以及截图范围返回结果'
-                                                                   '是否有误！')
+            self.log.write_log(level='error', message='百度OCR识别失败！请检查apikey和secretkey以及截图范围返回结果'
+                                                      '是否有误！')
             return -1
 
-    def ocrspace_ocr(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
+    def ocrspace_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
         if len(ocrspace_ocr_apikey) == 0:
-            pcr_log(self.account).write_log(level='error', message='读取ocrspace_ocr_apikey失败！')
+            self.log.write_log(level='error', message='读取ocrspace_ocr_apikey失败！')
             return -1
 
-        if screen_shot is None:
-            screen_shot = self.getscreen()
-        if screen_shot.shape[0] > screen_shot.shape[1]:
-            if anticlockwise_rotation_times >= 1:
-                for _ in range(anticlockwise_rotation_times):
-                    screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            # cv2.imwrite('fuck_rot90_test.bmp', screen_shot_)
-            # screen_shot_ = rot90(screen_shot_)  # 旋转90°
-            pass
-        part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-        part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+        part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+        if type == 'number':
+            # 锐化处理+高斯滤波，避免放大失真
+            kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)  # 锐化
+            part = cv2.filter2D(part, -1, kernel=kernel)
+        if blur == 'gussian':
+            part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
         img_binary = cv2.imencode('.png', part)[1].tobytes()
-
         try:
             files = {
                 'file': ('tmp.png', img_binary, 'image/png'),
@@ -1645,50 +1653,44 @@ class BaseMixin:
             # 原生输出有助于开发者
             result = result.json().get('ParsedResults')[0].get('ParsedText')
             if debug:
-                print('ocrspaceOCR识别结果：%s' % result)
+                self.log.write_log('debug', 'ocrspaceOCR识别结果：%s' % result)
             if result:
                 return result
             else:
                 return -1
         except:
-            pcr_log(self.account).write_log(level='error', message='ocrspaceOCR识别失败！请检查ocrspace_ocr_apikey以及截图范围返回结果'
-                                                                   '是否有误！')
+            self.log.write_log(level='error', message='ocrspaceOCR识别失败！请检查ocrspace_ocr_apikey以及截图范围返回结果'
+                                                      '是否有误！')
             return -1
 
-    def ocr_local(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
-        if screen_shot is None:
-            screen_shot = self.getscreen()
-
+    def ocr_local(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
         try:
-            if screen_shot.shape[0] > screen_shot.shape[1]:
-                if anticlockwise_rotation_times >= 1:
-                    for _ in range(anticlockwise_rotation_times):
-                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            if type == 'number':
+                # 锐化处理+高斯滤波，避免放大失真
+                kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)  # 锐化
+                part = cv2.filter2D(part, -1, kernel=kernel)
+            if blur == 'gussian':
+                part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
             img_binary = cv2.imencode('.png', part)[1].tobytes()
             files = {'file': ('tmp.png', img_binary, 'image/png')}
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr/", files=files)
             if debug:
-                print('本地OCR识别结果：%s' % local_ocr_text.text)
+                self.log.write_log('debug', '本地OCR识别结果：%s' % local_ocr_text.text)
             return local_ocr_text.text
         except Exception as ocr_error:
-            pcr_log(self.account).write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
+            self.log.write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
             return -1
 
-    def ocr_local2(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
-        if screen_shot is None:
-            screen_shot = self.getscreen()
-
+    def ocr_local2(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
         try:
-            if screen_shot.shape[0] > screen_shot.shape[1]:
-                if anticlockwise_rotation_times >= 1:
-                    for _ in range(anticlockwise_rotation_times):
-                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            if type == 'number':
+                # 锐化处理+高斯滤波，避免放大失真
+                kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)  # 锐化
+                part = cv2.filter2D(part, -1, kernel=kernel)
+            if blur == 'gussian':
+                part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
             img_binary = cv2.imencode('.png', part)[1].tobytes()
             files = {'file': ('tmp.png', img_binary, 'image/png')}
             r = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr2/", files=files).json().get("res")
@@ -1696,64 +1698,71 @@ class BaseMixin:
             # local_ocr_text_credibility = float(local_ocr_text[1])  # 可信度
             if round(float(r[1]), 2) > credibility:
                 if debug:
-                    print('本地OCR-2识别结果：%s' % local_ocr_text)
+                    self.log.write_log('debug', '本地OCR-2识别结果：%s' % local_ocr_text)
                 return local_ocr_text
             else:
                 if debug:
-                    print('本地OCR-2识别结果：%s,该结果可信度太低，丢弃！' % local_ocr_text)
+                    self.log.write_log('debug', '本地OCR-2识别结果：%s,该结果可信度太低，丢弃！' % local_ocr_text)
                 return -1
         except Exception as ocr_error:
-            pcr_log(self.account).write_log(level='error', message='本地OCR-2识别失败，原因：%s' % ocr_error)
+            self.log.write_log(level='error', message='本地OCR-2识别失败，原因：%s' % ocr_error)
             return -1
 
-    def ocr_local3(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
-        if screen_shot is None:
-            screen_shot = self.getscreen()
-
+    def ocr_local3(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
         try:
-            if screen_shot.shape[0] > screen_shot.shape[1]:
-                if anticlockwise_rotation_times >= 1:
-                    for _ in range(anticlockwise_rotation_times):
-                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            if type == 'number':
+                # 锐化处理+高斯滤波，避免放大失真
+                kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)  # 锐化
+                part = cv2.filter2D(part, -1, kernel=kernel)
+            if blur == 'gussian':
+                part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
             img_binary = cv2.imencode('.png', part)[1].tobytes()
             files = {'file': ('tmp.png', img_binary, 'image/png')}
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr3/", files=files)
             if debug:
-                print('本地OCR3识别结果：%s' % local_ocr_text.text)
+                self.log.write_log('debug', '本地OCR3识别结果：%s' % local_ocr_text.text)
             return local_ocr_text.text
         except Exception as ocr_error:
-            pcr_log(self.account).write_log(level='error', message='本地OCR3识别失败，原因：%s' % ocr_error)
+            self.log.write_log(level='error', message='本地OCR3识别失败，原因：%s' % ocr_error)
             return -1
 
-    def easyocr_ocr(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs'):
-        if screen_shot is None:
-            screen_shot = self.getscreen()
-
+    def easyocr_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
         try:
-            if screen_shot.shape[0] > screen_shot.shape[1]:
-                if anticlockwise_rotation_times >= 1:
-                    for _ in range(anticlockwise_rotation_times):
-                        screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-                screen_shot = UIMatcher.AutoRotateClockWise90(screen_shot)
-            part = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
-            part = cv2.resize(part, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            if type == 'number':
+                # 锐化处理+高斯滤波，避免放大失真
+                kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)  # 锐化
+                part = cv2.filter2D(part, -1, kernel=kernel)
+            if blur == 'gussian':
+                part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
             img_binary = cv2.imencode('.png', part)[1].tobytes()
             files = {'file': img_binary}
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr4/", files=files)
             if debug:
-                print('本地OCR4识别结果：%s' % local_ocr_text.text)
+                self.log.write_log('debug', '本地OCR4识别结果：%s' % local_ocr_text.text)
             return local_ocr_text.text
         except Exception as ocr_error:
-            pcr_log(self.account).write_log(level='error', message='本地OCR4识别失败，原因：%s' % ocr_error)
+            self.log.write_log(level='error', message='本地OCR4识别失败，原因：%s' % ocr_error)
             return -1
 
     def ocr_int(self, x1, y1, x2, y2, screen_shot=None):
-        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=2.0, credibility=0.97, language='eng')
+        """
+        获取整型数字，不能包含 /
+        :arg
+        """
+        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=10.0, credibility=0.9, type='number',
+                              blur='gussian')
+        try:
+            int(out)
+        except ValueError:
+            # 说明得到的不是数字
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=10.0, credibility=0.9, type='number')
         if out == -1:
-            raise OCRRecognizeError("整数OCR失败了！", outstr=str(out))
+            # 重新投入数字特化处理
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=5.0, credibility=0.9, type='number')
+            if out == -1:
+                raise OCRRecognizeError("整数OCR失败了！", outstr=str(out))
         out = make_it_as_number_as_possible(out)
         return int(out)
 

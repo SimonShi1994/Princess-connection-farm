@@ -26,7 +26,7 @@ class ShopMixin(ToolsMixin):
         at = (789, 16, 918, 32)
         out = self.ocr_int(*at, screen_shot=screen)
         if debug:
-            print("持有代币：%s" % out)
+            self.log.write_log('debug',"持有代币：%s" % out)
         return out
 
     def buy_press(self):
@@ -42,7 +42,7 @@ class ShopMixin(ToolsMixin):
 
     def tick_frag(self, fraglist=None):
         if fraglist is None:
-            print("无该类型碎片")
+            self.log.write_log('warning',"无该类型碎片")
             return
         drag_count = 0
         buy_count = 0
@@ -62,7 +62,7 @@ class ShopMixin(ToolsMixin):
                 if a == 0:
                     buy_count += 1
                     fraglist.remove(frag_)
-                    print(fraglist)
+                    self.log.write_log('info',str(fraglist))
                     if len(fraglist) == 0:
                         if self.is_exists(SHOP_BTN["jiechusuoyou"]):
                             self.buy_press()
@@ -119,7 +119,7 @@ class ShopMixin(ToolsMixin):
             pass
         else:
             self.tick_frag(fraglist=dxc_fraglist)
-        print("地下城购买完毕")
+        self.log.write_log('info',"地下城购买完毕")
         time.sleep(2)
         # JJC碎片
         self.click(454, 65)
@@ -131,7 +131,7 @@ class ShopMixin(ToolsMixin):
             pass
         else:
             self.tick_frag(fraglist=jjc_fraglist)
-        print("JJC购买完毕")
+        self.log.write_log('info',"JJC购买完毕")
         time.sleep(2)
         # PJJC碎片
         self.click(543, 65)
@@ -143,7 +143,7 @@ class ShopMixin(ToolsMixin):
             pass
         else:
             self.tick_frag(fraglist=pjjc_fraglist)
-        print("PJJC购买完毕")
+        self.log.write_log('info',"PJJC购买完毕")
         time.sleep(2)
         # 行会碎片
         self.click(640, 65)
@@ -155,5 +155,5 @@ class ShopMixin(ToolsMixin):
             pass
         else:
             self.tick_frag(fraglist=clan_fraglist)
-        print("行会购买完毕")
+        self.log.write_log('info',"行会购买完毕")
         self.lock_home()

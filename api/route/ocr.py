@@ -1,4 +1,3 @@
-import queue
 import random
 import time
 import os
@@ -14,14 +13,13 @@ from core.pcr_config import ocr_mode_main, ocr_mode_secondary, baidu_apiKey, bai
     ocrspace_ocr_apikey
 
 ocr_list = [x for x in ocr_mode_secondary.split(',')]
-ocr_list.insert(0,ocr_mode_main)
+ocr_list.insert(0, ocr_mode_main)
 for ocr_mode in ocr_list:
     try:
         if len(ocr_mode) == 0:
             continue
         if ocr_mode[:2] != "网络":
             if ocr_mode == "本地1":
-
                 # 这一行代码用于关闭tensorflow的gpu模式（如果使用，内存占用翻几倍）
                 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
@@ -39,24 +37,28 @@ for ocr_mode in ocr_list:
                 ocr = ddddocr.DdddOcr(show_ad=False, old=True)
             if ocr_mode == "本地4":
                 import easyocr
+
                 # 'ch_tra' 中文繁体
                 easyocr_reader = easyocr.Reader(['ch_sim', 'en'], gpu=False,
                                                 verbose=False)  # this needs to run only once to load the model into memory
         else:
-            # 这一行创建了发包队列
-            queue = queue.Queue(baidu_QPS)
-            config = {
-                'appId': 'PCR',
-                'apiKey': baidu_apiKey,
-                'secretKey': baidu_secretKey
-            }
-            ocrspace_ocr_config = {
-                'isOverlayRequired': False,
-                'apikey': ocrspace_ocr_apikey,
-                'language': 'chs',
-                'scale': True,
-            }
-            client = AipOcr(**config)
+            if ocr_mode == "网络1":
+                import queue
+                # 这一行创建了发包队列
+                baidu_queue = queue.Queue(baidu_QPS)
+                config = {
+                    'appId': 'PCR',
+                    'apiKey': baidu_apiKey,
+                    'secretKey': baidu_secretKey
+                }
+                client = AipOcr(**config)
+            if ocr_mode == "网络2":
+                ocrspace_ocr_config = {
+                    'isOverlayRequired': False,
+                    'apikey': ocrspace_ocr_apikey,
+                    'language': 'chs',
+                    'scale': True,
+                }
     except ModuleNotFoundError as e:
         print("OCR初始化启动，模块缺失：", e)
         os.system("pause")
@@ -117,7 +119,7 @@ def local_ocr4():
         result = easyocr_reader.readtext(upload_file.read(), detail=0)
         # print(result)
         if type(result) is list:
-            return str(result).replace("'",'').replace('[','').replace(']','')
+            return str(result).replace("'", '').replace('[', '').replace(']', '')
     return 400
 
 
@@ -126,10 +128,10 @@ def baidu_ocr():
     lay_sw = False
     # 接收图片
     img = request.files.get('file')
-    queue.put((img.read()))
+    baidu_queue.put((img.read()))
     if img:
         # time.sleep(random.uniform(1.5, 2.05))
-        part = queue.get()
+        part = baidu_queue.get()
 
         @retry(stop_max_attempt_number=5)
         def sent_ocr():
@@ -162,7 +164,7 @@ def ocrspace_ocr(language='chs'):
                           data=ocrspace_ocr_config,
                           )
         if type(r) is list:
-            return str(r).replace("'",'').replace('[','').replace(']','')
+            return str(r).replace("'", '').replace('[', '').replace(']', '')
     except Exception as e:
         raise Exception('ocrspace_ocr发生了错误，原因为:{}'.format(e))
     return r.content.decode()

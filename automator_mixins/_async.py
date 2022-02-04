@@ -253,11 +253,11 @@ class AsyncMixin(ToolsMixin):
         while Multithreading({}).is_stopped():
             keyboard.wait('shift+p')
             block_sw = 1
-            print("下一步，脚本暂停,按shift+p恢复")
+            self.log.write_log('info',"下一步，脚本暂停,按shift+p恢复")
             await asyncio.sleep(0.8)
             keyboard.wait('shift+p')
             block_sw = 0
-            print("恢复运行")
+            self.log.write_log('info',"恢复运行")
             await asyncio.sleep(0.8)
             async_blocking_sw = 0
 
@@ -331,7 +331,7 @@ class AsyncMixin(ToolsMixin):
                 try:
                     self.phone_privacy()
                 except Exception as e:
-                    print(e)
+                    self.log.write_log('error',f"重启匿名化错误：{e}")
 
             self.lock_home()
 

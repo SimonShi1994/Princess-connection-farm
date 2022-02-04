@@ -1,11 +1,18 @@
+import datetime
 import logging
 import os
+import sys
 import time
+from logging.handlers import RotatingFileHandler
+
+import colorlog  # 控制台日志输入颜色
 from sys import stdout
 
 from core.bot import Bot
 
 # 各项需要累积的初始化
+from core.pcr_config import debug
+
 acc_cout = 0
 star_time = 0
 end_time = 0
@@ -14,6 +21,13 @@ end_time = 0
 class pcr_log():  # 帐号内部日志（从属于每一个帐号）
     dst_folder = os.path.join(os.getcwd(), 'log')  # 设置日志文件存储位置 位置为log文件夹下
     acc_message = {}
+    log_colors_config = {
+        'DEBUG': 'cyan',
+        'INFO': 'purple',
+        'WARNING': 'yellow',
+        'ERROR': 'red',
+        'CRITICAL': 'bold_red',
+    }
 
     def __init__(self, acc):  # acc为账户名
         # 此处为兼容连接
@@ -25,41 +39,110 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         # self.clean()
 
         self.norm_log = logging.getLogger(acc)
-        self.norm_log.setLevel('INFO')  # 设置日志级别
+        self.norm_log.setLevel('DEBUG')  # 设置日志级别
         self.norm_hdl_std = logging.StreamHandler(stdout)
-        self.norm_hdl_std.setLevel('INFO')  # 设置Handler级别
+        if debug:
+            self.norm_hdl_std.setLevel('DEBUG')  # 设置Handler级别
+        else:
+            self.norm_hdl_std.setLevel('INFO')  # 设置Handler级别
 
-        self.norm_hdl = logging.FileHandler(os.path.join(self.dst_folder, '%s.log' % acc), encoding='utf-8')
-        self.norm_hdl.setLevel('INFO')
+        # self.norm_hdl = logging.FileHandler(os.path.join(self.dst_folder, '%s.log' % acc), encoding='utf-8')
+        # self.norm_hdl.setLevel('INFO')
 
-        self.norm_fomatter = logging.Formatter('%(asctime)s\t%(name)s\t--%(levelname)s\t%(message)s')  # 设置输出格式
+        self.norm_fomatter = colorlog.ColoredFormatter('%(log_color)s[%(asctime)s] '
+                                                       '%(message)s',
+                                                       log_colors=self.log_colors_config)
+
+        # 创建一个FileHandler，用于写到本地
+        self.fhbacker = RotatingFileHandler(filename=os.path.join(self.dst_folder, '%s.log' % acc),
+                                            mode='a', maxBytes=1024 * 1024 * 5, backupCount=5,
+                                            encoding='utf-8')  # 使用RotatingFileHandler类，滚动备份日志
+        self.fhbacker.setLevel('DEBUG')
+        self.fhbacker.setFormatter(self.norm_fomatter)
+
         self.norm_hdl_std.setFormatter(self.norm_fomatter)
+        # self.norm_hdl.setFormatter(self.norm_fomatter)
 
-        self.norm_hdl.setFormatter(self.norm_fomatter)
         if not self.norm_log.handlers:
             self.norm_log.addHandler(self.norm_hdl_std)
-            self.norm_log.addHandler(self.norm_hdl)
+            # self.norm_log.addHandler(self.norm_hdl)
+            self.norm_log.addHandler(self.fhbacker)
+        # else:
+        #     self.norm_log.removeHandler(self.norm_hdl_std)
+        #     # self.norm_log.removeHandler(self.norm_hdl)
+        #     self.norm_log.removeHandler(self.fhbacker)
+        #     self.norm_log.addHandler(self.norm_hdl_std)
+        #     # self.norm_log.addHandler(self.norm_hdl)
+        #     self.norm_log.addHandler(self.fhbacker)
 
-    def clean(self):
-        with open(os.path.join(self.dst_folder, 'Account.log'), 'w')as fp:
+    def get_file_sorted(self, file_path):
+        """最后修改时间顺序升序排列 os.path.getmtime()->获取文件最后修改时间"""
+        dir_list = os.listdir(file_path)
+        if not dir_list:
+            return
+        else:
+            dir_list = sorted(dir_list, key=lambda x: os.path.getmtime(os.path.join(file_path, x)))
+            return dir_list
+
+    def TimeStampToTime(self, timestamp):
+        """格式化时间"""
+        timeStruct = time.localtime(timestamp)
+        return str(time.strftime('%Y-%m-%d', timeStruct))
+
+    def handle_logs(self):
+        """处理日志过期天数和文件数量"""
+        dir_list = ['log']  # 要删除文件的目录名
+        for dir in dir_list:
+            dirPath = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '\\' + dir  # 拼接删除目录完整路径
+            file_list = self.get_file_sorted(dirPath)  # 返回按修改时间排序的文件list
+            if file_list:  # 目录下没有日志文件
+                for i in file_list:
+                    file_path = os.path.join(dirPath, i)  # 拼接文件的完整路径
+                    t_list = self.TimeStampToTime(os.path.getctime(file_path)).split('-')
+                    now_list = self.TimeStampToTime(time.time()).split('-')
+                    t = datetime.datetime(int(t_list[0]), int(t_list[1]),
+                                          int(t_list[2]))  # 将时间转换成datetime.datetime 类型
+                    now = datetime.datetime(int(now_list[0]), int(now_list[1]), int(now_list[2]))
+                    if (now - t).days > 6:  # 创建时间大于6天的文件删除
+                        self.delete_logs(file_path)
+                if len(file_list) > 4:  # 限制目录下记录文件数量
+                    file_list = file_list[0:-4]
+                    for i in file_list:
+                        file_path = os.path.join(dirPath, i)
+                        # print(file_path)
+                        self.delete_logs(file_path)
+
+    def delete_logs(self, file_path):
+        try:
+            os.remove(file_path)
+            # print(file_path)
+        except PermissionError as e:
+            # self.norm_log.error('删除日志文件失败：{}'.format(e))
             pass
 
     def write_log(self, level, message):
+        """
+        :param message: str
+        :param level: debug/info/warning/error|critical
+        """
+        funcName = sys._getframe().f_back.f_code.co_name  # 获取调用函数名
+        lineNumber = sys._getframe().f_back.f_lineno  # 获取行号
         lev = level.lower()
+        msg_format = f'[{funcName}:{lineNumber}] [{lev}]-\t{message}'
         if lev == 'debug':
-            self.norm_log.debug(message)
+            self.norm_log.debug(msg=msg_format)
         elif lev == 'info':
-            self.norm_log.info(message)
+            self.norm_log.info(msg=msg_format)
             self.server_bot(s_level=lev, message=message)
         elif lev == 'warning':
-            self.norm_log.warning(message)
+            self.norm_log.warning(msg=msg_format)
             self.server_bot(s_level=lev, message=message)
         elif lev == 'error':
-            self.norm_log.error(message)
+            self.norm_log.error(msg=msg_format)
             pcr_log("__ERROR_LOG__").write_log("info", f"账号 {self.acc_name} ： {message}")
             self.server_bot(s_level=lev, message=message)
         else:
-            self.norm_log.critical(message)
+            self.norm_log.critical(msg=msg_format)
 
 
 class pcr_acc_log:  # 帐号日志（全局）
@@ -92,3 +175,4 @@ class pcr_acc_log:  # 帐号日志（全局）
         star_time = time.time()
         self.acc_log.info('帐号：' + ac + '成功登录.')
         # pcr_log('admin').server_bot('', message="账号信息：%s成功登陆\n" % ac)
+

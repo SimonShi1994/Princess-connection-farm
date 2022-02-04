@@ -186,6 +186,7 @@ class FightBaseMixin(ToolsMixin):
             True 设置成功
             False 可能未设置成功
         """
+
         @PCRRetry(delay=0.5, max_retry=max_retry, raise_return=False)
         def fun():
             nonlocal screen
@@ -195,9 +196,9 @@ class FightBaseMixin(ToolsMixin):
             if out == level:
                 return True
             else:
-                while out!=level:
+                while out != level:
                     self.click(FIGHT_BTN["speed_0"], post_delay=0.2)
-                    out=(out+1)%(max_level+1)
+                    out = (out + 1) % (max_level + 1)
                 time.sleep(1.3)  # 防止涟漪
                 screen = self.getscreen()
                 raise ContinueNow()
@@ -239,16 +240,17 @@ class FightBaseMixin(ToolsMixin):
 
         @PCRRetry(delay=0.5, max_retry=max_retry, raise_return=False)
         def fun():
-            nonlocal  screen
-            out = self.get_fight_auto(screen,3)
-            if out==-1:
+            nonlocal screen
+            out = self.get_fight_auto(screen, 3)
+            if out == -1:
                 raise RetryNow()
             if out == auto:
                 return True
             else:
-                self.click(FIGHT_BTN["auto_on"],post_delay=1.5)  # 避免涟漪影响
-                screen=self.getscreen()
+                self.click(FIGHT_BTN["auto_on"], post_delay=1.5)  # 避免涟漪影响
+                screen = self.getscreen()
                 raise ContinueNow()
+
         return fun()
 
     @DEBUG_RECORD
@@ -286,7 +288,7 @@ class FightBaseMixin(ToolsMixin):
         for i in range(1, 6):
             cur = UIMatcher.img_cut(sc, FIGHT_BTN["empty"][i].at)
             if debug:
-                print("std: ", i, cur.std())
+                self.log.write_log('debug', "std: " + str(i) + cur.std())
             if cur.std() <= 15:
                 count_live -= 1
         return count_live
@@ -300,7 +302,7 @@ class FightBaseMixin(ToolsMixin):
         要求场景：处于”队伍编组“情况下。
         """
         sc = self.getscreen()
-        if change>=2:
+        if change >= 2:
             p0 = self.img_prob(FIGHT_BTN["sort_up"], screen=sc)
             p1 = self.img_prob(FIGHT_BTN["sort_down"], screen=sc)
             if p0 > p1:

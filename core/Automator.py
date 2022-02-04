@@ -42,10 +42,10 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
     def run_custom_task(self, pymodule: str, funcname: str, var=None, **kwargs):
         func = None
         try:
-            print("导入模块中……")
+            self.log.write_log('info', "导入模块中……")
             py = getcustomtask(pymodule)
             func = getattr(py, funcname)
-            print("导入成功！")
+            self.log.write_log('info',"导入成功！")
         except Exception as e:
             self.log.write_log("error", f"自定义脚本导入失败！{e}")
         if func is not None:
@@ -246,4 +246,5 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
 
 
 if __name__ == "__main__":
+    # TODO LOG:?
     print(Automator.mro())
