@@ -23,10 +23,10 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
     acc_message = {}
     log_colors_config = {
         'DEBUG': 'cyan',
-        'INFO': 'green',
+        'INFO': 'purple',
         'WARNING': 'yellow',
         'ERROR': 'red',
-        'CRITICAL': 'red',
+        'CRITICAL': 'bold_red',
     }
 
     def __init__(self, acc):  # acc为账户名
