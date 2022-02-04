@@ -156,7 +156,7 @@ class HanghuiMixin(ToolsMixin):
 
     def join_hanghui(self, clubname):
         # 2021-8-11 CyiceK修了点bug
-        self.log.write_log('info','>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
+        self.log.write_log('info','>>>>>>>即将加入公会名为：' + clubname + '<<<<<<<')
         self.lock_home()
         # 进入
         self.click_btn(MAIN_BTN["hanghui"])
