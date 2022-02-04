@@ -288,7 +288,7 @@ class FightBaseMixin(ToolsMixin):
         for i in range(1, 6):
             cur = UIMatcher.img_cut(sc, FIGHT_BTN["empty"][i].at)
             if debug:
-                self.log.write_log('debug', "std: " + str(i) + cur.std())
+                self.log.write_log('debug', "std: " + str(i) + str(cur.std()))
             if cur.std() <= 15:
                 count_live -= 1
         return count_live
