@@ -175,8 +175,9 @@ class LoginMixin(ToolsMixin):
                     # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
                     self.getscreen()
                     if imgfindcaptcha_is_work:
-                        if self.is_exists(START_UI["anying"]) and self.is_exists(START_UI["wenzidianji"],
-                                                                                 at=(342, 94, 622, 162)):
+                        if self.is_exists(START_UI["anying"], at=(348, 162, 621, 439)) and self.is_exists(
+                                START_UI["wenzidianji"],
+                                at=(342, 94, 622, 162)):
                             if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(
                                     START_UI["yanzhengshibai"],
                                     at=(618, 399, 659, 440)):
@@ -219,52 +220,52 @@ class LoginMixin(ToolsMixin):
                     self.d(text="返回").click()
 
                 elif self.d(textContains="请在下图依次").exists():
-                    self.log.write_log('info',f">>>{self.account}-检测到图字结合题")
-                    self.log.write_log('warning',"当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
+                    self.log.write_log('info', f">>>{self.account}-检测到图字结合题")
+                    self.log.write_log('warning', "当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
                     # 这是关闭验证码 self.click(667, 65, post_delay=3)
                     # 结果出来为四个字的坐标
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6004")
                     for i in range(0, _len + 1):
                         x = int(answer_result[i].split(',')[0]) + 157
                         y = int(answer_result[i].split(',')[1]) + 1
-                        self.log.write_log('info',f">{self.account}-验证码第{i}坐标识别：{x},{y}")
+                        self.log.write_log('info', f">{self.account}-验证码第{i}坐标识别：{x},{y}")
                         self.click(x, y)
                         if answer_result == [255, 439]:
                             self.click(230, 500)
-                            self.log.write_log('info',"平台识别不出来，刷新")
+                            self.log.write_log('info', "平台识别不出来，刷新")
                         self.d(text="确认").click()
                         _time = + 1
                         time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="请点击").exists():
-                    self.log.write_log('info',f">>>{self.account}-检测到图形题")
+                    self.log.write_log('info', f">>>{self.account}-检测到图形题")
 
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
                     # print(answer_result,' ', _len,' ', _id)
                     x = int(answer_result[0]) + 157
                     y = int(answer_result[1]) + 1
-                    self.log.write_log('info',f">{self.account}-验证码坐标识别： {x},{y}")
+                    self.log.write_log('info', f">{self.account}-验证码坐标识别： {x},{y}")
                     # print(type(x))
                     self.click(x, y)
                     if answer_result == [255, 439]:
                         self.click(230, 500)
-                        self.log.write_log('info',"平台识别不出来，刷新")
+                        self.log.write_log('info', "平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
                     time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="拖动滑块").exists():
-                    self.log.write_log('info',f">>>{self.account}-检测到滑块题")
+                    self.log.write_log('info', f">>>{self.account}-检测到滑块题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X8006")
                     x = int(answer_result[0]) + 157
                     y = int(answer_result[1]) + 1
-                    self.log.write_log('info',f">{self.account}-滑块坐标识别：{x}, 386")
+                    self.log.write_log('info', f">{self.account}-滑块坐标识别：{x}, 386")
                     # print(type(x))
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 3.6)
                     if answer_result == [255, 439]:
                         self.click(230, 500)
-                        self.log.write_log('info',"平台识别不出来，刷新")
+                        self.log.write_log('info', "平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
                     time.sleep(captcha_sleep_times)
@@ -342,7 +343,7 @@ class LoginMixin(ToolsMixin):
                             AutoCaptcha()
                             due_AutoCaptcha()
                         except Exception as e:
-                            self.log.write_log('error',f"自动过验证码发生报错:{e}")
+                            self.log.write_log('error', f"自动过验证码发生报错:{e}")
                             continue
                         state = True  # 先这样，10s验证，state几乎已经不适用了
                         # time.sleep(5)
