@@ -290,7 +290,6 @@ class UIMatcher:
                 # cls._log.write_log(level='debug',
                 #                    message="{}--{}--({},{})".format(template_path, round(max_val, 3)
                 #                                                     , x, y))
-                pass
                 if at is None:
                     cls._log.write_log('debug', "{}  at=({}, {}, {}, {})".format(template_path, x1 + max_loc[0],
                                                                                  y1 + max_loc[1],

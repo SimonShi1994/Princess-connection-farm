@@ -11,7 +11,7 @@ from sys import stdout
 from core.bot import Bot
 
 # 各项需要累积的初始化
-from core.pcr_config import debug
+from core.pcr_config import debug, colorlogsw
 
 acc_cout = 0
 star_time = 0
@@ -49,13 +49,16 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         # self.norm_hdl = logging.FileHandler(os.path.join(self.dst_folder, '%s.log' % acc), encoding='utf-8')
         # self.norm_hdl.setLevel('INFO')
 
-        self.norm_fomatter = colorlog.ColoredFormatter('%(log_color)s[%(asctime)s] '
-                                                       '%(message)s',
-                                                       log_colors=self.log_colors_config)
+        if colorlogsw:
+            self.norm_fomatter = colorlog.ColoredFormatter('%(log_color)s[%(asctime)s] '
+                                                           '%(message)s',
+                                                           log_colors=self.log_colors_config)
+        else:
+            self.norm_fomatter = logging.Formatter('%(asctime)s\t%(name)s\t--%(levelname)s\t%(message)s')  # 设置输出格式
 
         # 创建一个FileHandler，用于写到本地
         self.fhbacker = RotatingFileHandler(filename=os.path.join(self.dst_folder, '%s.log' % acc),
-                                            mode='a', maxBytes=1024 * 1024 * 5, backupCount=5,
+                                            mode='a+', maxBytes=1024 * 1024 * 5, backupCount=5,
                                             encoding='utf-8')  # 使用RotatingFileHandler类，滚动备份日志
         self.fhbacker.setLevel('DEBUG')
         self.fhbacker.setFormatter(self.norm_fomatter)
@@ -67,13 +70,25 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             self.norm_log.addHandler(self.norm_hdl_std)
             # self.norm_log.addHandler(self.norm_hdl)
             self.norm_log.addHandler(self.fhbacker)
-        # else:
-        #     self.norm_log.removeHandler(self.norm_hdl_std)
+        else:
+            self.norm_log.removeHandler(self.norm_hdl_std)
         #     # self.norm_log.removeHandler(self.norm_hdl)
-        #     self.norm_log.removeHandler(self.fhbacker)
-        #     self.norm_log.addHandler(self.norm_hdl_std)
+            self.norm_log.removeHandler(self.fhbacker)
+            self.norm_log.addHandler(self.norm_hdl_std)
         #     # self.norm_log.addHandler(self.norm_hdl)
-        #     self.norm_log.addHandler(self.fhbacker)
+            self.norm_log.addHandler(self.fhbacker)
+
+    def get_log_object(self, _name):
+        if logging.getLogger(_name):
+            return logging.getLogger(_name)
+        else:
+            return None
+
+    def exist_log_handles(self):
+        if self.norm_log.handlers:
+            return True
+        else:
+            return False
 
     def get_file_sorted(self, file_path):
         """最后修改时间顺序升序排列 os.path.getmtime()->获取文件最后修改时间"""
@@ -175,4 +190,3 @@ class pcr_acc_log:  # 帐号日志（全局）
         star_time = time.time()
         self.acc_log.info('帐号：' + ac + '成功登录.')
         # pcr_log('admin').server_bot('', message="账号信息：%s成功登陆\n" % ac)
-
