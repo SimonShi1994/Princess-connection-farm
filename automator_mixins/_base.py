@@ -1519,8 +1519,9 @@ class BaseMixin:
     @DEBUG_RECORD
     def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text",
                    before_preprocess=PreProcesses(), after_preprocess=PreProcesses(), apply_screen=True, blur=None,
-                   custom_ocr=None):
+                   custom_ocr=None, allowstr=None):
         """
+        :param allowstr:只允许识别出的字符串
         :param custom_ocr: 优先使用的自定义ocr，排在主次前面，只能单个
         :param after_preprocess: 后cv预处理，在ocr外部处理，经过旋转（或许有）+裁剪，再处理
         :param blur: 滤波/模糊 <str> 在被调用的ocr内部进行，在size之后，目前只有 "gussian" 高斯滤波
@@ -1579,23 +1580,26 @@ class BaseMixin:
         screen_shot = after_preprocess(screen_shot)
 
         if custom_ocr:
-            ocr_text = ocr_register.get(custom_ocr)(screen_shot, size, credibility, language, type, blur=blur)
+            ocr_text = ocr_register.get(custom_ocr)(screen_shot, size, credibility, language, type, blur=blur,
+                                                    allowstr=allowstr)
             if ocr_text and ocr_text != -1:
                 return ocr_text
-        ocr_text = ocr_register.get(ocr_mode_main)(screen_shot, size, credibility, language, type, blur=blur)
+        ocr_text = ocr_register.get(ocr_mode_main)(screen_shot, size, credibility, language, type, blur=blur,
+                                                   allowstr=allowstr)
         if force_primary_equals_secondary:
             for ocr_second in ocr_mode_secondary.split(','):
-                ocr_text2 = ocr_register.get(ocr_second)(screen_shot, size, credibility, language, type, blur=blur)
+                ocr_text2 = ocr_register.get(ocr_second)(screen_shot, size, credibility, language, type, blur=blur,
+                                                         allowstr=allowstr)
                 if ocr_text != ocr_text2:
                     ocr_text = ocr_register.get(force_primary_equals_secondary_use)(screen_shot, size,
                                                                                     credibility, language, type,
-                                                                                    blur=blur)
+                                                                                    blur=blur, allowstr=allowstr)
         else:
             if ocr_text == -1:
                 if len(ocr_mode_secondary) != 0:
                     for ocr_second in ocr_mode_secondary.split(','):
                         ocr_text = ocr_register.get(ocr_second)(screen_shot, size, credibility,
-                                                                language, type, blur=blur)
+                                                                language, type, blur=blur, allowstr=allowstr)
                         if not ocr_text or ocr_text == -1:
                             continue
                         else:
@@ -1615,7 +1619,7 @@ class BaseMixin:
 
     # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
     # 使用Baidu OCR接口
-    def baidu_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def baidu_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
         # 默认原图大小（1.0）
         if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
@@ -1640,7 +1644,7 @@ class BaseMixin:
                                                       '是否有误！')
             return -1
 
-    def ocrspace_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def ocrspace_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         if len(ocrspace_ocr_apikey) == 0:
             self.log.write_log(level='error', message='读取ocrspace_ocr_apikey失败！')
             return -1
@@ -1672,7 +1676,7 @@ class BaseMixin:
                                                       '是否有误！')
             return -1
 
-    def ocr_local(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def ocr_local(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         try:
             part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             if type == 'number':
@@ -1691,7 +1695,7 @@ class BaseMixin:
             self.log.write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
             return -1
 
-    def ocr_local2(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def ocr_local2(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         try:
             part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             if type == 'number':
@@ -1717,7 +1721,7 @@ class BaseMixin:
             self.log.write_log(level='error', message='本地OCR-2识别失败，原因：%s' % ocr_error)
             return -1
 
-    def ocr_local3(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def ocr_local3(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         try:
             part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             if type == 'number':
@@ -1736,7 +1740,7 @@ class BaseMixin:
             self.log.write_log(level='error', message='本地OCR3识别失败，原因：%s' % ocr_error)
             return -1
 
-    def easyocr_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def easyocr_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         try:
             part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             if type == 'number':
@@ -1755,7 +1759,7 @@ class BaseMixin:
             self.log.write_log(level='error', message='本地OCR4识别失败，原因：%s' % ocr_error)
             return -1
 
-    def pcrocr_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def pcrocr_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         try:
             part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             if type == 'number':
@@ -1766,9 +1770,11 @@ class BaseMixin:
                 part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
             img_binary = cv2.imencode('.jpg', part)[1].tostring()  # 转成base64编码（误）
             img_binary = base64.b64encode(img_binary)
+            if not allowstr:
+                allowstr='None'
             data = {
                 'file': ('tmp.png', img_binary, 'image/png'),
-                'voc': None,
+                'voc': allowstr,
                 'do_pre': True,
             }
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/pcrocr_ocr/", data=data)
