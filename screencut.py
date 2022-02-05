@@ -135,11 +135,16 @@ class AutomatorDebuger(Automator):
     def __init__(self):
         super().__init__("debug")  # 设置为debug时，不会自动连接
         self._obj = {}
+        self._pcrocr = None
 
     @staticmethod
     def Init():
         from core.initializer import _connect
         _connect()
+
+    def InitPCROCR(self):
+        from pcrocr.ocr import PCROCRBasic
+        self._pcrocr = PCROCRBasic()
 
     def Connect(self, address=None):
         lst = adbutils.adb.device_list()
@@ -317,6 +322,22 @@ class AutomatorDebuger(Automator):
                 y1, y2 = plt.ylim()
                 print(self.ocr_center(int(x1), int(y2), int(x2), int(y1), img.IMG))
                 event.inaxes.figure.canvas.draw()
+            if event.key in ['1','2','3','4','0']:
+                x1, x2 = plt.xlim()
+                y2, y1 = plt.ylim()
+                x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
+                IMG = img.cut(x1, y1, x2, y2).IMG
+                if event.key == '1':
+                    print("OCR_INT:",self._pcrocr.ocr_int(IMG))
+                elif event.key == '2':
+                    print("OCR_A/B:", self._pcrocr.ocr_A_B(IMG))
+                elif event.key == '3':
+                    print("OCR_xA:", self._pcrocr.ocr_xA(IMG))
+                elif event.key == '4':
+                    print("OCR_MANA:", self._pcrocr.ocr_mana(IMG))
+                elif event.key == '0':
+                    print("OCR(BASIC):",self._pcrocr.ocr(IMG))
+
 
         img.show(False)
         ax = plt.gca()
