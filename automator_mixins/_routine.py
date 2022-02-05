@@ -1,7 +1,7 @@
 import time
 
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN, FIGHT_BTN
+from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN, FIGHT_BTN, SHOP_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.pcr_checker import RetryNow, PCRRetry, LockMaxRetryError
@@ -71,7 +71,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_img(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
         while True:
             # 跳过抽奖提示
-            time.sleep(4)
+            time.sleep(5)
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/niudan_sheding.jpg'):
                 self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
@@ -104,7 +104,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.click_btn(MAIN_BTN["niudan"], until_disappear=MAIN_BTN["liwu"])
         while True:
             # 跳过抽奖提示
-            time.sleep(2)
+            time.sleep(5)
             screen_shot_ = self.getscreen()
             if UIMatcher.img_where(screen_shot_, 'img/niudan_sheding.jpg'):
                 self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
@@ -185,7 +185,7 @@ class RoutineMixin(ShuatuBaseMixin):
                         if tili_time >= times:
                             return False
                 except:
-                    pass
+                    self.log.write_log("warning", f"{self.account}在购买体力时识别次数失败。")
 
             state = self.lock_img(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_plus"], elsedelay=2, retry=3)
             if not state:
@@ -195,7 +195,11 @@ class RoutineMixin(ShuatuBaseMixin):
             self.lock_no_img(MAIN_BTN["tili_ok"], elseclick=MAIN_BTN["tili_ok"], elsedelay=2)
             self.start_shuatu()
             state = self.lock_img(MAIN_BTN["tili_ok2"], retry=3)
-            # TODO 宝石不够时的判断
+            # 宝石不够时的判断(已写
+            if self.is_exists(SHOP_BTN["goumaibaoshi"]):
+                self.log.write_log("warning", f"{self.account}已经没有宝石买体力了。")
+                self.lock_home()
+                return False
             var["cur"] += 1
             mv.save()
             self.lock_no_img(MAIN_BTN["tili_ok2"], elseclick=MAIN_BTN["tili_ok2"], elsedelay=1)

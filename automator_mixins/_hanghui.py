@@ -134,8 +134,8 @@ class HanghuiMixin(ToolsMixin):
 
     def joinhanghui(self, clubname):  # 小号加入行会
         # 应该废弃了
-        print("此功能或许已经废弃，转另一个版本")
-        print('>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
+        self.log.write_log('waring',"此功能或许已经废弃，转另一个版本")
+        self.log.write_log('info','>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
         self.click(693, 430)  # 点击行会
         self.lock_img('img/zujianhanghui.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
         time.sleep(1)
@@ -156,7 +156,7 @@ class HanghuiMixin(ToolsMixin):
 
     def join_hanghui(self, clubname):
         # 2021-8-11 CyiceK修了点bug
-        print('>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
+        self.log.write_log('info','>>>>>>>即将加入公会名为：' + clubname + '<<<<<<<')
         self.lock_home()
         # 进入
         self.click_btn(MAIN_BTN["hanghui"])
@@ -164,7 +164,7 @@ class HanghuiMixin(ToolsMixin):
             if self.is_exists(HANGHUI_BTN["zujianhanghui"]):
                 break
             if self.is_exists(HANGHUI_BTN["chengyuanxinxi"]):
-                print("已加入行会")
+                self.log.write_log('info',"已加入行会")
                 return
             self.fclick(689, 460)
             time.sleep(0.5)

@@ -69,12 +69,12 @@ class EnhanceMixin(ShuatuBaseMixin):
                         ekh = ecb.goto_kaihua()
                         if do_kaihua:
                             if debug:
-                                print("升星任务开始")
+                                self.log.write_log('debug',"升星任务开始")
                             if ekh.get_starup_status():
                                 ekh.cainengkaihua()
                         ekh.goto_base()
                         if debug:
-                            print("升星完成，前往base")
+                            self.log.write_log('debug',"升星完成，前往base")
 
                         # 装备级等级强化
                         while True:
@@ -82,21 +82,21 @@ class EnhanceMixin(ShuatuBaseMixin):
                             ers = ecb.get_equip_status()
                             ehs = ecb.get_enhance_status()
                             if debug:
-                                print("等级装备强化任务开始")
-                                print('角色状态：%s' % ehs)
+                                self.log.write_log('debug',"等级装备强化任务开始")
+                                self.log.write_log('debug','角色状态：%s' % ehs)
 
                             if ers == 2:
                                 # 先处理升rank
                                 if do_rank:
                                     # rank提升开
                                     if debug:
-                                        print("rank提升开始")
+                                        self.log.write_log('debug',"rank提升开始")
                                     self.click_btn(JUESE_BTN["rank_on"], until_appear=JUESE_BTN["rank_up_ok"])
                                     self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["rank_up_complete"])
                                     for _ in range(2):
                                         self.fclick(1, 1)
                                         if debug:
-                                            print("rank提升完成")
+                                            self.log.write_log('debug',"rank提升完成")
                                         continue
                                 else:
                                     # rank提升关闭，那就有装备就穿，等级拉满。由于提示升rank，不会缺装备
@@ -107,14 +107,14 @@ class EnhanceMixin(ShuatuBaseMixin):
                                             continue
                                     # 拉满了跑路
                                     if debug:
-                                        print("rank任务完成")
+                                        self.log.write_log('debug',"rank任务完成")
                                     break
                                 continue
 
                             if ehs == 0:
                                 # 穿满强化满等级满
                                 if debug:
-                                    print("穿满，无动作")
+                                    self.log.write_log('debug',"穿满，无动作")
                                 break
 
                             if ehs == 1:
@@ -132,13 +132,13 @@ class EnhanceMixin(ShuatuBaseMixin):
                                         tili_left = fi.get_tili_left(sc)
                                         if tili_left < 12:
                                             self.stop_shuatu()
-                                            print("没有体力了，退出")
+                                            self.log.write_log('info',"没有体力了，退出")
                                             for _ in range(6):
                                                 self.click(1, 1)
                                             break
                                         fi.goto_tiaozhan()
                                         if debug:
-                                            print("开始刷图补装备")
+                                            self.log.write_log('debug',"开始刷图补装备")
 
                                         # 支援
                                         fb = FightBianzuDXC(self)
@@ -187,7 +187,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                                 if tili_left < 13:
                                                     for _ in range(6):
                                                         self.click(1, 1)
-                                                    print("没有体力了，退出")
+                                                    self.log.write_log('info',"没有体力了，退出")
                                                     break
                                                     # 这个break导致一直next_char
                                                 fi.set_saodang_to_max()
@@ -214,7 +214,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                         for _ in range(6):
                                             self.click(1, 1)
                                         if debug:
-                                            print("刷图/扫荡完毕")
+                                            self.log.write_log('debug',"刷图/扫荡完毕")
                                     continue
                                 else:
                                     break
@@ -226,17 +226,17 @@ class EnhanceMixin(ShuatuBaseMixin):
                                 self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
                                 continue
                         if debug:
-                            print("等级装备强化任务开始")
+                            self.log.write_log('debug',"等级装备强化任务开始")
                         # 专武
                         if do_zhuanwu:
                             ecb.goto_zhuanwu()
                             if debug:
-                                print("专武任务开始")
+                                self.log.write_log('debug',"专武任务开始")
                             ezw = CharZhuanwu(self)
                             while True:
                                 zws = ezw.get_zhuanwu_status()
                                 if debug:
-                                    print('专武状态：%s' % zws)
+                                    self.log.write_log('debug','专武状态：%s' % zws)
                                 if zws == 2:
                                     ezw.wear_zhuanwu()
                                     continue
@@ -253,9 +253,9 @@ class EnhanceMixin(ShuatuBaseMixin):
                                     break
                             ezw.goto_base()
                             if debug:
-                                print("专武任务完成")
+                                self.log.write_log('debug',"专武任务完成")
                         if debug:
-                            print("此角色强化任务已完成")
+                            self.log.write_log('debug',"此角色强化任务已完成")
                         ecb = CharBase(self)
                         cm = ecb.goto_menu()
                         time.sleep(1)
@@ -267,7 +267,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                 break
             else:
                 cm.dragdown()
-                if self.is_exists(img="img/juese/weijiesuo_w.bmp", at=(21, 144, 167, 463)):
+                if self.is_exists(JUESE_BTN["weijiesuo_w"], at=(21, 144, 167, 463)):
                     break
                 continue
 

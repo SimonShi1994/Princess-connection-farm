@@ -33,7 +33,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20220115"
+script_version = "Ver 2.7.20220204"
 
 
 
@@ -345,7 +345,10 @@ def ShowAutoConsole():
 
 def ShowOCR():
     print = rprint
-    print("* OCR模式 ocr_mode：", ocr_mode)
+    print("* 主OCR模式 ocr_mode_main：", ocr_mode_main)
+    print("* 次OCR模式 ocr_mode_secondary：", ocr_mode_secondary)
+    print("* 主次一致才输出：", RTrue("已开启") if force_primary_equals_secondary else RFalse("未开启"))
+    print("* 主次不一致用此OCR模式 force_primary_equals_secondary_use：", force_primary_equals_secondary_use)
     if baidu_apiKey != "":
         print("* BaiduAPI 已配置！")
     else:
@@ -520,8 +523,8 @@ if __name__ == "__main__":
     else:
         try:
             s = requests.Session()
-            s.mount('http://', HTTPAdapter(max_retries=5))
-            s.mount('https://', HTTPAdapter(max_retries=5))
+            s.mount('http://', HTTPAdapter(max_retries=2))
+            s.mount('https://', HTTPAdapter(max_retries=2))
             # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
             api_url = f"https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/{trace_tree}"
             all_info = s.get(api_url)
@@ -548,8 +551,8 @@ if __name__ == "__main__":
         print("help 查看帮助                   exit 退出")
         print("info 查看配置信息               guide 教程")
         print("edit 进入编辑模式                  qq QQ群")
+        print("data 进入数据中心                 img 图坐标添加工具")
         print("adb 执行adb命令")
-        print("data 进入数据中心")
         print("screencut 截屏小工具")
         print("By TheAutumnOfRice")
         print("----------------------------------------")
@@ -861,6 +864,9 @@ if __name__ == "__main__":
             elif order == "data":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("DataCenter.py", "r", encoding="utf-8").read())
+            elif order == "img":
+                assert SCH is None, "必须先停止正在运行的Schedule"
+                exec(open("img_helper.py", "r", encoding="utf-8").read())
             elif order == "screencut":
                 assert SCH is None, "必须先停止正在运行的Schedule"
                 exec(open("screencut.py", "r", encoding="utf-8").read())

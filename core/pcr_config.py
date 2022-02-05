@@ -62,6 +62,7 @@ def CGetFloat(section, option, default=None) -> float:
 def CGet(section, option, default=None) -> str:
     return _CGet("get", section, option, default)
 
+
 class GlobalConfig:
     """
     全局配置类
@@ -175,6 +176,7 @@ debug_record_size = GC.add_int('debug', 'debug_record_size', 50)
 u2_record_filter = GC.add_list('debug', 'u2_record_filter', [])
 debug_record_filter = GC.add_list('debug', 'debug_record_filter', ['_lock_img', '_move_check'])
 trace_tree = GC.add_str('debug', 'trace_tree', 'master')
+colorlogsw = GC.add_bool('debug', 'colorlogsw', True)
 
 force_as_ocr_as_possible = GC.add_bool("task", "force_as_ocr_as_possible", True)
 sent_state_img = GC.add_bool('log', 'sent_state_img', False)
@@ -194,10 +196,14 @@ sentstate = GC.add_int('log', 'sentstate', 30)
 proxy_http = GC.add_str('log', 'proxy_http')
 proxy_https = GC.add_str('log', 'proxy_https')
 
+force_primary_equals_secondary = GC.add_bool('pcrfarm_setting', 'force_primary_equals_secondary', False)
+force_primary_equals_secondary_use = GC.add_str('pcrfarm_setting', 'force_primary_equals_secondary_use', "本地1")
+ocr_mode_main = GC.add_str('pcrfarm_setting', 'ocr_mode_main', "本地1")
+ocr_mode_secondary = GC.add_str('pcrfarm_setting', 'ocr_mode_secondary', '网络1,网络2')
 baidu_apiKey = GC.add_str('pcrfarm_setting', 'baidu_apiKey')
 baidu_secretKey = GC.add_str('pcrfarm_setting', 'baidu_secretKey')
 baidu_QPS = GC.add_int('pcrfarm_setting', 'baidu_QPS', 2)
-ocr_mode = GC.add_str('pcrfarm_setting', 'ocr_mode', "本地")
+ocrspace_ocr_apikey = GC.add_str('pcrfarm_setting', 'ocrspace_ocr_apikey')
 anticlockwise_rotation_times = GC.add_int('pcrfarm_setting', 'anticlockwise_rotation_times', 1)
 async_screenshot_freq = GC.add_int('pcrfarm_setting', 'async_screenshot_freq', 5)
 bad_connecting_time = GC.add_int('pcrfarm_setting', 'bad_connecting_time', 10)
@@ -209,7 +215,7 @@ end_shutdown = GC.add_bool('pcrfarm_setting', 'end_shutdown', False)
 lockimg_timeout = GC.add_int('pcrfarm_setting', 'lockimg_timeout', 90)
 enable_pause = GC.add_bool('pcrfarm_setting', 'enable_pause', False)
 max_reboot = GC.add_int('pcrfarm_setting', 'max_reboot', 3)
-force_timeout_reboot = GC.add_bool('pcrfarm_setting','force_timeout_reboot',True)
+force_timeout_reboot = GC.add_bool('pcrfarm_setting', 'force_timeout_reboot', True)
 running_input = GC.add_bool('pcrfarm_setting', 'running_input', False)
 captcha_skip = GC.add_bool('pcrfarm_setting', 'captcha_skip', False)
 captcha_sleep_times = GC.add_float('pcrfarm_setting', 'captcha_sleep_times', 0.2)

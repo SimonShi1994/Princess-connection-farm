@@ -31,6 +31,7 @@ _CONFIG_PATH = os.path.abspath(
 
 _EMULATORS = {}
 
+_log = pcr_log('emulator_port')
 
 class Emulator(object):
     def __init__(self, d):
@@ -154,14 +155,14 @@ def check_adb_connected(devices_queue):
 
 def get_ports(emulator):
     ps = get_processes(emulator)
-    pcr_log('admin').write_log(level='debug',
+    _log.write_log(level='debug',
                                message=_("{name}({type}) processes:").format(
                                    name=emulator.name, type=emulator.type))
-    pcr_log('admin').write_log(level='debug', message=ps)
+    _log.write_log(level='debug', message=ps)
     # print(
     #     _("{name}({type}) processes:").format(
     #         name=emulator.name, type=emulator.type))
-    print(ps)
+    # print(ps)
     ports = []
     if 1 <= len(ps) <= len(emulator.default_ports):
         for default_port in emulator.default_ports:
@@ -243,7 +244,7 @@ def get_port(PID, re_rules=None):
     first_line = text.split(':')
     # print(first_line)
     if not first_line:
-        print("模拟器程序获取列表为空")
+        _log.write_log('info',"模拟器程序获取列表为空")
         return por
     while True:
         # print(len(first_line))
@@ -285,7 +286,7 @@ def get_port(PID, re_rules=None):
                 # os.system("taskkill /im adb.exe /f")
                 # print(adb_connect_info)
                 if error_str in adb_connect_info:
-                    pcr_log('admin').write_log(level='error', message=f"连接模拟器[{emulator_ip2 + ':' + str(cd[0])}]失败，"
+                    _log.write_log(level='error', message=f"连接模拟器[{emulator_ip2 + ':' + str(cd[0])}]失败，"
                                                                       f"不是这个模拟器,继续查找中...")
                     i += 1
                     continue
@@ -313,7 +314,7 @@ def get_port(PID, re_rules=None):
 
 
 def check_known_emulators():
-    print("混搭请注意下端口是否相互冲突！")
+    _log.write_log('info',"混搭请注意下端口是否相互冲突！")
     read_config()
     emulators = {}
     filtered_emulator = []
@@ -339,7 +340,7 @@ def check_known_emulators():
                                 # print("进程不存活")
                                 continue
                             if str(get_port(ps[i].pid, e.re_port)) not in result:
-                                print("检测到【" + e.name + "】模拟器")
+                                _log.write_log('info',"检测到【" + e.name + "】模拟器")
                                 result.append(get_port(ps[i].pid, e.re_port))
                 else:
                     for i in range(0, len(ps)):
@@ -347,7 +348,7 @@ def check_known_emulators():
                             # print("进程不存活")
                             continue
                         if str(get_port(ps[i].pid, e.re_port)) not in result:
-                            print("检测到【" + e.name + "】模拟器")
+                            _log.write_log('info',"检测到【" + e.name + "】模拟器")
                             result.append(get_port(ps[i].pid, e.re_port))
                             # print(result)
                         # result = [5565]

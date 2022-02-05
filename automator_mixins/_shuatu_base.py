@@ -861,7 +861,7 @@ class ShuatuBaseMixin(FightBaseMixin):
                                                 check_xd=True, go_xd=xianding,
                                                 check_jq=juqing_in_fight, check_star=True)
                     if debug:
-                        print("上次星数：", self.last_star)
+                        self.log.write_log('debug',"上次星数："+self.last_star)
                     time.sleep(3)
                 if mode == -1:
                     raise Exception("战斗场景识别失败")
@@ -1718,7 +1718,7 @@ class ShuatuBaseMixin(FightBaseMixin):
         self.click(177, 145)  # First
         time.sleep(3)
         for i in range(5):
-            print("Now: ", i)
+            self.log.write_log('info',f"Now: {i}")
             time.sleep(5)
             while True:
                 screen_shot_ = self.getscreen()

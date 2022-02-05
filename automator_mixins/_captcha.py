@@ -8,7 +8,6 @@ import requests
 from requests.adapters import HTTPAdapter
 
 from core.pcr_config import captcha_userstr, captcha_software_key, captcha_level, debug
-from core.log_handler import pcr_log
 from core.safe_u2 import timeout
 
 
@@ -19,7 +18,7 @@ class CaptionSkip:
     by：CyiceK
     """
 
-    def __init__(self):
+    def __init__(self, _log=None):
         self.host_result = ''
         self._count_times = 0
         self.img = None
@@ -38,11 +37,18 @@ class CaptionSkip:
             'Content-Type': 'application/x-www-form-urlencoded',
         }
 
+        if _log:
+            self.log = _log
+        else:
+            from core import log_handler
+
+            self.log = log_handler.pcr_log("CaptionSkip_admin")
+
     def get_host(self, num=0):
         try:
             while True:
                 # 获取host
-                time.sleep(random.uniform(0.10, 1.00))
+                time.sleep(random.uniform(0.10, 0.25))
                 self.host_result = self.conversation.get(url="http://3.haoi23.net/svlist.html").text
                 if self.host_result is not None:
                     self.host_result = str(self.host_result).replace("===", '').replace("+++", '')
@@ -89,7 +95,7 @@ class CaptionSkip:
         :return: answer_result[0], answer_result[1] = x,y
         """
         if len(captcha_userstr) == 0 or len(captcha_software_key) == 0:
-            pcr_log('admin').write_log(level='error', message='接码-密码串为空！')
+            self.log.write_log(level='error', message='接码-密码串为空！')
             return False
 
         if captcha_level == "小速":
@@ -98,7 +104,7 @@ class CaptionSkip:
             question_type = question_type.replace('X', 'T')
 
         if debug:
-            print("!验证码识别模块开始运行!")
+            self.log.write_log('debug',"!验证码识别模块开始运行!")
         self.get_host()
 
         # 发送图片
@@ -123,9 +129,9 @@ class CaptionSkip:
         # 题号
         caption_id = self.conversation.post(url=self.img_post_url, data=img_post, headers=self.img_hear_dict)
         if debug:
-            print(">图片发送了……")
+            self.log.write_log('debug', ">图片发送了……")
         if caption_id.text in self.error_feature:
-            pcr_log('admin').write_log(level='error', message=caption_id.text)
+            self.log.write_log(level='error', message=caption_id.text)
         # print(caption_id.text)
         img_answer_get = {
             'id': caption_id,
@@ -133,10 +139,10 @@ class CaptionSkip:
         }
 
         if debug:
-            print(">>等待验证码识别返回值")
+            self.log.write_log('debug',">>等待验证码识别返回值")
         while True:
             # 获取答案
-            time.sleep(random.uniform(0.3, 0.8))
+            time.sleep(random.uniform(0.10, 0.20))
             answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
             # print(answer_result.text)
             count_len = len(answer_result.text)
@@ -151,7 +157,7 @@ class CaptionSkip:
                         # 左上 94,128 右下 560,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
-                            print(">[范围]刷新验证码")
+                            self.log.write_log('debug',">[范围]刷新验证码")
                         # 刷新验证码
                         answer_result = [255, 439]
                         return answer_result, count_len, 0
@@ -163,7 +169,7 @@ class CaptionSkip:
                         # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
-                            print(">[范围]刷新验证码")
+                            self.log.write_log('debug',">[范围]刷新验证码")
                         # 刷新验证码
                         answer_result = [255, 439]
                         return answer_result, count_len, 0
@@ -177,7 +183,7 @@ class CaptionSkip:
                         # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
-                            print(">[范围]刷新验证码")
+                            self.log.write_log('debug',">[范围]刷新验证码")
                         # 刷新验证码
                         answer_result = [255, 439]
                         return answer_result, count_len, 0
@@ -186,7 +192,7 @@ class CaptionSkip:
             elif answer_result.text == "#答案不确定" or answer_result.text in self.no_result or self._count_times >= 7:
                 # 答案不确定(不扣分)
                 if debug:
-                    print(">[不确定]刷新验证码")
+                    self.log.write_log('debug',">[不确定]刷新验证码")
                 # 刷新验证码
                 answer_result = [255, 439]
                 self._count_times = 0

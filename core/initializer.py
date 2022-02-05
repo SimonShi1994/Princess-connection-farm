@@ -39,6 +39,13 @@ if add_adb_to_path:
 
 def _connect():  # 连接adb与uiautomator
     global FIRST_CONNECT
+
+    try:
+        # 清理日志
+        pcr_log('admin').handle_logs()
+    except FileNotFoundError:
+        pass
+
     try:
         if enable_auto_find_emulator:
             port_list = set(check_known_emulators())
@@ -580,6 +587,8 @@ class PCRInitializer:
                     if device.a is not None:
                         device.a.force_kill()
                     break
+                if msg == "close game at now!!!":
+                    device.a.app_stop('com.bilibili.priconne')
                 if type(msg) is dict and "method" in msg:
                     try:
                         if msg["method"] == "config":
@@ -675,6 +684,7 @@ class PCRInitializer:
         threading.Thread(target=_listener, daemon=True).start()
         last_busy_time = time.time()
         device_on = False
+        app_on = True
         while not flag["exit"]:
             try:
                 if quit_emulator_when_free and device_on \
@@ -683,10 +693,15 @@ class PCRInitializer:
                     device.quit_emulator()
                     out_queue.put({"device_status": {"serial": serial, "status": "sleep"}})
                     out_queue.put({"device": {"serial": serial, "method": "offline"}})
+                if app_on and time.time() - last_busy_time > max_free_time:
+                    app_on = False
+                    if device.a is not None:
+                        device.a.app_stop('com.bilibili.priconne')
                 _task = task_queue.get(False)
             except queue.Empty:
                 time.sleep(1)
                 continue
+            app_on = True
             if device.a is None:
                 device.a = Automator("debug")
             priority, account, task_name, rec_addr, task, continue_ = _task
@@ -898,6 +913,9 @@ class PCRInitializer:
 
     def show_debug_record(self, running=False, device=None):
         self.send_message(device, {'method': 'rec', 'running': running})
+
+    def close_game(self, device=None):
+        self.send_message(device, "close game at now!!!")
 
     def stop(self, join=False, clear=False, force=False):
         if clear:
@@ -1548,7 +1566,6 @@ class Schedule:
         """
         展示当前计划执行情况
         """
-
         status = self.get_status(last_state)
         print("= 执行进度 =")
         for D in status:

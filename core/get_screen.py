@@ -10,15 +10,17 @@ import matplotlib.pyplot as plt
 import websocket
 
 # from core.Automator import Automator
+from core import log_handler
 from core.pcr_config import debug, fast_screencut_timeout, fast_screencut_delay
 
 lock = threading.Lock()
 
 
-
 class ReceiveFromMinicap:
+
     def __init__(self, address):
         # 当前最后接收到的1帧数据
+        self.log = log_handler.pcr_log("ReceiveFromMinicap")
         self.receive_data = queue.Queue()
         # 接收标志位（每次接收1帧都会重置）
         self.receive_flag = 0
@@ -48,13 +50,13 @@ class ReceiveFromMinicap:
             while not self.ws_stop:
                 try:
                     if debug:
-                        print("截图线程开启！")
+                        self.log.write_log('debug', "截图线程开启！")
                     self.ws.run_forever(ping_interval=30, ping_timeout=10)
                 except Exception as e:
                     if debug:
-                        print("截图线程出现问题！")
+                        self.log.write_log('debug', "截图线程出现问题！")
                     if debug:
-                        print("run minicap", type(e), e)
+                        self.log.write_log('debug', f"run minicap{type(e)} {e}")
                     if self.ws_stop:
                         return
                     self.ws.close()
@@ -66,7 +68,7 @@ class ReceiveFromMinicap:
                                                      on_error=self.on_error)
                     time.sleep(1)
             if debug:
-                print("截图异步线程已经关闭！")
+                self.log.write_log('debug', "截图异步线程已经关闭！")
 
         if self.receive_thread is None:
             self.receive_thread = threading.Thread(target=run, name="minicap_thread", daemon=True)
@@ -88,14 +90,14 @@ class ReceiveFromMinicap:
                         self.receive_flag = 0
                 else:
                     if debug:
-                        print(message)
+                        self.log.write_log('debug', message)
             except queue.Empty:
                 pass
 
     # 错误回调函数
     def on_error(self, error):
         if debug:
-            print(error)
+            self.log.write_log('debug', error)
         if self.ws_stop:
             return
         self.ws.close()
@@ -110,7 +112,7 @@ class ReceiveFromMinicap:
     # 关闭ws的回调函数
     def on_close(self):
         if debug:
-            print("### closed ###")
+            self.log.write_log('debug', "### closed ###")
 
     # 开始接收1帧画面
     def receive_img(self):
@@ -122,7 +124,7 @@ class ReceiveFromMinicap:
             try:
                 data = self.receive_data.get(timeout=fast_screencut_timeout)
                 if debug:
-                    print("data len:", len(data))
+                    self.log.write_log('debug', f"data len:{len(data)}")
                 data = BytesIO(data)
                 data = plt.imread(data, "PNG")
                 # 转rgb
@@ -133,16 +135,16 @@ class ReceiveFromMinicap:
             except queue.Empty:
                 # 读取超时
                 if debug:
-                    print("读取超时")
+                    self.log.write_log('debug', "读取超时")
                 retry += 1
                 continue
             except Exception as e:
                 if debug:
-                    print("receive_img", type(e), e)
+                    self.log.write_log('debug', f"receive_img{type(e)}{e}")
                 retry += 1
                 continue
         if debug:
-            print("快速截图失败！")
+            self.log.write_log('debug', "快速截图失败！")
         lock.release()
         return None
 

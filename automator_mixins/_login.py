@@ -24,6 +24,11 @@ class LoginMixin(ToolsMixin):
     包含登录相关操作的脚本
     """
 
+    def __init__(self):
+        super().__init__()
+        if not self.log:
+            from ._tools import ToolsMixin
+
     @timeout(180, "start执行超时：超过3分钟")
     @DEBUG_RECORD
     def start(self):
@@ -33,8 +38,8 @@ class LoginMixin(ToolsMixin):
         协议：MIT License
         启动脚本，请确保已进入游戏页面。
         """
+        self.phone_privacy()
         while True:
-            self.phone_privacy()
             # 判断jgm进程是否在前台, 最多等待20秒，否则唤醒到前台
             if self.d.app_wait("com.bilibili.priconne", front=True, timeout=1):
                 if not self.appRunning:
@@ -43,6 +48,7 @@ class LoginMixin(ToolsMixin):
                 self.appRunning = True
                 break
             else:
+                time.sleep(random.uniform(1.5, 5.12))
                 self.app = self.d.session("com.bilibili.priconne")
                 self.appRunning = False
                 continue
@@ -128,10 +134,10 @@ class LoginMixin(ToolsMixin):
             for _ in range(2):
                 # 有两个协议需要同意
                 if debug:
-                    print("等待认证")
+                    self.log.write_log('debug', "等待认证")
                 while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                     if debug:
-                        print("发现协议")
+                        self.log.write_log('debug', "发现协议")
                     self._move_check()
                     self.d.touch.down(810, 378).sleep(1).up(810, 378)
                     if self.d(text="请滑动阅读协议内容").exists():
@@ -141,10 +147,11 @@ class LoginMixin(ToolsMixin):
                         self.d(description="同意").click()
                     # time.sleep(6)
                 if debug:
-                    print("结束认证")
+                    self.log.write_log('debug', "结束认证")
 
         SkipAuth()
         flag = False
+        imgfindcaptcha_is_work = True
         if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
             flag = True
             _time = 1
@@ -152,96 +159,120 @@ class LoginMixin(ToolsMixin):
             _pop = False
 
             # 初始化接码
-            cs = CaptionSkip()
+            cs = CaptionSkip(self.log)
 
             def AutoCaptcha():
 
                 nonlocal _time
                 nonlocal _id
                 nonlocal _pop
+                nonlocal imgfindcaptcha_is_work
 
                 # time.sleep(1)
+                _try_count = 0
                 while True:
                     # 这里是判断验证码动画是否加载完毕和截图到达指定位置
                     # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
                     self.getscreen()
-                    if self.is_exists(START_UI["anying"]) and self.is_exists(START_UI["wenzidianji"],
-                                                                             at=(342, 94, 622, 162)):
-                        if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(START_UI["yanzhengshibai"],
-                                                                                             at=(618, 399, 659, 440)):
+                    if imgfindcaptcha_is_work:
+                        if self.is_exists(START_UI["anying"], at=(348, 162, 621, 439)) and self.is_exists(
+                                START_UI["wenzidianji"],
+                                at=(342, 94, 622, 162)):
+                            if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(
+                                    START_UI["yanzhengshibai"],
+                                    at=(618, 399, 659, 440)):
+                                screen = self.getscreen()
+                                screen = screen[1:575, 157:793]
+                                # 原来的 456, 489
+                                # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
+                                break
+                        elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                             screen = self.getscreen()
-                            screen = screen[1:575, 157:793]
-                            # 原来的 456, 489
-                            # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
                             break
-                    elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
+                        else:
+                            time.sleep(1)
+                            if _try_count > 10:
+                                imgfindcaptcha_is_work = False
+                                self.log.write_log("warning", f"{self.account}，"
+                                                              f"10s过去了，你似乎不适用OpenCV来识别验证框（，"
+                                                              f"即将启用老方法,验证码延迟【1.5+captcha_sleep_times】生效")
+                                # self.d(text="确认").click()
+                                self.click(687, 72)
+                                time.sleep(1.5 + captcha_sleep_times)
+                                screen = self.getscreen()
+                                screen = screen[1:575, 157:793]
+                                break
+                            _try_count += 1
+                    else:
+                        time.sleep(1.5 + captcha_sleep_times)
                         screen = self.getscreen()
+                        screen = screen[1:575, 157:793]
                         break
 
                 if self.d(textContains="请点击此处重试").exists():
-                    print(f">>>{self.account}-请点击此处重试")
+                    self.log.write_log('info', f">>>{self.account}-请点击此处重试")
                     # 点重试
                     # self.click(482, 315)
                     self.d(text="请点击此处重试").click()
 
                 elif self.d(textContains="异常").exists() or self.d(textContains="返回").exists():
-                    print(f">>>{self.account}-网络异常，刷新验证码")
+                    self.log.write_log('info', f">>>{self.account}-网络异常，刷新验证码")
                     self.click(476, 262)
                     self.d(text="返回").click()
 
                 elif self.d(textContains="请在下图依次").exists():
-                    print(f">>>{self.account}-检测到图字结合题")
-                    print("当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
+                    self.log.write_log('info', f">>>{self.account}-检测到图字结合题")
+                    self.log.write_log('warning', "当出现这玩意时，请仔细核对你的账号密码是否已被更改找回！")
                     # 这是关闭验证码 self.click(667, 65, post_delay=3)
                     # 结果出来为四个字的坐标
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6004")
                     for i in range(0, _len + 1):
                         x = int(answer_result[i].split(',')[0]) + 157
                         y = int(answer_result[i].split(',')[1]) + 1
-                        print(f">{self.account}-验证码第{i}坐标识别：", x, ',', y)
+                        self.log.write_log('info', f">{self.account}-验证码第{i}坐标识别：{x},{y}")
                         self.click(x, y)
                         if answer_result == [255, 439]:
-                            self.click(230, 500)
-                            print("平台识别不出来，刷新")
+                            self.click(687, 72)
+                            self.log.write_log('info', "平台识别不出来，刷新")
                         self.d(text="确认").click()
                         _time = + 1
                         time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="请点击").exists():
-                    print(f">>>{self.account}-检测到图形题")
+                    self.log.write_log('info', f">>>{self.account}-检测到图形题")
 
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6001")
                     # print(answer_result,' ', _len,' ', _id)
                     x = int(answer_result[0]) + 157
                     y = int(answer_result[1]) + 1
-                    print(f">{self.account}-验证码坐标识别：", x, ',', y)
+                    self.log.write_log('info', f">{self.account}-验证码坐标识别： {x},{y}")
                     # print(type(x))
                     self.click(x, y)
                     if answer_result == [255, 439]:
-                        self.click(230, 500)
-                        print("平台识别不出来，刷新")
+                        self.click(687, 72)
+                        self.log.write_log('info', "平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
                     time.sleep(captcha_sleep_times)
 
                 elif self.d(textContains="拖动滑块").exists():
-                    print(f">>>{self.account}-检测到滑块题")
+                    self.log.write_log('info', f">>>{self.account}-检测到滑块题")
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X8006")
                     x = int(answer_result[0]) + 157
                     y = int(answer_result[1]) + 1
-                    print(f">{self.account}-滑块坐标识别：", x, 386)
+                    self.log.write_log('info', f">{self.account}-滑块坐标识别：{x}, 386")
                     # print(type(x))
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 3.6)
                     if answer_result == [255, 439]:
-                        self.click(230, 500)
-                        print("平台识别不出来，刷新")
+                        self.click(687, 72)
+                        self.log.write_log('info', "平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
                     time.sleep(captcha_sleep_times)
 
                 else:
-                    print(f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），如有问题请加群带图联系开发者")
+                    self.log.write_log('info', f"{self.account}-存在未知领域，无法识别到验证码（或许已经进入主页面了），如有问题请加群带图联系开发者")
                     # return False
 
             def due_AutoCaptcha():
@@ -288,6 +319,9 @@ class LoginMixin(ToolsMixin):
                 elif "账号异常" in str(toast_message).split(" "):
                     raise BadLoginException("账号异常！")
 
+                if _time >= 2 and self.d(text="登录").exists():
+                    self.d(text="登录").click(timeout=2)
+
                 # 下面代码暂时不管用
                 # if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                 #     if _time >= 5:
@@ -313,7 +347,7 @@ class LoginMixin(ToolsMixin):
                             AutoCaptcha()
                             due_AutoCaptcha()
                         except Exception as e:
-                            print(f"自动过验证码发生报错:{e}")
+                            self.log.write_log('error', f"自动过验证码发生报错:{e}")
                             continue
                         state = True  # 先这样，10s验证，state几乎已经不适用了
                         # time.sleep(5)
@@ -420,7 +454,7 @@ class LoginMixin(ToolsMixin):
                     break
                 if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                     if debug:
-                        print("发现协议")
+                        self.log.write_log('debug', "发现协议")
                     self.d.touch.down(810, 378).sleep(1).up(810, 378)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()

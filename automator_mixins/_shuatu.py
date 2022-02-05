@@ -615,25 +615,25 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.setting()
             mv.setflag("set")
         if a == 1 and b < 8:
-            print("1")
+            self.log.write_log('info',"1")
             self.tuitu(0, "1-8", buy_tili=3, clear_tili=False, var=var)
             a, b = getab()
         if a == 1 and b == 8:
             self.auto_upgrade(buy_tili=3, var=var)
         if a == 1 or (a == 2 and b < 5):
-            print("2")
+            self.log.write_log('info',"2")
             self.tuitu(0, "2-5", buy_tili=3, clear_tili=False, var=var)
             a, b = getab()
         if a == 2 and b == 5:
             self.auto_upgrade(buy_tili=3, var=var)
         if a == 1 or (a == 2 and b < 11):
-            print("3")
+            self.log.write_log('info',"3")
             self.tuitu(0, "2-11", buy_tili=3, clear_tili=False, var=var)
             a, b = getab()
         if a == 2 and b == 11:
             self.auto_upgrade(buy_tili=3, var=var)
         if a < 3:
-            print("4")
+            self.log.write_log('info',"4")
             self.tuitu(0, "3-1", buy_tili=3, clear_tili=False, var=var)
         self.clear_tili_info(var)
         mv.clearflags()

@@ -169,8 +169,8 @@ class AutomatorDebuger(Automator):
             self.login_auth(account, password)
         self.init_home()
 
-    def Shot(self, file="test.bmp", show=True):
-        self.getscreen(file)
+    def Shot(self, file="test.bmp", show=True, force_slow=False):
+        self.getscreen(file, force_slow=force_slow)
         # AutoRotate
         img = ImgBox(filepath=file)
         if img.width < img.height:
@@ -187,9 +187,15 @@ class AutomatorDebuger(Automator):
     def Equal(self, file1, file2, at=None):
         print("Equality:", self.img_equal(file1, file2, at))
 
-    def Show(self, file="test.bmp", at=None):
+    def Show(self, file="test.bmp", at=None, verbose=True, return_click=False):
         img = ImgBox(filepath=file)
         self._obj = dict(txt=None, pnt=None, move=False, rec=None)
+        click = self._obj["click"] = {
+            "last": None,
+            "xy": [],
+            "at": [],
+        }
+
         if at is not None:
             img.self_cut(*at)
 
@@ -205,12 +211,12 @@ class AutomatorDebuger(Automator):
                 y2, y1 = plt.ylim()
                 x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
                 addr = e.get()
-                print(f"p({(x1+x2)//2},{(y1+y2)//2},img=\"{addr}\",at=({x1},{y1},{x2},{y2}))")
+                if verbose: print(f"p({(x1 + x2) // 2},{(y1 + y2) // 2},img=\"{addr}\",at=({x1},{y1},{x2},{y2}))")
                 img.cut(x1, y1, x2, y2).save(addr)
                 try:
                     img.cut(x1, y1, x2, y2).save(addr)
                 except Exception as ee:
-                    print(f"Error: {ee}")
+                    if verbose: print(f"Error: {ee}")
                 master.destroy()
 
             def cancel():
@@ -223,70 +229,78 @@ class AutomatorDebuger(Automator):
             mainloop()
 
         def OnClick(event):
-            txt = self._obj["txt"]
-            pnt = self._obj["pnt"]
-            if event.button == 1 and not event.dblclick:
-                # 单击，显示坐标,self.click
-                try:
-                    txt.remove()
-                except:
-                    pass
-                try:
-                    pnt.remove()
-                except:
-                    pass
-                x = event.xdata
-                y = event.ydata
-                print(f"self.click({int(x)},{int(y)})")
-                ax = plt.gca()
-                txt = ax.text(plt.xlim()[0], plt.ylim()[0], "%d,%d" % (x, y), backgroundcolor="w")
-                pnt = ax.scatter(x, y, 10, "red")
-                ax.figure.canvas.draw()
-                self._obj["txt"] = txt
-                self._obj["pnt"] = pnt
-            elif event.button == 1 and event.dblclick:
-                # 双击，归位
-                try:
-                    txt.remove()
-                except:
-                    pass
-                try:
-                    pnt.remove()
-                except:
-                    pass
-                plt.xlim([0, img.width])
-                plt.ylim([img.height, 0])
-                plt.gca().figure.canvas.draw()
-            elif event.button == 2:
-                # 中键，以当前的截图范围保存新的图片
-                SaveFile()
-            elif event.button == 3:
-                # 右键，框选
-                self._obj["x1"] = event.xdata
-                self._obj["y1"] = event.ydata
-                self._obj["move"] = True
+            try:
+                txt = self._obj["txt"]
+                pnt = self._obj["pnt"]
+                if event.button == 1 and not event.dblclick:
+                    # 单击，显示坐标,self.click
+                    try:
+                        txt.remove()
+                    except:
+                        pass
+                    try:
+                        pnt.remove()
+                    except:
+                        pass
+                    x = event.xdata
+                    y = event.ydata
+                    click["last"] = (int(x), int(y))
+                    if verbose: print(f"self.click({int(x)},{int(y)})")
+                    ax = plt.gca()
+                    txt = ax.text(plt.xlim()[0], plt.ylim()[0], "%d,%d" % (x, y), backgroundcolor="w")
+                    pnt = ax.scatter(x, y, 10, "red")
+                    ax.figure.canvas.draw()
+                    self._obj["txt"] = txt
+                    self._obj["pnt"] = pnt
+                elif event.button == 1 and event.dblclick:
+                    # 双击，归位
+                    try:
+                        txt.remove()
+                    except:
+                        pass
+                    try:
+                        pnt.remove()
+                    except:
+                        pass
+                    plt.xlim([0, img.width])
+                    plt.ylim([img.height, 0])
+                    plt.gca().figure.canvas.draw()
+                elif event.button == 2:
+                    # 中键，以当前的截图范围保存新的图片
+                    SaveFile()
+                elif event.button == 3:
+                    # 右键，框选
+                    self._obj["x1"] = event.xdata
+                    self._obj["y1"] = event.ydata
+                    self._obj["move"] = True
+            except:
+                pass
 
         def OnMove(event):
-            if self._obj["move"]:
-                try:
-                    self._obj["rec"].remove()
-                except:
-                    pass
-                x1 = self._obj["x1"]
-                y1 = self._obj["y1"]
-                x2 = event.xdata
-                y2 = event.ydata
-                w = x2 - x1
-                h = y2 - y1
-                if w < 0:
-                    w = -w
-                    x1, x2 = x2, x1
-                if h < 0:
-                    h = -h
-                    y1, y2 = y2, y1
-                ax = plt.gca()
-                self._obj["rec"] = ax.add_patch(plt.Rectangle((x1, y1), w, h, edgecolor="red", fill=False, linewidth=2))
-                ax.figure.canvas.draw()
+            try:
+                if self._obj["move"]:
+                    try:
+                        self._obj["rec"].remove()
+                    except:
+                        pass
+                    x1 = self._obj["x1"]
+                    y1 = self._obj["y1"]
+                    x2 = event.xdata
+                    y2 = event.ydata
+                    w = x2 - x1
+                    h = y2 - y1
+                    if w < 0:
+                        w = -w
+                        x1, x2 = x2, x1
+                    if h < 0:
+                        h = -h
+                        y1, y2 = y2, y1
+                    ax = plt.gca()
+                    self._obj["rec"] = ax.add_patch(
+                        plt.Rectangle((x1, y1), w, h, edgecolor="red", fill=False, linewidth=2))
+                    ax.figure.canvas.draw()
+            except:
+                pass
 
         def OnRelease(event):
             if self._obj["move"]:
@@ -312,7 +326,7 @@ class AutomatorDebuger(Automator):
                 plt.xlim([x1, x2])
                 plt.ylim([y2, y1])
                 ax.figure.canvas.draw()
-                print(f"at=({x1},{y1},{x2},{y2})")
+                if verbose: print(f"at=({x1},{y1},{x2},{y2})")
 
         def OnKeyPress(event):
             if event.inaxes is None:
@@ -320,7 +334,7 @@ class AutomatorDebuger(Automator):
             if event.key == 'o':
                 x1, x2 = plt.xlim()
                 y1, y2 = plt.ylim()
-                print(self.ocr_center(int(x1), int(y2), int(x2), int(y1), img.IMG))
+                if verbose: print(self.ocr_center(int(x1), int(y2), int(x2), int(y1), img.IMG))
                 event.inaxes.figure.canvas.draw()
             if event.key in ['1','2','3','4','0']:
                 x1, x2 = plt.xlim()
@@ -338,6 +352,14 @@ class AutomatorDebuger(Automator):
                 elif event.key == '0':
                     print("OCR(BASIC):",self._pcrocr.ocr(IMG))
 
+            if event.key == 'a':
+                x1, x2 = plt.xlim()
+                y1, y2 = plt.ylim()
+                click["at"].append((int(x1), int(y2), int(x2), int(y1)))
+                print("记录： at=", click["at"][-1])
+            if event.key == "x":
+                click["xy"].append(click["last"])
+                print("记录： xy=", click["xy"])
 
         img.show(False)
         ax = plt.gca()
@@ -346,6 +368,8 @@ class AutomatorDebuger(Automator):
         ax.figure.canvas.mpl_connect('button_release_event', OnRelease)
         ax.figure.canvas.mpl_connect('key_press_event', OnKeyPress)
         plt.show(block=True)
+        if return_click:
+            return click
 
 
 if __name__ == "__main__":
