@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import datetime
 import os
 import queue
@@ -1517,8 +1518,10 @@ class BaseMixin:
 
     @DEBUG_RECORD
     def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text",
-                   before_preprocess=PreProcesses(), after_preprocess=PreProcesses(), apply_screen=True, blur=None):
+                   before_preprocess=PreProcesses(), after_preprocess=PreProcesses(), apply_screen=True, blur=None,
+                   custom_ocr=None):
         """
+        :param custom_ocr: 优先使用的自定义ocr，排在主次前面，只能单个
         :param after_preprocess: 后cv预处理，在ocr外部处理，经过旋转（或许有）+裁剪，再处理
         :param blur: 滤波/模糊 <str> 在被调用的ocr内部进行，在size之后，目前只有 "gussian" 高斯滤波
         :param apply_screen: 是否只使用一个screen
@@ -1554,6 +1557,7 @@ class BaseMixin:
             "本地2": self.ocr_local2,
             "本地3": self.ocr_local3,
             "本地4": self.easyocr_ocr,
+            "PCR定制": self.pcrocr_ocr,
         }
 
         if screen_shot is None:
@@ -1574,6 +1578,10 @@ class BaseMixin:
         screen_shot = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
         screen_shot = after_preprocess(screen_shot)
 
+        if custom_ocr:
+            ocr_text = ocr_register.get(custom_ocr)(screen_shot, size, credibility, language, type, blur=blur)
+            if ocr_text and ocr_text != -1:
+                return ocr_text
         ocr_text = ocr_register.get(ocr_mode_main)(screen_shot, size, credibility, language, type, blur=blur)
         if force_primary_equals_secondary:
             for ocr_second in ocr_mode_secondary.split(','):
@@ -1745,6 +1753,30 @@ class BaseMixin:
             return local_ocr_text.text
         except Exception as ocr_error:
             self.log.write_log(level='error', message='本地OCR4识别失败，原因：%s' % ocr_error)
+            return -1
+
+    def pcrocr_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+        try:
+            part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            if type == 'number':
+                # 锐化处理+高斯滤波，避免放大失真
+                kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)  # 锐化
+                part = cv2.filter2D(part, -1, kernel=kernel)
+            if blur == 'gussian':
+                part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
+            img_binary = cv2.imencode('.jpg', part)[1].tostring()  # 转成base64编码（误）
+            img_binary = base64.b64encode(img_binary)
+            data = {
+                'file': ('tmp.png', img_binary, 'image/png'),
+                'voc': None,
+                'do_pre': True,
+            }
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/pcrocr_ocr/", data=data)
+            if debug:
+                self.log.write_log('debug', 'PCR特化OCR识别结果：%s' % local_ocr_text.text)
+            return local_ocr_text.text
+        except Exception as ocr_error:
+            self.log.write_log(level='error', message='PCR特化OCR识别失败，原因：%s' % ocr_error)
             return -1
 
     def ocr_int(self, x1, y1, x2, y2, screen_shot=None):
