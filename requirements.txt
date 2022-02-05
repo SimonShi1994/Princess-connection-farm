@@ -50,3 +50,9 @@ protobuf==3.14.0
 
 ## For img_helper
 pyperclip
+
+## For PCROCR
+cnocr==2.1.0
+
+## For training PCROCR
+# skorch==0.11.0
