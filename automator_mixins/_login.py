@@ -198,6 +198,7 @@ class LoginMixin(ToolsMixin):
                                                               f"即将启用老方法,验证码延迟【1.5+captcha_sleep_times】生效")
                                 # self.d(text="确认").click()
                                 self.click(687, 72)
+                                self.d(text="登录").click(timeout=5)
                                 time.sleep(1.5 + captcha_sleep_times)
                                 screen = self.getscreen()
                                 screen = screen[1:575, 157:793]
@@ -233,6 +234,7 @@ class LoginMixin(ToolsMixin):
                         self.click(x, y)
                         if answer_result == [255, 439]:
                             self.click(687, 72)
+                            self.d(text="登录").click(timeout=5)
                             self.log.write_log('info', "平台识别不出来，刷新")
                         self.d(text="确认").click()
                         _time = + 1
@@ -250,6 +252,7 @@ class LoginMixin(ToolsMixin):
                     self.click(x, y)
                     if answer_result == [255, 439]:
                         self.click(687, 72)
+                        self.d(text="登录").click(timeout=5)
                         self.log.write_log('info', "平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
@@ -266,6 +269,7 @@ class LoginMixin(ToolsMixin):
                     self.d.drag_to(322, 388, x, 386, 3.6)
                     if answer_result == [255, 439]:
                         self.click(687, 72)
+                        self.d(text="登录").click(timeout=5)
                         self.log.write_log('info', "平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
