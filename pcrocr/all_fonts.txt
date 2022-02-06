@@ -1,7 +1,1 @@
-Arial.ttf
-Calibri.ttf
-Calibrii.ttf
-Consola.ttf
-Consolai.ttf
-Times.ttf
-Timesi.ttf
+Msyh.ttc

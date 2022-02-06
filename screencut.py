@@ -399,6 +399,7 @@ if __name__ == "__main__":
                 print("where screen template threshold：以threshold为阈值，求template在screen中的未知（中点和x1,y1,x2,y2）")
                 print("login account [password]  在开始界面进行登录，如果不输入password，则默认使用users中储存的密码。")
                 print("input string 清空当前输入并且输入string")
+                print("initpcrocr： 初始化PCROCR")
                 print("exec 进入编程调试模式")
                 print("----")
                 print("在图片显示界面：")
@@ -408,6 +409,8 @@ if __name__ == "__main__":
                 print("双击左键： 框选复位")
             elif order == "init":
                 a.Init()
+            elif order == "initpcrocr":
+                a.InitPCROCR()
             elif order == "connect":
                 if len(cmds) == 2:
                     a.Connect(cmds[1])

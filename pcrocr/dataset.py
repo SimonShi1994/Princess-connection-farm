@@ -11,8 +11,8 @@ from cnocr.data_utils.aug import RandomStretchAug
 import cv2
 
 
-def load_from_tsv(filename,top=None,cuda=True):
-    out = np.genfromtxt(filename,delimiter='\t',dtype=str)
+def load_from_tsv(filename,top=None,tail=None,cuda=True):
+    out = np.genfromtxt(filename,delimiter='\t',dtype=str,encoding="utf-8")
     label_list = []
     img_list = []
 
@@ -21,6 +21,10 @@ def load_from_tsv(filename,top=None,cuda=True):
             top -= 1
             if top<0:
                 break
+        if tail is not None:
+            tail -= 1
+            if tail>=0:
+                continue
         img = cv2.imread(path)
         img = img_preprocess(img,cuda)
         if img.shape[2]<20:

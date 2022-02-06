@@ -1,17 +1,22 @@
-from pcrocr.model import pcr_basic_model
+from pcrocr.model import pcr_basic_model, pcr_normal_model
 from tqdm import tqdm
 from pcrocr.dataset import MyDataset,MyDataLoader,load_from_tsv
 import torch
 
 MODEL_SETTINGS = [
-    dict(model="densenet_lite_136-fc",file="basic_DL136_fc.pt"),
-    dict(model="densenet_lite_136-lstm",file="basic_DL136_lstm.pt"),
-    dict(model="densenet_lite_136-gru",file="basic_DL136_gru.pt"),
-    dict(model="mobilenetv3_tiny-lstm",file="basic_MNT_lstm.pt"),
-    dict(model="mobilenetv3_tiny-fc",file="basic_MNT_fc.pt"),
+    dict(model="densenet_lite_136-fc",file="normal_DL136_fc.pt"),
+    dict(model="densenet_lite_136-lstm",file="normal_DL136_lstm.pt"),
+    dict(model="densenet_lite_136-gru",file="normal_DL136_gru.pt"),
+    dict(model="mobilenetv3_tiny-lstm",file="normal_MNT_lstm.pt"),
+    # dict(model="mobilenetv3_tiny-fc",file="basic_MNT_fc.pt"),
 ]
 DATA_LIST = [
-    "realA","realA2","realB","realB2"
+    "realA","realA2","realB","realB2","artifactA","artifactB","realC"
+    # "realC"
+]
+DATA_LAST = [
+    6500,2000,9000,18000,18000,8000,8000
+    # 8000,
 ]
 
 print("==== Loading models ====")
@@ -20,18 +25,18 @@ model_names = [m['model'] for m in MODEL_SETTINGS]
 
 for setting in MODEL_SETTINGS:
     print("Loading",setting['file'],"...")
-    model = pcr_basic_model(setting['model']).eval()
-    param_addr = f"model/basic/{setting['file']}"
+    model = pcr_normal_model(setting['model']).eval()
+    param_addr = f"model/normal2/{setting['file']}"
     param = torch.load(param_addr,map_location="cuda")
     model.load_state_dict(param)
     models.append(model)
 
 RESULTS = {}
 torch.set_grad_enabled(False)
-for data in DATA_LIST:
+for data,tail in zip(DATA_LIST,DATA_LAST):
     print(f"==== DATA: {data} ====")
     print("Loading data...")
-    img_list, label_list = load_from_tsv(f"{data}/data.tsv")
+    img_list, label_list = load_from_tsv(f"{data}/data.tsv",tail=tail)
     all_count = 0
     true_count = 0
     error_imgs = []
@@ -39,7 +44,7 @@ for data in DATA_LIST:
     error_estr = []
     error_targets = []
     dataset = MyDataset(img_list,label_list)
-    dataloader = MyDataLoader(dataset,batch_size=200,do_shuffle=False)
+    dataloader = MyDataLoader(dataset,batch_size=100,do_shuffle=False)
     model_scores = {}
     print("Testing models...")
     for X,Y in tqdm(dataloader):
@@ -101,3 +106,5 @@ RESULTS2 ={k:{k2:v2 if k2!='errors' else
              [{k3:v3 for k3,v3 in err.items() if k3 in ['e_str','t_str']} for err in v2]
     for k2,v2 in v.items()}
 for k,v in RESULTS.items()}
+
+ALL_ACC = sum([a['true_count'] for a in RESULTS.values()])/sum([a['all_count'] for a in RESULTS.values()])

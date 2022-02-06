@@ -7,7 +7,7 @@ import numpy as np
 class PCROCRBasic:
     """
     PCR的基础OCR模块
-    包括0~9,冒号，逗号，斜杠，叉号(x)
+    包括0~9,冒号，逗号，斜杠，叉号(x), 以及必要的中文字（见pcrocr/label_basic.txt)
     载入模型目录，config.ini设置使用的模型，多模型投票决定结果。
     """
     def __init__(self,models_dir="pcrocr/model/basic",voc_dir="pcrocr"):
@@ -22,6 +22,8 @@ class PCROCRBasic:
 
     def initialize(self):
         config = np.genfromtxt(f"{self.models_dir}/model_config.ini",comments='#',delimiter='\t',dtype='str')
+        if config.ndim == 1:
+            config = config.reshape(1,-1)
         for filename,modelname in config:
             model = pcr_basic_model(model_name=modelname,cuda=False,voc_dir=self.voc_dir)
             param = torch.load(f"{self.models_dir}/{filename}",map_location="cpu")
@@ -63,3 +65,6 @@ class PCROCRBasic:
 
     def ocr_mana(self,x,do_pre=True):
         return self.ocr(x,voc="0123456789,",do_pre=do_pre)
+
+    def ocr_time(self,x,do_pre=True):
+        return self.ocr(x,voc="0123456789:",do_pre=do_pre)
