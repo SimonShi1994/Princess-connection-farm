@@ -10,6 +10,10 @@
 
 **支持模拟器多开**
 
+**使用多进程优化+异步Python性能**
+
+**支持异常报错卡住自动重启**
+
 **支持自动填写验证码**
 
 **支持24小时挂机**
@@ -83,7 +87,7 @@
 
 - **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
-- 【非强制性】本地OCR 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
+- 【不推荐】本地OCR 1/2 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
 
 - 自行打开`requirements.txt`确认依赖无误
 
@@ -163,7 +167,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice) 、UVJkiNTQ(https://github.com/UVJkiNTQ)、对本项目的倾力帮助。
+2. 感谢[CyiceK](https://github.com/1076472672) 、[Dr-Bluemond](https://github.com/Dr-Bluemond) 、[TheAutumnOfRice](https://github.com/TheAutumnOfRice) 、[UVJkiNTQ](https://github.com/UVJkiNTQ)以及其他众多贡献者对本项目的倾力帮助。
 
 3. **来个 star 吧(*/ω＼*)，有问题请提交issue**
 
@@ -194,6 +198,13 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2022/02/07 By CyiceK
+
+- 优化验证码图片截图识别
+- easyocr支持allowlist参数
+- 依赖安装优化
+- 内置最新的完整的谷歌安装开发sdk（adb）
+- 本地ocr核心逐步移动到easyocr（本地4）+pcrocr上，比老muggle_ocr（本地1），内存占用比大约为20M/130M
 
 2022/02/07 By TheAutumnOfRice
 

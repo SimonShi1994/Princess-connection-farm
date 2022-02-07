@@ -118,10 +118,15 @@ def local_ocr3():
 @ocr_api.route('/local_ocr4/', methods=['POST'])
 def local_ocr4():
     # 接收图片
-    upload_file = request.files.get('file')
+    upload_file = request.form.get('file')
     # print(upload_file)
+    allowstr = request.form.get('allowstr')
+    if allowstr != 'null' and allowstr != 'None':
+        allowstr = allowstr
+    else:
+        allowstr = None
     if upload_file:
-        result = easyocr_reader.readtext(upload_file.read(), detail=0)
+        result = easyocr_reader.readtext(upload_file.read(), allowlist=allowstr,detail=0)
         # print(result)
         if type(result) is list:
             return str(result).replace("'", '').replace('[', '').replace(']', '')
