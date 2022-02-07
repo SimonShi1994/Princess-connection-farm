@@ -51,16 +51,16 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         # self.norm_hdl.setLevel('INFO')
 
         if colorlogsw:
-            self.norm_fomatter = colorlog.ColoredFormatter('%(log_color)s[%(asctime)s] '
-                                                           '%(message)s',
+            self.norm_fomatter = colorlog.ColoredFormatter('%(log_color)s[%(asctime)s]\t'
+                                                           '[%(name)s] \t%(message)s',
                                                            log_colors=self.log_colors_config)
         else:
-            self.norm_fomatter = logging.Formatter('%(asctime)s\t%(name)s\t--%(levelname)s\t%(message)s')  # 设置输出格式
+            self.norm_fomatter = logging.Formatter('[%(asctime)s]\t[%(name)s]\t%(message)s')  # 设置输出格式
 
         # 创建一个FileHandler，用于写到本地
+        # maxBytes=1024 * 1024 * 5, backupCount=5,
         self.fhbacker = RotatingFileHandler(filename=os.path.join(self.dst_folder, '%s.log' % acc),
-                                            mode='a+', maxBytes=1024 * 1024 * 5, backupCount=5,
-                                            encoding='utf-8')  # 使用RotatingFileHandler类，滚动备份日志
+                                            mode='a+', encoding='utf-8')  # 使用RotatingFileHandler类，滚动备份日志
         self.fhbacker.setLevel('DEBUG')
         self.fhbacker.setFormatter(self.norm_fomatter)
 
@@ -71,13 +71,13 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             self.norm_log.addHandler(self.norm_hdl_std)
             # self.norm_log.addHandler(self.norm_hdl)
             self.norm_log.addHandler(self.fhbacker)
-        else:
-            self.norm_log.removeHandler(self.norm_hdl_std)
-        #     # self.norm_log.removeHandler(self.norm_hdl)
-            self.norm_log.removeHandler(self.fhbacker)
-            self.norm_log.addHandler(self.norm_hdl_std)
-        #     # self.norm_log.addHandler(self.norm_hdl)
-            self.norm_log.addHandler(self.fhbacker)
+        # else:
+        #     self.norm_log.removeHandler(self.norm_hdl_std)
+        # #     # self.norm_log.removeHandler(self.norm_hdl)
+        #     self.norm_log.removeHandler(self.fhbacker)
+        #     self.norm_log.addHandler(self.norm_hdl_std)
+        # #     # self.norm_log.addHandler(self.norm_hdl)
+        #     self.norm_log.addHandler(self.fhbacker)
 
     def get_log_object(self, _name):
         if logging.getLogger(_name):
@@ -121,12 +121,12 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
                     now = datetime.datetime(int(now_list[0]), int(now_list[1]), int(now_list[2]))
                     if (now - t).days > 6:  # 创建时间大于6天的文件删除
                         self.delete_logs(file_path)
-                if len(file_list) > 4:  # 限制目录下记录文件数量
-                    file_list = file_list[0:-4]
-                    for i in file_list:
-                        file_path = os.path.join(dirPath, i)
-                        # print(file_path)
-                        self.delete_logs(file_path)
+                # if len(file_list) > 4:  # 限制目录下记录文件数量
+                #     file_list = file_list[0:-4]
+                #     for i in file_list:
+                #         file_path = os.path.join(dirPath, i)
+                #         # print(file_path)
+                #         self.delete_logs(file_path)
 
     def delete_logs(self, file_path):
         try:
@@ -195,20 +195,24 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             return
         lev = level.lower()
         msg_format = f'{pre_format_str} [{lev}]-\t{message}'
-        if lev == 'debug':
-            self.norm_log.debug(msg=msg_format)
-        elif lev == 'info':
-            self.norm_log.info(msg=msg_format)
-            self.server_bot(s_level=lev, message=message)
-        elif lev == 'warning':
-            self.norm_log.warning(msg=msg_format)
-            self.server_bot(s_level=lev, message=message)
-        elif lev == 'error':
-            self.norm_log.error(msg=msg_format)
-            pcr_log("__ERROR_LOG__").write_log("info", f"账号 {self.acc_name} ： {message}")
-            self.server_bot(s_level=lev, message=message)
-        else:
-            self.norm_log.critical(msg=msg_format)
+        try:
+            if lev == 'debug':
+                self.norm_log.debug(msg=msg_format)
+            elif lev == 'info':
+                self.norm_log.info(msg=msg_format)
+                self.server_bot(s_level=lev, message=message)
+            elif lev == 'warning':
+                self.norm_log.warning(msg=msg_format)
+                self.server_bot(s_level=lev, message=message)
+            elif lev == 'error':
+                self.norm_log.error(msg=msg_format)
+                pcr_log("__ERROR_LOG__").write_log("info", f"账号 {self.acc_name} ： {message}")
+                self.server_bot(s_level=lev, message=message)
+            else:
+                self.norm_log.critical(msg=msg_format)
+        except Exception as e:
+            # TODO:多进程待修复
+            print("日志写入权限错误：", e)
 
 
 class pcr_acc_log:  # 帐号日志（全局）
