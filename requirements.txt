@@ -13,7 +13,7 @@ opencv-python-headless==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 keyboard==0.13.5 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 retrying -i https://pypi.douban.com/simple
 id-validator
-colorlog
+colorlog~=6.6.0
 
 ## For datacenter
 pypinyin
@@ -50,3 +50,21 @@ protobuf==3.14.0
 
 ## For img_helper
 pyperclip
+
+## For PCROCR
+cnocr==2.1.0
+
+## For training PCROCR
+skorch==0.11.0
+
+
+requests~=2.27.1
+Flask~=2.0.2
+Pillow~=9.0.1
+numpy~=1.22.2
+future~=0.18.2
+Werkzeug~=2.0.2
+argparse~=1.4.0
+torch~=1.10.2
+torchvision~=0.11.3
+tqdm~=4.62.3

@@ -17,7 +17,7 @@ class FightBianZuBase(PCRMsgBoxBase):
         """
         按order进行选择
         :param order:
-            order in ["zhanli","dengji","xingshu"]
+            order in ["zhanli","dengji","xingshu","shoucang"]
         :param change:
             0-不换人 1-人全部换下不上 2-默认：全部换人 3 - 不下人直接上
         """
@@ -75,9 +75,10 @@ class FightBianZuBase(PCRMsgBoxBase):
             - "zhanli" 按战力排序
             - "dengji" 按等级排序
             - "xingshu" 按星数排序
+            - "shoucang" 按收藏排序
         若为"none"或者""：不换人
         """
-        if team_order in ["zhanli", "dengji", "xingshu"]:
+        if team_order in ["zhanli", "dengji", "xingshu", "shoucang"]:
             return self.select_by_sort(team_order, change)
         elif team_order in ["none", ""]:
             return None

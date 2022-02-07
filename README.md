@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20220205
+# Princess connection 公主连结农场脚本v2.8.20220207
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -72,8 +72,8 @@
 
 - [x] 刷经验
 - [x] 副本扫荡
-- [ ] 初始化
-- [ ] 自动推图
+- [x] 初始化
+- [x] 自动推图
 - [x] 自动升级  
 - [x] 借人推图
 
@@ -194,6 +194,35 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/02/07 By TheAutumnOfRice
+
+- 模块追加
+  - 新增pcrocr，专门为bcr量身定制，设置中允许Rank和图号使用OCR获得而不是图像匹配。
+    ！需要cnocr库！
+  
+- 功能更新
+  - 重写角色识别，修复了六星无法识别的问题。
+  - 修复了自动推图所用的自动升级，增加了收藏顺序,允许装备升星。通用刷图允许失败升级功能。
+  - 新增通用OCR推图`s9-t`，对s9进行了封装
+  - 允许VH刷图/推图；允许设置碎片达到目标数则跳过图
+  - 初始化、主线推图等功能因为自动升级的原因现在恢复可用状态
+  
+- BUG修复
+  - 修复了限定商店卡ok_btn的BUG
+  - 修复买体力后不更新可刷图flag的BUG
+  - 修复刷图规划无图可刷时的BUG
+  - 修复基本信息获取，适配pcrocr
+  
+- 配置更新
+  - debuglog增加一些过滤器config
+  - 优化screencut调试体验
+  
+- 框架升级
+  - _base新增lock_change，用于检测区域变化。
+  - 新增prechecks，可以在getscreen后即时操作。
+  - PCRRetry新增BreakNow异常，用于直接跳转到函数尾
+
 
 2022/02/04 By UVJkiNTQ
 
