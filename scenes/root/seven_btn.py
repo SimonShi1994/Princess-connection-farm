@@ -5,7 +5,7 @@ from scenes.scene_base import PCRSceneBase
 
 if TYPE_CHECKING:
     from scenes.root.wodezhuye import WoDeZhuYe
-    from scenes.root.juese import JueSe
+    from scenes.root.juese import CharMenu
     from scenes.root.maoxian import MaoXian
     from scenes.root.gonghuizhijia import GongHuiZhiJia
     from scenes.root.zhucaidan import ZhuCaiDan
@@ -22,12 +22,11 @@ class SevenBTNMixin(PCRSceneBase):
             self.click(MAIN_BTN["zhuye"])
         return self.goto(WoDeZhuYe,gotofun)  # Type:WoDeZhuYe
 
-    def goto_juese(self)->"JueSe":
-
-        from scenes.root.juese import JueSe
+    def goto_juese(self)->"CharMenu":
+        from scenes.root.juese import CharMenu
         def gotofun():
             self.click(MAIN_BTN["juese"])
-        return self.goto(JueSe,gotofun)  # Type:JueSe
+        return self.goto(CharMenu,gotofun)  # Type:JueSe
 
     def goto_maoxian(self)->"MaoXian":
 

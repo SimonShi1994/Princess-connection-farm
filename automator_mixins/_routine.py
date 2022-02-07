@@ -202,6 +202,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 return False
             var["cur"] += 1
             mv.save()
+            self.start_shuatu()
             self.lock_no_img(MAIN_BTN["tili_ok2"], elseclick=MAIN_BTN["tili_ok2"], elsedelay=1)
         del var["cur"]
 
@@ -648,7 +649,6 @@ class RoutineMixin(ShuatuBaseMixin):
     #     self.AR.set("time_status", ts)
     #     self.lock_home()
 
-    @PCRRetry(name="restart")
     def shengjidiaocha(self,team_order="zhanli"):
         """
         圣迹调查
@@ -662,7 +662,6 @@ class RoutineMixin(ShuatuBaseMixin):
         S.doit(team_order)
         self.lock_home()
 
-    @PCRRetry(name="restart")
     def shendiandiaocha(self,team_order="zhanli"):
         """
         神殿调查

@@ -11,7 +11,8 @@ from sys import stdout
 from core.bot import Bot
 
 # 各项需要累积的初始化
-from core.pcr_config import debug
+from core.pcr_config import debug, colorlogsw, write_debug_to_log, do_not_show_debug_if_in_these_files, \
+    skip_codename_output_if_in_these_files, show_codename_in_log, show_linenumber_in_log, show_filename_in_log
 
 acc_cout = 0
 star_time = 0
@@ -49,14 +50,17 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         # self.norm_hdl = logging.FileHandler(os.path.join(self.dst_folder, '%s.log' % acc), encoding='utf-8')
         # self.norm_hdl.setLevel('INFO')
 
-        self.norm_fomatter = colorlog.ColoredFormatter('%(log_color)s[%(asctime)s] '
-                                                       '%(message)s',
-                                                       log_colors=self.log_colors_config)
+        if colorlogsw:
+            self.norm_fomatter = colorlog.ColoredFormatter('%(log_color)s[%(asctime)s]\t'
+                                                           '[%(name)s] \t%(message)s',
+                                                           log_colors=self.log_colors_config)
+        else:
+            self.norm_fomatter = logging.Formatter('[%(asctime)s]\t[%(name)s]\t%(message)s')  # 设置输出格式
 
         # 创建一个FileHandler，用于写到本地
+        # maxBytes=1024 * 1024 * 5, backupCount=5,
         self.fhbacker = RotatingFileHandler(filename=os.path.join(self.dst_folder, '%s.log' % acc),
-                                            mode='a', maxBytes=1024 * 1024 * 5, backupCount=5,
-                                            encoding='utf-8')  # 使用RotatingFileHandler类，滚动备份日志
+                                            mode='a+', encoding='utf-8')  # 使用RotatingFileHandler类，滚动备份日志
         self.fhbacker.setLevel('DEBUG')
         self.fhbacker.setFormatter(self.norm_fomatter)
 
@@ -69,11 +73,23 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
             self.norm_log.addHandler(self.fhbacker)
         # else:
         #     self.norm_log.removeHandler(self.norm_hdl_std)
-        #     # self.norm_log.removeHandler(self.norm_hdl)
+        # #     # self.norm_log.removeHandler(self.norm_hdl)
         #     self.norm_log.removeHandler(self.fhbacker)
         #     self.norm_log.addHandler(self.norm_hdl_std)
-        #     # self.norm_log.addHandler(self.norm_hdl)
+        # #     # self.norm_log.addHandler(self.norm_hdl)
         #     self.norm_log.addHandler(self.fhbacker)
+
+    def get_log_object(self, _name):
+        if logging.getLogger(_name):
+            return logging.getLogger(_name)
+        else:
+            return None
+
+    def exist_log_handles(self):
+        if self.norm_log.handlers:
+            return True
+        else:
+            return False
 
     def get_file_sorted(self, file_path):
         """最后修改时间顺序升序排列 os.path.getmtime()->获取文件最后修改时间"""
@@ -105,12 +121,12 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
                     now = datetime.datetime(int(now_list[0]), int(now_list[1]), int(now_list[2]))
                     if (now - t).days > 6:  # 创建时间大于6天的文件删除
                         self.delete_logs(file_path)
-                if len(file_list) > 4:  # 限制目录下记录文件数量
-                    file_list = file_list[0:-4]
-                    for i in file_list:
-                        file_path = os.path.join(dirPath, i)
-                        # print(file_path)
-                        self.delete_logs(file_path)
+                # if len(file_list) > 4:  # 限制目录下记录文件数量
+                #     file_list = file_list[0:-4]
+                #     for i in file_list:
+                #         file_path = os.path.join(dirPath, i)
+                #         # print(file_path)
+                #         self.delete_logs(file_path)
 
     def delete_logs(self, file_path):
         try:
@@ -125,24 +141,78 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         :param message: str
         :param level: debug/info/warning/error|critical
         """
-        funcName = sys._getframe().f_back.f_code.co_name  # 获取调用函数名
-        lineNumber = sys._getframe().f_back.f_lineno  # 获取行号
-        lev = level.lower()
-        msg_format = f'[{funcName}:{lineNumber}] [{lev}]-\t{message}'
-        if lev == 'debug':
-            self.norm_log.debug(msg=msg_format)
-        elif lev == 'info':
-            self.norm_log.info(msg=msg_format)
-            self.server_bot(s_level=lev, message=message)
-        elif lev == 'warning':
-            self.norm_log.warning(msg=msg_format)
-            self.server_bot(s_level=lev, message=message)
-        elif lev == 'error':
-            self.norm_log.error(msg=msg_format)
-            pcr_log("__ERROR_LOG__").write_log("info", f"账号 {self.acc_name} ： {message}")
-            self.server_bot(s_level=lev, message=message)
+
+        frame = sys._getframe().f_back
+        funcName = frame.f_code.co_name
+        lineNumber = frame.f_lineno
+        fileName = frame.f_code.co_filename
+        show_funcName = show_codename_in_log
+        show_lineNumber = show_linenumber_in_log
+        show_fileName = show_filename_in_log
+
+        # print(">>>",level,message)
+
+        if level == 'debug':
+            for badfile in do_not_show_debug_if_in_these_files:
+                if fileName.endswith(badfile):
+                    return
+
+        while frame is not None:
+            flag = True
+            for skipfile in skip_codename_output_if_in_these_files:
+                if fileName.endswith(skipfile):
+                    frame = frame.f_back
+                    funcName = frame.f_code.co_name
+                    lineNumber = frame.f_lineno
+                    fileName = frame.f_code.co_filename
+                    flag = False
+                    break
+            if flag:
+                break
         else:
-            self.norm_log.critical(msg=msg_format)
+            show_funcName = False
+            show_lineNumber = False
+            show_fileName = False
+
+        pre_format = []
+        pre_format.append("[")
+        if show_fileName:
+            filename_str = os.path.split(fileName)[1]
+            pre_format.append(f"{filename_str}")
+        if show_fileName and show_funcName:
+            pre_format.append("/")
+        if show_funcName:
+            pre_format.append(funcName)
+        if show_lineNumber:
+            pre_format.append(f":{lineNumber}")
+        pre_format.append("]")
+        if len(pre_format)==2:
+            pre_format_str = ""
+        else:
+            pre_format_str = "".join(pre_format)
+        if level == "debug" and not write_debug_to_log:
+            print("DEBUG:",pre_format_str,message)
+            return
+        lev = level.lower()
+        msg_format = f'{pre_format_str} [{lev}]-\t{message}'
+        try:
+            if lev == 'debug':
+                self.norm_log.debug(msg=msg_format)
+            elif lev == 'info':
+                self.norm_log.info(msg=msg_format)
+                self.server_bot(s_level=lev, message=message)
+            elif lev == 'warning':
+                self.norm_log.warning(msg=msg_format)
+                self.server_bot(s_level=lev, message=message)
+            elif lev == 'error':
+                self.norm_log.error(msg=msg_format)
+                pcr_log("__ERROR_LOG__").write_log("info", f"账号 {self.acc_name} ： {message}")
+                self.server_bot(s_level=lev, message=message)
+            else:
+                self.norm_log.critical(msg=msg_format)
+        except Exception as e:
+            # TODO:多进程待修复
+            print("日志写入权限错误：", e)
 
 
 class pcr_acc_log:  # 帐号日志（全局）
@@ -175,4 +245,3 @@ class pcr_acc_log:  # 帐号日志（全局）
         star_time = time.time()
         self.acc_log.info('帐号：' + ac + '成功登录.')
         # pcr_log('admin').server_bot('', message="账号信息：%s成功登陆\n" % ac)
-

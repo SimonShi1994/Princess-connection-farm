@@ -10,6 +10,7 @@ from core.constant import MAOXIAN_BTN, MAIN_BTN, PCRelement, FIGHT_BTN, DXC_ELEM
     ZHUXIAN_ID, JUESE_BTN, NORMAL_COORD, HARD_COORD, ZHUXIAN_SECOND_ID
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
+from core.pcr_checker import PCRRetry, BreakNow, ContinueNow
 from core.pcr_config import debug, disable_timeout_raise
 
 
@@ -1490,119 +1491,122 @@ class ShuatuBaseMixin(FightBaseMixin):
         return np.sum(t)
 
     @DEBUG_RECORD
-    def auto_upgrade(self, buy_tili=0, do_rank=True, do_shuatu=True, var={}):
+    @PCRRetry(name="re_for_tili")
+    def auto_upgrade(self, buy_tili=0, buy_sucai=True, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=False, count=5, sortby="dengji",do_tuitu=True,
+                     team_order="zhanli",getzhiyuan=True,  var={}):
         """
         :param buy_tili: 如果要通过刷图来获取装备，最多买体力次数
+        :param buy_sucai: 素材不够时，是否购买素材
         :param do_rank: 是否升rank
         :param do_shuatu: 是否在装备可以获得但不够时，通过刷图来获取装备
+        :param do_kaihua: 如果能开花，是否开花
+        :param do_zhuanwu: 如果能升级专武，是否升级
+        :param count: 前几个升级
+        :param sortby: 排序方式(dengji/zhanli/xingshu/shoucang/...）
+        :param do_tuitu: 是否进行推图
+        :param team_order: 见self.set_fight_team_order(A-B/dengji/zhanli/xingshu/shoucang)
+        :param getzhiyuan: 是否使用支援
         ！注：auto_upgrade不会调用self.clear_tili_info()！
         ！注：目前不会进行装备强化
         新的自动强化函数
         """
+        mv = movevar(var)
+        mv.regflag("buy_tili",0)
+        mv.regflag("count",0)
+        mv.regflag("show_chara",False)
 
-        # TODO 装备强化问题
-        def _next():
+        def buy_tili_if_can():
+            if var["buy_tili"] < buy_tili:
+                var["buy_tili"] += 1
+                self.log.write_log("info", f"没体力了，买体力：{var['buy_tili']}/{buy_tili}")
+                self.lock_home()
+                result = getattr(self, "goumaitili")(times=1)
+                if result is False:
+                    var["buy_tili"] = buy_tili
+                    self.log.write_log("warning", "买体力失败了！！")
+                    mv.save()
+                else:
+                    mv.save()
+                    self.log.write_log("info", "买体力成功，继续升级流程。")
+                    raise ContinueNow(name="re_for_tili")
+
+
+        S = self.get_zhuye().goto_juese()
+        S.sort_by(sortby)
+        S.sort_down()
+        S = S.enter_first_juese()
+        for ind in range(var["count"]):
+            S.next_char()
+
+        while var["count"]<count:
+            if not var["show_chara"]:
+                KS = S.goto_kaihua()
+                sc = self.getscreen()
+                name = KS.get_name(sc)
+                self.log.write_log("info",f"自动升级角色{var['count']+1}/{count}，当前：{name}")
+                if do_kaihua:
+                    while KS.get_starup_status(sc):
+                        # 可以开花
+                        stars = KS.get_stars(sc)
+                        self.log.write_log("info",f"可以开花！开花 {stars}->{stars+1}")
+                        KS.cainengkaihua()
+                        sc = self.getscreen()
+                S = KS.goto_zhuangbei()
+                var["show_chara"] = True
+                mv.save()
+
             sc = self.getscreen()
-            name_at = (40, 393, 104, 441)
-            self.click(929, 269)
-            # TODO 这里会卡，原因不明
-            for _ in range(10):
-                m = self.wait_for_change(screen=sc, at=name_at, delay=1, threshold=0.84, max_retry=1)
-                if self.is_exists(JUESE_BTN["fhqhdj_ok"], screen=self.last_screen):
-                    self.click_btn(JUESE_BTN["fhqhdj_ok"])
-                    time.sleep(0.5)
-                    sc = self.getscreen()
-                elif m:
-                    break
-                if self.upgrade_kkr(sc):
-                    break
-            else:
-                raise Exception("原因不明的wait_for_change错误！")
+            es = S.get_equip_status(sc)
+            if es==2:
+                if do_rank:
+                    self.log.write_log("info","可以升级RANK，升级！")
+                    S.do_rankup(True)
+                    self.fclick(1,1)
+                    continue
+            out = S.do_zidongqianghua(buy_sucai=buy_sucai,do_shuatu=do_shuatu,do_tuitu=do_tuitu,
+                                teamorder=team_order,getzhiyuan=getzhiyuan)
+            if out==1:
+                buy_tili_if_can()
 
-        def _rank_up():
-            # rank提升步骤
-            if do_rank and self.is_exists(JUESE_BTN["rank_tisheng"]):
-                out = self.click_btn(JUESE_BTN["rank_tisheng"], until_appear={
-                    JUESE_BTN["rank_tisheng_ok"]: 1,
-                    JUESE_BTN["rank_tisheng_ok_noequ"]: 2}, side_check=self.upgrade_kkr)
-                if out == 1:
-                    self.click_btn(JUESE_BTN["rank_tisheng_ok"])
-                else:
-                    self.click_btn(JUESE_BTN["rank_tisheng_ok_noequ"])
-                self.click_btn(JUESE_BTN["rank_tisheng_ok2"], wait_self_before=True)
-                return True
-
-            return False
-
-        def _auto():
-            # 自动强化
-            def _xiadian():
-                for _ in range(5):  # 瞎点结束
-                    self.click(9, 73)
-
-            while True:
-                if self.is_exists(JUESE_BTN["zdqh"], method="sq"):
-                    self.click_btn(JUESE_BTN["zdqh"], side_check=self.upgrade_kkr)
-                    mode = self.lock_img(
-                        {JUESE_BTN["rank_tisheng_ok"]: 1, JUESE_BTN["tjqhcd"]: 2, JUESE_BTN["zdqh"]: 99})
-                    if mode == 99:
-                        continue  # 报错修补
-                    if mode == 1:
-                        # 存在正常的强化
-                        self.click_btn(JUESE_BTN["rank_tisheng_ok"])
-                        while True:
-                            out = self.lock_img({
-                                JUESE_BTN["yjzb_off"]: 1,
-                                JUESE_BTN["rank_tisheng"]: 2,
-                                JUESE_BTN["fhqhdj_ok"]: 3,
-                            }, is_raise=False, timeout=15)
-                            if out == 3:
-                                self.click_btn(JUESE_BTN["fhqhdj_ok"])
-                                continue
-                            if out == 2 and do_rank:
-                                _rank_up()
-                            else:
-                                break
-
+            # 再次检查Rank
+            sc = self.getscreen()
+            es = S.get_equip_status(sc)
+            if es == 2:
+                if do_rank:
+                    self.log.write_log("info", "可以升级RANK，升级！")
+                    S.do_rankup(True)
+                    self.fclick(1, 1)
+                    out = S.do_zidongqianghua(buy_sucai=buy_sucai,do_shuatu=do_shuatu, do_tuitu=do_tuitu,
+                                        teamorder=team_order, getzhiyuan=getzhiyuan)
+                    if out==1:
+                        buy_tili_if_can()
+            if do_zhuanwu:
+                ZW = S.goto_zhuanwu()
+                while True:
+                    zws = ZW.get_zhuanwu_status()
+                    if zws == 2:
+                        self.log.write_log("info","可以穿专武！")
+                        ZW.wear_zhuanwu()
                         continue
-                    else:
-                        # 推荐强化菜单：必须刷装备，或者进行装备升级
-                        if self.is_exists(JUESE_BTN["tuijianguanqia"], screen=self.last_screen):
-                            if not do_shuatu:
-                                _xiadian()
-                                break
-                            if not self.check_shuatu():
-                                _xiadian()
-                                break
-                            stars = self.get_tuijian_stars(screen=self.last_screen)
-                            if stars == 3:
-                                self.zhandouzuobiao(485, 232, 3, None, use_saodang=True, speed=1, auto=1,
-                                                    buy_tili=buy_tili, var=var)
-                            elif stars > 0:
-                                self.zhandouzuobiao(485, 232, 1, None, speed=1, auto=1, buy_tili=buy_tili, var=var)
-                            else:
-                                _xiadian()
-                                break
-                            _xiadian()
-                            if self._zdzb_info == "nocishu":
-                                break
+                    if zws == 3 or zws == 5:
+                        c = ZW.unlock_ceiling(tozhuanwulv=999999)
+                        if c != 2:
+                            continue
                         else:
-                            # 直接结束
-                            _xiadian()
                             break
-                else:
-                    return False
+                    if zws == 4:
+                        self.log.write_log("info", "可以升级专武！")
+                        ZW.levelup_zhuanwu()
+                        continue
+                    if zws == 0 or zws == 1:
+                        break
+                S = ZW.goto_zhuangbei()
+            var["count"] += 1
+            var["show_chara"] = False
+            mv.save()
+            S.next_char()
 
-        # 进入强化
-        if buy_tili > 0:
-            self.start_shuatu()
-        self.lock_home()
-        self.enter_upgrade()
-        for _ in range(5):
-            while _rank_up():
-                pass
-            _auto()
-            _next()
+        mv.clearflags()
         self.lock_home()
 
     @DEBUG_RECORD
@@ -1678,34 +1682,36 @@ class ShuatuBaseMixin(FightBaseMixin):
         return (tu, left)
 
     @DEBUG_RECORD
-    def get_next_hard_id(self):
+    def get_next_hard_id(self,use_dict = HARD_COORD):
         def count_lock(tu):
             sc = self.getscreen()
             cnt = 0
-            for i in range(1, 4):
-                x, y = HARD_COORD[tu][i]
+            for i in range(1, len(use_dict[tu])+1):
+                x, y = use_dict[tu][i]
                 if self._exist_lock(x, y, screen=sc):
                     cnt += 1
             return cnt
 
         last_tu = None
         last_cnt = None
+
         while True:
             tu = self.check_zhuxian_id(max_retry=5)  # 此处老是图号识别失败，很诡异
+            TOTAL = len(use_dict[tu])
             cnt = count_lock(tu)
             if tu == last_tu:
-                return tu, 3 - cnt
+                return tu, TOTAL - cnt
             if last_cnt is not None:
-                if last_cnt == 3 and cnt < 3:
-                    return tu, 3 - cnt
-                if last_cnt == 0 and cnt == 3:
-                    return last_tu, 3
-            if cnt == 3:
+                if last_cnt == TOTAL and cnt < TOTAL:
+                    return tu, TOTAL - cnt
+                if last_cnt == 0 and cnt == TOTAL:
+                    return last_tu, TOTAL
+            if cnt == TOTAL:
                 self.goLeft()
             elif cnt == 0:
                 self.goRight()
             else:
-                return tu, 3 - cnt
+                return tu, TOTAL - cnt
             last_tu = tu
             last_cnt = cnt
 

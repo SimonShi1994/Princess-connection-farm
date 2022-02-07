@@ -33,7 +33,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.7.20220204"
+script_version = "Ver 2.8.20220207"
 
 
 
@@ -347,7 +347,7 @@ def ShowOCR():
     print = rprint
     print("* 主OCR模式 ocr_mode_main：", ocr_mode_main)
     print("* 次OCR模式 ocr_mode_secondary：", ocr_mode_secondary)
-    print("* 主次一致才输出：", RTrue("已开启") if force_primary_equals_secondary else RFalse("未开启"))
+    print("* 主次一致才输出：", )
     print("* 主次不一致用此OCR模式 force_primary_equals_secondary_use：", force_primary_equals_secondary_use)
     if baidu_apiKey != "":
         print("* BaiduAPI 已配置！")
@@ -358,6 +358,7 @@ def ShowOCR():
         wprint("运行中")
     else:
         print("未运行")
+    print("* 使用PCR定制专属OCR提升精确度 use_pcrocr_to_process_basic_text",RTrue("已开启") if use_pcrocr_to_process_basic_text else RFalse("未开启"))
 
 
 def ShowPCRPerformance():
@@ -392,6 +393,10 @@ def ShowPCRPerformance():
 def ShowTaskInfo():
     print = rprint
     print("* 如果有OCR版本，强制使用OCR版本的任务 force_as_ocr_as_possible：", RTrue("已开启") if force_as_ocr_as_possible else RFalse("未开启"))
+    print("* 使用pcrocr进行Rank识别 use_pcrocr_to_detect_rank：",
+          RTrue("已开启") if use_pcrocr_to_detect_rank else RFalse("未开启"))
+    print("* 使用pcrocr进行主线图号识别 use_pcrocr_to_detect_zhuxian：",
+          RTrue("已开启") if use_pcrocr_to_detect_zhuxian else RFalse("未开启"))
     data = GetDataCenterTime()
     if data is None:
         print("* 干炸里脊数据库版本：未找到数据库或数据库异常！请更新数据库！")
@@ -401,6 +406,7 @@ def ShowTaskInfo():
 def ShowDebugInfo():
     print = rprint
     print("* 输出Debug信息 debug：", RTrue("已开启") if debug else RFalse("未开启"))
+    print("* 把debug信息记录到文件中 write_debug_to_log：", RTrue("已开启") if write_debug_to_log else RFalse("未开启"))
     print("* 忽略警告信息 ignore_warning：", RTrue("已开启") if ignore_warning else RFalse("未开启"))
     print("* 保存错误堆栈 trace_exception_for_debug:", RTrue("已开启") if trace_exception_for_debug else RFalse("未开启"))
     print("* 保存baiduocr的图片 baidu_ocr_img：", RTrue("已开启") if baidu_ocr_img else RFalse("未开启"))
@@ -409,6 +415,13 @@ def ShowDebugInfo():
     print("* U2指令过滤列表 u2_record_filter:", u2_record_filter)
     print("* Automator指令记录队列大小 debug_record_size: ", debug_record_size)
     print("* Automator指令过滤列表 debug_record_filter: ", debug_record_filter)
+    print("* 使用colorlog库输出记录 colorlogsw：", RTrue("已开启") if colorlogsw else RFalse("未开启"))
+    print("* 在log中显示函数名 show_codename_in_log：", RTrue("已开启") if show_codename_in_log else RFalse("未开启"))
+    print("* 在log中显示文件名 show_filename_in_log：", RTrue("已开启") if show_filename_in_log else RFalse("未开启"))
+    print("* 在log中显示行数 show_linenumber_in_log：", RTrue("已开启") if show_linenumber_in_log else RFalse("未开启"))
+    print("* 以下文件中的信息不显示在debug中 do_not_show_debug_if_in_these_files：",do_not_show_debug_if_in_these_files)
+    print("* 打印函数名时，跳过以下文件中的函数： skip_codename_output_if_in_these_files：", skip_codename_output_if_in_these_files)
+
 
 
 def CheckConstantImgs():
@@ -453,12 +466,19 @@ def CheckConstantImgs():
 
 
 def ShowInfo():
+    print(" ============ 调试配置 =============")
     ShowDebugInfo()
+    print(" ============ 任务配置 =============")
     ShowTaskInfo()
+    print(" ============ Bot配置 =============")
     ShowServerChan()
+    print(" ============ OCR配置 =============")
     ShowOCR()
+    print(" ============ 核心内容配置 =============")
     ShowPCRPerformance()
+    print(" ============ 自启动配置 =============")
     ShowAutoConsole()
+    print(" ============ 检查本地资源文件 =============")
     CheckConstantImgs()
 
 def PrintQQ():

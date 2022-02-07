@@ -297,7 +297,7 @@ class FightBaseMixin(ToolsMixin):
     def set_fight_team_order(self, order="zhanli", change=2):
         """
         按照战力顺序设置战斗队伍
-        order in ["zhanli","dengji","xingshu"]
+        order in ["zhanli","dengji","xingshu","shoucang"]
         change:0-不换人 1-人全部换下不上 2-默认：全部换人 3- 不下人，直接上人
         要求场景：处于”队伍编组“情况下。
         """
@@ -323,6 +323,12 @@ class FightBaseMixin(ToolsMixin):
                     self.click_btn(FIGHT_BTN["sort_star"], until_appear=FIGHT_BTN["cat_ok"])
                     self.click(FIGHT_BTN["cat_star"], pre_delay=0.5, post_delay=1)
                     self.click_btn(FIGHT_BTN["cat_ok"])
+            elif order == "shoucang":
+                if not self.is_exists(FIGHT_BTN["sort_shoucang"]):
+                    self.click_btn(FIGHT_BTN["sort_shoucang"], until_appear=FIGHT_BTN["cat_ok"])
+                    self.click(FIGHT_BTN["cat_shoucang"], pre_delay=0.5, post_delay=1)
+                    self.click_btn(FIGHT_BTN["cat_ok"])
+
         # 换人3
         if 1 <= change <= 2:
             for _ in range(5):

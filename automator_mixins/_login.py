@@ -196,8 +196,10 @@ class LoginMixin(ToolsMixin):
                                 self.log.write_log("warning", f"{self.account}，"
                                                               f"10s过去了，你似乎不适用OpenCV来识别验证框（，"
                                                               f"即将启用老方法,验证码延迟【1.5+captcha_sleep_times】生效")
-                                self.d(text="确认").click()
-                                time.sleep(1.7 + captcha_sleep_times)
+                                # self.d(text="确认").click()
+                                self.click(687, 72)
+                                self.d(text="登录").click(timeout=5)
+                                time.sleep(1.5 + captcha_sleep_times)
                                 screen = self.getscreen()
                                 screen = screen[1:575, 157:793]
                                 break
@@ -231,7 +233,8 @@ class LoginMixin(ToolsMixin):
                         self.log.write_log('info', f">{self.account}-验证码第{i}坐标识别：{x},{y}")
                         self.click(x, y)
                         if answer_result == [255, 439]:
-                            self.click(230, 500)
+                            self.click(687, 72)
+                            self.d(text="登录").click(timeout=5)
                             self.log.write_log('info', "平台识别不出来，刷新")
                         self.d(text="确认").click()
                         _time = + 1
@@ -248,7 +251,8 @@ class LoginMixin(ToolsMixin):
                     # print(type(x))
                     self.click(x, y)
                     if answer_result == [255, 439]:
-                        self.click(230, 500)
+                        self.click(687, 72)
+                        self.d(text="登录").click(timeout=5)
                         self.log.write_log('info', "平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
@@ -264,7 +268,8 @@ class LoginMixin(ToolsMixin):
                     # 从322,388 滑动到 x,y
                     self.d.drag_to(322, 388, x, 386, 3.6)
                     if answer_result == [255, 439]:
-                        self.click(230, 500)
+                        self.click(687, 72)
+                        self.d(text="登录").click(timeout=5)
                         self.log.write_log('info', "平台识别不出来，刷新")
                     self.d(text="确认").click()
                     _time = + 1
@@ -317,6 +322,9 @@ class LoginMixin(ToolsMixin):
                     raise BadLoginException("密码错误！")
                 elif "账号异常" in str(toast_message).split(" "):
                     raise BadLoginException("账号异常！")
+
+                if _time >= 2 and self.d(text="登录").exists():
+                    self.d(text="登录").click(timeout=2)
 
                 # 下面代码暂时不管用
                 # if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():

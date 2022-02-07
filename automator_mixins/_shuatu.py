@@ -1,15 +1,15 @@
 import os
 import time
-from math import floor
+from math import floor, inf
 
 from DataCenter import LoadPCRData
 from core.MoveRecord import movevar
-from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, ACTIVITY_COORD
+from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, ACTIVITY_COORD, VH_COORD
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
 from core.pcr_checker import PCRRetry, LockTimeoutError, RetryNow, ContinueNow
-from core.pcr_config import force_as_ocr_as_possible
+from core.pcr_config import force_as_ocr_as_possible, debug
 from core.valid_task import ShuatuToTuple
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian, FightInfoZhuXianNormal
 from ._shuatu_base import ShuatuBaseMixin
@@ -42,7 +42,7 @@ class ShuatuMixin(ShuatuBaseMixin):
     @staticmethod
     def GetXYTD(mode, nowA, nowB):
         """
-        mode: N or H
+        mode: N or H or VH
         返回MA-B的： X,Y,卵用没有参数，Drag方向
         """
         if mode == "N":
@@ -55,6 +55,9 @@ class ShuatuMixin(ShuatuBaseMixin):
                 return DL[nowB].x, DL[nowB].y, 1, "left"
         elif mode == "H":
             D = HARD_COORD[nowA]
+            return D[nowB].x, D[nowB].y, 1, None
+        else:
+            D = VH_COORD[nowA]
             return D[nowB].x, D[nowB].y, 1, None
 
     def kuaisujieren(self, max_do=2, max_map=999):
@@ -406,6 +409,90 @@ class ShuatuMixin(ShuatuBaseMixin):
         assert len(strs) == 2, f"错误的编队信息：{tustr}"
         return int(strs[0]), int(strs[1])
 
+    def tuitu_ocr(self, mode, from_="new", to="max", buy_tili=0, xianding=False, team_order="zhanli", zhiyuan_mode=0,
+                  lose_action="exit",win_without_threestar_is_lose=True,upgrade_kwargs={}, var={}):
+        """
+        mode:   0 - Normal; 1 - Hard; 2 - VH （没测过）
+        from_:  A-B 或者 new
+        to:     A-B 或者 max
+        buy_tili：所用体力
+        其他参数见shuatu_dailt_ocr
+        """
+        # 使用shuatu_daily_ocr重写
+        # Step 1: 寻找起点
+        LST = []
+
+        if mode == 0:
+            if from_ == "new":
+                self.get_zhuye().goto_maoxian().goto_normal().clear_initFC()
+                A, B = self.get_next_normal_id()
+                self.lock_home()
+            else:
+                A, B = [int(x) for x in from_.split("-")]
+            D = NORMAL_COORD
+            if to == "max":
+                TA = max(D)
+                TB = max(list(D[TA]['left'])+list(D[TA]['right']))
+            else:
+                TA,TB = [int(x) for x in to.split("-")]
+            for aa in range(A,TA+1):
+                for bb in range(B if aa==A else 1,
+                                max(list(D[aa]['left'])+list(D[aa]['right']))+1 if aa<TA else TB+1):
+                    LST.append(f"{aa}-{bb}-1")
+        elif mode == 1:
+            if from_ == "new":
+                self.get_zhuye().goto_maoxian().goto_hard().clear_initFC()
+                A, B = self.get_next_hard_id()
+                self.lock_home()
+            else:
+                A, B = [int(x) for x in from_.split("-")]
+            D = HARD_COORD
+            if to == "max":
+                TA = max(D)
+                TB = 3
+            else:
+                TA, TB = [int(x) for x in to.split("-")]
+            for aa in range(A, TA + 1):
+                for bb in range(B if aa == A else 1,
+                               4 if aa < TA else TB + 1):
+                    LST.append(f"H{aa}-{bb}-1")
+        elif mode == 2:
+            if from_ == "new":
+                self.get_zhuye().goto_maoxian().goto_vh().clear_initFC()
+                A, B = self.get_next_hard_id(VH_COORD)
+                self.lock_home()
+            else:
+                A, B = [int(x) for x in from_.split("-")]
+            D = VH_COORD
+            if to == "max":
+                TA = max(D)
+                TB = max(D[TA])
+            else:
+                TA, TB = [int(x) for x in to.split("-")]
+            for aa in range(A, TA + 1):
+                for bb in range(B if aa == A else 1,
+                               4 if aa < TA else TB + 1):
+                    LST.append(f"VH{aa}-{bb}-1")
+        else:
+            raise ValueError("mode can only be 0 or 1")
+
+        # Step 2
+        self.shuatu_daily_ocr(
+            tu_order=LST,
+            daily_tili=buy_tili,
+            xianding=xianding,
+            not_three_star_action="do",
+            zero_star_action="do",
+            lose_action=lose_action,
+            can_not_enter_action="exit",
+            win_without_threestar_is_lose=win_without_threestar_is_lose,
+            team_order=team_order,
+            zhiyuan_mode=zhiyuan_mode,
+            _use_daily=False,
+            upgrade_kwargs=upgrade_kwargs,
+            var=var,
+        )
+
     def tuitu(self, mode, to, from_="new", buy_tili=0, auto_upgrade=2, use_ub=2,
               force_three_star=False, clear_tili=True, var={}):
         """
@@ -445,6 +532,22 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         --By TheAutumnOfRice
         """
+
+        if force_as_ocr_as_possible:
+            self.log.write_log("info","该函数已经用OCR版本重写，自动跳转到tuitu_ocr函数。")
+            self.tuitu_ocr(
+                mode=mode,
+                from_=from_,
+                to=to,
+                buy_tili=buy_tili,
+                team_order="dengji",
+                win_without_threestar_is_lose=force_as_ocr_as_possible,
+                lose_action="exit" if auto_upgrade==0 else "upgrade",
+                upgrade_kwargs=dict(do_shuatu=False if auto_upgrade==1 else True),
+                var=var
+            )
+        else:
+            self.log.write_log("error", "该函数的非OCR版本已经不再维护，估计不能用了。")
 
         def enter():
             self.lock_home()
@@ -991,17 +1094,27 @@ class ShuatuMixin(ShuatuBaseMixin):
                          team_order="zhanli",
                          zhiyuan_mode=0,
                          _use_daily=True,
-                         var={}):
+                         var={},
+                         upgrade_kwargs={}):
         """
         OCR 刷图！！超快！！
         :param tu_order: 刷图顺序表。
             tu_order为一个list，对每一个元素：
                 "A-B-T"表示刷普通图A-B共T次
                 "HA-B-T"表示刷困难图A-B共T次
+                "VHA-B-T"表示刷极难图A-B共T次
             Example:
                 tu_order=["3-4-10","H1-1-3"]
             注意：困难图如果刷超过3次，并不会自动购买次数。
             该刷图列表表示的刷图顺序为录入顺序。
+
+            20220206 NEW: 如果存在波浪线 ~，则表示H, VH的碎片数量达到波浪线后的值则停刷。若波浪线后为inf，则无限制。
+                H图默认无限制。
+                VH图默认为50。
+                    "H3-3-3"  刷H3-3，无限制。
+                    "H3-3-3~150"  刷H3-3到150个就停刷
+                    "VH20-3-3~inf"  刷VH20-3到无限个
+                    "VH20-3-3" 刷VH20-3到50个
         :param daily_tili: 每日买体力次数。
         :param xianding: 是否买空限定商店（如果出现的话）
         :param not_three_star_action: 遇到未满三星图如何操作
@@ -1012,6 +1125,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 "do" 手刷
                 "exit" 终止刷图
                 "skip" 跳过该图
+                "upgrade" 开始自动升级角色，若仍然打不赢，终止刷图（仅对lose_action起作用，按照team_order的五个人，team_order不能为编组）
         :param win_without_threestar_is_lose: 如果没有三星过关就算输
         :param team_order:
             使用队伍 "A-B" 形式，表示编组A选择B。
@@ -1029,7 +1143,6 @@ class ShuatuMixin(ShuatuBaseMixin):
                 -2 - 当有好友助战时仅使用好友支援一人推图，否则不使用支援自己推图。
                 3  - 任意选择一个支援+自己队伍推图。
                 -3 - 任意选择一个支援仅支援一人推图。
-
         :param _use_daily: 开启后，统计体力使用次数以及每个图刷过的次数（兼容shuatuNN）
         """
         self.check_ocr_running()  # 必须要OCR！
@@ -1038,12 +1151,14 @@ class ShuatuMixin(ShuatuBaseMixin):
         mv = movevar(var)
         if _use_daily:
             ds = self.AR.get("daily_status", UDD["daily_status"])
+            var['buy_tili'] = ds.setdefault('buy_tili',0)
         else:
             mv.regflag("normal", {})
             mv.regflag("hard", {})
+            mv.regflag("veryhard", {})
             mv.regflag("buy_tili", 0)
             ds = var
-
+        mv.regflag("upgraded",False)
         def record_ds(ds):
             # 记录每日推图所用体力，推图记录之类。
             if _use_daily:
@@ -1054,6 +1169,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     self.log.write_log("info", "已经重置刷图记录。")
                     ds["normal"] = {}
                     ds["hard"] = {}
+                    ds["veryhard"] = {}
                     ds["buy_tili"] = 0
                 ds["last_time"] = t1
                 self.AR.set("daily_status", ds)
@@ -1068,21 +1184,35 @@ class ShuatuMixin(ShuatuBaseMixin):
                 if s[0] == "H":
                     mode = "H"
                     s = s[1:]
+                elif s[0] == "V" and s[1] == "H":
+                    mode = "VH"
+                    s = s[2:]
+                tg = None
+                if '~' in s:
+                    s,s_right = s.split('~')
+                    if s_right == "inf":
+                        tg = inf
+                    else:
+                        tg = int(s_right)
                 lst = s.split("-")
                 A, B, T = int(lst[0]), int(lst[1]), int(lst[2])
-                return mode, A, B, T
+                if mode == "H" and tg is None:
+                    tg = inf
+                if mode == "VH" and tg is None:
+                    tg = 50
+                return mode, A, B, T, tg
 
             cur = []
             for i in tu_order:
-                m, a, b, t = parse_str(i)
-                target = ds["normal"] if m == "N" else ds["hard"]
+                m, a, b, t, tg = parse_str(i)
+                target = ds["normal"] if m == "N" else ds["hard"] if m=="H" else ds["veryhard"]
                 label = f"{a}-{b}"
                 target.setdefault(label, 0)
                 if target[label] < t:
-                    cur += [(m, a, b, t - target[label])]
+                    cur += [(m, a, b, t - target[label],tg)]
             new_cur = []
             # 分解任务：一次最多80扫荡
-            for m, a, b, t in cur:
+            for m, a, b, t, tg in cur:
                 tt = t
                 while tt > 0:
                     if tt > 80:
@@ -1090,7 +1220,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     else:
                         ttt = tt
                     tt -= ttt
-                    new_cur += [(m, a, b, ttt)]
+                    new_cur += [(m, a, b, ttt, tg)]
             return new_cur
 
         # 关卡分析
@@ -1113,10 +1243,10 @@ class ShuatuMixin(ShuatuBaseMixin):
         S = S.goto_maoxian()
         last_a = -1
         last_m = None
-        for ind, (m, a, b, t) in enumerate(cur):
-            mode = "hard" if m == "H" else "normal"
+        for ind, (m, a, b, t, tg) in enumerate(cur):
+            mode = "veryhard" if m == "VH" else "hard" if m == "H" else "normal"
             x, y, _, d = GetXYTD(m, a, b)
-            # m: mode (H,N)
+            # m: mode (VH,H,N)
             # a,b: a-b
             # t: **剩余** 要刷几次
             # x,y：坐标
@@ -1127,9 +1257,12 @@ class ShuatuMixin(ShuatuBaseMixin):
                 if m == "N":
                     S = S.goto_normal()
                     res = S.select_normal_id(a)
-                else:
+                elif m == "H":
                     S = S.goto_hard()
                     res = S.select_hard_id(a)
+                else:
+                    S = S.goto_vh()
+                    res = S.select_vh_id(a)
                 if not res:
                     if can_not_enter_action == "exit":
                         self.log.write_log("info", f"无法进入图{m}{a}-{b}！结束刷图。")
@@ -1173,17 +1306,25 @@ class ShuatuMixin(ShuatuBaseMixin):
                         self.log.write_log("info", f"无法进入图{m}{a}-{b}！跳过该图。")
                         return "continue"
                 S.clear_initFC()  # 清除可可罗的检测
+                if m in ['H','VH']:
+                    # 碎片目标检测
+                    if tg!=inf:
+                        first_cnt = M.get_first_item_count()
+                        if first_cnt>=tg:
+                            self.log.write_log("info",f"图{m}{a}-{b}已经有{first_cnt}/{tg}个目标碎片，不刷啦！")
+                            return "continue"
                 sc = self.getscreen()
                 stars = M.get_upperright_stars(sc)
+                if debug: self.log.write_log("debug", f"星数：{stars}")
                 if stars == 3:
                     # 可以扫荡
                     # 次数判断：对Hard图
                     max_cishu = t  # 目标：刷t次
-                    if m == "H":
+                    if m in ["H","VH"]:
                         cishu = M.get_cishu(sc)
                         if cishu == 0:
                             # 不能扫荡，没有次数
-                            ds["hard"][f"{a}-{b}"] = 3
+                            ds[mode][f"{a}-{b}"] = 3
                             record_ds(ds)
                             self.fclick(1, 1)
                             self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
@@ -1277,7 +1418,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                                 self.click(1, 1)
                             return "continue"
                     # 次数判断：对Hard图
-                    if m == "H":
+                    if m in ["H","VH"]:
                         cishu = M.get_cishu(sc)
                         if cishu == 0:
                             # 不能扫荡，没有次数
@@ -1403,6 +1544,34 @@ class ShuatuMixin(ShuatuBaseMixin):
                         elif lose_action == "skip":
                             self.log.write_log("info", f"战败于{m}{a}-{b}，跳过该图！")
                             return "continue"
+                        elif lose_action == "upgrade":
+                            if var["upgraded"] is False:
+                                self.log.write_log("info", f"战败于{m}{a}-{b}，尝试升级角色再次刷图！")
+                                if team_order not in ['zhanli','dengji','xingshu','shoucang']:
+                                    self.log.write_log("error", f"战败自动升级中，team_order只能为zhanli/dengji/xingshu/shoucang！终止刷图。")
+                                    self.lock_home()
+                                    return "return"
+
+                                self.auto_upgrade(buy_tili=upgrade_kwargs.setdefault("buy_tili",daily_tili),
+                                                  buy_sucai=upgrade_kwargs.setdefault("buy_sucai",True),
+                                                  do_rank=upgrade_kwargs.setdefault("do_rank",True),
+                                                  do_shuatu=upgrade_kwargs.setdefault("do_shuatu",True),
+                                                  do_kaihua=upgrade_kwargs.setdefault("do_kaihua",True),
+                                                  do_zhuanwu=upgrade_kwargs.setdefault("do_zhuanwu",False),
+                                                  count=upgrade_kwargs.setdefault("count",5),
+                                                  sortby=upgrade_kwargs.setdefault("sortby",team_order),
+                                                  getzhiyuan=True if zhiyuan_mode!=0 else False,var=var)
+
+                                var["upgraded"] = True
+                                record_ds(ds)
+                                mv.save()
+                                self.log.write_log("info","自动升级结束，重新尝试刷图。")
+                                self.restart_this_task()
+                            else:
+                                self.log.write_log("info", f"战败于{m}{a}-{b}，已经升级过角色还打不过，放弃啦。")
+                                self.lock_home()
+                                return "return"
+
                         else:
                             self.log.write_log("info", f"战败于{m}{a}-{b}，重试该图！")
                             raise RetryNow("DOIT")

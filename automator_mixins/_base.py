@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import datetime
 import os
 import queue
@@ -16,14 +17,15 @@ import requests
 import uiautomator2 as u2
 
 from core import log_handler
-from core.MoveRecord import MoveSkipException
+from core.MoveRecord import MoveSkipException, MoveRestartException
 from core.MoveRecord import moveset
 from core.constant import PCRelement, MAIN_BTN, JUQING_BTN, DXC_ELEMENT, MAOXIAN_BTN
 from core.cv import UIMatcher, PreProcesses
 from core.get_screen import ReceiveFromMinicap
 from core.pcr_checker import ExceptionSet, ElementChecker, Checker, ReturnValue
 from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticlockwise_rotation_times, ocr_mode_main, \
-    ocr_mode_secondary, force_primary_equals_secondary, force_primary_equals_secondary_use, ocrspace_ocr_apikey
+    ocr_mode_secondary, force_primary_equals_secondary, force_primary_equals_secondary_use, ocrspace_ocr_apikey, \
+    use_pcrocr_to_process_basic_text
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
     force_fast_screencut, adb_dir, clear_traces_and_cache, debug_record_size, debug_record_filter
 from core.safe_u2 import SafeU2Handle, safe_u2_connect, timeout
@@ -176,7 +178,43 @@ class BaseMixin:
         self.ES = ExceptionSet(self)
         self.headers_group = {}
         self.default_header = True
+        self.prechecks = {}
+        self.enable_precheck = True
         # self.register_basic_ES()
+
+    def restart_this_task(self):
+        """
+        重置当前任务
+        """
+        raise MoveRestartException()
+
+
+    def skip_this_task(self):
+        """
+        跳过当前任务
+        """
+        raise MoveSkipException()
+
+    def register_precheck(self,name:str,func:Callable[[np.ndarray],np.ndarray]):
+        """
+        新增一条precheck，在getscreen函数内直接对screen进行screen = func(screen)
+        func函数必须要有返回值！返回的是接下来后续处理所用的screen！！
+            ！ 与sidecheck不同之处在于，precheck不会给FC传递信息，所以如果造成延迟，并不会影响到计时器，
+            ！ 因此建议precheck为一次性使用，与restart_this_task搭配，一旦触发直接重开
+            ！ 如果需要继续当前流程的，请谨慎使用
+            
+        precheck仍然会受到header的影响，但precheck一次只能同时执行一条。即自己不会调用自己，自己不会调用其他。
+        当precheck触发时，所有的precheck都将处于关闭状态。
+        """
+        self.prechecks[name] = func
+
+    def clear_all_prechecks(self):
+        self.prechecks.clear()
+        self.enable_precheck = True
+
+    def remove_precheck(self,name):
+        if name in self.prechecks:
+            del self.prechecks[name]
 
     def register_basic_ES(self):
         # Loading时，啥事不干（防止卡住，只检测last_screen）
@@ -217,24 +255,25 @@ class BaseMixin:
 
     @DEBUG_RECORD
     def init_fastscreen(self):
+        __log = log_handler.pcr_log("fastscreen")
         if fast_screencut and Multithreading({}).program_is_stopped():
             from core.get_screen import ReceiveFromMinicap
             self.receive_minicap = ReceiveFromMinicap(self.address)
             self.receive_minicap.start()
-            self.log.write_log('info', f"Device:{self._d.serial}快速截图已打开，测试中……")
+            __log.write_log('info', f"Device:{self._d.serial}快速截图已打开，测试中……")
             for retry in range(3):
                 try:
                     data = self.receive_minicap.receive_img()
                     if data is None:
                         raise Exception("读取数据超过最大尝试次数")
                     self.fastscreencut_retry = 0
-                    self.log.write_log('info', f"Device:{self._d.serial}快速截图运行正常。")
+                    __log.write_log('info', f"Device:{self._d.serial}快速截图运行正常。")
                     break
                 except Exception as e:
                     self.receive_minicap.stop()
                     time.sleep(1)
                     if retry < 2:
-                        self.log.write_log('info', f"Device:{self._d.serial}尝试重新开启快速截图...{e}")
+                        __log.write_log('info', f"Device:{self._d.serial}尝试重新开启快速截图...{e}")
                         self.receive_minicap = ReceiveFromMinicap(self.address)
                         self.receive_minicap.start()
             else:
@@ -242,7 +281,7 @@ class BaseMixin:
                 if force_fast_screencut:
                     raise FastScreencutException("快速截图打开失败！")
                 else:
-                    self.log.write_log('error', f"Device:{self._d.serial}快速截图打开失败！使用慢速截图。")
+                    __log.write_log('error', f"Device:{self._d.serial}快速截图打开失败！使用慢速截图。")
 
     @DEBUG_RECORD
     def init_device(self, address):
@@ -642,7 +681,7 @@ class BaseMixin:
         img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY) / 255
         eqt = np.sum(np.abs(img1 - img2) < similarity) / img1.size
         if debug:
-            self.log.write_log('debug', "EQT:{eqt}")
+            self.log.write_log('debug', f"EQT:{eqt}")
         return eqt
 
     @DEBUG_RECORD
@@ -816,68 +855,78 @@ class BaseMixin:
         # 如果debug_screen为None，则正常截图；
         # 否则，getscreen函数使用debug_screen作为读取的screen
 
-        try:
-            from automator_mixins._async import block_sw, enable_pause
-            if enable_pause:
-                if block_sw == 1:
-                    self.log.write_log('info', f"{self.address}- 截图暂停中~")
-                    while block_sw == 1:
-                        from automator_mixins._async import block_sw
-                        time.sleep(1)
-                        self._paused = True
-                    self.log.write_log('info', f"{self.address}- 截图恢复~")
-            else:
-                if self.freeze:
-                    self.log.write_log('info', f"{self.address}- 截图暂停中~")
-                    while self.freeze:
-                        time.sleep(1)
-                        self._paused = True
-                    self.log.write_log('info', f"{self.address}- 截图恢复~")
-        except Exception as error:
-            self.log.write_log('error', f'截图暂停-错误: {error}')
-
-        if self.debug_screen is None:
-            if not force_slow and fast_screencut and self.fastscreencut_retry < 3:
-                try:
-                    data = self.receive_minicap.receive_img()
-                    if data is None:
-                        raise Exception("读取数据超过最大尝试次数")
-                    # 改用内存缓存
-                    self.last_screen = data
-                    # 如果传入了文件路径参数，则保存文件
-                    if filename is not None:
-                        cv2.imwrite(filename, self.last_screen)
-                    self.fastscreencut_retry = 0
-                except Exception as e:
-                    if force_fast_screencut:
-                        raise FastScreencutException(*e.args)
-                    else:
-                        self.log.write_log("warning", f"快速截图出错 {e}， 使用低速截图")
-                        self.fastscreencut_retry += 1
-                        if self.fastscreencut_retry == 3:
-                            self.log.write_log("error", f"快速截图连续出错3次，关闭快速截图。")
-                            self.receive_minicap.stop()
-                        self.last_screen = self.d.screenshot(filename, format="opencv")
-            else:
-                if filename is None:
-                    self.last_screen = self.d.screenshot(filename, format="opencv")
+        def _getscreen():
+            try:
+                from automator_mixins._async import block_sw, enable_pause
+                if enable_pause:
+                    if block_sw == 1:
+                        self.log.write_log('info', f"{self.address}- 截图暂停中~")
+                        while block_sw == 1:
+                            from automator_mixins._async import block_sw
+                            time.sleep(1)
+                            self._paused = True
+                        self.log.write_log('info', f"{self.address}- 截图恢复~")
                 else:
-                    self.d.screenshot(filename, format="opencv")
-                    self.last_screen = cv2.imread(filename)
-            self.last_screen_time = time.time()
-            output_screen = UIMatcher.AutoRotateClockWise90(self.last_screen)
-            if debug:
-                if output_screen is None:
-                    self.log.write_log('debug', "ERROR！截图为空！")
-            if output_screen is not None and output_screen.shape != (540, 960, 3):
-                self.log.write_log('waring', f"Warning: 截屏大小为{output_screen.shape} "
-                                             f"应为 (540,960,3)， 可能模拟器分辨率没有被正确设置！")
-            return output_screen
-        else:
-            if isinstance(self.debug_screen, str):
-                return cv2.imread(self.debug_screen)
+                    if self.freeze:
+                        self.log.write_log('info', f"{self.address}- 截图暂停中~")
+                        while self.freeze:
+                            time.sleep(1)
+                            self._paused = True
+                        self.log.write_log('info', f"{self.address}- 截图恢复~")
+            except Exception as error:
+                self.log.write_log('error', f'截图暂停-错误: {error}')
+
+            if self.debug_screen is None:
+                if not force_slow and fast_screencut and self.fastscreencut_retry < 3:
+                    try:
+                        data = self.receive_minicap.receive_img()
+                        if data is None:
+                            raise Exception("读取数据超过最大尝试次数")
+                        # 改用内存缓存
+                        self.last_screen = data
+                        # 如果传入了文件路径参数，则保存文件
+                        if filename is not None:
+                            cv2.imwrite(filename, self.last_screen)
+                        self.fastscreencut_retry = 0
+                    except Exception as e:
+                        if force_fast_screencut:
+                            raise FastScreencutException(*e.args)
+                        else:
+                            self.log.write_log("warning", f"快速截图出错 {e}， 使用低速截图")
+                            self.fastscreencut_retry += 1
+                            if self.fastscreencut_retry == 3:
+                                self.log.write_log("error", f"快速截图连续出错3次，关闭快速截图。")
+                                self.receive_minicap.stop()
+                            self.last_screen = self.d.screenshot(filename, format="opencv")
+                else:
+                    if filename is None:
+                        self.last_screen = self.d.screenshot(filename, format="opencv")
+                    else:
+                        self.d.screenshot(filename, format="opencv")
+                        self.last_screen = cv2.imread(filename)
+                self.last_screen_time = time.time()
+                output_screen = UIMatcher.AutoRotateClockWise90(self.last_screen)
+                if debug:
+                    if output_screen is None:
+                        self.log.write_log('debug', "ERROR！截图为空！")
+                if output_screen is not None and output_screen.shape != (540, 960, 3):
+                    self.log.write_log('waring', f"Warning: 截屏大小为{output_screen.shape} "
+                                                 f"应为 (540,960,3)， 可能模拟器分辨率没有被正确设置！")
+                return output_screen
             else:
-                return self.debug_screen
+                if isinstance(self.debug_screen, str):
+                    return cv2.imread(self.debug_screen)
+                else:
+                    return self.debug_screen
+
+        screen = _getscreen()
+        if self.enable_precheck:
+            for func in self.prechecks.values():
+                self.enable_precheck = False
+                screen = func(screen)
+                self.enable_precheck = True
+        return screen
+
 
     @DEBUG_RECORD
     def find_img(self, img, at=None, alldelay=0.5,
@@ -997,7 +1046,33 @@ class BaseMixin:
 
         FC.add(Checker(f, name="lock_fun - RTFun"))
         FC.add_intervalprocess(f2, retry, elsedelay, name="lock_fun - elseclick")
-        FC.lock(alldelay, timeout, is_raise=False if disable_timeout_raise else is_raise)
+        return FC.lock(alldelay, timeout, is_raise=False if disable_timeout_raise else is_raise)
+
+    @DEBUG_RECORD
+    def lock_change(self, at, threshold=0.9, similarity=0.01,  screen=None, refresh_screen=False, ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
+                 elsedelay=0.5, alldelay=0.5, retry=None, is_raise=False, timeout=None, elseafter=0., **kwargs ):
+        """
+        锁定，直到窗口变化
+        similarity - 差异在similarity内的像素被认为equal
+        threshold - 当equal的比例在threshold之上时，认为screen equal
+        screen - 用于对比的底图，若不指定，则现场截一张图
+        refresh_screen - 如果equal，则用新图代替老图。
+        """
+        if screen is None:screen = self.getscreen()
+        old_screen = [screen]
+        def func():
+            sc2 = self.getscreen()
+            if self.img_equal(old_screen[0],sc2,at=at,similarity=similarity)<threshold:
+                flag = True
+            else:
+                flag = False
+            if refresh_screen:
+                old_screen[0] = sc2
+            return flag
+
+        return self.lock_fun(func,ifclick=ifclick,ifbefore=ifbefore,ifdelay=ifdelay,elseclick=elseclick,
+                             elsedelay=elsedelay,alldelay=alldelay,retry=retry,is_raise=is_raise,
+                             timeout=timeout,elseafter=elseafter,**kwargs)
 
     @DEBUG_RECORD
     def _lock_img(self, img: Union[PCRelement, str, dict, list], ifclick=None, ifbefore=0., ifdelay=1., elseclick=None,
@@ -1516,8 +1591,11 @@ class BaseMixin:
 
     @DEBUG_RECORD
     def ocr_center(self, x1, y1, x2, y2, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text",
-                   before_preprocess=PreProcesses(), after_preprocess=PreProcesses(), apply_screen=True, blur=None):
+                   before_preprocess=PreProcesses(), after_preprocess=PreProcesses(), apply_screen=True, blur=None,
+                   custom_ocr=None, allowstr=None):
         """
+        :param allowstr:只允许识别出的字符串
+        :param custom_ocr: 优先使用的自定义ocr，排在主次前面，只能单个
         :param after_preprocess: 后cv预处理，在ocr外部处理，经过旋转（或许有）+裁剪，再处理
         :param blur: 滤波/模糊 <str> 在被调用的ocr内部进行，在size之后，目前只有 "gussian" 高斯滤波
         :param apply_screen: 是否只使用一个screen
@@ -1553,6 +1631,8 @@ class BaseMixin:
             "本地2": self.ocr_local2,
             "本地3": self.ocr_local3,
             "本地4": self.easyocr_ocr,
+            "PCR定制": self.pcrocr_ocr,
+            "pcr": self.pcrocr_ocr,  # 不需要打中文，太麻烦了
         }
 
         if screen_shot is None:
@@ -1573,20 +1653,27 @@ class BaseMixin:
         screen_shot = screen_shot[y1:y2, x1:x2]  # 对角线点坐标
         screen_shot = after_preprocess(screen_shot)
 
-        ocr_text = ocr_register.get(ocr_mode_main)(screen_shot, size, credibility, language, type, blur=blur)
+        if custom_ocr:
+            ocr_text = ocr_register.get(custom_ocr)(screen_shot, size, credibility, language, type, blur=blur,
+                                                    allowstr=allowstr)
+            if ocr_text and ocr_text != -1:
+                return ocr_text
+        ocr_text = ocr_register.get(ocr_mode_main)(screen_shot, size, credibility, language, type, blur=blur,
+                                                   allowstr=allowstr)
         if force_primary_equals_secondary:
             for ocr_second in ocr_mode_secondary.split(','):
-                ocr_text2 = ocr_register.get(ocr_second)(screen_shot, size, credibility, language, type, blur=blur)
+                ocr_text2 = ocr_register.get(ocr_second)(screen_shot, size, credibility, language, type, blur=blur,
+                                                         allowstr=allowstr)
                 if ocr_text != ocr_text2:
                     ocr_text = ocr_register.get(force_primary_equals_secondary_use)(screen_shot, size,
                                                                                     credibility, language, type,
-                                                                                    blur=blur)
+                                                                                    blur=blur, allowstr=allowstr)
         else:
             if ocr_text == -1:
                 if len(ocr_mode_secondary) != 0:
                     for ocr_second in ocr_mode_secondary.split(','):
                         ocr_text = ocr_register.get(ocr_second)(screen_shot, size, credibility,
-                                                                language, type, blur=blur)
+                                                                language, type, blur=blur, allowstr=allowstr)
                         if not ocr_text or ocr_text == -1:
                             continue
                         else:
@@ -1606,7 +1693,7 @@ class BaseMixin:
 
     # 对当前界面(x1,y1)->(x2,y2)的矩形内容进行OCR识别
     # 使用Baidu OCR接口
-    def baidu_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def baidu_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         # size表示相对原图的放大/缩小倍率，1.0为原图大小，2.0表示放大两倍，0.5表示缩小两倍
         # 默认原图大小（1.0）
         if len(baidu_apiKey) == 0 or len(baidu_secretKey) == 0:
@@ -1631,7 +1718,7 @@ class BaseMixin:
                                                       '是否有误！')
             return -1
 
-    def ocrspace_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def ocrspace_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         if len(ocrspace_ocr_apikey) == 0:
             self.log.write_log(level='error', message='读取ocrspace_ocr_apikey失败！')
             return -1
@@ -1663,7 +1750,7 @@ class BaseMixin:
                                                       '是否有误！')
             return -1
 
-    def ocr_local(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def ocr_local(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         try:
             part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             if type == 'number':
@@ -1682,7 +1769,7 @@ class BaseMixin:
             self.log.write_log(level='error', message='本地OCR识别失败，原因：%s' % ocr_error)
             return -1
 
-    def ocr_local2(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def ocr_local2(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         try:
             part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             if type == 'number':
@@ -1708,7 +1795,7 @@ class BaseMixin:
             self.log.write_log(level='error', message='本地OCR-2识别失败，原因：%s' % ocr_error)
             return -1
 
-    def ocr_local3(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def ocr_local3(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         try:
             part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             if type == 'number':
@@ -1727,7 +1814,7 @@ class BaseMixin:
             self.log.write_log(level='error', message='本地OCR3识别失败，原因：%s' % ocr_error)
             return -1
 
-    def easyocr_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None):
+    def easyocr_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
         try:
             part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
             if type == 'number':
@@ -1746,13 +1833,43 @@ class BaseMixin:
             self.log.write_log(level='error', message='本地OCR4识别失败，原因：%s' % ocr_error)
             return -1
 
+    def pcrocr_ocr(self, screen_shot=None, size=1.0, credibility=0.91, language='chs', type="text", blur=None, allowstr=None):
+        try:
+            part = cv2.resize(screen_shot, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)  # 利用resize调整图片大小
+            # if type == 'number':
+            #     # 锐化处理+高斯滤波，避免放大失真
+            #     kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]], np.float32)  # 锐化
+            #     part = cv2.filter2D(part, -1, kernel=kernel)
+            # if blur == 'gussian':
+            #     part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
+            img_binary = cv2.imencode('.jpg', part)[1].tostring()  # 转成base64编码（误）
+            img_binary = base64.b64encode(img_binary)
+            if not allowstr:
+                allowstr='None'
+            data = {
+                'file': img_binary,
+                'voc': allowstr,
+                'do_pre': "True",
+            }
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/pcrocr_ocr/", data=data)
+            text = local_ocr_text.text
+            if debug:
+                self.log.write_log('debug', 'PCR特化OCR识别结果：%s' % text)
+            return text
+        except Exception as ocr_error:
+            self.log.write_log(level='error', message='PCR特化OCR识别失败，原因：%s' % ocr_error)
+            return -1
+
     def ocr_int(self, x1, y1, x2, y2, screen_shot=None):
         """
         获取整型数字，不能包含 /
         :arg
         """
-        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=10.0, credibility=0.9, type='number',
-                              blur='gussian')
+        if use_pcrocr_to_process_basic_text:
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot,custom_ocr="pcr",allowstr="0123456789")
+        else:
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=10.0, credibility=0.9, type='number',
+                                  blur='gussian')
         try:
             int(out)
         except ValueError:
@@ -1774,8 +1891,10 @@ class BaseMixin:
             assert len(l) == 2, "字符串中有且只有一个/！"
             a, b = l
             return a, b
-
-        out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, language='eng')
+        if use_pcrocr_to_process_basic_text:
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr="0123456789/")
+        else:
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, language='eng')
         try:
             a, b = ABfun(out)
             a = make_it_as_number_as_possible(a)
