@@ -199,7 +199,7 @@ def pcrocr_ocr():
     if img:
         try:
             result = pcrocr(x=img, voc=voc, do_pre=do_pre)
-            return str(result)
+            return result['text']
         except FileNotFoundError as e:
             raise Exception('PCR特化OCR发生了错误，原因为:{}'.format(e))
     return 400

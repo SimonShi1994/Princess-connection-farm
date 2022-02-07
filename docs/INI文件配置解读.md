@@ -13,6 +13,12 @@
 |debug_record_size|Automator指令记录列表大小|int|50      ||
 |debug_record_filter|Automator指令过滤列表|list|列表中的指令不会被记录|['_lock_img','_move_check']      |
 |write_debug_to_log|打印debug信息到log|bool|如果你开发的时候不想搞那么多log到盘里，关闭它|True|
+|colorlogsw|是否使用colorlog进行日志输出|bool||True|
+|do_not_show_debug_if_in_these_files|以下文件的debug不显示|list||["get_screen.py", "pcr_checker.py", "valid_task.py", "bot.py"]|
+|skip_codename_output_if_in_these_files|以下文件的函数名、行号不显示|list||['_base.py','cv.py','scene_base.py','pcr_checker.py']|
+|show_codename_in_log|在log中输出函数名|bool||True|
+|show_filename_in_log|在log中输出文件名|bool||True|
+|show_linenumber_in_log|在log中输出行号|bool||True|
 |trace_tree|追踪的分支版本|str||master |
 |force_as_ocr_as_possible|开启后，如果某个任务有OCR版本，则自动使用之|bool||True|
 |use_pcrocr_to_detect_rank|开启后，使用OCR检测角色Rank而不是图像匹配|bool|推荐，准确度很高|True|

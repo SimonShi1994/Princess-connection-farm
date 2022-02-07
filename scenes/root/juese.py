@@ -324,9 +324,13 @@ class CharZhuangBei(CharBase):
         if screen is None:
             screen = self.getscreen()
         if use_pcrocr_to_detect_rank:
-            rank_at = (201,110,295,135)
-            out = self.ocr_center(*rank_at,screen,custom_ocr="pcr",allowstr="品级0123456789")
-            out = int(make_it_as_number_as_possible(out))
+            rank_at_1 = (201,110,295,135)
+            rank_at_2 = (410,389,431,403)
+            # out1 = self.ocr_center(*rank_at_1,screen,custom_ocr="pcr",allowstr="品级0123456789")
+            # out1 = int(make_it_as_number_as_possible(out1))
+            out2 = self.ocr_center(*rank_at_2,screen,custom_ocr="pcr",allowstr="0123456789")
+            out2 = int(make_it_as_number_as_possible(out2))
+            out = out2
             return out
         out = self.check_dict_id(RANKS_DICT, screen, diff_threshold=0.001)
         for _ in range(3):

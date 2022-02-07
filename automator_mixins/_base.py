@@ -1852,9 +1852,10 @@ class BaseMixin:
                 'do_pre': "True",
             }
             local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/pcrocr_ocr/", data=data)
+            text = local_ocr_text.text
             if debug:
-                self.log.write_log('debug', 'PCR特化OCR识别结果：%s' % local_ocr_text.text)
-            return local_ocr_text.text
+                self.log.write_log('debug', 'PCR特化OCR识别结果：%s' % text)
+            return text
         except Exception as ocr_error:
             self.log.write_log(level='error', message='PCR特化OCR识别失败，原因：%s' % ocr_error)
             return -1

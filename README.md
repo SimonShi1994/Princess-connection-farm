@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20220205
+# Princess connection 公主连结农场脚本v2.8.20220207
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -205,10 +205,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - 允许VH刷图/推图；允许设置碎片达到目标数则跳过图
 - 修复买体力后不更新可刷图flag的BUG
 - debuglog增加一些过滤器config
+- 修复刷图规划无图可刷时的BUG
   
 - _base新增lock_change，用于检测区域变化。
 - 新增prechecks，可以在getscreen后即时操作。
 - PCRRetry新增BreakNow异常，用于直接跳转到函数尾
+- 优化screencut调试体验
 
 2022/02/04 By UVJkiNTQ
 

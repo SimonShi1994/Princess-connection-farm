@@ -499,6 +499,8 @@ class PCRData:
         map_id = {}
         for ind, k in enumerate(can_maps):
             map_id[ind] = k
+        if len(map_id)==0:
+            return {}, 0
         x = cp.Variable(len(map_id), name="x")
         xflag = cp.Variable(len(map_id), name="xflag", boolean=True)
         cons = [x >= 0]

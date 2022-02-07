@@ -17,7 +17,7 @@ from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
-from core.pcr_config import debug, fast_screencut, lockimg_timeout
+from core.pcr_config import debug, fast_screencut, lockimg_timeout, use_pcrocr_to_process_basic_text
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import get_all_group
@@ -463,7 +463,7 @@ class ToolsMixin(BaseMixin):
         t = t[left:right + 1]
         return t.sum() / len(t)
 
-    def get_daoju_number(self, screen=None, must_int=True):
+    def get_daoju_number(self, screen=None, must_int=True, do_addition_check=True):
         """想尽一切办法获得右上角道具数量。
         利用x号定位，获取精确范围。
         若开启must_int：则会再搞不出整数时返回(None, 原始str），搞出时返回（整数，原始str）
@@ -483,8 +483,13 @@ class ToolsMixin(BaseMixin):
                 return -1
         choose = choose[0]
         prob, x, y, (x1, y1, x2, y2) = choose
-        num_at = (x2 + 647, 199, 720, 214)
+        num_at = (x2 + 647 + 4, 199, 720, 214)
         out = self.ocr_int(*num_at)
+        if use_pcrocr_to_process_basic_text:
+            if must_int:
+                return out, str(out)  # 这个准啊！
+            else:
+                return str(out)
         if out == -1:
             if must_int:
                 return None, out
@@ -763,7 +768,9 @@ class ToolsMixin(BaseMixin):
     def jueseshibie(self, var: Optional[dict] = None):
         mv = movevar(var)
         self.check_ocr_running()
-        S = self.get_zhuye().goto_juese().enter_first_juese()
+        S = self.get_zhuye().goto_juese()
+        self.click(299, 23)  # 全部
+        S = S.enter_first_juese()
 
         def output_dict(d):
             path = os.path.join("outputs", "juese_info")
