@@ -767,7 +767,7 @@ VALID_TASK = ValidTask() \
           TaskParam("gonghui_prefix_valid", str, "行会名前缀验证", "[需要OCR]只通过以该项为前缀的行会名。空字符串表示不过滤。", ""),
           TaskParam("all_reject", bool, "全部拒绝", "不需要OCR，但是把所有申请都拒绝掉。适合于全部拒绝->小号申请->全部通过的思路。", False)
           ]) \
-    .add("t1", "rename", "批量重命名【别用】", "随机+批量给自己换个名字，建议配合OCR识别信息更佳",
+    .add("t1", "rename", "批量重命名", "随机+批量给自己换个名字，建议配合OCR识别信息更佳",
          [TaskParam("name", str, "新名字", "你的量产新名字，以空格为间隔"),
           TaskParam("auto_id", bool, "自动生成随机位数id", "生成一个随机数0-1000在名字后面", False)]) \
     .add("t2", "save_box_screen", "box截图", "按照战力/等级/星数截屏前两行box",

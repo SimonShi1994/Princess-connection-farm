@@ -255,17 +255,28 @@ class ToolsMixin(BaseMixin):
             self.lock_home()
             screen_shot = self.getscreen()
             # 体力 包括/
-            acc_info_dict["tili"] = self.ocr_int(243, 6, 305, 22, screen_shot=screen_shot)
+            A,B = self.ocr_A_B(243, 6, 305, 22, screen_shot=screen_shot)
+            acc_info_dict["tili"] = f"{A}/{B}"
             # 等级 make_it_as_number_as_possible
             acc_info_dict["dengji"] = self.ocr_int(29, 43, 60, 67, screen_shot=screen_shot)
             # mana
-            acc_info_dict["mana"] = make_it_as_number_as_possible(
-                self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot, size=2.0) \
-                    .replace(',', '').replace('.', ''))
+            if use_pcrocr_to_process_basic_text:
+                acc_info_dict["mana"] = make_it_as_number_as_possible(
+                    self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot,custom_ocr="pcr",allowstr="0123456789,") \
+                        .replace(',', ''))
+            else:
+                acc_info_dict["mana"] = make_it_as_number_as_possible(
+                    self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot, size=2.0) \
+                        .replace(',', '').replace('.', ''))
             # 宝石
-            acc_info_dict["baoshi"] = make_it_as_number_as_possible(
-                self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, size=2.0) \
-                    .replace(',', '').replace('.', ''))
+            if use_pcrocr_to_process_basic_text:
+                acc_info_dict["baoshi"] = make_it_as_number_as_possible(
+                    self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, custom_ocr="pcr",allowstr="0123456789,") \
+                        .replace(',', ''))
+            else:
+                acc_info_dict["baoshi"] = make_it_as_number_as_possible(
+                    self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, size=2.0) \
+                        .replace(',', '').replace('.', ''))
         if introduction_info:
             self.lock_img(ZHUCAIDAN_BTN["bangzhu"], elseclick=[(871, 513)])  # 锁定帮助
             # 去简介
