@@ -422,10 +422,12 @@ FIGHT_BTN = {
     "sort_star": p(596, 90, img="img/fight/sort_star.bmp", at=(577, 78, 616, 99)),
     "sort_up": p(741, 88, img="img/fight/sort_up.bmp", at=(722, 77, 760, 99)),
     "sort_power": p(597, 89, img="img/fight/sort_power.bmp", at=(575, 79, 618, 99)),
+    "sort_shoucang":p(614,89,img="img/fight/sort_shoucang.bmp",at=(581,79,647,99)),
     "cat_dengji": p(69, 142, name="等级"),  # cat：分类界面
     "cat_zhanli": p(290, 141, name="战力"),
     "cat_rank": p(511, 142, name="RANK"),
     "cat_star": p(731, 139, name="星数"),
+    "cat_shoucang":p(729,250,name="收藏"),
     "cat_ok": p(587, 478, img="img/ui/queren_blue.bmp", at=(559, 463, 613, 492)),  # 分类界面：OK
     "my_team": p(867, 88),  # 我的队伍
     "team_h": {
@@ -500,10 +502,10 @@ SHOP_BTN = {
     "pjjc_btn": p(543, 68, img="img/shop/pjjc_btn.bmp", at=(500, 56, 588, 78)),
     "clan_btn": p(640, 65, img="img/shop/clan_btn.bmp", at=(602, 57, 666, 79)),
     "nvshen_btn": p(829, 65, img="img/shop/nvshen_btn.bmp", at=(776, 57, 864, 77)),
-    "xianding_ok": p(589, 478, img="img/ui/ok_btn_1.bmp", at=(487, 454, 691, 502)),
+    "xianding_ok": p(586,478,img="img/ui/queren_blue.bmp",at=(559, 463, 613, 492)),
     "shop_left_kkr": p(img="img/girl/kkr_middle.bmp", at=(78, 311, 179, 339)),
     "lijiguanbi": p(527, 438),
-    "querenchongzhi": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
+    "querenchongzhi": p(587,370,img="img/ui/queren_blue.bmp",at=(560, 355, 614, 384)),
     "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
     "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
     "jiechusuoyou": p(596, 437, img="img/shop/jiechusuoyou.bmp", at=(562, 427, 630, 447)),
@@ -587,6 +589,25 @@ JUESE_BTN = {
     "return_ok": p(476, 475, img="img/juese/queren_white.bmp", at=(451, 463, 501, 487)),  # 返还强化道具
     "return_menu": p(31, 30, img="img/juese/return_menu.bmp", at=(14, 16, 49, 44)),
     "weijiesuo_w": p(102, 163, img="img/juese/weijiesuo_w.bmp", at=(60, 155, 144, 172)),  # 未获得角色
+
+    "weishoucang":p(44,99,img="img/juese/weishoucang.bmp",at=(15,71,73,128)),  # 未收藏 图标
+    "yishoucang":p(45,101,img="img/juese/yishoucang.bmp",at=(19,72,71,130)),
+    "sixth_star":p(339,334,img="img/juese/sixth_star.bmp",at=(327,322,351,346)),  # 第六颗星
+    "sixth_star_off":p(340,334,img="img/juese/sixth_star_off.bmp",at=(325,319,355,350)),  # 第六颗星（暗的）
+    "liuxing_info":p(354,336,img="img/juese/liuxing_info.bmp",at=(338,320,371,353)),  # 六星开花右下角的info
+
+    "pjtsqr":p(480,148,img="img/juese/pjtsqr.bmp",at=(414,134,546,162)),
+    "pjtsqr_ok":p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
+    "pjtswb":p(479,87,img="img/juese/pjtswb.bmp",at=(414,70 ,544,165)),  # 更大的空间，防止出事
+
+    "tjqh_zb":p(304,98,img="img/juese/tjqh_zb.bmp",at=(274,89,335,108)),
+    "tjqh_gq":p(305,96,img="img/juese/tjqh_gq.bmp",at=(278,88,332,105)),
+    "zdzbqhqr":p(479,41,img="img/juese/zdzbqhqr.bmp",at=(394,29,564,53)),
+    "zdzbqhqr_ok":p(586,478,img="img/ui/queren_blue.bmp",at=(559,463,613,492)),
+    "scgm_and_zdzbqhqr":p(480,40,img="img/juese/scgm_and_zdzbqhqr.bmp",at=(340,26,620,55)),
+
+    "rank_max":p(654,242,img="img/juese/rank_max.bmp",at=(630,231,678,253)),
+
 
 }
 MAX_DXC = 5  # 一共出了多少个地下城关

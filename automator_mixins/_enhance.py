@@ -7,7 +7,7 @@ from scenes.dxc.dxc_fight import FightBianzuDXC
 from scenes.dxc.dxc_fight import FightingWinDXC, FightingLossDXC
 from scenes.fight.fightinfo_zhuxian import FightInfoBase
 from scenes.fight.fighting_zhuxian import FightingWinZhuXian2, HaoYouMsg
-from scenes.juese.juese_base import CharMenu, get_plate_img_path, CharBase, CharKaihua, CharZhuanwu
+from scenes.root.juese import CharMenu, get_plate_img_path, CharBase, CharKaihua, CharZhuanwu, CharZhuangBei
 from scenes.scene_base import PossibleSceneList
 
 
@@ -43,17 +43,10 @@ class EnhanceMixin(ShuatuBaseMixin):
         # 计数器
         if charlist is None:
             charlist = []
-        self.lock_home()
-        self.clear_all_initFC()
-        self.click_btn(MAIN_BTN["juese"], until_appear=JUESE_BTN["duiwu"])
-        time.sleep(5)
-        self.fclick(1,1)
+        cm = self.get_zhuye().goto_juese()
         # 进入角色选择
-        cm = CharMenu(self)
         cm.sort_by(sort)
-        time.sleep(2)
         cm.sort_down()
-        time.sleep(1)
 
         while True:
             # 单页面循环
@@ -64,21 +57,21 @@ class EnhanceMixin(ShuatuBaseMixin):
                 for j in plate_path:
                     a = cm.click_plate(j, screen=sc)
                     if a is True:
+                        cm.clear_initFC()
                         charlist.remove(i)
-                        ecb = CharBase(self)
+                        ecb = CharZhuangBei(self).enter()
                         ekh = ecb.goto_kaihua()
                         if do_kaihua:
                             if debug:
                                 self.log.write_log('debug',"升星任务开始")
                             if ekh.get_starup_status():
                                 ekh.cainengkaihua()
-                        ekh.goto_base()
+                        ecb = ekh.goto_juese()
                         if debug:
                             self.log.write_log('debug',"升星完成，前往base")
 
                         # 装备级等级强化
                         while True:
-                            ecb = CharBase(self)
                             ers = ecb.get_equip_status()
                             ehs = ecb.get_enhance_status()
                             if debug:
@@ -125,7 +118,8 @@ class EnhanceMixin(ShuatuBaseMixin):
                                     self.click_btn(JUESE_BTN["zdqh_0"], until_appear=JUESE_BTN["tuijiancaidan"])
                                     time.sleep(2)
                                     self.click_btn(JUESE_BTN["enter_shuatu"], until_appear=FIGHT_BTN["baochou"])
-                                    fi = FightInfoBase(self)
+                                    ecb.clear_initFC()
+                                    fi = FightInfoBase(self).enter()
                                     sc = self.getscreen()
                                     stars = fi.get_upperright_stars(sc)
                                     if stars < 3:
@@ -136,12 +130,11 @@ class EnhanceMixin(ShuatuBaseMixin):
                                             for _ in range(6):
                                                 self.click(1, 1)
                                             break
-                                        fi.goto_tiaozhan()
+                                        fb = fi.goto_tiaozhan()
                                         if debug:
                                             self.log.write_log('debug',"开始刷图补装备")
 
                                         # 支援
-                                        fb = FightBianzuDXC(self)
                                         fb.select_team(team_order, change=3)
                                         if getzhiyuan:
                                             fb.get_zhiyuan(assist_num=1, force_haoyou=False, if_full=is_full)
@@ -229,10 +222,9 @@ class EnhanceMixin(ShuatuBaseMixin):
                             self.log.write_log('debug',"等级装备强化任务开始")
                         # 专武
                         if do_zhuanwu:
-                            ecb.goto_zhuanwu()
+                            ezw = ecb.goto_zhuanwu()
                             if debug:
                                 self.log.write_log('debug',"专武任务开始")
-                            ezw = CharZhuanwu(self)
                             while True:
                                 zws = ezw.get_zhuanwu_status()
                                 if debug:
@@ -251,13 +243,12 @@ class EnhanceMixin(ShuatuBaseMixin):
                                     continue
                                 if zws == 0 or zws == 1:
                                     break
-                            ezw.goto_base()
+                            ecb = ezw.goto_zhuangbei()
                             if debug:
                                 self.log.write_log('debug',"专武任务完成")
                         if debug:
                             self.log.write_log('debug',"此角色强化任务已完成")
-                        ecb = CharBase(self)
-                        cm = ecb.goto_menu()
+                        cm = ecb.goto_juese()
                         time.sleep(1)
 
             if len(charlist) == 0:

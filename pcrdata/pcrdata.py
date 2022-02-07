@@ -398,6 +398,8 @@ class PCRData:
         return diff_id + A * 1000 + B
 
     def get_map_tili(self, mode, A, B):
+        if mode == "veryhard":
+            return 20
         mid = self.get_map_id(mode, A, B)
         return self.MInfo[mid]['tili']
 

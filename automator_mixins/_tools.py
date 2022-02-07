@@ -9,11 +9,11 @@ import numpy as np
 import openpyxl
 import pandas as pd
 import pathlib
-from scenes.juese.juese_base import get_name_from_plate_path
+from scenes.root.juese import get_name_from_plate_path
 
 from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, RANKS_DICT, JUESE_BTN, DXC_ELEMENT, JUQING_BTN, p
+from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING_BTN, p
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -21,10 +21,9 @@ from core.pcr_config import debug, fast_screencut, lockimg_timeout
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import get_all_group
-from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, make_it_as_juese_as_possible, \
-    get_time_str, checkNameValid
+from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, get_time_str, checkNameValid
 from ._base import BaseMixin
-from scenes.juese.juese_base import CharMenu
+from scenes.root.juese import CharMenu
 
 
 class ToolsMixin(BaseMixin):
@@ -485,7 +484,7 @@ class ToolsMixin(BaseMixin):
         choose = choose[0]
         prob, x, y, (x1, y1, x2, y2) = choose
         num_at = (x2 + 647, 199, 720, 214)
-        out = self.ocr_center(*num_at, size=10.0, type="number")
+        out = self.ocr_int(*num_at)
         if out == -1:
             if must_int:
                 return None, out
@@ -602,7 +601,7 @@ class ToolsMixin(BaseMixin):
             for _ in range(6):
                 self.click(1, 1)
             at = (492, 266, 566, 286)
-            out = self.ocr_center(*at, screen_shot=sc)
+            out = self.ocr_int(*at, screen_shot=sc)
             new_out = make_it_as_number_as_possible(out)
             try:
                 the_int = int(new_out)
@@ -764,170 +763,7 @@ class ToolsMixin(BaseMixin):
     def jueseshibie(self, var: Optional[dict] = None):
         mv = movevar(var)
         self.check_ocr_running()
-
-        def get_valid_screen(screen=None):
-            if screen is None:
-                screen = self.getscreen()
-            def checkfunc(sc):
-                while self.click_gaoliang(sc):
-                    sc = self.getscreen()
-                    time.sleep(1)
-                ALL_FEATURES = [
-                    MAIN_BTN["right_kkr"],
-                    DXC_ELEMENT["dxc_kkr"],
-                ]
-                for f in ALL_FEATURES:
-                    if self.is_exists(f, screen=sc):
-                        return True
-                return False
-
-            CNT = 0
-            while checkfunc(screen):
-                if CNT>=10:
-                    raise Exception("在角色检测中跳过kkr失败！")
-                for _ in range(10):
-                    self.click(1,1)
-                CNT+=1
-                time.sleep(1)
-                screen = self.getscreen()
-
-            return screen
-
-        def get_stars(screen=None):
-            screen = get_valid_screen(screen)
-            from core.constant import PCRelement as p
-            five_stars = {
-                1: p(170, 337),
-                2: p(209, 337),
-                3: p(243, 335),
-                4: p(281, 336),
-                5: p(320, 335),
-            }
-            return int(self.count_stars(five_stars, screen))
-
-        def get_level(screen=None):
-            screen = get_valid_screen(screen)
-            at = (259, 416, 291, 433)
-            return make_it_as_number_as_possible(self.ocr_center(*at, screen))
-
-        def get_haogan(screen=None):
-            screen = get_valid_screen(screen)
-            at = (271, 390, 291, 405)
-            return make_it_as_number_as_possible(self.ocr_center(*at, screen))
-
-        def get_zhanli(screen=None):
-            screen = get_valid_screen(screen)
-            at = (830, 261, 894, 275)
-            return make_it_as_number_as_possible(self.ocr_center(*at, screen))
-
-        def get_name(screen=None):
-            screen = get_valid_screen(screen)
-            data = self._load_data_cache()
-            at = (483, 119, 760, 141)
-            ori_out = self.ocr_center(*at, screen)
-            while True:
-                if make_it_as_zhuangbei_as_possible(ori_out) in getattr(data, "EQU_ID") or "?" in ori_out.replace("？",
-                                                                                                                  "?"):
-                    # 是装备!
-                    self.click(782, 76, post_delay=0.5)
-                    screen = self.getscreen()
-                    ori_out = self.ocr_center(*at, screen)
-                else:
-                    break
-
-            out = make_it_as_juese_as_possible(ori_out)
-            if out == "公主宝珠":
-                for _ in range(5):
-                    self.click(121, 172)
-                time.sleep(1)
-                return get_name()
-            out = self._check_img_in_list_or_dir(out, (482, 114, 750, 261), "ocrfix/juese", "C_ID", screen)
-
-            return out
-
-        def get_rank(screen=None):
-            screen = get_valid_screen(screen)
-            out = self.check_dict_id(RANKS_DICT, screen, diff_threshold=0.001)
-            for _ in range(3):
-                if out is None:
-                    self.click(525, 71, post_delay=1)
-                    out = self.check_dict_id(RANKS_DICT, screen, diff_threshold=0.001)
-            if out is None:
-                self.log.write_log("warning", "获取Rank失败！")
-                return None
-            return int(out)
-
-        def get_six_clothes(screen=None):
-            screen = get_valid_screen(screen)
-            Six_Points = [
-                (101, 111),
-                (336, 112),
-                (65, 198),
-                (371, 199),
-                (101, 284),
-                (336, 286),
-            ]
-            sc = cv2.cvtColor(screen, cv2.COLOR_RGB2HSV)
-            value = sc[:, :, 1]
-            out = []  # 从左到右，从上到下
-            for p in Six_Points:
-                w, h = 60, 30
-                pic = UIMatcher.img_cut(value, (p[0], p[1], p[0] + w, p[1] + h))
-                if debug:
-                    self.log.write_log('debug',pic.max())
-                if pic.max() > 150:
-                    out += [True]
-                else:
-                    out += [False]
-            if debug:
-                self.log.write_log('debug',out)
-            return out
-
-        def _next():
-            sc = self.getscreen()
-            name_at = (40, 393, 104, 441)
-            self.click(929, 269)
-            for _ in range(10):
-                m = self.wait_for_change(screen=sc, at=name_at, delay=1, threshold=0.84, max_retry=1)
-                if self.is_exists(JUESE_BTN["return_ok"], screen=self.last_screen):
-                    self.click_btn(JUESE_BTN["return_ok"])
-                    time.sleep(0.5)
-                    sc = self.getscreen()
-                elif m:
-                    break
-                if self.upgrade_kkr(sc):
-                    break
-            else:
-                raise Exception("原因不明的wait_for_change错误！")
-
-        def _enter():
-            getattr(self, "enter_upgrade")()
-
-        def Click_CaiNeng(screen=None):
-            at = (549, 155, 858, 352)
-            if screen is None:
-                screen = self.getscreen()
-            old = UIMatcher.img_cut(screen, at)
-            while True:
-                self.click(782, 76, post_delay=0.5)
-                screen = self.getscreen()
-                new = UIMatcher.img_cut(screen, at)
-                if self.img_equal(old, new) > 0.98:
-                    continue
-                break
-
-        def Click_Zhuangbei(screen=None):
-            at = (549, 155, 858, 352)
-            if screen is None:
-                screen = self.getscreen()
-            old = UIMatcher.img_cut(screen, at)
-            while True:
-                self.click(525, 71, post_delay=0.5)
-                screen = self.getscreen()
-                new = UIMatcher.img_cut(screen, at)
-                if self.img_equal(old, new) > 0.98:
-                    continue
-                break
+        S = self.get_zhuye().goto_juese().enter_first_juese()
 
         def output_dict(d):
             path = os.path.join("outputs", "juese_info")
@@ -941,29 +777,29 @@ class ToolsMixin(BaseMixin):
                     f.write("\t".join([str(s) for s in [k, v["star"], v["rank"], v["dengji"], *v["zb"], v["haogan"],
                                                         get_time_str(v["last_update"])]]) + "\n")
 
-        self.lock_home()
-        _enter()
         mv.regflag("count", 0)
-        Click_CaiNeng()
-        FIRST_NAME = get_name()
-        Click_Zhuangbei()
+        S = S.goto_kaihua()
+        FIRST_NAME = S.get_name()
+        S = S.goto_zhuangbei()
+
         for _ in range(var["count"]):
-            _next()
+            S.next_char()
+
         while True:
-            sc = get_valid_screen()
+            sc = self.getscreen()
             data = self.AR.get("juese_info", UDD["juese_info"])
             # Main Info
             D = {}
-            D["haogan"] = get_haogan(sc)
-            D["dengji"] = get_level(sc)
-            D["rank"] = get_rank(sc)
-            D["zb"] = get_six_clothes(sc)
-            Click_CaiNeng(sc)
-            sc = get_valid_screen(self.last_screen)
-            NAME = get_name(sc)
+            D["haogan"] = S.get_haogan(sc)
+            D["dengji"] = S.get_level(sc)
+            D["rank"] = S.get_rank(sc)
+            D["zb"] = S.get_six_clothes(sc)
+            S = S.goto_kaihua()
+            sc = self.getscreen()
+            NAME = S.get_name(sc)
             if NAME == FIRST_NAME and var["count"] != 0:
                 break
-            D["star"] = get_stars(sc)
+            D["star"] = S.get_stars(sc)
             D["last_update"] = time.time()
             if NAME not in data:
                 data[NAME] = {}
@@ -971,8 +807,8 @@ class ToolsMixin(BaseMixin):
             self.AR.set("juese_info", data)
             var["count"] += 1
             mv.save()
-            Click_Zhuangbei(sc)
-            _next()
+            S = S.goto_zhuangbei()
+            S.next_char()
         mv.clearflags()
         output_dict(self.AR.get("juese_info", UDD["juese_info"]))
         self.lock_home()
@@ -1030,4 +866,6 @@ class ToolsMixin(BaseMixin):
             return True
         else:
             return False
+
+
 

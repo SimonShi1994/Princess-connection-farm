@@ -177,8 +177,20 @@ u2_record_filter = GC.add_list('debug', 'u2_record_filter', [])
 debug_record_filter = GC.add_list('debug', 'debug_record_filter', ['_lock_img', '_move_check'])
 trace_tree = GC.add_str('debug', 'trace_tree', 'master')
 colorlogsw = GC.add_bool('debug', 'colorlogsw', True)
+write_debug_to_log = GC.add_bool('debug', 'write_debug_to_log', True)
+do_not_show_debug_if_in_these_files = GC.add_list('debug','do_not_show_debug_if_in_these_files',
+                                                  ['get_screen.py','pcr_checker.py','valid_task.py','bot.py'])
+skip_codename_output_if_in_these_files = GC.add_list('debug','skip_codename_output_if_in_these_files',
+                                                     ['_base.py','cv.py','scene_base.py','pcr_checker.py'])
+show_codename_in_log = GC.add_bool('debug','show_codename_in_log',True)
+show_filename_in_log = GC.add_bool('debug','show_filename_in_log',True)
+show_linenumber_in_log = GC.add_bool('debug','show_linenumber_in_log',True)
+
 
 force_as_ocr_as_possible = GC.add_bool("task", "force_as_ocr_as_possible", True)
+use_pcrocr_to_detect_rank = GC.add_bool("task", "use_pcrocr_to_detect_rank", True)
+use_pcrocr_to_detect_zhuxian = GC.add_bool("task", "use_pcrocr_to_detect_zhuxian", False)
+
 sent_state_img = GC.add_bool('log', 'sent_state_img', False)
 qqbot_key = GC.add_str('log', 'qqbot_key')
 qqbot_select = GC.add_str('log', 'qqbot_select')
@@ -196,6 +208,7 @@ sentstate = GC.add_int('log', 'sentstate', 30)
 proxy_http = GC.add_str('log', 'proxy_http')
 proxy_https = GC.add_str('log', 'proxy_https')
 
+use_pcrocr_to_process_basic_text = GC.add_bool('pcrfarm_setting', 'use_pcrocr_to_process_basic_text', True)
 force_primary_equals_secondary = GC.add_bool('pcrfarm_setting', 'force_primary_equals_secondary', False)
 force_primary_equals_secondary_use = GC.add_str('pcrfarm_setting', 'force_primary_equals_secondary_use', "本地1")
 ocr_mode_main = GC.add_str('pcrfarm_setting', 'ocr_mode_main', "本地1")

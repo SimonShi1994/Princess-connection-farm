@@ -48,6 +48,19 @@ class FightInfoBase(PCRMsgBoxBase):
         t = tf < tb
         return np.sum(t)
 
+    def get_first_item_count(self):
+        # OCR获得第一个item（一般是角色碎片）的当前持有数
+        self.check_ocr_running()
+        at=(836,182,890,202)
+        first_icon = (187,360)
+        handle = self._a.d.touch.down(*first_icon)
+        time.sleep(1.5)
+        sc = self.getscreen()
+        out = self.ocr_int(*at,sc)
+        handle.up(*first_icon)
+        time.sleep(0.8) # 防止残留
+        return out
+
     def get_saodangquan(self, screen=None):
         # OCR获得扫荡券数量
         self.check_ocr_running()
@@ -164,18 +177,22 @@ class FightInfoBase(PCRMsgBoxBase):
                       one_tili:int = 0,
                       check_cishu=False,
                       max_speed=1,
+                      get_zhiyuan=False,
                       ):
         """
         team_order:  见select_team
         one_tili:
             0 - 不进行体力检查
             (int) - 一次消耗的体力次数，会进行体力检查。 （一次刷不了则退出）
+            -1 - 假设消耗10体，进去后进一步计算one_tili
         check_cishu:
             False - 不进行次数检查
             True - 进行次数检查 （0/N则退出）
         max_speed:
             1 - 两倍速
             2 - 四倍速可用
+        get_zhiyuan:
+            是否使用支援
         <return>
             0: 挑战成功
             1: 挑战失败
@@ -191,10 +208,10 @@ class FightInfoBase(PCRMsgBoxBase):
                 self.exit_me()
                 return 2
 
-        if one_tili > 0:
+        if one_tili > 0 or one_tili==-1:
             # 体力检查
             tili_left = self.get_tili_left(screen)
-            if tili_left < one_tili:
+            if tili_left <one_tili if one_tili!=-1 else 10:
                 self.log.write_log("warning", "体力不足，无法挑战！")
                 self.exit_me()
                 self._a.stop_shuatu()
@@ -208,6 +225,8 @@ class FightInfoBase(PCRMsgBoxBase):
 
         T = self.goto_tiaozhan()
         T.select_team(team_order)
+        if get_zhiyuan:
+            T.get_zhiyuan()
         F = T.goto_fight()
         F.set_auto(1)
         F.set_speed(max_speed,max_speed,self.last_screen)
@@ -223,10 +242,28 @@ class FightInfoBase(PCRMsgBoxBase):
                     if isinstance(out,A.FightingWinZhuXian2):
                         out.next()
                         return 0
+                    elif isinstance(out, A.XianDingShangDianBox):
+                        out.Cancel()
+                    elif isinstance(out, A.LevelUpBox):
+                        out.OK()
+                        self.start_shuatu()
+                    elif isinstance(out, A.TuanDuiZhanBox):
+                        out.OK()
+                    elif isinstance(out, A.AfterFightKKR):
+                        out.skip()
+                        self._a.restart_this_task()
+                    elif isinstance(out, A.ChaoChuShangXianBox):
+                        out.OK()
             elif isinstance(out,D.FightingLoseZhuXian):
                 self.log.write_log("info",f"战败了！")
                 out.exit(self.fun_click(814,493))
                 return 1
+            elif isinstance(out,D.FightingDialog):
+                out.skip()
+            elif isinstance(out,D.LoveUpScene):
+                out.skip()
+            elif isinstance(out,D.HaoYouMsg):
+                out.exit_with_off()
 
     def easy_saodang(self,
                      target_cishu:Union[int,str]="max",
@@ -238,6 +275,7 @@ class FightInfoBase(PCRMsgBoxBase):
         one_tili:
             0 - 不进行体力检查
             (int) - 一次消耗的体力次数，会进行体力检查。 （一次刷不了则退出）
+            -1 - 假设消耗10体，进去后进一步计算one_tili
         check_cishu:
             False - 不进行次数检查
             True - 进行次数检查 （0/N则退出）
@@ -279,14 +317,16 @@ class FightInfoBase(PCRMsgBoxBase):
                 self.log.write_log("warning", f"次数不足，只能扫荡{cishu_left}次！")
                 exitflag = 2
 
-        if one_tili>0:
+        if one_tili>0 or one_tili==-1:
             # 体力检查
             tili_left = self.get_tili_left(screen)
-            if tili_left<one_tili:
+            if tili_left<(one_tili if one_tili!=-1 else 10):
                 self.log.write_log("warning","体力不足，无法扫荡！")
                 self.exit_me()
                 self._a.stop_shuatu()
                 return 1
+            if one_tili==-1:
+                one_tili = tili_left-self.get_tili_right(screen)
             if isinstance(target_cishu,int):
                 all_tili = one_tili * target_cishu
                 if tili_left<all_tili:

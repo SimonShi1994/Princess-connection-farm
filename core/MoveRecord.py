@@ -17,6 +17,10 @@ class MoveSkipException(Exception):
         super().__init__()
         self.skipinfo = skipinfo
 
+class MoveRestartException(Exception):
+    def __init__(self, skipinfo=None):
+        super().__init__()
+        self.skipinfo = skipinfo
 
 class moveerr(Exception):
     """
@@ -976,6 +980,8 @@ class moveset:
                     cur += 1
                 else:
                     cur = e.skipinfo
+            except MoveRestartException as e:
+                pass
             except moveerr as me:
                 if me.code in self.catch:
                     # 暂存当前cur并跳转

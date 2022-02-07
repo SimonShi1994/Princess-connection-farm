@@ -12,7 +12,7 @@ import cv2
 import base64
 
 def base64_decode(code):
-    b64_de_img = str(base64.b64decode(code))
+    b64_de_img = base64.b64decode(code)
     np_arr = np.fromstring(b64_de_img, np.uint8)  # 把字符串转ndarray
     c_img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
     return c_img

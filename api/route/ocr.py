@@ -11,6 +11,7 @@ from io import BytesIO
 from aip import AipOcr
 from core.pcr_config import ocr_mode_main, ocr_mode_secondary, baidu_apiKey, baidu_secretKey, baidu_QPS, \
     ocrspace_ocr_apikey
+from pcrocr.ocr import PCROCRBasic
 
 ocr_list = [x for x in ocr_mode_secondary.split(',')]
 ocr_list.insert(0, ocr_mode_main)
@@ -42,8 +43,12 @@ for ocr_mode in ocr_list:
                 easyocr_reader = easyocr.Reader(['ch_sim', 'en'], gpu=False,
                                                 verbose=False)  # this needs to run only once to load the model into memory
         else:
+            # 强制加载
+            pcrocr = PCROCRBasic().ocr
+
             if ocr_mode == "网络1":
                 import queue
+
                 # 这一行创建了发包队列
                 baidu_queue = queue.Queue(baidu_QPS)
                 config = {
@@ -168,3 +173,33 @@ def ocrspace_ocr(language='chs'):
     except Exception as e:
         raise Exception('ocrspace_ocr发生了错误，原因为:{}'.format(e))
     return r.content.decode()
+
+
+@ocr_api.route('/pcrocr_ocr/', methods=['POST'])
+def pcrocr_ocr():
+    # 接收图片
+    img = request.form.get('file')
+    # print(request.form.get('voc'))
+    voc = request.form.get('voc')
+    do_pre = request.form.get('do_pre')
+    # print("VOC:",voc,type(voc))
+    # print("DO_PRE:",do_pre,type(do_pre))
+    # from pcrocr.utils import base64_decode
+    # print(base64_decode(img))
+
+    if voc != 'null' and voc != 'None':
+        voc = voc
+    else:
+        voc = None
+
+    if do_pre != 'True' and do_pre != 'true':
+        do_pre = False
+    else:
+        do_pre = True
+    if img:
+        try:
+            result = pcrocr(x=img, voc=voc, do_pre=do_pre)
+            return str(result)
+        except FileNotFoundError as e:
+            raise Exception('PCR特化OCR发生了错误，原因为:{}'.format(e))
+    return 400

@@ -12,8 +12,11 @@
 |u2_record_filter|U2指令过滤列表|list|列表中的指令不会被记录|[]      |
 |debug_record_size|Automator指令记录列表大小|int|50      ||
 |debug_record_filter|Automator指令过滤列表|list|列表中的指令不会被记录|['_lock_img','_move_check']      |
+|write_debug_to_log|打印debug信息到log|bool|如果你开发的时候不想搞那么多log到盘里，关闭它|True|
 |trace_tree|追踪的分支版本|str||master |
 |force_as_ocr_as_possible|开启后，如果某个任务有OCR版本，则自动使用之|bool||True|
+|use_pcrocr_to_detect_rank|开启后，使用OCR检测角色Rank而不是图像匹配|bool|推荐，准确度很高|True|
+|use_pcrocr_to_detect_zhuxian|开启后，使用OCR检测角色Rank而不是图像匹配|bool|准确度不能保证！但如果新图尚未更新，可以用此苟活|False|
 | qqbot_select | qqbot的选择api服务商 | str | CoolPush/Qmsgnike | CoolPush |
 | qqbot_private_send_switch | qqbot私聊开关 | int | 0关 1开 | 0 |
 | qqbot_group_send_switch | qqbot群聊开关 | int | 0关 1开 | 0 |
@@ -34,6 +37,7 @@
 |       baidu_secretKey        |                 baidu_secretKey为百度ocr api                 | string |          | SCU6390~94d830b |
 | baidu_QPS | baidu_QPS为百度并发限制连接数 | int | | 2 |
 | ocrspace_ocr_apikey | ocr.space的apikey | string | | SCU6390~94d830b |
+|use_pcrocr_to_process_basic_text|是否优先使用pcr定制ocr来识别数字和基础符号|bool|识别字符见pcrocr/label_basic.txt|True|
 | force_primary_equals_secondary | 是否当主要OCR和次要OCR识别内容一致时才返回值 | bool | | False |
 | force_primary_equals_secondary_use | 比较全部值都无主次一致时使用该OCR | string | | 本地1 |
 | ocr_mode_main | 主要OCR | string | | 本地1 |

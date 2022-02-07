@@ -11,7 +11,8 @@ from sys import stdout
 from core.bot import Bot
 
 # 各项需要累积的初始化
-from core.pcr_config import debug, colorlogsw
+from core.pcr_config import debug, colorlogsw, write_debug_to_log, do_not_show_debug_if_in_these_files, \
+    skip_codename_output_if_in_these_files, show_codename_in_log, show_linenumber_in_log, show_filename_in_log
 
 acc_cout = 0
 star_time = 0
@@ -140,10 +141,60 @@ class pcr_log():  # 帐号内部日志（从属于每一个帐号）
         :param message: str
         :param level: debug/info/warning/error|critical
         """
-        funcName = sys._getframe().f_back.f_code.co_name  # 获取调用函数名
-        lineNumber = sys._getframe().f_back.f_lineno  # 获取行号
+
+        frame = sys._getframe().f_back
+        funcName = frame.f_code.co_name
+        lineNumber = frame.f_lineno
+        fileName = frame.f_code.co_filename
+        show_funcName = show_codename_in_log
+        show_lineNumber = show_linenumber_in_log
+        show_fileName = show_filename_in_log
+
+        # print(">>>",level,message)
+
+        if level == 'debug':
+            for badfile in do_not_show_debug_if_in_these_files:
+                if fileName.endswith(badfile):
+                    return
+
+        while frame is not None:
+            flag = True
+            for skipfile in skip_codename_output_if_in_these_files:
+                if fileName.endswith(skipfile):
+                    frame = frame.f_back
+                    funcName = frame.f_code.co_name
+                    lineNumber = frame.f_lineno
+                    fileName = frame.f_code.co_filename
+                    flag = False
+                    break
+            if flag:
+                break
+        else:
+            show_funcName = False
+            show_lineNumber = False
+            show_fileName = False
+
+        pre_format = []
+        pre_format.append("[")
+        if show_fileName:
+            filename_str = os.path.split(fileName)[1]
+            pre_format.append(f"{filename_str}")
+        if show_fileName and show_funcName:
+            pre_format.append("/")
+        if show_funcName:
+            pre_format.append(funcName)
+        if show_lineNumber:
+            pre_format.append(f":{lineNumber}")
+        pre_format.append("]")
+        if len(pre_format)==2:
+            pre_format_str = ""
+        else:
+            pre_format_str = "".join(pre_format)
+        if level == "debug" and not write_debug_to_log:
+            print("DEBUG:",pre_format_str,message)
+            return
         lev = level.lower()
-        msg_format = f'[{funcName}:{lineNumber}] [{lev}]-\t{message}'
+        msg_format = f'{pre_format_str} [{lev}]-\t{message}'
         if lev == 'debug':
             self.norm_log.debug(msg=msg_format)
         elif lev == 'info':
