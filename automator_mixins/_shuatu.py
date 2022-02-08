@@ -1707,3 +1707,51 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
         self.auto_upgrade(buy_tili=buy_tili, do_rank=do_rank, do_shuatu=do_shuatu)
         self.lock_home()
+
+    def daily_shuatu_auto(self,daily_tili=0, xianding=True,
+                          do_kucunshibie=True, do_jueseshibie=True, n=1, max_tu="max", var={}):
+        """
+        每日刷图，但是基于角色识别和装备识别自动规划要刷的normal图！
+        *你需要在data中事先设定角色的追踪*
+        大号专用，默认所有图均三星可扫荡。
+        :param daily_tili: 每日体力
+        :param xianding: 是否刷空限定商店
+        :param do_kucunshibie: 是否做库存识别
+        :param do_jueseshibie: 是否做角色识别
+        :param n: 当前为N几
+        :param max_tu: 最多考虑到图几。设置为max时，按数据库中最新值为准，但可能会超出当前最高可推图。
+        """
+
+        mv = movevar(var)
+        if do_kucunshibie and mv.notflag("kucun"):
+            self.log.write_log("info","开始进行前置库存识别")
+            self.kucunshibie(var=var)
+            mv.setflag("kucun")
+        if do_jueseshibie and mv.notflag("juese"):
+            self.log.write_log("info", "开始进行前置角色识别")
+            self.jueseshibie(var=var)
+            mv.setflag("juese")
+        import DataCenter
+        DataCenter.AR = self.AR
+        DataCenter.LoadPCRData()
+        arg_strs = [f"--n={n}"]
+        if max_tu!="max":
+            arg_strs.append(f"--max-tu={max_tu}")
+        arg_str = " ".join(arg_strs)
+        self.log.write_log("info","正在规划最佳刷图方案……")
+        out_sorted, out_map = DataCenter.ZB_ST_ADVICE(arg_str, verbose=False)
+        NMap = []
+        for i in out_sorted:
+            a, b = i.split("-")
+            if int(a) < 11:
+                continue
+            c = out_map[i]
+            if int(a)>MAX_MAP:
+                self.log.write_log("warning",f"刷图规划中含有无法刷的图：{a}-{b}，跳过该图！你可以设置max_tu参数来避免这种情况。")
+                continue
+            NMap += [f"{a}-{b}-{c}"]
+        # print("Will be shua:", NMap)
+        self.log.write_log("info",f"即将按以下顺序进行刷图：{','.join(NMap)}")
+
+        self.shuatu_daily_ocr(NMap, daily_tili=daily_tili,xianding=xianding,not_three_star_action="skip",
+                              can_not_enter_action="skip",zero_star_action="skip",var=var)
