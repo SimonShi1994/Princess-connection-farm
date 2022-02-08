@@ -1,3 +1,4 @@
+from core.MoveRecord import MoveRestartException
 from core.constant import MAIN_BTN, DXC_ELEMENT
 from core.pcr_checker import LockMaxRetryError, ContinueNow
 from ..fight.fightinfo_base import FightInfoBase
@@ -59,17 +60,16 @@ class ShengJiDiaoCha(DiaoChaXuanGuanBase):
         super().__init__(*args, **kwargs)
         self.scene_name = "ShengJiDiaoCha"
         self.feature = self.fun_feature_exist(MAIN_BTN["shengji_title"])
-        self.initFC = lambda FC: FC.getscreen().add_sidecheck(self.shenji_sidecheck)
+        self.initPC = self.shenji_precheck
 
-    def shenji_sidecheck(self, screen):
+
+    def shenji_precheck(self, screen):
         if self.is_exists(MAIN_BTN["karin_middle"], screen=screen) or self.is_exists(MAIN_BTN["kailu_middle"],
                                                                                      screen=screen):
             self.chulijiaocheng(turnback=None)
-            # self.goto_maoxian().goto_diaocha().goto_shengji()
             self.clear_initFC()
-            raise ContinueNow(name="restart")
-
-        return False
+            self._a.restart_this_task()
+        return screen
 
 
 class ShenDianDiaoCha(DiaoChaXuanGuanBase):
@@ -77,12 +77,11 @@ class ShenDianDiaoCha(DiaoChaXuanGuanBase):
         super().__init__(*args, **kwargs)
         self.scene_name = "ShenDianDiaoCha"
         self.feature = self.fun_feature_exist(MAIN_BTN["shendian_title"])
-        self.initFC = lambda FC: FC.getscreen().add_sidecheck(self.shendian_sidecheck)
+        self.initPC = self.shendian_sidecheck
 
     def shendian_sidecheck(self, screen):
         if self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen):
             self.chulijiaocheng(turnback=None)
-            # self.goto_maoxian().goto_diaocha().goto_shengji()
             self.clear_initFC()
-            raise ContinueNow(name="restart")
-        return False
+            self._a.restart_this_task()
+        return screen

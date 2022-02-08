@@ -118,10 +118,15 @@ def local_ocr3():
 @ocr_api.route('/local_ocr4/', methods=['POST'])
 def local_ocr4():
     # 接收图片
-    upload_file = request.files.get('file')
+    upload_file = request.form.get('file')
     # print(upload_file)
+    allowstr = request.form.get('allowstr')
+    if allowstr != 'null' and allowstr != 'None':
+        allowstr = allowstr
+    else:
+        allowstr = None
     if upload_file:
-        result = easyocr_reader.readtext(upload_file.read(), detail=0)
+        result = easyocr_reader.readtext(upload_file.read(), allowlist=allowstr,detail=0)
         # print(result)
         if type(result) is list:
             return str(result).replace("'", '').replace('[', '').replace(']', '')
@@ -182,24 +187,24 @@ def pcrocr_ocr():
     # print(request.form.get('voc'))
     voc = request.form.get('voc')
     do_pre = request.form.get('do_pre')
-    # print(img,' ',voc,' ',do_pre)
+    # print("VOC:",voc,type(voc))
+    # print("DO_PRE:",do_pre,type(do_pre))
     # from pcrocr.utils import base64_decode
     # print(base64_decode(img))
 
-    if voc != 'null' or voc != 'None':
+    if voc != 'null' and voc != 'None':
         voc = voc
     else:
         voc = None
 
-    if do_pre != 'True' or do_pre != 'true':
+    if do_pre != 'True' and do_pre != 'true':
         do_pre = False
     else:
         do_pre = True
-
     if img:
         try:
             result = pcrocr(x=img, voc=voc, do_pre=do_pre)
-            return str(result)
+            return result['text']
         except FileNotFoundError as e:
             raise Exception('PCR特化OCR发生了错误，原因为:{}'.format(e))
     return 400

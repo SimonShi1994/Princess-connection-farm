@@ -1,6 +1,6 @@
 from cnocr import gen_model
 import torch.nn as nn
-def pcr_basic_model(model_name="densenet_lite_136-gru",cuda=True,voc_dir=""):
+def pcr_basic_model(model_name="densenet_lite_136-gru",cuda=True,voc_dir="."):
     V = []
     with open(f"{voc_dir}/label_basic.txt","r",encoding="utf-8") as f:
         for v in f:
@@ -11,6 +11,7 @@ def pcr_basic_model(model_name="densenet_lite_136-gru",cuda=True,voc_dir=""):
     #     )   # Enable 3 channels.
     # model.forward = lambda x:model.forward(*x)
     return model if not cuda else model.cuda()
+
 class MyLoss(nn.Module):
     def __init__(self):
         super().__init__()

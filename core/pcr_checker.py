@@ -678,6 +678,15 @@ class ContinueNow(Exception):
         super().__init__()
         self.name = name
 
+class BreakNow(Exception):
+    # 立即跳出，不过不会触发任何异常
+    # value：返回值
+    def __init__(self, name=None, value=None):
+        super().__init__()
+        self.name = name
+        self.value = value
+
+
 class TooMuchRetry(Exception):
     pass
 
@@ -754,6 +763,9 @@ class PCRRetry:
                     if r.name == self.name:
                         time.sleep(self.delay)
                         continue
+                except BreakNow as r:
+                    if r.name == self.name:
+                        return r.value
                 except Exception as e:
                     if self.include_errors in [None, False]:
                         raise e

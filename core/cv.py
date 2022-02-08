@@ -210,7 +210,7 @@ class UIMatcher:
                     l += [(res[i, j], _x, _y, _at)]
                     if debug:
                         cls._log.write_log('debug',
-                                           f"p({_x},{_y},img={template_path if type(template_path) is str else '...'},at={_at}), \nCCOEFF={res[i, j]}")
+                                           f"p({_x},{_y},img=\"{template_path if type(template_path) is str else '...'}\",at={_at}), \nCCOEFF={res[i, j]}")
         return sorted(l, reverse=True)
 
     @staticmethod

@@ -81,6 +81,11 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 self.log.write_log("info", f"正在执行： {title} 记录存放目录： {rec_addr}")
                 # 标记当前执行的位置！
                 self.task_current(title)
+                # 防止泄露全局影响
+                self.ES.FCs.clear()  # 清除全部ES
+                self.headers_group.clear()  # 清除全部header
+                self.register_basic_ES()
+                self.prechecks.clear()
                 flag = False
                 try:
                     self.__getattribute__(funname)(**kwargs, var=var)
@@ -156,10 +161,6 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         before_ = True
         retry = 0
         while retry <= max_retry:
-            # 防止泄露全局影响
-            self.ES.FCs.clear()  # 清除全部ES
-            self.headers_group.clear()  # 清除全部header
-            self.register_basic_ES()
             try:
                 if before_:
                     self.task_current("登录")

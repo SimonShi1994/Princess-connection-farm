@@ -114,21 +114,64 @@ def generate_random():
               random.choice(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'] + ['1'] * 5) * (length // 4 + 1)
     return ''.join(lst)
 
+def generate_confused_words():
+    MODE = random.randint(0,2)
+    if MODE == 0:
+        words_list = "117/117/117/4"
+    elif MODE == 1:
+        words_list = "555xxx1"
+    else:
+        words_list = "3838381"
+    length = random.randint(3, 6)
+    lst = []
+    for ind in range(length):
+        lst.append(random.choice(words_list))
+    return ''.join(lst)
+
+
+def generate_random_with_words():
+    length = random.randint(1, 7)
+    words_list = "0123456789等级品战力张使用位x"
+    lst = []
+    for ind in range(length):
+        lst.append(random.choice(words_list))
+    return ''.join(lst)
+
+def generate_normal_words():
+    MODE = random.randint(0,5)
+    if MODE == 0:
+        return f"等级{random.randint(1,999)}"
+    elif MODE == 1:
+        return f"战力{random.randint(0,9999999)}"
+    elif MODE == 2:
+        return f"品级{random.randint(1,99)}"
+    elif MODE == 3:
+        return f"使用{random.randint(1,9999)}张"
+    elif MODE == 4:
+        return f"{random.randint(1,999999)}位"
+    else:
+        return f"x{random.randint(1, 9999999)}张"
 
 def generate_everything():
     funcs = [
-        generate_random,
-        generate_random,
-        generate_random,
-        generate_random,
-        generate_random,
-        generate_random,
-        generate_random,
-        generate_random,
+        # generate_normal_words,
+        # generate_random_with_words,
+        # generate_random,
+        # generate_random,
+        # generate_random,
+        # generate_random,
+        # generate_random,
+        # generate_random,
+        # generate_random,
+        # generate_random,
         generate_random_time,
         generate_random_x_int,
-        generate_random_mana,
+        # generate_random_mana,
         generate_random_slash,
+        generate_confused_words,
+        generate_confused_words,
+        generate_confused_words,
+        generate_confused_words,
     ]
     mode = random.randint(0, len(funcs) - 1)
     return funcs[mode]()
@@ -136,7 +179,7 @@ def generate_everything():
 
 if __name__ == "__main__":
     # 人造数据生成
-    DIR = "artifact"
+    DIR = "artifactC"
 
     os.makedirs(f"{DIR}", exist_ok=True)
     # 读取img/juese/plate作为随机背景
@@ -156,7 +199,7 @@ if __name__ == "__main__":
     del lsts
 
     # 生成数据集
-    n_samples = 20000
+    n_samples = 10000
     RECs = {
         "filename": [],
         "result": [],
@@ -167,18 +210,18 @@ if __name__ == "__main__":
         # 随机背景
         bc = random.choice(pics)
         # 随机字号
-        font_size = random.randint(15, 35)
+        font_size = random.randint(10, 20)
         # 随机间距
-        spacing = random.randint(4, 8)
+        spacing = random.randint(4, 12)
         # 随机字体
         font_type = random.choice(all_fonts)
         # 随机颜色
-        font_color = tuple(random.randint(0, 128) for _ in range(3))
+        font_color = tuple(random.randint(0, 100) for _ in range(3))
         # 生成图片
         pic = generate_from_text(
             text=text,
             pic=bc,
-            board=random.choice([True, False, False]),
+            board=random.choice([True, True, True, False]),
             fontname=font_type,
             fontsize=font_size,
             fontcolor=font_color,
@@ -191,4 +234,4 @@ if __name__ == "__main__":
         RECs["result"].append(result_filter(text))
 
     df = pd.DataFrame(RECs)
-    df.to_csv(f"{DIR}/train.tsv", sep="\t", header=False, index=False)
+    df.to_csv(f"{DIR}/data.tsv", sep="\t", header=False, index=False)

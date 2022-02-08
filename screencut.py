@@ -1,3 +1,4 @@
+import os
 from tkinter import StringVar, Entry, Tk, Button, mainloop
 
 import adbutils
@@ -211,7 +212,7 @@ class AutomatorDebuger(Automator):
                 y2, y1 = plt.ylim()
                 x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
                 addr = e.get()
-                if verbose: print(f"p({(x1 + x2) // 2},{(y1 + y2) // 2},img=\"{addr}\",at=({x1},{y1},{x2},{y2}))")
+                if verbose: print(f"{os.path.split(addr)[:-4]}: p({(x1 + x2) // 2},{(y1 + y2) // 2},img=\"{addr}\",at=({x1},{y1},{x2},{y2})),")
                 img.cut(x1, y1, x2, y2).save(addr)
                 try:
                     img.cut(x1, y1, x2, y2).save(addr)
@@ -399,6 +400,7 @@ if __name__ == "__main__":
                 print("where screen template threshold：以threshold为阈值，求template在screen中的未知（中点和x1,y1,x2,y2）")
                 print("login account [password]  在开始界面进行登录，如果不输入password，则默认使用users中储存的密码。")
                 print("input string 清空当前输入并且输入string")
+                print("initpcrocr： 初始化PCROCR")
                 print("exec 进入编程调试模式")
                 print("----")
                 print("在图片显示界面：")
@@ -406,8 +408,12 @@ if __name__ == "__main__":
                 print("右键拖动： 框选小区域")
                 print("单击中键： 把当前框选的小区域保存为新的图片")
                 print("双击左键： 框选复位")
+                print("o : 对选定区域调用ocr_center")
+                print("12340 ： initpcrocr后，对选定区域进行指定模式的OCR检测")
             elif order == "init":
                 a.Init()
+            elif order == "initpcrocr":
+                a.InitPCROCR()
             elif order == "connect":
                 if len(cmds) == 2:
                     a.Connect(cmds[1])

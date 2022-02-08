@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.7.20220205
+# Princess connection 公主连结农场脚本v2.8.20220207
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -9,6 +9,10 @@
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
 **支持模拟器多开**
+
+**使用多进程优化+异步Python性能**
+
+**支持异常报错卡住自动重启**
 
 **支持自动填写验证码**
 
@@ -72,8 +76,8 @@
 
 - [x] 刷经验
 - [x] 副本扫荡
-- [ ] 初始化
-- [ ] 自动推图
+- [x] 初始化
+- [x] 自动推图
 - [x] 自动升级  
 - [x] 借人推图
 
@@ -83,7 +87,7 @@
 
 - **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
-- 【非强制性】本地OCR 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
+- 【不推荐】本地OCR 1/2 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
 
 - 自行打开`requirements.txt`确认依赖无误
 
@@ -163,7 +167,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-2. 感谢CyiceK(https://github.com/1076472672) 、Dr-Bluemond(https://github.com/Dr-Bluemond) 、TheAutumnOfRice(https://github.com/TheAutumnOfRice) 、UVJkiNTQ(https://github.com/UVJkiNTQ)、对本项目的倾力帮助。
+2. 感谢[CyiceK](https://github.com/1076472672) 、[Dr-Bluemond](https://github.com/Dr-Bluemond) 、[TheAutumnOfRice](https://github.com/TheAutumnOfRice) 、[UVJkiNTQ](https://github.com/UVJkiNTQ)以及其他众多贡献者对本项目的倾力帮助。
 
 3. **来个 star 吧(*/ω＼*)，有问题请提交issue**
 
@@ -194,6 +198,42 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2022/02/07 By CyiceK
+
+- 优化验证码图片截图识别
+- easyocr支持allowlist参数
+- 依赖安装优化
+- 内置最新的完整的谷歌安装开发sdk（adb）
+- 本地ocr核心逐步移动到easyocr（本地4）+pcrocr上，比老muggle_ocr（本地1），内存占用比大约为20M/130M
+
+2022/02/07 By TheAutumnOfRice
+
+- 模块追加
+  - 新增pcrocr，专门为bcr量身定制，设置中允许Rank和图号使用OCR获得而不是图像匹配。
+    ！需要cnocr库！
+  
+- 功能更新
+  - 重写角色识别，修复了六星无法识别的问题。
+  - 修复了自动推图所用的自动升级，增加了收藏顺序,允许装备升星。通用刷图允许失败升级功能。
+  - 新增通用OCR推图`s9-t`，对s9进行了封装
+  - 允许VH刷图/推图；允许设置碎片达到目标数则跳过图
+  - 初始化、主线推图等功能因为自动升级的原因现在恢复可用状态
+  
+- BUG修复
+  - 修复了限定商店卡ok_btn的BUG
+  - 修复买体力后不更新可刷图flag的BUG
+  - 修复刷图规划无图可刷时的BUG
+  - 修复基本信息获取，适配pcrocr
+  
+- 配置更新
+  - debuglog增加一些过滤器config
+  - 优化screencut调试体验
+  
+- 框架升级
+  - _base新增lock_change，用于检测区域变化。
+  - 新增prechecks，可以在getscreen后即时操作。
+  - PCRRetry新增BreakNow异常，用于直接跳转到函数尾
+
 
 2022/02/04 By UVJkiNTQ
 

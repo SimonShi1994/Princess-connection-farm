@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 
 from core.constant import MAOXIAN_BTN, ZHUXIAN_ID, ZHUXIAN_SECOND_ID, DXC_ELEMENT, NORMAL_COORD, HARD_COORD
 from core.pcr_checker import retry_run, Checker, LockError
-from core.pcr_config import save_debug_img
+from core.pcr_config import save_debug_img, use_pcrocr_to_detect_zhuxian
 from scenes.errors import MaoxianRecognizeError, ZhuxianIDRecognizeError
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian
 from scenes.root.seven_btn import SevenBTNMixin
@@ -11,6 +11,7 @@ from scenes.root.seven_btn import SevenBTNMixin
 if TYPE_CHECKING:
     from scenes.zhuxian.zhuxian_normal import ZhuXianNormal
     from scenes.zhuxian.zhuxian_hard import ZhuXianHard
+    from scenes.zhuxian.zhuxian_vh import ZhuXianVH
     from scenes.zhuxian.zhuxian_msg import BuyTiliBox
 
 
@@ -25,7 +26,7 @@ class ZhuXianBase(SevenBTNMixin):
             if not self.is_exists(MAOXIAN_BTN["ditu"], screen=screen):
                 return False
             state = self.check_maoxian_screen(screen, is_raise=False)
-            return state in [1, 2]
+            return state in [1, 2, 3]
 
         self.feature = feature
         self.initFC = self.outside_fc()
@@ -116,12 +117,36 @@ class ZhuXianBase(SevenBTNMixin):
         """
 
         # self.Drag_Left()  # 保证截图区域一致
+        sc = [screen]
         def fun():
+            if sc[0] is None:
+                sc[0] = self.getscreen()
+
+            if use_pcrocr_to_detect_zhuxian:
+                at = (60, 56, 88, 74)  # 前两个数字？
+                out = self.ocr_center(*at,screen,custom_ocr="pcr",allowstr=None)
+                lst = []
+                for ch in out:
+                    if len(lst)==2:
+                        break
+                    if ch in "0123456789":
+                        lst.append(ch)
+                    else:
+                        break
+                if len(lst)==0:
+                    self._raise(ZhuxianIDRecognizeError)
+                if lst[0]=="0":
+                    self._raise(ZhuxianIDRecognizeError)
+                out = int("".join(lst))
+                self.maoxian_id = out
+                return out
+
             id = self.check_dict_id(ZHUXIAN_ID, screen, diff_threshold=0)
             for second in ZHUXIAN_SECOND_ID:
                 if id in second:
                     id = self.check_dict_id(ZHUXIAN_SECOND_ID[second], screen, diff_threshold=0.1)
                     break
+            sc[0] = None
             if id is None:
                 self._raise(ZhuxianIDRecognizeError)
             self.maoxian_id = id
@@ -160,6 +185,14 @@ class ZhuXianBase(SevenBTNMixin):
         def gotofun():
             self.click(MAOXIAN_BTN["hard_on"])
         return self.goto(ZhuXianHard,gotofun,use_in_feature_only=True)  # Type:ZhuXianHard
+
+    def goto_vh(self) -> "ZhuXianVH":
+        from scenes.zhuxian.zhuxian_vh import ZhuXianVH
+        def gotofun():
+            self.click(MAOXIAN_BTN["vh_off"])
+
+        return self.goto(ZhuXianVH, gotofun, use_in_feature_only=True)
+
 
     def goto_buytili(self) -> "BuyTiliBox":
         from scenes.zhuxian.zhuxian_msg import BuyTiliBox

@@ -43,6 +43,7 @@ class PCRSceneBase:
         self.scene_name = "BaseScene"
         self._a.scenes += [self]
         self.initFC = None
+        self.initPC = None
         self.feature = None  # screen -> True/False
         self._raise = self._a._raise
         self.check_ocr_running = self._a.check_ocr_running
@@ -64,6 +65,7 @@ class PCRSceneBase:
         self.not_loading = self._a.not_loading
         self.getscreen = self._a.getscreen
         self.lock_fun = self._a.lock_fun
+        self.lock_change = self._a.lock_change
         self.chulijiaocheng = self._a.chulijiaocheng
         self.check_dict_id = self._a.check_dict_id
         self.ocr_center = self._a.ocr_center
@@ -142,27 +144,31 @@ class PCRSceneBase:
         # Clear Other Scenes InitFC
         self._a.clear_all_initFC(self.scene_name)
         self._a.scenes = [self]
-        if self.initFC is not None:
-            self.set_initFC()
-            # self._a.ES.register(self.initFC, group=self.scene_name)
+        self.set_initFC()
         if self.feature is not None:
             self._a.getFC().getscreen().wait_for_loading(). \
                 add(Checker(featurein, name=f"{self.scene_name} - Feature In"), rv=True).lock(timeout=timeout)
         return self
 
     def clear_initFC(self):
-        if isinstance(self.initFC, ElementChecker):
-            self._a.ES.clear(self.scene_name)
-        else:
-            self._a.clearFCHeader(group_name=self.scene_name)
+        if self.initPC is not None:
+            self._a.remove_precheck(self.scene_name)
+        if self.initFC is not None:
+            if isinstance(self.initFC, ElementChecker):
+                self._a.ES.clear(self.scene_name)
+            else:
+                self._a.clearFCHeader(group_name=self.scene_name)
 
         return self
 
     def set_initFC(self):
-        if isinstance(self.initFC, ElementChecker):
-            self._a.ES.register(self.initFC, self.scene_name)
-        else:
-            self._a.setFCHeader(group_name=self.scene_name, FCFun=self.initFC)
+        if self.initPC is not None:
+            self._a.register_precheck(self.scene_name,self.initPC)
+        if self.initFC is not None:
+            if isinstance(self.initFC, ElementChecker):
+                self._a.ES.register(self.initFC, self.scene_name)
+            else:
+                self._a.setFCHeader(group_name=self.scene_name, FCFun=self.initFC)
         return self
 
     def no_initFC(self):

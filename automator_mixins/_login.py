@@ -175,17 +175,18 @@ class LoginMixin(ToolsMixin):
                     # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
                     self.getscreen()
                     if imgfindcaptcha_is_work:
-                        if self.is_exists(START_UI["anying"], at=(348, 162, 621, 439)) and self.is_exists(
-                                START_UI["wenzidianji"],
-                                at=(342, 94, 622, 162)):
-                            if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(
-                                    START_UI["yanzhengshibai"],
-                                    at=(618, 399, 659, 440)):
-                                screen = self.getscreen()
-                                screen = screen[1:575, 157:793]
-                                # 原来的 456, 489
-                                # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
-                                break
+                        # if self.is_exists(START_UI["anying"], threshold=0.78,
+                        #                   at=(348, 162, 621, 439)) and self.is_exists(START_UI["wenzidianji"],
+                        #                                                               at=(342, 94, 622, 162)):
+                        #     if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(
+                        #             START_UI["yanzhengshibai"],
+                        #             at=(618, 399, 659, 440)):
+                        if self.wait_for_stable(similarity=0.95, delay=0.3, at=(348, 162, 621, 439)):
+                            screen = self.getscreen()
+                            screen = screen[1:575, 157:793]
+                            # 原来的 456, 489
+                            # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
+                            break
                         elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                             screen = self.getscreen()
                             break
