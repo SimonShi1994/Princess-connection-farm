@@ -1,3 +1,4 @@
+import base64
 import random
 import time
 import os
@@ -19,6 +20,10 @@ for ocr_mode in ocr_list:
     try:
         if len(ocr_mode) == 0:
             continue
+
+        # 强制加载
+        pcr_ocr = PCROCRBasic().ocr
+
         if ocr_mode[:2] != "网络":
             if ocr_mode == "本地1":
                 # 这一行代码用于关闭tensorflow的gpu模式（如果使用，内存占用翻几倍）
@@ -43,9 +48,6 @@ for ocr_mode in ocr_list:
                 easyocr_reader = easyocr.Reader(['ch_sim', 'en'], gpu=False,
                                                 verbose=False)  # this needs to run only once to load the model into memory
         else:
-            # 强制加载
-            pcrocr = PCROCRBasic().ocr
-
             if ocr_mode == "网络1":
                 import queue
 
@@ -118,7 +120,7 @@ def local_ocr3():
 @ocr_api.route('/local_ocr4/', methods=['POST'])
 def local_ocr4():
     # 接收图片
-    upload_file = request.form.get('file')
+    upload_file = base64.b64decode(request.form.get('file'))
     # print(upload_file)
     allowstr = request.form.get('allowstr')
     if allowstr != 'null' and allowstr != 'None':
@@ -126,10 +128,11 @@ def local_ocr4():
     else:
         allowstr = None
     if upload_file:
-        result = easyocr_reader.readtext(upload_file.read(), allowlist=allowstr,detail=0)
+        result = easyocr_reader.readtext(upload_file, allowlist=allowstr, detail=0)
         # print(result)
         if type(result) is list:
             return str(result).replace("'", '').replace('[', '').replace(']', '')
+        return str(result)
     return 400
 
 
@@ -203,7 +206,7 @@ def pcrocr_ocr():
         do_pre = True
     if img:
         try:
-            result = pcrocr(x=img, voc=voc, do_pre=do_pre)
+            result = pcr_ocr(x=img, voc=voc, do_pre=do_pre)
             return result['text']
         except FileNotFoundError as e:
             raise Exception('PCR特化OCR发生了错误，原因为:{}'.format(e))
