@@ -167,7 +167,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-2. 感谢[CyiceK](https://github.com/1076472672) 、[Dr-Bluemond](https://github.com/Dr-Bluemond) 、[TheAutumnOfRice](https://github.com/TheAutumnOfRice) 、[UVJkiNTQ](https://github.com/UVJkiNTQ)以及其他众多贡献者对本项目的倾力帮助。
+2. 感谢[CyiceK](https://github.com/1076472672) 、[Dr-Bluemond](https://github.com/Dr-Bluemond) 、[TheAutumnOfRice](https://github.com/TheAutumnOfRice) 、[UVJkiNTQ](https://github.com/UVJkiNTQ) 以及其他众多贡献者对本项目的倾力帮助。
 
 3. **来个 star 吧(*/ω＼*)，有问题请提交issue**
 
@@ -202,6 +202,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 2022/02/08 By TheAutumnOfRice
 
 - 新增大号自动刷图规划`s9-auto`功能
+- 修复购买mana limit_today的ocr问题
 - 修复探索中一次不扫荡满的问题
 - 修复图号识别中second_id识别出错的BUG
 
