@@ -722,7 +722,8 @@ VALID_TASK = ValidTask() \
     .add('r1', "gonghuizhijia", "家园领取", "收取公会之家的奖励",
          [TaskParam("auto_update", bool, "自动升级家具", "自动升级家具，家具的位置为游戏默认位置", False), ]) \
     .add("r2", "mianfeiniudan", "免费扭蛋", "抽取免费扭蛋") \
-    .add("r3", "mianfeishilian", "免费10连", "抽取免费十连（如果有的话）") \
+    .add("r3", "mianfeishilian", "免费10连", "抽取免费十连（如果有的话）",
+         [TaskParam("select", int, "附奖选择", "选择附奖角色（请输入1或者2）", 1)]) \
     .add("r4", "shouqu", "收取礼物", "收取全部礼物") \
     .add("r5", "shouqurenwu", "收取任务", "收取全部任务奖励。\n如果日常任务和主线任务都存在，需要收取两遍。") \
     .add("r6", "goumaitili", "购买体力", "购买一定次数的体力",
