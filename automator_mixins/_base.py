@@ -1832,9 +1832,10 @@ class BaseMixin:
                 part = cv2.GaussianBlur(part, (3, 3), 1)  # 高斯滤波
             if not allowstr:
                 allowstr = 'None'
-            img_binary = cv2.imencode('.png', part)[1].tobytes()
-            files = {'file': img_binary, 'allowstr': allowstr}
-            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr4/", files=files)
+            img_binary = cv2.imencode('.jpg', part)[1].tostring()  # 转成base64编码（误）
+            img_binary = base64.b64encode(img_binary)
+            data = {'file': img_binary, 'allowstr': allowstr}
+            local_ocr_text = requests.post(url="http://127.0.0.1:5000/ocr/local_ocr4/", data=data)
             if debug:
                 self.log.write_log('debug', '本地OCR4识别结果：%s' % local_ocr_text.text)
             return local_ocr_text.text

@@ -181,7 +181,7 @@ class LoginMixin(ToolsMixin):
                         #     if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(
                         #             START_UI["yanzhengshibai"],
                         #             at=(618, 399, 659, 440)):
-                        if self.wait_for_stable(similarity=0.95, delay=0.3, at=(348, 162, 621, 439)):
+                        if self.wait_for_stable(similarity=0.95, delay=0.8, at=(348, 162, 621, 439)):
                             screen = self.getscreen()
                             screen = screen[1:575, 157:793]
                             # 原来的 456, 489
