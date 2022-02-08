@@ -69,18 +69,7 @@ class RoutineMixin(ShuatuBaseMixin):
             return
         self.lock_home()
         self.lock_img(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
-        while True:
-            # 跳过抽奖提示
-            time.sleep(5)
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/niudan_sheding.jpg'):
-                self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
-                break
-            else:
-                time.sleep(1)
-                self.click(473, 436)  # 手动点击
-                time.sleep(2)
-                break
+        self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
         state = self.lock_img({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
                               elseclick=NIUDAN_BTN["putong"], retry=5, is_raise=False)
         if not state:
@@ -98,25 +87,55 @@ class RoutineMixin(ShuatuBaseMixin):
         self.AR.set("time_status", ts)
         self.lock_home()
 
-    def mianfeishilian(self):
+    def mianfeishilian(self, select=None):
+        if select is None:
+            select = 1
         # 免费十连，2022/1/1
         self.lock_home()
-        self.click_btn(MAIN_BTN["niudan"], until_disappear=MAIN_BTN["liwu"])
-        while True:
-            # 跳过抽奖提示
-            time.sleep(5)
-            screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/niudan_sheding.jpg'):
-                self.guochang(screen_shot_, ['img/niudan_sheding.jpg'], suiji=0)
-                break
+        # 正常进入部分，附奖扭蛋提示会在10s内消失
+        self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
+        # 以下代码为备用，当有提示不消失时可以启用
+        # while True:
+        #     self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
+        #     self.fclick(1, 1)  # 处理某些提示
+        #     if self.lock_img(NIUDAN_BTN["gem"]):
+        #         break
+        #     else:
+        #         continue
+
+        # 附奖设置
+        self.fclick(423, 433)
+
+        if self.lock_img(NIUDAN_BTN["jiangpinneirong"]):
+            # 有附奖扭蛋
+            r = self.img_where_all("img/niudan/xuanze.bmp")
+            if r == []:
+                self.log.write_log("info", "已指定附奖。")
             else:
-                time.sleep(1)
-                self.click(473, 436)  # 手动点击
-                time.sleep(2)
-                break
+                if select == 1:
+                    xcor = r[0]
+                    ycor = r[1]
+                    self.click(xcor, ycor)
+
+                if select == 2:
+                    xcor = r[3]
+                    ycor = r[4]
+                    self.click(xcor, ycor)
+                self.lock_img(NIUDAN_BTN["jiyisuipianxuanze"])
+                self.click(589, 365)
+                self.lock_img(NIUDAN_BTN["xuanzezhong"])
+                self.log.write_log("info", "设定附奖完成。")
+            self.fclick(1, 1)
+        else:
+            self.log.write_log("info", "非附奖扭蛋期间。")
 
         while True:
-            if self.is_exists(NIUDAN_BTN["mianfeishilian"]):  # 仅当有免费十连时抽取免费十连
+            fc = [255, 89, 74]
+            bc = [255, 247, 247]
+            xcor = 917
+            ycor = 302
+            youmianfei = self.check_color(fc, bc, xcor, ycor, color_type="rgb")
+            if youmianfei:  # 仅当有免费十连时抽取免费十连
                 self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
                 self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
                 time.sleep(1.5)

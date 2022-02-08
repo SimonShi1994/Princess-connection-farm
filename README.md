@@ -198,6 +198,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2022/02/07 By UVJkiNTQ
+
+- r3免费十连，尝试性添加对附奖扭蛋的选取。默认选第一个角色。
+
 2022/02/07 By CyiceK
 
 - 优化验证码图片截图识别

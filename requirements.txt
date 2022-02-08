@@ -59,8 +59,8 @@ skorch==0.11.0
 
 
 requests~=2.27.1
-Pillow~=9.0.1
-numpy~=1.22.2
+Pillow~=8.2
+numpy~=1.19.2
 future~=0.18.2
 Werkzeug~=2.0.2
 argparse~=1.4.0
