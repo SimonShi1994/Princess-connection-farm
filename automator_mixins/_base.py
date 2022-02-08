@@ -805,7 +805,7 @@ class BaseMixin:
             if debug:
                 self.log.write_log('debug', str(tu))
                 self.log.write_log('debug', str(l))
-            if l[0] < max_threshold or l[0] - l[1] < diff_threshold:
+            if l[0] < max_threshold or (len(l)>1 and l[0] - l[1] < diff_threshold):
                 time.sleep(0.5)
                 continue
             else:

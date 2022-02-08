@@ -192,11 +192,11 @@ class ValidTask:
         py = None
         try:
             if debug:
-                self.__log.write_log('debug',f"Loading pymodule:{pymodule}")
+                self.__log.write_log('debug', f"Loading pymodule:{pymodule}")
             py = getcustomtask(pymodule)
         except Exception as e:
             if debug:
-                self.__log.write_log('debug',f"读取自定义模块失败！ {e}")
+                self.__log.write_log('debug', f"读取自定义模块失败！ {e}")
             return
         if not getattr(py, "__enable__", False):
             return
@@ -204,7 +204,7 @@ class ValidTask:
         custom_T = valid.T
         for abbr in custom_T:
             if debug:
-                self.__log.write_log('debug',f"添加自定义：{abbr}")
+                self.__log.write_log('debug', f"添加自定义：{abbr}")
             for illegal in ["self", "var", "funcname", "pymodule"]:
                 assert illegal not in custom_T[abbr]["param_dict"], "自定义变量中不能出现" + illegal + "!"
             self.T[abbr] = custom_T[abbr].copy()
@@ -503,13 +503,14 @@ class TeamInputer(InputBoxBase):
                 return f"队号A-B中队伍B必须为1~3的整数，但{i}不满足要求"
         return ""
 
-TeamOrderInputer= StrInputer(desc="none - 不改变队伍，使用上次队伍。\n"
-                                             "zhanli   -   按照战力排序取前五。\n"
-                                             "dengji   -   按照等级排序取前五。\n"
-                                             "xingshu   -   按照星级排序取前五。\n"
-                                             "shoucang -   按照收藏排序取前五。\n"
-                                             "(A)-(B) - 使用队伍编组A-B，且1<=A<=5,1<=B<=3。\n"
-                                             "Example:  3-1  # 编组3队伍1.")
+
+TeamOrderInputer = StrInputer(desc="none - 不改变队伍，使用上次队伍。\n"
+                                   "zhanli   -   按照战力排序取前五。\n"
+                                   "dengji   -   按照等级排序取前五。\n"
+                                   "xingshu   -   按照星级排序取前五。\n"
+                                   "shoucang -   按照收藏排序取前五。\n"
+                                   "(A)-(B) - 使用队伍编组A-B，且1<=A<=5,1<=B<=3。\n"
+                                   "Example:  3-1  # 编组3队伍1.")
 
 """
 class MeiRiHTuInputer(ShuatuBaseBox):
@@ -754,7 +755,7 @@ VALID_TASK = ValidTask() \
                     inputbox=TeamOrderInputer),
           ]) \
     .add("r10", "shengjidiaocha", "圣迹调查", "进行圣迹调查",
-        [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
                     inputbox=TeamOrderInputer)]) \
     .add("r11", "shouqunvshenji", "收取女神祭", "收取女神祭") \
     .add("r12", "shendiandiaocha", "神殿调查", "进行神殿调查",
@@ -778,7 +779,7 @@ VALID_TASK = ValidTask() \
                                          "dengji:按照等级降序\n"
                                          "shoucang:按照收藏降序", "xingshu")]) \
     .add("t3", "get_base_info", "OCR获取账号信息【识别精度较低】", "识别会单独消耗时间，大约几分钟\n利用OCR获取等级/名字/行会名/mana/宝石/战力/"
-                                             "扫荡券，并输出成xls表格到xls文件夹\n注意：请不要在生成表格的期间打开表格！",
+                                                     "扫荡券，并输出成xls表格到xls文件夹\n注意：请不要在生成表格的期间打开表格！",
          [TaskParam("acc_nature", int, "XLS输出格式", "0：小号、农场号\n1：大号"),
           TaskParam("base_info", bool, "账号基础信息", "是否获取账号基本信息（等级/mana/宝石）"),
           TaskParam("introduction_info", bool, "简介基础信息", "是否获取账号简介基本信息（等级/全角色战力/所属行会/玩家ID）"),
@@ -797,7 +798,7 @@ VALID_TASK = ValidTask() \
     .add("s1-3", "shuajingyan3", "刷经验3-1【别用，除非OCR】", "刷图3-1，比较节省刷图卷。",
          [TaskParam("map", int, "废弃参数", "随便输入一个整数")]) \
     .add("s1-s", "shuajingyan_super", "超级刷1-1【别用】", "【可能有BUG】扫荡券用完了就采用手刷，有扫荡券就再用扫荡券\n"
-                                                "一直刷到倾家荡产，体力耗尽！",
+                                                    "一直刷到倾家荡产，体力耗尽！",
          [TaskParam("mode", int, "刷图模式", "0：纯扫荡券\n"
                                          "1：先扫荡券，无法扫荡时手刷\n"
                                          "2：纯手刷\n", 1),
@@ -810,11 +811,11 @@ VALID_TASK = ValidTask() \
           TaskParam("use_ocr", bool, "使用OCR", "是否使用OCR来优化刷图", False)]) \
     .add("s5", "chushihua", "初始化【已经修复】", "从1-3自动推到3-1，已经推过的部分不会再推。") \
     .add("s5-2", "chushihua2", "快速初始化【已经修复】", "从1-3自动推到3-1，已经推过的部分不会再推。\n"
-                                        "先刷经验后推图，效率更高，但是会刷很多次1-1.") \
+                                              "先刷经验后推图，效率更高，但是会刷很多次1-1.") \
     .add("s6", "zidongtuitu_normal", "自动推Normal图【已经修复】", "使用等级前五的角色自动推Normal图\n"
-                                                       "如果某一关没有三星过关，则强化重打。\n"
-                                                       "若强化了还是打不过，则退出。\n"
-                                                       "若没体力了，也退出。",
+                                                         "如果某一关没有三星过关，则强化重打。\n"
+                                                         "若强化了还是打不过，则退出。\n"
+                                                         "若没体力了，也退出。",
          [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程最多购买体力次数（每天）", 3),
           TaskParam("auto_upgrade", int, "自动升级设置", "开启后，如果推图失败，则会进入升级逻辑"
                                                    "如果升级之后仍然推图失败，则放弃推图"
@@ -823,9 +824,9 @@ VALID_TASK = ValidTask() \
                                                    "2: 自动强化并且会补全一切装备", 1),
           TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max")]) \
     .add("s6-h", "zidongtuitu_hard", "自动推Hard图【已经修复】", "使用等级前五的角色自动推Hard图\n"
-                                                     "如果某一关没有三星过关，则强化重打。\n"
-                                                     "若强化了还是打不过，则退出。\n"
-                                                     "若没体力了，也退出。",
+                                                       "如果某一关没有三星过关，则强化重打。\n"
+                                                       "若强化了还是打不过，则退出。\n"
+                                                       "若没体力了，也退出。",
          [TaskParam("buy_tili", int, "体力购买次数", "整个推图/强化过程最多购买体力次数（每天）", 3),
           TaskParam("auto_upgrade", int, "自动升级设置", "开启后，如果推图失败，则会进入升级逻辑"
                                                    "如果升级之后仍然推图失败，则放弃推图"
@@ -865,33 +866,33 @@ VALID_TASK = ValidTask() \
           TaskParam("do_kaihua", bool, "是否升星", "若关卡能挑战但未三星，是否允许手刷推图。", False),
           TaskParam("do_zhuanwu", bool, "是否进行专武任务", "是否进行专武任务，包括佩戴及升级", False),
           TaskParam("sort", str, "角色强化选择排序方式", "角色选择按什么排序，默认使用等级\n"
-                    "level 表示等级\n"
-                    "zhanli 表示战力\n"
-                    "rank 表示品阶\n"
-                    "star 表示*数\n"
-                    "atk 表示物理攻击力\n"
-                    "def 表示物理防御力\n"
-                    "mat 表示魔法攻击力\n"
-                    "mdf 表示魔法防御力\n"
-                    "hp 表示血量\n"
-                    "love 表示亲密度\n"       
-                    "zhuanwu 表示专武\n"
-                    "fav 表示我的最爱\n"
-                    "six 表示六星已解放", "level"),
+                                               "level 表示等级\n"
+                                               "zhanli 表示战力\n"
+                                               "rank 表示品阶\n"
+                                               "star 表示*数\n"
+                                               "atk 表示物理攻击力\n"
+                                               "def 表示物理防御力\n"
+                                               "mat 表示魔法攻击力\n"
+                                               "mdf 表示魔法防御力\n"
+                                               "hp 表示血量\n"
+                                               "love 表示亲密度\n"
+                                               "zhuanwu 表示专武\n"
+                                               "fav 表示我的最爱\n"
+                                               "six 表示六星已解放", "level"),
           TaskParam("count", int, "前N个", "选择遍历角色数量", 15),
           TaskParam("charlist", list, "角色列表", "需要升级的角色",
                     inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称（如有括号，使用中文括号），例如 凯露（夏日）")),
           TaskParam("tozhuanwulv", int, "专武上限等级", "专武上限等级", 120)]) \
-    .add("s8-a","auto_upgrade","自动升级前几个角色","不能指定角色升级，但能升级前几个角色。",
-         [TaskParam("buy_tili",int,"购买体力","最多购买几次体力来完成升级",0),
-          TaskParam("do_rank",bool,"RANK提升","是否提升RANK",True),
-          TaskParam("do_shuatu",bool,"是否刷图","缺装备时是否刷图",True),
-          TaskParam("count",int,"前几","对前几个角色进行升级",5),
-          TaskParam("sortby",str,"前几排序","前几个角色的排序方式(dengji/xingshu/zhanli/shoucang)","xingshu"),
-          TaskParam("do_tuitu",bool,"是否推图","如果没打过的图，是否要推。",False),
+    .add("s8-a", "auto_upgrade", "自动升级前几个角色", "不能指定角色升级，但能升级前几个角色。",
+         [TaskParam("buy_tili", int, "购买体力", "最多购买几次体力来完成升级", 0),
+          TaskParam("do_rank", bool, "RANK提升", "是否提升RANK", True),
+          TaskParam("do_shuatu", bool, "是否刷图", "缺装备时是否刷图", True),
+          TaskParam("count", int, "前几", "对前几个角色进行升级", 5),
+          TaskParam("sortby", str, "前几排序", "前几个角色的排序方式(dengji/xingshu/zhanli/shoucang)", "xingshu"),
+          TaskParam("do_tuitu", bool, "是否推图", "如果没打过的图，是否要推。", False),
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
                     inputbox=team_order_inputer),
-          TaskParam("getzhiyuan",bool,"是否支援","是否需要选择第一个支援位来支援",False)])\
+          TaskParam("getzhiyuan", bool, "是否支援", "是否需要选择第一个支援位来支援", False)]) \
     .add("s9", "shuatu_daily_ocr", "OCR主线通用刷图推图", "使用OCR辅助的稳定的通用主线刷图/推图",
          [TaskParam("tu_order", list, "刷图顺序", "刷图/推图会依次按照该顺序",
                     inputbox=ListInputer(desc="一行一个字符串(A)-(B)-(T)或者H(A)-(B)-(T)或VH(A)-(B)-(T)\n"
@@ -931,10 +932,10 @@ VALID_TASK = ValidTask() \
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           ]) \
     .add("s9-t", "tuitu_ocr", "OCR主线推图", "s9，但是专门用于一个一个图的推",
-         [TaskParam("mode",int,"推什么图","0 - Normal; 1 - Hard, 2 - VH"),
-          TaskParam("from_",str,"从哪里推","请输入(A)-(B) 或者 new表示从最新图开始。","new"),
-          TaskParam("to",str,"推到哪里","请输入(A)-(B) 或者 max表示推到目前最新进度","max"),
-          TaskParam("buy_tili",int,"推图所用体力","本任务中最多购买几次体力",0),
+         [TaskParam("mode", int, "推什么图", "0 - Normal; 1 - Hard, 2 - VH"),
+          TaskParam("from_", str, "从哪里推", "请输入(A)-(B) 或者 new表示从最新图开始。", "new"),
+          TaskParam("to", str, "推到哪里", "请输入(A)-(B) 或者 max表示推到目前最新进度", "max"),
+          TaskParam("buy_tili", int, "推图所用体力", "本任务中最多购买几次体力", 0),
 
           TaskParam("xianding", bool, "限定商店", "是否买空限定商店", True),
           TaskParam("lose_action", str, "推图失败时",
@@ -947,6 +948,16 @@ VALID_TASK = ValidTask() \
                     inputbox=team_order_inputer),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           ]) \
+    .add("s9-auto","daily_shuatu_auto","大号自动规划刷N图","每日刷图，但是基于角色识别和装备识别自动规划要刷的normal图！\n"
+                                                        "*你需要在data中事先设定角色的追踪*\n"
+                                                        "大号专用，默认所有图均三星可扫荡。",
+         [TaskParam("daily_tili", int, "每日体力", "每天最多用于刷N图体力购买次数，该记录每日清零。", 0),
+          TaskParam("xianding", bool, "限定商店", "是否买空限定商店", True),
+          TaskParam("do_kucunshibie",bool,"前置库存识别","是否在该任务中前置库存识别任务",True),
+          TaskParam("do_jueseshibie",bool,"前置角色识别","是否在该任务中前置角色识别任务",True),
+          TaskParam("n",int,"N几","当前是N几",1),
+          TaskParam("max_tu",str,"最多考虑图几","为整数(A)时，最多考虑到图A为止；设置为max时，按数据库中最新值为准，但可能会超出当前最高可推图。"),
+          ]) \
     .add("s10", "kuaisujieren", "好友快速借人", "借好友随便推一关，点进去什么图就推它的第一关。",
          [TaskParam("max_do", int, "最多借几次", "如果还有好友可以借，最多借几次，默认为2.", 2),
           TaskParam("max_map", int, "最多推图几", "随便推图不会推超过[max_map]-1的图。可以填很大的数，如999来屏蔽该设置。", 999)]) \
@@ -957,9 +968,9 @@ VALID_TASK = ValidTask() \
     .add("s11-h", "jierentuitu_hard", "借人推困难图", "借好友或别人的进行推普通图。",
          [TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max"),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
-          TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)])\
-    .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。",) \
-    .add("t9", "buy_all_frag",  "碎片购买", "根据角色名称使用代币购买商店碎片",
+          TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)]) \
+    .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。", ) \
+    .add("t9", "buy_all_frag", "碎片购买", "根据角色名称使用代币购买商店碎片",
          [TaskParam("dxc_fraglist", list, "dxc碎片", "需要购买的碎片名称",
                     inputbox=ListInputer(desc="请输入地下城商店角色碎片，一行一个角色名称")),
           TaskParam("jjc_fraglist", list, "jjc碎片", "需要购买的碎片名称",
@@ -968,7 +979,7 @@ VALID_TASK = ValidTask() \
                     inputbox=ListInputer(desc="请输入PJJC商店角色碎片，一行一个角色名称")),
           TaskParam("clan_fraglist", list, "行会碎片", "需要购买的碎片名称",
                     inputbox=ListInputer(desc="请输入行会商店角色碎片，一行一个角色名称")),
-          ])\
+          ])
 
 customtask_addr = "customtask"
 

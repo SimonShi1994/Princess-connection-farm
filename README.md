@@ -201,7 +201,9 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 2022/02/08 By TheAutumnOfRice
 
-- 修复探索扫荡不点满的问题
+- 新增大号自动刷图规划`s9-auto`功能
+- 修复探索中一次不扫荡满的问题
+- 修复图号识别中second_id识别出错的BUG
 
 2022/02/07 By CyiceK
 
