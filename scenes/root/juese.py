@@ -190,7 +190,7 @@ class CharBase(SevenBTNMixin):
         return screen
 
     def goto_zhuangbei(self) -> "CharZhuangBei":
-        return self.goto(CharZhuangBei, self.fun_click(JUESE_BTN["equip_selected"]), before_clear=False)
+        return self.goto(CharZhuangBei, self.fun_click(JUESE_BTN["equip_unselected"]), before_clear=False)
 
     def goto_kaihua(self) -> "CharKaihua":
         return self.goto(CharKaihua, self.fun_click(JUESE_BTN["kaihua_unselected"]), before_clear=False)
@@ -492,9 +492,6 @@ class CharKaihua(CharBase):
         out = self._a._check_img_in_list_or_dir(out, (482, 114, 750, 261), "ocrfix/juese", "C_ID", screen)
         return out
 
-    def goto_zhuangbei(self) -> "CharZhuangBei":
-        return self.goto(CharZhuangBei, self.fun_click(JUESE_BTN["equip_unselected"]))
-
     def goto_menu(self) -> "CharMenu":
         return self.goto(CharMenu, self.fun_click(JUESE_BTN["return_menu"]))
 
@@ -594,9 +591,6 @@ class CharZhuanwu(CharBase):
         at = (569, 80, 601, 99)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
-
-    def goto_zhuangbei(self) -> "CharZhuangBei":
-        return self.goto(CharZhuangBei, self.fun_click(JUESE_BTN["equip_unselected"]))
 
     def goto_menu(self) -> "CharMenu":
         return self.goto(CharMenu, self.fun_click(JUESE_BTN["return_menu"]))
