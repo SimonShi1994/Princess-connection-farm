@@ -68,8 +68,18 @@ class RoutineMixin(ShuatuBaseMixin):
             self.log.write_log("info", "该时间段已经抽取过免费扭蛋！")
             return
         self.lock_home()
-        self.lock_img(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
-        self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
+        self.lock_img(MAIN_BTN["liwu"], ifclick=(753, 514))
+        while True:
+            self.click(753, 514)
+            if self.is_exists(NIUDAN_BTN["gem"]):
+                self.fclick(1, 1)  # 处理某些提示
+                if self.is_exists(NIUDAN_BTN["niudan_sheding"]):
+                    self.click_btn(NIUDAN_BTN["niudan_sheding"])  # 处理是否显示下载中
+                if self.lock_img(NIUDAN_BTN["gem"]):
+                    break
+                continue
+            else:
+                continue
         state = self.lock_img({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
                               elseclick=NIUDAN_BTN["putong"], retry=5, is_raise=False)
         if not state:
@@ -93,15 +103,19 @@ class RoutineMixin(ShuatuBaseMixin):
         # 免费十连，2022/1/1
         self.lock_home()
         # 正常进入部分，附奖扭蛋提示会在10s内消失
-        self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
+        # self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
         # 以下代码为备用，当有提示不消失时可以启用
-        # while True:
-        #     self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
-        #     self.fclick(1, 1)  # 处理某些提示
-        #     if self.lock_img(NIUDAN_BTN["gem"]):
-        #         break
-        #     else:
-        #         continue
+        while True:
+            self.click(753, 514)
+            if self.is_exists(NIUDAN_BTN["gem"]):
+                self.fclick(1, 1)  # 处理某些提示
+                if self.is_exists(NIUDAN_BTN["niudan_sheding"]):
+                    self.click_btn(NIUDAN_BTN["niudan_sheding"])  # 处理是否显示下载中
+                if self.lock_img(NIUDAN_BTN["gem"]):
+                    break
+                continue
+            else:
+                continue
 
         # 附奖设置
         self.fclick(423, 433)
