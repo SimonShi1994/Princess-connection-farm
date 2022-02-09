@@ -1,6 +1,6 @@
 import time
 
-from core.constant import MAIN_BTN, MAOXIAN_BTN
+from core.constant import MAIN_BTN
 from ..fight.fightinfo_base import FightInfoBase
 from ..root.seven_btn import SevenBTNMixin
 from ..scene_base import PossibleSceneList
@@ -101,8 +101,9 @@ class TanSuoInfoBox(FightInfoBase):
             return self.tiaozhan(team_order)
 
     def saodang_all(self):
-        for _ in range(10):
-            self.click(MAOXIAN_BTN["saodang_plus"])
+        self.set_saodang_to_max()  #
+        # for _ in range(10):
+        #     self.click(MAOXIAN_BTN["saodang_plus"])
         S = self.goto_saodang()
         J = S.OK()
         J.OK()
