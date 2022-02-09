@@ -71,7 +71,7 @@ class RoutineMixin(ShuatuBaseMixin):
         def sheding_zairu(screen):
             if self.is_exists(NIUDAN_BTN["niudan_sheding"], screen=screen):
                 self.click_btn(NIUDAN_BTN["niudan_sheding"])
-                return self.getscreen()
+                return self.restart_this_task()
             return screen
 
         def tiaoguo_tishi(screen):
@@ -83,10 +83,11 @@ class RoutineMixin(ShuatuBaseMixin):
         self.register_precheck("skip_load", sheding_zairu)
         self.register_precheck("skip_note", tiaoguo_tishi)
         self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
-        self.clear_all_prechecks()
+
 
         state = self.lock_img({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
                               elseclick=NIUDAN_BTN["putong"], retry=5, is_raise=False)
+
         if not state:
             self.log.write_log("error", "扭蛋检测失败。")
             self.lock_home()
@@ -100,6 +101,7 @@ class RoutineMixin(ShuatuBaseMixin):
             self.log.write_log("info", "可能已经领取过免费扭蛋了")
         ts["niudan"] = time.time()
         self.AR.set("time_status", ts)
+        self.clear_all_prechecks()
         self.lock_home()
 
     def mianfeishilian(self, select=None):
@@ -111,7 +113,7 @@ class RoutineMixin(ShuatuBaseMixin):
         def sheding_zairu(screen):
             if self.is_exists(NIUDAN_BTN["niudan_sheding"], screen=screen):
                 self.click_btn(NIUDAN_BTN["niudan_sheding"])
-                return self.getscreen()
+                return self.restart_this_task()
             return screen
 
         def tiaoguo_tishi(screen):
@@ -123,11 +125,11 @@ class RoutineMixin(ShuatuBaseMixin):
         self.register_precheck("skip_load", sheding_zairu)
         self.register_precheck("skip_note", tiaoguo_tishi)
         self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
-        self.clear_all_prechecks()
+
 
         # 附奖设置
         self.fclick(423, 433)
-
+        self.clear_all_prechecks()
         if self.lock_img(NIUDAN_BTN["jiangpinneirong"]):
             # 有附奖扭蛋
             r = self.img_where_all("img/niudan/xuanze.bmp")
