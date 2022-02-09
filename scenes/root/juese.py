@@ -198,6 +198,9 @@ class CharBase(SevenBTNMixin):
     def goto_zhuanwu(self) -> "CharZhuanwu":
         return self.goto(CharZhuanwu, self.fun_click(JUESE_BTN["zhuanwu_unselected"]), before_clear=False)
 
+    def goto_menu(self) -> "CharMenu":
+        return self.goto(CharMenu, self.fun_click(JUESE_BTN["return_menu"]))
+
     def get_shoucang_state(self, screen=None):
         # True: 收藏了；  False： 未收藏
         if screen is None: screen = self.getscreen()
@@ -492,9 +495,6 @@ class CharKaihua(CharBase):
         out = self._a._check_img_in_list_or_dir(out, (482, 114, 750, 261), "ocrfix/juese", "C_ID", screen)
         return out
 
-    def goto_menu(self) -> "CharMenu":
-        return self.goto(CharMenu, self.fun_click(JUESE_BTN["return_menu"]))
-
 
 class CharZhuanwu(CharBase):
     def __init__(self, *args, **kwargs):
@@ -591,6 +591,3 @@ class CharZhuanwu(CharBase):
         at = (569, 80, 601, 99)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
-
-    def goto_menu(self) -> "CharMenu":
-        return self.goto(CharMenu, self.fun_click(JUESE_BTN["return_menu"]))

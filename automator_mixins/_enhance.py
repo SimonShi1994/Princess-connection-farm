@@ -139,7 +139,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                         fb.select_team(team_order, change=3)
                                         if getzhiyuan:
                                             fb.get_zhiyuan(assist_num=1, force_haoyou=False, if_full=is_full)
-                                        zd = fb.goto_zhandou()
+                                        zd = fb.goto_fight()
                                         zd.set_auto(True)
                                         zd.set_speed(1, max_level=1)
                                         during = DuringFighting(self)
