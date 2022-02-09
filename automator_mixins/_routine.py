@@ -61,17 +61,32 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_home()
 
     def mianfeiniudan(self):
-        # 免费扭蛋
-        # 2020-07-31 TheAutumnOfRice: 检查完毕
+
         ts = self.AR.get("time_status", UDD["time_status"])
         if not diff_5_12hour(time.time(), ts["niudan"]):
             self.log.write_log("info", "该时间段已经抽取过免费扭蛋！")
             return
         self.lock_home()
-        self.lock_img(MAIN_BTN["liwu"], ifclick=MAIN_BTN["niudan"])
-        self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
+
+        def sheding_zairu(screen):
+            if self.is_exists(NIUDAN_BTN["niudan_sheding"], screen=screen):
+                self.click_btn(NIUDAN_BTN["niudan_sheding"])
+                return self.restart_this_task()
+            return screen
+
+        def tiaoguo_tishi(screen):
+            if not self.is_exists(NIUDAN_BTN["gem"], screen=screen):
+                self.click(1, 1)
+                return self.getscreen()
+            return screen
+
+        self.register_precheck("skip_load", sheding_zairu)
+        self.register_precheck("skip_note", tiaoguo_tishi)
+        self.click(MAIN_BTN["niudan"])
+        self.lock_img(NIUDAN_BTN["gem"])
         state = self.lock_img({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
                               elseclick=NIUDAN_BTN["putong"], retry=5, is_raise=False)
+        self.clear_all_prechecks()
         if not state:
             self.log.write_log("error", "扭蛋检测失败。")
             self.lock_home()
@@ -92,23 +107,30 @@ class RoutineMixin(ShuatuBaseMixin):
             select = 1
         # 免费十连，2022/1/1
         self.lock_home()
-        # 正常进入部分，附奖扭蛋提示会在10s内消失
+
+        def sheding_zairu(screen):
+            if self.is_exists(NIUDAN_BTN["niudan_sheding"], screen=screen):
+                self.click_btn(NIUDAN_BTN["niudan_sheding"])
+                return self.restart_this_task()
+            return screen
+
+        def tiaoguo_tishi(screen):
+            if not self.is_exists(NIUDAN_BTN["gem"], screen=screen):
+                self.click(1, 1)
+                return self.getscreen()
+            return screen
+
+        self.register_precheck("skip_load", sheding_zairu)
+        self.register_precheck("skip_note", tiaoguo_tishi)
         self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
-        # 以下代码为备用，当有提示不消失时可以启用
-        # while True:
-        #     self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
-        #     self.fclick(1, 1)  # 处理某些提示
-        #     if self.lock_img(NIUDAN_BTN["gem"]):
-        #         break
-        #     else:
-        #         continue
+
 
         # 附奖设置
         self.fclick(423, 433)
-
-        if self.lock_img(NIUDAN_BTN["jiangpinneirong"]):
+        self.clear_all_prechecks()
+        if self.is_exists(NIUDAN_BTN["jiangpinneirong"]):
             # 有附奖扭蛋
-            r = self.img_where_all("img/niudan/xuanze.bmp")
+            r = self.img_where_all(NIUDAN_BTN["xuanze"].img)
             if r == []:
                 self.log.write_log("info", "已指定附奖。")
             else:
