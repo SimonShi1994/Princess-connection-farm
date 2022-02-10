@@ -82,8 +82,7 @@ class RoutineMixin(ShuatuBaseMixin):
 
         self.register_precheck("skip_load", sheding_zairu)
         self.register_precheck("skip_note", tiaoguo_tishi)
-        self.click(MAIN_BTN["niudan"])
-        self.lock_img(NIUDAN_BTN["gem"])
+        self.lock_img(NIUDAN_BTN["gem"],elseclick=MAIN_BTN["niudan"])
         state = self.lock_img({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
                               elseclick=NIUDAN_BTN["putong"], retry=5, is_raise=False)
         self.clear_all_prechecks()
