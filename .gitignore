@@ -4,6 +4,7 @@ __pycache__
 test.py
 img/test.bmp
 venv
+.venv
 AccountRecord.txt
 AccountRecord.log
 accounts.txt
@@ -28,6 +29,7 @@ xls/
 PCRError/
 pcrdata/data.db
 ocrfix/
+poetry.lock
 
 # 测试用文件夹
 /test/

@@ -142,7 +142,7 @@ class CaptionSkip:
             self.log.write_log('debug',">>等待验证码识别返回值")
         while True:
             # 获取答案
-            time.sleep(random.uniform(0.10, 0.20))
+            time.sleep(random.uniform(0.20, 0.80))
             answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
             # print(answer_result.text)
             count_len = len(answer_result.text)
