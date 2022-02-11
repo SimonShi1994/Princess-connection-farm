@@ -1,4 +1,4 @@
- <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
+ <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
 # Princess connection 公主连结农场脚本v2.8.20220209
 
@@ -8,9 +8,9 @@
 
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
-**支持模拟器多开**
+*把个人时间花在其他有用的地方，让脚本帮你养老婆养女儿*
 
-**使用多进程优化+异步Python性能**
+**使用多进程+异步线程而且支持模拟器多开**
 
 **支持异常报错卡住自动重启**
 
@@ -85,11 +85,21 @@
 
 方法1-通过python venv
 
-搭配venv+包管理器，下载
+- 完整包（依赖包[本地ocr只包含了本地4]+Python3.8.10便携包）
 
-https://www.123pan.com/s/dDG9-Z83WA提取码:rcUK
+  https://www.123pan.com/s/dDG9-L83WA
 
-**安装教程**与**python3.8.10安装包**均在压缩包内，请解压到本项目下确保在项目下有` \.venv\Scripts`该目录结构  ~~不要套娃成这样` \.venv\.venv\Scripts`~~
+  提取码:XM8K
+
+- 完整依赖包[本地ocr只包含了本地4]（搭配venv+包管理器）
+
+  https://www.123pan.com/s/dDG9-Z83WA
+
+  提取码:rcUK
+  
+  **安装教程**与**python3.8.10安装包**均在压缩包内
+
+请解压到本项目下确保在项目下有` \.venv\Scripts`该目录结构  ~~不要套娃成这样` \.venv\.venv\Scripts`~~
 
 
 
@@ -144,7 +154,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
 
-- 使用OCR相关的服务，必须启动app。使用2021-01-23后的版本程序默认自动启动app。
+- 使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
 
 - 关于本地OCR1删库问题，可以使用清华源安装
 
