@@ -24,4 +24,4 @@ def emuidemo():
     # ], cell_width='100px', cell_height='100px')
 
 
-emuidemo()
+# emuidemo()

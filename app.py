@@ -27,7 +27,7 @@ def create_app():
     CORS(app, supports_credentials=True)
 
     @app.route('/', defaults={'path': ''})
-    @app.route('/<reg("((?!(api|apidocs)).)+"):path>')  # 暂 api|apidoc 以外的所有路由视为前端路由
+    @app.route('/<reg("((?!(api|apidocs|ocr|demo)).)+"):path>')  # 暂 api|apidoc|ocr|demo 以外的所有路由视为前端路由
     def index(path):
         return render_template("index.html")
 
@@ -38,6 +38,17 @@ def create_app():
     app.register_blueprint(subtask_api, url_prefix='/api')
     app.register_blueprint(batches_api, url_prefix='/api')
     app.register_blueprint(ocr_api, url_prefix='/ocr')
+
+    # `task_func` is PyWebIO task function
+    from pywebio.platform.flask import webio_view
+    import main_webUI
+
+    app.add_url_rule('/demo', 'webio_view', webio_view(main_webUI.emuidemo),
+                     methods=['GET', 'POST', 'OPTIONS'])  # need GET,POST and OPTIONS methods
+
+    # http://127.0.0.1:5000/demo
+
+    # app.register_blueprint(emulator_api, url_prefix='/api')
 
     app.config['SWAGGER'] = {
         'title': 'Princess Connection Farm',
