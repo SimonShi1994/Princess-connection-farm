@@ -14,6 +14,7 @@ from core.pcr_config import *
 from core.richutils import RTitle as RError, RValue as RWarn
 from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
 from core.utils import is_ocr_running
+from pcr_api import script_version
 
 
 def wprint(*args,**kwargs):
@@ -33,7 +34,6 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.8.20220209"
 
 
 

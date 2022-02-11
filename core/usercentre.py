@@ -716,17 +716,17 @@ class AutomatorRecorder:
         check_valid_switch(d)
         return d
 
-    def setuser(self, userobj: dict):
+    def setuser(self, userobj: dict, is_raise=False):
         target_name = "%s/%s.json" % (user_addr, self.account)
-        if check_user_dict(userobj, is_raise=False):
+        if check_user_dict(userobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, userobj)
         else:
             print("用户文件不合法，保存失败")
 
     @staticmethod
-    def settask(taskfile, taskobj: dict):
+    def settask(taskfile, taskobj: dict, is_raise=False):
         target_name = "%s/%s.json" % (task_addr, taskfile)
-        if check_task_dict(taskobj, is_raise=False):
+        if check_task_dict(taskobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, taskobj)
         else:
             print("任务文件不合法，保存失败")
@@ -742,25 +742,25 @@ class AutomatorRecorder:
             f.write("\n".join(acclist))
 
     @staticmethod
-    def setbatch(batchfile, batchobj: dict):
+    def setbatch(batchfile, batchobj: dict, is_raise=False):
         target_name = "%s/%s.json" % (batch_addr, batchfile)
-        if check_valid_batch(batchobj, is_raise=False):
+        if check_valid_batch(batchobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, batchobj)
         else:
             print("批配置不合法，保存失败")
 
     @staticmethod
-    def setschedule(schedulefile, scheduleobj: dict):
+    def setschedule(schedulefile, scheduleobj: dict, is_raise=False):
         target_name = "%s/%s.json" % (schedule_addr, schedulefile)
-        if check_valid_schedule(scheduleobj, is_raise=False):
+        if check_valid_schedule(scheduleobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, scheduleobj)
         else:
             print("计划配置不合法，保存失败")
 
     @staticmethod
-    def setswitch(switchfile, switchobj: dict):
+    def setswitch(switchfile, switchobj: dict, is_raise=False):
         target_name = "%s/%s.json" % (switch_addr, switchfile)
-        if check_valid_switch(switchobj, is_raise=False):
+        if check_valid_switch(switchobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, switchobj)
         else:
             print("开关配置不合法，保存失败")
