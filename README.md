@@ -1,4 +1,4 @@
- <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
+ <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
 # Princess connection 公主连结农场脚本v2.8.20220209
 
@@ -8,9 +8,9 @@
 
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
-**支持模拟器多开**
+*把个人时间花在其他有用的地方，让脚本帮你养老婆养女儿*
 
-**使用多进程优化+异步Python性能**
+**使用多进程+异步线程而且支持模拟器多开**
 
 **支持异常报错卡住自动重启**
 
@@ -83,11 +83,33 @@
 
 ## :globe_with_meridians:环境
 
+方法1-通过python venv
+
+- 完整包（依赖包[本地ocr只包含了本地4]+Python3.8.10便携包）
+
+  https://www.123pan.com/s/dDG9-L83WA
+
+  提取码:XM8K
+
+- 完整依赖包[本地ocr只包含了本地4]（搭配venv+包管理器）
+
+  https://www.123pan.com/s/dDG9-Z83WA
+
+  提取码:rcUK
+  
+  **安装教程**与**python3.8.10安装包**均在压缩包内
+
+请解压到本项目下确保在项目下有` \.venv\Scripts`该目录结构  ~~不要套娃成这样` \.venv\.venv\Scripts`~~
+
+
+
+方法2-传统pip install
+
 - 需要 3.9>Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
 - **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
-- 【不推荐】本地OCR 1/2 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)
+- ~~【不推荐】本地OCR 1/2 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)~~
 
 - 自行打开`requirements.txt`确认依赖无误
 
@@ -105,7 +127,9 @@
   pip install -r requirements.txt -i https://pypi.douban.com/simple
   ```
 
-~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。（建议先试一下不设置的情况
+
+
+~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。~~（建议先试一下不设置的情况
 
 建议使用雷电模拟器4但不意味着其他模拟器无法使用，本项目中均以雷电模拟器4为示例。
 
@@ -130,7 +154,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
 
-- 使用OCR相关的服务，必须启动app。使用2021-01-23后的版本程序默认自动启动app。
+- 使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
 
 - 关于本地OCR1删库问题，可以使用清华源安装
 
@@ -146,7 +170,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 - 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
 
-- 如果模拟器没有安装 ATX ，请在打开模拟器后，在控控制台里输入init进行初始化模拟器环境
+- 如果模拟器没有安装 ATX ，请在打开模拟器后，在控制台里输入init进行初始化模拟器环境
 
 - **第一次使用，完全不懂怎么办，请阅读下列新手方法** 
 
