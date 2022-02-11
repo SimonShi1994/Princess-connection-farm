@@ -85,7 +85,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.lock_img(NIUDAN_BTN["gem"],elseclick=MAIN_BTN["niudan"])
         state = self.lock_img({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
                               elseclick=NIUDAN_BTN["putong"], retry=5, is_raise=False)
-        self.clear_all_prechecks()
+        self.remove_precheck("skip_note")
         if not state:
             self.log.write_log("error", "扭蛋检测失败。")
             self.lock_home()
@@ -126,7 +126,7 @@ class RoutineMixin(ShuatuBaseMixin):
 
         # 附奖设置
         self.fclick(423, 433)
-        self.clear_all_prechecks()
+
         if self.is_exists(NIUDAN_BTN["jiangpinneirong"]):
             # 有附奖扭蛋
             r = self.img_where_all(NIUDAN_BTN["xuanze"].img)
@@ -149,7 +149,7 @@ class RoutineMixin(ShuatuBaseMixin):
             self.fclick(1, 1)
         else:
             self.log.write_log("info", "非附奖扭蛋期间。")
-
+        self.remove_precheck("skip_note")
         while True:
             fc = [255, 89, 74]
             bc = [255, 247, 247]
