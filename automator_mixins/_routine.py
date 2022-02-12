@@ -21,7 +21,8 @@ class RoutineMixin(ShuatuBaseMixin):
         # 2020-09-09 CyiceK: 添加升级
         jiaju_list = ["saodangquan", "mana", "jingyan", "tili"]
         self.lock_home()
-        self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], side_check=self.juqing_kkr, elsedelay=1)
+        self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], side_check=self.juqing_kkr,
+                      elsedelay=1)
 
         if auto_update:
             screen_shot = self.getscreen()
@@ -82,7 +83,7 @@ class RoutineMixin(ShuatuBaseMixin):
 
         self.register_precheck("skip_load", sheding_zairu)
         self.register_precheck("skip_note", tiaoguo_tishi)
-        self.lock_img(NIUDAN_BTN["gem"],elseclick=MAIN_BTN["niudan"])
+        self.lock_img(NIUDAN_BTN["gem"], elseclick=MAIN_BTN["niudan"])
         state = self.lock_img({NIUDAN_BTN["putong_mianfei"]: 1, NIUDAN_BTN["putong_wancheng"]: 2},
                               elseclick=NIUDAN_BTN["putong"], retry=5, is_raise=False)
         self.remove_precheck("skip_note")
@@ -129,23 +130,31 @@ class RoutineMixin(ShuatuBaseMixin):
 
         if self.is_exists(NIUDAN_BTN["jiangpinneirong"]):
             # 有附奖扭蛋
-            r = self.img_where_all(NIUDAN_BTN["xuanze"].img)
-            if r == []:
+            at = (525, 189, 692, 435)
+            r = self.img_where_all(NIUDAN_BTN["xuanze"].img, at=at)
+            s = self.img_where_all(NIUDAN_BTN["xuanzezhong"].img, at=at)
+            if len(s) > 0:
+                # 找到已选择
                 self.log.write_log("info", "已指定附奖。")
             else:
-                if select == 1:
-                    xcor = r[0]
-                    ycor = r[1]
-                    self.click(xcor, ycor)
+                if len(r) == 0:
+                    # 没找到已选择，但也找不到可选
+                    self.log.write_log("warning", "无法指定附奖。")
+                else:
+                    # 指定设定
+                    if select == 1:
+                        xcor = r[0]
+                        ycor = r[1]
+                        self.click(xcor, ycor)
 
-                if select == 2:
-                    xcor = r[3]
-                    ycor = r[4]
-                    self.click(xcor, ycor)
-                self.lock_img(NIUDAN_BTN["jiyisuipianxuanze"])
-                self.click(589, 365)
-                self.lock_img(NIUDAN_BTN["xuanzezhong"])
-                self.log.write_log("info", "设定附奖完成。")
+                    if select == 2:
+                        xcor = r[3]
+                        ycor = r[4]
+                        self.click(xcor, ycor)
+                    self.lock_img(NIUDAN_BTN["jiyisuipianxuanze"])
+                    self.click(589, 365)
+                    self.lock_img(NIUDAN_BTN["xuanzezhong"].img, at=at)
+                    self.log.write_log("info", "设定附奖完成。")
             self.fclick(1, 1)
         else:
             self.log.write_log("info", "非附奖扭蛋期间。")
@@ -155,8 +164,9 @@ class RoutineMixin(ShuatuBaseMixin):
             bc = [255, 247, 247]
             xcor = 917
             ycor = 302
+            a = self.is_exists(NIUDAN_BTN["chiyoushu"])
             youmianfei = self.check_color(fc, bc, xcor, ycor, color_type="rgb")
-            if youmianfei:  # 仅当有免费十连时抽取免费十连
+            if youmianfei and a:  # 仅当有免费十连时抽取免费十连
                 self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
                 self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
                 time.sleep(1.5)
@@ -182,7 +192,7 @@ class RoutineMixin(ShuatuBaseMixin):
             s = self.lock_img({LIWU_BTN["shouqule"]: 1, LIWU_BTN["chiyoushangxian"]: 2},
                               elseclick=LIWU_BTN["ok"], elsedelay=8)
             if s == 1:
-                self.click_btn(LIWU_BTN["ok2"],until_disappear=LIWU_BTN["shouqule"])
+                self.click_btn(LIWU_BTN["ok2"], until_disappear=LIWU_BTN["shouqule"])
                 self.lock_home()
             else:
                 self.log.write_log("warning", "收取体力达到上限！")
@@ -261,8 +271,8 @@ class RoutineMixin(ShuatuBaseMixin):
                 time.sleep(0.5)
                 self.lock_img(MAIN_BTN["mana_title"], elseclick=MAIN_BTN["mana_plus"])
                 at = (733, 389, 783, 405)
-                mana_left,mana_right = self.ocr_A_B(*at)
-                mana_time = mana_left//10
+                mana_left, mana_right = self.ocr_A_B(*at)
+                mana_time = mana_left // 10
                 if mana_time >= times:
                     self.lock_home()
                     return False
@@ -505,6 +515,7 @@ class RoutineMixin(ShuatuBaseMixin):
         if force_as_ocr_as_possible:
             self.tansuo_new_ocr(mode)
             return
+
         def tryfun():
             if mode == 0:
                 ec = [(539, 146)]
@@ -625,6 +636,7 @@ class RoutineMixin(ShuatuBaseMixin):
         ts["tansuo"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
+
     #
     # def shengji(self, mode=0, times=5, tili=False):
     #     """
@@ -690,7 +702,7 @@ class RoutineMixin(ShuatuBaseMixin):
     #     self.AR.set("time_status", ts)
     #     self.lock_home()
 
-    def shengjidiaocha(self,team_order="zhanli"):
+    def shengjidiaocha(self, team_order="zhanli"):
         """
         圣迹调查
         全刷，不能扫荡则以team_order战斗
@@ -703,7 +715,7 @@ class RoutineMixin(ShuatuBaseMixin):
         S.doit(team_order)
         self.lock_home()
 
-    def shendiandiaocha(self,team_order="zhanli"):
+    def shendiandiaocha(self, team_order="zhanli"):
         """
         神殿调查
         全刷，不能扫荡则以team_order战斗
