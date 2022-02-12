@@ -123,7 +123,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.register_precheck("skip_note", tiaoguo_tishi)
         self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
 
-
+        self.remove_precheck("skip_note")
         # 附奖设置
         self.fclick(423, 433)
 
@@ -149,7 +149,7 @@ class RoutineMixin(ShuatuBaseMixin):
             self.fclick(1, 1)
         else:
             self.log.write_log("info", "非附奖扭蛋期间。")
-        self.remove_precheck("skip_note")
+
         while True:
             fc = [255, 89, 74]
             bc = [255, 247, 247]
