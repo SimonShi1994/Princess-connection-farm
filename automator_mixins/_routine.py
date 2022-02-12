@@ -155,8 +155,9 @@ class RoutineMixin(ShuatuBaseMixin):
             bc = [255, 247, 247]
             xcor = 917
             ycor = 302
+            a = self.is_exists(NIUDAN_BTN["chiyoushu"])
             youmianfei = self.check_color(fc, bc, xcor, ycor, color_type="rgb")
-            if youmianfei:  # 仅当有免费十连时抽取免费十连
+            if youmianfei and a:  # 仅当有免费十连时抽取免费十连
                 self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
                 self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
                 time.sleep(1.5)
