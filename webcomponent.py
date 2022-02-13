@@ -198,4 +198,14 @@ class MainApp(ComponentBase):
 
 
 if __name__ == "__main__":
+    """
+    元件结构
+    MainApp {
+        CalcArea {
+            CalcPlus,
+            CalcMinus,
+        },
+        DisplayAllNumbers
+    }
+    """
     server = start_server(MainApp(), port=10234)
