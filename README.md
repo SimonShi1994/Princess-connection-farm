@@ -85,16 +85,22 @@
 
 方法1-通过python venv
 
-- 完整包（依赖包[本地ocr只包含了本地4]+Python3.8.10便携包）
+**本地ocr仅有本地4**
 
-  https://www.123pan.com/s/dDG9-L83WA
+- 完整包（Python3.8.10便携包+依赖包）
 
-  提取码:XM8K
+  解压即用，简单方便
 
-- 完整依赖包[本地ocr只包含了本地4]（搭配venv+包管理器）
+  https://www.123pan.com/s/dDG9-x03WA
+
+  提取码:YIZI
+
+- 单体依赖包（搭配venv+包管理器）
+
+  适合管理，方便依赖升级
 
   https://www.123pan.com/s/dDG9-Z83WA
-
+  
   提取码:rcUK
   
   **安装教程**与**python3.8.10安装包**均在压缩包内
