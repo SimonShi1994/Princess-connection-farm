@@ -24,6 +24,7 @@ log
 /error_screenshot/
 outputs/
 *.cmd
+*.bat
 debug_imgs/
 xls/
 PCRError/
