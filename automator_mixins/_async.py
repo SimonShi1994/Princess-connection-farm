@@ -245,6 +245,7 @@ class AsyncMixin(ToolsMixin):
         测试
         :return:
         """
+        # TODO:堵塞造成了线程泄漏,暂停函数需要放置在父进程而不是在子进程
         global block_sw
         global async_blocking_sw
         if not enable_pause:
