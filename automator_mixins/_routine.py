@@ -58,7 +58,7 @@ class RoutineMixin(ShuatuBaseMixin):
                                        retry=2)
                 i = i + 1
                 continue
-
+        self.remove_precheck("skip_load")
         self.lock_home()
 
     def mianfeiniudan(self):
@@ -180,6 +180,7 @@ class RoutineMixin(ShuatuBaseMixin):
             else:
                 self.log.write_log("warning", "图片查找不到限定")
                 break
+        self.remove_precheck("skip_load")
         self.lock_home()
 
     def shouqu(self):  # 收取全部礼物
