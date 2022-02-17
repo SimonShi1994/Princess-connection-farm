@@ -91,9 +91,9 @@
 
   解压即用，简单方便
 
-  https://www.123pan.com/s/dDG9-x03WA
-
-  提取码:YIZI
+  https://www.123pan.com/s/dDG9-P03WA
+  
+  提取码:73nD
 
 - 单体依赖包（搭配venv+包管理器）
 
