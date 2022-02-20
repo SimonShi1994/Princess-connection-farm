@@ -25,6 +25,7 @@ log
 outputs/
 *.cmd
 *.bat
+!run.bat
 debug_imgs/
 xls/
 PCRError/
