@@ -5,6 +5,8 @@ import time
 import pywebio
 from abc import abstractmethod, ABC
 from pcr_api import PCRAPI
+import pywebio.output as wo
+import pywebio.pin as wp
 
 
 class ScopeName(str):
@@ -37,6 +39,9 @@ class ScopeName(str):
     def put_scope(self, name: str, content=[], position=pywebio.output.OutputPosition.BOTTOM):
         return pywebio.output.put_scope(self + name, content, scope=self, position=position)
 
+    def del_scope(self, name=None):
+        return pywebio.output.remove(self + name)
+
     def get(self, name: str, strict=True):
         return pywebio.pin.get_pin_value(self + name, strict)
 
@@ -50,6 +55,7 @@ class ComponentBase(ABC):
             scope = "__root__"
         self.scope = ScopeName(scope)
         self.PCRAPI = PCRAPI()
+        self.used_scope = {}
 
     @abstractmethod
     def apply(self):
@@ -65,8 +71,12 @@ class ComponentBase(ABC):
             return out
         else:
             component.scope = self.scope + name
+            self.used_scope.setdefault(name, self.scope + name)
             out = component.apply()
             return out
+
+    def get_component_scope(self, name):
+        return self.used_scope.get(name)
 
     def __call__(self):
         return self.apply()
@@ -79,24 +89,29 @@ class GetDatacenterTimeComponent(ComponentBase):
         return pywebio.output.put_text(PCRAPI.get_datacenter_time())
 
     def apply(self):
-        return self.get_datacenter_time()
+        layer = wo.put_column([
+            self.get_datacenter_time()
+        ])
+        return layer
 
 
 class RunAdbComponent(ComponentBase):
-
+    # TODO:交互组件
     @staticmethod
     def run_adb(cmd):
         PCRAPI.run_adb(cmd)
 
-    def put_text(self):
-        cmd = pywebio.input.input('执行的命令')
-
     def apply(self):
-        pass
+        cmd = pywebio.input.input('执行的命令')
+        self.run_adb(cmd)
+        layer = wo.put_column([
+            cmd
+        ])
+        return layer
 
 
 class RunInitComponent(ComponentBase):
-
+    # TODO:交互组件
     @staticmethod
     def unbind_btn():
         pywebio.output.put_button("取消绑定当前的计划", onclick=lambda: PCRAPI.run_init(), color='info')
@@ -112,7 +127,10 @@ class GetLastScheduleComponent(ComponentBase):
         pywebio.output.put_text(PCRAPI.get_last_schedule())
 
     def apply(self):
-        pass
+        layer = wo.put_column([
+            self.put_text()
+        ])
+        return layer
 
 
 class GetDeviceStatusComponent(ComponentBase):
@@ -121,7 +139,10 @@ class GetDeviceStatusComponent(ComponentBase):
         pywebio.output.put_text(self.PCRAPI.get_device_status())
 
     def apply(self):
-        pass
+        layer = wo.put_column([
+            self.put_text()
+        ])
+        return layer
 
 
 class GetTaskQueueComponent(ComponentBase):
@@ -130,7 +151,10 @@ class GetTaskQueueComponent(ComponentBase):
         pywebio.output.put_text(self.PCRAPI.get_task_queue())
 
     def apply(self):
-        pass
+        layer = wo.put_column([
+            self.put_text()
+        ])
+        return layer
 
 
 class GetScheduleStatusComponent(ComponentBase):
@@ -139,11 +163,14 @@ class GetScheduleStatusComponent(ComponentBase):
         pywebio.output.put_text(self.PCRAPI.get_schedule_status())
 
     def apply(self):
-        pass
+        layer = wo.put_column([
+            self.put_text()
+        ])
+        return layer
 
 
 class ReadUserComponent(ComponentBase):
-
+    # TODO:交互组件
     def put_input(self):
         username = pywebio.input.input('输入要读取的密码的用户名')
         pywebio.output.put_text(self.PCRAPI.read_user(username))
@@ -153,7 +180,7 @@ class ReadUserComponent(ComponentBase):
 
 
 class BindScheduleComponent(ComponentBase):
-
+    # TODO:交互组件
     def put_input(self):
         name = pywebio.input.input('输入要绑定的计划名')
         pywebio.output.put_text(self.PCRAPI.bind_schedule(name))
@@ -163,7 +190,7 @@ class BindScheduleComponent(ComponentBase):
 
 
 class UnbindScheduleComponent(ComponentBase):
-
+    # TODO:交互组件
     def put_button(self):
         pywebio.output.put_button("取消绑定当前的计划", onclick=lambda: self.PCRAPI.unbind_schedule(), color='warning')
 
@@ -172,6 +199,7 @@ class UnbindScheduleComponent(ComponentBase):
 
 
 class FirstStartPcrComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         pywebio.output.put_button("first", onclick=lambda: self.PCRAPI.start_pcr(1), color='info')
 
@@ -191,6 +219,7 @@ class ContinueStartPcrComponent(ComponentBase):
 
 
 class NotThingsStartPcrComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         pywebio.output.put_button("不使用schedule", onclick=lambda: self.PCRAPI.start_pcr(0), color='info')
 
@@ -199,6 +228,7 @@ class NotThingsStartPcrComponent(ComponentBase):
 
 
 class StopPcrComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         pywebio.output.put_button("停止脚本", onclick=lambda: self.PCRAPI.stop_pcr(), color='danger')
 
@@ -207,6 +237,7 @@ class StopPcrComponent(ComponentBase):
 
 
 class ScheduleClearAllErrorComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         pywebio.output.put_button("清除全部错误", onclick=lambda: self.PCRAPI.schedule_clear_error(), color='danger')
 
@@ -215,6 +246,7 @@ class ScheduleClearAllErrorComponent(ComponentBase):
 
 
 class ScheduleClearErrorComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         name = pywebio.input.input('清除名称为name的subschedule的错误')
         self.PCRAPI.schedule_clear_error(name)
@@ -224,6 +256,7 @@ class ScheduleClearErrorComponent(ComponentBase):
 
 
 class ScheduleFinishAllErrorComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         pywebio.output.put_button("直接完成全部schedule。", onclick=lambda: self.PCRAPI.schedule_finish(), color='danger')
 
@@ -232,6 +265,7 @@ class ScheduleFinishAllErrorComponent(ComponentBase):
 
 
 class ScheduleFinishComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         name = pywebio.input.input('将某一个子subschedule设为完成。')
         self.PCRAPI.schedule_finish(name)
@@ -241,6 +275,7 @@ class ScheduleFinishComponent(ComponentBase):
 
 
 class ScheduleRestartAllErrorComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         pywebio.output.put_button("重置全部计划，！除了永久执行的计划！", onclick=lambda: self.PCRAPI.schedule_restart(),
                                   color='danger')
@@ -250,6 +285,7 @@ class ScheduleRestartAllErrorComponent(ComponentBase):
 
 
 class ScheduleRestartComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         name = pywebio.input.input('重新开始某一个subschedule')
         self.PCRAPI.schedule_restart(name)
@@ -259,6 +295,7 @@ class ScheduleRestartComponent(ComponentBase):
 
 
 class DeviceReconnectComponent(ComponentBase):
+    # TODO:交互组件
     def put_button(self):
         pywebio.output.put_button("重新搜索设备并连接", onclick=lambda: self.PCRAPI.device_reconnect(), color='info')
 
@@ -267,7 +304,7 @@ class DeviceReconnectComponent(ComponentBase):
 
 
 class AddBatchToPcrComponent(ComponentBase):
-
+    # TODO:交互组件
     @staticmethod
     async def add_batch_to_pcr_component():
         data = await pywebio.input.input_group("中途向任务队列中增加一条batch", [
@@ -278,11 +315,11 @@ class AddBatchToPcrComponent(ComponentBase):
         # self.pywebio_output.put_text(self.PCRAPI.add_batch_to_pcr(data['batch'], data['continue_']))
 
     def apply(self):
-        await self.add_batch_to_pcr_component()
+        self.add_batch_to_pcr_component()
 
 
 class AddTaskToPcrComponent(ComponentBase):
-
+    # TODO:交互组件
     @staticmethod
     async def add_task_to_pcr_component():
         data = await pywebio.input.input_group("中途向任务队列中增加一个谁做谁", [
@@ -296,10 +333,11 @@ class AddTaskToPcrComponent(ComponentBase):
         # self.pywebio_output.put_text(self.PCRAPI.add_task_to_pcr(data['accs'], data['_checkbox']))
 
     def apply(self):
-        await self.add_task_to_pcr_component()
+        self.add_task_to_pcr_component()
 
 
 class WriteUserComponent(ComponentBase):
+    # TODO:交互组件
     def input_group(self):
         data = pywebio.input.input_group("username and userdict", [
             pywebio.input.input('输入要写入的密码的用户名', name='username'),
