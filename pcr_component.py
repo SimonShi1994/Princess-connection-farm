@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import asyncio
 import time
+from typing import Optional
 
 import pywebio
 from abc import abstractmethod, ABC
@@ -50,11 +51,11 @@ class ScopeName(str):
 
 
 class ComponentBase(ABC):
-    def __init__(self, scope=None):
+    def __init__(self, scope=None, api: Optional[PCRAPI] = None):
         if scope is None:
             scope = "__root__"
         self.scope = ScopeName(scope)
-        self.PCRAPI = PCRAPI()
+        self.PCRAPI = api
         self.used_scope = {}
 
     @abstractmethod
@@ -65,6 +66,7 @@ class ComponentBase(ABC):
         pass
 
     def add_component(self, component: "ComponentBase", name=None):
+        component.PCRAPI = self.PCRAPI
         if name is None:
             component.scope = self.scope
             out = component.apply()
