@@ -23,18 +23,6 @@ function myFunction(){
 def TABS_TPL(tabs_id:str):
     return """
 <div class="webio-tabs" id="__TABS_ID__">
-{{#tabs}}
-    <input type="radio" class="toggle" name="__TABS_ID__" id="__TABS_ID__{{index}}" myindex="{{index}}" {{#checked}}checked{{/checked}}>
-    <label for="__TABS_ID__{{index}}">
-        <p>{{title}}</p>
-        {{#close_btn}}<button type="button" onclick="Close___TABS_ID__({{index}})">x</button>{{/close_btn}}
-    </label>
-    <div class="webio-tabs-content">
-    {{#content}}
-        {{& pywebio_output_parse}}
-    {{/content}}
-    </div>
-{{/tabs}}
 {{{TEMPLATE_SCRIPT}}}
 <script>
 {{{CLOSE_SCRIPT}}}
@@ -50,7 +38,7 @@ def _TEMPLATE_SCRIPT(tabs_id):
 <input type="radio" class="toggle" name="__TABS_ID__" id="__TABS_ID__{{index}}" myindex="{{index}}">
 <label for="__TABS_ID__{{index}}">
     <p>{{title}}</p>
-    {{#close_btn}}<button type="button" onclick="Close___TABS_ID__({{index}})">x</button>{{/close_btn}}
+    {{#close_btn}}<button type="button" onclick="WebIO.pushData('','{{CALLBACK_ID}}')">x</button>{{/close_btn}}
 </label>
 <div class="webio-tabs-content">
     <div id="pywebio-scope-{{scope_name}}"></div>
@@ -97,13 +85,14 @@ function Show___TABS_ID__(pg){
 """.replace("__TABS_ID__",tabs_id)
 def _ADD_SCRIPT(tabs_id):
     return """
-function Add___TABS_ID__(pg,title,close_btn,scope_name,show){
+function Add___TABS_ID__(pg,title,close_btn,scope_name,show,callback_id){
     var template = $('#Template__TABS_ID__').html();
     var obj = {
         index: String(pg),
         title: title,
         close_btn: close_btn,
-        scope_name: scope_name
+        scope_name: scope_name,
+        CALLBACK_ID: callback_id,
     };
     Mustache.parse(template);
     var rendered = Mustache.render(template, obj);
@@ -119,36 +108,25 @@ function Add___TABS_ID__(pg,title,close_btn,scope_name,show){
 class AdvancedTab(ComponentBase):
     def __init__(self,contents=[]):
         """
-        ！！contents中不需要使用self.add_component，因为contents本身要求输入scope了。！！
         contents: List Of [ Dict {
             title - str: 标题,
             scope - str (default:S{index}) 子域域名
-            contents - list (default:[]) : 初始内容，同put_scope
+            content - ComponentBase ：（可选）展示的内容
             checked - bool (default:False) : 默认是否显示
             close_btn - bool (default:True) : 是否允许关闭页面
         }]
         """
         super().__init__()
+        self.tab_dict = {}
+        self.init_contents = []
+        self.tab_count = 0  # ID计数器，并不是当前总数！（无限递增，保证ID不重复）
         self.init(contents)
         self.unique_id = "AT_"+''.join(sample(ascii_letters + digits, 10))
+        self.on_content_change = None  # TAB内容改变时执行
 
-    @staticmethod
-    def make_init_content(title:str,scope:Optional[str]=None,contents:Optional[list]=None,
-                     checked:Optional[bool]=False,close_btn:Optional[bool]=True):
-        obj = {
-            'title':title,
-            'scope':scope,
-        }
-        if contents is not None:
-            obj['contents'] = contents
-        if checked is not None:
-            obj['checked'] = checked
-        if close_btn is not None:
-            obj['close_btn'] = close_btn
-        return obj
     def init(self,contents=[]):
         subscopes = []
-        self.tab_dict = OrderedDict({})
+        self.tab_dict = {}
         for ind, content in enumerate(contents):
             assert isinstance(content, dict)
             assert 'title' in content
@@ -157,40 +135,48 @@ class AdvancedTab(ComponentBase):
             subscopes.append(content['scope'])
             content.setdefault("checked", False)
             content.setdefault("close_btn", True)
-            content.setdefault("contents", [])
-            assert isinstance(content["contents"], list)
-
-            D = self.tab_dict.setdefault(ind, {})
-            D["title"] = content["title"]
-            D["scope"] = content["scope"]
+            if "content" in content:
+                assert isinstance(content["content"], ComponentBase)
+            else:
+                content["content"] = None
 
         self.init_contents = contents
         self.tab_count = len(self.tab_dict)  # ID计数器，并不是当前总数！（无限递增，保证ID不重复）
-        return self
 
+    @staticmethod
+    def make_init_content(title:str,scope:Optional[str]=None,content:Optional[ComponentBase]=None,
+                    close_btn:Optional[bool]=True,checked:Optional[bool]=False):
+        obj = {
+            'title':title,
+            'scope':scope,
+        }
+        if content is not None:
+            obj['content'] = content
+        if checked is not None:
+            obj['checked'] = checked
+        if close_btn is not None:
+            obj['close_btn'] = close_btn
+        return obj
 
     def apply(self):
-        print(self.init_contents)
+        # Initial Apply, 展示一个空的tab
+        # 新增tab在on_apply中实现，必须先渲染空框架才能新增tab
         output = wo.put_widget(TABS_TPL(self.unique_id),
                       {
-                          "tabs":[
-                              {
-                                  "index":str(ind),
-                                  "title":cont["title"],
-                                  "checked":cont["checked"],
-                                  "close_btn":cont["close_btn"],
-                                  "content":wo.put_scope(self.scope.add(cont['scope']),
-                                                         cont['contents'])
-                              } for ind,cont in enumerate(self.init_contents)
-                          ],
                           "TEMPLATE_SCRIPT":_TEMPLATE_SCRIPT(self.unique_id),
                           "CLOSE_SCRIPT":_CLOSE_SCRIPT(self.unique_id),
                           "ADD_SCRIPT":_ADD_SCRIPT(self.unique_id),
                           "CURRENT_SCRIPT":_CURRENT_SCRIPT(self.unique_id),
                           "SHOWTAB_SCRIPT":_SHOWTAB_SCRIPT(self.unique_id),
                       })
-        self.init_contents = None  # 好像必须得None触发__del__才能让他输出
         return output
+
+    def on_apply(self):
+        # print("清空之前页面")
+        self.init(self.init_contents)
+        # print("加载初始页面")
+        for ind,D in enumerate(self.init_contents):
+            self.add_tab(D["title"],D["scope"],D["content"],D["close_btn"],D["checked"])
 
     def add_tab(self, title: str, scope:Optional[str]=None, content:Optional["ComponentBase"]=None,
                 enable_close=True,show_tab=True,save_tabs_info=True):
@@ -209,7 +195,6 @@ class AdvancedTab(ComponentBase):
             }
         return:ScopeName - 新tab的域名
         """
-
         pg = self.tab_count
         if scope is None:
             scope = f"S{pg}"
@@ -217,14 +202,22 @@ class AdvancedTab(ComponentBase):
         close_btn = "true" if enable_close else "false"
         show = "true" if show_tab else "false"
         func_name = "Add___TABS_ID__".replace("__TABS_ID__",self.unique_id)
-        ws.run_js(f"""{func_name}({pg},"{title}",{close_btn},"{scope_name}",{show})""")
+        if enable_close:
+            # 需要注册一个回调函数
+            def onclick_callback(*args,**kwargs):
+                # print("我也不知道会传啥进来：",args,kwargs)
+                self.del_tab(pg)
+            callback_id = ws.get_current_session().register_callback(onclick_callback)
+        else:
+            callback_id = "NOTUSED"
+        ws.eval_js(f"""{func_name}({pg},"{title}",{close_btn},"{scope_name}",{show},"{callback_id}")""")
         self.tab_dict[self.tab_count]={
             "title":title,
             "scope":scope,
         }
         if content is not None:
             assert isinstance(content,ComponentBase)
-            self.tab_dict["content"]=content
+            self.tab_dict[self.tab_count]["content"]=content
             content.scope = self.scope.add(scope)  # 先设定根场景防止意外
             content.PCRAPI = self.PCRAPI  # 传递API
             if save_tabs_info:
@@ -235,7 +228,8 @@ class AdvancedTab(ComponentBase):
             with self.scope.add(scope).enter(clear=True):
                 content.apply()
         self.tab_count += 1
-
+        if self.on_content_change is not None:
+            self.on_content_change()
         return self.scope+scope
 
     def del_tab(self,ind:int):
@@ -259,8 +253,10 @@ class AdvancedTab(ComponentBase):
                     self.show_tab(tab_list[cur-1])
 
             func_name = "Close___TABS_ID__".replace("__TABS_ID__", self.unique_id)
-            ws.run_js(f"{func_name}({ind})")
+            ws.eval_js(f"{func_name}({ind})")
             del self.tab_dict[ind]
+            if self.on_content_change is not None:
+                self.on_content_change()
             return True
         else:
             return False
@@ -270,7 +266,7 @@ class AdvancedTab(ComponentBase):
         # 若tab_dict中有，则尝试高亮并返回True，否则返回False
         if ind in self.tab_dict:
             func_name = "Show___TABS_ID__".replace("__TABS_ID__", self.unique_id)
-            ws.run_js(f"{func_name}({ind})")
+            ws.eval_js(f"{func_name}({ind})")
             return True
         else:
             return False
@@ -304,10 +300,9 @@ class TestPage(PageBase):
         ])
 
 class TabAdder(ComponentBase):
-    def __init__(self, bind_tab: "AdvancedTab", bind_mainpage:"MainPage"):
+    def __init__(self, bind_tab: "AdvancedTab"):
         super().__init__()
         self.bind_tab = bind_tab
-        self.bind_mainpage = bind_mainpage
 
     def btn_click(self):
         S = self.scope
@@ -316,7 +311,6 @@ class TabAdder(ComponentBase):
         enable_close = len(S.get("EC"))==1
         show_tab = len(S.get("ST"))==1
         self.bind_tab.add_tab(title,scope,content=TestPage(),enable_close=enable_close,show_tab=show_tab)
-        self.bind_mainpage.refresh_code()
 
     def apply(self):
         S = self.scope
@@ -335,16 +329,14 @@ class TabAdder(ComponentBase):
         ])
 
 class TabDeler(ComponentBase):
-    def __init__(self, bind_tab: "AdvancedTab", bind_mainpage:"MainPage"):
+    def __init__(self, bind_tab: "AdvancedTab"):
         super().__init__()
         self.bind_tab = bind_tab
-        self.bind_mainpage = bind_mainpage
 
     def btn_click(self):
         S = self.scope
         index = S.get("II")
         self.bind_tab.del_tab(index)
-        self.bind_mainpage.refresh_code()
 
     def apply(self):
         S = self.scope
@@ -360,8 +352,8 @@ class MainPage(PageBase):
     def __init__(self, bind_tab:AdvancedTab):
         super().__init__()
         self.bind_tab = bind_tab
-        self.tab_adder = TabAdder(bind_tab,self)
-        self.tab_deler = TabDeler(bind_tab,self)
+        self.tab_adder = TabAdder(bind_tab)
+        self.tab_deler = TabDeler(bind_tab)
 
     def get_tab_json(self):
         return pformat(self.bind_tab.tab_dict)
@@ -386,12 +378,13 @@ class MainAPP(ComponentBase):
     def __init__(self):
         super().__init__()
         self.TAB = AdvancedTab()
-        self.MainPage = MainPage(self.TAB)
+        self.MainPage = MainPage(self.TAB)  # 先绑定
+        self.TAB.init([AdvancedTab.make_init_content("MAIN","main",self.MainPage,False,True)])  # 重新init实现双向绑定
+        self.TAB.on_content_change = self.MainPage.refresh_code  # TAB内容改变时，刷新code显示
+
     def apply(self):
         out = wo.put_column([
-            self.TAB.init([
-                AdvancedTab.make_init_content("MAIN","main",[self.MainPage()],True,False)
-            ]).apply(),
+            self.add_component(self.TAB,name="TAB"),
             wo.put_html(html),
         ])
         return out
@@ -399,3 +392,4 @@ class MainAPP(ComponentBase):
 if __name__ == "__main__":
     app = MainAPP()
     pywebio.start_server(app,10234)
+    # from pywebio.session.threadbased import ScriptModeSession

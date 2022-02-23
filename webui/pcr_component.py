@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 import asyncio
 import time
-from typing import Optional
+from typing import Optional, Callable
 
 import pywebio
 from abc import abstractmethod, ABC
@@ -57,16 +57,32 @@ class ComponentBase(ABC):
         self.scope = ScopeName(scope)
         self.PCRAPI = api
         self.used_scope = {}
+        self.on_apply_queue = []  # 记录on_apply的调用队列
+        """
+        on_apply:
+        调用__call__时，在执行完全部apply后执行的内容。
+        调用add_component时，子元件的on_apply将被暂存到父元件的on_apply_queue队列。
+        执行时，子元件的on_apply先执行，父元件的on_apply后执行
+        ！在全部渲染完毕后被调用！
+        """
+        if not hasattr(self,"on_apply"):
+            self.on_apply = None
 
     @abstractmethod
     def apply(self):
         """
         元件实现的主要部分
+        但如果你想要触发on_apply事件，你得用__call__！
+        __call__没有返回值，会执行最顶层的apply后，进一步按照先子再父的顺序执行on_apply！
         """
         pass
 
     def add_component(self, component: "ComponentBase", name=None):
         component.PCRAPI = self.PCRAPI
+        if component.on_apply is not None:
+            self.on_apply_queue.append(component.on_apply)  # 添加子元件的on_apply到调用队列
+        self.on_apply_queue.extend(component.on_apply_queue)  # 合并调用队列到上级
+        component.on_apply_queue = []
         if name is None:
             component.scope = self.scope
             out = component.apply()
@@ -81,8 +97,15 @@ class ComponentBase(ABC):
         return self.used_scope.get(name)
 
     def __call__(self):
-        return self.apply()
-
+        """
+        最顶层的元件使用__call__
+        apply只是渲染，__call__是渲染并执行所有的on_apply事件函数！
+        __call__没有返回值！
+        """
+        self.apply()
+        for func in self.on_apply_queue:
+            func()
+        self.on_apply_queue = []
 
 class GetDatacenterTimeComponent(ComponentBase):
 
