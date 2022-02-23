@@ -1,13 +1,11 @@
 # -*- coding:utf-8 -*-
 import random
-import time
 
 import pywebio
 
-from pcr_component import ScopeName, ComponentBase, GetDatacenterTimeComponent
+from webui.pcr_component import ScopeName, ComponentBase, GetDatacenterTimeComponent
 import pywebio.output as po
 import pywebio.output as wo
-import pywebio.pin as wp
 
 
 class Tabs(ComponentBase):
