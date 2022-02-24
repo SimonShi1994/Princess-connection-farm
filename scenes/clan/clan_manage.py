@@ -29,6 +29,7 @@ class ClanMember(ClanBase):
     '''
     sortflag:0 默认值; 1 按战力; 2 按职务
     '''
+
     def sortmember(self, sortflag):
         self.click_btn(HANGHUI_BTN["chengyuanpaixu"], elsedelay=5, until_appear=HANGHUI_BTN["paixuqueren"])
         if sortflag == 1:
@@ -72,13 +73,58 @@ class ClanMember(ClanBase):
                         break
 
 
-
 class NoClan(SevenBTNMixin):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "NoClan"
         self.feature = self.fun_feature_exist(HANGHUI_BTN["sheding_join"])
+
+
+class ClanBattleMAP(SevenBTNMixin):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "ClanBattleMAP"
+        self.feature = self.fun_feature_exist(HANGHUI_BTN["rank_info"])
+
+    def click_boss(self):
+        r = self.img_where_all(img="img/hanghui/battle/boss_lp.bmp", at=(13, 133, 916, 379), threshold=0.6)
+        if r is []:
+            self.log.write_log("info", "未识别到BOSS，可能不在公会战期间")
+            return False
+        else:
+            x = r[0]
+            y = r[1]
+            x1 = int(x) + 77
+            y1 = int(y) - 43
+            self.click(x1, y1)
+            self.lock_no_img(HANGHUI_BTN["rank_info"])
+
+    def get_cishu(self):
+        a = self.ocr_int(549, 395, 569, 415)
+        if a == 0:
+            if self.is_exists(HANGHUI_BTN["fanhuanshijian"]):
+                return 1
+            else:
+                return 0
+        else:
+            return a
+
+
+class ClanBattlePre(ClanBattleMAP):
+    # 公会战准备
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "ClanBattlePre"
+        self.feature = self.fun_feature_exist(HANGHUI_BTN["rank_info"])
+
+    def make_formal(self):
+        self.lock_img(HANGHUI_BTN["monizhan_unselected"], elseclick=(862, 104))
+
+    def goto_battle(self):  # 点击挑战，进入队伍编组
+        from scenes.fight.fightbianzu_base import FightBianZuBase
+        return self.goto(FightBianZuBase, self.fun_click(HANGHUI_BTN["tiaozhan"]))
 
 
 

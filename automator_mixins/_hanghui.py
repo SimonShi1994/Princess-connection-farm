@@ -7,6 +7,7 @@ from core.log_handler import pcr_log
 from core.safe_u2 import timeout
 from core.utils import diffday
 from automator_mixins._tools import ToolsMixin
+from scenes.clan.clan_manage import ClanBattleMAP
 
 
 class HanghuiMixin(ToolsMixin):
@@ -132,27 +133,27 @@ class HanghuiMixin(ToolsMixin):
         self.lock_img('img/ok.bmp', ifclick=[(591, 440)], ifdelay=1)  # 点击ok
         self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
-    def joinhanghui(self, clubname):  # 小号加入行会
-        # 应该废弃了
-        self.log.write_log('waring',"此功能或许已经废弃，转另一个版本")
-        self.log.write_log('info','>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
-        self.click(693, 430)  # 点击行会
-        self.lock_img('img/zujianhanghui.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
-        time.sleep(1)
-        self.lock_img('img/zujianhanghui.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
-        self.click(860, 79)  # 点击设定
-        self.lock_img('img/quxiao2.jpg', ifclick=[(477, 177)], ifdelay=1)  # 点击输入框
-        self.d.send_keys(clubname)
-        time.sleep(1)
-        self.click(1, 1)
-        time.sleep(1)
-        self.click(587, 432)
-        time.sleep(5)
-        self.click(720, 172)
-        time.sleep(1)
-        self.lock_img('img/jiaru.bmp', ifclick=[(839, 443)], ifdelay=1)  # 点击加入
-        self.lock_img('img/ok.jpg', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
-        self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
+    # def joinhanghui(self, clubname):  # 小号加入行会
+    #     # 应该废弃了
+    #     self.log.write_log('waring',"此功能或许已经废弃，转另一个版本")
+    #     self.log.write_log('info','>>>>>>>即将加入公会名为：', clubname, '<<<<<<<')
+    #     self.click(693, 430)  # 点击行会
+    #     self.lock_img('img/zujianhanghui.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
+    #     time.sleep(1)
+    #     self.lock_img('img/zujianhanghui.bmp', elseclick=[(1, 1)], alldelay=0.5)  # 锁定行会界面
+    #     self.click(860, 79)  # 点击设定
+    #     self.lock_img('img/quxiao2.jpg', ifclick=[(477, 177)], ifdelay=1)  # 点击输入框
+    #     self.d.send_keys(clubname)
+    #     time.sleep(1)
+    #     self.click(1, 1)
+    #     time.sleep(1)
+    #     self.click(587, 432)
+    #     time.sleep(5)
+    #     self.click(720, 172)
+    #     time.sleep(1)
+    #     self.lock_img('img/jiaru.bmp', ifclick=[(839, 443)], ifdelay=1)  # 点击加入
+    #     self.lock_img('img/ok.jpg', ifclick=[(597, 372)], ifdelay=1)  # 点击ok
+    #     self.lock_img('img/liwu.bmp', elseclick=[(131, 533), (1, 1)], elsedelay=0.5, at=(891, 413, 930, 452))  # 回首页
 
     def join_hanghui(self, clubname):
         # 2021-8-11 CyiceK修了点bug
@@ -456,15 +457,9 @@ class HanghuiMixin(ToolsMixin):
                     self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1),
                                   side_check=self.juqing_kkr)
                     screen = self.getscreen()
-                    r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
-                    if self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
-                                     side_check=self.juqing_kkr, retry=5):
-                        if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
-                            break
-                    else:
-                        # if看看是不是延迟太高导致的
-                        if not self.is_exists(img=TUANDUIZHAN_BTN["tiaozhan"]):
-                            self.click(1, 1)
+                    cbm = ClanBattleMAP(self)
+                    cbm.click_boss()
+                    break
                 except Exception as e:
                     pcr_log(self.account).write_log("info", f"识别不到boss信息，已退出本任务")
                     return

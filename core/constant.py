@@ -379,6 +379,17 @@ HANGHUI_BTN = {
     # 收取报酬
     "sqbc": p(img="img/hanghui/sqbc.bmp", at=(439, 32, 521, 52)),
 
+    # # # 会战相关 # # #
+    "rank_info": p(276, 106, img="img/hanghui/battle/rank_info.bmp", at=(270, 96, 283, 116)),
+    "boss_lp": p(212, 369, img="img/hanghui/battle/boss_lp.bmp", at=(191, 361, 234, 377)),
+    "fanhuanshijian": p(541, 406, img="img/hanghui/battle/fanhuanshijian.bmp", at=(511, 398, 572, 414)),
+    "shbg": p(833, 45, img="img/hanghui/battle/shbg.bmp", at=(798, 34, 868, 56)),  # 怪物详情界面
+    "monizhan_unselected": p(745, 107, img="img/hanghui/battle/monizhan_unselected.bmp", at=(710, 98, 780, 117)),
+    "tiaozhan": p(833,456,img="img/hanghui/battle/tiaozhan.bmp",at=(806,442,860,471)),
+
+
+
+
 }
 TUANDUIZHAN_BTN = {
     "tuanduizhan": p(img="img/hanghui/tuanduizhan.bmp", at=(805, 204, 950, 346)),
