@@ -464,6 +464,7 @@ class HanghuiMixin(ToolsMixin):
                     pcr_log(self.account).write_log("info", f"识别不到boss信息，已退出本任务")
                     return
             else:
+                self.fclick(1, 1)
                 continue
 
         def tiaozhan() -> bool:
