@@ -87,6 +87,19 @@ class ClanBattleMAP(SevenBTNMixin):
         super().__init__(*args, **kwargs)
         self.scene_name = "ClanBattleMAP"
         self.feature = self.fun_feature_exist(HANGHUI_BTN["rank_info"])
+        self.initPC = self.gonghuizhan_precheck
+
+    def gonghuizhan_precheck(self, screen):
+        if self.is_exists(HANGHUI_BTN["baochouqueren"], screen=screen):
+            self.click_btn(HANGHUI_BTN["baochouqueren"])
+        if self.is_exists(HANGHUI_BTN["guanbi"], screen=screen):
+            self.click_btn(HANGHUI_BTN["guanbi"])
+        if self.is_exists(HANGHUI_BTN["sudu"]):
+            self.click(349, 282)
+            time.sleep(1)
+            self.click(479, 365)
+            self.clear_initFC()
+        return screen
 
     def click_boss(self):
         r = self.img_where_all(img="img/hanghui/battle/boss_lp.bmp", at=(13, 133, 916, 379), threshold=0.6)
@@ -125,6 +138,3 @@ class ClanBattlePre(ClanBattleMAP):
     def goto_battle(self):  # 点击挑战，进入队伍编组
         from scenes.fight.fightbianzu_base import FightBianZuBase
         return self.goto(FightBianZuBase, self.fun_click(HANGHUI_BTN["tiaozhan"]))
-
-
-
