@@ -385,13 +385,11 @@ HANGHUI_BTN = {
     "fanhuanshijian": p(541, 406, img="img/hanghui/battle/fanhuanshijian.bmp", at=(511, 398, 572, 414)),
     "shbg": p(833, 45, img="img/hanghui/battle/shbg.bmp", at=(798, 34, 868, 56)),  # 怪物详情界面
     "monizhan_unselected": p(745, 107, img="img/hanghui/battle/monizhan_unselected.bmp", at=(710, 98, 780, 117)),
-    "tiaozhan": p(833,456,img="img/hanghui/battle/tiaozhan.bmp",at=(806,442,860,471)),
-    "baochouqueren": p(476,477,img="img/hanghui/battle/baochouqueren.bmp",at=(448,463,505,491)), # 报酬确认提示
-    "guanbi": p(476,476,img="img/hanghui/battle/guanbi.bmp",at=(452,464,501,489)), # 关闭X月团队站开始的提示
-    "sudu": p(479,146,img="img/hanghui/battle/sudu.bmp",at=(383,134,575,159)), # 模拟速度设定
-
-
-
+    "tiaozhan": p(833, 456, img="img/hanghui/battle/tiaozhan.bmp", at=(806, 442, 860, 471)),
+    "guanbi": p(476, 476, img="img/hanghui/battle/guanbi.bmp", at=(452, 464, 501, 489)),  # 关闭X月团队站开始的提示
+    "sudu": p(479, 146, img="img/hanghui/battle/sudu.bmp", at=(383, 134, 575, 159)),  # 模拟速度设定
+    "kkr_dialog": p(280, 402, img="img/hanghui/battle/kkr_dialog.bmp", at=(257, 392, 304, 412)),  # kkr对话框设别
+    "queren": p(477,477,img="img/hanghui/battle/queren.bmp",at=(455,466,499,488)),  # 确认报酬
 
 }
 TUANDUIZHAN_BTN = {

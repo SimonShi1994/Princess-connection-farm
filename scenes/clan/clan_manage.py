@@ -98,7 +98,6 @@ class ClanBattleMAP(SevenBTNMixin):
             self.click(349, 282)
             time.sleep(1)
             self.click(479, 365)
-            self.clear_initFC()
         return screen
 
     def click_boss(self):

@@ -7,7 +7,7 @@ from core.log_handler import pcr_log
 from core.safe_u2 import timeout
 from core.utils import diffday
 from automator_mixins._tools import ToolsMixin
-from scenes.clan.clan_manage import ClanBattleMAP
+from scenes.clan.clan_battle import ClanBattleMAP
 
 
 class HanghuiMixin(ToolsMixin):
