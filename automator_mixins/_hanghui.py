@@ -457,7 +457,7 @@ class HanghuiMixin(ToolsMixin):
                     self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1),
                                   side_check=self.juqing_kkr)
                     screen = self.getscreen()
-                    cbm = ClanBattleMAP(self)
+                    cbm = ClanBattleMAP(self).enter()
                     cbm.click_boss()
                     break
                 except Exception as e:
