@@ -56,7 +56,7 @@ class ClanBattlePre(ClanBattleMAP):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "ClanBattlePre"
-        self.feature = self.fun_feature_exist(HANGHUI_BTN["rank_info"])
+        self.feature = self.fun_feature_exist(HANGHUI_BTN["shbg"])
         self.initPC = self.zhandouzhunbei_precheck
 
     def zhandouzhunbei_precheck(self, screen):
@@ -72,6 +72,14 @@ class ClanBattlePre(ClanBattleMAP):
 
 
 class ClanBattleBianzu(ClanBattleMAP):  # 公会战编组
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "ClanBattlePre"
+        self.feature = self.fun_feature_exist(HANGHUI_BTN["rank_info"])
+        self.initPC = self.duiwubianji_precheck
 
-    pass
+    def duiwubianji_precheck(self, screen):
+        if self.is_exists(HANGHUI_BTN["kkr_dialog"], screen=screen):
+            self.click(160, 100)
+            self.click(160, 100)
 
