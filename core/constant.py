@@ -402,7 +402,7 @@ TUANDUIZHAN_BTN = {
     "guanbi": p(430, 487, img="img/hanghui/close_btn_1.bmp", at=(199, 393, 742, 526)),
 }
 ZHUCAIDAN_BTN = {
-    "bangzhu": p(img="img/zhucaidan/bangzhu.bmp", at=(52, 293, 253, 335)),
+    "bangzhu": p(153,269,img="img/zhucaidan/bangzhu.bmp",at=(52, 248, 253, 290)),
     "jianjie": p(img="img/zhucaidan/jianjie.bmp", at=(267, 241, 499, 290)),
     "daoju": p(475, 160, img="img/zhucaidan/daoju.bmp", at=(475, 112, 610, 187)),
     "saodangquan": p(img="img/zhucaidan/saodangquan.bmp"),
@@ -459,9 +459,9 @@ FIGHT_BTN = {
     },
     "team_v": {
         # 队伍1，队伍2，队伍3
-        1: p(797, 173),
-        2: p(788, 291),
-        3: p(788, 412),
+        1: p(785, 200),
+        2: p(785, 325),
+        3: p(785, 423),
     },
     "first_five": {
         # 前五个角色
@@ -628,7 +628,7 @@ JUESE_BTN = {
     "rank_max": p(654, 242, img="img/juese/rank_max.bmp", at=(630, 231, 678, 253)),
 
 }
-MAX_DXC = 5  # 一共出了多少个地下城关
+MAX_DXC = 6  # 一共出了多少个地下城关
 
 DXC_ELEMENT = {
     # 由于识别率不佳，暂时不用
@@ -638,13 +638,13 @@ DXC_ELEMENT = {
     "left": p(945, 242),
     "zyjsqr": p(img="img/dxc/zyjsqr.bmp", at=(412, 29, 549, 54)),
     "zyjsqr_ok": p(595, 471),
-    "chetui": p(876, 427, img="img/dxc/chetui.bmp", at=(830, 407, 929, 448)),
+    "chetui": p(809,428,img="img/dxc/chetui.bmp",at=(789,419,830,438)),
     "chetui_ok": p(591, 365, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "chetuiqueren": p(img="img/dxc/chetuiqueren.bmp", at=(433, 134, 521, 158)),
     "sytzcs": p(723, 438, img="img/dxc/sytzcs.bmp", at=(667, 428, 784, 447)),
     "kyzdjs": p(img="img/dxc/kyzdjs.bmp", at=(591, 377, 687, 396)),
     "ceng": p(img="img/dxc/ceng.bmp"),
-    "in_sytzcs": p(img="img/dxc/in_sytzcs.bmp", at=(639, 421, 731, 438)),
+    "in_sytzcs": p(620,430,img="img/dxc/in_sytzcs.bmp",at=(575,421,665,439)),
     "1/1": p(img="img/dxc/dxc_1_1.bmp", at=(887, 429, 913, 446)),
     "0/1": p(img="img/dxc/dxc_0_1.bmp", at=(883, 429, 910, 445)),
     "qwdxc": p(810, 489),  # 失败：前往地下城
@@ -653,8 +653,8 @@ DXC_ELEMENT = {
     "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
     "shouqubaochou_ok": p(480, 477, img="img/ui/queren.bmp", at=(450, 465, 509, 489)),
     "qianwangdixiacheng": p(805, 495),
-    "qyxzqr": p(img="img/dxc/qyxzqr.bmp", at=(415, 135, 540, 157)),
-    "quyuxuanzequeren_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
+    "qyxzqr": p(478,88,img="img/dxc/qyxzqr.bmp",at=(411,76,546,100)),
+    "quyuxuanzequeren_ok": p(586,433,img="img/ui/queren_blue.bmp",at=(559, 418, 613, 447)),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
@@ -730,7 +730,8 @@ DXC_ENTRANCE = {
     2: p(366, 245, name="密林的大树"),
     3: p(600, 246, name="断崖的遗迹"),
     4: p(831, 246, name="沧海的孤塔"),
-    5: p(831, 246, name="EX 2"),
+    5: p(607, 241, name="EX 2"),
+    6: p(831, 235, name="EX 3"),
 }
 DXC_ENTRANCE_DRAG = {
     1: "left",
@@ -738,6 +739,7 @@ DXC_ENTRANCE_DRAG = {
     3: "left",
     4: "left",
     5: "right",
+    6: "right",
 }
 DXC_COORD = {
     # 每个地下城里面每一个关卡的位置
@@ -775,6 +777,14 @@ DXC_COORD = {
         3: p(491, 262),
         4: p(425, 250),
         5: p(502, 259),
+    },
+
+    6: {
+        1: p(680,241),
+        2: p(487,237),
+        3: p(224,226),
+        4: p(477,204),
+        5: p(715,218),
     }
 }
 
@@ -955,8 +965,12 @@ VH_COORD = {
     20: {
         1: p(210, 270, name="VH20-1"),
         2: p(478, 337, name="VH20-2"),
+        3: p(767, 262, name="VH20-3"),
     },
-
+    21: {
+        1: p(218, 266, name="VH21-1"),
+        2: p(475, 330, name="VH21-2"),
+    },
 }
 
 MAOXIAN_BTN = {

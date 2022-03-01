@@ -31,8 +31,8 @@ class FightingWinBase(PCRSceneBase):
 
     def win_feature(self, screen):
         from core.constant import p
-        duiwu_icon = p(img="img/fight/duiwu_icon.bmp", at=(896, 78, 924, 97))
-        shbg = p(850, 37, img="img/fight/shbg.bmp", at=(814, 26, 886, 48))
+        duiwu_icon = p(909,88,img="img/fight/duiwu_icon.bmp",at=(895, 78, 923, 97))
+        shbg = p(850,38,img="img/fight/shbg.bmp",at=(814, 27, 886, 49))
         return self.is_exists(duiwu_icon, screen=screen) and self.is_exists(shbg, screen=screen)
 
 

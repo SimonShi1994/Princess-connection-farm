@@ -755,7 +755,7 @@ class BaseMixin:
         return True
 
     @DEBUG_RECORD
-    def wait_for_loading(self, screen=None, delay=0.5, timeout=30):
+    def wait_for_loading(self, screen=None, delay=0.5, timeout=90):
         """
         等待黑屏loading结束
         :param screen: 设置为None时，截图，否则使用screen
@@ -1871,13 +1871,15 @@ class BaseMixin:
             self.log.write_log(level='error', message='PCR特化OCR识别失败，原因：%s' % ocr_error)
             return -1
 
-    def ocr_int(self, x1, y1, x2, y2, screen_shot=None):
+    def ocr_int(self, x1, y1, x2, y2, screen_shot=None, allow_int=None):
         """
         获取整型数字，不能包含 /
         :arg
         """
+        if allow_int is None:
+            allow_int = "0123456789"
         if use_pcrocr_to_process_basic_text:
-            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr="0123456789")
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr=allow_int)
         else:
             out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=10.0, credibility=0.9, type='number',
                                   blur='gussian')
@@ -1894,7 +1896,9 @@ class BaseMixin:
         out = make_it_as_number_as_possible(out)
         return int(out)
 
-    def ocr_A_B(self, x1, y1, x2, y2, screen_shot=None):
+    def ocr_A_B(self, x1, y1, x2, y2, screen_shot=None, allow_AB=None):
+        if allow_AB is None:
+            allow_AB = "0123456789"
         def ABfun(s):
             assert s != "-1", "什么都没有检测到"
             assert "/" in s, "字符串中应该有/"
@@ -1904,7 +1908,7 @@ class BaseMixin:
             return a, b
 
         if use_pcrocr_to_process_basic_text:
-            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr="0123456789/")
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr="/"+allow_AB)
         else:
             out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, language='eng')
         try:

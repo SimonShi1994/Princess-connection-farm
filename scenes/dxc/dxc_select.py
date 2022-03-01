@@ -94,13 +94,13 @@ class DXCSelectB(SevenBTNMixin):
 
     def get_cishu(self, screen=None):
         # OCR获取还可以挑战的次数
-        at = (786, 419, 817, 438)
-        A, B = self.ocr_A_B(*at, screen_shot=screen)
+        at = (721,421,753,438)
+        A, B = self.ocr_A_B(*at, screen_shot=screen,allow_AB="01")
         return A
 
     def get_jieshu(self, screen=None):
         # OCR获取当前层数
-        at = (582, 422, 614, 437)
+        at = (516,421,548,438)
         try:
             A, B = self.ocr_A_B(*at, screen_shot=screen)
         except OCRRecognizeError as e:

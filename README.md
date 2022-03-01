@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220220
+# Princess connection 公主连结农场脚本v2.8.20220229
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -228,6 +228,26 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/02/29 By TheAutumnOfRice, UVJkiNTQ
+
+- 坐标更新
+  - 新增VH20-3~VH21-2
+  - 更改了地下城入口坐标
+  - 新增ex3地下城坐标
+- 新版本新增功能
+  - 主线战斗速度提高到四倍速
+  - JJC白给`j1` `j2`默认尝试跳过战斗
+- 新版本适应性修复
+  (以下关于地下城的修复仅测试通用地下城`d5`)
+  - 修复地下城入口确认框的feature偏移
+  - 修复了主菜单画面的feature偏移
+  - 修复了地下城内部UI偏移
+  - 修复战斗胜利界面feature偏移
+  - 修复编组选择中纵向按钮坐标偏移
+- 框架升级 
+  - ocr_int, ocr_A_B允许设定字符集参数了
+
 2022/02/20 By UVJkiNTQ
 
 - 修复30图坐标偏移
