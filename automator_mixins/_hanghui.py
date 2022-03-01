@@ -458,7 +458,7 @@ class HanghuiMixin(ToolsMixin):
                                   side_check=self.juqing_kkr)
                     screen = self.getscreen()
                     cbm = ClanBattleMAP(self).enter()
-                    cbm.click_boss()
+                    cbm.goto_battlepre()
                     break
                 except Exception as e:
                     pcr_log(self.account).write_log("info", f"识别不到boss信息，已退出本任务")
