@@ -38,7 +38,7 @@ class JJCMixin(FightBaseMixin):
             # 803 496
             self.wait_for_loading(delay=2)
             self.set_fight_speed(2, 2)
-        self.lock_img(JJC_BTN["list"], timeout=180, elseclick=[(803, 496), (1, 1)], elsedelay=8)
+        self.lock_img(JJC_BTN["list"], timeout=180, elseclick=[(803, 496), (1, 1),(914,353)], elsedelay=8)
         self.lock_home()
         # 做pjjc任务
 
@@ -70,5 +70,5 @@ class JJCMixin(FightBaseMixin):
             # 843, 452
             self.wait_for_loading(delay=2)
             self.set_fight_speed(2, 2)
-        self.lock_img(JJC_BTN["plist"], timeout=180 * 3, elseclick=[(803, 506), (1, 1)], elsedelay=8)
+        self.lock_img(JJC_BTN["plist"], timeout=180 * 3, elseclick=[(803, 506), (1, 1),(914,353)], elsedelay=8)
         self.lock_home()

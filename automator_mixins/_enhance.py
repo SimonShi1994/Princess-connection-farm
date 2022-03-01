@@ -141,7 +141,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                             fb.get_zhiyuan(assist_num=1, force_haoyou=False, if_full=is_full)
                                         zd = fb.goto_fight()
                                         zd.set_auto(True)
-                                        zd.set_speed(1, max_level=1)
+                                        zd.set_speed(2, max_level=2)
                                         during = DuringFighting(self)
                                         while True:
                                             time.sleep(1)

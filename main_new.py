@@ -1,4 +1,5 @@
 import datetime
+import time
 import subprocess
 import traceback
 
@@ -33,7 +34,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.8.20220220"
+script_version = "Ver 2.8.20220229"
 
 
 
@@ -53,6 +54,7 @@ def StartPCR():
     if PCR is None:
         print("控制器正在连接中……")
         os.system(f"cd {adb_dir} & adb kill-server")
+        time.sleep(5)
         PCR = PCRInitializer()
         PCR.connect()
     PCR.devices.add_from_config()

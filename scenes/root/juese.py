@@ -201,17 +201,18 @@ class CharBase(SevenBTNMixin):
     def goto_menu(self) -> "CharMenu":
         return self.goto(CharMenu, self.fun_click(JUESE_BTN["return_menu"]))
 
-    def get_shoucang_state(self, screen=None):
-        # True: 收藏了；  False： 未收藏
-        if screen is None: screen = self.getscreen()
-        A = self.img_prob(JUESE_BTN["yishoucang"], screen=screen)
-        B = self.img_prob(JUESE_BTN["weishoucang"], screen=screen)
-        return A > B
-
-    def set_shoucang_state(self, state: bool, screen=None):
-        # True - 收藏； False - 取消收藏
-        if self.get_shoucang_state(screen) != state:
-            self.click(JUESE_BTN["yishoucang"], post_delay=0.5)
+    # 新版本收藏的位置改变了
+    # def get_shoucang_state(self, screen=None):
+    #     # True: 收藏了；  False： 未收藏
+    #     if screen is None: screen = self.getscreen()
+    #     A = self.img_prob(JUESE_BTN["yishoucang"], screen=screen)
+    #     B = self.img_prob(JUESE_BTN["weishoucang"], screen=screen)
+    #     return A > B
+    #
+    # def set_shoucang_state(self, state: bool, screen=None):
+    #     # True - 收藏； False - 取消收藏
+    #     if self.get_shoucang_state(screen) != state:
+    #         self.click(JUESE_BTN["yishoucang"], post_delay=0.5)
 
     def get_level(self, screen=None):
         if screen is None: screen = self.getscreen()
@@ -409,7 +410,7 @@ class CharZhuangBei(CharBase):
                         if do_tuitu:
                             self.log.write_log("info", "需要推图，准备推图")
                             out = fi.easy_shoushua(team_order=teamorder, one_tili=-1, check_cishu=False,
-                                                   max_speed=1, get_zhiyuan=getzhiyuan)
+                                                   max_speed=2, get_zhiyuan=getzhiyuan)
                             if out == 1:
                                 self.log.write_log("info", "由于挑战失败了，跳过这个角色的装备升级。")
                                 self.fclick(1, 1)
@@ -444,6 +445,7 @@ class CharKaihua(CharBase):
             return False
 
     def get_stars(self, screen=None):
+        # TODO: Can not recognize Changed Stars
         if screen is None: screen = self.getscreen()
         from core.constant import PCRelement as p
         if self.is_exists(JUESE_BTN["liuxing_info"], screen=screen):

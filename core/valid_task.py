@@ -457,7 +457,7 @@ class TeamInputer(InputBoxBase):
     def create(self) -> list:
         print("请输入队号")
         print("输入 A-B 表示使用编组A队伍B，其中A为1~5整数，B为1~3整数")
-        print("输入 zhanli 表示按照战力排名取前五位组队")
+        print("输入 zhanli 表示按照战力取前五位组队")
         print("输入 end 结束编辑")
         count = 1
         self.l = []
@@ -714,7 +714,7 @@ VALID_TASK = ValidTask() \
           TaskParam("teams", list, "编队列表", "编队列表，参战地下城所使用的编队\n"
                                            "按照列表顺序分别表示编队1号，2号，3号……\n"
                                            "每一个元素为一个字符串\n"
-                                           "若为\"zhanli/dengji/xingshu/shoucang\"，则按照相关排序，选择前五最高为当前队伍\n"
+                                           "若为\"zhanli\"，则按照相关排序，选择前五最高为当前队伍\n"
                                            "若为\"a-b\",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b", inputbox=TeamInputer()),
           TaskParam("safety_stop", int, "安全保护", "防止大号误撤退。\n设置为0时，不管；\n设置为1时，若小关伤亡惨重，直接返回主页不撤退。", 1),
           TaskParam("assist", int, "支援设置", "0表示不用支援，1~16选支援第1/2行的第n个（1-8）(9-16)，等级限制会自动选择第n+1个", 0)]) \
