@@ -229,7 +229,14 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2022/02/29 By TheAutumnOfRice, UVJkiNTQ
+2022/03/02 By TheAutumnOfRice
+
+- 增加了自动升级中自动强化亮着但无法点击时的应对措施
+- 增加了自动升级中刷图遇到Hard图时次数不足的应对措施
+- easy_shoushua函数增加对无穷扫荡次数的识别
+- 修复了2022年2月没有29天的BUG （
+
+2022/02/28 By TheAutumnOfRice, UVJkiNTQ
 
 - 坐标更新
   - 新增VH20-3~VH21-2

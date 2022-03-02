@@ -196,17 +196,19 @@ class FightInfoBase(PCRMsgBoxBase):
         <return>
             0: 挑战成功
             1: 挑战失败
+            2: 没有次数
         <return scene>
             会关闭FightInfo窗口，回到选关页面。
         """
         screen = self.getscreen()
         if check_cishu:
             # 次数检查
-            cishu_left = self.get_cishu(screen)
-            if cishu_left == 0:
-                self.log.write_log("warning", "次数不足，无法挑战！")
-                self.exit_me()
-                return 2
+            if not self.is_exists(FIGHT_BTN["infinity"], screen=screen):  # 并没有检测到infinity
+                cishu_left = self.get_cishu(screen)
+                if cishu_left == 0:
+                    self.log.write_log("warning", "次数不足，无法挑战！")
+                    self.exit_me()
+                    return 2
 
         if one_tili > 0 or one_tili==-1:
             # 体力检查
