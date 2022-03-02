@@ -33,6 +33,7 @@ _EMULATORS = {}
 
 _log = pcr_log('emulator_port')
 
+
 class Emulator(object):
     def __init__(self, d):
         self.type = d['type']
@@ -156,8 +157,8 @@ def check_adb_connected(devices_queue):
 def get_ports(emulator):
     ps = get_processes(emulator)
     _log.write_log(level='debug',
-                               message=_("{name}({type}) processes:").format(
-                                   name=emulator.name, type=emulator.type))
+                   message=_("{name}({type}) processes:").format(
+                       name=emulator.name, type=emulator.type))
     _log.write_log(level='debug', message=ps)
     # print(
     #     _("{name}({type}) processes:").format(
@@ -244,7 +245,7 @@ def get_port(PID, re_rules=None):
     first_line = text.split(':')
     # print(first_line)
     if not first_line:
-        _log.write_log('info',"模拟器程序获取列表为空")
+        _log.write_log('info', "模拟器程序获取列表为空")
         return por
     while True:
         # print(len(first_line))
@@ -254,7 +255,7 @@ def get_port(PID, re_rules=None):
         # print(cd[-1])
         # print(cd[0])
 
-        if (i < len(first_line)-1) and (cd[-1] == "0.0.0.0" or cd[-1] == "127.0.0.1"):
+        if (i < len(first_line) - 1) and (cd[-1] == "0.0.0.0" or cd[-1] == "127.0.0.1"):
             # print(cd[0])
             try:
                 if not emulators_port_interval[0] >= int(cd[0]) >= emulators_port_interval[1]:
@@ -271,7 +272,8 @@ def get_port(PID, re_rules=None):
                     continue
 
             else:
-                adb_connect_info = os.popen(f' cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(
+                adb_connect_info = os.popen(
+                    f' cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(cd[0])).read().split(
                     ' ')
                 error_str = ["failed", "10068"]
                 # print(adb_connect_info)
@@ -287,7 +289,7 @@ def get_port(PID, re_rules=None):
                 # print(adb_connect_info)
                 if error_str in adb_connect_info:
                     _log.write_log(level='error', message=f"连接模拟器[{emulator_ip2 + ':' + str(cd[0])}]失败，"
-                                                                      f"不是这个模拟器,继续查找中...")
+                                                          f"不是这个模拟器,继续查找中...")
                     i += 1
                     continue
 
@@ -304,7 +306,7 @@ def get_port(PID, re_rules=None):
                     por = cd[0]
                     # print(por)
                     break
-        elif i < len(first_line)-1:
+        elif i < len(first_line) - 1:
             i += 1
         else:
             # print("模拟器adb端口获取列表为空")
@@ -314,7 +316,7 @@ def get_port(PID, re_rules=None):
 
 
 def check_known_emulators():
-    _log.write_log('info',"混搭请注意下端口是否相互冲突！")
+    _log.write_log('info', "混搭请注意下端口是否相互冲突！")
     read_config()
     emulators = {}
     filtered_emulator = []
@@ -340,7 +342,7 @@ def check_known_emulators():
                                 # print("进程不存活")
                                 continue
                             if str(get_port(ps[i].pid, e.re_port)) not in result:
-                                _log.write_log('info',"检测到【" + e.name + "】模拟器")
+                                _log.write_log('info', "检测到【" + e.name + "】模拟器")
                                 result.append(get_port(ps[i].pid, e.re_port))
                 else:
                     for i in range(0, len(ps)):
@@ -348,7 +350,7 @@ def check_known_emulators():
                             # print("进程不存活")
                             continue
                         if str(get_port(ps[i].pid, e.re_port)) not in result:
-                            _log.write_log('info',"检测到【" + e.name + "】模拟器")
+                            _log.write_log('info', "检测到【" + e.name + "】模拟器")
                             result.append(get_port(ps[i].pid, e.re_port))
                             # print(result)
                         # result = [5565]

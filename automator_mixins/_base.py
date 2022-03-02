@@ -1581,8 +1581,20 @@ class BaseMixin:
                                                                                    f"{i} && exit" + "'")
             run_cmd(
                 f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
-                                                                               '/lib && chmod 000 libsecsdk.so'
+                                                                               '/lib && chmod 755 libsecsdk.so'
                                                                                ' && exit' + "'")
+            run_cmd(
+                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
+                                                                               '/lib && chmod 755 libtersafe2.so'
+                                                                               ' && exit' + "'")
+            run_cmd(
+                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
+                                                                               '/lib && chmod 755 libweibosdkcore.so'
+                                                                               ' && exit' + "'")
+
+            self.d.session("com.bilibili.priconne")
+            self.d.app_wait("com.bilibili.priconne")
+
             # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
             # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
             # print("》》》匿名完毕《《《")
@@ -1632,7 +1644,6 @@ class BaseMixin:
             "本地2": self.ocr_local2,
             "本地3": self.ocr_local3,
             "本地4": self.easyocr_ocr,
-            "PCR定制": self.pcrocr_ocr,
             "pcr": self.pcrocr_ocr,  # 不需要打中文，太麻烦了
         }
 

@@ -139,7 +139,7 @@ class LoginMixin(ToolsMixin):
                     if debug:
                         self.log.write_log('debug', "发现协议")
                     self._move_check()
-                    self.d.touch.down(810, 378).sleep(1).up(810, 378)
+                    self.d.touch.down(808, 353).sleep(1).up(808, 353)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
                     if self.d(description="请滑动阅读协议内容").exists():
@@ -163,7 +163,7 @@ class LoginMixin(ToolsMixin):
 
             def AutoCaptcha():
 
-                nonlocal _time
+                nonlocal _time  # 验证码答题次数
                 nonlocal _id
                 nonlocal _pop
                 nonlocal imgfindcaptcha_is_work
@@ -181,7 +181,7 @@ class LoginMixin(ToolsMixin):
                         #     if not self.is_exists(START_UI["xuanzedian"]) and not self.is_exists(
                         #             START_UI["yanzhengshibai"],
                         #             at=(618, 399, 659, 440)):
-                        if self.wait_for_stable(similarity=0.95, delay=0.8, at=(348, 162, 621, 439)):
+                        if self.wait_for_stable(similarity=0.98, delay=0.8, at=(348, 162, 621, 439)):
                             screen = self.getscreen()
                             screen = screen[1:575, 157:793]
                             # 原来的 456, 489
@@ -327,21 +327,26 @@ class LoginMixin(ToolsMixin):
                 if _time >= 2 and self.d(text="登录").exists():
                     self.d(text="登录").click(timeout=2)
 
-                # 下面代码暂时不管用
-                # if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
-                #     if _time >= 5:
-                #         print("重试次数太多啦，休息15s")
-                #         time.sleep(15)
-                #         _time = 0
-                #         AutoCaptcha()
-                #     # 如果次数大于两次，则申诉题目
-                #     elif _time > captcha_senderror_times and captcha_senderror:
-                #         print("—申诉题目:", _id)
-                #         cs.send_error(_id)
-                #     _time = + 1
-                #     print("验证码登陆验证重来！")
-                #     # 如果还有验证码就返回重试
-                #     AutoCaptcha()
+                if _time >= 2 and (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
+                    self.click(687, 72)
+                    self.d(text="登录").click(timeout=5)
+                    _time = 0
+
+            # 下面代码暂时不管用
+            # if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
+            #     if _time >= 5:
+            #         print("重试次数太多啦，休息15s")
+            #         time.sleep(15)
+            #         _time = 0
+            #         AutoCaptcha()
+            #     # 如果次数大于两次，则申诉题目
+            #     elif _time > captcha_senderror_times and captcha_senderror:
+            #         print("—申诉题目:", _id)
+            #         cs.send_error(_id)
+            #     _time = + 1
+            #     print("验证码登陆验证重来！")
+            #     # 如果还有验证码就返回重试
+            #     AutoCaptcha()
 
             manual_captcha = captcha_skip
             if captcha_skip is False:
@@ -460,7 +465,7 @@ class LoginMixin(ToolsMixin):
                 if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                     if debug:
                         self.log.write_log('debug', "发现协议")
-                    self.d.touch.down(810, 378).sleep(1).up(810, 378)
+                    self.d.touch.down(808, 353).sleep(1).up(808, 353)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
                     if self.d(description="请滑动阅读协议内容").exists():

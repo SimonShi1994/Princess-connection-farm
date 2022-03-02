@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220302.1
+# Princess connection 公主连结农场脚本v2.8.20220302.2
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -229,12 +229,15 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2022/03/02 By TheAutumnOfRice
+2022/03/02 By TheAutumnOfRice，CyiceK
 
 - 增加了自动升级中自动强化亮着但无法点击时的应对措施
 - 增加了自动升级中刷图遇到Hard图时次数不足的应对措施
 - easy_shoushua, easy_saodang函数增加对无穷次数的识别
 - 修复了2022年2月没有29天的BUG （
+- 修复d1的已知bug
+- 修复莫名其妙卡logo的问题
+- 更替验证码刷新方式
 
 2022/02/28 By TheAutumnOfRice, UVJkiNTQ
 
