@@ -131,7 +131,6 @@ class EnhanceMixin(ShuatuBaseMixin):
                                             for _ in range(6):
                                                 self.click(1, 1)
                                             break
-                                        fb = fi.goto_tiaozhan()
                                         if debug:
                                             self.log.write_log('debug', "开始刷图补装备")
 
@@ -139,9 +138,11 @@ class EnhanceMixin(ShuatuBaseMixin):
                                         if getzhiyuan:
                                             fi.easy_shoushua(team_order, one_tili=10, check_cishu=True, max_speed=1,
                                                              get_zhiyuan=True, if_full=is_full)
+                                            continue
                                         else:
                                             fi.easy_shoushua(team_order, check_cishu=True, max_speed=1,
                                                              get_zhiyuan=False)
+                                            continue
 
                                     else:
                                         sc = self.getscreen()
