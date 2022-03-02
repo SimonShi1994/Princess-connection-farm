@@ -359,6 +359,7 @@ class CharZhuangBei(CharBase):
     @PCRRetry(name="re_qianghua")
     def do_zidongqianghua(self, buy_sucai=True, do_shuatu=True, do_tuitu=False, teamorder="zhanli", getzhiyuan=False):
         # Return 1: 因为没体力而终止了
+        # Return 2: 因为没次数而终止了
         self.fclick(1, 1)
         if self.get_enhance_status() == 0:
             self.log.write_log("info", "已经不能再自动强化了。")
@@ -407,9 +408,14 @@ class CharZhuangBei(CharBase):
                     fi: FightInfoBase = self.goto(FightInfoBase, gotofun=self.fun_click(477, 201))
                     stars = fi.get_upperright_stars()
                     if stars == 3:
-                        fi.easy_saodang(target_cishu=6, one_tili=-1, check_cishu=True)
-                        self.fclick(1, 1)
-                        raise ContinueNow(name="re_qianghua")
+                        out = fi.easy_saodang(target_cishu=6, one_tili=-1, check_cishu=True)
+                        if out == 2:
+                            self.log.write_log("info", "没有挑战次数了，放弃这个角色的装备刷取……")
+                            self.fclick(1, 1)
+                            return 2
+                        else:
+                            self.fclick(1, 1)
+                            raise ContinueNow(name="re_qianghua")
                     else:
                         if do_tuitu:
                             self.log.write_log("info", "需要推图，准备推图")
@@ -422,7 +428,7 @@ class CharZhuangBei(CharBase):
                             elif out == 2:
                                 self.log.write_log("info", "没有挑战次数了，放弃这个角色的装备刷取……")
                                 self.fclick(1, 1)
-                                return
+                                return 2
                             else:
                                 self.fclick(1, 1)
                                 raise ContinueNow(name="re_qianghua")  # 再次强化看看能不能直接穿了
