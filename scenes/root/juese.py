@@ -366,7 +366,11 @@ class CharZhuangBei(CharBase):
         out = self.click_btn(JUESE_BTN["zdqh_1"], until_appear={
             JUESE_BTN["zdqh_ok"]: 1,
             JUESE_BTN["tuijiancaidan"]: 2,
-        })
+        }, retry=3, is_raise=False)
+        if out is False:
+            self.log.write_log("info", "尝试点了自动强化，但好像没有反应？")
+            self.fclick(1, 1)
+            return
         if out == 1:
             self.log.write_log("info", "进行等级、穿衣的升级。")
             self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
@@ -403,16 +407,20 @@ class CharZhuangBei(CharBase):
                     fi: FightInfoBase = self.goto(FightInfoBase, gotofun=self.fun_click(477, 201))
                     stars = fi.get_upperright_stars()
                     if stars == 3:
-                        fi.easy_saodang(target_cishu=6, one_tili=-1, check_cishu=False)
+                        fi.easy_saodang(target_cishu=6, one_tili=-1, check_cishu=True)
                         self.fclick(1, 1)
                         raise ContinueNow(name="re_qianghua")
                     else:
                         if do_tuitu:
                             self.log.write_log("info", "需要推图，准备推图")
-                            out = fi.easy_shoushua(team_order=teamorder, one_tili=-1, check_cishu=False,
+                            out = fi.easy_shoushua(team_order=teamorder, one_tili=-1, check_cishu=True,
                                                    max_speed=2, get_zhiyuan=getzhiyuan)
                             if out == 1:
                                 self.log.write_log("info", "由于挑战失败了，跳过这个角色的装备升级。")
+                                self.fclick(1, 1)
+                                return
+                            elif out == 2:
+                                self.log.write_log("info", "没有挑战次数了，放弃这个角色的装备刷取……")
                                 self.fclick(1, 1)
                                 return
                             else:

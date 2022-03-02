@@ -27,7 +27,7 @@ class DuringFighting(PossibleSceneList):
 class EnhanceMixin(ShuatuBaseMixin):
 
     def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, charlist=None,
-                       team_order="zhanli", getzhiyuan=True, is_full=2, tozhuanwulv=150, count=15, sort="level"):
+                       team_order="zhanli", getzhiyuan=False, is_full=0, tozhuanwulv=150, count=15, sort="level"):
         '''
         角色升级任务，包含了装备、升星、专武
         do_rank:rank升级
@@ -136,32 +136,12 @@ class EnhanceMixin(ShuatuBaseMixin):
                                             self.log.write_log('debug', "开始刷图补装备")
 
                                         # 支援
-                                        fb.select_team(team_order, change=3)
                                         if getzhiyuan:
-                                            fb.get_zhiyuan(assist_num=1, force_haoyou=False, if_full=is_full)
-                                        zd = fb.goto_fight()
-                                        zd.set_auto(True)
-                                        zd.set_speed(2, max_level=2)
-                                        during = DuringFighting(self)
-                                        while True:
-                                            time.sleep(1)
-                                            out = during.check(timeout=300, double_check=3)
-                                            if isinstance(out, during.HaoYouMsg):
-                                                out.exit_with_off()
-                                                continue
-                                            elif isinstance(out, during.FightingWinDXC):
-                                                out.ok()
-                                                fw = FightingWinZhuXian2(self).enter()
-                                                time.sleep(5)
-                                                fw.next()
-                                                return True
-                                            elif isinstance(out, during.FightingLossDXC):
-                                                out.ok()
-                                                return True
-                                            # elif isinstance(out, next.TuanDuiZhanBox):
-                                            #     out.OK()
-                                            else:
-                                                continue
+                                            fi.easy_shoushua(team_order, one_tili=10, check_cishu=True, max_speed=1,
+                                                             get_zhiyuan=True, if_full=is_full)
+                                        else:
+                                            fi.easy_shoushua(team_order, check_cishu=True, max_speed=1,
+                                                             get_zhiyuan=False)
 
                                     else:
                                         sc = self.getscreen()

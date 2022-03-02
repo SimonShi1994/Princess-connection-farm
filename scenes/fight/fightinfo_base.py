@@ -174,10 +174,11 @@ class FightInfoBase(PCRMsgBoxBase):
 
     def easy_shoushua(self,
                       team_order,
-                      one_tili:int = 0,
-                      check_cishu=False,
+                      one_tili: int = 0,
+                      check_cishu=True,
                       max_speed=1,
                       get_zhiyuan=False,
+                      if_full=0
                       ):
         """
         team_order:  见select_team
@@ -193,20 +194,24 @@ class FightInfoBase(PCRMsgBoxBase):
             2 - 四倍速可用
         get_zhiyuan:
             是否使用支援
+        if_full:
+            换下的人，详见get_zhiyuan函数
         <return>
             0: 挑战成功
             1: 挑战失败
+            2: 没有次数
         <return scene>
             会关闭FightInfo窗口，回到选关页面。
         """
         screen = self.getscreen()
         if check_cishu:
             # 次数检查
-            cishu_left = self.get_cishu(screen)
-            if cishu_left == 0:
-                self.log.write_log("warning", "次数不足，无法挑战！")
-                self.exit_me()
-                return 2
+            if not self.is_exists(FIGHT_BTN["infinity"], screen=screen):  # 并没有检测到infinity
+                cishu_left = self.get_cishu(screen)
+                if cishu_left == 0:
+                    self.log.write_log("warning", "次数不足，无法挑战！")
+                    self.exit_me()
+                    return 2
 
         if one_tili > 0 or one_tili==-1:
             # 体力检查
@@ -226,7 +231,7 @@ class FightInfoBase(PCRMsgBoxBase):
         T = self.goto_tiaozhan()
         T.select_team(team_order)
         if get_zhiyuan:
-            T.get_zhiyuan()
+            T.get_zhiyuan(if_full=if_full)
         F = T.goto_fight()
         F.set_auto(1)
         F.set_speed(max_speed,max_speed,self.last_screen)
@@ -266,9 +271,9 @@ class FightInfoBase(PCRMsgBoxBase):
                 out.exit_with_off()
 
     def easy_saodang(self,
-                     target_cishu:Union[int,str]="max",
-                     one_tili:int=0,
-                     check_cishu=False,
+                     target_cishu: Union[int, str] = "max",
+                     one_tili: int = 0,
+                     check_cishu=True,
                      ):
         """
         target_cishu: 目标次数， max则满。
@@ -308,14 +313,15 @@ class FightInfoBase(PCRMsgBoxBase):
 
         if check_cishu:
             # 次数检查
-            cishu_left = self.get_cishu(screen)
-            if cishu_left == 0:
-                self.log.write_log("warning","次数不足，无法扫荡！")
-                self.exit_me()
-                return 2
-            elif isinstance(target_cishu,int) and cishu_left<target_cishu:
-                self.log.write_log("warning", f"次数不足，只能扫荡{cishu_left}次！")
-                exitflag = 2
+            if not self.is_exists(FIGHT_BTN["infinity"], screen=screen):  # 并没有检测到infinity
+                cishu_left = self.get_cishu(screen)
+                if cishu_left == 0:
+                    self.log.write_log("warning", "次数不足，无法扫荡！")
+                    self.exit_me()
+                    return 2
+                elif isinstance(target_cishu, int) and cishu_left < target_cishu:
+                    self.log.write_log("warning", f"次数不足，只能扫荡{cishu_left}次！")
+                    exitflag = 2
 
         if one_tili>0 or one_tili==-1:
             # 体力检查
