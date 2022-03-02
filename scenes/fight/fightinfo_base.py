@@ -174,8 +174,8 @@ class FightInfoBase(PCRMsgBoxBase):
 
     def easy_shoushua(self,
                       team_order,
-                      one_tili:int = 0,
-                      check_cishu=False,
+                      one_tili: int = 0,
+                      check_cishu=True,
                       max_speed=1,
                       get_zhiyuan=False,
                       ):
@@ -196,17 +196,19 @@ class FightInfoBase(PCRMsgBoxBase):
         <return>
             0: 挑战成功
             1: 挑战失败
+            2: 没有次数
         <return scene>
             会关闭FightInfo窗口，回到选关页面。
         """
         screen = self.getscreen()
         if check_cishu:
             # 次数检查
-            cishu_left = self.get_cishu(screen)
-            if cishu_left == 0:
-                self.log.write_log("warning", "次数不足，无法挑战！")
-                self.exit_me()
-                return 2
+            if not self.is_exists(FIGHT_BTN["infinity"], screen=screen):  # 并没有检测到infinity
+                cishu_left = self.get_cishu(screen)
+                if cishu_left == 0:
+                    self.log.write_log("warning", "次数不足，无法挑战！")
+                    self.exit_me()
+                    return 2
 
         if one_tili > 0 or one_tili==-1:
             # 体力检查
@@ -266,9 +268,9 @@ class FightInfoBase(PCRMsgBoxBase):
                 out.exit_with_off()
 
     def easy_saodang(self,
-                     target_cishu:Union[int,str]="max",
-                     one_tili:int=0,
-                     check_cishu=False,
+                     target_cishu: Union[int, str] = "max",
+                     one_tili: int = 0,
+                     check_cishu=True,
                      ):
         """
         target_cishu: 目标次数， max则满。
@@ -308,14 +310,15 @@ class FightInfoBase(PCRMsgBoxBase):
 
         if check_cishu:
             # 次数检查
-            cishu_left = self.get_cishu(screen)
-            if cishu_left == 0:
-                self.log.write_log("warning","次数不足，无法扫荡！")
-                self.exit_me()
-                return 2
-            elif isinstance(target_cishu,int) and cishu_left<target_cishu:
-                self.log.write_log("warning", f"次数不足，只能扫荡{cishu_left}次！")
-                exitflag = 2
+            if not self.is_exists(FIGHT_BTN["infinity"], screen=screen):  # 并没有检测到infinity
+                cishu_left = self.get_cishu(screen)
+                if cishu_left == 0:
+                    self.log.write_log("warning", "次数不足，无法扫荡！")
+                    self.exit_me()
+                    return 2
+                elif isinstance(target_cishu, int) and cishu_left < target_cishu:
+                    self.log.write_log("warning", f"次数不足，只能扫荡{cishu_left}次！")
+                    exitflag = 2
 
         if one_tili>0 or one_tili==-1:
             # 体力检查
