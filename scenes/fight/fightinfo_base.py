@@ -178,6 +178,7 @@ class FightInfoBase(PCRMsgBoxBase):
                       check_cishu=True,
                       max_speed=1,
                       get_zhiyuan=False,
+                      if_full=0
                       ):
         """
         team_order:  见select_team
@@ -193,6 +194,8 @@ class FightInfoBase(PCRMsgBoxBase):
             2 - 四倍速可用
         get_zhiyuan:
             是否使用支援
+        if_full:
+            换下的人，详见get_zhiyuan函数
         <return>
             0: 挑战成功
             1: 挑战失败
@@ -228,7 +231,7 @@ class FightInfoBase(PCRMsgBoxBase):
         T = self.goto_tiaozhan()
         T.select_team(team_order)
         if get_zhiyuan:
-            T.get_zhiyuan()
+            T.get_zhiyuan(if_full=if_full)
         F = T.goto_fight()
         F.set_auto(1)
         F.set_speed(max_speed,max_speed,self.last_screen)

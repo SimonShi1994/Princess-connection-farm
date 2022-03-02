@@ -67,7 +67,8 @@ class FightBianZuBase(PCRMsgBoxBase):
         return '-' in team_order
 
     def clear_team(self):
-        self.select_by_sort("zhanli",change=1)
+        self.select_by_sort("zhanli", change=1)
+
     def select_team(self, team_order="zhanli", change=2):
         """
         使用队伍 "A-B" 形式，表示编组A选择B。
@@ -91,14 +92,14 @@ class FightBianZuBase(PCRMsgBoxBase):
     def get_fight_current_member_count(self):
         return self._a.get_fight_current_member_count()
 
-    def get_zhiyuan(self, assist_num=1,force_haoyou=False,if_full=0):
+    def get_zhiyuan(self, assist_num=1, force_haoyou=False, if_full=0):
         # 从左到右获取一个可能的支援
         # out: 0- Success 1- 人满 2- 等级不够 3- 无支援人物 4- 无好友
         # force_haoyou: 只借好友，不然不借
         # if full: 人满时？ -1： 返回人满；  0： 随机下一个人  1~5： 下第n个人
         out = 0
         if self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
-                            retry=3, wait_self_before=True):
+                          retry=3, wait_self_before=True):
             if force_haoyou and not self.is_exists(HAOYOU_BTN["haoyou_sup"]):
                 out = 4
                 self.log.write_log("info", "没有好友了，不借了！")
@@ -113,12 +114,12 @@ class FightBianZuBase(PCRMsgBoxBase):
                             choose = random.choice([1, 2, 3, 4, 5])
                         else:
                             choose = if_full
-                        self.click(FIGHT_BTN["empty"][choose], pre_delay=1,post_delay=0.5)
+                        self.click(FIGHT_BTN["empty"][choose], pre_delay=1, post_delay=0.5)
                         if if_full == 0:
                             self.log.write_log("info", f"已经人满，随机换下第{choose}人！")
                         else:
                             self.log.write_log("info", f"已经人满，换下第{choose}人！")
-                        now_count-=1
+                        now_count -= 1
                 for c in range(assist_num, assist_num + 2):
                     if c <= 8:
                         self.click_juese_by_rc(1, c)
