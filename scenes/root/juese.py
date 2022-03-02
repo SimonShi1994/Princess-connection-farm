@@ -407,13 +407,13 @@ class CharZhuangBei(CharBase):
                     fi: FightInfoBase = self.goto(FightInfoBase, gotofun=self.fun_click(477, 201))
                     stars = fi.get_upperright_stars()
                     if stars == 3:
-                        fi.easy_saodang(target_cishu=6, one_tili=-1, check_cishu=False)
+                        fi.easy_saodang(target_cishu=6, one_tili=-1, check_cishu=True)
                         self.fclick(1, 1)
                         raise ContinueNow(name="re_qianghua")
                     else:
                         if do_tuitu:
                             self.log.write_log("info", "需要推图，准备推图")
-                            out = fi.easy_shoushua(team_order=teamorder, one_tili=-1, check_cishu=False,
+                            out = fi.easy_shoushua(team_order=teamorder, one_tili=-1, check_cishu=True,
                                                    max_speed=2, get_zhiyuan=getzhiyuan)
                             if out == 1:
                                 self.log.write_log("info", "由于挑战失败了，跳过这个角色的装备升级。")
