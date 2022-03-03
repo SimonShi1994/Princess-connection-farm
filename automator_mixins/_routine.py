@@ -33,6 +33,7 @@ class RoutineMixin(ShuatuBaseMixin):
             # 两次是因为有个家具介绍 关闭 确认
             self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
                           side_check=self.juqing_kkr, retry=5, is_raise=False)
+            time.sleep(1)
         self.start_shuatu()
         if auto_update:
             i = 0

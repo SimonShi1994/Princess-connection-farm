@@ -798,7 +798,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         # 已经进入地下城
         cur_layer = S.get_jieshu()
-        max_layer = max(DXC_NUM[dxc_id])
+        max_layer = max(DXC_COORD[dxc_id])
 
         if stop_criteria == 0:
             min_live = 5
