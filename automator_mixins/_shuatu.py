@@ -1105,7 +1105,9 @@ class ShuatuMixin(ShuatuBaseMixin):
                 "VHA-B-T"表示刷极难图A-B共T次
             Example:
                 tu_order=["3-4-10","H1-1-3"]
-            注意：困难图如果刷超过3次，并不会自动购买次数。
+              # 注意：困难图如果刷超过3次，并不会自动购买次数。
+            20220303 NEW: Hard/VH允许输入大于3的值，此时会自动尝试进行购买次数了。
+
             该刷图列表表示的刷图顺序为录入顺序。
 
             20220206 NEW: 如果存在波浪线 ~，则表示H, VH的碎片数量达到波浪线后的值则停刷。若波浪线后为inf，则无限制。
@@ -1205,22 +1207,30 @@ class ShuatuMixin(ShuatuBaseMixin):
             cur = []
             for i in tu_order:
                 m, a, b, t, tg = parse_str(i)
-                target = ds["normal"] if m == "N" else ds["hard"] if m=="H" else ds["veryhard"]
+                target = ds["normal"] if m == "N" else ds["hard"] if m == "H" else ds["veryhard"]
                 label = f"{a}-{b}"
                 target.setdefault(label, 0)
                 if target[label] < t:
-                    cur += [(m, a, b, t - target[label],tg)]
+                    cur += [(m, a, b, t - target[label], t, tg)]
             new_cur = []
-            # 分解任务：一次最多80扫荡
-            for m, a, b, t, tg in cur:
+            # 分解任务：一次最多80扫荡(normal) 3次扫荡(hard,VH)
+            for m, a, b, t, ori_t, tg in cur:
                 tt = t
                 while tt > 0:
-                    if tt > 80:
-                        ttt = 80
+                    if m == "N":
+                        if tt > 80:
+                            ttt = 80
+                        else:
+                            ttt = tt
+                        tt -= ttt
+                        new_cur += [(m, a, b, ttt, ori_t, tg)]
                     else:
-                        ttt = tt
-                    tt -= ttt
-                    new_cur += [(m, a, b, ttt, tg)]
+                        if tt > 3:
+                            ttt = 3
+                        else:
+                            ttt = tt
+                        tt -= ttt
+                        new_cur += [(m, a, b, ttt, ori_t, tg)]
             return new_cur
 
         # 关卡分析
@@ -1243,7 +1253,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         S = S.goto_maoxian()
         last_a = -1
         last_m = None
-        for ind, (m, a, b, t, tg) in enumerate(cur):
+        for ind, (m, a, b, t, ori_t, tg) in enumerate(cur):
             mode = "veryhard" if m == "VH" else "hard" if m == "H" else "normal"
             x, y, _, d = GetXYTD(m, a, b)
             # m: mode (VH,H,N)
@@ -1324,11 +1334,27 @@ class ShuatuMixin(ShuatuBaseMixin):
                         cishu = M.get_cishu(sc)
                         if cishu == 0:
                             # 不能扫荡，没有次数
-                            ds[mode][f"{a}-{b}"] = 3
-                            record_ds(ds)
-                            self.fclick(1,1)
-                            self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
-                            return "continue"
+                            if ori_t > 3:
+                                # 试图买次数
+                                cishu_return = M.buy_cishu()
+                                if cishu_return:
+                                    # 购买成功
+                                    cishu = 3
+                                    ds[mode][f"{a}-{b}"] = 3
+                                    record_ds(ds)
+                                else:
+                                    # 购买失败，可能已经买过了
+                                    ds[mode][f"{a}-{b}"] = 6
+                                    record_ds(ds)
+                                    self.fclick(1, 1)
+                                    self.log.write_log("info", f"{m}{a}-{b}已经买过次数，不能再刷更多了！")
+                                    return "continue"
+                            else:
+                                ds[mode][f"{a}-{b}"] = 3
+                                record_ds(ds)
+                                self.fclick(1, 1)
+                                self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
+                                return "continue"
                         max_cishu = min(cishu, max_cishu)
                     self._zdzb_info = ""  # 记录失败原因
                     # 扫荡券判断：最多还能扫荡几次
@@ -1746,12 +1772,72 @@ class ShuatuMixin(ShuatuBaseMixin):
             if int(a) < 11:
                 continue
             c = out_map[i]
-            if int(a)>MAX_MAP:
-                self.log.write_log("warning",f"刷图规划中含有无法刷的图：{a}-{b}，跳过该图！你可以设置max_tu参数来避免这种情况。")
+            if int(a) > MAX_MAP:
+                self.log.write_log("warning", f"刷图规划中含有无法刷的图：{a}-{b}，跳过该图！你可以设置max_tu参数来避免这种情况。")
                 continue
             NMap += [f"{a}-{b}-{c}"]
         # print("Will be shua:", NMap)
-        self.log.write_log("info",f"即将按以下顺序进行刷图：{','.join(NMap)}")
+        self.log.write_log("info", f"即将按以下顺序进行刷图：{','.join(NMap)}")
 
-        self.shuatu_daily_ocr(NMap, daily_tili=daily_tili,xianding=xianding,not_three_star_action="skip",
-                              can_not_enter_action="skip",zero_star_action="skip",var=var)
+        self.shuatu_daily_ocr(NMap, daily_tili=daily_tili, xianding=xianding, not_three_star_action="skip",
+                              can_not_enter_action="skip", zero_star_action="skip", var=var)
+
+    def dahaohuodong_hard(self, tu_order=[], code="current", entrance_ind="auto", var=None):
+        """
+        大号刷活动Hard图，要求已经手动通过关。
+        tu_order: list of [1,2,3,4,5]
+        code: 见scenes/huodng/huodong_manager.py
+        entrance_ind：在冒险界面进入活动，设置为"auto"时，自动寻找剧情活动按钮；设置为int时，固定为从右往左数第几个按钮
+        """
+        self.lock_home()
+        if not self.check_shuatu():
+            return
+        # List of str -> List of int
+        tu_order = [int(s) for s in tu_order]
+        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        self.log.write_log("info", f"开始刷活动Hard：{MAP.NAME} - {tu_order}")
+        out = MAP.shua_hard(tu_order)
+        self.lock_home()
+
+    def dahaohuodong_VHBoss(self, team_order="none", code="current", entrance_ind="auto", var=None):
+        """
+        大号打VHBoss，team_order见shuatu_daily_ocr。
+        code: 见scenes/huodng/huodong_manager.py
+        entrance_ind：在冒险界面进入活动，设置为"auto"时，自动寻找剧情活动按钮；设置为int时，固定为从右往左数第几个按钮
+        """
+        self.lock_home()
+        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        self.log.write_log("info", f"开始刷活动VHBoss：{MAP.NAME}")
+        MAP.shua_VHBoss(team_order)
+        self.lock_home()
+
+    def xiaohaohuodong_11(self, cishu="max", team_order="zhanli", get_zhiyuan=True, code="current", entrance_ind="auto",
+                          var=None):
+        """
+        小号打活动1-1，没打过会推图。cishu可以为"max"或整数
+        team_order见shuatu_daily_ocr。
+        get_zhiyuan：设置为True，任意借支援。
+        code: 见scenes/huodng/huodong_manager.py
+        entrance_ind：在冒险界面进入活动，设置为"auto"时，自动寻找剧情活动按钮；设置为int时，固定为从右往左数第几个按钮
+        """
+        self.lock_home()
+        if not self.check_shuatu():
+            return
+        if cishu != "max":
+            cishu = int(cishu)
+        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.lock_home()
+            return
+        self.log.write_log("info", f"开始刷活动1-1：{MAP.NAME}")
+
+        c, cishu_left = MAP.shua_11(cishu, team_order, get_zhiyuan)
+
+        if c == 0 and (cishu_left == "max" or cishu_left > 0):
+            # 再刷一次
+            MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+            if MAP is False:
+                self.lock_home()
+                return
+            c, cishu_left = MAP.shua_11(cishu_left, team_order, get_zhiyuan)
+        self.lock_home()

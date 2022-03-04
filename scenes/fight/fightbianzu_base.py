@@ -17,7 +17,7 @@ class FightBianZuBase(PCRMsgBoxBase):
         """
         按order进行选择
         :param order:
-            order in ["zhanli","dengji","xingshu","shoucang"]
+            order in ["zhanli","dengji","xingshu","shoucang","none"]
         :param change:
             0-不换人 1-人全部换下不上 2-默认：全部换人 3 - 不下人直接上
         """
@@ -73,6 +73,8 @@ class FightBianZuBase(PCRMsgBoxBase):
         """
         使用队伍 "A-B" 形式，表示编组A选择B。
         若为 order指令：则按以下order排序后取前5.
+            - "none" 不变化
+            - "nobody" 不上人（只上支援）
             - "zhanli" 按战力排序
             - "dengji" 按等级排序
             - "xingshu" 按星数排序
@@ -83,6 +85,8 @@ class FightBianZuBase(PCRMsgBoxBase):
             return self.select_by_sort(team_order, change)
         elif team_order in ["none", ""]:
             return None
+        elif team_order == "nobody":
+            self.select_by_sort("none", 1)
         else:
             A, B = team_order.split("-")
             A = int(A)

@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220302.4
+# Princess connection 公主连结农场脚本v2.8.20220304.1
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -78,8 +78,10 @@
 - [x] 副本扫荡
 - [x] 初始化
 - [x] 自动推图
-- [x] 自动升级  
+- [x] 自动升级
 - [x] 借人推图
+- [x] 小号刷活动图1-1
+- [x] 大号打活动图Hard，VHBoss
 
 ## :globe_with_meridians:环境
 
@@ -115,9 +117,13 @@
 
 - **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
-- ~~【不推荐】本地OCR 1/2 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)~~
+- ~~【不推荐】本地OCR 1/2
+  需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe)
+  或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)~~
 
 - 自行打开`requirements.txt`确认依赖无误
+
+  * 注意！requirements.txt中含有四种OCR依赖，默认均被注释。你需要先根据你的需求取消其中几种的注释，再进行依赖安装。
 
 - 先cd进项目目录下
 
@@ -133,11 +139,11 @@
   pip install -r requirements.txt -i https://pypi.douban.com/simple
   ```
 
-
-
 ~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。~~（建议先试一下不设置的情况
 
-建议使用雷电模拟器4但不意味着其他模拟器无法使用，本项目中均以雷电模拟器4为示例。
+~~建议使用雷电模拟器4但不意味着其他模拟器无法使用，本项目中均以雷电模拟器4为示例。~~
+
+目前来看，雷电4，蓝叠，雷神模拟器均可以使用。一般来说，只要支持adb连接的模拟器都可以使用。
 
 **重要：模拟器分辨率要求540*960**
 
@@ -172,7 +178,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 
-- 出现`“No module named 'XXX'`，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
+- 出现`“No module named 'XXX'`，请在项目目录执行`pip install -r requirements.txt`重新安装依赖，或手动执行`pip install XXX`
 
 - 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
 
@@ -214,7 +220,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - [x] 简化Schedule操作模式
 - [ ] WebGUI界面
 - [x] 提高刷图效率
-- [ ] 刷活动本
+- [x] 刷活动本
 - [x] 女神祭
 - [ ] 跳过18图切图动画
 
@@ -228,6 +234,27 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/03/04 By TheAutumnOfRice，CyiceK
+
+- 功能更新
+  - 新增大号刷活动Hard`s12`，大号刷活动VHBoss`s13`
+  - 新增小号刷活动1-1`s14`
+  - 通用刷图`s9`允许设置Hard,VH本的次数至六次（可以买次数了）
+- 性能优化
+  - 优化可推图探索的性能
+  - 优化adb连接策略，使用全局adb重连防止多开时自相残杀（`global_adb_restart`）
+  - 模拟器自启动时会默认不断尝试重连adb（`restart_adb_during_emulator_launch_delay`）
+  - 模拟器自动控制现在支持雷电、雷神、蓝叠（未测试）
+- BUG修复
+  - 修复自动升级试图推图时一直体力不足的BUG
+  - 进一步修复了开局卡验证码的情况
+  - 修复了自动关闭公主连结和自动关闭模拟器冲突的BUG
+  - 修复了`s14`显示找不到活动的BUG
+  - 修复了precheck中重启导致第二次precheck失效的BUG
+- 框架更新
+  - 处理教程现在可以跳过剧情动画了
+  - Automator现在可通过self.output_msg_fun与父进程通信了
 
 2022/03/02 By TheAutumnOfRice，CyiceK
 

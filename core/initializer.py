@@ -20,12 +20,13 @@ from automator_mixins._captcha import CaptionSkip
 from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
-from core.launcher import LauncherBase, LDLauncher
-from core.pcr_config import GC, enable_pause
+from core.launcher import LauncherBase, LDLauncher, BSLauncher
+from core.pcr_config import GC, enable_pause, debug
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
     trace_exception_for_debug, sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
-    max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr, ignore_serials
-from core.safe_u2 import OfflineException, ReadTimeoutException
+    max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr, ignore_serials, \
+    restart_adb_during_emulator_launch_delay
+from core.safe_u2 import OfflineException, ReadTimeoutException, random_sleep, run_adb
 from core.usercentre import AutomatorRecorder, parse_batch, list_all_flags
 from core.utils import diffday, PrintToStr
 
@@ -58,7 +59,7 @@ def _connect():  # 连接adb与uiautomator
             for port in emulator_ports:
                 os.system(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(port))
         else:
-            os.system(f"cd {adb_dir} & adb start-server")
+            os.system(f"cd {adb_dir} & adb devices")  # adb devices = adb start-server
         # os.system 函数正常情况下返回是进程退出码，0为正常退出码，其余为异常
         """
         if os.system('cd adb & adb connect ' + selected_emulator) != 0:
@@ -132,12 +133,12 @@ class Device:
     def with_emulator(self):
         return self.emulator_launcher is not None
 
-    def launch_emulator(self, block=False):
+    def launch_emulator(self, block=False, adb_restart_fun=None):
         if self.emulator_launcher is not None:
             if not self.emulator_launcher.is_running(self.emulator_id):
                 self.emulator_launcher.launch(self.emulator_id, block)
             if block:
-                return self.wait_for_healthy()
+                return self.wait_for_healthy(adb_restart_fun=adb_restart_fun)
             if self.a is not None:
                 self.a.fastscreencut_retry = 0  # 重置快速截图次数
         return True
@@ -146,12 +147,12 @@ class Device:
         if self.emulator_launcher is not None:
             self.emulator_launcher.quit(self.emulator_id)
 
-    def restart_emulator(self, block=False):
+    def restart_emulator(self, block=False, adb_restart_fun=None):
         if self.emulator_launcher is not None:
             if self.emulator_launcher is not None:
                 self.emulator_launcher.restart(self.emulator_id, block)
             if block:
-                self.wait_for_healthy()
+                self.wait_for_healthy(adb_restart_fun=adb_restart_fun)
 
     def is_connected(self):
         try:
@@ -172,13 +173,17 @@ class Device:
             return False
         return True
 
-    def wait_for_healthy(self, timeout=360):
+    def wait_for_healthy(self, timeout=360, adb_restart_fun=None):
         last = time.time()
+        cnt = 0
         while time.time() - last < timeout:
             if self.is_connected():
                 if self.is_healthy():
                     return True
             time.sleep(1)
+            cnt += 1
+            if cnt % 10 == 0 and adb_restart_fun is not None:
+                adb_restart_fun()
         return False
 
     def start_u2(self):
@@ -224,11 +229,31 @@ class AllDevices:
     def __init__(self):
         self.devices: Dict[str, Device] = {}  # serial : device
         self.emulator_launcher: Optional[LauncherBase] = None
+        self.last_adb_restart_time = 0  # 用于全局adb_restart
+
+    def global_restart_adb(self, tm=None):
+        if tm is None:
+            tm = restart_adb_during_emulator_launch_delay
+        if tm == 0:
+            return
+        t = time.time()
+        if t - self.last_adb_restart_time > tm:
+            if debug:
+                pcr_log("AllDevices").write_log("debug", f"触发adb重启！冷却时间：{tm}")
+            random_sleep()
+            run_adb("kill-server", timeout=60)
+            random_sleep()
+            run_adb("devices", timeout=60)
+            self.last_adb_restart_time = time.time()
+        else:
+            pass
 
     def add_from_config(self):
         if emulator_console != "":
-            if selected_emulator == "雷电":
+            if selected_emulator in ["雷电", "雷神"]:
                 self.emulator_launcher = LDLauncher()
+            elif selected_emulator == "蓝叠":
+                self.emulator_launcher = BSLauncher()
             else:
                 raise Exception(f"不支持的模拟器类型：{selected_emulator}")
             for i in emulator_id:
@@ -236,7 +261,7 @@ class AllDevices:
 
     def start_all_emulators(self):
         if self.emulator_launcher is not None:
-            self.emulator_launcher.start_all()
+            self.emulator_launcher.start_all(adb_restart_fun=self.global_restart_adb)
 
     def quit_all_emulators(self):
         if self.emulator_launcher is not None:
@@ -248,9 +273,9 @@ class AllDevices:
             flag = False
             for i in emulator_id:
                 if not self.devices[i].is_healthy():
-                    self.devices[i].restart_emulator(False)
+                    self.devices[i].restart_emulator(False, adb_restart_fun=self.global_restart_adb)
                     flag = True
-            self.emulator_launcher.wait_for_all()
+            self.emulator_launcher.wait_for_all(adb_restart_fun=self.global_restart_adb)
             self.refrush_device_all()
 
     def add_device(self, serial: str, id: int = None, launcher: LauncherBase = None):
@@ -417,6 +442,7 @@ class PCRInitializer:
 
     def _emulator_keeper(self):
         """
+        !弃用！
         模拟器检查线程
         如果模拟器故障，则将其重启
         """
@@ -429,6 +455,7 @@ class PCRInitializer:
 
     def start_emulator_keeper(self):
         """
+        !弃用！
         启动模拟器检查线程
         """
         if self.emulator_keeper_switch == 0:
@@ -438,6 +465,7 @@ class PCRInitializer:
 
     def stop_emulator_keeper(self):
         """
+        !弃用！
         关闭模拟器检查线程
         """
         self.emulator_keeper_switch = 0
@@ -576,9 +604,20 @@ class PCRInitializer:
         """
         flag = {"exit": False}
 
+        def adb_restart_fun():
+            out_queue.put({"action": {
+                "serial": device.serial,
+                "action": "restart_adb",
+                "tm": None,
+            }})
+            time.sleep(1)
+            run_adb("devices")
+
         def _listener():
             while flag["exit"] == False:
                 msg = in_queue.get()
+                if msg == "close game at now!!!":
+                    device.a.app_stop('com.bilibili.priconne')
                 if msg == "quit":
                     flag["exit"] = True
                     break
@@ -587,8 +626,6 @@ class PCRInitializer:
                     if device.a is not None:
                         device.a.force_kill()
                     break
-                if msg == "close game at now!!!":
-                    device.a.app_stop('com.bilibili.priconne')
                 if type(msg) is dict and "method" in msg:
                     try:
                         if msg["method"] == "config":
@@ -687,23 +724,23 @@ class PCRInitializer:
         app_on = True
         while not flag["exit"]:
             try:
+                if app_on and time.time() - last_busy_time > max_free_time:
+                    app_on = False
+                    if device.a is not None:
+                        device.a.app_stop('com.bilibili.priconne')
                 if quit_emulator_when_free and device_on \
                         and device.with_emulator() and time.time() - last_busy_time > max_free_time:
                     device_on = False
                     device.quit_emulator()
                     out_queue.put({"device_status": {"serial": serial, "status": "sleep"}})
                     out_queue.put({"device": {"serial": serial, "method": "offline"}})
-                if app_on and time.time() - last_busy_time > max_free_time:
-                    app_on = False
-                    if device.a is not None:
-                        device.a.app_stop('com.bilibili.priconne')
                 _task = task_queue.get(False)
             except queue.Empty:
                 time.sleep(1)
                 continue
             app_on = True
             if device.a is None:
-                device.a = Automator("debug")
+                device.a = Automator("debug", output_msg_fun=out_queue.put)
             priority, account, task_name, rec_addr, task, continue_ = _task
             out_queue.put({"task": {"status": "start", "task": _task, "device": serial}})
             out_queue.put({"device": {"serial": serial, "method": "start"}})
@@ -712,7 +749,7 @@ class PCRInitializer:
                 device_on = True
                 if device.with_emulator() and not device.is_connected():
                     out_queue.put({"device_status": {"serial": serial, "status": "launch"}})
-                    if not device.launch_emulator(True):
+                    if not device.launch_emulator(True, adb_restart_fun=adb_restart_fun):
                         out_queue.put({"device_status": {"serial": serial, "status": "launch_fail"}})
                         out_queue.put({"device": {"serial": serial, "method": "offline"}})
                         out_queue.put({"task": {"status": "retry", "task": _task, "device": serial}})
@@ -734,9 +771,9 @@ class PCRInitializer:
                         if device.with_emulator():
                             out_queue.put({"device_status": {"serial": serial, "status": "restart"}})
                             out_queue.put({"device": {"serial": serial, "method": "offline"}})
-                            device.restart_emulator(True)
+                            device.restart_emulator(True, adb_restart_fun=adb_restart_fun)
                             # 尝试重启模拟器
-                            if device.wait_for_healthy():
+                            if device.wait_for_healthy(adb_restart_fun=adb_restart_fun):
                                 out_queue.put({"device_status": {"serial": serial, "status": "restart_success"}})
                                 device.start_u2()
                                 continue  # 重启成功
@@ -757,9 +794,9 @@ class PCRInitializer:
                     if device.with_emulator():
                         out_queue.put({"device_status": {"serial": serial, "status": "restart"}})
                         out_queue.put({"device": {"serial": serial, "method": "offline"}})
-                        device.restart_emulator(True)
+                        device.restart_emulator(True, adb_restart_fun=adb_restart_fun)
                         # 尝试重启模拟器
-                        if device.wait_for_healthy():
+                        if device.wait_for_healthy(adb_restart_fun=adb_restart_fun):
                             out_queue.put({"device_status": {"serial": serial, "status": "restart_success"}})
                             device.start_u2()
                             continue  # 重启成功
@@ -829,6 +866,13 @@ class PCRInitializer:
         elif status == "launch_fail":
             self.write_log(f"设备 {serial} 启动失败！")
 
+    def process_action_msg(self, msg):
+        serial = msg.setdefault("serial", "???")
+        action = msg["action"]
+        if action == "restart_adb":
+            tm = msg.setdefault("tm", 2)
+            self.devices.global_restart_adb(tm)
+
     def _listener(self):
         """
         侦听线程，获取子进程从out_queue中返回的消息
@@ -845,6 +889,8 @@ class PCRInitializer:
                 self.process_task_method(msg["task"])
             if "device_status" in msg:
                 self.process_status_msg(msg["device_status"])
+            if "action" in msg:
+                self.process_action_msg(msg["action"])
         self.listening = False
 
     def start(self):

@@ -2,6 +2,7 @@
 import datetime
 import os
 import traceback
+from typing import Callable, Any
 
 import cv2
 
@@ -22,7 +23,7 @@ from core.MoveRecord import moveset, UnknownMovesetException
 from core.bot import Bot
 from core.log_handler import pcr_log
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
-from core.pcr_config import trace_exception_for_debug, captcha_skip
+from core.pcr_config import trace_exception_for_debug, captcha_skip, debug
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import check_task_dict, list_all_flags, is_in_group
 from core.valid_task import VALID_TASK, getcustomtask
@@ -30,7 +31,7 @@ from core.valid_task import VALID_TASK, getcustomtask
 
 class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin,HaoYouMixin,
                 JuQingMixin, EnhanceMixin, ShopMixin):
-    def __init__(self, address):
+    def __init__(self, address, output_msg_fun: Callable[[dict], Any] = None):
         """
         device: 如果是 USB 连接，则为 adb devices 的返回结果；如果是模拟器，则为模拟器的控制 URL 。
         """
@@ -38,6 +39,8 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         ShuatuMixin.__init__(self)
         DXCMixin.__init__(self)
         self.init_device(address)
+        if output_msg_fun is not None:
+            self.output_msg_fun = output_msg_fun  # 向外传输信息
 
     def run_custom_task(self, pymodule: str, funcname: str, var=None, **kwargs):
         func = None
@@ -86,11 +89,16 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 self.headers_group.clear()  # 清除全部header
                 self.register_basic_ES()
                 self.prechecks.clear()
+                self.enable_precheck = True
                 flag = False
                 try:
                     self.__getattribute__(funname)(**kwargs, var=var)
-                except TypeError:
+                except TypeError as e:
+                    if debug:
+                        self.log.write_log("debug", f"Catch Type Error:{e} - {funname} - {kwargs}")
                     flag = True
+                    if 'var' not in str(e):
+                        raise e
                 if flag:
                     self.__getattribute__(funname)(**kwargs)
 
