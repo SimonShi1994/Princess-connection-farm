@@ -224,6 +224,5 @@ class FightingLoseZhuXian(FightingLoseBase):
         super().__init__(*args, **kwargs)
         self.scene_name = "FightingLoseZhuXian2"
 
-    def goto_zhuxian(self, zhuxian_type: Union[Type["ZhuXianHard"], Type["ZhuXianNormal"]]) -> Union[
-        "ZhuXianHard", "ZhuXianNormal"]:
+    def goto_zhuxian(self, zhuxian_type):
         return self.goto(zhuxian_type, self.fun_click(806, 489))  # 前往主线关卡

@@ -14,8 +14,8 @@ import requests
 import uiautomator2
 
 from core import log_handler
-from core.pcr_config import adb_dir, debug, disable_timeout_raise, u2_record_size, u2_record_filter,force_timeout_reboot
-
+from core.pcr_config import adb_dir, debug, disable_timeout_raise, u2_record_size, u2_record_filter, \
+    force_timeout_reboot, global_adb_restart
 # log
 __log = log_handler.pcr_log("safe_u2")
 
@@ -108,8 +108,11 @@ def run_adb(cmd: str, timeout=None):
     try:
         subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
     except Exception as e:
-        __log.write_log('error',f"adb启动失败,{e},试图修复。")
-        os.system("taskkill /im adb.exe /f")
+        __log.write_log('error', f"adb启动失败,{e},试图修复。")
+        try:
+            os.system("taskkill /im adb.exe /f")
+        except Exception as e:
+            pass
         subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
 
 
@@ -129,7 +132,7 @@ def random_sleep():
     time.sleep(random.random())
 
 
-def safe_u2_connect(serial: str):
+def safe_u2_connect(serial: str, adb_restart_fun=None):
     last_e = None
     for retry in range(3):
         try:
@@ -138,10 +141,13 @@ def safe_u2_connect(serial: str):
             last_e = e
             if e.args[0] == "unknown host service":
                 # 重连
-                random_sleep()
-                run_adb("kill-server", timeout=60)
-                random_sleep()
-                run_adb("start-server", timeout=60)
+                if adb_restart_fun is not None:
+                    adb_restart_fun()
+                else:
+                    random_sleep()
+                    run_adb("kill-server", timeout=60)
+                    random_sleep()
+                    run_adb("start-server", timeout=60)
         except RuntimeError as e:
             last_e = e
             if e.args[0].endswith("is offline"):
@@ -153,7 +159,7 @@ def safe_u2_connect(serial: str):
 
 
 @timeout(300, "u2命令执行超时")
-def safe_wraper(fun, *args, **kwargs):
+def safe_wraper(fun, *args, adb_restart_fun=None, **kwargs):
     last_e = None
     for retry in range(3):
         try:
@@ -162,7 +168,7 @@ def safe_wraper(fun, *args, **kwargs):
             # 试者重连
             last_e = e
             random_sleep()
-            run_adb("start-server", timeout=60)
+            run_adb("devices", timeout=60)
         except requests.exceptions.ConnectionError as e:
             last_e = e
             time.sleep(1)  # 这个问题是多开了一个，只会爆一次错
@@ -170,16 +176,22 @@ def safe_wraper(fun, *args, **kwargs):
             last_e = e
             if e.args[0] == "unknown host service":
                 # 重连
+                if global_adb_restart and adb_restart_fun is not None:
+                    adb_restart_fun()
+                else:
+                    random_sleep()
+                    run_adb("kill-server", timeout=60)
+                    random_sleep()
+                    run_adb("start-server", timeout=60)
+        except uiautomator2.exceptions.BaseError as e:
+            last_e = e
+            if global_adb_restart and adb_restart_fun is not None:
+                adb_restart_fun()
+            else:
                 random_sleep()
                 run_adb("kill-server", timeout=60)
                 random_sleep()
                 run_adb("start-server", timeout=60)
-        except uiautomator2.exceptions.BaseError as e:
-            last_e = e
-            random_sleep()
-            run_adb("kill-server", timeout=60)
-            random_sleep()
-            run_adb("start-server", timeout=60)
         except RuntimeError as e:
             last_e = e
             if e.args[0].endswith("is offline"):
@@ -218,17 +230,18 @@ class U2Record:
         return out
 
 class SafeU2HandleBase:
-    def __init__(self, obj, safe_items=[], safe_subobjs={}):
+    def __init__(self, obj, safe_items=[], safe_subobjs={}, adb_restart_fun=None):
         self.R = U2Record(u2_record_size)
         self.obj = obj
         self.safe_items = safe_items
         self.safe_subobjs = safe_subobjs
+        self.adb_restart_fun = adb_restart_fun
 
     def __getattr__(self, item):
         if item in self.safe_items:
             def fun(*args, **kwargs):
                 cur = self.R.add(item, *args, **kwargs)
-                output = safe_wraper(getattr(self.obj, item), *args,
+                output = safe_wraper(getattr(self.obj, item), *args, adb_restart_fun=self.adb_restart_fun,
                                      **kwargs)
                 cur['end'] = self.R.gettime()
                 return output
@@ -243,23 +256,23 @@ class SafeU2HandleBase:
 
 
 class SafeU2Object(SafeU2HandleBase):
-    def __init__(self, obj: uiautomator2.UiObject):
-        super().__init__(obj, ["click", "exists"])
+    def __init__(self, obj: uiautomator2.UiObject, adb_restart_fun=None):
+        super().__init__(obj, ["click", "exists"], adb_restart_fun=adb_restart_fun)
 
 
 class SafeU2Touch(SafeU2HandleBase):
-    def __init__(self, obj):
-        super().__init__(obj, ['down', 'move', 'up', 'sleep'])
+    def __init__(self, obj, adb_restart_fun=None):
+        super().__init__(obj, ['down', 'move', 'up', 'sleep'], adb_restart_fun=adb_restart_fun)
 
 class SafeU2Handle(SafeU2HandleBase):
-    def __init__(self, obj: uiautomator2.Device):
+    def __init__(self, obj: uiautomator2.Device, adb_restart_fun=None):
         super().__init__(obj,
                          ["app_wait", "session", "clear_text", "send_keys",
                           "click", "drag", "screenshot", "app_stop"],
-                         {'touch': SafeU2Touch})
+                         {'touch': SafeU2Touch}, adb_restart_fun=adb_restart_fun)
 
     def __call__(self, *args, **kwargs):
         self.R.add(item="()", *args, **kwargs)
         # next_obj=safe_wraper(super(SafeU2HandleBase,self).__getattribute__("obj").__call__,*args,**kwargs)
         next_obj = self.obj(*args, **kwargs)
-        return SafeU2Object(next_obj)
+        return SafeU2Object(next_obj, adb_restart_fun=self.adb_restart_fun)

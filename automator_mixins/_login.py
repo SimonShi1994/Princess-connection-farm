@@ -87,6 +87,10 @@ class LoginMixin(ToolsMixin):
                 time.sleep(0.8)
                 self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
                 continue
+            if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
+                self.click(667, 65)
+                # 防止卡验证码
+                break
             if not self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
                 time.sleep(0.2)
             else:
