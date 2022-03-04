@@ -933,7 +933,11 @@ class BaseMixin:
         if self.enable_precheck:
             for func in self.prechecks.values():
                 self.enable_precheck = False
-                screen = func(screen)
+                try:
+                    screen = func(screen)
+                except Exception as e:
+                    self.enable_precheck = True
+                    raise e
                 self.enable_precheck = True
         return screen
 

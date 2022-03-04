@@ -89,6 +89,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 self.headers_group.clear()  # 清除全部header
                 self.register_basic_ES()
                 self.prechecks.clear()
+                self.enable_precheck = True
                 flag = False
                 try:
                     self.__getattribute__(funname)(**kwargs, var=var)

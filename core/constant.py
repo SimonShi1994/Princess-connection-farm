@@ -478,6 +478,7 @@ FIGHT_BTN = {
     "team_close": p(476, 477, img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),  # 选队界面的关闭按钮
     "shbg": p(img="img/fight/shbg.bmp", at=(804, 24, 902, 54)),  # 伤害报告
     "duiwu_icon": p(img="img/fight/duiwu_icon.bmp", at=(896, 78, 924, 97)),
+    "duiwu_icon_dark": p(908, 40, img="img/fight/duiwu_icon_dark.bmp", at=(895, 24, 922, 57)),
     "huodedaoju": p(img="img/fight/huodedaoju.bmp", at=(442, 135, 514, 160)),
     "xiayibu_fight": p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502)),
     "menu": p(img="img/fight/menu.bmp", at=(871, 18, 928, 32)),
