@@ -263,6 +263,8 @@ class FightInfoBase(PCRMsgBoxBase):
                         self._a.restart_this_task()
                     elif isinstance(out, A.ChaoChuShangXianBox):
                         out.OK()
+                    elif isinstance(out, A.HaoYouMsg):
+                        out.exit_with_off()
             elif isinstance(out, D.FightingLoseZhuXian):
                 self.log.write_log("info", f"战败了！")
                 out.exit(self.fun_click(814, 493))

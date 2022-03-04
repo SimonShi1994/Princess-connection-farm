@@ -177,11 +177,13 @@ class AfterFightingWin(PossibleSceneList):
     def __init__(self, a, *args, **kwargs):
         self.AfterFightKKR = AfterFightKKR
         self.FightingWinZhuXian2 = FightingWinZhuXian2
+        self.HaoYouMsg = HaoYouMsg
         scene_list = [
             self.XianDingShangDianBox(a),
             self.LevelUpBox(a),
             self.TuanDuiZhanBox(a),
             self.ChaoChuShangXianBox(a),
+            HaoYouMsg(a),
             FightingWinZhuXian2(a),
             AfterFightKKR(a),  # kkr剧情跳脸
         ]

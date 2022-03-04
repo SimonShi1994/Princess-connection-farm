@@ -1831,13 +1831,13 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         self.log.write_log("info", f"开始刷活动1-1：{MAP.NAME}")
 
-        code, cishu_left = MAP.shua_11(cishu, team_order, get_zhiyuan)
+        c, cishu_left = MAP.shua_11(cishu, team_order, get_zhiyuan)
 
-        if code == 0 and (cishu_left == "max" or cishu_left > 0):
+        if c == 0 and (cishu_left == "max" or cishu_left > 0):
             # 再刷一次
             MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
             if MAP is False:
                 self.lock_home()
                 return
-            code, cishu_left = MAP.shua_11(cishu_left, team_order, get_zhiyuan)
+            c, cishu_left = MAP.shua_11(cishu_left, team_order, get_zhiyuan)
         self.lock_home()

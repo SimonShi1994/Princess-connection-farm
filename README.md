@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220304
+# Princess connection 公主连结农场脚本v2.8.20220304.1
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -248,8 +248,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
   - 模拟器自动控制现在支持雷电、雷神、蓝叠（未测试）
 - BUG修复
   - 修复自动升级试图推图时一直体力不足的BUG
-  - 修复了开局卡验证码的情况
+  - 进一步修复了开局卡验证码的情况
   - 修复了自动关闭公主连结和自动关闭模拟器冲突的BUG
+  - 修复了`s14`显示找不到活动的BUG
+  - 修复了precheck中重启导致第二次precheck失效的BUG
 - 框架更新
   - 处理教程现在可以跳过剧情动画了
   - Automator现在可通过self.output_msg_fun与父进程通信了
