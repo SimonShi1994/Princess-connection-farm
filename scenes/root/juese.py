@@ -413,6 +413,10 @@ class CharZhuangBei(CharBase):
                             self.log.write_log("info", "没有挑战次数了，放弃这个角色的装备刷取……")
                             self.fclick(1, 1)
                             return 2
+                        elif out == 1:
+                            self.log.write_log("info", "体力不足了，跳过该角色。")
+                            self.fclick(1, 1)
+                            return 1
                         else:
                             self.fclick(1, 1)
                             raise ContinueNow(name="re_qianghua")
@@ -429,6 +433,10 @@ class CharZhuangBei(CharBase):
                                 self.log.write_log("info", "没有挑战次数了，放弃这个角色的装备刷取……")
                                 self.fclick(1, 1)
                                 return 2
+                            elif out == 3:
+                                self.log.write_log("info", "体力不足了，跳过该角色。")
+                                self.fclick(1, 1)
+                                return 1
                             else:
                                 self.fclick(1, 1)
                                 raise ContinueNow(name="re_qianghua")  # 再次强化看看能不能直接穿了

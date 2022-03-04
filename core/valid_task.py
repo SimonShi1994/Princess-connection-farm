@@ -509,6 +509,7 @@ TeamOrderInputer = StrInputer(desc="none - 不改变队伍，使用上次队伍�
                                    "dengji   -   按照等级排序取前五。\n"
                                    "xingshu   -   按照星级排序取前五。\n"
                                    "shoucang -   按照收藏排序取前五。\n"
+                                   "nobody -  不上任何人（只上支援，没支援就会出错）\n"
                                    "(A)-(B) - 使用队伍编组A-B，且1<=A<=5,1<=B<=3。\n"
                                    "Example:  3-1  # 编组3队伍1.")
 
@@ -664,6 +665,25 @@ zhiyuan_mode_kwargs = {
             "-3 - 任意选择一个支援仅支援一人推图。\n",
     "default": 0,
 }
+
+huodong_code_kwargs = {
+    "key": "code",
+    "typ": str,
+    "title": "图号代码",
+    "desc": """输入"current"表示当前进行的活动，其它代码见scenes/huodong/huodong_manager.py""",
+    "default": "current",
+}
+huodong_entrance_ind_kwargs = {
+    "key": "entrance_ind",
+    "typ": str,
+    "title": "活动入口位置",
+    "desc": """冒险界面的小圆按钮哪个是活动？
+    "auto" - 自动寻找位置
+    "1"/"2"/"3" - 从右往左数第几个位置。
+    """,
+    "default": "auto",
+}
+
 VALID_TASK = ValidTask() \
     .add("h1", "hanghui", "行会捐赠", "小号进行行会自动捐赠装备",
          [TaskParam("once_times", int, "单账号捐赠的次数", "一个账号轮询捐赠多少次，多次可以提高容错率但会增加脚本执行时间", 2)]) \
@@ -907,7 +927,7 @@ VALID_TASK = ValidTask() \
                                               "    H10-3-3~150  # 若碎片数小于150，则刷H图10-3 3次。\n"
                                               "    VH20-3-3  # 若碎片数小于50，则刷VH图20-3 3次。\n"
                                               "    VH20-3-3~inf  # 刷VH图20-3 3次。\n"
-                                              "注：H/VH图最多刷3次，并不会买次数。")),
+                                              "注：H/VH图最多刷6次，超过3次会尝试购买次数。")),
           TaskParam("daily_tili", int, "每日体力", "每日在刷图上所用的体力购买总数。", 0),
           TaskParam("xianding", bool, "限定商店", "是否买空限定商店", True),
           TaskParam("zero_star_action", str, "从未通关时",
@@ -970,6 +990,21 @@ VALID_TASK = ValidTask() \
          [TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max"),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)]) \
+    .add("s12", "dahaohuodong_hard", "大号刷活动Hard图", "刷活动Hard图，要求已经全部三星。",
+         [TaskParam("tu_order", list, "图号", "只包含1~5的列表，表示活动困难图图号，每个均刷3次。",
+                    inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~5的整数")),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("s13", "dahaohuodong_VHBoss", "大号刷活动VHBoss", "刷活动VHBoss图，如果没赢很可能有BUG",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("s14", "xiaohaohuodong_11", "小号刷活动1-1", "刷活动1-1图，可以借人，如果推了其它活动图可能会报错。",
+         [TaskParam("cishu", str, "刷几次", "max表示全刷，或者也可以输入一个整数。", "max"),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", True),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
     .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。", ) \
     .add("t9", "buy_all_frag", "碎片购买", "根据角色名称使用代币购买商店碎片",
          [TaskParam("dxc_fraglist", list, "dxc碎片", "需要购买的碎片名称",

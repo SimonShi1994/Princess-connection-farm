@@ -28,7 +28,7 @@ from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticl
     use_pcrocr_to_process_basic_text
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
     force_fast_screencut, adb_dir, clear_traces_and_cache, debug_record_size, debug_record_filter
-from core.safe_u2 import SafeU2Handle, safe_u2_connect, timeout
+from core.safe_u2 import SafeU2Handle, safe_u2_connect, timeout, run_adb
 from core.usercentre import AutomatorRecorder
 from core.utils import make_it_as_number_as_possible
 from scenes.errors import PCRError
@@ -180,7 +180,17 @@ class BaseMixin:
         self.default_header = True
         self.prechecks = {}
         self.enable_precheck = True
+        self.output_msg_fun = lambda x: print("OutputMsg:", x)
         # self.register_basic_ES()
+
+    def request_restart_adb(self):
+        # 请求全局adb重启的函数
+        self.output_msg_fun({"action": {
+            "serial": self.address,
+            "action": "restart_adb",
+        }})
+        time.sleep(5)
+        run_adb("devices")
 
     def restart_this_task(self):
         """
@@ -290,8 +300,8 @@ class BaseMixin:
         self.appRunning = False
         self.address = address
         if address != "debug":
-            self._d = safe_u2_connect(address)
-            self.d = SafeU2Handle(self._d)
+            self._d = safe_u2_connect(address, adb_restart_fun=self.request_restart_adb)
+            self.d = SafeU2Handle(self._d, adb_restart_fun=self.request_restart_adb)
             self.init_fastscreen()
 
     @DEBUG_RECORD
@@ -1280,7 +1290,7 @@ class BaseMixin:
 
     @timeout(300, "处理教程时间过长，超过5分钟！")
     @DEBUG_RECORD
-    def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
+    def chulijiaocheng(self, turnback: Optional[str] = "shuatu"):  # 处理教程, 最终返回刷图页面
         """
         这个处理教程函数是给chushihua.py用的
 
@@ -1292,12 +1302,13 @@ class BaseMixin:
         都没有就点边界点
         # 有取消点取消
         :turnback:
-            shuatu: 返回刷图页面
+            "shuatu": 返回刷图页面
             None: 不返回任何页面
         :return:
         """
         # 2021-1-10 FC改写
         count = [0]
+        process_count = [0]
         FC = self.getFC().getscreen()
 
         def f(screen):
@@ -1350,9 +1361,15 @@ class BaseMixin:
                 for _ in range(3):
                     self.click(390, 369)
                     time.sleep(1)
+            elif self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen_shot_):
+                self.click(JUQING_BTN["tiaoguo_2"])
             else:
-                for _ in range(6):
-                    self.click(1, 100)  # Speed Up Click
+                process_count[0] += 1
+                if process_count[0] % 3 == 0:
+                    for _ in range(6):
+                        self.click(1, 100)  # Speed Up Click
+                else:
+                    self.click(1, 100)
             count[0] = 0
 
         FC.add(Checker(f))
