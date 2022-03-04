@@ -47,23 +47,31 @@ class LauncherBase(metaclass=ABCMeta):
         time.sleep(3)
         self.launch(id, block)
 
-    def wait_for_launch(self, id: int, timeout=wait_for_launch_time):
+    def wait_for_launch(self, id: int, timeout=wait_for_launch_time, adb_restart_fun=None):
         last_time = time.time()
+        cnt = 0
         while not self.is_running(id):
             time.sleep(1)
             if time.time() - last_time > timeout:
                 return False
+            cnt += 1
+            if cnt % 10 == 0 and adb_restart_fun is not None:
+                adb_restart_fun()
         return True
 
-    def wait_for_all(self):
+    def wait_for_all(self, adb_restart_fun=None):
         for i in emulator_id:
+            cnt = 0
             while not self.is_running(i):
                 time.sleep(1)
+                cnt += 1
+                if cnt % 10 == 0 and adb_restart_fun is not None:
+                    adb_restart_fun()
 
-    def start_all(self):
+    def start_all(self, adb_restart_fun=None):
         for i in emulator_id:
             self.launch(i, False)
-        self.wait_for_all()
+        self.wait_for_all(adb_restart_fun=adb_restart_fun)
 
     def quit_all(self):
         for i in emulator_id:
@@ -232,4 +240,5 @@ class BSLauncher(LauncherBase):
 EMULATOR_DICT = {
     "雷电": LDLauncher,
     "蓝叠": BSLauncher,
+    "雷神": LDLauncher,
 }

@@ -153,6 +153,7 @@ MAIN_BTN = {
     "managuanqia": p(801, 221),  # 玛娜关卡
     "tansuo_zero": p(img="img/tansuo/zero.bmp", at=(654, 433, 678, 448)),
     "tansuo_sytzcs": p(img="img/tansuo/sytzcs.bmp", at=(485, 432, 575, 452)),
+    "tansuo_clock": p(725, 439, img="img/tansuo/clock.bmp", at=(716, 430, 734, 448)),
     "tansuo_back": p(30, 32),
     "tansuo_saodangok2": p(472, 478, img="img/tansuo/jrtssy.bmp", at=(412, 462, 539, 487)),
     "jrtssy2": p(829, 491, img="img/tansuo/jrtssy2.bmp", at=(756, 472, 900, 506)),
@@ -185,6 +186,13 @@ MAIN_BTN = {
 
     # 活动提示关闭（大范围检测
     "guanbi": p(430, 487, img="img/hanghui/close_btn_1.bmp", at=(199, 393, 742, 526)),
+
+    # 冒险界面的圆按钮
+    "round_btn": {
+        1: p(409, 424),
+        2: p(320, 421),
+        3: p(243, 420),
+    }
 }
 JJC_BTN = {
     "list": p(img="img/jjc/list.bmp", at=(821, 77, 888, 103)),  # 列表更新
@@ -275,6 +283,14 @@ NIUDAN_BTN = {
     "niudan_sheding": p(476, 433, img="img/niudan/niudan_sheding.bmp", at=(452, 420, 501, 446)),
     "chiyoushu": p(528, 413, img="img/niudan/chiyoushu.bmp", at=(505, 405, 552, 422)),
     "xuanzezhong": p(604, 262, img="img/niudan/xuanzezhong.bmp", at=(577, 251, 632, 274)),
+
+}
+
+HUODONG_BTN = {
+    "jqhd": p(img="img/huodong/jqhd.bmp", at=(107, 437, 441, 452)),
+    "sjxz": p(img="img/huodong/sjxz.bmp", at=(436, 134, 522, 158)),
+    "bossqsl": p(666, 425, img="img/huodong/bossqsl.bmp", at=(622, 416, 710, 434)),
+    "long_next": p(807, 488, img="img/huodong/long_next.bmp", at=(713, 473, 902, 504)),
 
 }
 
@@ -474,6 +490,7 @@ FIGHT_BTN = {
     "team_close": p(476, 477, img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),  # 选队界面的关闭按钮
     "shbg": p(img="img/fight/shbg.bmp", at=(804, 24, 902, 54)),  # 伤害报告
     "duiwu_icon": p(img="img/fight/duiwu_icon.bmp", at=(896, 78, 924, 97)),
+    "duiwu_icon_dark": p(908, 40, img="img/fight/duiwu_icon_dark.bmp", at=(895, 24, 922, 57)),
     "huodedaoju": p(img="img/fight/huodedaoju.bmp", at=(442, 135, 514, 160)),
     "xiayibu_fight": p(img="img/fight/xiayibu.bmp", at=(794, 475, 864, 502)),
     "menu": p(img="img/fight/menu.bmp", at=(871, 18, 928, 32)),
@@ -502,6 +519,7 @@ FIGHT_BTN = {
     "fangqi_2": p(625, 376, img="img/fight/fangqi_2.bmp", at=(491, 346, 686, 392)),
     "tgdw": p(img="img/fight/tgdw.bmp", at=(805, 82, 900, 105)),
     "infinity": p(img="img/fight/infinity.bmp", at=(897, 407, 920, 420)),
+    "no_tili": p(724, 413, img="img/fight/no_tili.bmp", at=(709, 406, 739, 421)),
     "fighting_caidan": p(img="img/fight/fighting_caidan.bmp", at=(882, 18, 918, 32)),
     "zhandou_failed": p(img="img/fight/zhandou_failed.bmp"),
 }
@@ -1006,6 +1024,8 @@ MAOXIAN_BTN = {
     "no_cishu": p(img="img/maoxian/no_cishu.bmp", at=(400, 229, 541, 289)),
     "chaochushangxian": p(img="img/maoxian/chaochushangxian.bmp", at=(343, 207, 602, 232)),
     "sytzcshf": p(img="img/maoxian/sytzcshf.bmp", at=(391, 132, 562, 155)),  # 剩余挑战次数恢复
+    "sytzcshf_queren": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
+    "jtdhfkncs": p(452, 249, img="img/maoxian/jtdhfkncs.bmp", at=(380, 240, 525, 259)),
     "lock": p(img="img/maoxian/lock.bmp"),
     "tiaozhan_off": p(img="img/maoxian/tiaozhan_off.bmp", at=(768, 437, 909, 468)),
     "tiaozhan_on": p(img="img/maoxian/tiaozhan_on.bmp", at=(768, 439, 910, 470)),

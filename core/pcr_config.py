@@ -250,6 +250,9 @@ emulators_port_interval: Optional[list] = (GC.add_list('emulator_setting', 'emul
 emulators_port_list: Optional[list] = (GC.add_list('emulator_setting', 'emulators_port_list', []))
 emulator_ports: Optional[list] = (GC.add_list('emulator_setting', 'emulator_ports', []))
 adb_dir = GC.add_abspath('emulator_setting', 'adb_dir', "adb")
+global_adb_restart = GC.add_bool('emulator_setting', 'global_adb_restart', True)
+restart_adb_during_emulator_launch_delay = GC.add_int('emulator_setting', 'restart_adb_during_emulator_launch_delay',
+                                                      10)
 add_adb_to_path = GC.add_bool('emulator_setting', 'add_adb_to_path', True)
 selected_emulator = GC.add_str('emulator_setting', 'selected_emulator', "雷电")
 emulator_console = GC.add_str('emulator_setting', 'emulator_console')
