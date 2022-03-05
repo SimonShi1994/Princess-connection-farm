@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220304.1
+# Princess connection 公主连结农场脚本v2.8.20220305
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -234,6 +234,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/03/05 By UVJkiNTQ
+
+ - 修复setting偏移
+ - 为s8加入新选项，可一键升满好感并阅读剧情
+ - 添加了scene内借人刷图选择换下几号位的选项
 
 2022/03/04 By TheAutumnOfRice，CyiceK
 

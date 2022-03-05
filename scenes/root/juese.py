@@ -4,7 +4,7 @@ import time
 import cv2
 
 from DataCenter import LoadPCRData
-from core.constant import JUESE_BTN, RANKS_DICT, MAIN_BTN, DXC_ELEMENT, MAOXIAN_BTN
+from core.constant import JUESE_BTN, RANKS_DICT, MAIN_BTN, DXC_ELEMENT, MAOXIAN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.pcr_checker import PCRRetry, ContinueNow
 from core.pcr_config import debug, use_pcrocr_to_detect_rank
@@ -188,6 +188,54 @@ class CharBase(SevenBTNMixin):
                 self.clear_initFC()
                 self._a.restart_this_task()
         return screen
+
+    def loveplus(self, read_story=False):
+        if self.is_exists(img="img/juese/red_mid.bmp", method="sq", at=(53, 331, 61, 341)):  # 好感度剧情红点
+            self.click_btn(JUESE_BTN["hgdjq"], until_appear=JUESE_BTN["juesejuqing"])
+            self.click_btn(JUESE_BTN["hgdts"], until_appear=JUESE_BTN["zengli"])
+            if self.is_exists(JUESE_BTN["haoganzuida"]):
+                self.click(367, 473)  # 取消
+            else:
+                self.click(651, 214)  # Max
+                self.click_btn(JUESE_BTN["zengsong"])
+                time.sleep(1)
+                if self.is_exists(JUESE_BTN["donghuaqueren"]):
+                    self.click(349, 260)
+                    if not self.is_exists(JUESE_BTN["ticked"].img, at=(362, 330, 416, 385)):
+                        self.click(386, 353)
+                self.lock_img(JUESE_BTN["juqingjiesuo"])
+                self.click(481, 473)  # 关闭
+            self.lock_img(JUESE_BTN["juesejuqing"])
+            self.log.write_log("info", "无法再提升好感度")
+
+            if read_story:
+                while True:
+                    time.sleep(1)
+                    lst = self.img_where_all(img="img/juqing/new_content.bmp", method="sq", at=(245, 98, 320, 442))
+                    if len(lst) > 0:
+                        x = lst[0] + 383
+                        y = lst[1] + 50
+                        '''
+                        280, 246
+                        663, 297
+                        '''
+                        self.click(x, y)  # 进入剧情
+                        self._a.guojuqing(story_type="haogandu")
+                        continue
+                    if self.is_exists(JUESE_BTN["lxydjq"]):
+                        self._a.guojuqing(story_type="haogandu")
+                        continue
+                    if self.is_exists(JUESE_BTN["lxydjq"].img, at=(394, 73, 564, 100)):
+                        self._a.guojuqing(story_type="haogandu")
+                        continue
+                    if self.is_exists(JUESE_BTN["wujuqing"]):
+                        self.log.write_log("info", "好感剧情已读完")
+                        self.fclick(1, 1)
+                        break
+                    else:
+                        self.log.write_log("info", "无可读好感剧情")
+                        self.fclick(1, 1)
+                        break
 
     def goto_zhuangbei(self) -> "CharZhuangBei":
         return self.goto(CharZhuangBei, self.fun_click(JUESE_BTN["equip_unselected"]), before_clear=False)
@@ -585,7 +633,7 @@ class CharZhuanwu(CharBase):
 
     def yijianqianghua(self):
         self.click_btn(JUESE_BTN["yijianqianghua"], until_appear=JUESE_BTN["wear_confirm"])
-        self.click(655, 230)   # 点击MAX
+        self.click(655, 230)  # 点击MAX
         if not self.is_exists(JUESE_BTN["ticked"]):
             self.click(386, 410)  # 勾上
         self.click_btn(JUESE_BTN["wear_confirm"])
@@ -623,4 +671,3 @@ class CharZhuanwu(CharBase):
         at = (569, 80, 601, 99)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
-

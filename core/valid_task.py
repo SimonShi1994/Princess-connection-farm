@@ -879,6 +879,7 @@ VALID_TASK = ValidTask() \
     .add("nothing", "do_nothing", "啥事不干", "啥事不干，调试用") \
     .add("s8", "zidongqianghua", "自动升级【已重写】", "此功能为自动升级角色功能",
          [TaskParam("do_rank", bool, "是否升rank", "是否进行rank提升", True),
+          TaskParam("do_loveplus", bool, "是否升好感", "是否阅读好感剧情,升满好感", False),
           TaskParam("do_shuatu", bool, "是否推图", "是否推图获取装备", True),
           TaskParam("getzhiyuan", bool, "是否借支援", "是否借人推图", False),
           TaskParam("is_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 2),
@@ -900,10 +901,10 @@ VALID_TASK = ValidTask() \
                                                "zhuanwu 表示专武\n"
                                                "fav 表示我的最爱\n"
                                                "six 表示六星已解放", "level"),
-          TaskParam("count", int, "前N个", "选择遍历角色数量", 15),
+          TaskParam("count", int, "前N个", "选择遍历角色数量(已废弃，现在根据角色名称选择)", 15),
           TaskParam("charlist", list, "角色列表", "需要升级的角色",
                     inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称（如有括号，使用中文括号），例如 凯露（夏日）")),
-          TaskParam("tozhuanwulv", int, "专武上限等级", "专武上限等级", 120)]) \
+          TaskParam("tozhuanwulv", int, "专武上限等级", "专武上限等级，拉满填写999", 120)]) \
     .add("s8-a", "auto_upgrade", "自动升级前几个角色", "不能指定角色升级，但能升级前几个角色。",
          [TaskParam("buy_tili", int, "购买体力", "最多购买几次体力来完成升级", 0),
           TaskParam("do_rank", bool, "RANK提升", "是否提升RANK", True),

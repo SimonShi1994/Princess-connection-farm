@@ -218,6 +218,8 @@ JUQING_BTN = {
     "quxiao": p(334, 372, img="img/hanghui/quxiao.bmp", at=(313, 361, 355, 382)),
     "wuyuyin": p(481, 362, img="img/juqing/wuyuyin.bmp", at=(453, 353, 508, 371)),
     "guanbi": p(476, 432, img="img/juqing/guanbi.bmp", at=(454, 418, 498, 445)),
+    "baochouqueren": p(478, 41, img="img/juqing/baochouqueren.bmp", at=(433, 28, 523, 55)),
+    "locked": p(279, 151, img="img/juqing/locked.bmp", at=(259, 133, 300, 170)),
 }
 
 LIWU_BTN = {
@@ -586,6 +588,16 @@ JUESE_BTN = {
     "levelup_zhuanwu": p(842, 435, img="img/juese/levelup_zhuanwu.bmp", at=(821, 422, 864, 449)),
     "yijianqianghua": p(551, 435, img="img/juese/yijianqianghua.bmp", at=(509, 419, 593, 451)),
     "ticked": p(387, 411, img="img/juese/ticked.bmp", at=(361, 384, 414, 438)),
+    "juesejuqing": p(479, 42, img="img/juese/juesejuqing.bmp", at=(434, 30, 524, 55)),  # 角色剧情弹窗
+    "hgdts": p(587, 476, img="img/juese/hgdts.bmp", at=(529, 461, 645, 492)),  # 好感度提升
+    "zengli": p(479, 42, img="img/juese/zengli.bmp", at=(453, 29, 505, 55)),  # 赠礼
+    "zengsong": p(589, 477, img="img/juese/zengsong.bmp", at=(558, 461, 621, 493)),  # 赠送
+    "haoganzuida": p(478, 288, img="img/juese/haoganzuida.bmp", at=(455, 274, 502, 302)),
+    "juqingjiesuo": p(477, 42, img="img/juese/juqingjiesuo.bmp", at=(434, 29, 521, 55)),
+    "hgdjq": p(27, 352, img="img/juese/hgdjq.bmp", at=(10, 339, 45, 366)),  # 好感度剧情按钮
+    "lxydjq": p(479, 86, img="img/juese/lxydjq.bmp", at=(394, 73, 564, 100)),  # 连续阅读剧情
+    "wujuqing": p(411, 150, img="img/juese/wujuqing.bmp", at=(304, 137, 518, 164)),
+    "donghuaqueren": p(479,87,img="img/juese/donghuaqueren.bmp",at=(435,76,524,98)),
     "qhscxz": p(img="img/juese/qhscxz.bmp", at=(65, 69, 164, 90)),  # 强化素材选择
     "bnjxqh": p(img="img/juese/bnjxqh.bmp", at=(594, 419, 805, 443)),  # 不能继续强化
     "sucaibuzu": p(img="img/juese/sucaibuzu.bmp", at=(447, 420, 514, 441)),
