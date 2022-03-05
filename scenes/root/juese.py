@@ -204,8 +204,8 @@ class CharBase(SevenBTNMixin):
                     if not self.is_exists(JUESE_BTN["ticked"].img, at=(362, 330, 416, 385)):
                         self.click(386, 353)  # 勾选
                         self.click(589, 425)  # 确认
-                self.lock_img(JUESE_BTN["juqingjiesuo"])
-                self.click(481, 473)  # 关闭
+                self.lock_img(JUESE_BTN["juqingjiesuo"], aat=(429, 22, 525, 257))
+                self.click_img(JUESE_BTN["guanbi"])  # 关闭
             self.lock_img(JUESE_BTN["juesejuqing"])
             self.log.write_log("info", "无法再提升好感度")
 

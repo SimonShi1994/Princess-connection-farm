@@ -597,7 +597,8 @@ JUESE_BTN = {
     "hgdjq": p(27, 352, img="img/juese/hgdjq.bmp", at=(10, 339, 45, 366)),  # 好感度剧情按钮
     "lxydjq": p(479, 86, img="img/juese/lxydjq.bmp", at=(394, 73, 564, 100)),  # 连续阅读剧情
     "wujuqing": p(411, 150, img="img/juese/wujuqing.bmp", at=(304, 137, 518, 164)),
-    "donghuaqueren": p(479,87,img="img/juese/donghuaqueren.bmp",at=(435,76,524,98)),
+    "donghuaqueren": p(479, 87, img="img/juese/donghuaqueren.bmp", at=(435, 76, 524, 98)),
+    "guanbi": p(476, 476, img="img/juese/guanbi.bmp", at=(447, 460, 505, 493)),
     "qhscxz": p(img="img/juese/qhscxz.bmp", at=(65, 69, 164, 90)),  # 强化素材选择
     "bnjxqh": p(img="img/juese/bnjxqh.bmp", at=(594, 419, 805, 443)),  # 不能继续强化
     "sucaibuzu": p(img="img/juese/sucaibuzu.bmp", at=(447, 420, 514, 441)),
