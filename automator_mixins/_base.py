@@ -1576,9 +1576,11 @@ class BaseMixin:
             adb_dir, self.address, _get_imei(20)))
         # print("》》》匿名完毕《《《")
         if clear_traces_and_cache:
+            # self.d.app_stop("com.bilibili.priconne")
             # 清除痕迹和缓存
             clear_list = ["/storage/emulated/0/bilibili_data", "/storage/emulated/0/bilibili_time",
                           "data/data/com.bilibili.priconne/databases", "data/data/com.bilibili.priconne/shared_prefs"]
+            # "data/data/com.bilibili.priconne/shared_prefs"
             not_clear_file = ["*.playerprefs.xml", "config_data.xml", "agree_license_info.xml"]
             for i in clear_list:
                 if i == clear_list[3]:
@@ -1586,13 +1588,14 @@ class BaseMixin:
                         run_cmd(
                             f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force {j} .. "
                                                                                            f"&& exit" + "'")
-                run_cmd(
-                    f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
-                if i == clear_list[3]:
-                    for j in not_clear_file:
-                        run_cmd(
-                            f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force ../{j} "
-                                                                                           f"&& exit" + "'")
+                else:
+                    run_cmd(
+                        f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
+                # if i == clear_list[3]:
+                #     for j in not_clear_file:
+                #         run_cmd(
+                #             f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force ../{j} "
+                #                                                                            f"&& exit" + "'")
 
             clear_list2 = ["time_*", "data_*"]
             for i in clear_list2:
@@ -1602,19 +1605,19 @@ class BaseMixin:
                                                                                    f"{i} && exit" + "'")
             run_cmd(
                 f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
-                                                                               '/lib && chmod 755 libsecsdk.so'
+                                                                               '/lib && chmod 444 libsecsdk.so'
                                                                                ' && exit' + "'")
             run_cmd(
                 f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
-                                                                               '/lib && chmod 755 libtersafe2.so'
+                                                                               '/lib && chmod 444 libtersafe2.so'
                                                                                ' && exit' + "'")
             run_cmd(
                 f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
                                                                                '/lib && chmod 755 libweibosdkcore.so'
                                                                                ' && exit' + "'")
-
-            self.d.session("com.bilibili.priconne")
-            self.d.app_wait("com.bilibili.priconne")
+            # time.sleep(3)
+            # self.d.session("com.bilibili.priconne")
+            # self.d.app_wait("com.bilibili.priconne")
 
             # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
             # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
