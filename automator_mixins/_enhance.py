@@ -26,8 +26,9 @@ class DuringFighting(PossibleSceneList):
 
 class EnhanceMixin(ShuatuBaseMixin):
 
-    def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, charlist=None,
-                       team_order="zhanli", getzhiyuan=False, is_full=0, tozhuanwulv=150, count=15, sort="level"):
+    def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, do_loveplus=False,
+                       charlist=None, team_order="zhanli", getzhiyuan=False, is_full=0, tozhuanwulv=150,
+                       sort="level", count=15):
         '''
         角色升级任务，包含了装备、升星、专武
         do_rank:rank升级
@@ -201,7 +202,10 @@ class EnhanceMixin(ShuatuBaseMixin):
                                 self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
                                 continue
                         if debug:
-                            self.log.write_log('debug', "等级装备强化任务开始")
+                            self.log.write_log('debug', "等级装备强化任务完成")
+                        # 好感度升级
+                        if do_loveplus:
+                            ecb.loveplus(read_story=True)
                         # 专武
                         if do_zhuanwu:
                             ezw = ecb.goto_zhuanwu()
@@ -215,11 +219,14 @@ class EnhanceMixin(ShuatuBaseMixin):
                                     ezw.wear_zhuanwu()
                                     continue
                                 if zws == 3 or zws == 5:
-                                    c = ezw.unlock_ceiling(tozhuanwulv=tozhuanwulv)
-                                    if c != 2:
-                                        continue
+                                    if tozhuanwulv == 999:
+                                        ezw.yijianqianghua()
                                     else:
-                                        break
+                                        c = ezw.unlock_ceiling(tozhuanwulv=tozhuanwulv)
+                                        if c != 2:
+                                            continue
+                                        else:
+                                            break
                                 if zws == 4:
                                     ezw.levelup_zhuanwu()
                                     continue
