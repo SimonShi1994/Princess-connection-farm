@@ -537,15 +537,15 @@ class CharZhuanwu(CharBase):
             if self.is_exists(JUESE_BTN["zhuanwu_equipable"], method="sq", threshold=0.95, screen=screen):
                 return 2
             else:
-                if self.is_exists(img="img/juese/red_mid.bmp", at=(660, 409, 668, 418), screen=screen):
+                if self.is_exists(img="img/juese/red_mid.bmp", at=(747, 409, 755, 418), screen=screen):
                     # 解放红点亮
-                    if self.is_exists(img="img/juese/red_mid.bmp", at=(879, 409, 887, 418), screen=screen):
+                    if self.is_exists(img="img/juese/red_mid.bmp", at=(892, 409, 901, 418), screen=screen, method="sq"):
                         # 强化红点亮
                         return 5
                     else:
                         return 3
                 else:
-                    if self.is_exists(img="img/juese/red_mid.bmp", at=(879, 409, 887, 418), screen=screen):
+                    if self.is_exists(img="img/juese/red_mid.bmp", at=(892, 409, 901, 418), screen=screen, method="sq"):
                         # 强化红点亮
                         return 4
                     else:
@@ -583,9 +583,17 @@ class CharZhuanwu(CharBase):
                 self.log.write_log('info', "已达到目标专武等级")
                 return 2
 
+    def yijianqianghua(self):
+        self.click_btn(JUESE_BTN["yijianqianghua"], until_appear=JUESE_BTN["wear_confirm"])
+        self.click(655, 230)   # 点击MAX
+        if not self.is_exists(JUESE_BTN["ticked"]):
+            self.click(386, 410)  # 勾上
+        self.click_btn(JUESE_BTN["wear_confirm"])
+        time.sleep(3)  # 等动画
+
     def levelup_zhuanwu(self):
         while True:
-            if self.is_exists(img="img/juese/red_mid.bmp", at=(879, 409, 887, 418)):
+            if self.is_exists(img="img/juese/red_mid.bmp", at=(892, 409, 901, 418), method="sq"):
                 self.click_btn(JUESE_BTN["levelup_zhuanwu"], until_appear=JUESE_BTN["qhscxz"])
                 at = (615, 389, 694, 412)
                 sc1 = self.getscreen()
@@ -615,3 +623,4 @@ class CharZhuanwu(CharBase):
         at = (569, 80, 601, 99)
         out = self.ocr_int(*at, screen_shot=screen)
         return out
+

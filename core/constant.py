@@ -406,7 +406,7 @@ TUANDUIZHAN_BTN = {
     "guanbi": p(430, 487, img="img/hanghui/close_btn_1.bmp", at=(199, 393, 742, 526)),
 }
 ZHUCAIDAN_BTN = {
-    "bangzhu": p(153,269,img="img/zhucaidan/bangzhu.bmp",at=(52, 248, 253, 290)),
+    "bangzhu": p(153, 269, img="img/zhucaidan/bangzhu.bmp", at=(52, 248, 253, 290)),
     "jianjie": p(img="img/zhucaidan/jianjie.bmp", at=(267, 241, 499, 290)),
     "daoju": p(475, 160, img="img/zhucaidan/daoju.bmp", at=(475, 112, 610, 187)),
     "saodangquan": p(img="img/zhucaidan/saodangquan.bmp"),
@@ -578,12 +578,14 @@ JUESE_BTN = {
     "zhuanwu_lock": p(img="img/juese/zhuanwu_lock.bmp", at=(662, 172, 734, 243)),
     "zhuanwu_equipable": p(img="img/juese/zhuanwu_equipable.bmp", at=(261, 126, 266, 130)),
     "wear": p(802, 435, img="img/juese/wear.bmp", at=(777, 421, 836, 449)),
-    "wear_confirm": p(587, 476, img="img/juese/wear_confirm.bmp", at=(561, 462, 615, 491)),
+    "wear_confirm": p(588, 476, img="img/juese/wear_confirm.bmp", at=(563, 462, 612, 490)),
     "unlock_ceiling_confirm": p(585, 476, img="img/juese/unlock_ceiling_confirm.bmp", at=(538, 460, 636, 492)),
-    "unlock_ceiling": p(585, 435, img="img/juese/unlock_ceiling.bmp", at=(545, 424, 630, 446)),
-    "unlock_ceiling_off": p(img="img/juese/unlock_ceiling_off.bmp", at=(532, 419, 646, 453)),
-    "unlock_ceiling_need_lv": p(img="img/juese/unlock_ceiling_need_lv.bmp", at=(388, 420, 458, 443)),
-    "levelup_zhuanwu": p(805, 435, img="img/juese/levelup_zhuanwu.bmp", at=(779, 422, 833, 448)),
+    "unlock_ceiling": p(698, 434, img="img/juese/unlock_ceiling.bmp", at=(659, 421, 737, 447)),
+    "unlock_ceiling_off": p(588, 477, img="img/juese/unlock_ceiling_off.bmp", at=(539, 461, 638, 493)),
+    "unlock_ceiling_need_lv": p(img="img/juese/unlock_ceiling_need_lv.bmp", at=(391, 420, 458, 443)),
+    "levelup_zhuanwu": p(842, 435, img="img/juese/levelup_zhuanwu.bmp", at=(821, 422, 864, 449)),
+    "yijianqianghua": p(551, 435, img="img/juese/yijianqianghua.bmp", at=(509, 419, 593, 451)),
+    "ticked": p(387, 411, img="img/juese/ticked.bmp", at=(361, 384, 414, 438)),
     "qhscxz": p(img="img/juese/qhscxz.bmp", at=(65, 69, 164, 90)),  # 强化素材选择
     "bnjxqh": p(img="img/juese/bnjxqh.bmp", at=(594, 419, 805, 443)),  # 不能继续强化
     "sucaibuzu": p(img="img/juese/sucaibuzu.bmp", at=(447, 420, 514, 441)),
@@ -644,13 +646,13 @@ DXC_ELEMENT = {
     "left": p(945, 242),
     "zyjsqr": p(img="img/dxc/zyjsqr.bmp", at=(412, 29, 549, 54)),
     "zyjsqr_ok": p(595, 471),
-    "chetui": p(809,428,img="img/dxc/chetui.bmp",at=(789,419,830,438)),
+    "chetui": p(809, 428, img="img/dxc/chetui.bmp", at=(789, 419, 830, 438)),
     "chetui_ok": p(591, 365, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "chetuiqueren": p(img="img/dxc/chetuiqueren.bmp", at=(433, 134, 521, 158)),
     "sytzcs": p(723, 438, img="img/dxc/sytzcs.bmp", at=(667, 428, 784, 447)),
     "kyzdjs": p(img="img/dxc/kyzdjs.bmp", at=(591, 377, 687, 396)),
     "ceng": p(img="img/dxc/ceng.bmp"),
-    "in_sytzcs": p(620,430,img="img/dxc/in_sytzcs.bmp",at=(575,421,665,439)),
+    "in_sytzcs": p(620, 430, img="img/dxc/in_sytzcs.bmp", at=(575, 421, 665, 439)),
     "1/1": p(img="img/dxc/dxc_1_1.bmp", at=(887, 429, 913, 446)),
     "0/1": p(img="img/dxc/dxc_0_1.bmp", at=(883, 429, 910, 445)),
     "qwdxc": p(810, 489),  # 失败：前往地下城
@@ -659,8 +661,8 @@ DXC_ELEMENT = {
     "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
     "shouqubaochou_ok": p(480, 477, img="img/ui/queren.bmp", at=(450, 465, 509, 489)),
     "qianwangdixiacheng": p(805, 495),
-    "qyxzqr": p(478,88,img="img/dxc/qyxzqr.bmp",at=(411,76,546,100)),
-    "quyuxuanzequeren_ok": p(586,433,img="img/ui/queren_blue.bmp",at=(559, 418, 613, 447)),
+    "qyxzqr": p(478, 88, img="img/dxc/qyxzqr.bmp", at=(411, 76, 546, 100)),
+    "quyuxuanzequeren_ok": p(586, 433, img="img/ui/queren_blue.bmp", at=(559, 418, 613, 447)),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
@@ -786,11 +788,11 @@ DXC_COORD = {
     },
 
     6: {
-        1: p(680,241),
-        2: p(487,237),
-        3: p(224,226),
-        4: p(477,204),
-        5: p(715,218),
+        1: p(680, 241),
+        2: p(487, 237),
+        3: p(224, 226),
+        4: p(477, 204),
+        5: p(715, 218),
     }
 }
 

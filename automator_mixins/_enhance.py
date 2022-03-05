@@ -214,11 +214,14 @@ class EnhanceMixin(ShuatuBaseMixin):
                                     ezw.wear_zhuanwu()
                                     continue
                                 if zws == 3 or zws == 5:
-                                    c = ezw.unlock_ceiling(tozhuanwulv=tozhuanwulv)
-                                    if c != 2:
-                                        continue
+                                    if tozhuanwulv == 999:
+                                        ezw.yijianqianghua()
                                     else:
-                                        break
+                                        c = ezw.unlock_ceiling(tozhuanwulv=tozhuanwulv)
+                                        if c != 2:
+                                            continue
+                                        else:
+                                            break
                                 if zws == 4:
                                     ezw.levelup_zhuanwu()
                                     continue
