@@ -141,7 +141,7 @@ MAIN_BTN = {
 
     "exp_bar": p(at=(78, 23, 178, 31), fc=(106, 205, 176), bc=(94, 125, 146)),
     "speaker_box": p(img="img/ui/speaker_box.bmp", at=(182, 395, 209, 409)),  # 有人说话时名字左上角的红色
-    "setting_pic": p(158, 225, img="img/home/setting.bmp", at=(44, 198, 254, 257)),
+    "setting_pic": p(158, 225, img="img/home/setting.bmp", at=(55, 181, 198, 224)),
     "tansuo": p(738, 137),
 
     # 换号确认
@@ -218,6 +218,8 @@ JUQING_BTN = {
     "quxiao": p(334, 372, img="img/hanghui/quxiao.bmp", at=(313, 361, 355, 382)),
     "wuyuyin": p(481, 362, img="img/juqing/wuyuyin.bmp", at=(453, 353, 508, 371)),
     "guanbi": p(476, 432, img="img/juqing/guanbi.bmp", at=(454, 418, 498, 445)),
+    "baochouqueren": p(478, 41, img="img/juqing/baochouqueren.bmp", at=(433, 28, 523, 55)),
+    "locked": p(279, 151, img="img/juqing/locked.bmp", at=(259, 133, 300, 170)),
 }
 
 LIWU_BTN = {
@@ -406,7 +408,7 @@ TUANDUIZHAN_BTN = {
     "guanbi": p(430, 487, img="img/hanghui/close_btn_1.bmp", at=(199, 393, 742, 526)),
 }
 ZHUCAIDAN_BTN = {
-    "bangzhu": p(153,269,img="img/zhucaidan/bangzhu.bmp",at=(52, 248, 253, 290)),
+    "bangzhu": p(153, 269, img="img/zhucaidan/bangzhu.bmp", at=(52, 248, 253, 290)),
     "jianjie": p(img="img/zhucaidan/jianjie.bmp", at=(267, 241, 499, 290)),
     "daoju": p(475, 160, img="img/zhucaidan/daoju.bmp", at=(475, 112, 610, 187)),
     "saodangquan": p(img="img/zhucaidan/saodangquan.bmp"),
@@ -578,12 +580,25 @@ JUESE_BTN = {
     "zhuanwu_lock": p(img="img/juese/zhuanwu_lock.bmp", at=(662, 172, 734, 243)),
     "zhuanwu_equipable": p(img="img/juese/zhuanwu_equipable.bmp", at=(261, 126, 266, 130)),
     "wear": p(802, 435, img="img/juese/wear.bmp", at=(777, 421, 836, 449)),
-    "wear_confirm": p(587, 476, img="img/juese/wear_confirm.bmp", at=(561, 462, 615, 491)),
+    "wear_confirm": p(588, 476, img="img/juese/wear_confirm.bmp", at=(563, 462, 612, 490)),
     "unlock_ceiling_confirm": p(585, 476, img="img/juese/unlock_ceiling_confirm.bmp", at=(538, 460, 636, 492)),
-    "unlock_ceiling": p(585, 435, img="img/juese/unlock_ceiling.bmp", at=(545, 424, 630, 446)),
-    "unlock_ceiling_off": p(img="img/juese/unlock_ceiling_off.bmp", at=(532, 419, 646, 453)),
-    "unlock_ceiling_need_lv": p(img="img/juese/unlock_ceiling_need_lv.bmp", at=(388, 420, 458, 443)),
-    "levelup_zhuanwu": p(805, 435, img="img/juese/levelup_zhuanwu.bmp", at=(779, 422, 833, 448)),
+    "unlock_ceiling": p(698, 434, img="img/juese/unlock_ceiling.bmp", at=(659, 421, 737, 447)),
+    "unlock_ceiling_off": p(588, 477, img="img/juese/unlock_ceiling_off.bmp", at=(539, 461, 638, 493)),
+    "unlock_ceiling_need_lv": p(img="img/juese/unlock_ceiling_need_lv.bmp", at=(391, 420, 458, 443)),
+    "levelup_zhuanwu": p(842, 435, img="img/juese/levelup_zhuanwu.bmp", at=(821, 422, 864, 449)),
+    "yijianqianghua": p(551, 435, img="img/juese/yijianqianghua.bmp", at=(509, 419, 593, 451)),
+    "ticked": p(387, 411, img="img/juese/ticked.bmp", at=(361, 384, 414, 438)),
+    "juesejuqing": p(479, 42, img="img/juese/juesejuqing.bmp", at=(434, 30, 524, 55)),  # 角色剧情弹窗
+    "hgdts": p(587, 476, img="img/juese/hgdts.bmp", at=(529, 461, 645, 492)),  # 好感度提升
+    "zengli": p(479, 42, img="img/juese/zengli.bmp", at=(453, 29, 505, 55)),  # 赠礼
+    "zengsong": p(589, 477, img="img/juese/zengsong.bmp", at=(558, 461, 621, 493)),  # 赠送
+    "haoganzuida": p(478, 288, img="img/juese/haoganzuida.bmp", at=(455, 274, 502, 302)),
+    "juqingjiesuo": p(477, 42, img="img/juese/juqingjiesuo.bmp", at=(434, 29, 521, 55)),
+    "hgdjq": p(27, 352, img="img/juese/hgdjq.bmp", at=(10, 339, 45, 366)),  # 好感度剧情按钮
+    "lxydjq": p(479, 86, img="img/juese/lxydjq.bmp", at=(394, 73, 564, 100)),  # 连续阅读剧情
+    "wujuqing": p(411, 150, img="img/juese/wujuqing.bmp", at=(304, 137, 518, 164)),
+    "donghuaqueren": p(479, 87, img="img/juese/donghuaqueren.bmp", at=(435, 76, 524, 98)),
+    "guanbi": p(476, 476, img="img/juese/guanbi.bmp", at=(447, 460, 505, 493)),
     "qhscxz": p(img="img/juese/qhscxz.bmp", at=(65, 69, 164, 90)),  # 强化素材选择
     "bnjxqh": p(img="img/juese/bnjxqh.bmp", at=(594, 419, 805, 443)),  # 不能继续强化
     "sucaibuzu": p(img="img/juese/sucaibuzu.bmp", at=(447, 420, 514, 441)),
@@ -644,13 +659,13 @@ DXC_ELEMENT = {
     "left": p(945, 242),
     "zyjsqr": p(img="img/dxc/zyjsqr.bmp", at=(412, 29, 549, 54)),
     "zyjsqr_ok": p(595, 471),
-    "chetui": p(809,428,img="img/dxc/chetui.bmp",at=(789,419,830,438)),
+    "chetui": p(809, 428, img="img/dxc/chetui.bmp", at=(789, 419, 830, 438)),
     "chetui_ok": p(591, 365, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "chetuiqueren": p(img="img/dxc/chetuiqueren.bmp", at=(433, 134, 521, 158)),
     "sytzcs": p(723, 438, img="img/dxc/sytzcs.bmp", at=(667, 428, 784, 447)),
     "kyzdjs": p(img="img/dxc/kyzdjs.bmp", at=(591, 377, 687, 396)),
     "ceng": p(img="img/dxc/ceng.bmp"),
-    "in_sytzcs": p(620,430,img="img/dxc/in_sytzcs.bmp",at=(575,421,665,439)),
+    "in_sytzcs": p(620, 430, img="img/dxc/in_sytzcs.bmp", at=(575, 421, 665, 439)),
     "1/1": p(img="img/dxc/dxc_1_1.bmp", at=(887, 429, 913, 446)),
     "0/1": p(img="img/dxc/dxc_0_1.bmp", at=(883, 429, 910, 445)),
     "qwdxc": p(810, 489),  # 失败：前往地下城
@@ -659,8 +674,8 @@ DXC_ELEMENT = {
     "xiayibu": p(836, 503, img="img/ui/xiayibu.bmp", at=(731, 480, 932, 527)),
     "shouqubaochou_ok": p(480, 477, img="img/ui/queren.bmp", at=(450, 465, 509, 489)),
     "qianwangdixiacheng": p(805, 495),
-    "qyxzqr": p(478,88,img="img/dxc/qyxzqr.bmp",at=(411,76,546,100)),
-    "quyuxuanzequeren_ok": p(586,433,img="img/ui/queren_blue.bmp",at=(559, 418, 613, 447)),
+    "qyxzqr": p(478, 88, img="img/dxc/qyxzqr.bmp", at=(411, 76, 546, 100)),
+    "quyuxuanzequeren_ok": p(586, 433, img="img/ui/queren_blue.bmp", at=(559, 418, 613, 447)),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
@@ -786,11 +801,11 @@ DXC_COORD = {
     },
 
     6: {
-        1: p(680,241),
-        2: p(487,237),
-        3: p(224,226),
-        4: p(477,204),
-        5: p(715,218),
+        1: p(680, 241),
+        2: p(487, 237),
+        3: p(224, 226),
+        4: p(477, 204),
+        5: p(715, 218),
     }
 }
 
