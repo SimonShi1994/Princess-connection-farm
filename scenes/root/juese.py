@@ -380,12 +380,21 @@ class CharZhuangBei(CharBase):
             sc = self.getscreen()
             A = self.img_prob(JUESE_BTN["tjqh_zb"], screen=sc)  # 装备、专武升星
             B = self.img_prob(JUESE_BTN["tjqh_gq"], screen=sc)  # 刷关
+            if A < 0.1 and B < 0.1:
+                self.log.write_log("warning", "为什么啥都没有呢……跳过该角色……")
+                self.fclick(1, 1)
+                return
             if A > B:
                 self.log.write_log("info", "进行装备升星或专武升级。")
                 out2 = self.lock_img({
                     JUESE_BTN["zdzbqhqr"]: 1,
                     JUESE_BTN["scgm_and_zdzbqhqr"]: 2
-                }, elseclick=(477, 201), elsedelay=8)  # 点第一个
+                }, elseclick=(477, 201), elsedelay=8, retry=3, is_raise=False)  # 点第一个
+                if out2 is False:
+                    self.log.write_log("warning", "为什么什么都点不到呢……跳过该角色……")
+                    self.fclick(1, 1)
+                    return
+
                 if out2 == 1:
 
                     self.click_btn(JUESE_BTN["zdzbqhqr_ok"], until_disappear=JUESE_BTN["zdzbqhqr"])
