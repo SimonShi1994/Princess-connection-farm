@@ -446,6 +446,7 @@ FIGHT_BTN = {
     "sort_level": p(596, 88, img="img/fight/sort_level.bmp", at=(576, 78, 617, 99)),
     "sort_star": p(596, 90, img="img/fight/sort_star.bmp", at=(577, 78, 616, 99)),
     "sort_up": p(741, 88, img="img/fight/sort_up.bmp", at=(722, 77, 760, 99)),
+    "sort_by": p(684,89,img="img/fight/sort_by.bmp",at=(672, 78, 695, 99)),
     "sort_power": p(597, 89, img="img/fight/sort_power.bmp", at=(575, 79, 618, 99)),
     "sort_shoucang": p(614, 89, img="img/fight/sort_shoucang.bmp", at=(581, 79, 647, 99)),
     "cat_dengji": p(69, 142, name="等级"),  # cat：分类界面
