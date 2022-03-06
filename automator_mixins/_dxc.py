@@ -2,7 +2,6 @@ import time
 
 from core.constant import DXC_NUM, FIGHT_BTN, DXC_ELEMENT
 from core.cv import UIMatcher
-from core.log_handler import pcr_log
 from core.pcr_config import force_as_ocr_as_possible
 from scenes.dxc.dxc_select import DXCSelectA, DXCSelectB, PossibleDXCMenu
 from ._dxc_base import DXCBaseMixin
@@ -313,7 +312,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
             else:
                 # 防止奇奇怪怪的飞到主菜单
-                if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], retry=6):
+                if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], elsedelay=0.8, retry=10):
                     self.lock_img('img/fight/auto_on.bmp', elseclick=[(914, 425)], elsedelay=0.8, retry=5)
                     self.lock_img('img/fight/speed_2.bmp', elseclick=[(913, 494)], elsedelay=0.8, retry=5)
             while skip is False:  # 结束战斗返回
