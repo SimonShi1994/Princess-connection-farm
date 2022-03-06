@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220306.1
+# Princess connection 公主连结农场脚本v2.8.20220306.2
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -234,6 +234,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2022/03/06 By UVJkiNTQ
+
+ - 修复setting偏移
+ - 为s8加入新选项，可一键升满好感并阅读剧情
+ - 添加了scene内借人刷图选择换下几号位的选项
 
 2022/03/06 By CyiceK, TheAutumnOfRice
 
@@ -246,12 +251,6 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
   - 修复自动升级中点击自动强化后弹出空对话框然后卡住的问题
   - 修复`s13`大号刷VHBoss中刷成NormalBoss的BUG
   - 修复adb命令执行失败后线程崩溃的BUG
-
-2022/03/05 By UVJkiNTQ
-
- - 修复setting偏移
- - 为s8加入新选项，可一键升满好感并阅读剧情
- - 添加了scene内借人刷图选择换下几号位的选项
 
 2022/03/04 By TheAutumnOfRice，CyiceK
 
