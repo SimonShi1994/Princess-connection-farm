@@ -205,7 +205,7 @@ class CharBase(SevenBTNMixin):
                         self.click(386, 353)  # 勾选
                         self.click(589, 425)  # 确认
                 self.lock_img(JUESE_BTN["juqingjiesuo"], at=(429, 22, 525, 257))
-                self.click_img(JUESE_BTN["guanbi"])  # 关闭
+                self.click_img(img=JUESE_BTN["guanbi"].img, at=(418, 278, 534, 492))  # 关闭
             self.lock_img(JUESE_BTN["juesejuqing"])
             self.log.write_log("info", "无法再提升好感度")
 
