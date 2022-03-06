@@ -172,6 +172,7 @@ class HuodongMapBase(ZhuXianBase):
             -1 - 无法进入
         """
         XY = self._check_coord(self.XY_VH_BOSS)
+        self.goto_hard()
         out = self.lock_img(HUODONG_BTN["bossqsl"], elseclick=XY, elsedelay=2, retry=3, is_raise=False)
         if out is False:
             self.log.write_log("info", "无法进入VHBoss，今天可能已经打过了。")
