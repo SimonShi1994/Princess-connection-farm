@@ -111,9 +111,9 @@ def run_adb(cmd: str, timeout=None):
         __log.write_log('error', f"adb启动失败,{e},试图修复。")
         try:
             os.system("taskkill /im adb.exe /f")
+            subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
         except Exception as e:
-            pass
-        subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
+            __log.write_log('error', f"执行adb命令{cmd}失败了：{e}")
 
 
 class OfflineException(Exception):
