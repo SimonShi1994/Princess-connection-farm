@@ -234,23 +234,21 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
-2022/03/06 By UVJkiNTQ
-
- - 修复setting偏移
- - 为s8加入新选项，可一键升满好感并阅读剧情
- - 添加了scene内借人刷图选择换下几号位的选项
-
-2022/03/06 By CyiceK, TheAutumnOfRice
-
+2022/03/06 By CyiceK, TheAutumnOfRice, UVJkiNTQ
+- 功能更新
+  - 为s8加入新选项，可一键升满好感并阅读剧情
 - 性能优化
   - 优化验证码逻辑
 - BUG修复
+  - 修复setting偏移
   - 修复d1 无法加速和auto
   - 修复更新程序方式1无法新建文件夹bug
   - 修复自动升级中误点“仅强化经验和等级”的问题
   - 修复自动升级中点击自动强化后弹出空对话框然后卡住的问题
   - 修复`s13`大号刷VHBoss中刷成NormalBoss的BUG
   - 修复adb命令执行失败后线程崩溃的BUG
+- 框架更新
+  - 添加了scene内借人刷图选择换下几号位的选项
 
 2022/03/04 By TheAutumnOfRice，CyiceK
 
