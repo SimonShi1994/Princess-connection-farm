@@ -172,11 +172,10 @@ class LoginMixin(ToolsMixin):
                 # time.sleep(1)
                 # 这里是判断验证码动画是否加载完毕和截图到达指定位置
                 # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
-                self.getscreen()
+                screen = self.getscreen()
                 # 这里堵塞了，等图像稳定
                 if self.wait_for_stable(similarity=1.0, delay=0.8, at=(348, 162, 621, 439)):
-                    screen = self.getscreen()
-                    screen = screen[1:575, 157:793]
+                    screen = self.getscreen()[1:575, 157:793]
                     # 原来的 456, 489
                     # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
                 elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
@@ -209,7 +208,7 @@ class LoginMixin(ToolsMixin):
                         self.click(x, y)
                         if answer_result == [255, 439]:
                             self.click(687, 72)
-                            self.d(text="登录").click(timeout=5)
+                            self.d(text="登录").click(timeout=1)
                             self.log.write_log('info', "平台识别不出来，刷新")
                         else:
                             self.d(text="确认").click()
@@ -228,7 +227,7 @@ class LoginMixin(ToolsMixin):
                     self.click(x, y)
                     if answer_result == [255, 439]:
                         self.click(687, 72)
-                        self.d(text="登录").click(timeout=5)
+                        self.d(text="登录").click(timeout=1)
                         self.log.write_log('info', "平台识别不出来，刷新")
                     else:
                         self.d(text="确认").click()
@@ -246,7 +245,7 @@ class LoginMixin(ToolsMixin):
                     self.d.drag_to(322, 388, x, 386, 3.6)
                     if answer_result == [255, 439]:
                         self.click(687, 72)
-                        self.d(text="登录").click(timeout=5)
+                        self.d(text="登录").click(timeout=1)
                         self.log.write_log('info', "平台识别不出来，刷新")
                     else:
                         self.d(text="确认").click()
@@ -289,7 +288,7 @@ class LoginMixin(ToolsMixin):
                 if toast_message == "请检查网络,-662":
                     # print("请检查网络,-662")
                     if self.d(text="登录").exists():
-                        self.d(text="登录").click(timeout=2)
+                        self.d(text="登录").click(timeout=1)
                     time.sleep(captcha_sleep_times)
                     # raise BadLoginException("请检查网络，-662")
                 elif toast_message == "密码错误":
@@ -302,7 +301,7 @@ class LoginMixin(ToolsMixin):
                         (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                     # print(_time, "验证码重生")
                     self.click(687, 72)
-                    self.d(text="登录").click(timeout=0.6)
+                    self.d(text="登录").click(timeout=1)
                     _time = 1
 
                 # 单独控件检测应该放在最后
@@ -312,7 +311,7 @@ class LoginMixin(ToolsMixin):
                     time.sleep(captcha_sleep_times)
 
                 if self.d(text="登录").exists():
-                    self.d(text="登录").click(timeout=0.6)
+                    self.d(text="登录").click(timeout=1)
 
             # 下面代码暂时不管用
             # if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
