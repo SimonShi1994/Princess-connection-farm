@@ -1515,7 +1515,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             TZ.clear_team()
                         else:
                             TZ.select_team(team_order)
-                        code = TZ.get_zhiyuan()
+                        code = TZ.get_zhiyuan(zhiyuan_sort="atk")
                         if code > 0:
                             self.log.write_log("warning", f"借人出现奇怪的错误 【CODE={code}】，不知所措，自己推图！")
                             if TZ.get_fight_current_member_count() < 5:
