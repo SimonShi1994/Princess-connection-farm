@@ -312,9 +312,9 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                     self.lock_no_img('img/qianwangdixiacheng.jpg', elseclick=[(870, 503)])
             else:
                 # 防止奇奇怪怪的飞到主菜单
-                if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], elsedelay=0.8, retry=10):
-                    self.lock_img('img/fight/auto_on.bmp', elseclick=[(914, 425)], elsedelay=0.8, retry=10)
-                    self.lock_img('img/fight/speed_2.bmp', elseclick=[(913, 494)], elsedelay=0.8, retry=10)
+                if self.lock_img(FIGHT_BTN["caidan"], elseclick=[(1, 1)], elsedelay=1.8, retry=10):
+                    self.lock_img('img/fight/auto_on.bmp', elseclick=[(914, 425)], elsedelay=1.8, retry=10)
+                    self.lock_img('img/fight/speed_2.bmp', elseclick=[(913, 494)], elsedelay=1.8, retry=10)
             while skip is False:  # 结束战斗返回
                 time.sleep(self.change_time)
                 if self.is_exists('img/shanghaibaogao.jpg', at=(663, 6, 958, 120)) and \
