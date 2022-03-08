@@ -649,6 +649,15 @@ class BaseMixin:
         return UIMatcher.img_all_where(screen, img, threshold, at, method)
 
     @DEBUG_RECORD
+    def img_findgaoliang(self, img):
+        """
+        :param img: img需是处理好的
+        """
+        if img is None:
+            img = self.getscreen()
+        return UIMatcher.find_gaoliang(img)
+
+    @DEBUG_RECORD
     def img_where_all_prob(self, img, threshold=0.9, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED,
                            preprocess=PreProcesses(), apply_screen=True):
         """
