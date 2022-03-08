@@ -178,7 +178,7 @@ class LoginMixin(ToolsMixin):
                     # 原来的 456, 489
                     # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
                 elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
-                    screen = self.getscreen()
+                    return False
 
                 # 再改就屎山了（
                 if due_AutoCaptcha(toast=False) == -1:
@@ -379,9 +379,9 @@ class LoginMixin(ToolsMixin):
                         #     manual_captcha = True
                         #     break
                     else:
-                        time.sleep(0.5)
+                        time.sleep(1)
                         if not self.d(className='android.widget.RelativeLayout').exists():
-                            # print(self.account, "已经过验证码")
+                            self.log.write_log('info', f"{self.account}已经过验证码")
                             SkipAuth()
                             flag = False
                             break
