@@ -31,9 +31,11 @@ class RoutineMixin(ShuatuBaseMixin):
 
         for _ in range(3):
             # 两次是因为有个家具介绍 关闭 确认
-            self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
+            self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=1.5,
                           side_check=self.juqing_kkr, retry=5, is_raise=False)
             time.sleep(1)
+            self.lock_img(JIAYUAN_BTN["guanbi"], elseclick=JIAYUAN_BTN["quanbushouqu"], elsedelay=0.5,
+                          side_check=self.juqing_kkr, retry=5, is_raise=False)
         self.start_shuatu()
         if auto_update:
             i = 0
