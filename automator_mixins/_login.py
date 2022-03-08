@@ -202,7 +202,7 @@ class LoginMixin(ToolsMixin):
                         else:
                             pass
                             # time.sleep(captcha_sleep_times)
-                    _time = + 1
+                    _time += 1
                     return True
 
                 elif self.d(textContains="请点击").exists():
@@ -222,7 +222,7 @@ class LoginMixin(ToolsMixin):
                     else:
                         pass
                         # time.sleep(captcha_sleep_times)
-                    _time = + 1
+                    _time += 1
                     return True
 
                 elif self.d(textContains="拖动滑块").exists():
@@ -241,7 +241,7 @@ class LoginMixin(ToolsMixin):
                     else:
                         pass
                         # time.sleep(captcha_sleep_times)
-                    _time = + 1
+                    _time += 1
                     return True
 
                 else:
@@ -270,7 +270,7 @@ class LoginMixin(ToolsMixin):
                             (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                         self.d(text="确认").click()
                         _id = -1
-                        return -1  # 不清楚验证码是否验证成功
+                        return -1  # 不清楚验证码是否验证成功，会导致toast无法执行
 
                     if toast:
                         # 这里是验证码登录后
@@ -385,6 +385,8 @@ class LoginMixin(ToolsMixin):
                             SkipAuth()
                             flag = False
                             break
+                        elif due_AutoCaptcha() == -1:
+                            continue
             else:
                 manual_captcha = True
             if manual_captcha:
