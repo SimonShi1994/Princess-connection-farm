@@ -137,7 +137,7 @@ class EnhanceMixin(ShuatuBaseMixin):
 
                                         # 支援
                                         if getzhiyuan:
-                                            fi.easy_shoushua(team_order, one_tili=10, check_cishu=True, max_speed=1,
+                                            fi.easy_shoushua(team_order, check_cishu=True, max_speed=1,
                                                              get_zhiyuan=True, if_full=is_full)
                                             continue
                                         else:
