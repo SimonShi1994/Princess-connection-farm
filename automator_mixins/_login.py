@@ -173,10 +173,19 @@ class LoginMixin(ToolsMixin):
                 # 不用at，直接全图找更保险.请自行处理验证失败图片抖动的耗时
                 screen = None
                 # 这里堵塞了，等图像稳定
-                if self.wait_for_stable(similarity=1.0, threshold=0.1, delay=0.6, at=(348, 162, 621, 439)):
-                    screen = self.getscreen()[1:575, 157:793]
+                if self.wait_for_stable(similarity=1.0, threshold=0.1, delay=0.5, at=(348, 162, 621, 439)):
                     # 原来的 456, 489
                     # 不要了，这是新的分辨率，需要包含游戏一部分截图 636,539
+                    screen = self.getscreen()[1:575, 157:793]
+
+                    # 白屏处理
+                    find_bw_img = screen[44:492, 94:543]
+                    w, b, _, _ = self.img_findgaoliang(find_bw_img)
+                    if b == 0:
+                        return False
+                    elif w > 200000 and b < 5000:
+                        return False
+
                 elif not (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
                     return False
 
@@ -312,7 +321,7 @@ class LoginMixin(ToolsMixin):
                         self.log.write_log('info', "请检查网络,-662")
                         # print("请检查网络,-662")
                         if self.d(text="登录").exists():
-                            self.d(text="登录").click(timeout=1)
+                            self.d(text="登录").click(timeout=5)
                         # time.sleep(captcha_sleep_times)
                         return -1
                         # raise BadLoginException("请检查网络，-662")
@@ -327,19 +336,19 @@ class LoginMixin(ToolsMixin):
                         # print(_time, "验证码重生")
                         self.log.write_log('info', "验证码刷新")
                         self.click(687, 72)
-                        self.d(text="登录").click(timeout=1)
+                        self.d(text="登录").click(timeout=10)
                         _time = 1
                         return -1
 
                     # 单独控件检测应该放在最后
                     elif self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
                         # time.sleep(0.8)
-                        self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click(timeout=0.6)
+                        self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click(timeout=5)
                         # time.sleep(captcha_sleep_times)
                         return -1
 
                     elif self.d(text="登录").exists():
-                        self.d(text="登录").click(timeout=1)
+                        self.d(text="登录").click(timeout=5)
                         return -1
 
             # 下面代码暂时不管用
