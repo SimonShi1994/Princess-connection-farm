@@ -162,7 +162,7 @@ class FightBianZuBase(PCRMsgBoxBase):
                         out = 1
                     else:
                         if if_full == 0:
-                            choose = 2
+                            choose = random.choice([1, 2, 3, 4, 5])
                         else:
                             choose = if_full
                         self.click(FIGHT_BTN["empty"][choose], pre_delay=1, post_delay=0.5)
