@@ -407,7 +407,7 @@ HANGHUI_BTN = {
     "guanbi": p(476, 476, img="img/hanghui/battle/guanbi.bmp", at=(452, 464, 501, 489)),  # 关闭X月团队站开始的提示
     "sudu": p(479, 146, img="img/hanghui/battle/sudu.bmp", at=(383, 134, 575, 159)),  # 模拟速度设定
     "kkr_dialog": p(280, 402, img="img/hanghui/battle/kkr_dialog.bmp", at=(257, 392, 304, 412)),  # kkr对话框设别
-    "queren": p(477,477,img="img/hanghui/battle/queren.bmp",at=(455,466,499,488)),  # 确认报酬
+    "queren": p(477, 477, img="img/hanghui/battle/queren.bmp", at=(455, 466, 499, 488)),  # 确认报酬
 
 }
 TUANDUIZHAN_BTN = {
@@ -458,7 +458,7 @@ FIGHT_BTN = {
     "sort_level": p(596, 88, img="img/fight/sort_level.bmp", at=(576, 78, 617, 99)),
     "sort_star": p(596, 90, img="img/fight/sort_star.bmp", at=(577, 78, 616, 99)),
     "sort_up": p(741, 88, img="img/fight/sort_up.bmp", at=(722, 77, 760, 99)),
-    "sort_by": p(684,89,img="img/fight/sort_by.bmp",at=(672, 78, 695, 99)),
+    "sort_by": p(684, 89, img="img/fight/sort_by.bmp", at=(672, 78, 695, 99)),
     "sort_power": p(597, 89, img="img/fight/sort_power.bmp", at=(575, 79, 618, 99)),
     "sort_shoucang": p(614, 89, img="img/fight/sort_shoucang.bmp", at=(581, 79, 647, 99)),
     "cat_dengji": p(69, 142, name="等级"),  # cat：分类界面
@@ -1100,35 +1100,35 @@ ZHUXIAN_ID = {
 
 ZHUXIAN_XXXYY_ID = {
     # 小行星原野你长得太像了，无奈增加二级分类
-    18: p(img="img/zhuxian/18R.bmp", at=(195, 59, 224, 72)),
-    19: p(img="img/zhuxian/19R.bmp", at=(194, 59, 223, 71)),
+    18: p(img="img/zhuxian/18R.bmp", at=(192, 59, 228, 77)),
+    19: p(img="img/zhuxian/19R.bmp", at=(193, 59, 229, 76)),
 }
 ZHUXIAN_KSTLYSL_ID = {
-    20: p(img="img/zhuxian/20R.bmp", at=(218, 59, 248, 70)),  # 卡斯塔里森林
-    21: p(img="img/zhuxian/21R.bmp", at=(217, 59, 244, 71)),
+    20: p(img="img/zhuxian/20R.bmp", at=(218, 60, 250, 75)),  # 卡斯塔里森林
+    21: p(img="img/zhuxian/21R.bmp", at=(213, 60, 251, 77)),
 }
 ZHUXIAN_XXXYF_ID = {
-    22: p(img="img/zhuxian/22R.bmp", at=(196, 59, 232, 76)),
-    23: p(img="img/zhuxian/23R.bmp", at=(195, 59, 233, 78)),
+    22: p(img="img/zhuxian/22R.bmp", at=(196, 59, 232, 75)),
+    23: p(img="img/zhuxian/23R.bmp", at=(196, 60, 233, 75)),
 }
 ZHUXIAN_LDWSQF_ID = {
-    24: p(img="img/zhuxian/24R.bmp", at=(212, 60, 254, 78)),
-    25: p(img="img/zhuxian/25R.bmp", at=(216, 59, 250, 73)),
+    24: p(img="img/zhuxian/24R.bmp", at=(215, 60, 253, 76)),
+    25: p(img="img/zhuxian/25R.bmp", at=(214, 60, 251, 75)),
 }
 ZHUXIAN_SBDDSL_ID = {
-    26: p(img="img/zhuxian/26R.bmp", at=(212, 58, 252, 77)),
-    27: p(img="img/zhuxian/27R.bmp", at=(214, 58, 251, 77)),
+    26: p(img="img/zhuxian/26R.bmp", at=(214, 60, 252, 77)),
+    27: p(img="img/zhuxian/27R.bmp", at=(214, 60, 250, 75)),
 }
 ZHUXIAN_DSTEHSA_ID = {
-    28: p(img="img/zhuxian/28R.bmp", at=(217, 59, 254, 77)),
-    29: p(img="img/zhuxian/29R.bmp", at=(218, 60, 253, 77)),
+    28: p(img="img/zhuxian/28R.bmp", at=(217, 59, 252, 75)),
+    29: p(img="img/zhuxian/29R.bmp", at=(216, 59, 252, 76)),
 }
 ZHUXIAN_FTLDY_ID = {
-    30: p(img="img/zhuxian/30R.bmp", at=(196, 60, 230, 76)),
-    31: p(img="img/zhuxian/31R.bmp", at=(191, 59, 229, 76)),
+    30: p(img="img/zhuxian/30R.bmp", at=(196, 60, 233, 75)),
+    31: p(img="img/zhuxian/31R.bmp", at=(192, 60, 228, 75)),
 }
 ZHUXIAN_FSJYSL_ID = {
-    32: p(img="img/zhuxian/32R.bmp", at=(217, 60, 247, 74)),
+    32: p(img="img/zhuxian/32R.bmp", at=(214, 60, 250, 75)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,

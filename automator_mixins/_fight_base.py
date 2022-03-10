@@ -19,9 +19,9 @@ class FightBaseMixin(ToolsMixin):
     @DEBUG_RECORD
     def Drag_Right(self, origin=False):
         if origin:
-            self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
+            self.d.drag(740, 120, 200, 120, 0.1)  # 拖拽到最右
         else:
-            self.d.touch.down(600, 120).sleep(0.1).move(200, 120).sleep(0.2).up(200, 120)
+            self.d.touch.down(740, 120).sleep(0.1).move(200, 120).sleep(0.2).up(200, 120)
         time.sleep(self.change_time)
 
     @DEBUG_RECORD
