@@ -137,12 +137,26 @@ class EnhanceMixin(ShuatuBaseMixin):
 
                                         # 支援
                                         if getzhiyuan:
-                                            fi.easy_shoushua(team_order, check_cishu=True, max_speed=1,
+                                            r = fi.easy_shoushua(team_order, check_cishu=True, max_speed=1,
                                                              get_zhiyuan=True, if_full=is_full)
+                                            if r == 2:
+                                                break
+                                            if r == 3:
+                                                self.stop_shuatu()
+                                                break
+                                            time.sleep(2)
+                                            self.fclick(1, 1)
                                             continue
                                         else:
-                                            fi.easy_shoushua(team_order, check_cishu=True, max_speed=1,
+                                            r = fi.easy_shoushua(team_order, check_cishu=True, max_speed=1,
                                                              get_zhiyuan=False)
+                                            if r == 2:
+                                                break
+                                            if r == 3:
+                                                self.stop_shuatu()
+                                                break
+                                            time.sleep(2)
+                                            self.fclick(1, 1)
                                             continue
 
                                     else:
