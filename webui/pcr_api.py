@@ -61,7 +61,7 @@ class PCRAPI:
         """
         self._check_end()
         assert schedule != "", "计划名称不能为空！"
-        with open("bind_schedule.txt", "w", encoding="utf-8") as f:
+        with open("../bind_schedule.txt", "w", encoding="utf-8") as f:
             f.write(schedule)
         self.last_schedule = schedule
 
@@ -71,7 +71,7 @@ class PCRAPI:
         return - None
         """
         self._check_end()
-        with open("bind_schedule.txt", "w", encoding="utf-8") as f:
+        with open("../bind_schedule.txt", "w", encoding="utf-8") as f:
             f.write("")
         self.last_schedule = ""
 
@@ -81,9 +81,9 @@ class PCRAPI:
         查看bind_schedule.txt，获取最后一次绑定的计划
         return - last_schedule
         """
-        if not os.path.exists("bind_schedule.txt"):
+        if not os.path.exists("../bind_schedule.txt"):
             return ""
-        with open("bind_schedule.txt", "r", encoding="utf-8") as f:
+        with open("../bind_schedule.txt", "r", encoding="utf-8") as f:
             lines = f.readlines()
             if len(lines) > 0:
                 return lines[0]
@@ -95,7 +95,7 @@ class PCRAPI:
         运行adb命令 f
         return - 运行结果
         """
-        return subprocess.run(f"{os.path.join(adb_dir, 'adb')} {f}", capture_output=True).stdout
+        return subprocess.run(f"{os.path.join(adb_dir, '../adb')} {f}", capture_output=True).stdout
 
     @staticmethod
     def run_init():

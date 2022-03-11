@@ -1,7 +1,5 @@
 # -*- coding:utf-8 -*-
-import asyncio
-import time
-from typing import Optional, Callable
+from typing import Optional
 
 import pywebio
 from abc import abstractmethod, ABC
@@ -65,7 +63,7 @@ class ComponentBase(ABC):
         执行时，子元件的on_apply先执行，父元件的on_apply后执行
         ！在全部渲染完毕后被调用！
         """
-        if not hasattr(self,"on_apply"):
+        if not hasattr(self, "on_apply"):
             self.on_apply = None
 
     @abstractmethod
@@ -107,10 +105,10 @@ class ComponentBase(ABC):
             func()
         self.on_apply_queue = []
 
+
 class GetDatacenterTimeComponent(ComponentBase):
 
-    @staticmethod
-    def get_datacenter_time():
+    def get_datacenter_time(self):
         return pywebio.output.put_text(PCRAPI.get_datacenter_time())
 
     def apply(self):
@@ -122,15 +120,17 @@ class GetDatacenterTimeComponent(ComponentBase):
 
 class RunAdbComponent(ComponentBase):
     # TODO:交互组件
-    @staticmethod
-    def run_adb(cmd):
-        PCRAPI.run_adb(cmd)
+    def run_adb(self):
+        _scope = self.scope.add("RunAdbComponent")
+        PCRAPI.run_adb(_scope.get('cmd'))
 
     def apply(self):
-        cmd = pywebio.input.input('执行的命令')
-        self.run_adb(cmd)
+        _scope = self.scope.add("RunAdbComponent")
+        cmd = wp.put_input(_scope + 'cmd', label='执行的命令')
+        btn = wo.put_button("执行", onclick=self.run_adb)
         layer = wo.put_column([
-            cmd
+            cmd,
+            wo.put_row([cmd, btn])
         ])
         return layer
 
