@@ -27,7 +27,7 @@ class DuringFighting(PossibleSceneList):
 class EnhanceMixin(ShuatuBaseMixin):
 
     def zidongqianghua(self, do_rank=True, do_shuatu=True, do_kaihua=True, do_zhuanwu=True, do_loveplus=False,
-                       charlist=None, team_order="zhanli", getzhiyuan=False, is_full=0, tozhuanwulv=150,
+                       charlist=None, team_order="zhanli", getzhiyuan=False, is_full=0, tozhuanwulv=150, torank=30,
                        sort="level", count=15):
         '''
         角色升级任务，包含了装备、升星、专武
@@ -75,14 +75,15 @@ class EnhanceMixin(ShuatuBaseMixin):
                         while True:
                             ers = ecb.get_equip_status()
                             ehs = ecb.get_enhance_status()
+                            now_rank = ecb.get_rank()
                             if debug:
                                 self.log.write_log('debug', "等级装备强化任务开始")
                                 self.log.write_log('debug', '角色状态：%s' % ehs)
 
                             if ers == 2:
                                 # 先处理升rank
-                                if do_rank:
-                                    # rank提升开
+                                if do_rank and (now_rank < torank):
+                                    # rank提升开且小于目标rank
                                     if debug:
                                         self.log.write_log('debug', "rank提升开始")
                                     self.click_btn(JUESE_BTN["rank_on"], until_appear=JUESE_BTN["rank_up_ok"])

@@ -904,6 +904,7 @@ VALID_TASK = ValidTask() \
           TaskParam("count", int, "前N个", "选择遍历角色数量(已废弃，现在根据角色名称选择)", 15),
           TaskParam("charlist", list, "角色列表", "需要升级的角色",
                     inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称（如有括号，使用中文括号），例如 凯露（夏日）")),
+          TaskParam("torank", int, "rank(品级)上限等级", "品级上限，拉满填写99，默认拉满,", 99),
           TaskParam("tozhuanwulv", int, "专武上限等级", "专武上限等级，拉满填写999", 120)]) \
     .add("s8-a", "auto_upgrade", "自动升级前几个角色", "不能指定角色升级，但能升级前几个角色。",
          [TaskParam("buy_tili", int, "购买体力", "最多购买几次体力来完成升级", 0),
