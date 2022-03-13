@@ -3,7 +3,7 @@ from typing import Optional
 
 import pywebio
 from abc import abstractmethod, ABC
-from pcr_api import PCRAPI
+from pcr_api import PCRAPI, script_version
 import pywebio.output as wo
 import pywebio.pin as wp
 
@@ -118,31 +118,59 @@ class GetDatacenterTimeComponent(ComponentBase):
         return layer
 
 
+class GetGithubInfo(ComponentBase):
+
+    def apply(self):
+        layer = wo.put_column([
+            wo.put_markdown(PCRAPI.get_github_info())
+        ])
+        return layer
+
+
+class GetScriptVersion(ComponentBase):
+
+    def apply(self):
+        layer = wo.put_column([
+            wo.put_text(script_version)
+        ])
+        return layer
+
+
 class RunAdbComponent(ComponentBase):
     # TODO:交互组件
     def run_adb(self):
         _scope = self.scope.add("RunAdbComponent")
         PCRAPI.run_adb(_scope.get('cmd'))
 
-    def apply(self):
+    def adb_popup(self):
         _scope = self.scope.add("RunAdbComponent")
-        cmd = wp.put_input(_scope + 'cmd', label='执行的命令')
+        cmd = wp.put_input(_scope + 'cmd', label='执行的adb命令')
         btn = wo.put_button("执行", onclick=self.run_adb)
-        layer = wo.put_column([
-            cmd,
-            wo.put_row([cmd, btn])
+
+        cmd_popup = wo.popup('执行adb命令', [
+            wo.put_column([
+                cmd,
+                wo.put_row([btn, wo.put_buttons(['关闭窗口'], onclick=lambda _: wo.close_popup())])
+            ])
         ])
-        return layer
+        return cmd_popup
+
+    def apply(self):
+        return wo.put_buttons(['执行adb命令'], onclick=lambda _: self.adb_popup())
 
 
 class RunInitComponent(ComponentBase):
     # TODO:交互组件
     @staticmethod
     def unbind_btn():
-        pywebio.output.put_button("取消绑定当前的计划", onclick=lambda: PCRAPI.run_init(), color='info')
+        return wo.put_button("初始化模拟器环境", onclick=lambda: PCRAPI.run_init(), color='danger')
 
     def apply(self):
-        pass
+        _scope = self.scope.add("RunInitComponent")
+        layer = wo.put_column([
+            self.unbind_btn()
+        ])
+        return layer
 
 
 class GetLastScheduleComponent(ComponentBase):
@@ -197,150 +225,239 @@ class GetScheduleStatusComponent(ComponentBase):
 class ReadUserComponent(ComponentBase):
     # TODO:交互组件
     def put_input(self):
-        username = pywebio.input.input('输入要读取的密码的用户名')
-        pywebio.output.put_text(self.PCRAPI.read_user(username))
+        _scope = self.scope.add("ReadUserComponent")
+        pywebio.output.put_text(self.PCRAPI.read_user(_scope.get('username')))
 
     def apply(self):
-        pass
+        _scope = self.scope.add("ReadUserComponent")
+        username = wp.put_input(_scope + 'username', label='输入要读取的密码的用户名')
+        btn = wo.put_button("确定", onclick=self.put_input, color="success")
+        layer = wo.put_column([
+            wo.put_row([username, btn])
+        ])
+        return layer
 
 
 class BindScheduleComponent(ComponentBase):
     # TODO:交互组件
     def put_input(self):
-        name = pywebio.input.input('输入要绑定的计划名')
-        pywebio.output.put_text(self.PCRAPI.bind_schedule(name))
+        _scope = self.scope.add("BindScheduleComponent")
+        pywebio.output.put_text(self.PCRAPI.bind_schedule(_scope.get('name')))
 
     def apply(self):
-        pass
+        _scope = self.scope.add("BindScheduleComponent")
+        name = wp.put_input(_scope + 'name', label='输入要绑定的计划名')
+        btn = wo.put_button("确定", onclick=self.put_input, color="success")
+        layer = wo.put_column([
+            wo.put_row([name, btn])
+        ])
+        return layer
 
 
 class UnbindScheduleComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        pywebio.output.put_button("取消绑定当前的计划", onclick=lambda: self.PCRAPI.unbind_schedule(), color='warning')
+        self.PCRAPI.unbind_schedule()
 
     def apply(self):
-        pass
+        _scope = self.scope.add("UnbindScheduleComponent")
+        btn = wo.put_button("取消绑定当前的计划", onclick=self.put_button, color='warning')
+        layer = wo.put_column([
+            wo.put_row([btn])
+        ])
+        return layer
 
 
 class FirstStartPcrComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        pywebio.output.put_button("first", onclick=lambda: self.PCRAPI.start_pcr(1), color='info')
+        self.PCRAPI.start_pcr(1)
 
     def apply(self):
-        pass
+        _scope = self.scope.add("FirstStartPcrComponent")
+        btn = wo.put_button("first", onclick=self.put_button, color='info')
+        layer = wo.put_column([
+            wo.put_row([btn])
+        ])
+        return layer
 
 
 class ContinueStartPcrComponent(ComponentBase):
     def put_button(self):
         # TODO: 需要堵塞才能看到效果，主程序运行完成按钮事件销毁
-        pywebio.output.put_button("continue", onclick=lambda: self.PCRAPI.start_pcr(2), color='info')
-        import time
-        time.sleep(100)
+        self.PCRAPI.start_pcr(2)
+        # import time
+        # time.sleep(100)
 
     def apply(self):
-        pass
+        _scope = self.scope.add("ContinueStartPcrComponent")
+        btn = wo.put_button("continue", onclick=self.put_button, color='info')
+        layer = wo.put_column([
+            wo.put_row([btn])
+        ])
+        return layer
 
 
 class NotThingsStartPcrComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        pywebio.output.put_button("不使用schedule", onclick=lambda: self.PCRAPI.start_pcr(0), color='info')
+        self.PCRAPI.start_pcr(0)
 
     def apply(self):
-        pass
+        _scope = self.scope.add("NotThingsStartPcrComponent")
+        btn = wo.put_button("不使用schedule", onclick=self.put_button, color='info')
+        layer = wo.put_column([
+            wo.put_row([btn])
+        ])
+        return layer
 
 
 class StopPcrComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        pywebio.output.put_button("停止脚本", onclick=lambda: self.PCRAPI.stop_pcr(), color='danger')
+        self.PCRAPI.stop_pcr()
 
     def apply(self):
-        pass
+        _scope = self.scope.add("StopPcrComponent")
+        btn = wo.put_button("停止脚本", onclick=self.put_button, color='danger')
+        layer = wo.put_column([
+            wo.put_row([btn])
+        ])
+        return layer
 
 
 class ScheduleClearAllErrorComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        pywebio.output.put_button("清除全部错误", onclick=lambda: self.PCRAPI.schedule_clear_error(), color='danger')
+        self.PCRAPI.schedule_clear_error()
 
     def apply(self):
-        pass
+        _scope = self.scope.add("ScheduleClearAllErrorComponent")
+        btn = wo.put_button("清除全部错误", onclick=self.put_button, color='danger')
+        layer = wo.put_column([
+            wo.put_row([btn])
+        ])
+        return layer
 
 
 class ScheduleClearErrorComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        name = pywebio.input.input('清除名称为name的subschedule的错误')
-        self.PCRAPI.schedule_clear_error(name)
+        _scope = self.scope.add("ScheduleClearErrorComponent")
+        self.PCRAPI.schedule_clear_error(_scope.get('name'))
 
     def apply(self):
-        pass
+        _scope = self.scope.add("ScheduleClearErrorComponent")
+        name = wp.put_input(_scope + 'name', label="清除名称为name的subschedule的错误")
+        btn = wo.put_button("确认", onclick=self.put_button, color='danger')
+        layer = wo.put_column([
+            wo.put_row([name, btn])
+        ])
+        return layer
 
 
 class ScheduleFinishAllErrorComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        pywebio.output.put_button("直接完成全部schedule。", onclick=lambda: self.PCRAPI.schedule_finish(), color='danger')
+        self.PCRAPI.schedule_finish()
 
     def apply(self):
-        pass
+        _scope = self.scope.add("ScheduleFinishAllErrorComponent")
+        btn = wo.put_button("直接完成全部schedule。", onclick=self.put_button, color='success')
+        layer = wo.put_column([
+            wo.put_row([btn])
+        ])
+        return layer
 
 
 class ScheduleFinishComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        name = pywebio.input.input('将某一个子subschedule设为完成。')
-        self.PCRAPI.schedule_finish(name)
+        _scope = self.scope.add("ScheduleFinishComponent")
+        self.PCRAPI.schedule_finish(_scope.get('name'))
 
     def apply(self):
-        pass
+        _scope = self.scope.add("ScheduleFinishComponent")
+        name = wp.put_input(_scope + 'name', label="将某一个子subschedule设为完成。")
+        btn = wo.put_button("确认", onclick=self.put_button, color='success')
+        layer = wo.put_column([
+            wo.put_row([name, btn])
+        ])
+        return layer
 
 
 class ScheduleRestartAllErrorComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        pywebio.output.put_button("重置全部计划，！除了永久执行的计划！", onclick=lambda: self.PCRAPI.schedule_restart(),
-                                  color='danger')
+        self.PCRAPI.schedule_restart()
 
     def apply(self):
-        pass
+        _scope = self.scope.add("ScheduleRestartAllErrorComponent")
+        btn = wo.put_button("重置全部计划，！除了永久执行的计划！", onclick=self.put_button, color='danger')
+        layer = wo.put_column([
+            wo.put_row([btn])
+        ])
+        return layer
 
 
 class ScheduleRestartComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        name = pywebio.input.input('重新开始某一个subschedule')
-        self.PCRAPI.schedule_restart(name)
+        _scope = self.scope.add("ScheduleRestartComponent")
+        self.PCRAPI.schedule_restart(_scope.get('name'))
 
     def apply(self):
-        pass
+        _scope = self.scope.add("ScheduleRestartComponent")
+        name = wp.put_input(_scope + 'name', label="重新开始某一个subschedule。")
+        btn = wo.put_button("确认", onclick=self.put_button, color='warning')
+        layer = wo.put_column([
+            wo.put_row([name, btn])
+        ])
+        return layer
 
 
 class DeviceReconnectComponent(ComponentBase):
     # TODO:交互组件
     def put_button(self):
-        pywebio.output.put_button("重新搜索设备并连接", onclick=lambda: self.PCRAPI.device_reconnect(), color='info')
+        self.PCRAPI.device_reconnect()
 
     def apply(self):
-        pass
+        _scope = self.scope.add("DeviceReconnectComponent")
+        btn = wo.put_button("重新搜索设备并连接", onclick=self.put_button, color='info')
+        layer = wo.put_column([
+            wo.put_row([btn])
+        ])
+        return layer
 
 
 class AddBatchToPcrComponent(ComponentBase):
     # TODO:交互组件
-    @staticmethod
-    async def add_batch_to_pcr_component():
-        data = await pywebio.input.input_group("中途向任务队列中增加一条batch", [
-            pywebio.input.input('合法的batch字典', name='batch'),
-            pywebio.input.checkbox(options=['以continue模式运行该batch'], name='continue_')
-        ])
-        print(data['batch'], data['continue_'])
-        # self.pywebio_output.put_text(self.PCRAPI.add_batch_to_pcr(data['batch'], data['continue_']))
+
+    def add_batch_to_pcr_component(self):
+        _scope = self.scope.add("AddBatchToPcrComponent")
+        self.PCRAPI.add_batch_to_pcr(_scope.get('dict'), _scope.get('checkbox'))
 
     def apply(self):
-        self.add_batch_to_pcr_component()
+        _scope = self.scope.add("AddBatchToPcrComponent")
+        # data = pywebio.input.input_group("中途向任务队列中增加一条batch", [
+        #     pywebio.input.input('合法的batch字典', name='batch'),
+        #     pywebio.input.checkbox(options=['以continue模式运行该batch'], name='continue_')
+        # ])
+
+        title = wo.put_text("中途向任务队列中增加一条batch")
+        _dict = wp.put_input(_scope + 'dict', label='合法的batch字典')
+        _checkbox = wp.put_checkbox(scope=_scope + 'checkbox', options=['以continue模式运行该batch'], name='continue_')
+        ok_btn = wo.put_button("确认", onclick=self.add_batch_to_pcr_component, color='primary')
+
+        layer = wo.put_column([
+            title,
+            _dict,
+            _checkbox,
+            ok_btn
+        ], size='25px 70px 25px 20px')
+        return layer
+        # print(data['batch'], data['continue_'])
+        # self.pywebio_output.put_text(self.PCRAPI.add_batch_to_pcr(data['batch'], data['continue_']))
 
 
 class AddTaskToPcrComponent(ComponentBase):
@@ -375,142 +492,8 @@ class WriteUserComponent(ComponentBase):
         pass
 
 
-# class PCRComponent():
-#     def __init__(self):
-#         super().__init__()
-#         self.PCRAPI = PCRAPI()
-#         self.pywebio = pywebio
-#         self.pywebio_output = pywebio.output
-#         self.pywebio_input = pywebio.input
-#         self.pywebio_pin = pywebio.pin
-#
-#         # 测试代码
-#         # self.PCRAPI.start_pcr(0)
-#
-#     def get_datacenter_time_component(self):
-#         self.pywebio_output.put_text(PCRAPI.get_datacenter_time())
-#
-#     def run_adb_component(self):
-#         cmd = self.pywebio_input.input('执行的命令')
-#         PCRAPI.run_adb(cmd)
-#
-#     def run_init_component(self):
-#         self.pywebio_output.put_button("取消绑定当前的计划", onclick=lambda: PCRAPI.run_init(), color='info')
-#
-#     def get_last_schedule_component(self):
-#         self.pywebio_output.put_text(PCRAPI.get_last_schedule())
-#
-#     def get_device_status_component(self):
-#         self.pywebio_output.put_text(self.PCRAPI.get_device_status())
-#
-#     def get_task_queue_component(self):
-#         self.pywebio_output.put_text(self.PCRAPI.get_task_queue())
-#
-#     def get_schedule_status_component(self):
-#         self.pywebio_output.put_text(self.PCRAPI.get_schedule_status())
-#
-#     def read_user_component(self):
-#         username = self.pywebio_input.input('输入要读取的密码的用户名')
-#         self.pywebio_output.put_text(self.PCRAPI.read_user(username))
-#
-#     def bind_schedule_component(self):
-#         name = self.pywebio_input.input('输入要绑定的计划名')
-#         self.pywebio_output.put_text(self.PCRAPI.bind_schedule(name))
-#
-#     def unbind_schedule_component(self):
-#         self.pywebio_output.put_button("取消绑定当前的计划", onclick=lambda: self.PCRAPI.unbind_schedule(), color='warning')
-#
-#     def first_start_pcr_component(self):
-#         self.pywebio_output.put_button("first", onclick=lambda: self.PCRAPI.start_pcr(1), color='info')
-#
-#     def continue_start_pcr_component(self):
-#         # TODO: 需要堵塞才能看到效果，主程序运行完成按钮事件销毁
-#         self.pywebio_output.put_button("continue", onclick=lambda: self.PCRAPI.start_pcr(2), color='info')
-#         import time
-#         time.sleep(100)
-#
-#     def not_things_start_pcr_component(self):
-#         self.pywebio_output.put_button("不使用schedule", onclick=lambda: self.PCRAPI.start_pcr(0), color='info')
-#
-#     def stop_pcr_component(self):
-#         self.pywebio_output.put_button("停止脚本", onclick=lambda: self.PCRAPI.stop_pcr(), color='danger')
-#
-#     def schedule_clear_all_error_component(self):
-#         self.pywebio_output.put_button("清除全部错误", onclick=lambda: self.PCRAPI.schedule_clear_error(), color='danger')
-#
-#     def schedule_clear_error_component(self):
-#         name = self.pywebio_input.input('清除名称为name的subschedule的错误')
-#         self.PCRAPI.schedule_clear_error(name)
-#
-#     def schedule_finish_all_error_component(self):
-#         self.pywebio_output.put_button("直接完成全部schedule。", onclick=lambda: self.PCRAPI.schedule_finish(), color='danger')
-#
-#     def schedule_finish_component(self):
-#         name = self.pywebio_input.input('将某一个子subschedule设为完成。')
-#         self.PCRAPI.schedule_finish(name)
-#
-#     def schedule_restart_all_error_component(self):
-#         self.pywebio_output.put_button("重置全部计划，！除了永久执行的计划！", onclick=lambda: self.PCRAPI.schedule_restart(),
-#                                        color='danger')
-#
-#     def schedule_restart_component(self):
-#         name = self.pywebio_input.input('重新开始某一个subschedule')
-#         self.PCRAPI.schedule_restart(name)
-#
-#     def device_reconnect_component(self):
-#         self.pywebio_output.put_button("重新搜索设备并连接", onclick=lambda: self.PCRAPI.device_reconnect(), color='info')
-#
-#     async def add_batch_to_pcr_component(self):
-#         data = await self.pywebio_input.input_group("中途向任务队列中增加一条batch", [
-#             self.pywebio_input.input('合法的batch字典', name='batch'),
-#             self.pywebio_input.checkbox(options=['以continue模式运行该batch'], name='continue_')
-#         ])
-#         print(data['batch'], data['continue_'])
-#         # self.pywebio_output.put_text(self.PCRAPI.add_batch_to_pcr(data['batch'], data['continue_']))
-#
-#     async def add_task_to_pcr_component(self):
-#         data = await self.pywebio_input.input_group("中途向任务队列中增加一个谁做谁", [
-#             self.pywebio_input.input('用户列表，接受新任务的对象。', name='accs'),
-#             self.pywebio_input.input('显示在任务队列中的任务名称', name='taskname'),
-#             self.pywebio_input.input('合法的task字典，若不指定，则自动在tasks目录下找taskname的任务文件载入。', name='task'),
-#             self.pywebio_input.input('任务优先级', name='priority'),
-#             self.pywebio_input.checkbox(options=['以continue模式运行该任务', '随机accs的顺序'], name='_checkbox')
-#         ])
-#         print(data['accs'], data['_checkbox'])
-#         # self.pywebio_output.put_text(self.PCRAPI.add_task_to_pcr(data['accs'], data['_checkbox']))
-#
-#     def write_user_component(self):
-#         data = self.pywebio_input.input_group("username and userdict", [
-#             self.pywebio_input.input('输入要写入的密码的用户名', name='username'),
-#             self.pywebio_input.textarea('输入要写入的dict', name='userdict')
-#         ])
-#         print(data['username'], data['userdict'])
-#         # self.pywebio_output.put_text(self.PCRAPI.write_user(data['username'], data['userdict']))
-#
-#     def tabs_demo(self):
-#         self.pywebio_output.put_tabs([
-#             {'title': 'Text', 'content': self.pywebio_output.put_scope('ta', content=['aaa1'])},
-#             {'title': 'Markdown', 'content': self.pywebio_output.put_scope('tb', content=['bbb'])},
-#         ])
-#         self.pywebio.pin.put_input('tA', scope='ta')
-#         self.pywebio.pin.put_input('tB', scope='tb')
-#         self.pywebio.pin.put_actions('tA1', buttons=[{
-#             "label": 'test',
-#             'value': 'save',
-#             'type': 'submit',
-#             "color": 'danger'
-#         }], scope='ta')
-#         while True:
-#             changed = self.pywebio.pin.pin_wait_change('tA', 'tB', 'tA1')
-#             with self.pywebio.output.use_scope('ta', clear=False):
-#                 self.pywebio.output.put_code(changed)
-
-class MainApp(ComponentBase):
-
-    def apply(self):
-        pass
-
-
 if __name__ == "__main__":
-    D = ComponentBase()
-    D.MainApp()
+    RunAdbComponent().apply()
+    import time
+
+    time.sleep(90)

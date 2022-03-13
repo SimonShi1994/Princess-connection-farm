@@ -6,6 +6,9 @@ import subprocess
 import time
 from typing import List
 
+import requests
+from requests.adapters import HTTPAdapter
+
 import core.usercentre as uc
 from core.emulator_port import check_known_emulators
 from core.initializer import PCRInitializer, Schedule, Device
@@ -96,6 +99,28 @@ class PCRAPI:
         return - 运行结果
         """
         return subprocess.run(f"{os.path.join(adb_dir, '../adb')} {f}", capture_output=True).stdout
+
+    @staticmethod
+    def get_github_info():
+        try:
+            s = requests.Session()
+            s.mount('http://', HTTPAdapter(max_retries=2))
+            s.mount('https://', HTTPAdapter(max_retries=2))
+            # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
+            api_url = f"https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/{trace_tree}"
+            all_info = s.get(api_url)
+            if all_info.status_code == 403:
+                update_info = "最新版本为 {请求频繁，当前无法连接到github！请休息2分钟后再试}"
+            elif all_info.status_code == 200:
+                all_info = all_info.json()
+                new_time = all_info["commit"].get("committer").get("date")
+                new_messages = all_info["commit"].get("message")
+                update_info = f"{trace_tree}分支最新版本为 {new_time} -> 更新内容为 {new_messages}"
+            else:
+                update_info = "最新版本为 {当前无法连接到github！}"
+        except:
+            update_info = "最新版本为 {当前无法连接到github！}"
+        return update_info
 
     @staticmethod
     def run_init():

@@ -3,7 +3,7 @@ from pprint import pformat
 
 import pywebio
 
-from pcr_component import *
+from view import *
 from webui.advanced_tab import AdvancedTab
 
 import pywebio.output as wo
@@ -86,20 +86,20 @@ class TestPage(PageBase):
         ])
 
 
-class MainPage(PageBase):
+class MainTabPage(PageBase):
     def __init__(self, bind_tab: AdvancedTab):
         super().__init__()
         self.bind_tab = bind_tab
 
     def test(self):
         S = self.scope
-        self.bind_tab.add_tab('title', S + 'scope', content=GetDatacenterTimeComponent(), enable_close=True,
+        self.bind_tab.add_tab('title', S + 'scope', content=TestPage(), enable_close=True,
                               show_tab=True)
 
     def apply(self):
         return wo.put_row([
             wo.put_column([
-                wo.put_text('demo')
+                self.add_component(MainPage(), "MainPage")
             ])
         ])
 
@@ -108,7 +108,7 @@ class MainAPP(ComponentBase):
     def __init__(self):
         super().__init__()
         self.TAB = AdvancedTab()
-        self.MainPage = MainPage(self.TAB)  # 先绑定
+        self.MainPage = MainTabPage(self.TAB)  # 先绑定
         self.TAB.init([AdvancedTab.make_init_content("MAIN", "main", self.MainPage, False, True)])  # 重新init实现双向绑定
 
     def apply(self):
