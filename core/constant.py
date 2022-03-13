@@ -220,7 +220,6 @@ JUQING_BTN = {
     "guanbi": p(476, 432, img="img/juqing/guanbi.bmp", at=(447, 415, 505, 448)),
     "baochouqueren": p(478, 41, img="img/juqing/baochouqueren.bmp", at=(433, 28, 523, 55)),
     "locked": p(279, 151, img="img/juqing/locked.bmp", at=(259, 133, 300, 170)),
-    "jiesuotiaojian": p(478, 146, img="img/juqing/jiesuotiaojian.bmp", at=(430, 132, 526, 160)),
 }
 
 LIWU_BTN = {
