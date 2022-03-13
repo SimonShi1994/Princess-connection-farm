@@ -878,8 +878,9 @@ class ToolsMixin(BaseMixin):
 
             # 主线剧情退出检测
             if self.is_exists(JUQING_BTN["guanbi"], screen=screen) and story_type == "zhuxian":
-                self.click_btn(JUQING_BTN["guanbi"], until_appear=p(img="img/juqing/in_join.bmp"))
-                time.sleep(3)
+                self.click_btn(JUQING_BTN["guanbi"])
+                time.sleep(1)
+                self.fclick(1, 1)
                 self.log.write_log('info', "完成了这段剧情")
                 break
             # 兼容信赖度退出检测，不是很稳定，因为点无语音的时候背景也有
