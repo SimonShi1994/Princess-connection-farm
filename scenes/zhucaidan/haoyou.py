@@ -12,7 +12,7 @@ class HaoYouRoot(SevenBTNMixin):
         self.feature = self.fun_feature_exist(HAOYOU_BTN["hualin_root"])
 
     def goto_haoyouguanli(self)->"HaoYouGuanLi":
-        return self.goto(HaoYouGuanLi, self.fun_click(HAOYOU_BTN["haoyouguanli_guanli"]))
+        return self.goto(HaoYouGuanLi, self.fun_click(HAOYOU_BTN["haoyouguanli_w"]))
 
 
 class HaoYouGuanLi(SevenBTNMixin):
