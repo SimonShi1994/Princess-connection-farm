@@ -146,6 +146,9 @@ class EnhanceMixin(ShuatuBaseMixin):
                                             if r == 3:
                                                 self.stop_shuatu()
                                                 break
+                                            if r == 1:
+                                                self.log.write_log('info', "打不过，跑了")
+                                                break
                                             time.sleep(2)
                                             self.fclick(1, 1)
                                             continue
@@ -156,6 +159,9 @@ class EnhanceMixin(ShuatuBaseMixin):
                                                 break
                                             if r == 3:
                                                 self.stop_shuatu()
+                                                break
+                                            if r == 1:
+                                                self.log.write_log('info', "打不过，跑了")
                                                 break
                                             time.sleep(2)
                                             self.fclick(1, 1)
