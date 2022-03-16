@@ -285,6 +285,8 @@ NIUDAN_BTN = {
     "niudan_sheding": p(476, 433, img="img/niudan/niudan_sheding.bmp", at=(452, 420, 501, 446)),
     "chiyoushu": p(528, 413, img="img/niudan/chiyoushu.bmp", at=(505, 405, 552, 422)),
     "xuanzezhong": p(604, 262, img="img/niudan/xuanzezhong.bmp", at=(577, 251, 632, 274)),
+    "exchange_queren": p(479,426,img="img/ui/ok_btn_2.bmp",at=(456, 412, 501, 440)),
+
 
 }
 
@@ -293,6 +295,11 @@ HUODONG_BTN = {
     "sjxz": p(img="img/huodong/sjxz.bmp", at=(436, 134, 522, 158)),
     "bossqsl": p(666, 425, img="img/huodong/bossqsl.bmp", at=(622, 416, 710, 434)),
     "long_next": p(807, 488, img="img/huodong/long_next.bmp", at=(713, 473, 902, 504)),
+    "taofazheng_btn": p(597, 357, img="img/huodong/taofazheng_btn.bmp", at=(573, 349, 622, 366)),
+    "huodongguanka": p(555, 271, img="img/huodong/huodongguanka.bmp", at=(513, 261, 597, 282)),
+    "dangqianliebiao": p(660, 303, img="img/huodong/dangqianliebiao.bmp", at=(620, 293, 701, 314)),
+    "blsd": p(482, 41, img="img/huodong/blsd.bmp", at=(439, 29, 526, 54)),  # 便利设定
+    "return": p(31, 30, img="img/huodong/return.bmp", at=(15, 21, 47, 40)),
 
 }
 
