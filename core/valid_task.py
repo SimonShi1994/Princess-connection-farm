@@ -885,7 +885,7 @@ VALID_TASK = ValidTask() \
           TaskParam("is_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 2),
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="1-1",
                     inputbox=team_order_inputer),
-          TaskParam("do_kaihua", bool, "是否升星", "若关卡能挑战但未三星，是否允许手刷推图。", False),
+          TaskParam("do_kaihua", bool, "是否升星", "是否才能开花", False),
           TaskParam("do_zhuanwu", bool, "是否进行专武任务", "是否进行专武任务，包括佩戴及升级", False),
           TaskParam("sort", str, "角色强化选择排序方式", "角色选择按什么排序，默认使用等级\n"
                                                "level 表示等级\n"
@@ -901,7 +901,6 @@ VALID_TASK = ValidTask() \
                                                "zhuanwu 表示专武\n"
                                                "fav 表示我的最爱\n"
                                                "six 表示六星已解放", "level"),
-          TaskParam("count", int, "前N个", "选择遍历角色数量(已废弃，现在根据角色名称选择)", 15),
           TaskParam("charlist", list, "角色列表", "需要升级的角色",
                     inputbox=ListInputer(desc="请输入需要升级的角色，一行一个角色名称（如有括号，使用中文括号），例如 凯露（夏日）")),
           TaskParam("torank", int, "rank(品级)上限等级", "品级上限，拉满填写99，默认拉满,", 99),

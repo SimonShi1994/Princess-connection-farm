@@ -1,3 +1,5 @@
+import time
+
 from core.pcr_checker import PCRRetry
 from scenes.fight.fightinfo_base import FightInfoBase
 from scenes.fight.fightbianzu_base import FightBianZuBase
@@ -213,3 +215,55 @@ class HuodongMapBase(ZhuXianBase):
                     out.next()
                     self.chulijiaocheng(turnback=None)
                     return 0
+
+
+class HuodongMenu(PCRSceneBase):
+    def __init__(self, a):
+        super().__init__(a)
+        self.feature = self.fun_feature_exist(HUODONG_BTN["huodongguanka"])
+
+    def goto_map(self):
+        return self.goto(HuodongMapBase, self.fun_click(HUODONG_BTN["huodongguanka"]))
+
+
+class Jiaohuan(PCRSceneBase):
+    def __init__(self, a):
+        super().__init__(a)
+        self.feature = self.fun_feature_exist(HUODONG_BTN["dangqianliebiao"])
+
+    def get_taofazheng(self, screen=None):
+        self.check_ocr_running()
+        if screen is None:
+            screen = self.getscreen()
+        at = (880, 431, 928, 448)
+        return self.ocr_int(*at, screen)
+
+    def setting(self):
+        self.lock_img(HUODONG_BTN["blsd"], elseclick=(785, 38))
+        self.click(721, 156)  # 100次
+        self.click(500, 272)  # 跳过
+        self.click(500, 379)  # 5次后一键
+        self.fclick(1, 1)
+
+    def exchange_all(self, reset=False):
+        while True:
+            a = self.get_taofazheng()
+            if a > 10:
+                self.click(825, 371)
+                time.sleep(2)
+
+                # 这轮换完/不足一轮
+                if self.is_exists(HUODONG_BTN["exchange_queren"]):
+                    self.click_btn(HUODONG_BTN["return"], until_appear=HUODONG_BTN["dangqianliebiao"])
+                # TODO:多周目扩充
+                # self.lock_img(HUODONG_BTN["return"])
+                pass
+            if a <= 10:
+                self.lock_img(HUODONG_BTN["return"])
+                self.click_btn(HUODONG_BTN["return"], until_appear=HUODONG_BTN["dangqianliebiao"])
+                pass
+            else:
+                return
+
+    def goto_menu(self):
+        return self.goto(HuodongMapBase, self.fun_click(HUODONG_BTN["huodongguanka"]))
