@@ -517,7 +517,10 @@ class PCRData:
         else:
             obj = cp.Minimize(cp.sum(x))
         prob = cp.Problem(obj, cons)
-        result = prob.solve(verbose=True)
+        try:
+            result = prob.solve(verbose=True, tm_lim=30000, it_lim=50, max_iters=50)
+        except:
+            result = prob.solve(verbose=True)
         out_map = {}
         int_result = 0
         for ind, a in enumerate(x):

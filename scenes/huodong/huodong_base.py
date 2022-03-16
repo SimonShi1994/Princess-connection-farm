@@ -108,6 +108,9 @@ class HuodongMapBase(ZhuXianBase):
         XY11 = self._check_coord(self.XY11)
         self.goto_normal()
         fi = self.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
+        if fi is None:
+            self.chulijiaocheng(None)
+            self._a.restart_this_task()
         ADDD = {}
         if fi.is_threestar():
             out = fi.easy_saodang(cishu, 8, False, additional_info=ADDD)

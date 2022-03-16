@@ -1763,9 +1763,9 @@ class ShuatuMixin(ShuatuBaseMixin):
         arg_strs = [f"--n={n}"]
         if max_tu!="max":
             arg_strs.append(f"--max-tu={max_tu}")
-        arg_str = " ".join(arg_strs)
+        # arg_str = " ".join(arg_strs)
         self.log.write_log("info","正在规划最佳刷图方案……")
-        out_sorted, out_map = DataCenter.ZB_ST_ADVICE(arg_str, verbose=False)
+        out_sorted, out_map = DataCenter.ZB_ST_ADVICE(arg_strs, verbose=False)
         NMap = []
         for i in out_sorted:
             a, b = i.split("-")
