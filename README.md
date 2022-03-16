@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220316
+# Princess connection 公主连结农场脚本v2.8.20220316.1
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -234,11 +234,17 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
-2022/03/16 By UVJkiNTQ
+2022/03/16 By UVJkiNTQ, TheAutumnOfRice
 - BUG修复
  - 修复好友管理无法点击的BUG
+ - 修复大号自动规划刷图中max_tu参数无效的问题
+ - 修复data中刷图规划min-rare,max-rare设置项无效的问题，以及无视成装的问题
+ - 修复活动1-1的一些BUG
+ - 修复推图中遇到好感度提升时崩溃的BUG
 - 性能优化
  - 优化扭蛋判断
+ - 探索推图现在也能四倍速了
+ - 刷图规划现在限制最多计算时间为30s了
 - 框架更新
  - 新增活动插片部分功能
  - 移除了s8的无效参数count，新增一个torank参数，可用于控制rank上限（穿满不强化）

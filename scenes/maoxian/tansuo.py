@@ -117,7 +117,7 @@ class TanSuoInfoBox(FightInfoBase):
         T.select_team(team_order)
         F = T.goto_fight()
         F.set_auto(1)
-        F.set_speed(1)
+        F.set_speed(2, max_level=2)
         D = F.get_during()
         while True:
             time.sleep(1)

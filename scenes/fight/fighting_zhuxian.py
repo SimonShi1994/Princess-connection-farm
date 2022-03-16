@@ -140,7 +140,7 @@ class LoveUpScene(FightingWinBase):
         self.feature = self.fun_feature_exist(MAIN_BTN["tiaoguo"])
 
     def skip(self):
-        self.exit(self.click(MAIN_BTN["tiaoguo"]), interval=1)
+        self.exit(self.fun_click(MAIN_BTN["tiaoguo"]), interval=1)
 
 
 class FightingDialog(PCRMsgBoxBase):
