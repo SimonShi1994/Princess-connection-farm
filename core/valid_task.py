@@ -814,6 +814,18 @@ VALID_TASK = ValidTask() \
     .add("t5", "zanting", "暂停", "暂停脚本，弹出弹窗，直到手动点击弹窗才结束") \
     .add("t6", "kucunshibie", "库存识别", "识别装备库存并输出到outputs文件夹。") \
     .add("t7", "jueseshibie", "角色识别", "识别角色信息并输出到outputs文件夹。") \
+    .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。", ) \
+    .add("t9", "buy_all_frag", "碎片购买", "根据角色名称使用代币购买商店碎片",
+         [TaskParam("dxc_fraglist", list, "dxc碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入地下城商店角色碎片，一行一个角色名称")),
+          TaskParam("jjc_fraglist", list, "jjc碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入JJC商店角色碎片，一行一个角色名称")),
+          TaskParam("pjjc_fraglist", list, "pjjc碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入PJJC商店角色碎片，一行一个角色名称")),
+          TaskParam("clan_fraglist", list, "行会碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入行会商店角色碎片，一行一个角色名称")),
+          ]) \
+    .add("t10", "setting", "设置初始化（试验性，慎用）", "初始化设置，例如跳过动画，隐藏外传等，，提升脚本运行效率。", ) \
     .add("s1", "shuajingyan", "刷经验1-1【别用，除非OCR】", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "废弃参数", "随便输入一个整数")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1【别用，除非OCR】", "刷图3-1，比较节省刷图卷。",
@@ -1005,18 +1017,7 @@ VALID_TASK = ValidTask() \
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", True),
           TaskParam(**huodong_code_kwargs),
-          TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。", ) \
-    .add("t9", "buy_all_frag", "碎片购买", "根据角色名称使用代币购买商店碎片",
-         [TaskParam("dxc_fraglist", list, "dxc碎片", "需要购买的碎片名称",
-                    inputbox=ListInputer(desc="请输入地下城商店角色碎片，一行一个角色名称")),
-          TaskParam("jjc_fraglist", list, "jjc碎片", "需要购买的碎片名称",
-                    inputbox=ListInputer(desc="请输入JJC商店角色碎片，一行一个角色名称")),
-          TaskParam("pjjc_fraglist", list, "pjjc碎片", "需要购买的碎片名称",
-                    inputbox=ListInputer(desc="请输入PJJC商店角色碎片，一行一个角色名称")),
-          TaskParam("clan_fraglist", list, "行会碎片", "需要购买的碎片名称",
-                    inputbox=ListInputer(desc="请输入行会商店角色碎片，一行一个角色名称")),
-          ])
+          TaskParam(**huodong_entrance_ind_kwargs)])
 
 customtask_addr = "customtask"
 
