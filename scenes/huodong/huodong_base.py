@@ -254,13 +254,12 @@ class HuodongMenu(PCRSceneBase):
 
     def shua_NBoss(self, team_order="none"):
         """
-        大号刷NBoss。最好已经打过一遍了。
+        刷NBoss。最好已经打过一遍了。
         之后可能有剧情，因此默认跳过剧情。
         这个函数的结束位置在home，无论如何都会返回主页
         return
             0 - 挑战成功
             1 - 挑战失败
-            2 - 券不足
             -1 - 无法进入
         """
         fi = self.goto_nboss()
