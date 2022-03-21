@@ -264,9 +264,10 @@ class HuodongMenu(PCRSceneBase):
         """
         fi = self.goto_nboss()
         while True:
-            if fi.get_bsq_right() == -1:
+            screen = self.getscreen()
+            if fi.get_bsq_right(screen) == -1:
                 break
-            if fi.check_taofa():
+            if fi.check_taofa(screen):
                 # 检查是否打满3次，可以扫荡
                 fi.easy_saodang(target_cishu="max", one_quan=20)
                 break

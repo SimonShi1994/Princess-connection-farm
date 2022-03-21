@@ -28,7 +28,7 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
         self.exit(exit_fun)
 
     def get_bsq_left(self, screen=None):
-        # OCR获得扫荡前体力BOSS券数量
+        # OCR获得扫荡前BOSS券BOSS券数量
         self.check_ocr_running()
         if screen is None:
             screen = self.getscreen()
@@ -141,8 +141,8 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
         """
         team_order:  见select_team
         max_speed:
-            1 - 两倍速
-            2 - 四倍速可用
+            1 - 两倍速(B0SS不得四倍速)
+
         <return>
             0: 挑战成功
             1: 挑战失败
@@ -151,7 +151,6 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
         <return scene>
             会关闭FightInfo窗口，回到选关页面。
         """
-        screen = self.getscreen()
 
         T = self.goto_tiaozhan()
         T.select_team(team_order)
@@ -175,15 +174,12 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
                     elif isinstance(out, A.LevelUpBox):
                         out.OK()
                         self.start_shuatu()
-                    elif isinstance(out, A.TuanDuiZhanBox):
-                        out.OK()
                     elif isinstance(out, A.AfterFightKKR):
                         out.skip()
                         self._a.restart_this_task()
                     elif isinstance(out, A.ChaoChuShangXianBox):
                         out.OK()
-                    elif isinstance(out, A.HaoYouMsg):
-                        out.exit_with_off()
+
             elif isinstance(out, D.FightingLoseZhuXian):
                 self.log.write_log("info", f"战败了！")
                 out.exit(self.fun_click(814, 493))
@@ -192,8 +188,6 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
                 out.skip()
             elif isinstance(out, D.LoveUpScene):
                 out.skip()
-            elif isinstance(out, D.HaoYouMsg):
-                out.exit_with_off()
 
     def easy_saodang(self,
                      target_cishu: Union[int, str] = "max",
@@ -202,7 +196,7 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
                      ):
         """
         target_cishu: 目标次数， max则满。
-        one_tili:
+        one_quan:
             0 - 不进行BOSS券检查
             (int) - 一次消耗的BOSS券，会进行BOSS券检查。 （一次刷不了则退出）
             -1 - 假设消耗10体，进去后进一步计算one_quan
@@ -238,8 +232,8 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
         if one_quan > 0 or one_quan == -1:
             # BOSS券检查
             bsq_left = self.get_bsq_left(screen)
-            if self.is_exists(FIGHT_BTN["no_tili"], screen=screen):
-                self.log.write_log("warning", "体力不足，无法扫荡！")
+            if self.is_exists(HUODONG_BTN["no_quan_right"], screen=screen):
+                self.log.write_log("warning", "BOSS券不足，无法扫荡！")
                 self.exit_me()
                 return 1
             if one_quan == -1:
@@ -247,7 +241,7 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
             if isinstance(target_cishu, int):
                 all_bsq = one_quan * target_cishu
                 if bsq_left < all_bsq:
-                    self.log.write_log("warning", f"体力不足，只能扫荡{all_bsq // bsq_left}次！")
+                    self.log.write_log("warning", f"BOSS券不足，只能扫荡{all_bsq // bsq_left}次！")
                     exitflag = 1
 
         if isinstance(target_cishu, int) and exitflag == 0:
