@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220318
+# Princess connection 公主连结农场脚本v2.8.20220321
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -234,6 +234,14 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2022/03/21 By UVJkiNTQ
+- 框架更新
+ - 添加了活动BOSS相关scene
+ - 添加了角色位置判断函数
+ - 添加了刷活动Normal Boss的函数（暂未实装任务）
+ - 添加了交换讨伐证的函数（暂未实装任务）
+
+
 2022/03/18 By UVJkiNTQ
 - 性能优化
  - 添加了新任务t10，用于关闭技能动画，外传按钮等，以提高脚本效率。（试验性）
