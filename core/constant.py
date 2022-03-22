@@ -307,6 +307,7 @@ HUODONG_BTN = {
     "no_quan_right": p(904,424,img="img/huodong/no_quan_right.bmp",at=(893,418,915,431)),
     "tiaozhan2_on": p(839,467,img="img/huodong/tiaozhan2_on.bmp",at=(804,453,874,482)),
     "saodang2_on": p(755,372,img="img/huodong/saodang2_on.bmp",at=(707,356,803,389)),
+    "fuke": p(414,444,img="img/huodong/fuke.bmp",at=(394, 434, 434, 453)),
 
 }
 

@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220321
+# Princess connection 公主连结农场脚本v2.8.20220322
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -234,13 +234,14 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
-2022/03/21 By UVJkiNTQ
+2022/03/22 By UVJkiNTQ
 - 框架更新
  - 添加了活动BOSS相关scene
  - 添加了角色位置判断函数
- - 添加了刷活动Normal Boss的函数（暂未实装任务）
- - 添加了交换讨伐证的函数（暂未实装任务）
-
+ - 添加了刷活动Normal/Hard Boss的函数，任务s15
+ - 添加了交换讨伐证的函数，任务s16
+- 性能优化
+ - 现活动入口auto支持复刻活动。如同时存在，优先级（文字）为 剧情活动 > 复刻，此时如需刷复刻活动，请使用参数指定。
 
 2022/03/18 By UVJkiNTQ
 - 性能优化

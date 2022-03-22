@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from scenes.maoxian.tansuo import TanSuoMenu
     from scenes.dxc.dxc_select import DXCSelectA, DXCSelectB
     from scenes.maoxian.diaocha import DiaoChaMenu
+    from scenes.huodong.huodong_base import HuodongMapBase
 
 class MaoXian(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
@@ -73,7 +74,7 @@ class MaoXian(SevenBTNMixin):
         from scenes.maoxian.diaocha import DiaoChaMenu
         return self.goto(DiaoChaMenu, self.fun_click(MAIN_BTN["diaocha"]))
 
-    def goto_huodong(self, code: str, entrance_ind: Union[str, int] = "auto"):
+    def goto_huodong(self, code: str, entrance_ind: Union[str, int] = "auto") -> "HuodongMapBase":
         # 进入活动图，冒险->寻找活动按钮，若发现normal，则结束；否则chulijiaocheng，再进入一次，保证进入Map界面。
         # code: 见scenes/huodong/huodong_manager.py
         # entrance_ind: 设置为"auto"时，自动寻找剧情活动按钮；设置为int时，固定为从右往左数第几个按钮
@@ -89,6 +90,11 @@ class MaoXian(SevenBTNMixin):
             if entrance_ind == "auto":
                 for _ in range(10):
                     L = self.img_where_all(HUODONG_BTN["jqhd"], threshold=0.8)
+                    time.sleep(0.2)
+                    if len(L) > 0:
+                        break
+                for _ in range(10):
+                    L = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8, )
                     time.sleep(0.2)
                     if len(L) > 0:
                         break
@@ -129,3 +135,5 @@ class MaoXian(SevenBTNMixin):
                 self._a.get_zhuye().goto_maoxian()
                 "GOTO LABEL A"
                 continue
+
+        return self.goto(HuodongMapBase, gotofun=None)

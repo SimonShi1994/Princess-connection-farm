@@ -1017,6 +1017,14 @@ VALID_TASK = ValidTask() \
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", True),
           TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("s15", "shua_hd_boss", "刷活动Boss（试验性）", "刷Normal或者Hard难度活动Boss，尽量打过一次以防卡剧情。",
+         [TaskParam("boss_type", str, "刷什么难度的Boss", "N表示普通，H表示困难", "N"),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("s16", "exchange_tfz", "交换讨伐证（别用）", "交换讨伐证，尽量每天刷完活动后进行一次。",
+         [TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)])
 
 customtask_addr = "customtask"
