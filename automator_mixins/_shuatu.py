@@ -12,6 +12,7 @@ from core.pcr_checker import PCRRetry, LockTimeoutError, RetryNow, ContinueNow
 from core.pcr_config import force_as_ocr_as_possible, debug
 from core.valid_task import ShuatuToTuple
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian, FightInfoZhuXianNormal
+from scenes.huodong.huodong_base import HuodongMapBase
 from ._shuatu_base import ShuatuBaseMixin
 
 
@@ -1841,3 +1842,33 @@ class ShuatuMixin(ShuatuBaseMixin):
                 return
             c, cishu_left = MAP.shua_11(cishu_left, team_order, get_zhiyuan)
         self.lock_home()
+
+    def exchange_tfz(self,code="current", entrance_ind="auto",
+                          var=None):
+        """
+        code: 见scenes/huodng/huodong_manager.py
+        entrance_ind：在冒险界面进入活动，设置为"auto"时，自动寻找剧情活动按钮；设置为int时，固定为从右往左数第几个按钮
+        """
+        self.lock_home()
+        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.lock_home()
+            return
+        map_base = HuodongMapBase(self)
+        jiaohuan = map_base.goto_menu().goto_jiaohuan()
+        jiaohuan.exchange_all()
+        self.lock_home()
+
+    def shua_hd_boss(self, team_order="none", code="current", entrance_ind="auto", boss_type=None, var=None):
+        """
+        打活动Boss，team_order见shuatu_daily_ocr。
+        code: 见scenes/huodng/huodong_manager.py
+        entrance_ind：在冒险界面进入活动，设置为"auto"时，自动寻找剧情活动按钮；设置为int时，固定为从右往左数第几个按钮
+        """
+        self.lock_home()
+        act_map = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        act_menu = act_map.goto_menu()
+        self.log.write_log("info", f"开始刷活动Boss,难度{boss_type}")
+        act_menu.shua_Boss(team_order=team_order, boss_type=boss_type)
+        self.lock_home()
+

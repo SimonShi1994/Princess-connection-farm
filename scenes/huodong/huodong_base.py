@@ -6,8 +6,9 @@ from scenes.fight.fightbianzu_base import FightBianZuBase
 from scenes.fight.fighting_base import FightingBase
 from scenes.fight.fighting_zhuxian import LoveUpScene, HaoYouMsg, FightingDialog, FightingWinZhuXian, \
     FightingLoseZhuXian
+from scenes.huodong.huodong_fight import BOSS_FightInfoBase
 from scenes.zhuxian.zhuxian_base import ZhuXianBase
-from scenes.scene_base import PCRSceneBase, PossibleSceneList
+from scenes.scene_base import PCRSceneBase, PossibleSceneList, PCRMsgBoxBase
 from core.constant import p, FIGHT_BTN, HUODONG_BTN, MAIN_BTN
 from typing import Union
 
@@ -79,6 +80,22 @@ class HuodongMapBase(ZhuXianBase):
         self.lock_img(self.NORMAL_ON, elseclick=self.NORMAL_ON, method="sq")
         return self
 
+    def to_leftdown(self):
+        time.sleep(1)
+        obj = self.d.touch.down(47, 466)
+        time.sleep(0.1)
+        obj.move(47, 96)
+        time.sleep(0.8)
+        obj.up(47, 96)
+        time.sleep(1)
+        obj = self.d.touch.down(84, 80)
+        time.sleep(0.1)
+        obj.move(416, 80)
+        time.sleep(0.8)
+        obj.up(416, 80)
+        time.sleep(1)
+
+
     def _check_coord(self, t):
         # t: tuple -> PCRComponent
         # t: None -> raise!
@@ -89,6 +106,9 @@ class HuodongMapBase(ZhuXianBase):
                 return p(t[0], t[1])
             else:
                 return p
+
+    def goto_menu(self) -> "HuodongMenu":
+        return self.goto(HuodongMenu, self.fun_click(HUODONG_BTN["return"]))
 
     def shua_11(self, cishu: Union[str, int] = "max", team_order="nobody", get_zhiyuan=True, ):
         """
@@ -107,6 +127,7 @@ class HuodongMapBase(ZhuXianBase):
         self.set_initFC()
         XY11 = self._check_coord(self.XY11)
         self.goto_normal()
+        self.to_leftdown()
         fi = self.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
         if fi is None:
             self.chulijiaocheng(None)
@@ -225,8 +246,85 @@ class HuodongMenu(PCRSceneBase):
         super().__init__(a)
         self.feature = self.fun_feature_exist(HUODONG_BTN["huodongguanka"])
 
-    def goto_map(self):
+    def goto_map(self) -> "HuodongMapBase":
         return self.goto(HuodongMapBase, self.fun_click(HUODONG_BTN["huodongguanka"]))
+
+    def goto_jiaohuan(self) -> "Jiaohuan":
+        return self.goto(Jiaohuan, self.fun_click(HUODONG_BTN["taofazheng_btn"]))
+
+    def goto_nboss(self) -> "BOSS_FightInfoBase":
+        screen = self.getscreen()
+        self.click_img(img=HUODONG_BTN["nboss"].img, screen=screen, at=(681, 130, 789, 302))
+        return self.goto(BOSS_FightInfoBase, gotofun=None)
+
+    def goto_hboss(self) -> "BOSS_FightInfoBase":
+        screen = self.getscreen()
+        self.click_img(img=HUODONG_BTN["hboss"].img, screen=screen, at=(681, 130, 789, 302))
+        return self.goto(BOSS_FightInfoBase, gotofun=None)
+
+    def goto_vhboss(self) -> "BOSS_FightInfoBase":
+        screen = self.getscreen()
+        self.click_img(img=HUODONG_BTN["vhboss"].img, screen=screen, at=(681, 130, 789, 302))
+        return self.goto(BOSS_FightInfoBase, gotofun=None)
+
+    def shua_Boss(self, team_order="none", boss_type=None):
+        """
+        刷活动Boss。最好已经打过一遍了。
+        之后可能有剧情，因此默认跳过剧情。
+        这个函数的结束位置在home，无论如何都会返回主页
+        return
+            0 - 挑战成功
+            1 - 挑战失败
+            -1 - 无法进入
+        """
+        if boss_type == "N" or boss_type == "n":
+            fi = self.goto_nboss()
+        elif boss_type == "H" or boss_type == "h":
+            fi = self.goto_hboss()
+        elif boss_type == "VH" or boss_type == "vh":
+            fi = self.goto_vhboss()
+        else:
+            self.log.write_log("warning", "错误的boss类型，跳过该任务")
+            return
+
+        while True:
+            screen = self.getscreen()
+            if fi.get_bsq_right(screen) == -1:
+                break
+            if fi.check_taofa(screen):
+                # 检查是否打满3次，可以扫荡
+                fi.easy_saodang(target_cishu="max", one_quan=20)
+                break
+            else:
+                fb: FightBianZuHuoDong = self.goto(FightBianZuHuoDong, self.fun_click(HUODONG_BTN["tiaozhan2_on"]))
+                fb.select_team(team_order)
+                zd = fb.goto_zhandou()
+                zd.auto_and_fast(1)
+                during = zd.get_during()
+                after = None
+                while True:
+                    out = during.check(timeout=300, double_check=3)
+                    if isinstance(out, during.FightingWin):
+                        self.log.write_log("info", "你胜利了。")
+                        out.next()
+                        after = out.get_after()
+                        break
+                    elif isinstance(out, during.FightingLose):
+                        self.log.write_log("info", "你失败了.")
+                        out.goto_zhuxian(type(self))
+                        self._a.lock_home()
+                        return 1
+                    elif isinstance(out, during.FightingDialog):
+                        out.skip()
+                    else:
+                        continue
+                if after is not None:
+                    while True:
+                        out = after.check()
+                        if isinstance(out, after.FightingWinZhuXian2):
+                            out.next()
+                            self.chulijiaocheng(turnback=None)
+                            return 0
 
 
 class Jiaohuan(PCRSceneBase):
@@ -261,10 +359,10 @@ class Jiaohuan(PCRSceneBase):
                 # TODO:多周目扩充
                 # self.lock_img(HUODONG_BTN["return"])
                 pass
-            if a <= 10:
+            elif a <= 10:
                 self.lock_img(HUODONG_BTN["return"])
                 self.click_btn(HUODONG_BTN["return"], until_appear=HUODONG_BTN["dangqianliebiao"])
-                pass
+                return
             else:
                 return
 

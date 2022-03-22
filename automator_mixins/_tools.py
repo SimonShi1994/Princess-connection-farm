@@ -26,6 +26,7 @@ from ._base import BaseMixin
 from scenes.root.juese import CharMenu
 
 
+
 class ToolsMixin(BaseMixin):
     """
     工具类插片
@@ -966,3 +967,5 @@ class ToolsMixin(BaseMixin):
             return True
         else:
             return False
+
+
