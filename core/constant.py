@@ -286,7 +286,6 @@ NIUDAN_BTN = {
     "chiyoushu": p(528, 413, img="img/niudan/chiyoushu.bmp", at=(505, 405, 552, 422)),
     "xuanzezhong": p(604, 262, img="img/niudan/xuanzezhong.bmp", at=(577, 251, 632, 274)),
 
-
 }
 
 HUODONG_BTN = {
@@ -300,14 +299,14 @@ HUODONG_BTN = {
     "blsd": p(482, 41, img="img/huodong/blsd.bmp", at=(439, 29, 526, 54)),  # 便利设定
     "return": p(31, 30, img="img/huodong/return.bmp", at=(15, 21, 47, 40)),
     "exchange_queren": p(479, 426, img="img/ui/ok_btn_2.bmp", at=(456, 412, 501, 440)),
-    "nboss": p(738,155,img="img/huodong/nboss.bmp",at=(721,147,755,163)),
-    "hboss": p(737,218,img="img/huodong/hboss.bmp",at=(721,209,754,227)),
-    "vhboss": p(739,281,img="img/huodong/vhboss.bmp",at=(719,274,760,289)),
-    "baochou": p(89,456,img="img/huodong/baochou.bmp",at=(62,422,117,490)),
-    "no_quan_right": p(904,424,img="img/huodong/no_quan_right.bmp",at=(893,418,915,431)),
-    "tiaozhan2_on": p(839,467,img="img/huodong/tiaozhan2_on.bmp",at=(804,453,874,482)),
-    "saodang2_on": p(755,372,img="img/huodong/saodang2_on.bmp",at=(707,356,803,389)),
-    "fuke": p(414,444,img="img/huodong/fuke.bmp",at=(394, 434, 434, 453)),
+    "nboss": p(738, 155, img="img/huodong/nboss.bmp", at=(721, 147, 755, 163)),
+    "hboss": p(737, 218, img="img/huodong/hboss.bmp", at=(721, 209, 754, 227)),
+    "vhboss": p(739, 281, img="img/huodong/vhboss.bmp", at=(719, 274, 760, 289)),
+    "baochou": p(89, 456, img="img/huodong/baochou.bmp", at=(62, 422, 117, 490)),
+    "no_quan_right": p(904, 424, img="img/huodong/no_quan_right.bmp", at=(893, 418, 915, 431)),
+    "tiaozhan2_on": p(839, 467, img="img/huodong/tiaozhan2_on.bmp", at=(804, 453, 874, 482)),
+    "saodang2_on": p(755, 372, img="img/huodong/saodang2_on.bmp", at=(707, 356, 803, 389)),
+    "fuke": p(414, 444, img="img/huodong/fuke.bmp", at=(394, 434, 434, 453)),
 
 }
 
@@ -416,12 +415,13 @@ HANGHUI_BTN = {
     "rank_info": p(276, 106, img="img/hanghui/battle/rank_info.bmp", at=(270, 96, 283, 116)),
     "boss_lp": p(212, 369, img="img/hanghui/battle/boss_lp.bmp", at=(191, 361, 234, 377)),
     "fanhuanshijian": p(541, 406, img="img/hanghui/battle/fanhuanshijian.bmp", at=(511, 398, 572, 414)),
-    "shbg": p(833, 45, img="img/hanghui/battle/shbg.bmp", at=(798, 34, 868, 56)),  # 怪物详情界面
+    "shbg": p(704, 47, img="img/hanghui/battle/shbg.bmp", at=(672, 37, 737, 58)),  # 怪物详情界面
     "monizhan_unselected": p(745, 107, img="img/hanghui/battle/monizhan_unselected.bmp", at=(710, 98, 780, 117)),
     "tiaozhan": p(833, 456, img="img/hanghui/battle/tiaozhan.bmp", at=(806, 442, 860, 471)),
     "guanbi": p(476, 476, img="img/hanghui/battle/guanbi.bmp", at=(452, 464, 501, 489)),  # 关闭X月团队站开始的提示
     "sudu": p(479, 146, img="img/hanghui/battle/sudu.bmp", at=(383, 134, 575, 159)),  # 模拟速度设定
     "kkr_dialog": p(280, 402, img="img/hanghui/battle/kkr_dialog.bmp", at=(257, 392, 304, 412)),  # kkr对话框设别
+    # "kkr_dialog2": p(280, 402, img="img/hanghui/battle/kkr_dialog2.bmp", at=(257, 392, 304, 412)),  # kkr对话框设别
     "queren": p(477, 477, img="img/hanghui/battle/queren.bmp", at=(455, 466, 499, 488)),  # 确认报酬
 
 }
