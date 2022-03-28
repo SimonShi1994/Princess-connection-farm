@@ -423,6 +423,12 @@ HANGHUI_BTN = {
     "kkr_dialog": p(280, 402, img="img/hanghui/battle/kkr_dialog.bmp", at=(257, 392, 304, 412)),  # kkr对话框设别
     # "kkr_dialog2": p(280, 402, img="img/hanghui/battle/kkr_dialog2.bmp", at=(257, 392, 304, 412)),  # kkr对话框设别
     "queren": p(477, 477, img="img/hanghui/battle/queren.bmp", at=(455, 466, 499, 488)),  # 确认报酬
+    "tdzksqr": p(478, 144, img="img/hanghui/battle/tdzksqr.bmp", at=(403, 132, 553, 157)),  # 团队战开始确认
+    "fhsjqr": p(478, 144, img="img/hanghui/battle/tdzksqr.bmp", at=(403, 28, 554, 54)),  # 返还时间开始确认
+    "zhandou_confirm": p(587, 370, img="img/hanghui/battle/zhandou_confirm.bmp", at=(559, 354, 616, 386)),  # 团队战开始(战斗)
+    "zhandou_confirm2": p(587, 478, img="img/hanghui/battle/zhandou_confirm.bmp", at=(558, 462, 616, 495)),  # 团队战开始(战斗)
+    "huodebaochou": p(498, 159, img="img/hanghui/battle/huodebaochou.bmp", at=(338, 130, 659, 188)),  # 打完boss获得挑战报酬
+    "xiayibu": p(807, 489, img="img/hanghui/battle/xiayibu.bmp", at=(769, 473, 846, 505)),  # 打完boss下一步
 
 }
 TUANDUIZHAN_BTN = {

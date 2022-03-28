@@ -708,7 +708,12 @@ VALID_TASK = ValidTask() \
                                               "程序自动记录上一次成功发起的时间.\n"
                                               "如果两次捐赠小于8小时，且相差小于等待时间\n"
                                               "则程序进入什么都不做的等待，否则跳过。", 300)]) \
-    .add("h10", "tuanduizhan", "自动摸会战", "农场号自动出甜心刀,请自己确保执行到该任务时已经有挑战次数。目前还在beta，不排除有问题") \
+    .add("h10", "tuanduizhan", "自动摸会战", "自动用完公会战次数",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="none",
+                   inputbox=team_order_inputer),
+          TaskParam("getzhiyuan", bool, "是否借支援", "是否借人推图", False),
+          TaskParam("is_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍配合使用", 0),
+          TaskParam("once", bool, "是否只打一次", "摸一下", True)]) \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
          [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个", 1),
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False),
