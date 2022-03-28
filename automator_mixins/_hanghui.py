@@ -449,10 +449,10 @@ class HanghuiMixin(ToolsMixin):
             cbm = ClanBattleMAP(self).enter()
             cishu = cbm.get_cishu()
             if cishu == -1:  # 返还时间
-                cbp = cbm.goto_battlepre()
+                cbp = cbm.goto_battlepre().make_formal()
                 T = cbp.goto_bianzu()
             elif cishu > 0:
-                cbp = cbm.goto_battlepre()
+                cbp = cbm.goto_battlepre().make_formal()
                 T = cbp.goto_bianzu()
                 T = FightBianZuBase(self)
                 T.select_team(team_order)

@@ -27,7 +27,7 @@ class ClanBattleMAP(SevenBTNMixin):
         # if self.is_exists(HANGHUI_BTN["kkr_dialog2"], screen=screen):
         #     self.click(160, 100)
         #     self.click(160, 100)
-        elif self.is_exists(HANGHUI_BTN["sudu"]):  # 战斗速度上限设定（关闭）
+        elif self.is_exists(HANGHUI_BTN["sudu"], screen=screen):  # 战斗速度上限设定（关闭）
             self.click(349, 282)
             time.sleep(1)
             self.click(479, 365)
