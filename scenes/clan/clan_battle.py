@@ -18,16 +18,16 @@ class ClanBattleMAP(SevenBTNMixin):
 
     def gonghuizhan_precheck(self, screen):
         if self.is_exists(HANGHUI_BTN["queren"], screen=screen):  # 报酬确认
-            self.click_btn(HANGHUI_BTN["queren"])
-        if self.is_exists(HANGHUI_BTN["guanbi"], screen=screen):  # 公会战开始、排名公布
-            self.click_btn(HANGHUI_BTN["guanbi"])
-        if self.is_exists(HANGHUI_BTN["kkr_dialog"], screen=screen):
+            self.click(HANGHUI_BTN["queren"])
+        elif self.is_exists(HANGHUI_BTN["guanbi"], screen=screen):  # 公会战开始、排名公布
+            self.click(HANGHUI_BTN["guanbi"])
+        elif self.is_exists(HANGHUI_BTN["kkr_dialog"], screen=screen):
             self.click(160, 100)
             self.click(160, 100)
         # if self.is_exists(HANGHUI_BTN["kkr_dialog2"], screen=screen):
         #     self.click(160, 100)
         #     self.click(160, 100)
-        if self.is_exists(HANGHUI_BTN["sudu"]):  # 战斗速度上限设定（关闭）
+        elif self.is_exists(HANGHUI_BTN["sudu"]):  # 战斗速度上限设定（关闭）
             self.click(349, 282)
             time.sleep(1)
             self.click(479, 365)
@@ -38,8 +38,9 @@ class ClanBattleMAP(SevenBTNMixin):
         screen = self.getscreen()
         r = self.img_where_all(img="img/hanghui/battle/boss_lp.bmp", threshold=0.5, at=(13, 133, 916, 379), )
         if not r:
-            self.log.write_log("info", "未识别到BOSS，可能不在公会战期间")
-            return
+            self.log.write_log("warning", "未识别到BOSS，可能不在公会战期间")
+            self.clear_initFC()
+            return self._a.skip_this_task()
         else:
             x = r[0]
             y = r[1]
@@ -47,10 +48,12 @@ class ClanBattleMAP(SevenBTNMixin):
             y1 = int(y) - 43
             return self.goto(ClanBattlePre, self.fun_click(x1, y1))
 
-    def get_cishu(self):
-        a = self.ocr_int(555, 396, 567, 414)
+    def get_cishu(self, screen=None):
+        if screen is None:
+            screen = self.getscreen()
+        a = self.ocr_int(555, 396, 567, 414, screen_shot=screen)
         if a == 0:
-            if self.is_exists(HANGHUI_BTN["fanhuanshijian"]):
+            if self.is_exists(HANGHUI_BTN["fanhuanshijian"], screen=screen):
                 return -1
             else:
                 return 0
