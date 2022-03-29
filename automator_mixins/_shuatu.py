@@ -1553,6 +1553,8 @@ class ShuatuMixin(ShuatuBaseMixin):
                             state["next"] = out.get_after()
                             out.next()
                             break
+                        if isinstance(out, During.TuanDuiZhanBox):
+                            out.OK()
                         if isinstance(out, During.FightingDialog):
                             out.skip()
                         if isinstance(out,During.HaoYouMsg):

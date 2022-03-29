@@ -711,8 +711,8 @@ VALID_TASK = ValidTask() \
     .add("h10", "tuanduizhan", "自动摸会战", "自动用完公会战次数",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="none",
                    inputbox=team_order_inputer),
-          TaskParam("getzhiyuan", bool, "是否借支援", "是否借人推图", False),
-          TaskParam("is_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍配合使用", 0),
+          TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
+          TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍配合使用", 0),
           TaskParam("once", bool, "是否只打一次", "摸一下", True)]) \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
          [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个", 1),

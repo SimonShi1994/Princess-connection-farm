@@ -1,4 +1,5 @@
 import time
+from typing import Union
 
 from core.constant import HANGHUI_BTN, FIGHT_BTN, DXC_ELEMENT, HAOYOU_BTN
 from scenes.root.seven_btn import SevenBTNMixin
@@ -33,14 +34,12 @@ class ClanBattleMAP(SevenBTNMixin):
             self.click(479, 365)
         return screen
 
-    def goto_battlepre(self) -> "ClanBattlePre":  # 点击进入BOSS
+    def goto_battlepre(self) -> Union[int, "ClanBattlePre"]:  # 点击进入BOSS
         time.sleep(5)
-        screen = self.getscreen()
         r = self.img_where_all(img="img/hanghui/battle/boss_lp.bmp", threshold=0.5, at=(13, 133, 916, 379), )
         if not r:
             self.log.write_log("warning", "未识别到BOSS，可能不在公会战期间")
-            self.clear_initFC()
-            return self._a.skip_this_task()
+            return -1
         else:
             x = r[0]
             y = r[1]

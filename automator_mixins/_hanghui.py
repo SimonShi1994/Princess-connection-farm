@@ -449,10 +449,14 @@ class HanghuiMixin(ToolsMixin):
             cbm = ClanBattleMAP(self).enter()
             cishu = cbm.get_cishu()
             if cishu == -1:  # 返还时间
-                cbp = cbm.goto_battlepre().make_formal()
+                cbp = cbm.goto_battlepre()
+                if cbp == -1:
+                    self.restart_this_task()
                 T = cbp.goto_bianzu()
             elif cishu > 0:
-                cbp = cbm.goto_battlepre().make_formal()
+                cbp = cbm.goto_battlepre()
+                if cbp == -1:
+                    self.restart_this_task()
                 T = cbp.goto_bianzu()
                 T = FightBianZuBase(self)
                 T.select_team(team_order)
@@ -462,7 +466,9 @@ class HanghuiMixin(ToolsMixin):
                     T.get_zhiyuan(if_full=if_full)
             else:
                 self.log.write_log("info", "次数不足，退出任务")
-                break
+                self.clear_all_prechecks()
+                self.lock_home()
+                self.skip_this_task()
             T = FightBianZuHangHui(self)
             F = T.goto_fight()
             F.set_auto(1)
