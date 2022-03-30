@@ -429,6 +429,9 @@ HANGHUI_BTN = {
     "zhandou_confirm2": p(587, 478, img="img/hanghui/battle/zhandou_confirm.bmp", at=(558, 462, 616, 495)),  # 团队战开始(战斗)
     "huodebaochou": p(498, 159, img="img/hanghui/battle/huodebaochou.bmp", at=(338, 130, 659, 188)),  # 打完boss获得挑战报酬
     "xiayibu": p(807, 489, img="img/hanghui/battle/xiayibu.bmp", at=(769, 473, 846, 505)),  # 打完boss下一步
+    "weibianzu": p(94, 453, img="img/hanghui/battle/weibianzu.bmp", at=(61, 436, 127, 471)),
+    "duiwubianzu": p(478, 146, img="img/hanghui/battle/xuanzeduiwu.bmp", at=(436, 135, 521, 158)),  # 有角色被用过了
+    "sytzcs": p(406, 406, img="img/hanghui/battle/sytzcs.bmp", at=(359, 397, 454, 415)),  # 剩余挑战次数
 
 }
 TUANDUIZHAN_BTN = {

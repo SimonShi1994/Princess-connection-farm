@@ -3,7 +3,7 @@ import time
 import numpy as np
 
 from automator_mixins._base import DEBUG_RECORD
-from core.constant import FIGHT_BTN, MAIN_BTN, MAOXIAN_BTN, JJC_BTN
+from core.constant import FIGHT_BTN, MAIN_BTN, MAOXIAN_BTN, JJC_BTN, HANGHUI_BTN
 from core.cv import UIMatcher
 from core.pcr_checker import PCRRetry, RetryNow, ContinueNow
 from core.pcr_config import debug
@@ -268,6 +268,8 @@ class FightBaseMixin(ToolsMixin):
         self.click(FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
         self.click(FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
         if not self.is_exists(JJC_BTN["dwbz"]):
+            if self.is_exists(HANGHUI_BTN["duiwubianzu"]):
+                self.click(587, 369)
             self.lock_img(JJC_BTN["dwbz"], elseclick=(477, 493), timeout=20)
             return False
         else:

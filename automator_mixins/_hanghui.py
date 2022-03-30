@@ -460,8 +460,8 @@ class HanghuiMixin(ToolsMixin):
                 T = cbp.goto_bianzu()
                 T = FightBianZuBase(self)
                 T.select_team(team_order)
-                if T.get_fight_current_member_count() < 5:
-                    T.select_team(team_order="zhanli", change=3)
+                if self.is_exists(HANGHUI_BTN["weibianzu"]):
+                    T.select_team(team_order="zhanli", change=2)
                 if get_zhiyuan:
                     T.get_zhiyuan(if_full=if_full)
             else:

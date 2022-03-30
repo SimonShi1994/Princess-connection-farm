@@ -1,6 +1,7 @@
 import time
 from typing import Union
 
+from automator_mixins._base import OCRRecognizeError
 from core.constant import HANGHUI_BTN, FIGHT_BTN, DXC_ELEMENT, HAOYOU_BTN
 from scenes.root.seven_btn import SevenBTNMixin
 from scenes.fight.fightbianzu_base import FightBianZuBase
@@ -47,9 +48,10 @@ class ClanBattleMAP(SevenBTNMixin):
             y1 = int(y) - 43
             return self.goto(ClanBattlePre, self.fun_click(x1, y1))
 
-    def get_cishu(self, screen=None):
-        if screen is None:
-            screen = self.getscreen()
+    def get_cishu(self):
+        self.lock_img(HANGHUI_BTN["sytzcs"], elseclick=(1, 1), elsedelay=0.1)  # 确保画面稳定的
+        time.sleep(0.5)
+        screen = self.getscreen()
         a = self.ocr_int(555, 396, 567, 414, screen_shot=screen)
         if a == 0:
             if self.is_exists(HANGHUI_BTN["fanhuanshijian"], screen=screen):
