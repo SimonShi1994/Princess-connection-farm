@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220328
+# Princess connection 公主连结农场脚本v2.8.20220331
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -234,9 +234,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
-2022/03/28 By UVJkiNTQ
+
+2022/03/31 By UVJkiNTQ
 - 性能优化
- - 修复团队战h10的boss识别问题，默认参数打一次。增加了参数可选编队、自动补齐5人、智能识别补偿刀（不换人出刀）。
+ - 重写团队战h10（自动摸会战）。默认参数打一次。增加了参数：可以用完次数、可选编队。编队不满则按战力自动补齐5人、智能识别补偿刀（不换人出刀）。
 
 2022/03/22 By UVJkiNTQ
 - 框架更新

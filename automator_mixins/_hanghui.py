@@ -441,9 +441,10 @@ class HanghuiMixin(ToolsMixin):
 
     def tuanduizhan(self, team_order="none", if_full=0, get_zhiyuan=False, once=True):
         self.lock_home()
+        # 能找到带举办中的团队战图标
         if not self.lock_img(img=TUANDUIZHAN_BTN["tuanduizhan"], ifclick=(875, 272),
                              elseclick=(478, 519), elsedelay=5, side_check=self.juqing_kkr, retry=3):
-            pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战哦")
+            pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战或非行会战期间")
             return
         while True:
             cbm = ClanBattleMAP(self).enter()
@@ -456,7 +457,7 @@ class HanghuiMixin(ToolsMixin):
             elif cishu > 0:
                 cbp = cbm.goto_battlepre()
                 if cbp == -1:
-                    self.restart_this_task()
+                    self.restart_this_task()  # 已知在团队战期间，肯定有次数，重试
                 T = cbp.goto_bianzu()
                 T = FightBianZuBase(self)
                 T.select_team(team_order)
