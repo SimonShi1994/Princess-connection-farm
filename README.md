@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220331
+# Princess connection 公主连结农场脚本v2.8.20220331.2
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -240,6 +240,9 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
  - 重写团队战h10（自动摸会战）。默认参数打一次。增加了参数：可以用完次数、可选编队。编队不满则按战力自动补齐5人、智能识别补偿刀（不换人出刀）。
 - 惯例更新
  - 更新活动（恩赐的财团与神圣学院的问题儿童）
+ - 更新33图
+- 框架更新
+ - 对活动map增加了一些初始判断，为推图准备了一些函数
 
 2022/03/22 By UVJkiNTQ
 - 框架更新

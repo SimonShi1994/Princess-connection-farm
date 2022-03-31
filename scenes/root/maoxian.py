@@ -92,17 +92,18 @@ class MaoXian(SevenBTNMixin):
                     L = self.img_where_all(HUODONG_BTN["jqhd"], threshold=0.8)
                     time.sleep(0.2)
                     if len(L) > 0:
+                        xx, yy = L[0], L[1]
                         break
-                for _ in range(10):
-                    L = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8, )
-                    time.sleep(0.2)
-                    if len(L) > 0:
-                        break
+                # for _ in range(10):
+                #     L = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8, )
+                #     time.sleep(0.2)
+                #     if len(L) > 0:
+                #         xx, yy = L[0], L[1]
+                #         break
                 else:
                     self.log.write_log("error", "未找到活动图标")
                     self._a.lock_home()
                     return False
-                xx, yy = L[0], L[1]
             else:
                 xx, yy = MAIN_BTN["round_btn"][entrance_ind]
             out = self.lock_img({
@@ -125,6 +126,7 @@ class MaoXian(SevenBTNMixin):
                 self.clear_initFC()
                 return MAP(self._a).enter()  # 结束
             elif out == 3:
+                self._a.guojuqing(story_type="haogandu")
                 self._a.lock_home()
                 self._a.get_zhuye().goto_maoxian()
                 "GOTO LABEL A"

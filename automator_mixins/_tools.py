@@ -915,7 +915,7 @@ class ToolsMixin(BaseMixin):
                 self.click(int(lst[0]), int(lst[1]))
                 continue
 
-            # 三种退出形式
+            # 退出形式
             # 报酬确认 (好感度剧情)
             if self.is_exists(JUQING_BTN["baochouqueren"], at=(433, 73, 523, 100),
                               screen=screen) and story_type == "haogandu":
