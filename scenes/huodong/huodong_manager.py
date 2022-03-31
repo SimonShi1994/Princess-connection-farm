@@ -4,6 +4,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
         "current": Map20220331,
+        "20220331": Map20220331,
         "20220208": Map20220208,
     }
     if code in HUODONG_CODE:
