@@ -59,10 +59,18 @@ class HuodongMapBase(ZhuXianBase):
     def __init__(self, a):
         super().__init__(a)
         self.feature = self.feature_normal_or_hard
-        self.initPC = self.karin_restart
+        self.initPC = self.clear_map
 
-    def karin_restart(self, screen):
-        if self.is_exists(MAIN_BTN["karin_middle"], screen=screen):
+    def clear_map(self, screen):
+        a = self.img_where_all(img="img/ui/quxiao2.bmp", screen=screen, at=(300, 270, 439, 450))
+        # 信赖度解锁：如果是推图，则到地图页面跳出。如果是扫荡，则在结算页面跳出。
+        b = self.img_where_all(img="img/ui/close_btn_1.bmp", screen=screen, at=(365, 266, 593, 516))
+        # 剧情解锁，记录解锁等
+        if len(a) > 0:
+            self.click(int(a[0]), int(a[1]))
+        elif len(b) > 0:
+            self.click(int(b[0]), int(b[1]))
+        elif self.is_exists(MAIN_BTN["karin_middle"], screen=screen):
             self.chulijiaocheng(None)
             self._a.restart_this_task()
         return screen
@@ -94,7 +102,6 @@ class HuodongMapBase(ZhuXianBase):
         time.sleep(0.8)
         obj.up(416, 80)
         time.sleep(1)
-
 
     def _check_coord(self, t):
         # t: tuple -> PCRComponent

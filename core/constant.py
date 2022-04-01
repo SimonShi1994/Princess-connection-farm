@@ -208,7 +208,7 @@ JJC_BTN = {
 
 }
 JUQING_BTN = {
-    "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(903, 26, 931, 55)),
+    "caidanyuan": p(916, 35, img="img/juqing/caidanyuan.bmp", at=(901, 23, 932, 48)),
     "xinneirong": p(img="img/ui/xinneirong.bmp", at=(462, 70, 495, 87)),
     "zhuxianjuqing": p(836, 111, img="img/juqing/zhuxianjuqing.bmp", at=(812, 97, 858, 125)),
     "tiaoguo_1": p(804, 38, img="img/juqing/tiaoguo_1.bmp", at=(765, 24, 849, 65)),
@@ -1007,6 +1007,11 @@ HARD_COORD = {
         2: p(494, 247, name="H32-2"),
         3: p(784, 330, name="H32-3"),
     },
+    33: {
+        1: p(177, 226, name="H33-1"),
+        2: p(485, 363, name="H33-2"),
+        3: p(779, 253, name="H33-3"),
+    },
 }
 
 VH_COORD = {
@@ -1028,6 +1033,7 @@ VH_COORD = {
     21: {
         1: p(218, 266, name="VH21-1"),
         2: p(475, 330, name="VH21-2"),
+        3: p(765, 253, name="VH21-3"),
     },
 }
 
@@ -1083,7 +1089,7 @@ MAOXIAN_BTN = {
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
 }
 
-MAX_MAP = 32
+MAX_MAP = 33
 
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(77, 61, 141, 72)),
@@ -1118,6 +1124,7 @@ ZHUXIAN_ID = {
     30: p(img="img/zhuxian/30L.bmp", at=(60, 55, 178, 77)),
     31: p(img="img/zhuxian/31L.bmp", at=(60, 55, 175, 77)),
     32: p(img="img/zhuxian/32L.bmp", at=(89, 58, 193, 73)),
+    33: p(img="img/zhuxian/33L.bmp", at=(61, 58, 196, 75)),
 }
 
 # ZHUXIAN_SUB_ID
@@ -1153,6 +1160,7 @@ ZHUXIAN_FTLDY_ID = {
 }
 ZHUXIAN_FSJYSL_ID = {
     32: p(img="img/zhuxian/32R.bmp", at=(214, 60, 250, 75)),
+    33: p(img="img/zhuxian/33R.bmp", at=(214, 60, 250, 75)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -1162,7 +1170,7 @@ ZHUXIAN_SECOND_ID = {
     (26, 27): ZHUXIAN_SBDDSL_ID,
     (28, 29): ZHUXIAN_DSTEHSA_ID,
     (30, 31): ZHUXIAN_FTLDY_ID,
-    (32,): ZHUXIAN_FSJYSL_ID,
+    (32, 33): ZHUXIAN_FSJYSL_ID,
 }
 
 NORMAL_COORD = {
@@ -1813,6 +1821,26 @@ NORMAL_COORD = {
             3: p(334, 284, name="32-3"),
             2: p(252, 408, name="32-2"),
             1: p(106, 385, name="32-1"),
+        },
+    },
+    33: {
+        "right": {
+            14: p(736, 197, name="33-14"),
+            13: p(709, 322, name="33-13"),
+            12: p(589, 272, name="33-12"),
+            11: p(508, 369, name="33-11"),
+            10: p(444, 235, name="33-10"),
+            9: p(314, 218, name="33-9"),
+            8: p(254, 340, name="33-8"),
+        },
+        "left": {
+            7: p(694, 239, name="33-7"),
+            6: p(547, 245, name="33-6"),
+            5: p(510, 363, name="33-5"),
+            4: p(378, 311, name="33-4"),
+            3: p(293, 230, name="33-3"),
+            2: p(206, 344, name="33-2"),
+            1: p(109, 239, name="33-1"),
         },
     },
 }

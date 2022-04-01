@@ -15,7 +15,7 @@ def get_huodong_by_code(code: str):
 
 class Map20220331(HuodongMapBase):
     NAME = "恩赐的财团与神圣学院的问题儿童"
-    XY11 = (146, 348)
+    XY11 = (123, 230)
     XY_VH_BOSS = (864, 288)
     HARD_COORD = {
         1: (115, 346),

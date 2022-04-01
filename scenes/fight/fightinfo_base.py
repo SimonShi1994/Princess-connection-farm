@@ -21,6 +21,33 @@ class FightInfoBase(PCRMsgBoxBase):
         # 检测编组设定
         self.feature = self.fun_feature_exist(FIGHT_BTN["baochou"])
 
+    def next_map(self, at=None, screen=None):
+        if screen is None:
+            screen = self.getscreen()
+        if at is None:
+            at = (231, 38, 293, 62)
+        self.lock_change(at, threshold=0.84, similarity=0.01, elseclick=(926, 248), elsedelay=3, is_raise=True,
+                         screen=screen)
+
+    def to_last_map(self, max_tu: int = 15):  # 尽量从1-1开始点
+        at = (231, 38, 293, 62)
+        count = 1
+        sc1 = self.getscreen()
+        while True:
+            self.click(926, 248)
+            count += 1
+            if count == max_tu:
+                self.log.write_log("info", "已到最后一图")
+                return "finish"
+            time.sleep(2)
+            sc2 = self.getscreen()
+            p = self.img_equal(sc1, sc2, at=at)
+            if p > 0.95:
+                self.log.write_log("info", "已到最后一图")
+                break
+            else:
+                sc1 = sc2
+
     def exit_me(self):
         def exit_fun():
             self.fclick(1, 1)
