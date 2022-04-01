@@ -830,7 +830,7 @@ VALID_TASK = ValidTask() \
           TaskParam("clan_fraglist", list, "行会碎片", "需要购买的碎片名称",
                     inputbox=ListInputer(desc="请输入行会商店角色碎片，一行一个角色名称")),
           ]) \
-    .add("t10", "setting", "设置初始化（试验性，慎用）", "初始化设置，例如跳过动画，隐藏外传等，，提升脚本运行效率。", ) \
+    .add("t10", "setting", "设置初始化", "初始化设置，例如跳过动画，隐藏外传等，，提升脚本运行效率。", ) \
     .add("s1", "shuajingyan", "刷经验1-1【别用，除非OCR】", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "废弃参数", "随便输入一个整数")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1【别用，除非OCR】", "刷图3-1，比较节省刷图卷。",
@@ -1030,6 +1030,12 @@ VALID_TASK = ValidTask() \
           TaskParam(**huodong_entrance_ind_kwargs)]) \
     .add("s16", "exchange_tfz", "交换讨伐证（别用）", "交换讨伐证，尽量每天刷完活动后进行一次。",
          [TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("s17", "tui_hd_normal", "推活动普通图", "用于解锁Normal Boss。",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", True),
+          TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 2),
+          TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)])
 
 customtask_addr = "customtask"

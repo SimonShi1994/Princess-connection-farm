@@ -294,7 +294,7 @@ HUODONG_BTN = {
     "bossqsl": p(666, 425, img="img/huodong/bossqsl.bmp", at=(622, 416, 710, 434)),
     "long_next": p(807, 488, img="img/huodong/long_next.bmp", at=(713, 473, 902, 504)),
     "taofazheng_btn": p(597, 357, img="img/huodong/taofazheng_btn.bmp", at=(573, 349, 622, 366)),
-    "huodongguanka": p(555, 271, img="img/huodong/huodongguanka.bmp", at=(513, 261, 597, 282)),
+    "huodongguanka": p(556, 202, img="img/huodong/huodongguanka.bmp", at=(515, 192, 598, 213)),
     "dangqianliebiao": p(660, 303, img="img/huodong/dangqianliebiao.bmp", at=(620, 293, 701, 314)),
     "blsd": p(482, 41, img="img/huodong/blsd.bmp", at=(439, 29, 526, 54)),  # 便利设定
     "return": p(31, 30, img="img/huodong/return.bmp", at=(15, 21, 47, 40)),
@@ -307,6 +307,9 @@ HUODONG_BTN = {
     "tiaozhan2_on": p(839, 467, img="img/huodong/tiaozhan2_on.bmp", at=(804, 453, 874, 482)),
     "saodang2_on": p(755, 372, img="img/huodong/saodang2_on.bmp", at=(707, 356, 803, 389)),
     "fuke": p(414, 444, img="img/huodong/fuke.bmp", at=(394, 434, 434, 453)),
+    "shadow_return": p(31, 29, img="img/huodong/shadow_return.bmp", at=(13, 15, 50, 44)),
+    "speaker_box": p(189, 411, img="img/huodong/speaker_box.bmp", at=(175, 403, 204, 419)),
+    "shadow_help": p(920,26,img="img/huodong/shadow_help.bmp",at=(909,14,931,38)),
 
 }
 
