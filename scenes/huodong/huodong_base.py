@@ -73,6 +73,9 @@ class HuodongMapBase(ZhuXianBase):
         elif self.is_exists(MAIN_BTN["karin_middle"], screen=screen):
             self.chulijiaocheng(None)
             self._a.restart_this_task()
+        elif self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
+            self.fclick(1, 1)
+            self._a.restart_this_task()
         return screen
 
     def feature_normal_or_hard(self, screen):
@@ -251,7 +254,7 @@ class HuodongMapBase(ZhuXianBase):
 class HuodongMenu(PCRSceneBase):
     def __init__(self, a):
         super().__init__(a)
-        self.feature = self.fun_feature_exist(HUODONG_BTN["huodongguanka"])
+        self.feature = self.fun_feature_exist(HUODONG_BTN["taofazheng_btn"])
 
     def goto_map(self) -> "HuodongMapBase":
         return self.goto(HuodongMapBase, self.fun_click(HUODONG_BTN["huodongguanka"]))

@@ -124,7 +124,7 @@ class MaoXian(SevenBTNMixin):
                 self.clear_initFC()
                 return MAP(self._a).enter()  # 结束
             elif out == 3:
-                self._a.guojuqing(story_type="haogandu")
+                self._a.guojuqing(story_type="huodong", no_skip=True)
                 self._a.lock_home()
                 self._a.get_zhuye().goto_maoxian()
                 "GOTO LABEL A"
