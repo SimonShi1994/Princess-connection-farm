@@ -902,9 +902,13 @@ class ToolsMixin(BaseMixin):
                 continue
             # 选择快进剧情
             if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen) and no_skip is False:
-                self.click_btn(JUQING_BTN["caidanyuan"], until_appear=(JUQING_BTN["tiaoguo_1"]))
-                # 快进确认弹出
-                self.click_btn(JUQING_BTN["tiaoguo_1"], until_appear=(JUQING_BTN["tiaoguo_2"]))
+                self.click_btn(JUQING_BTN["caidanyuan"], until_appear=(JUQING_BTN["auto"]))
+                if self.is_exists(JUQING_BTN["tiaoguo_1"]):
+                    # 快进确认弹出
+                    self.click_btn(JUQING_BTN["tiaoguo_1"], until_appear=(JUQING_BTN["tiaoguo_2"]))
+                else:
+                    no_skip = True
+                    self.click_btn(JUQING_BTN["auto"],)
                 continue
             # 确认快进，包括视频和剧情
             if self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen):

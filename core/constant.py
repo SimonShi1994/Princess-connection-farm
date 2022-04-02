@@ -220,6 +220,7 @@ JUQING_BTN = {
     "guanbi": p(476, 432, img="img/juqing/guanbi.bmp", at=(447, 415, 505, 448)),
     "baochouqueren": p(478, 41, img="img/juqing/baochouqueren.bmp", at=(433, 28, 523, 55)),
     "locked": p(279, 151, img="img/juqing/locked.bmp", at=(259, 133, 300, 170)),
+    "auto": p(806, 100, img="img/juqing/auto.bmp", at=(793, 90, 819, 111)),
 }
 
 LIWU_BTN = {
@@ -309,7 +310,7 @@ HUODONG_BTN = {
     "fuke": p(414, 444, img="img/huodong/fuke.bmp", at=(394, 434, 434, 453)),
     "shadow_return": p(31, 29, img="img/huodong/shadow_return.bmp", at=(13, 15, 50, 44)),
     "speaker_box": p(189, 411, img="img/huodong/speaker_box.bmp", at=(175, 403, 204, 419)),
-    "shadow_help": p(920,26,img="img/huodong/shadow_help.bmp",at=(909,14,931,38)),
+    "shadow_help": p(920, 26, img="img/huodong/shadow_help.bmp", at=(909, 14, 931, 38)),
 
 }
 

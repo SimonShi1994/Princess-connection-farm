@@ -13,7 +13,8 @@ if TYPE_CHECKING:
     from scenes.maoxian.tansuo import TanSuoMenu
     from scenes.dxc.dxc_select import DXCSelectA, DXCSelectB
     from scenes.maoxian.diaocha import DiaoChaMenu
-    from scenes.huodong.huodong_base import HuodongMapBase
+    from scenes.huodong.huodong_base import HuodongMapBase, HuodongMenu
+
 
 class MaoXian(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
@@ -109,6 +110,7 @@ class MaoXian(SevenBTNMixin):
                 MAP.NORMAL_ON: 2,  # Normal，进入
                 MAP.HARD_ON: 2,  # Hard，进入
                 JUQING_BTN["caidanyuan"]: 3,  # 菜单园
+                HUODONG_BTN["shadow_return"]: 4,  # 可以看到return的情况
 
             }, elseclick=(xx, yy), timeout=20, is_raise=False)
 
@@ -124,10 +126,15 @@ class MaoXian(SevenBTNMixin):
                 self.clear_initFC()
                 return MAP(self._a).enter()  # 结束
             elif out == 3:
-                self._a.guojuqing(story_type="huodong", no_skip=True)
+                self._a.guojuqing(story_type="huodong")
                 self._a.lock_home()
                 self._a.get_zhuye().goto_maoxian()
                 "GOTO LABEL A"
+                continue
+            elif out == 4:
+                self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
+                menu = HuodongMenu(self._a).enter()
+                menu.goto_map()
                 continue
             else:
                 # out = False
