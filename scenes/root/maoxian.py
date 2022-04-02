@@ -132,10 +132,8 @@ class MaoXian(SevenBTNMixin):
                 "GOTO LABEL A"
                 continue
             elif out == 4:
-                self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
-                menu = HuodongMenu(self._a).enter()
-                menu.goto_map()
-                continue
+                self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=180)
+                return HuodongMenu(self._a).enter().goto_map()
             else:
                 # out = False
                 self.chulijiaocheng(None)
