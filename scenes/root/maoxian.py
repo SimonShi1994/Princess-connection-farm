@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Union
 from core.constant import MAIN_BTN, MAOXIAN_BTN, HUODONG_BTN, JUQING_BTN, p
 from core.pcr_checker import LockTimeoutError, PCRRetry, ContinueNow
 from scenes.root.seven_btn import SevenBTNMixin
+from scenes.huodong.huodong_base import HuodongMapBase, HuodongMenu
 
 if TYPE_CHECKING:
     from scenes.zhuxian.zhuxian_normal import ZhuXianNormal
@@ -13,7 +14,6 @@ if TYPE_CHECKING:
     from scenes.maoxian.tansuo import TanSuoMenu
     from scenes.dxc.dxc_select import DXCSelectA, DXCSelectB
     from scenes.maoxian.diaocha import DiaoChaMenu
-    from scenes.huodong.huodong_base import HuodongMapBase, HuodongMenu
 
 
 class MaoXian(SevenBTNMixin):
