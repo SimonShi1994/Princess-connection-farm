@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220401
+# Princess connection 公主连结农场脚本v2.8.20220403
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -234,6 +234,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/04/03 By UVJkiNTQ
+- BUG修复
+  - 对活动任务进行了很多修复，尽可能减少重启。
+- 框架更新
+  - 对活动任务（原s12~s15）进行重编号，前缀为 hd。目前已经可以推N1-15，H1-5及N/H/VH Boss。
 
 2022/04/01 By UVJkiNTQ
 - 框架更新

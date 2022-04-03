@@ -90,8 +90,8 @@ class MaoXian(SevenBTNMixin):
             # 点击活动图标
             if entrance_ind == "auto":
                 for _ in range(10):
-                    L = self.img_where_all(HUODONG_BTN["jqhd"], threshold=0.8)
-                    M = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8, )
+                    L = self.img_where_all(HUODONG_BTN["jqhd"].img, threshold=0.8)
+                    M = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8)
                     time.sleep(0.2)
                     if len(L) > 0:
                         xx, yy = L[0], L[1]
@@ -107,8 +107,8 @@ class MaoXian(SevenBTNMixin):
                 xx, yy = MAIN_BTN["round_btn"][entrance_ind]
             out = self.lock_img({
                 HUODONG_BTN["sjxz"]: 1,  # 数据下载
-                MAP.NORMAL_ON: 2,  # Normal，进入
-                MAP.HARD_ON: 2,  # Hard，进入
+                HUODONG_BTN["NORMAL_ON"]: 2,  # Normal，进入
+                HUODONG_BTN["HARD_ON"]: 2,  # Hard，进入
                 JUQING_BTN["caidanyuan"]: 3,  # 菜单园
                 HUODONG_BTN["shadow_return"]: 4,  # 可以看到return的情况
 
