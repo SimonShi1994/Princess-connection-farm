@@ -1008,35 +1008,43 @@ VALID_TASK = ValidTask() \
          [TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max"),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)]) \
-    .add("s12", "dahaohuodong_hard", "大号刷活动Hard图", "刷活动Hard图，要求已经全部三星。",
-         [TaskParam("tu_order", list, "图号", "只包含1~5的列表，表示活动困难图图号，每个均刷3次。",
-                    inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~5的整数")),
+    .add("hd01", "tui_hd_map_normal", "推活动普通图", "用于推N1-15。",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
+          TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("s13", "dahaohuodong_VHBoss", "大号刷活动VHBoss", "刷活动VHBoss图，如果没赢很可能有BUG",
+    .add("hd02", "tui_hd_map_hard", "推活动困难图", "用于推H1-5。",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
+          TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("hd03", "shua_hd_boss", "推/刷活动Boss（N or H），", "刷Normal或者Hard难度活动Boss，用完挑战券，一次打不死会直接退出。。",
+         [TaskParam("boss_type", str, "刷什么难度的Boss", "N表示普通，H表示困难", "N"),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("hd04", "dahaohuodong_VHBoss", "推/刷活动VHBoss", "刷活动VHBoss图，如果没赢很可能有BUG",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("s14", "xiaohaohuodong_11", "小号刷活动1-1", "刷活动1-1图，可以借人，如果推了其它活动图可能会报错。",
+    .add("hd05", "xiaohaohuodong_11", "推/小号刷活动1-1", "推/刷活动1-1图，可以借人。",
          [TaskParam("cishu", str, "刷几次", "max表示全刷，或者也可以输入一个整数。", "max"),
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", True),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("s15", "shua_hd_boss", "刷活动Boss（试验性）", "刷Normal或者Hard难度活动Boss，尽量打过一次以防卡剧情。",
-         [TaskParam("boss_type", str, "刷什么难度的Boss", "N表示普通，H表示困难", "N"),
-          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+    .add("hd06", "dahaohuodong_hard", "大号刷活动Hard图", "刷活动Hard图，要求已经全部三星。",
+         [TaskParam("tu_order", list, "图号", "只包含1~5的列表，表示活动困难图图号，每个均刷3次。",
+                    inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~5的整数")),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("s16", "exchange_tfz", "交换讨伐证（别用）", "交换讨伐证，尽量每天刷完活动后进行一次。",
-         [TaskParam(**huodong_code_kwargs),
-          TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("s17", "tui_hd_normal", "推活动普通图", "用于解锁Normal Boss。",
-         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
-          TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", True),
-          TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 2),
-          TaskParam(**huodong_code_kwargs),
-          TaskParam(**huodong_entrance_ind_kwargs)])
+    # .add("hd07", "tui_hd_map", "刷指定活动普通图（必须打过）", "一般用来刷1-5或者1-15",
+    #      [TaskParam("map_id", int, "活动Normal图号", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
+    #       TaskParam("cishu", str, "刷几次", "max表示全刷，或者也可以输入一个整数。", "max"),
+    #       TaskParam(**huodong_code_kwargs),
+    #       TaskParam(**huodong_entrance_ind_kwargs)]) \
 
 customtask_addr = "customtask"
 

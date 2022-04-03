@@ -4,8 +4,7 @@ from core.pcr_checker import PCRRetry
 from scenes.fight.fightinfo_base import FightInfoBase
 from scenes.fight.fightbianzu_base import FightBianZuBase
 from scenes.fight.fighting_base import FightingBase
-from scenes.fight.fighting_zhuxian import LoveUpScene, HaoYouMsg, FightingDialog, FightingWinZhuXian, \
-    FightingLoseZhuXian
+from scenes.fight.fighting_zhuxian import LoveUpScene, HaoYouMsg, FightingDialog, FightingWinZhuXian
 from scenes.huodong.huodong_fight import BOSS_FightInfoBase
 from scenes.zhuxian.zhuxian_base import ZhuXianBase
 from scenes.scene_base import PCRSceneBase, PossibleSceneList, PCRMsgBoxBase
@@ -19,18 +18,27 @@ class FightingWinHuodong(FightingWinZhuXian):
         self.feature = self.fun_feature_exist(HUODONG_BTN["long_next"])
 
 
+class FightingLoseHuodong(FightingWinZhuXian):
+    def __init__(self, a):
+        super().__init__(a)
+        self.feature = self.fun_feature_exist(HUODONG_BTN["short_next"])
+
+    def exit_me(self):
+        self.click_btn(HUODONG_BTN["short_next"])
+
+
 class DuringFightingHuodong(PossibleSceneList):
     def __init__(self, a, *args, **kwargs):
         self.LoveUpScene = LoveUpScene
         self.FightingWin = FightingWinHuodong
-        self.FightingLose = FightingLoseZhuXian
+        self.FightingLose = FightingLoseHuodong
         self.FightingDialog = FightingDialog
         self.HaoYouMsg = HaoYouMsg
 
         scene_list = [
             LoveUpScene(a),
             FightingWinHuodong(a),
-            FightingLoseZhuXian(a),
+            FightingLoseHuodong(a),
             FightingDialog(a),
             HaoYouMsg(a),
         ]
@@ -49,8 +57,6 @@ class FightBianZuHuoDong(FightBianZuBase):
 
 class HuodongMapBase(ZhuXianBase):
     NAME = "UNDEFINED"
-    NORMAL_ON = p(764, 83, img="img/maoxian/normal_on.bmp", at=(739, 72, 788, 93))
-    HARD_ON = p(886, 82, img="img/maoxian/hard_on.bmp", at=(856, 70, 916, 93))
     XY11 = None  # Normal(1,1)的坐标，用于刷1-1
     HARD_COORD = None  # 大号刷Hard用坐标
     XY_HARD_BOSS = None
@@ -79,17 +85,17 @@ class HuodongMapBase(ZhuXianBase):
         return screen
 
     def feature_normal_or_hard(self, screen):
-        normal = self.is_exists(self.NORMAL_ON, screen=screen)
-        hard = self.is_exists(self.HARD_ON, screen=screen)
+        normal = self.is_exists(HUODONG_BTN["NORMAL_ON"], screen=screen)
+        hard = self.is_exists(HUODONG_BTN["HARD_ON"], screen=screen)
         return normal or hard
 
     def goto_hard(self):
-        self.lock_img(self.HARD_ON, elseclick=self.HARD_ON, method="sq")
-        return self
+        self.lock_img(HUODONG_BTN["HARD_ON"], elseclick=HUODONG_BTN["HARD_ON"], method="sq")
+
 
     def goto_normal(self):
-        self.lock_img(self.NORMAL_ON, elseclick=self.NORMAL_ON, method="sq")
-        return self
+        self.lock_img(HUODONG_BTN["NORMAL_ON"], elseclick=HUODONG_BTN["NORMAL_ON"], method="sq")
+
 
     def to_leftdown(self):
         time.sleep(1)
@@ -234,8 +240,8 @@ class HuodongMapBase(ZhuXianBase):
                 after = out.get_after()
                 break
             elif isinstance(out, during.FightingLose):
-                self.log.write_log("info", "你失败了.")
-                out.goto_zhuxian(type(self))
+                self.log.write_log("info", "打不过难度为VH活动Boss")
+                out.exit_me()
                 self._a.lock_home()
                 return 1
             elif isinstance(out, during.FightingDialog):
@@ -303,7 +309,10 @@ class HuodongMenu(PCRSceneBase):
                 break
             if fi.check_taofa(screen):
                 # 检查是否打满3次，可以扫荡
-                fi.easy_saodang(target_cishu="max", one_quan=20)
+                one_quan = 30
+                if boss_type == "N" or boss_type == "n":
+                    one_quan = 20
+                fi.easy_saodang(target_cishu="max", one_quan=one_quan)
                 break
             else:
                 fb: FightBianZuHuoDong = self.goto(FightBianZuHuoDong, self.fun_click(HUODONG_BTN["tiaozhan2_on"]))
@@ -320,10 +329,10 @@ class HuodongMenu(PCRSceneBase):
                         after = out.get_after()
                         break
                     elif isinstance(out, during.FightingLose):
-                        self.log.write_log("info", "你失败了.")
-                        out.goto_zhuxian(type(self))
+                        self.log.write_log("warning", "打不过难度为{boss_type}的活动Boss")
+                        out.exit_me()
                         self._a.lock_home()
-                        return 1
+                        return
                     elif isinstance(out, during.FightingDialog):
                         out.skip()
                     else:

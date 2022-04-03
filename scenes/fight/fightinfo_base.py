@@ -286,6 +286,8 @@ class FightInfoBase(PCRMsgBoxBase):
                     elif isinstance(out, A.LevelUpBox):
                         out.OK()
                         self.start_shuatu()
+                    elif isinstance(out, A.LoveUpScene):
+                        out.skip()
                     elif isinstance(out, A.TuanDuiZhanBox):
                         out.OK()
                     elif isinstance(out, A.AfterFightKKR):

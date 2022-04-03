@@ -220,6 +220,7 @@ JUQING_BTN = {
     "guanbi": p(476, 432, img="img/juqing/guanbi.bmp", at=(447, 415, 505, 448)),
     "baochouqueren": p(478, 41, img="img/juqing/baochouqueren.bmp", at=(433, 28, 523, 55)),
     "locked": p(279, 151, img="img/juqing/locked.bmp", at=(259, 133, 300, 170)),
+    "auto": p(806, 100, img="img/juqing/auto.bmp", at=(793, 90, 819, 111)),
 }
 
 LIWU_BTN = {
@@ -293,6 +294,7 @@ HUODONG_BTN = {
     "sjxz": p(img="img/huodong/sjxz.bmp", at=(436, 134, 522, 158)),
     "bossqsl": p(666, 425, img="img/huodong/bossqsl.bmp", at=(622, 416, 710, 434)),
     "long_next": p(807, 488, img="img/huodong/long_next.bmp", at=(713, 473, 902, 504)),
+    "short_next": p(846, 489, img="img/huodong/short_next.bmp", at=(811, 474, 881, 504)),
     "taofazheng_btn": p(597, 357, img="img/huodong/taofazheng_btn.bmp", at=(573, 349, 622, 366)),
     "huodongguanka": p(556, 202, img="img/huodong/huodongguanka.bmp", at=(515, 192, 598, 213)),
     "dangqianliebiao": p(660, 303, img="img/huodong/dangqianliebiao.bmp", at=(620, 293, 701, 314)),
@@ -309,7 +311,9 @@ HUODONG_BTN = {
     "fuke": p(414, 444, img="img/huodong/fuke.bmp", at=(394, 434, 434, 453)),
     "shadow_return": p(31, 29, img="img/huodong/shadow_return.bmp", at=(13, 15, 50, 44)),
     "speaker_box": p(189, 411, img="img/huodong/speaker_box.bmp", at=(175, 403, 204, 419)),
-    "shadow_help": p(920,26,img="img/huodong/shadow_help.bmp",at=(909,14,931,38)),
+    "shadow_help": p(920, 26, img="img/huodong/shadow_help.bmp", at=(909, 14, 931, 38)),
+    "NORMAL_ON": p(763, 82, img="img/huodong/normal_on.bmp", at=(740, 71, 786, 93)),
+    "HARD_ON": p(886, 82, img="img/huodong/hard_on.bmp", at=(864, 73, 909, 92)),
 
 }
 
@@ -580,7 +584,7 @@ SHOP_BTN = {
 }
 
 JUESE_BTN = {
-    "duiwu": p(img="img/juese/duiwu.bmp", at=(853, 15, 929, 35)),
+    "duiwu": p(890, 26, img="img/juese/duiwu.bmp", at=(851, 13, 931, 39)),
     "mana_ball": p(img="img/juese/mana_ball.bmp", at=(609, 21, 620, 34)),
     "first_juese": p(175, 140),
     "nine_juese": {

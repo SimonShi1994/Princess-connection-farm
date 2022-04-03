@@ -1878,8 +1878,8 @@ class ShuatuMixin(ShuatuBaseMixin):
         act_menu.shua_Boss(team_order=team_order, boss_type=boss_type)
         self.lock_home()
 
-    def tui_hd_normal(self, team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False, if_full=0,
-                      var=None):
+    def tui_hd_map(self, diff="N", team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
+                   if_full=0):
 
         self.lock_home()
         if not self.check_shuatu():
@@ -1889,13 +1889,25 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.lock_home()
             return
         XY11 = MAP._check_coord(MAP.XY11)
+        H1 = MAP._check_coord(MAP.HARD_COORD[1])
         first_time = True
         while True:
+            if self.check_shuatu() is False:
+                break
             MAP.enter()
-            MAP.goto_normal()
+            if diff == "N":
+                MAP.goto_normal()
+            else:
+                MAP.goto_hard()
             MAP.to_leftdown()
-            fi = MAP.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
-            a = fi.to_last_map()
+            if diff == "N":
+                # Normal 难度
+                fi = MAP.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
+                a = fi.to_last_map()
+            else:
+                # Hard难度
+                fi = MAP.click_xy_and_open_fightinfo(*H1, typ=FightInfoBase)
+                a = fi.to_last_map(max_tu=5)
             if a == "finish" and fi.get_upperright_stars() == 3:
                 self.log.write_log("info", "已完成推图")
                 break
@@ -1903,28 +1915,35 @@ class ShuatuMixin(ShuatuBaseMixin):
                 if first_time:
                     st = fi.easy_shoushua(team_order=team_order, one_tili=10, max_speed=2, get_zhiyuan=get_zhiyuan,
                                           if_full=if_full)  # 打完默认回fi
-                    if st != 0:
+                    if st == 1:
+                        return
+                    if st == 3:
+                        self.stop_shuatu()
                         return
                     first_time = False
                     continue
                 else:
                     st = fi.easy_shoushua(team_order="none", one_tili=10, max_speed=2, get_zhiyuan=get_zhiyuan,
                                           if_full=if_full)
-                    if st != 0:
+                    if st == 1:
                         return
+                    if st == 3:
+                        self.stop_shuatu()
+                        return
+
                 time.sleep(3)
                 self.fclick(1, 1)
                 time.sleep(1)
                 out = self.lock_img({
                     HUODONG_BTN["shadow_return"]: 1,  # 可以看到return的情况
                     HUODONG_BTN["shadow_help"]: 1,  # 信赖度
-                    MAP.NORMAL_ON: 2,  # Normal，在map了
-                    MAP.HARD_ON: 2,  # Hard，在map了
+                    HUODONG_BTN["NORMAL_ON"]: 2,  # Normal，在map了
+                    HUODONG_BTN["HARD_ON"]: 2,  # Hard，在map了
                     JUQING_BTN["caidanyuan"]: 3,  # 剧情菜单
                     HUODONG_BTN["speaker_box"]: 1,
                     HUODONG_BTN["taofazheng_btn"]: 4,
 
-                }, elseclick=(1, 1), timeout=20, is_raise=False, threshold=0.9)
+                }, elseclick=(1, 1), timeout=20, is_raise=False, threshold=0.8)
 
                 if out == 1:
                     self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
@@ -1938,11 +1957,19 @@ class ShuatuMixin(ShuatuBaseMixin):
                     HuodongMenu(self).goto_map()
                     continue
                 else:
-                    # out = False
-
                     self.chulijiaocheng(None)
                     self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
                     continue
 
         self.fclick(1, 1)
         self.lock_home()
+
+    def tui_hd_map_normal(self, team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
+                          if_full=0):
+        self.tui_hd_map(diff="N", team_order=team_order, code=code, entrance_ind=entrance_ind, get_zhiyuan=get_zhiyuan,
+                        if_full=if_full)
+
+    def tui_hd_map_hard(self, team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
+                        if_full=0):
+        self.tui_hd_map(diff="H", team_order=team_order, code=code, entrance_ind=entrance_ind, get_zhiyuan=get_zhiyuan,
+                        if_full=if_full)
