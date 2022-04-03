@@ -581,7 +581,7 @@ SHOP_BTN = {
 }
 
 JUESE_BTN = {
-    "duiwu": p(img="img/juese/duiwu.bmp", at=(853, 15, 929, 35)),
+    "duiwu": p(890, 26, img="img/juese/duiwu.bmp", at=(851, 13 ,931, 39)),
     "mana_ball": p(img="img/juese/mana_ball.bmp", at=(609, 21, 620, 34)),
     "first_juese": p(175, 140),
     "nine_juese": {
