@@ -39,6 +39,7 @@ class FightInfoBase(PCRMsgBoxBase):
                 self.log.write_log("info", "已到最后一图")
                 return "finish"
             count += 1
+            self.log.write_log("info", f"在{count}图")
             time.sleep(2)
             sc2 = self.getscreen()
             p = self.img_equal(sc1, sc2, at=at)

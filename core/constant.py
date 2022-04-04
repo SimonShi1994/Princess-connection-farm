@@ -314,6 +314,7 @@ HUODONG_BTN = {
     "shadow_help": p(920, 26, img="img/huodong/shadow_help.bmp", at=(909, 14, 931, 38)),
     "NORMAL_ON": p(763, 82, img="img/huodong/normal_on.bmp", at=(740, 71, 786, 93)),
     "HARD_ON": p(886, 82, img="img/huodong/hard_on.bmp", at=(864, 73, 909, 92)),
+    "queren": p(476, 369, img="img/huodong/queren.bmp", at=(448, 354, 505, 384)),  # 解锁BOSS扫荡
 
 }
 
