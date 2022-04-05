@@ -6,7 +6,7 @@ import os
 import requests
 from flask import Blueprint, jsonify, request
 from retrying import retry
-from PIL import Image, ImageDraw
+from PIL import Image
 from io import BytesIO
 
 from aip import AipOcr
@@ -76,6 +76,11 @@ for ocr_mode in ocr_list:
         os.system("pause")
 
 ocr_api = Blueprint('ocr', __name__)
+
+
+@ocr_api.route('/', methods=['GET'])
+def ocr_is_work():
+    return {'code': 200}
 
 
 @ocr_api.route('/local_ocr/', methods=['POST'])

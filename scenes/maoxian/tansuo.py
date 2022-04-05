@@ -26,7 +26,7 @@ class TanSuoXuanGuanBase(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "TanSuoXuanGuanBase"
-        self.feature = self.fun_feature_exist(MAIN_BTN["tansuo_sytzcs"])
+        self.feature = self.fun_feature_exist(MAIN_BTN["tansuo_clock"])
 
     def back(self) -> "TanSuoMenu":
         return self.goto(TanSuoMenu, self.fun_click(MAIN_BTN["tansuo_back"]))
@@ -101,7 +101,7 @@ class TanSuoInfoBox(FightInfoBase):
             return self.tiaozhan(team_order)
 
     def saodang_all(self):
-        self.set_saodang_to_max()  #
+        # self.set_saodang_to_max()  #
         # for _ in range(10):
         #     self.click(MAOXIAN_BTN["saodang_plus"])
         S = self.goto_saodang()
@@ -117,7 +117,7 @@ class TanSuoInfoBox(FightInfoBase):
         T.select_team(team_order)
         F = T.goto_fight()
         F.set_auto(1)
-        F.set_speed(1)
+        F.set_speed(2, max_level=2)
         D = F.get_during()
         while True:
             time.sleep(1)

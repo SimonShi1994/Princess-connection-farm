@@ -4,7 +4,7 @@ import time
 import cv2
 
 from DataCenter import LoadPCRData
-from core.constant import JUESE_BTN, RANKS_DICT, MAIN_BTN, DXC_ELEMENT, MAOXIAN_BTN
+from core.constant import JUESE_BTN, RANKS_DICT, MAIN_BTN, DXC_ELEMENT, MAOXIAN_BTN, JUQING_BTN
 from core.cv import UIMatcher
 from core.pcr_checker import PCRRetry, ContinueNow
 from core.pcr_config import debug, use_pcrocr_to_detect_rank
@@ -189,6 +189,56 @@ class CharBase(SevenBTNMixin):
                 self._a.restart_this_task()
         return screen
 
+    def loveplus(self, read_story=False):
+        if self.is_exists(img="img/juese/red_mid.bmp", method="sq", at=(53, 331, 61, 341)):  # 好感度剧情红点
+            self.click_btn(JUESE_BTN["hgdjq"], until_appear=JUESE_BTN["juesejuqing"])
+            self.click_btn(JUESE_BTN["hgdts"], until_appear=JUESE_BTN["zengli"])
+            if self.is_exists(JUESE_BTN["haoganzuida"]):
+                self.click(367, 473)  # 取消
+            else:
+                self.click(651, 214)  # Max
+                self.click_btn(JUESE_BTN["zengsong"])
+                time.sleep(1)
+                if self.is_exists(JUESE_BTN["donghuaqueren"]):
+                    self.click(349, 260)
+                    if not self.is_exists(JUESE_BTN["ticked"].img, at=(362, 330, 416, 385)):
+                        self.click(386, 353)  # 勾选
+                        self.click(589, 425)  # 确认
+                self.lock_img(JUESE_BTN["juqingjiesuo"], at=(429, 22, 525, 257))
+                sc = self.getscreen()
+                self.click_img(img=JUESE_BTN["guanbi"].img, at=(418, 278, 534, 492), screen=sc)  # 关闭
+            self.lock_img(JUESE_BTN["juesejuqing"])
+            self.log.write_log("info", "无法再提升好感度")
+
+            if read_story:
+                while True:
+                    time.sleep(1)
+                    lst = self.img_where_all(img="img/juqing/new_content.bmp", method="sq", at=(245, 98, 320, 442))
+                    if len(lst) > 0:
+                        x = lst[0] + 383
+                        y = lst[1] + 50
+                        '''
+                        280, 246
+                        663, 297
+                        '''
+                        self.click(x, y)  # 进入剧情
+                        self._a.guojuqing(story_type="haogandu")
+                        continue
+                    if self.is_exists(JUESE_BTN["lxydjq"]):
+                        self._a.guojuqing(story_type="haogandu")
+                        continue
+                    if self.is_exists(JUESE_BTN["lxydjq"].img, at=(394, 73, 564, 100)):
+                        self._a.guojuqing(story_type="haogandu")
+                        continue
+                    if self.is_exists(JUESE_BTN["wujuqing"]):
+                        self.log.write_log("info", "好感剧情已读完")
+                        self.fclick(1, 1)
+                        break
+                    else:
+                        self.log.write_log("info", "无可读好感剧情")
+                        self.fclick(1, 1)
+                        break
+
     def goto_zhuangbei(self) -> "CharZhuangBei":
         return self.goto(CharZhuangBei, self.fun_click(JUESE_BTN["equip_unselected"]), before_clear=False)
 
@@ -201,17 +251,18 @@ class CharBase(SevenBTNMixin):
     def goto_menu(self) -> "CharMenu":
         return self.goto(CharMenu, self.fun_click(JUESE_BTN["return_menu"]))
 
-    def get_shoucang_state(self, screen=None):
-        # True: 收藏了；  False： 未收藏
-        if screen is None: screen = self.getscreen()
-        A = self.img_prob(JUESE_BTN["yishoucang"], screen=screen)
-        B = self.img_prob(JUESE_BTN["weishoucang"], screen=screen)
-        return A > B
-
-    def set_shoucang_state(self, state: bool, screen=None):
-        # True - 收藏； False - 取消收藏
-        if self.get_shoucang_state(screen) != state:
-            self.click(JUESE_BTN["yishoucang"], post_delay=0.5)
+    # 新版本收藏的位置改变了
+    # def get_shoucang_state(self, screen=None):
+    #     # True: 收藏了；  False： 未收藏
+    #     if screen is None: screen = self.getscreen()
+    #     A = self.img_prob(JUESE_BTN["yishoucang"], screen=screen)
+    #     B = self.img_prob(JUESE_BTN["weishoucang"], screen=screen)
+    #     return A > B
+    #
+    # def set_shoucang_state(self, state: bool, screen=None):
+    #     # True - 收藏； False - 取消收藏
+    #     if self.get_shoucang_state(screen) != state:
+    #         self.click(JUESE_BTN["yishoucang"], post_delay=0.5)
 
     def get_level(self, screen=None):
         if screen is None: screen = self.getscreen()
@@ -358,6 +409,7 @@ class CharZhuangBei(CharBase):
     @PCRRetry(name="re_qianghua")
     def do_zidongqianghua(self, buy_sucai=True, do_shuatu=True, do_tuitu=False, teamorder="zhanli", getzhiyuan=False):
         # Return 1: 因为没体力而终止了
+        # Return 2: 因为没次数而终止了
         self.fclick(1, 1)
         if self.get_enhance_status() == 0:
             self.log.write_log("info", "已经不能再自动强化了。")
@@ -365,7 +417,11 @@ class CharZhuangBei(CharBase):
         out = self.click_btn(JUESE_BTN["zdqh_1"], until_appear={
             JUESE_BTN["zdqh_ok"]: 1,
             JUESE_BTN["tuijiancaidan"]: 2,
-        })
+        }, retry=3, is_raise=False)
+        if out is False:
+            self.log.write_log("info", "尝试点了自动强化，但好像没有反应？")
+            self.fclick(1, 1)
+            return
         if out == 1:
             self.log.write_log("info", "进行等级、穿衣的升级。")
             self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
@@ -374,12 +430,21 @@ class CharZhuangBei(CharBase):
             sc = self.getscreen()
             A = self.img_prob(JUESE_BTN["tjqh_zb"], screen=sc)  # 装备、专武升星
             B = self.img_prob(JUESE_BTN["tjqh_gq"], screen=sc)  # 刷关
+            if A < 0.1 and B < 0.1:
+                self.log.write_log("warning", "为什么啥都没有呢……跳过该角色……")
+                self.fclick(1, 1)
+                return
             if A > B:
                 self.log.write_log("info", "进行装备升星或专武升级。")
                 out2 = self.lock_img({
                     JUESE_BTN["zdzbqhqr"]: 1,
                     JUESE_BTN["scgm_and_zdzbqhqr"]: 2
-                }, elseclick=(477, 201), elsedelay=8)  # 点第一个
+                }, elseclick=(477, 201), elsedelay=8, retry=3, is_raise=False)  # 点第一个
+                if out2 is False:
+                    self.log.write_log("warning", "为什么什么都点不到呢……跳过该角色……")
+                    self.fclick(1, 1)
+                    return
+
                 if out2 == 1:
 
                     self.click_btn(JUESE_BTN["zdzbqhqr_ok"], until_disappear=JUESE_BTN["zdzbqhqr"])
@@ -402,18 +467,35 @@ class CharZhuangBei(CharBase):
                     fi: FightInfoBase = self.goto(FightInfoBase, gotofun=self.fun_click(477, 201))
                     stars = fi.get_upperright_stars()
                     if stars == 3:
-                        fi.easy_saodang(target_cishu=6, one_tili=-1, check_cishu=False)
-                        self.fclick(1, 1)
-                        raise ContinueNow(name="re_qianghua")
+                        out = fi.easy_saodang(target_cishu=6, one_tili=-1, check_cishu=True)
+                        if out == 2:
+                            self.log.write_log("info", "没有挑战次数了，放弃这个角色的装备刷取……")
+                            self.fclick(1, 1)
+                            return 2
+                        elif out == 1:
+                            self.log.write_log("info", "体力不足了，跳过该角色。")
+                            self.fclick(1, 1)
+                            return 1
+                        else:
+                            self.fclick(1, 1)
+                            raise ContinueNow(name="re_qianghua")
                     else:
                         if do_tuitu:
                             self.log.write_log("info", "需要推图，准备推图")
-                            out = fi.easy_shoushua(team_order=teamorder, one_tili=-1, check_cishu=False,
-                                                   max_speed=1, get_zhiyuan=getzhiyuan)
+                            out = fi.easy_shoushua(team_order=teamorder, one_tili=-1, check_cishu=True,
+                                                   max_speed=2, get_zhiyuan=getzhiyuan)
                             if out == 1:
                                 self.log.write_log("info", "由于挑战失败了，跳过这个角色的装备升级。")
                                 self.fclick(1, 1)
                                 return
+                            elif out == 2:
+                                self.log.write_log("info", "没有挑战次数了，放弃这个角色的装备刷取……")
+                                self.fclick(1, 1)
+                                return 2
+                            elif out == 3:
+                                self.log.write_log("info", "体力不足了，跳过该角色。")
+                                self.fclick(1, 1)
+                                return 1
                             else:
                                 self.fclick(1, 1)
                                 raise ContinueNow(name="re_qianghua")  # 再次强化看看能不能直接穿了
@@ -444,6 +526,7 @@ class CharKaihua(CharBase):
             return False
 
     def get_stars(self, screen=None):
+        # TODO: Can not recognize Changed Stars
         if screen is None: screen = self.getscreen()
         from core.constant import PCRelement as p
         if self.is_exists(JUESE_BTN["liuxing_info"], screen=screen):
@@ -513,15 +596,15 @@ class CharZhuanwu(CharBase):
             if self.is_exists(JUESE_BTN["zhuanwu_equipable"], method="sq", threshold=0.95, screen=screen):
                 return 2
             else:
-                if self.is_exists(img="img/juese/red_mid.bmp", at=(660, 409, 668, 418), screen=screen):
+                if self.is_exists(img="img/juese/red_mid.bmp", at=(747, 409, 755, 418), screen=screen):
                     # 解放红点亮
-                    if self.is_exists(img="img/juese/red_mid.bmp", at=(879, 409, 887, 418), screen=screen):
+                    if self.is_exists(img="img/juese/red_mid.bmp", at=(892, 409, 901, 418), screen=screen, method="sq"):
                         # 强化红点亮
                         return 5
                     else:
                         return 3
                 else:
-                    if self.is_exists(img="img/juese/red_mid.bmp", at=(879, 409, 887, 418), screen=screen):
+                    if self.is_exists(img="img/juese/red_mid.bmp", at=(892, 409, 901, 418), screen=screen, method="sq"):
                         # 强化红点亮
                         return 4
                     else:
@@ -559,9 +642,17 @@ class CharZhuanwu(CharBase):
                 self.log.write_log('info', "已达到目标专武等级")
                 return 2
 
+    def yijianqianghua(self):
+        self.click_btn(JUESE_BTN["yijianqianghua"], until_appear=JUESE_BTN["wear_confirm"])
+        self.click(655, 230)  # 点击MAX
+        if not self.is_exists(JUESE_BTN["ticked"]):
+            self.click(386, 410)  # 勾上
+        self.click_btn(JUESE_BTN["wear_confirm"])
+        time.sleep(3)  # 等动画
+
     def levelup_zhuanwu(self):
         while True:
-            if self.is_exists(img="img/juese/red_mid.bmp", at=(879, 409, 887, 418)):
+            if self.is_exists(img="img/juese/red_mid.bmp", at=(892, 409, 901, 418), method="sq"):
                 self.click_btn(JUESE_BTN["levelup_zhuanwu"], until_appear=JUESE_BTN["qhscxz"])
                 at = (615, 389, 694, 412)
                 sc1 = self.getscreen()

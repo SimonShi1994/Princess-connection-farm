@@ -1,6 +1,6 @@
 import time
 
-from core.constant import MAOXIAN_BTN, FIGHT_BTN, DXC_ELEMENT, HAOYOU_BTN
+from core.constant import MAOXIAN_BTN, FIGHT_BTN, DXC_ELEMENT, HAOYOU_BTN, JUESE_BTN
 from scenes.scene_base import PCRMsgBoxBase
 import random
 
@@ -17,7 +17,7 @@ class FightBianZuBase(PCRMsgBoxBase):
         """
         按order进行选择
         :param order:
-            order in ["zhanli","dengji","xingshu","shoucang"]
+            order in ["zhanli","dengji","xingshu","shoucang","none"]
         :param change:
             0-不换人 1-人全部换下不上 2-默认：全部换人 3 - 不下人直接上
         """
@@ -67,11 +67,14 @@ class FightBianZuBase(PCRMsgBoxBase):
         return '-' in team_order
 
     def clear_team(self):
-        self.select_by_sort("zhanli",change=1)
+        self.select_by_sort("zhanli", change=1)
+
     def select_team(self, team_order="zhanli", change=2):
         """
         使用队伍 "A-B" 形式，表示编组A选择B。
         若为 order指令：则按以下order排序后取前5.
+            - "none" 不变化
+            - "nobody" 不上人（只上支援）
             - "zhanli" 按战力排序
             - "dengji" 按等级排序
             - "xingshu" 按星数排序
@@ -82,6 +85,8 @@ class FightBianZuBase(PCRMsgBoxBase):
             return self.select_by_sort(team_order, change)
         elif team_order in ["none", ""]:
             return None
+        elif team_order == "nobody":
+            self.select_by_sort("none", 1)
         else:
             A, B = team_order.split("-")
             A = int(A)
@@ -91,14 +96,61 @@ class FightBianZuBase(PCRMsgBoxBase):
     def get_fight_current_member_count(self):
         return self._a.get_fight_current_member_count()
 
-    def get_zhiyuan(self, assist_num=1,force_haoyou=False,if_full=0):
+    def sort_down(self):
+        if self.is_exists(FIGHT_BTN["sort_down"]):
+            return
+        else:
+            self.click_btn(FIGHT_BTN["sort_up"], until_appear=FIGHT_BTN["sort_down"])
+        time.sleep(1)
+
+    def sort_by(self, cat=None):
+        cor_dict = {
+            'level': (69, 137),
+            'zhanli': (287, 137),
+            'rank': (508, 137),
+            'star': (727, 137),
+            'atk': (69, 193),
+            'mat': (287, 193),
+            'def': (508, 193),
+            'mdf': (727, 193),
+            'hp': (69, 251),
+            'zhuanwu': (287, 251),
+            'six': (510, 252)
+        }
+        # 兼容
+        name_dict = {
+            "dengji": "level",
+            "xingshu": "star",
+            "shoucang": "fav",
+        }
+        if cat in name_dict:
+            cat = name_dict[cat]
+        if cat is None:
+            return
+        else:
+            self.click_btn(FIGHT_BTN["sort_by"], until_appear=JUESE_BTN["fenlei"])
+            time.sleep(1)
+            self.click(cor_dict.get(cat)[0], cor_dict.get(cat)[1])
+            # 点击分类类型
+            time.sleep(1)
+            self.click(597, 477)
+            # 点击确认
+            time.sleep(1)
+
+    def get_zhiyuan(self, assist_num=1, force_haoyou=False, if_full=0, zhiyuan_sort="zhanli"):
         # 从左到右获取一个可能的支援
         # out: 0- Success 1- 人满 2- 等级不够 3- 无支援人物 4- 无好友
         # force_haoyou: 只借好友，不然不借
         # if full: 人满时？ -1： 返回人满；  0： 随机下一个人  1~5： 下第n个人
+        # zhiyuan_sort: 排序方式，方便确认想借的角色
         out = 0
         if self.click_btn(DXC_ELEMENT["zhiyuan_white"], until_appear=DXC_ELEMENT["zhiyuan_blue"],
-                            retry=3, wait_self_before=True):
+                          retry=3, wait_self_before=True):
+            if zhiyuan_sort is not None:
+                self.sort_down()
+                self.sort_by(cat=zhiyuan_sort)
+                self.log.write_log("info", f"已经按{zhiyuan_sort}排序！")
+
             if force_haoyou and not self.is_exists(HAOYOU_BTN["haoyou_sup"]):
                 out = 4
                 self.log.write_log("info", "没有好友了，不借了！")
@@ -113,12 +165,12 @@ class FightBianZuBase(PCRMsgBoxBase):
                             choose = random.choice([1, 2, 3, 4, 5])
                         else:
                             choose = if_full
-                        self.click(FIGHT_BTN["empty"][choose], pre_delay=1,post_delay=0.5)
+                        self.click(FIGHT_BTN["empty"][choose], pre_delay=1, post_delay=0.5)
                         if if_full == 0:
                             self.log.write_log("info", f"已经人满，随机换下第{choose}人！")
                         else:
                             self.log.write_log("info", f"已经人满，换下第{choose}人！")
-                        now_count-=1
+                        now_count -= 1
                 for c in range(assist_num, assist_num + 2):
                     if c <= 8:
                         self.click_juese_by_rc(1, c)

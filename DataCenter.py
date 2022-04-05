@@ -598,6 +598,14 @@ def ZB_ST_LACK(args):
                 num, _, _ = v
                 if k in data.EQU_ID:
                     store[data.EQU_ID[k]] = num
+            store = data.calc_equips_decompose(store)
+            # print("STORE:")
+            # for k,v in store.items():
+            #     print(data.get_name(k),":",v)
+            need_equip = data.calc_equips_decompose(need_equip)
+            # print("NEED_EQUIP:")
+            # for k,v in need_equip.items():
+            #     print(data.get_name(k),":",v)
             lack = data.calc_equips_decompose(need_equip, store)
         else:
             lack = data.calc_equips_decompose(need_equip)
@@ -658,10 +666,10 @@ def ZB_ST_ADVICE(args, verbose=True):
         if k in data.C_ID and "track_rank" in v and "track_zb" in v \
                 and "rank" in v and "zb" in v:
             ne = data.calc_rankup_equip(data.C_ID[k], v["rank"], v["zb"], v["track_rank"], v["track_zb"])
-            for n in list(ne.keys()):
-                lv = data.EInfo[n]['plevel']
-                if lv < min_rare or lv > max_rare:
-                    ne.pop(n)
+            # for n in list(ne.keys()):
+            #     lv = data.EInfo[n]['plevel']
+            #     if lv < min_rare or lv > max_rare:
+            #         ne.pop(n)
             ne2 = data.calc_equips_decompose(ne)
             for n in ne2:
                 js_need.setdefault(k, {})
@@ -679,10 +687,19 @@ def ZB_ST_ADVICE(args, verbose=True):
             num, _, _ = v
             if k in data.EQU_ID:
                 store[data.EQU_ID[k]] = num
+        store = data.calc_equips_decompose(store)
+        need_equip = data.calc_equips_decompose(need_equip)
         lack = data.calc_equips_decompose(need_equip, store)
     else:
         lack = data.calc_equips_decompose(need_equip)
 
+    # Do Rare Filter
+    new_lack = {}
+    for k, v in lack.items():
+        plevel = data.EInfo[k]["plevel"]
+        if min_rare <= plevel <= max_rare:
+            new_lack[k] = v
+    lack = new_lack
     prob_map = data.make_normal_map_prob(max_tu)
     map_js = {}
     for k, v in zb_js.items():

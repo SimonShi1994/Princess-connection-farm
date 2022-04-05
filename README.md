@@ -1,6 +1,6 @@
- <img src="webclient/src/assets/logo.jpg" width = "80" height = "80" alt="LOGO" align=center />
+ <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220209
+# Princess connection 公主连结农场脚本v2.8.20220316.1
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -8,9 +8,9 @@
 
 此项目为国服公主连结脚本，使用opencv图像识别进行按钮分析。本项目基于公主连接opencv高级脚本(https://github.com/bbpp222006/Princess-connection) 开发。
 
-**支持模拟器多开**
+*把个人时间花在其他有用的地方，让脚本帮你养老婆养女儿*
 
-**使用多进程优化+异步Python性能**
+**使用多进程+异步线程而且支持模拟器多开**
 
 **支持异常报错卡住自动重启**
 
@@ -78,18 +78,36 @@
 - [x] 副本扫荡
 - [x] 初始化
 - [x] 自动推图
-- [x] 自动升级  
+- [x] 自动升级
 - [x] 借人推图
+- [x] 小号刷活动图1-1
+- [x] 大号打活动图Hard，VHBoss
 
 ## :globe_with_meridians:环境
 
 方法1-通过python venv
 
-搭配venv+包管理器，下载
+**本地ocr仅有本地4**
 
-https://www.123pan.com/s/dDG9-Z83WA提取码:rcUK
+- 完整包（Python3.8.10便携包+依赖包）
 
-**安装教程**与**python3.8.10安装包**均在压缩包内，请解压到本项目下确保在项目下有` \.venv\Scripts`该目录结构  ~~不要套娃成这样` \.venv\.venv\Scripts`~~
+  解压即用，简单方便
+
+  https://www.123pan.com/s/dDG9-P03WA
+  
+  提取码:73nD
+
+- 单体依赖包（搭配venv+包管理器）
+
+  适合管理，方便依赖升级
+
+  https://www.123pan.com/s/dDG9-Z83WA
+  
+  提取码:rcUK
+  
+  **安装教程**与**python3.8.10安装包**均在压缩包内
+
+请解压到本项目下确保在项目下有` \.venv\Scripts`该目录结构  ~~不要套娃成这样` \.venv\.venv\Scripts`~~
 
 
 
@@ -99,9 +117,13 @@ https://www.123pan.com/s/dDG9-Z83WA提取码:rcUK
 
 - **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
 
-- ~~【不推荐】本地OCR 1/2 需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe) 或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)~~
+- ~~【不推荐】本地OCR 1/2
+  需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe)
+  或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)~~
 
 - 自行打开`requirements.txt`确认依赖无误
+
+  * 注意！requirements.txt中含有四种OCR依赖，默认均被注释。你需要先根据你的需求取消其中几种的注释，再进行依赖安装。
 
 - 先cd进项目目录下
 
@@ -117,11 +139,11 @@ https://www.123pan.com/s/dDG9-Z83WA提取码:rcUK
   pip install -r requirements.txt -i https://pypi.douban.com/simple
   ```
 
-
-
 ~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。~~（建议先试一下不设置的情况
 
-建议使用雷电模拟器4但不意味着其他模拟器无法使用，本项目中均以雷电模拟器4为示例。
+~~建议使用雷电模拟器4但不意味着其他模拟器无法使用，本项目中均以雷电模拟器4为示例。~~
+
+目前来看，雷电4，蓝叠，雷神模拟器均可以使用。一般来说，只要支持adb连接的模拟器都可以使用。
 
 **重要：模拟器分辨率要求540*960**
 
@@ -144,7 +166,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 - 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
 
-- 使用OCR相关的服务，必须启动app。使用2021-01-23后的版本程序默认自动启动app。
+- 使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
 
 - 关于本地OCR1删库问题，可以使用清华源安装
 
@@ -156,7 +178,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 - 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 
-- 出现`“No module named 'XXX'`，请在项目目录执行`pip install -r requirements.txt`重新安装依赖
+- 出现`“No module named 'XXX'`，请在项目目录执行`pip install -r requirements.txt`重新安装依赖，或手动执行`pip install XXX`
 
 - 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
 
@@ -198,7 +220,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - [x] 简化Schedule操作模式
 - [ ] WebGUI界面
 - [x] 提高刷图效率
-- [ ] 刷活动本
+- [x] 刷活动本
 - [x] 女神祭
 - [ ] 跳过18图切图动画
 
@@ -212,6 +234,106 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2022/03/16 By UVJkiNTQ, TheAutumnOfRice
+- BUG修复
+ - 修复好友管理无法点击的BUG
+ - 修复大号自动规划刷图中max_tu参数无效的问题
+ - 修复data中刷图规划min-rare,max-rare设置项无效的问题，以及无视成装的问题
+ - 修复活动1-1的一些BUG
+ - 修复推图中遇到好感度提升时崩溃的BUG
+- 性能优化
+ - 优化扭蛋判断
+ - 探索推图现在也能四倍速了
+ - 刷图规划现在限制最多计算时间为30s了
+- 框架更新
+ - 新增活动插片部分功能
+ - 移除了s8的无效参数count，新增一个torank参数，可用于控制rank上限（穿满不强化）
+
+2022/03/11 By UVJkiNTQ
+
+- BUG修复
+ - 修复s8自动强化需要刷图时退出时的逻辑错误以及遇到Hard图次数不足时死循环的问题
+ - 修复settings的选项偏移
+ - 修复Normal图存在N2/N3时图号识别的问题
+- 框架更新
+ - 增加了手动刷图时，可以按分类排序后再选择（比如按攻击力排序来借6⭐猫拳）
+ 
+ 
+2022/03/07 By CyiceK
+- 优化验证码逻辑 rc5
+
+2022/03/06 By CyiceK, TheAutumnOfRice, UVJkiNTQ
+- 功能更新
+  - 为s8加入新选项，可一键升满好感并阅读剧情
+- 性能优化
+  - 优化验证码逻辑，优化timeout
+- BUG修复
+  - 修复setting偏移
+  - 修复d1 无法加速和auto
+  - 修复更新程序方式1无法新建文件夹bug
+  - 修复自动升级中误点“仅强化经验和等级”的问题
+  - 修复自动升级中点击自动强化后弹出空对话框然后卡住的问题
+  - 修复`s13`大号刷VHBoss中刷成NormalBoss的BUG
+  - 修复adb命令执行失败后线程崩溃的BUG
+- 框架更新
+  - 添加了scene内借人刷图选择换下几号位的选项
+
+2022/03/04 By TheAutumnOfRice，CyiceK
+
+- 功能更新
+  - 新增大号刷活动Hard`s12`，大号刷活动VHBoss`s13`
+  - 新增小号刷活动1-1`s14`
+  - 通用刷图`s9`允许设置Hard,VH本的次数至六次（可以买次数了）
+- 性能优化
+  - 优化可推图探索的性能
+  - 优化adb连接策略，使用全局adb重连防止多开时自相残杀（`global_adb_restart`）
+  - 模拟器自启动时会默认不断尝试重连adb（`restart_adb_during_emulator_launch_delay`）
+  - 模拟器自动控制现在支持雷电、雷神、蓝叠（未测试）
+- BUG修复
+  - 修复自动升级试图推图时一直体力不足的BUG
+  - 进一步修复了开局卡验证码的情况
+  - 修复了自动关闭公主连结和自动关闭模拟器冲突的BUG
+  - 修复了`s14`显示找不到活动的BUG
+  - 修复了precheck中重启导致第二次precheck失效的BUG
+- 框架更新
+  - 处理教程现在可以跳过剧情动画了
+  - Automator现在可通过self.output_msg_fun与父进程通信了
+
+2022/03/02 By TheAutumnOfRice，CyiceK
+
+- 增加了自动升级中自动强化亮着但无法点击时的应对措施
+- 增加了自动升级中刷图遇到Hard图时次数不足的应对措施
+- easy_shoushua, easy_saodang函数增加对无穷次数的识别
+- 修复了2022年2月没有29天的BUG （
+- 修复d1的已知bug
+- 修复莫名其妙卡logo的问题
+- 更替验证码刷新方式
+- 修复了`d9`图6无法进入的BUG
+- 修复了快速截图下有装备领取时家园领取不领取体力的BUG
+
+2022/02/28 By TheAutumnOfRice, UVJkiNTQ
+
+- 坐标更新
+  - 新增VH20-3~VH21-2
+  - 更改了地下城入口坐标
+  - 新增ex3地下城坐标
+- 新版本新增功能
+  - 主线战斗速度提高到四倍速
+  - JJC白给`j1` `j2`默认尝试跳过战斗
+- 新版本适应性修复
+  (以下关于地下城的修复仅测试通用地下城`d5`)
+  - 修复地下城入口确认框的feature偏移
+  - 修复了主菜单画面的feature偏移
+  - 修复了地下城内部UI偏移
+  - 修复战斗胜利界面feature偏移
+  - 修复编组选择中纵向按钮坐标偏移
+- 框架升级 
+  - ocr_int, ocr_A_B允许设定字符集参数了
+
+2022/02/20 By UVJkiNTQ
+
+- 修复30图坐标偏移
+
 2022/02/09 By UVJkiNTQ
 
 - r3免费十连修复，修复s8的变更导致的错误。

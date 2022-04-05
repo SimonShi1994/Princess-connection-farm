@@ -28,7 +28,7 @@ from core.pcr_config import baidu_secretKey, baidu_apiKey, baidu_ocr_img, anticl
     use_pcrocr_to_process_basic_text
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, disable_timeout_raise, ignore_warning, \
     force_fast_screencut, adb_dir, clear_traces_and_cache, debug_record_size, debug_record_filter
-from core.safe_u2 import SafeU2Handle, safe_u2_connect, timeout
+from core.safe_u2 import SafeU2Handle, safe_u2_connect, timeout, run_adb
 from core.usercentre import AutomatorRecorder
 from core.utils import make_it_as_number_as_possible
 from scenes.errors import PCRError
@@ -180,7 +180,17 @@ class BaseMixin:
         self.default_header = True
         self.prechecks = {}
         self.enable_precheck = True
+        self.output_msg_fun = lambda x: print("OutputMsg:", x)
         # self.register_basic_ES()
+
+    def request_restart_adb(self):
+        # 请求全局adb重启的函数
+        self.output_msg_fun({"action": {
+            "serial": self.address,
+            "action": "restart_adb",
+        }})
+        time.sleep(5)
+        run_adb("devices")
 
     def restart_this_task(self):
         """
@@ -290,8 +300,8 @@ class BaseMixin:
         self.appRunning = False
         self.address = address
         if address != "debug":
-            self._d = safe_u2_connect(address)
-            self.d = SafeU2Handle(self._d)
+            self._d = safe_u2_connect(address, adb_restart_fun=self.request_restart_adb)
+            self.d = SafeU2Handle(self._d, adb_restart_fun=self.request_restart_adb)
             self.init_fastscreen()
 
     @DEBUG_RECORD
@@ -639,6 +649,15 @@ class BaseMixin:
         return UIMatcher.img_all_where(screen, img, threshold, at, method)
 
     @DEBUG_RECORD
+    def img_findgaoliang(self, img):
+        """
+        :param img: img需是处理好的
+        """
+        if img is None:
+            img = self.getscreen()
+        return UIMatcher.find_gaoliang(img)
+
+    @DEBUG_RECORD
     def img_where_all_prob(self, img, threshold=0.9, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED,
                            preprocess=PreProcesses(), apply_screen=True):
         """
@@ -755,7 +774,7 @@ class BaseMixin:
         return True
 
     @DEBUG_RECORD
-    def wait_for_loading(self, screen=None, delay=0.5, timeout=30):
+    def wait_for_loading(self, screen=None, delay=0.5, timeout=90):
         """
         等待黑屏loading结束
         :param screen: 设置为None时，截图，否则使用screen
@@ -923,7 +942,11 @@ class BaseMixin:
         if self.enable_precheck:
             for func in self.prechecks.values():
                 self.enable_precheck = False
-                screen = func(screen)
+                try:
+                    screen = func(screen)
+                except Exception as e:
+                    self.enable_precheck = True
+                    raise e
                 self.enable_precheck = True
         return screen
 
@@ -1280,7 +1303,7 @@ class BaseMixin:
 
     @timeout(300, "处理教程时间过长，超过5分钟！")
     @DEBUG_RECORD
-    def chulijiaocheng(self, turnback="shuatu"):  # 处理教程, 最终返回刷图页面
+    def chulijiaocheng(self, turnback: Optional[str] = "shuatu"):  # 处理教程, 最终返回刷图页面
         """
         这个处理教程函数是给chushihua.py用的
 
@@ -1292,12 +1315,13 @@ class BaseMixin:
         都没有就点边界点
         # 有取消点取消
         :turnback:
-            shuatu: 返回刷图页面
+            "shuatu": 返回刷图页面
             None: 不返回任何页面
         :return:
         """
         # 2021-1-10 FC改写
         count = [0]
+        process_count = [0]
         FC = self.getFC().getscreen()
 
         def f(screen):
@@ -1350,9 +1374,15 @@ class BaseMixin:
                 for _ in range(3):
                     self.click(390, 369)
                     time.sleep(1)
+            elif self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen_shot_):
+                self.click(JUQING_BTN["tiaoguo_2"])
             else:
-                for _ in range(6):
-                    self.click(1, 100)  # Speed Up Click
+                process_count[0] += 1
+                if process_count[0] % 3 == 0:
+                    for _ in range(6):
+                        self.click(1, 100)  # Speed Up Click
+                else:
+                    self.click(1, 100)
             count[0] = 0
 
         FC.add(Checker(f))
@@ -1555,9 +1585,11 @@ class BaseMixin:
             adb_dir, self.address, _get_imei(20)))
         # print("》》》匿名完毕《《《")
         if clear_traces_and_cache:
+            # self.d.app_stop("com.bilibili.priconne")
             # 清除痕迹和缓存
             clear_list = ["/storage/emulated/0/bilibili_data", "/storage/emulated/0/bilibili_time",
                           "data/data/com.bilibili.priconne/databases", "data/data/com.bilibili.priconne/shared_prefs"]
+            # "data/data/com.bilibili.priconne/shared_prefs"
             not_clear_file = ["*.playerprefs.xml", "config_data.xml", "agree_license_info.xml"]
             for i in clear_list:
                 if i == clear_list[3]:
@@ -1565,13 +1597,14 @@ class BaseMixin:
                         run_cmd(
                             f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force {j} .. "
                                                                                            f"&& exit" + "'")
-                run_cmd(
-                    f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
-                if i == clear_list[3]:
-                    for j in not_clear_file:
-                        run_cmd(
-                            f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force ../{j} "
-                                                                                           f"&& exit" + "'")
+                else:
+                    run_cmd(
+                        f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
+                # if i == clear_list[3]:
+                #     for j in not_clear_file:
+                #         run_cmd(
+                #             f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force ../{j} "
+                #                                                                            f"&& exit" + "'")
 
             clear_list2 = ["time_*", "data_*"]
             for i in clear_list2:
@@ -1581,8 +1614,20 @@ class BaseMixin:
                                                                                    f"{i} && exit" + "'")
             run_cmd(
                 f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
-                                                                               '/lib && chmod 000 libsecsdk.so'
+                                                                               '/lib && chmod 444 libsecsdk.so'
                                                                                ' && exit' + "'")
+            run_cmd(
+                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
+                                                                               '/lib && chmod 444 libtersafe2.so'
+                                                                               ' && exit' + "'")
+            run_cmd(
+                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
+                                                                               '/lib && chmod 755 libweibosdkcore.so'
+                                                                               ' && exit' + "'")
+            # time.sleep(3)
+            # self.d.session("com.bilibili.priconne")
+            # self.d.app_wait("com.bilibili.priconne")
+
             # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "time_*" | xargs rm - rf && exit"')
             # run_cmd(f'cd {adb_dir} && adb -s {self.address} shell "find. - name "data_*" | xargs rm - rf && exit"')
             # print("》》》匿名完毕《《《")
@@ -1632,7 +1677,6 @@ class BaseMixin:
             "本地2": self.ocr_local2,
             "本地3": self.ocr_local3,
             "本地4": self.easyocr_ocr,
-            "PCR定制": self.pcrocr_ocr,
             "pcr": self.pcrocr_ocr,  # 不需要打中文，太麻烦了
         }
 
@@ -1871,13 +1915,15 @@ class BaseMixin:
             self.log.write_log(level='error', message='PCR特化OCR识别失败，原因：%s' % ocr_error)
             return -1
 
-    def ocr_int(self, x1, y1, x2, y2, screen_shot=None):
+    def ocr_int(self, x1, y1, x2, y2, screen_shot=None, allow_int=None):
         """
         获取整型数字，不能包含 /
         :arg
         """
+        if allow_int is None:
+            allow_int = "0123456789"
         if use_pcrocr_to_process_basic_text:
-            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr="0123456789")
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr=allow_int)
         else:
             out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, size=10.0, credibility=0.9, type='number',
                                   blur='gussian')
@@ -1894,7 +1940,9 @@ class BaseMixin:
         out = make_it_as_number_as_possible(out)
         return int(out)
 
-    def ocr_A_B(self, x1, y1, x2, y2, screen_shot=None):
+    def ocr_A_B(self, x1, y1, x2, y2, screen_shot=None, allow_AB=None):
+        if allow_AB is None:
+            allow_AB = "0123456789"
         def ABfun(s):
             assert s != "-1", "什么都没有检测到"
             assert "/" in s, "字符串中应该有/"
@@ -1904,7 +1952,7 @@ class BaseMixin:
             return a, b
 
         if use_pcrocr_to_process_basic_text:
-            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr="0123456789/")
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr="/"+allow_AB)
         else:
             out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, language='eng')
         try:

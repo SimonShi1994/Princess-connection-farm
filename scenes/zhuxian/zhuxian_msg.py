@@ -8,7 +8,6 @@ if TYPE_CHECKING:
     from scenes.shop.xianding import XianDingShangDian
 
 
-
 class SaoDangQueRen(PCRMsgBoxBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -150,6 +149,7 @@ class BuyTiliBox(PCRMsgBoxBase):
         except LockError:
             # 这个框不检测也没问题。直接左上角跳过。
             return self.goto(EmptyOK,self.fun_click(1,1))
+
 
 class EmptyOK(PCRMsgBoxBase):
     def __init__(self,*args,**kwargs):

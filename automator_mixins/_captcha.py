@@ -104,7 +104,7 @@ class CaptionSkip:
             question_type = question_type.replace('X', 'T')
 
         if debug:
-            self.log.write_log('debug',"!验证码识别模块开始运行!")
+            self.log.write_log('debug', "!验证码识别模块开始运行!")
         self.get_host()
 
         # 发送图片
@@ -139,10 +139,10 @@ class CaptionSkip:
         }
 
         if debug:
-            self.log.write_log('debug',">>等待验证码识别返回值")
+            self.log.write_log('debug', ">>等待验证码识别返回值")
         while True:
             # 获取答案
-            time.sleep(random.uniform(0.20, 0.80))
+            time.sleep(0.8)
             answer_result = self.conversation.get(url=self.img_answer, data=img_answer_get, headers=self.img_hear_dict)
             # print(answer_result.text)
             count_len = len(answer_result.text)
@@ -157,7 +157,7 @@ class CaptionSkip:
                         # 左上 94,128 右下 560,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
-                            self.log.write_log('debug',">[范围]刷新验证码")
+                            self.log.write_log('debug', ">[范围]刷新验证码")
                         # 刷新验证码
                         answer_result = [255, 439]
                         return answer_result, count_len, 0
@@ -169,7 +169,7 @@ class CaptionSkip:
                         # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
-                            self.log.write_log('debug',">[范围]刷新验证码")
+                            self.log.write_log('debug', ">[范围]刷新验证码")
                         # 刷新验证码
                         answer_result = [255, 439]
                         return answer_result, count_len, 0
@@ -183,7 +183,7 @@ class CaptionSkip:
                         # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
                         self.send_error(caption_id.text)
                         if debug:
-                            self.log.write_log('debug',">[范围]刷新验证码")
+                            self.log.write_log('debug', ">[范围]刷新验证码")
                         # 刷新验证码
                         answer_result = [255, 439]
                         return answer_result, count_len, 0
@@ -192,7 +192,7 @@ class CaptionSkip:
             elif answer_result.text == "#答案不确定" or answer_result.text in self.no_result or self._count_times >= 7:
                 # 答案不确定(不扣分)
                 if debug:
-                    self.log.write_log('debug',">[不确定]刷新验证码")
+                    self.log.write_log('debug', ">[不确定]刷新验证码")
                 # 刷新验证码
                 answer_result = [255, 439]
                 self._count_times = 0

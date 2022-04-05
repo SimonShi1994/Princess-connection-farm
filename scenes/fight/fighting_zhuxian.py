@@ -140,7 +140,7 @@ class LoveUpScene(FightingWinBase):
         self.feature = self.fun_feature_exist(MAIN_BTN["tiaoguo"])
 
     def skip(self):
-        self.exit(self.click(MAIN_BTN["tiaoguo"]), interval=1)
+        self.exit(self.fun_click(MAIN_BTN["tiaoguo"]), interval=1)
 
 
 class FightingDialog(PCRMsgBoxBase):
@@ -177,11 +177,13 @@ class AfterFightingWin(PossibleSceneList):
     def __init__(self, a, *args, **kwargs):
         self.AfterFightKKR = AfterFightKKR
         self.FightingWinZhuXian2 = FightingWinZhuXian2
+        self.HaoYouMsg = HaoYouMsg
         scene_list = [
             self.XianDingShangDianBox(a),
             self.LevelUpBox(a),
             self.TuanDuiZhanBox(a),
             self.ChaoChuShangXianBox(a),
+            HaoYouMsg(a),
             FightingWinZhuXian2(a),
             AfterFightKKR(a),  # kkr剧情跳脸
         ]
@@ -224,6 +226,5 @@ class FightingLoseZhuXian(FightingLoseBase):
         super().__init__(*args, **kwargs)
         self.scene_name = "FightingLoseZhuXian2"
 
-    def goto_zhuxian(self, zhuxian_type: Union[Type["ZhuXianHard"], Type["ZhuXianNormal"]]) -> Union[
-        "ZhuXianHard", "ZhuXianNormal"]:
+    def goto_zhuxian(self, zhuxian_type):
         return self.goto(zhuxian_type, self.fun_click(806, 489))  # 前往主线关卡

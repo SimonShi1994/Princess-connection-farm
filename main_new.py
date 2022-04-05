@@ -1,4 +1,5 @@
 import datetime
+import time
 import subprocess
 import traceback
 
@@ -14,7 +15,6 @@ from core.pcr_config import *
 from core.richutils import RTitle as RError, RValue as RWarn
 from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
 from core.utils import is_ocr_running
-from pcr_api import script_version
 
 
 def wprint(*args,**kwargs):
@@ -34,6 +34,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
+script_version = "Ver 2.8.20220316.1"
 
 
 
@@ -53,6 +54,8 @@ def StartPCR():
     if PCR is None:
         print("控制器正在连接中……")
         os.system(f"cd {adb_dir} & adb kill-server")
+        os.system(f"cd {adb_dir} & adb devices")
+        time.sleep(5)
         PCR = PCRInitializer()
         PCR.connect()
     PCR.devices.add_from_config()
@@ -322,6 +325,7 @@ def ShowAutoConsole():
     print("* ADB文件路径 adb_dir：", os.path.abspath(adb_dir))
     print("* 忽略端口号 ignore_serials：", ignore_serials)
     print("* 自动添加至环境变量 add_adb_to_path：", RTrue("已开启") if add_adb_to_path else RFalse("未开启"))
+    print("* 使用全局adb重连 global_adb_restart", RTrue("已开启") if global_adb_restart else RFalse("未开启"))
     if emulator_console != "":
         print("* 模拟器自动控制已配置！")
         print("  - 模拟器选择 selected_emulator：", selected_emulator)
@@ -335,8 +339,11 @@ def ShowAutoConsole():
             print("  - 闲置自动关闭模拟器 quit_emulator_when_free：", RTrue("已开启") if quit_emulator_when_free else RFalse("未开启"))
             if quit_emulator_when_free:
                 print("  - - 最大闲置时间 max_free_time：", max_free_time)
+            print(" - 打开模拟器时重连adb间隔 restart_adb_during_emulator_launch_delay： ",
+                  restart_adb_during_emulator_launch_delay)
+
         else:
-            eprint("  !! 错误，不支持的模拟器。当前仅支持：雷电")
+            eprint(f"  !! 错误，不支持的模拟器。当前仅支持：{EMULATOR_DICT.keys()}")
     else:
         print("* 模拟器自动控制未配置，前往config.ini - emulator_console进行配置")
     print("* 自动启动app.py auto_start_app：", RTrue("已开启") if auto_start_app else RFalse("未开启"))
@@ -513,6 +520,11 @@ def Start_App():
             print("app启动完毕！")
             return
     eprint("app可能启动失败。")
+    wprint("！你可以尝试手动python app.py，检查是否缺少相关依赖。")
+    wprint("  requirements.txt中含有四种OCR，但均被注释，你可以选择你需要的OCR依赖取消其注释，然后重新安装依赖。")
+    wprint("  你也可以根据app.py给出的错误提示，使用pip install (依赖模块）来手动安装缺失的依赖。")
+    wprint("  确认依赖安装无误后，尝试重新启动main_new.py。")
+    wprint("！如果app.py的依赖无误，但仍然无法链接，如果你开着全局VPN，尝试关闭再试一次。")
 
 
 def get_arg(argv, key, default):
@@ -564,7 +576,7 @@ if __name__ == "__main__":
         rprint(f"当前版本为 {script_version}")
         rprint(update_info)
         print("----------------------------------------")
-        print("init 初始化模拟器环境&转化txt为json      ")
+        print("init 初始化模拟器环境      ")
         print("app 启动app.py", end=" ")
         print("[自启动：", "已开启" if auto_start_app else "未开启", "]", end=" ")
         print("[内部模式：", "已开启" if inline_app else "未开启", "]")
@@ -640,11 +652,11 @@ if __name__ == "__main__":
                 else:
                     os.system(f"cd {adb_dir} & adb start-server")
                 os.system('python -m uiautomator2 init')
-                os.system(f"cd batches & ren *.txt *.json")
-                os.system(f"cd groups & ren *.txt *.json")
-                os.system(f"cd schedules & ren *.txt *.json")
-                os.system(f"cd tasks & ren *.txt *.json")
-                os.system(f'cd users & for /r %a in (*.txt) do ren "%a" "%~na.json"')
+                # os.system(f"cd batches & ren *.txt *.json")
+                # os.system(f"cd groups & ren *.txt *.json")
+                # os.system(f"cd schedules & ren *.txt *.json")
+                # os.system(f"cd tasks & ren *.txt *.json")
+                # os.system(f'cd users & for /r %a in (*.txt) do ren "%a" "%~na.json"')
                 if os.system('python -m uiautomator2 init') != 0:
                     # pcr_log('admin').write_log(level='error', message="初始化 uiautomator2 失败")
                     print("初始化 uiautomator2 失败,请检查是否有模拟器没有安装上ATX")

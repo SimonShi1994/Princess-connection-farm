@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Optional
 
 from core.constant import MAOXIAN_BTN, ZHUXIAN_ID, ZHUXIAN_SECOND_ID, DXC_ELEMENT, NORMAL_COORD, HARD_COORD
 from core.pcr_checker import retry_run, Checker, LockError
-from core.pcr_config import save_debug_img, use_pcrocr_to_detect_zhuxian
+from core.pcr_config import save_debug_img, use_pcrocr_to_detect_zhuxian, debug
 from scenes.errors import MaoxianRecognizeError, ZhuxianIDRecognizeError
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian
 from scenes.root.seven_btn import SevenBTNMixin
@@ -124,22 +124,26 @@ class ZhuXianBase(SevenBTNMixin):
 
             if use_pcrocr_to_detect_zhuxian:
                 at = (60, 56, 88, 74)  # 前两个数字？
-                out = self.ocr_center(*at,screen,custom_ocr="pcr",allowstr=None)
-                lst = []
-                for ch in out:
-                    if len(lst)==2:
-                        break
-                    if ch in "0123456789":
-                        lst.append(ch)
-                    else:
-                        break
-                if len(lst)==0:
-                    self._raise(ZhuxianIDRecognizeError)
-                if lst[0]=="0":
-                    self._raise(ZhuxianIDRecognizeError)
-                out = int("".join(lst))
-                self.maoxian_id = out
-                return out
+                out = self.ocr_center(*at, screen, custom_ocr="pcr", allowstr=None)
+                if out != -1:
+                    lst = []
+                    for ch in out:
+                        if len(lst) == 2:
+                            break
+                        if ch in "0123456789":
+                            lst.append(ch)
+                        else:
+                            break
+                    if len(lst) == 0:
+                        self._raise(ZhuxianIDRecognizeError)
+                    if lst[0] == "0":
+                        self._raise(ZhuxianIDRecognizeError)
+                    out = int("".join(lst))
+                    self.maoxian_id = out
+                    return out
+                else:
+                    if debug:
+                        self.log.write_log("debug", "PCROCR获取主线失败，采用传统方法！")
 
             id = self.check_dict_id(ZHUXIAN_ID, screen, diff_threshold=0)
             for second in ZHUXIAN_SECOND_ID:
@@ -169,7 +173,7 @@ class ZhuXianBase(SevenBTNMixin):
         def gotofun():
             self.click(x, y)
         try:
-            return self.goto(typ, gotofun, retry=3, interval=3)
+            return self.goto(typ, gotofun, retry=3, interval=3, before_clear=False)
         except LockError:
             return None
 

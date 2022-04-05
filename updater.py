@@ -61,7 +61,7 @@ class Pcr_Downloader:
         except:
             update_info = "最新版本为 {当前无法连接到github！}"
         print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>')
-        print('Github项目 Princess connection 公主连结农场脚本 更新工具 v2.1 \n'
+        print('Github项目 Princess connection 公主连结农场脚本 更新工具 v2.2 \n'
               'Write By Yuki_Asuuna\nUpdate By CyiceK')
         print('请将本程序放在git clone的文件夹下')
         print('本程序仅供普通用户使用，原项目开发人员还是老老实实用git吧^_^')
@@ -226,7 +226,8 @@ class Pcr_Downloader:
                             shutil.copy(dst + '/Princess-connection-farm/' + fn,
                                         os.getcwd().replace('\\', '/') + '/')
                         elif os.path.isdir(fn):
-                            shutil.rmtree(os.getcwd().replace('\\', '/') + '/' + fn)
+                            if os.path.exists(os.getcwd().replace('\\', '/') + '/' + fn):
+                                shutil.rmtree(os.getcwd().replace('\\', '/') + '/' + fn)
                             shutil.copytree(dst + '/Princess-connection-farm/' + fn,
                                             os.getcwd().replace('\\', '/') + '/' + fn)
                 except Exception as e:

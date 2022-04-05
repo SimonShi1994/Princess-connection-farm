@@ -4,6 +4,8 @@ from random import random
 from typing import List, Optional, Union, Tuple
 
 from core.constant import USER_DEFAULT_DICT as UDD
+from core.log_handler import pcr_log
+from core.pcr_config import debug
 from core.valid_task import VALID_TASK, getcustomtask as _getcustomtask, list_all_customtasks as _list_all_customtasks
 
 """
@@ -847,6 +849,8 @@ class AutomatorRecorder:
                 flag = True
         if flag:
             self.json_save(target_name, now)
+        if debug:
+            pcr_log("AR").write_log("debug", f"Key:{key},AR Get:{now}")
         return now
 
     def set(self, key: str, obj: dict) -> bool:

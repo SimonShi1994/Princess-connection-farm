@@ -67,6 +67,8 @@
 |emulators_port_list|自动搜索模拟器连接的端口list|list||[5565,5566]|
 |emulator_ports|（除雷电外的的）模拟器端口|list|雷电可以不写|[]|
 |adb_dir|adb目录|str|可以使用脚本自带adb|adb|
+|global_adb_restart|全局adb自修复|bool|若adb需要重连，该操作由父进程完成|True|
+|restart_adb_during_emulator_launch_delay|自启动时不断重启adb|int|若为0，不重启|10|
 |emulator_console|模拟器控制台目录|str|目前仅支持雷电|F:\XuanZhi\LDPlayer\ldconsole.exe|
 |emulator_id|模拟器设备编号|list|目前只支持雷电|[0,1]|
 |quit_emulator_when_free|空闲时退出模拟器|bool||True|

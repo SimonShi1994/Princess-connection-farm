@@ -104,7 +104,7 @@ class ToolsMixin(BaseMixin):
             if num_of_white < 77000:
                 cnt += 1
                 time.sleep(1.5)  # 防止黑屏错误识别
-                if cnt>=2:
+                if cnt >= 2:
                     self.chulijiaocheng(None)  # 增加对教程的处理功能
             try:
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
@@ -149,9 +149,9 @@ class ToolsMixin(BaseMixin):
         self.click_btn(MAIN_BTN["setting_pic"])
         self.click(769, 87)
         time.sleep(1)
-        self.click(735, 238)
+        self.click(710, 226)
         time.sleep(0.5)
-        self.click(735, 375)
+        self.click(710, 349)
         time.sleep(0.5)
         self.click(479, 479)
         time.sleep(1)
@@ -198,7 +198,7 @@ class ToolsMixin(BaseMixin):
             img = self.getscreen()
             cut_img = UIMatcher.img_cut(img, th_at)
             if debug:
-                self.log.write_log('debug',"VAR:"+cut_img.var())
+                self.log.write_log('debug', "VAR:" + cut_img.var())
             if cut_img.var() > 1000:
                 # 有千位，卖
                 self.click_btn(ZHUCAIDAN_BTN["chushou2"], until_appear=ZHUCAIDAN_BTN["chushouwanbi"])
@@ -255,14 +255,14 @@ class ToolsMixin(BaseMixin):
             self.lock_home()
             screen_shot = self.getscreen()
             # 体力 包括/
-            A,B = self.ocr_A_B(243, 6, 305, 22, screen_shot=screen_shot)
+            A, B = self.ocr_A_B(243, 6, 305, 22, screen_shot=screen_shot)
             acc_info_dict["tili"] = f"{A}/{B}"
             # 等级 make_it_as_number_as_possible
             acc_info_dict["dengji"] = self.ocr_int(29, 43, 60, 67, screen_shot=screen_shot)
             # mana
             if use_pcrocr_to_process_basic_text:
                 acc_info_dict["mana"] = make_it_as_number_as_possible(
-                    self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot,custom_ocr="pcr",allowstr="0123456789,") \
+                    self.ocr_center(107, 54, 177, 76, screen_shot=screen_shot, custom_ocr="pcr", allowstr="0123456789,") \
                         .replace(',', ''))
             else:
                 acc_info_dict["mana"] = make_it_as_number_as_possible(
@@ -271,7 +271,7 @@ class ToolsMixin(BaseMixin):
             # 宝石
             if use_pcrocr_to_process_basic_text:
                 acc_info_dict["baoshi"] = make_it_as_number_as_possible(
-                    self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, custom_ocr="pcr",allowstr="0123456789,") \
+                    self.ocr_center(258, 52, 306, 72, screen_shot=screen_shot, custom_ocr="pcr", allowstr="0123456789,") \
                         .replace(',', ''))
             else:
                 acc_info_dict["baoshi"] = make_it_as_number_as_possible(
@@ -335,7 +335,7 @@ class ToolsMixin(BaseMixin):
             acc_info_dict["charlist"] = out
         acc_info_list.append(acc_info_dict)
         self.lock_home()
-            # 表格数据整理和转换
+        # 表格数据整理和转换
         if out_xls:
             # 将字典列表转换为DataFrame
             pf = pd.DataFrame(list(acc_info_list))
@@ -413,7 +413,7 @@ class ToolsMixin(BaseMixin):
         # part = screen_shot_[526:649, 494:524]
         ret = self.baidu_ocr(494, 526, 524, 649, 1)  # 获取体力区域的ocr结果
         if ret == -1:
-            self.log.write_log('error','体力识别失败！')
+            self.log.write_log('error', '体力识别失败！')
             return -1
         else:
             return int(ret['words_result'][1]['words'].split('/')[0])
@@ -764,7 +764,7 @@ class ToolsMixin(BaseMixin):
                 bmp2 = cv2.imdecode(np.fromfile(str(p), dtype=np.uint8), -1)
                 if self.img_equal(screen, bmp2, similarity=0.1) > 0.98:
                     if debug:
-                        self.log.write_log('debug',f"找到相似图片：{p}" )
+                        self.log.write_log('debug', f"找到相似图片：{p}")
                     if p.stem in target_list:
                         return p.stem
 
@@ -831,14 +831,14 @@ class ToolsMixin(BaseMixin):
         output_dict(self.AR.get("juese_info", UDD["juese_info"]))
         self.lock_home()
 
-    def guojuqing(self, story_type):
+    def guojuqing(self, story_type=""):
         while True:
             screen = self.getscreen()
             lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp", at=(233, 98, 285, 319), screen=screen)
-            self.log.write_log('info ',f"{lst}")
+            self.log.write_log('info ', f"{lst}")
             # 选择无语音选项
-            if self.is_exists(JUQING_BTN["wuyuyin"], screen=screen):
-                self.click_btn(JUQING_BTN["wuyuyin"], until_disappear=(JUQING_BTN["wuyuyin"]))
+            if self.is_exists(JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 452)):
+                self.click_img(img=JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 452))
                 continue
             # 选择快进剧情
             if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen):
@@ -848,21 +848,44 @@ class ToolsMixin(BaseMixin):
                 continue
             # 确认快进，包括视频和剧情
             if self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen):
-                self.click_btn(JUQING_BTN["tiaoguo_2"], until_appear=(JUQING_BTN["caidanyuan"]))
+                self.click_btn(JUQING_BTN["tiaoguo_2"])
                 continue
             # 选择支固定选红色
             if len(lst) > 0:
                 self.click(int(lst[0]), int(lst[1]))
                 continue
+
+            # 三种退出形式
+            # 报酬确认 (好感度剧情)
+            if self.is_exists(JUQING_BTN["baochouqueren"], at=(433, 73, 523, 100),
+                              screen=screen) and story_type == "haogandu":
+                '''
+                433, 73, 523, 100
+                433, 28, 523, 55
+                '''
+                self.click(475, 429)  # 点击关闭
+                self.log.write_log('info', "完成了这段剧情")
+                break
+            if self.is_exists(JUQING_BTN["baochouqueren"], at=(433, 28, 523, 55),
+                              screen=screen) and story_type == "haogandu":
+                '''
+                433, 73, 523, 100
+                433, 28, 523, 55
+                '''
+                self.click(475, 473)  # 点击关闭
+                self.log.write_log('info', "完成了这段剧情")
+                break
+
             # 主线剧情退出检测
             if self.is_exists(JUQING_BTN["guanbi"], screen=screen) and story_type == "zhuxian":
-                self.click_btn(JUQING_BTN["guanbi"], until_appear=p(img="img/juqing/in_join.bmp"))
-                time.sleep(3)
-                self.log.write_log('info',"完成了这段剧情")
+                self.click_btn(JUQING_BTN["guanbi"])
+                time.sleep(1)
+                self.fclick(1, 1)
+                self.log.write_log('info', "完成了这段剧情")
                 break
             # 兼容信赖度退出检测，不是很稳定，因为点无语音的时候背景也有
             if story_type == "xianlai" and self.is_exists("img/juqing/new_content.bmp", screen=screen, threshold=0.7):
-                self.log.write_log('info',"完成了这段剧情")
+                self.log.write_log('info', "完成了这段剧情")
                 break
             else:
                 self.fclick(479, 260)
@@ -884,6 +907,3 @@ class ToolsMixin(BaseMixin):
             return True
         else:
             return False
-
-
-
