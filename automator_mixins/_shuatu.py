@@ -1909,7 +1909,6 @@ class ShuatuMixin(ShuatuBaseMixin):
                 else:
                     fi.easy_saodang(target_cishu="1", one_quan=one_quan)
                 act_menu.fclick(1, 1)
-                act_menu.enter()
                 counter += 1
                 break
             else:
