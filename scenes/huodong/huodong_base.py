@@ -8,7 +8,7 @@ from scenes.fight.fighting_zhuxian import LoveUpScene, HaoYouMsg, FightingDialog
 from scenes.huodong.huodong_fight import BOSS_FightInfoBase
 from scenes.zhuxian.zhuxian_base import ZhuXianBase
 from scenes.scene_base import PCRSceneBase, PossibleSceneList, PCRMsgBoxBase
-from core.constant import p, FIGHT_BTN, HUODONG_BTN, MAIN_BTN
+from core.constant import p, FIGHT_BTN, HUODONG_BTN, MAIN_BTN, JUQING_BTN
 from typing import Union
 
 
@@ -82,6 +82,8 @@ class HuodongMapBase(ZhuXianBase):
         elif self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
             self.fclick(1, 1)
             self._a.restart_this_task()
+        elif self.is_exists(JUQING_BTN["caidanyuan"], screen=screen):  # 打倒多个boss会出现对话
+            self.fclick(1, 1)
         return screen
 
     def feature_normal_or_hard(self, screen):
