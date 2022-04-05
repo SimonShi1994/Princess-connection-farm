@@ -1041,11 +1041,11 @@ VALID_TASK = ValidTask() \
                     inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~5的整数")),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    # .add("hd07", "tui_hd_map", "刷指定活动普通图（必须打过）", "一般用来刷1-5或者1-15",
-    #      [TaskParam("map_id", int, "活动Normal图号", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
-    #       TaskParam("cishu", str, "刷几次", "max表示全刷，或者也可以输入一个整数。", "max"),
-    #       TaskParam(**huodong_code_kwargs),
-    #       TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("hd07", "shua_hd_map_normal", "刷指定活动普通图（必须打过）", "一般用来刷1-5或者1-15",
+         [TaskParam("map_id", int, "活动Normal图号", "1~15的数字", 1),
+          TaskParam("cishu", str, "刷几次", "max表示全刷，或者也可以输入一个整数。", "max"),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)])
 
 customtask_addr = "customtask"
 
