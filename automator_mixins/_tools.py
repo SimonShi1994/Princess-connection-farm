@@ -26,6 +26,7 @@ from ._base import BaseMixin
 from scenes.root.juese import CharMenu
 
 
+
 class ToolsMixin(BaseMixin):
     """
     工具类插片
@@ -144,17 +145,72 @@ class ToolsMixin(BaseMixin):
         self.lock_home()  # 追加检测
 
     def setting(self):
+        def dragdown():
+            time.sleep(1)
+            obj = self.d.touch.down(855, 400)
+            time.sleep(0.1)
+            obj.move(855, 80)
+            time.sleep(0.8)
+            obj.up(855, 80)
+            time.sleep(1)
+
         self.lock_home()
         self.click_btn(MAIN_BTN["zhucaidan"], until_appear=MAIN_BTN["setting_pic"])
         self.click_btn(MAIN_BTN["setting_pic"])
-        self.click(769, 87)
         time.sleep(1)
-        self.click(710, 226)
+        # 系统
+        self.click(709, 398)  # 不下载语音
+        dragdown()
+        dragdown()
+        dragdown()
+        self.click(709, 421)  # 借助战不加好友
+        dragdown()
+        dragdown()
+        self.click(483, 421)  # 显示品级确认
+        dragdown()
+        self.click(484, 226)  # 显示一键升级
         time.sleep(0.5)
-        self.click(710, 349)
+        self.click(484, 349)  # 提示家具升级
+        dragdown()
+        self.click(709, 152)  # 关闭活动结束提示
         time.sleep(0.5)
-        self.click(479, 479)
+        self.click(709, 275)  # 关闭外传
+        dragdown()
+        self.click(709, 204)  # 呼出队伍星级不同，不提示
+        time.sleep(0.5)
+        self.click(709, 372)  # 更改选择框
+        dragdown()
+        dragdown()
+        self.click(709, 266)  # 好感度播放设定，关
+        time.sleep(0.5)
+        self.click(709, 396)  # 好感度确认， 关
+
+        # 战斗
+        self.click(769, 87)  # 战斗tab
         time.sleep(1)
+        self.click(710, 226)  # 关闭技能动画
+        time.sleep(0.5)
+        self.click(710, 349)  # 低帧率
+        dragdown()
+        dragdown()
+        dragdown()
+        dragdown()
+        self.click(484, 172)  # 4倍速
+        time.sleep(0.5)
+        self.click(709, 299)  # 露娜塔战斗确认
+        time.sleep(0.5)
+        self.click(709, 427)  # 露娜塔跳过
+        dragdown()
+        self.click(709, 252)  # 多个目标动画
+        time.sleep(0.5)
+        self.click(709, 376)  # 快速开始，提示关
+        dragdown()
+        time.sleep(0.5)
+        self.click(107, 246)  # 双场跳过
+        self.click(484, 410)  # UB快速
+        time.sleep(0.5)
+
+        self.click(479, 479)  # 关闭
         self.click(95, 516)
         self.lock_home()
 
@@ -831,20 +887,28 @@ class ToolsMixin(BaseMixin):
         output_dict(self.AR.get("juese_info", UDD["juese_info"]))
         self.lock_home()
 
-    def guojuqing(self, story_type=""):
+    def guojuqing(self, story_type="", no_skip=False):
         while True:
             screen = self.getscreen()
             lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp", at=(233, 98, 285, 319), screen=screen)
             self.log.write_log('info ', f"{lst}")
+            # 连续阅读兼容
+            if self.is_exists(img="img/ui/queren_blue.bmp"):
+                self.click_img(img="img/ui/queren_blue.bmp", screen=screen)
+                continue
             # 选择无语音选项
             if self.is_exists(JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 452)):
                 self.click_img(img=JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 452))
                 continue
             # 选择快进剧情
-            if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen):
-                self.click_btn(JUQING_BTN["caidanyuan"], until_appear=(JUQING_BTN["tiaoguo_1"]))
-                # 快进确认弹出
-                self.click_btn(JUQING_BTN["tiaoguo_1"], until_appear=(JUQING_BTN["tiaoguo_2"]))
+            if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen) and no_skip is False:
+                self.click_btn(JUQING_BTN["caidanyuan"], until_appear=(JUQING_BTN["auto"]))
+                if self.is_exists(JUQING_BTN["tiaoguo_1"], method="sq"):
+                    # 快进确认弹出
+                    self.click_btn(JUQING_BTN["tiaoguo_1"], until_appear=(JUQING_BTN["tiaoguo_2"]))
+                else:
+                    no_skip = True
+                    # self.click_btn(JUQING_BTN["auto"],)  # 测试显示不点auto，，点边上更快一点
                 continue
             # 确认快进，包括视频和剧情
             if self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen):
@@ -855,7 +919,7 @@ class ToolsMixin(BaseMixin):
                 self.click(int(lst[0]), int(lst[1]))
                 continue
 
-            # 三种退出形式
+            # 退出形式
             # 报酬确认 (好感度剧情)
             if self.is_exists(JUQING_BTN["baochouqueren"], at=(433, 73, 523, 100),
                               screen=screen) and story_type == "haogandu":
@@ -887,6 +951,15 @@ class ToolsMixin(BaseMixin):
             if story_type == "xianlai" and self.is_exists("img/juqing/new_content.bmp", screen=screen, threshold=0.7):
                 self.log.write_log('info', "完成了这段剧情")
                 break
+            # 活动进入
+            if story_type == "huodong" and self.is_exists("img/juqing/guanbi.bmp", screen=screen, ):
+                self.fclick(1, 1)
+                self.log.write_log('info', "完成了这段剧情")
+                break
+            if story_type == "huodong" and self.is_exists("img/huodong/return.bmp", screen=screen, ):
+                self.fclick(1, 1)
+                self.log.write_log('info', "完成了这段剧情")
+                break
             else:
                 self.fclick(479, 260)
 
@@ -907,3 +980,5 @@ class ToolsMixin(BaseMixin):
             return True
         else:
             return False
+
+

@@ -208,7 +208,7 @@ JJC_BTN = {
 
 }
 JUQING_BTN = {
-    "caidanyuan": p(920, 36, img="img/juqing/caidanyuan.bmp", at=(903, 26, 931, 55)),
+    "caidanyuan": p(916, 35, img="img/juqing/caidanyuan.bmp", at=(901, 23, 932, 48)),
     "xinneirong": p(img="img/ui/xinneirong.bmp", at=(462, 70, 495, 87)),
     "zhuxianjuqing": p(836, 111, img="img/juqing/zhuxianjuqing.bmp", at=(812, 97, 858, 125)),
     "tiaoguo_1": p(804, 38, img="img/juqing/tiaoguo_1.bmp", at=(765, 24, 849, 65)),
@@ -220,6 +220,7 @@ JUQING_BTN = {
     "guanbi": p(476, 432, img="img/juqing/guanbi.bmp", at=(447, 415, 505, 448)),
     "baochouqueren": p(478, 41, img="img/juqing/baochouqueren.bmp", at=(433, 28, 523, 55)),
     "locked": p(279, 151, img="img/juqing/locked.bmp", at=(259, 133, 300, 170)),
+    "auto": p(806, 100, img="img/juqing/auto.bmp", at=(793, 90, 819, 111)),
 }
 
 LIWU_BTN = {
@@ -285,8 +286,6 @@ NIUDAN_BTN = {
     "niudan_sheding": p(476, 433, img="img/niudan/niudan_sheding.bmp", at=(452, 420, 501, 446)),
     "chiyoushu": p(528, 413, img="img/niudan/chiyoushu.bmp", at=(505, 405, 552, 422)),
     "xuanzezhong": p(604, 262, img="img/niudan/xuanzezhong.bmp", at=(577, 251, 632, 274)),
-    "exchange_queren": p(479,426,img="img/ui/ok_btn_2.bmp",at=(456, 412, 501, 440)),
-
 
 }
 
@@ -295,11 +294,26 @@ HUODONG_BTN = {
     "sjxz": p(img="img/huodong/sjxz.bmp", at=(436, 134, 522, 158)),
     "bossqsl": p(666, 425, img="img/huodong/bossqsl.bmp", at=(622, 416, 710, 434)),
     "long_next": p(807, 488, img="img/huodong/long_next.bmp", at=(713, 473, 902, 504)),
+    "short_next": p(846, 489, img="img/huodong/short_next.bmp", at=(811, 474, 881, 504)),
     "taofazheng_btn": p(597, 357, img="img/huodong/taofazheng_btn.bmp", at=(573, 349, 622, 366)),
-    "huodongguanka": p(555, 271, img="img/huodong/huodongguanka.bmp", at=(513, 261, 597, 282)),
+    "huodongguanka": p(556, 202, img="img/huodong/huodongguanka.bmp", at=(515, 192, 598, 213)),
     "dangqianliebiao": p(660, 303, img="img/huodong/dangqianliebiao.bmp", at=(620, 293, 701, 314)),
     "blsd": p(482, 41, img="img/huodong/blsd.bmp", at=(439, 29, 526, 54)),  # 便利设定
     "return": p(31, 30, img="img/huodong/return.bmp", at=(15, 21, 47, 40)),
+    "exchange_queren": p(479, 426, img="img/ui/ok_btn_2.bmp", at=(456, 412, 501, 440)),
+    "nboss": p(738, 155, img="img/huodong/nboss.bmp", at=(721, 147, 755, 163)),
+    "hboss": p(737, 218, img="img/huodong/hboss.bmp", at=(721, 209, 754, 227)),
+    "vhboss": p(739, 281, img="img/huodong/vhboss.bmp", at=(719, 274, 760, 289)),
+    "baochou": p(89, 456, img="img/huodong/baochou.bmp", at=(62, 422, 117, 490)),
+    "no_quan_right": p(904, 424, img="img/huodong/no_quan_right.bmp", at=(893, 418, 915, 431)),
+    "tiaozhan2_on": p(839, 467, img="img/huodong/tiaozhan2_on.bmp", at=(804, 453, 874, 482)),
+    "saodang2_on": p(755, 372, img="img/huodong/saodang2_on.bmp", at=(707, 356, 803, 389)),
+    "fuke": p(414, 444, img="img/huodong/fuke.bmp", at=(394, 434, 434, 453)),
+    "shadow_return": p(31, 29, img="img/huodong/shadow_return.bmp", at=(13, 15, 50, 44)),
+    "speaker_box": p(189, 411, img="img/huodong/speaker_box.bmp", at=(175, 403, 204, 419)),
+    "shadow_help": p(920, 26, img="img/huodong/shadow_help.bmp", at=(909, 14, 931, 38)),
+    "NORMAL_ON": p(763, 82, img="img/huodong/normal_on.bmp", at=(740, 71, 786, 93)),
+    "HARD_ON": p(886, 82, img="img/huodong/hard_on.bmp", at=(864, 73, 909, 92)),
 
 }
 
@@ -408,13 +422,23 @@ HANGHUI_BTN = {
     "rank_info": p(276, 106, img="img/hanghui/battle/rank_info.bmp", at=(270, 96, 283, 116)),
     "boss_lp": p(212, 369, img="img/hanghui/battle/boss_lp.bmp", at=(191, 361, 234, 377)),
     "fanhuanshijian": p(541, 406, img="img/hanghui/battle/fanhuanshijian.bmp", at=(511, 398, 572, 414)),
-    "shbg": p(833, 45, img="img/hanghui/battle/shbg.bmp", at=(798, 34, 868, 56)),  # 怪物详情界面
+    "shbg": p(704, 47, img="img/hanghui/battle/shbg.bmp", at=(672, 37, 737, 58)),  # 怪物详情界面
     "monizhan_unselected": p(745, 107, img="img/hanghui/battle/monizhan_unselected.bmp", at=(710, 98, 780, 117)),
     "tiaozhan": p(833, 456, img="img/hanghui/battle/tiaozhan.bmp", at=(806, 442, 860, 471)),
     "guanbi": p(476, 476, img="img/hanghui/battle/guanbi.bmp", at=(452, 464, 501, 489)),  # 关闭X月团队站开始的提示
     "sudu": p(479, 146, img="img/hanghui/battle/sudu.bmp", at=(383, 134, 575, 159)),  # 模拟速度设定
     "kkr_dialog": p(280, 402, img="img/hanghui/battle/kkr_dialog.bmp", at=(257, 392, 304, 412)),  # kkr对话框设别
+    # "kkr_dialog2": p(280, 402, img="img/hanghui/battle/kkr_dialog2.bmp", at=(257, 392, 304, 412)),  # kkr对话框设别
     "queren": p(477, 477, img="img/hanghui/battle/queren.bmp", at=(455, 466, 499, 488)),  # 确认报酬
+    "tdzksqr": p(478, 144, img="img/hanghui/battle/tdzksqr.bmp", at=(403, 132, 553, 157)),  # 团队战开始确认
+    "fhsjqr": p(478, 144, img="img/hanghui/battle/tdzksqr.bmp", at=(403, 28, 554, 54)),  # 返还时间开始确认
+    "zhandou_confirm": p(587, 370, img="img/hanghui/battle/zhandou_confirm.bmp", at=(559, 354, 616, 386)),  # 团队战开始(战斗)
+    "zhandou_confirm2": p(587, 478, img="img/hanghui/battle/zhandou_confirm.bmp", at=(558, 462, 616, 495)),  # 团队战开始(战斗)
+    "huodebaochou": p(498, 159, img="img/hanghui/battle/huodebaochou.bmp", at=(338, 130, 659, 188)),  # 打完boss获得挑战报酬
+    "xiayibu": p(807, 489, img="img/hanghui/battle/xiayibu.bmp", at=(769, 473, 846, 505)),  # 打完boss下一步
+    "weibianzu": p(94, 453, img="img/hanghui/battle/weibianzu.bmp", at=(61, 436, 127, 471)),
+    "duiwubianzu": p(478, 146, img="img/hanghui/battle/xuanzeduiwu.bmp", at=(436, 135, 521, 158)),  # 有角色被用过了
+    "sytzcs": p(406, 406, img="img/hanghui/battle/sytzcs.bmp", at=(359, 397, 454, 415)),  # 剩余挑战次数
 
 }
 TUANDUIZHAN_BTN = {
@@ -560,7 +584,7 @@ SHOP_BTN = {
 }
 
 JUESE_BTN = {
-    "duiwu": p(img="img/juese/duiwu.bmp", at=(853, 15, 929, 35)),
+    "duiwu": p(890, 26, img="img/juese/duiwu.bmp", at=(851, 13, 931, 39)),
     "mana_ball": p(img="img/juese/mana_ball.bmp", at=(609, 21, 620, 34)),
     "first_juese": p(175, 140),
     "nine_juese": {
@@ -990,6 +1014,11 @@ HARD_COORD = {
         2: p(494, 247, name="H32-2"),
         3: p(784, 330, name="H32-3"),
     },
+    33: {
+        1: p(177, 226, name="H33-1"),
+        2: p(485, 363, name="H33-2"),
+        3: p(779, 253, name="H33-3"),
+    },
 }
 
 VH_COORD = {
@@ -1011,6 +1040,7 @@ VH_COORD = {
     21: {
         1: p(218, 266, name="VH21-1"),
         2: p(475, 330, name="VH21-2"),
+        3: p(765, 253, name="VH21-3"),
     },
 }
 
@@ -1066,7 +1096,7 @@ MAOXIAN_BTN = {
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
 }
 
-MAX_MAP = 32
+MAX_MAP = 33
 
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(77, 61, 141, 72)),
@@ -1101,6 +1131,7 @@ ZHUXIAN_ID = {
     30: p(img="img/zhuxian/30L.bmp", at=(60, 55, 178, 77)),
     31: p(img="img/zhuxian/31L.bmp", at=(60, 55, 175, 77)),
     32: p(img="img/zhuxian/32L.bmp", at=(89, 58, 193, 73)),
+    33: p(img="img/zhuxian/33L.bmp", at=(61, 58, 196, 75)),
 }
 
 # ZHUXIAN_SUB_ID
@@ -1136,6 +1167,7 @@ ZHUXIAN_FTLDY_ID = {
 }
 ZHUXIAN_FSJYSL_ID = {
     32: p(img="img/zhuxian/32R.bmp", at=(214, 60, 250, 75)),
+    33: p(img="img/zhuxian/33R.bmp", at=(214, 60, 250, 75)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -1145,7 +1177,7 @@ ZHUXIAN_SECOND_ID = {
     (26, 27): ZHUXIAN_SBDDSL_ID,
     (28, 29): ZHUXIAN_DSTEHSA_ID,
     (30, 31): ZHUXIAN_FTLDY_ID,
-    (32,): ZHUXIAN_FSJYSL_ID,
+    (32, 33): ZHUXIAN_FSJYSL_ID,
 }
 
 NORMAL_COORD = {
@@ -1796,6 +1828,26 @@ NORMAL_COORD = {
             3: p(334, 284, name="32-3"),
             2: p(252, 408, name="32-2"),
             1: p(106, 385, name="32-1"),
+        },
+    },
+    33: {
+        "right": {
+            14: p(736, 197, name="33-14"),
+            13: p(709, 322, name="33-13"),
+            12: p(589, 272, name="33-12"),
+            11: p(508, 369, name="33-11"),
+            10: p(444, 235, name="33-10"),
+            9: p(314, 218, name="33-9"),
+            8: p(254, 340, name="33-8"),
+        },
+        "left": {
+            7: p(694, 239, name="33-7"),
+            6: p(547, 245, name="33-6"),
+            5: p(510, 363, name="33-5"),
+            4: p(378, 311, name="33-4"),
+            3: p(293, 230, name="33-3"),
+            2: p(206, 344, name="33-2"),
+            1: p(109, 239, name="33-1"),
         },
     },
 }

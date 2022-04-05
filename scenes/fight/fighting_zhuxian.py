@@ -1,7 +1,7 @@
 import time
 from typing import TYPE_CHECKING, Union, Type
 
-from core.constant import MAIN_BTN, DXC_ELEMENT, HAOYOU_BTN
+from core.constant import MAIN_BTN, DXC_ELEMENT, HAOYOU_BTN, MAOXIAN_BTN
 from core.pcr_checker import LockTimeoutError
 from scenes.fight.fighting_base import FightingBase, FightingWinBase, FightingLoseBase
 from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
@@ -122,6 +122,7 @@ class DuringFightingZhuXian(PossibleSceneList):
         self.FightingLoseZhuXian = FightingLoseZhuXian
         self.FightingDialog = FightingDialog
         self.HaoYouMsg = HaoYouMsg
+        self.TuanDuiZhanBox = TuanDuiZhanBox
 
         scene_list = [
             LoveUpScene(a),
@@ -129,8 +130,19 @@ class DuringFightingZhuXian(PossibleSceneList):
             FightingLoseZhuXian(a),
             FightingDialog(a),
             HaoYouMsg(a),
+            TuanDuiZhanBox(a),
         ]
         super().__init__(a, scene_list, double_check=0)
+
+
+class TuanDuiZhanBox(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "TuanDuiZhanBox"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["tuanduizhan"])
+
+    def OK(self):
+        self.click_btn(MAOXIAN_BTN["tuanduizhan_quxiao"])  # 跳过团队站
 
 
 class LoveUpScene(FightingWinBase):

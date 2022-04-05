@@ -708,7 +708,12 @@ VALID_TASK = ValidTask() \
                                               "程序自动记录上一次成功发起的时间.\n"
                                               "如果两次捐赠小于8小时，且相差小于等待时间\n"
                                               "则程序进入什么都不做的等待，否则跳过。", 300)]) \
-    .add("h10", "tuanduizhan", "自动摸会战", "农场号自动出甜心刀,请自己确保执行到该任务时已经有挑战次数。目前还在beta，不排除有问题") \
+    .add("h10", "tuanduizhan", "自动摸会战", "自动用完公会战次数",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="none",
+                   inputbox=team_order_inputer),
+          TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
+          TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍配合使用", 0),
+          TaskParam("once", bool, "是否只打一次", "摸一下", True)]) \
     .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
          [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个", 1),
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False),
@@ -814,6 +819,18 @@ VALID_TASK = ValidTask() \
     .add("t5", "zanting", "暂停", "暂停脚本，弹出弹窗，直到手动点击弹窗才结束") \
     .add("t6", "kucunshibie", "库存识别", "识别装备库存并输出到outputs文件夹。") \
     .add("t7", "jueseshibie", "角色识别", "识别角色信息并输出到outputs文件夹。") \
+    .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。", ) \
+    .add("t9", "buy_all_frag", "碎片购买", "根据角色名称使用代币购买商店碎片",
+         [TaskParam("dxc_fraglist", list, "dxc碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入地下城商店角色碎片，一行一个角色名称")),
+          TaskParam("jjc_fraglist", list, "jjc碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入JJC商店角色碎片，一行一个角色名称")),
+          TaskParam("pjjc_fraglist", list, "pjjc碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入PJJC商店角色碎片，一行一个角色名称")),
+          TaskParam("clan_fraglist", list, "行会碎片", "需要购买的碎片名称",
+                    inputbox=ListInputer(desc="请输入行会商店角色碎片，一行一个角色名称")),
+          ]) \
+    .add("t10", "setting", "设置初始化", "初始化设置，例如跳过动画，隐藏外传等，，提升脚本运行效率。", ) \
     .add("s1", "shuajingyan", "刷经验1-1【别用，除非OCR】", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "废弃参数", "随便输入一个整数")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1【别用，除非OCR】", "刷图3-1，比较节省刷图卷。",
@@ -991,32 +1008,43 @@ VALID_TASK = ValidTask() \
          [TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max"),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)]) \
-    .add("s12", "dahaohuodong_hard", "大号刷活动Hard图", "刷活动Hard图，要求已经全部三星。",
-         [TaskParam("tu_order", list, "图号", "只包含1~5的列表，表示活动困难图图号，每个均刷3次。",
-                    inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~5的整数")),
+    .add("hd01", "tui_hd_map_normal", "推活动普通图", "用于推N1-15。",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
+          TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("s13", "dahaohuodong_VHBoss", "大号刷活动VHBoss", "刷活动VHBoss图，如果没赢很可能有BUG",
+    .add("hd02", "tui_hd_map_hard", "推活动困难图", "用于推H1-5。",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
+          TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("hd03", "shua_hd_boss", "推/刷活动Boss（N or H），", "刷Normal或者Hard难度活动Boss，用完挑战券，一次打不死会直接退出。。",
+         [TaskParam("boss_type", str, "刷什么难度的Boss", "N表示普通，H表示困难", "N"),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("hd04", "dahaohuodong_VHBoss", "推/刷活动VHBoss", "刷活动VHBoss图，如果没赢很可能有BUG",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("s14", "xiaohaohuodong_11", "小号刷活动1-1", "刷活动1-1图，可以借人，如果推了其它活动图可能会报错。",
+    .add("hd05", "xiaohaohuodong_11", "推/小号刷活动1-1", "推/刷活动1-1图，可以借人。",
          [TaskParam("cishu", str, "刷几次", "max表示全刷，或者也可以输入一个整数。", "max"),
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", True),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("t8", "guozhuxianjuqing", "过主线剧情", "过主线剧情，不包含角色剧情和活动剧情。", ) \
-    .add("t9", "buy_all_frag", "碎片购买", "根据角色名称使用代币购买商店碎片",
-         [TaskParam("dxc_fraglist", list, "dxc碎片", "需要购买的碎片名称",
-                    inputbox=ListInputer(desc="请输入地下城商店角色碎片，一行一个角色名称")),
-          TaskParam("jjc_fraglist", list, "jjc碎片", "需要购买的碎片名称",
-                    inputbox=ListInputer(desc="请输入JJC商店角色碎片，一行一个角色名称")),
-          TaskParam("pjjc_fraglist", list, "pjjc碎片", "需要购买的碎片名称",
-                    inputbox=ListInputer(desc="请输入PJJC商店角色碎片，一行一个角色名称")),
-          TaskParam("clan_fraglist", list, "行会碎片", "需要购买的碎片名称",
-                    inputbox=ListInputer(desc="请输入行会商店角色碎片，一行一个角色名称")),
-          ])
+    .add("hd06", "dahaohuodong_hard", "大号刷活动Hard图", "刷活动Hard图，要求已经全部三星。",
+         [TaskParam("tu_order", list, "图号", "只包含1~5的列表，表示活动困难图图号，每个均刷3次。",
+                    inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~5的整数")),
+          TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    # .add("hd07", "tui_hd_map", "刷指定活动普通图（必须打过）", "一般用来刷1-5或者1-15",
+    #      [TaskParam("map_id", int, "活动Normal图号", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
+    #       TaskParam("cishu", str, "刷几次", "max表示全刷，或者也可以输入一个整数。", "max"),
+    #       TaskParam(**huodong_code_kwargs),
+    #       TaskParam(**huodong_entrance_ind_kwargs)]) \
 
 customtask_addr = "customtask"
 

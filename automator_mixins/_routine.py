@@ -128,39 +128,41 @@ class RoutineMixin(ShuatuBaseMixin):
         self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
 
         self.remove_precheck("skip_note")
-        # 附奖设置
-        if self.is_exists(img="img/niudan/juesexiangqing.bmp", at=(393, 431, 464, 456)):
-            self.log.write_log("info", "非附奖扭蛋期间。")
-        else:
-            self.fclick(423, 433)
-            if self.is_exists(NIUDAN_BTN["jiangpinneirong"]):
-                # 有附奖扭蛋
-                at = (525, 189, 692, 435)
-                r = self.img_where_all(NIUDAN_BTN["xuanze"].img, at=at)
-                s = self.img_where_all(NIUDAN_BTN["xuanzezhong"].img, at=at)
-                if len(s) > 0:
-                    # 找到已选择
-                    self.log.write_log("info", "已指定附奖。")
-                else:
-                    if len(r) == 0:
-                        # 没找到已选择，但也找不到可选
-                        self.log.write_log("warning", "无法指定附奖。")
-                    else:
-                        # 指定设定
-                        if select == 1:
-                            xcor = r[0]
-                            ycor = r[1]
-                            self.click(xcor, ycor)
 
-                        if select == 2:
-                            xcor = r[3]
-                            ycor = r[4]
-                            self.click(xcor, ycor)
-                        self.lock_img(NIUDAN_BTN["jiyisuipianxuanze"])
-                        self.click(589, 365)
-                        self.lock_img(NIUDAN_BTN["xuanzezhong"].img, at=at)
-                        self.log.write_log("info", "设定附奖完成。")
-                self.fclick(1, 1)
+        # 附奖设置
+        def fujiangshezhi():
+            if self.is_exists(img="img/niudan/juesexiangqing.bmp", at=(393, 431, 464, 456)):
+                self.log.write_log("info", "非附奖扭蛋期间。")
+            else:
+                self.fclick(423, 433)
+                if self.is_exists(NIUDAN_BTN["jiangpinneirong"]):
+                    # 有附奖扭蛋
+                    at = (525, 189, 692, 435)
+                    r = self.img_where_all(NIUDAN_BTN["xuanze"].img, at=at)
+                    s = self.img_where_all(NIUDAN_BTN["xuanzezhong"].img, at=at)
+                    if len(s) > 0:
+                        # 找到已选择
+                        self.log.write_log("info", "已指定附奖。")
+                    else:
+                        if len(r) == 0:
+                            # 没找到已选择，但也找不到可选
+                            self.log.write_log("warning", "无法指定附奖。")
+                        else:
+                            # 指定设定
+                            if select == 1:
+                                xcor = r[0]
+                                ycor = r[1]
+                                self.click(xcor, ycor)
+
+                            if select == 2:
+                                xcor = r[3]
+                                ycor = r[4]
+                                self.click(xcor, ycor)
+                            self.lock_img(NIUDAN_BTN["jiyisuipianxuanze"])
+                            self.click(589, 365)
+                            self.lock_img(NIUDAN_BTN["xuanzezhong"].img, at=at)
+                            self.log.write_log("info", "设定附奖完成。")
+                    self.fclick(1, 1)
 
         while True:
             fc = [255, 89, 74]
@@ -170,6 +172,7 @@ class RoutineMixin(ShuatuBaseMixin):
             a = self.is_exists(NIUDAN_BTN["chiyoushu"])
             youmianfei = self.check_color(fc, bc, xcor, ycor, color_type="rgb")
             if youmianfei and a:  # 仅当有免费十连时抽取免费十连
+                fujiangshezhi()
                 self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
                 self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
                 time.sleep(1.5)

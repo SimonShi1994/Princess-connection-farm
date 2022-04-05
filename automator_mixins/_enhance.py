@@ -133,7 +133,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                             for _ in range(6):
                                                 self.click(1, 1)
                                             break
-                                        fb = fi.goto_tiaozhan()
+                                        # fb = fi.goto_tiaozhan()
                                         if debug:
                                             self.log.write_log('debug', "开始刷图补装备")
 

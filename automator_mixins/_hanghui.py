@@ -7,6 +7,8 @@ from core.log_handler import pcr_log
 from core.safe_u2 import timeout
 from core.utils import diffday
 from automator_mixins._tools import ToolsMixin
+from scenes.clan.clan_battle import ClanBattleMAP, FightBianZuHangHui
+from scenes.fight.fightbianzu_base import FightBianZuBase
 
 
 class HanghuiMixin(ToolsMixin):
@@ -437,95 +439,55 @@ class HanghuiMixin(ToolsMixin):
             set_last_record()
         self.lock_home()
 
-    def tuanduizhan(self):
-        """
-        自动摸会战 By：CyiceK
-        2021/2/5
-        :return:
-        """
+    def tuanduizhan(self, team_order="none", if_full=0, get_zhiyuan=False, once=True):
         self.lock_home()
+        # 能找到带举办中的团队战图标
         if not self.lock_img(img=TUANDUIZHAN_BTN["tuanduizhan"], ifclick=(875, 272),
                              elseclick=(478, 519), elsedelay=5, side_check=self.juqing_kkr, retry=3):
-            pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战哦")
+            pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战或非行会战期间")
             return
         while True:
-            if self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1),
-                             side_check=self.juqing_kkr):
-                time.sleep(5 + self.change_time)
-                try:
-                    self.lock_img(img=TUANDUIZHAN_BTN["taofaxinxi"], elsedelay=2, elseclick=(1, 1),
-                                  side_check=self.juqing_kkr)
-                    screen = self.getscreen()
-                    r_list = self.img_where_all(img=TUANDUIZHAN_BTN["shangbiao"], screen=screen)
-                    if self.lock_img(img=TUANDUIZHAN_BTN["tiaozhan"], elseclick=(int(r_list[0]), int(r_list[1])),
-                                     side_check=self.juqing_kkr, retry=5):
-                        if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
-                            break
-                    else:
-                        # if看看是不是延迟太高导致的
-                        if not self.is_exists(img=TUANDUIZHAN_BTN["tiaozhan"]):
-                            self.click(1, 1)
-                except Exception as e:
-                    pcr_log(self.account).write_log("info", f"识别不到boss信息，已退出本任务")
-                    return
+            cbm = ClanBattleMAP(self).enter()
+            cishu = cbm.get_cishu()
+            if cishu == -1:  # 返还时间
+                cbp = cbm.goto_battlepre()
+                if cbp == -1:
+                    self.restart_this_task()
+                T = cbp.goto_bianzu()
+            elif cishu > 0:
+                cbp = cbm.goto_battlepre()
+                if cbp == -1:
+                    self.restart_this_task()  # 已知在团队战期间，肯定有次数，重试
+                T = cbp.goto_bianzu()
+                T = FightBianZuBase(self)
+                T.select_team(team_order)
+                if self.is_exists(HANGHUI_BTN["weibianzu"]):
+                    T.select_team(team_order="zhanli", change=2)
+                if get_zhiyuan:
+                    T.get_zhiyuan(if_full=if_full)
             else:
-                continue
-
-        def tiaozhan() -> bool:
-            # 非主流写法，内部方法
-            while True:
-                self.lock_img(TUANDUIZHAN_BTN["tiaozhan"], ifclick=[(833, 462)], side_check=self.juqing_kkr, retry=3)
-                self.lock_img(DXC_ELEMENT["sheding"], ifclick=(478, 443), retry=3)
-                if self.is_exists(TUANDUIZHAN_BTN["guanbi"]):
-                    self.click(TUANDUIZHAN_BTN["guanbi"])
-                if self.is_exists(TUANDUIZHAN_BTN["qianwangguanqia"]):
-                    # self.lock_no_img(TUANDUIZHAN_BTN["qianwangguanqia"], elseclick=(592, 436))
-                    # 刷 1-1获取次数？
-                    pcr_log(self.account).write_log("info", f"没有挑战次数")
-                    self.lock_home()
-                    return False
-                if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True,
-                                  black_threshold=1400):
-                    # 全部
-                    self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
-                    if not self.is_exists(DXC_ELEMENT["zhiyuan_gouxuan"]):
-                        for i in range(1, 9):
-                            self.click(DXC_ELEMENT["zhiyuan_dianren"][i])
-
-                        # 点完人后确认一遍
-                        if self.is_exists('img/notzhandoukaishi.bmp', at=(758, 423, 915, 473), is_black=True,
-                                          black_threshold=1400):
-                            pcr_log(self.account).write_log(level='info', message="%s没有合适的人物打公会战!" % self.account)
-                            self.lock_home()
-                            return False
-                        break
-                elif self.is_exists('img/dxc/zhandoukaishi.bmp', at=(758, 423, 915, 473)):
-                    return True
-
-        while True:
-            # 战斗检测
-            state = tiaozhan()
-            if not state:
-                return
-            # 战斗开始
-            self.click_btn(DXC_ELEMENT["zhandoukaishi"], until_disappear=DXC_ELEMENT["zhandoukaishi"], elsedelay=0.1,
-                           retry=4)
-
-            if self.lock_img(TUANDUIZHAN_BTN["zhandou"], retry=7):
-                # 战斗
-                self.lock_no_img(TUANDUIZHAN_BTN["zhandou"], elseclick=(587, 374))
+                self.log.write_log("info", "次数不足，退出任务")
+                self.clear_all_prechecks()
+                self.lock_home()
+                self.skip_this_task()
+            T = FightBianZuHangHui(self)
+            F = T.goto_fight()
+            F.set_auto(1)
+            F.set_speed(1)
+            if not cishu == -1:
+                self.lock_img(HANGHUI_BTN["huodebaochou"], timeout=180, ifclick=(90, 380), ifdelay=1)
+            self.lock_img(HANGHUI_BTN["xiayibu"], ifclick=(807, 489), ifdelay=0.1, elseclick=(90, 380),
+                          elsedelay=1)
+            self.lock_img(HANGHUI_BTN["rank_info"])
+            time.sleep(4)
+            if once:  # 只打一次
                 break
-            if self.is_exists('img/caidan.jpg'):
-                break
-            if self.is_exists(TUANDUIZHAN_BTN["tiaozhan"]):
-                tiaozhan()
+            continue
 
-        while True:
-            if self.lock_img('img/caidan.jpg', elseclick=[(1, 1)], retry=3):
-                self.lock_img('img/auto_1.jpg', elseclick=[(914, 425)], elsedelay=0.2, retry=3)
-                self.lock_img('img/kuaijin_1.jpg', elseclick=[(913, 494)], elsedelay=0.2, retry=3)
-            if self.is_exists('img/shanghaibaogao.jpg', at=(767, 18, 948, 65)) and \
-                    self.is_exists('img/xiayibu.jpg', at=(694, 474, 920, 535)):
-                self.lock_no_img('img/xiayibu.jpg', elseclick=[(806, 508)])
-                break
         self.lock_home()
+
+
+
+
+
+

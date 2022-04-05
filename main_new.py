@@ -17,25 +17,28 @@ from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, chec
 from core.utils import is_ocr_running
 
 
-def wprint(*args,**kwargs):
-    rprint(RWarn(*args,**kwargs))
+def wprint(*args, **kwargs):
+    rprint(RWarn(*args, **kwargs))
 
-def eprint(*args,**kwargs):
-    rprint(RError(*args,**kwargs))
+
+def eprint(*args, **kwargs):
+    rprint(RError(*args, **kwargs))
+
 
 def RTrue(s):
     return f"[green]{s}[/green]"
 
+
 def RFalse(s):
     return f"[red]{s}[/red]"
+
 
 import cv2
 
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.8.20220316.1"
-
+script_version = "Ver 2.8.20220403"
 
 
 def GetLastSchedule():
@@ -125,6 +128,7 @@ def ContinueSchedule():
     SCH.run_continue()
     RunningInput()
 
+
 def GetDataCenterTime():
     from DataCenter import LoadPCRData
     try:
@@ -135,6 +139,7 @@ def GetDataCenterTime():
         return None
     else:
         return datetime.datetime.fromtimestamp(data.last_update_time).strftime("%Y-%m-%d %H:%M:%S")
+
 
 def FirstBatch(batch):
     global PCR
@@ -365,7 +370,8 @@ def ShowOCR():
         wprint("运行中")
     else:
         print("未运行")
-    print("* 使用PCR定制专属OCR提升精确度 use_pcrocr_to_process_basic_text",RTrue("已开启") if use_pcrocr_to_process_basic_text else RFalse("未开启"))
+    print("* 使用PCR定制专属OCR提升精确度 use_pcrocr_to_process_basic_text",
+          RTrue("已开启") if use_pcrocr_to_process_basic_text else RFalse("未开启"))
 
 
 def ShowPCRPerformance():
@@ -397,9 +403,11 @@ def ShowPCRPerformance():
     print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", RTrue("已开启") if captcha_popup else RFalse("未开启"))
     print("* 缓存清理 clear_traces_and_cache：", RTrue("已开启") if clear_traces_and_cache else RFalse("未开启"))
 
+
 def ShowTaskInfo():
     print = rprint
-    print("* 如果有OCR版本，强制使用OCR版本的任务 force_as_ocr_as_possible：", RTrue("已开启") if force_as_ocr_as_possible else RFalse("未开启"))
+    print("* 如果有OCR版本，强制使用OCR版本的任务 force_as_ocr_as_possible：",
+          RTrue("已开启") if force_as_ocr_as_possible else RFalse("未开启"))
     print("* 使用pcrocr进行Rank识别 use_pcrocr_to_detect_rank：",
           RTrue("已开启") if use_pcrocr_to_detect_rank else RFalse("未开启"))
     print("* 使用pcrocr进行主线图号识别 use_pcrocr_to_detect_zhuxian：",
@@ -408,7 +416,8 @@ def ShowTaskInfo():
     if data is None:
         print("* 干炸里脊数据库版本：未找到数据库或数据库异常！请更新数据库！")
     else:
-        print("* 干炸里脊数据库版本：",data)
+        print("* 干炸里脊数据库版本：", data)
+
 
 def ShowDebugInfo():
     print = rprint
@@ -426,9 +435,8 @@ def ShowDebugInfo():
     print("* 在log中显示函数名 show_codename_in_log：", RTrue("已开启") if show_codename_in_log else RFalse("未开启"))
     print("* 在log中显示文件名 show_filename_in_log：", RTrue("已开启") if show_filename_in_log else RFalse("未开启"))
     print("* 在log中显示行数 show_linenumber_in_log：", RTrue("已开启") if show_linenumber_in_log else RFalse("未开启"))
-    print("* 以下文件中的信息不显示在debug中 do_not_show_debug_if_in_these_files：",do_not_show_debug_if_in_these_files)
+    print("* 以下文件中的信息不显示在debug中 do_not_show_debug_if_in_these_files：", do_not_show_debug_if_in_these_files)
     print("* 打印函数名时，跳过以下文件中的函数： skip_codename_output_if_in_these_files：", skip_codename_output_if_in_these_files)
-
 
 
 def CheckConstantImgs():
@@ -455,12 +463,11 @@ def CheckConstantImgs():
                         if v.at is not None:
                             img = cv2.imread(v.img)
                             h, w, _ = img.shape
-                            x1,y1,x2,y2 = v.at
-                            hh = y2-y1+1
-                            ww = x2-x1+1
-                            if h>hh or w>ww:
-                                eprint(" - AT范围错误，图片的(h,w)为",(h,w),"但给出的范围为",(hh,ww),k,v)
-
+                            x1, y1, x2, y2 = v.at
+                            hh = y2 - y1 + 1
+                            ww = x2 - x1 + 1
+                            if h > hh or w > ww:
+                                eprint(" - AT范围错误，图片的(h,w)为", (h, w), "但给出的范围为", (hh, ww), k, v)
 
     print("* 检查本地图片")
     for obj in dir(constant):
@@ -488,6 +495,7 @@ def ShowInfo():
     print(" ============ 检查本地资源文件 =============")
     CheckConstantImgs()
 
+
 def PrintQQ():
     print("------------------------------------------")
     print("QQ: 1130884619  - 公主连结国服代码交♂流群")
@@ -503,6 +511,7 @@ def PrintQQ():
     print("-  BOT人 （有机器人推送、交互经验）")
     print("-  基础脚本开发和维护 （随便懂点基础python语法）")
     print("-  全自动养号向脚本开发和维护（会python最好再会点CV）")
+
 
 def Start_App():
     if is_ocr_running():
@@ -533,11 +542,14 @@ def get_arg(argv, key, default):
             return argv[ind + 1]
     return default
 
+
 def has_arg(argv, key, default):
     for ind, a in enumerate(argv):
         if a == key:
             return True
     return default
+
+
 if __name__ == "__main__":
     CheckConstantImgs()
     GetLastSchedule()
@@ -612,19 +624,19 @@ if __name__ == "__main__":
             wprint("提示： 你没有开启自动过验证码（captcha_skip），如果出现验证码，需要手动点掉！")
         if not trace_exception_for_debug:
             wprint("提示： 你没有打开错误追踪(trace_exception_for_debug)，这将不会在出错后显示错误位置，如果需要反馈错误，请打开该选项！")
-        if emulator_console!="":
+        if emulator_console != "":
             wprint("提示： 你启用了模拟器自动控制（emulator_console），如果想要关闭，可以将该项字符串清空。")
         if enable_pause:
             eprint("警告： 你开起了全局的暂停控制（enable_pause），你在任何窗口按下Shift+P都可能导致脚本的暂停！")
         if running_input:
             eprint("警告： 你开起了运行时控制（running_input），虽然它功能强大又极其方便，但可能导致如果不按回车键脚本就不运行的情况！"
-                  "但你仍可以随时输入join来避免这种状况。")
+                   "但你仍可以随时输入join来避免这种状况。")
         DataCenterTime = GetDataCenterTime()
         if DataCenterTime is None:
             eprint("警告： 干炸里脊数据库异常或不存在，请进入数据中心data，然后输入update更新数据库！")
         print('----------------------------------------')
         if DataCenterTime is not None:
-            rprint("干炸里脊数据库更新时间：",DataCenterTime)
+            rprint("干炸里脊数据库更新时间：", DataCenterTime)
         if last_schedule != "":
             rprint("当前绑定计划：", RWarn(last_schedule))
     while True:

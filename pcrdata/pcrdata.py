@@ -153,12 +153,13 @@ def get_chara_info(CInfo):
     :return:
     """
     out = cur.execute(
-        f"select unit_id,atk_type,rarity from unit_data where comment<>'' and unit_id < 400000").fetchall()
-    for id, atk_type, rarity in out:
+        f"select unit_id,atk_type,rarity,search_area_width from unit_data where comment<>'' and unit_id < 400000").fetchall()
+    for id, atk_type, rarity, search_area_width in out:
         if id not in CInfo:
             continue
         CInfo[id]["atk_type"] = atk_type
         CInfo[id]["rarity"] = rarity
+        CInfo[id]["search_area_width"] = search_area_width
 
 
 def create_MInfo():
@@ -385,6 +386,20 @@ class PCRData:
             return self.EQU_ID[name]
         elif name in self.ITEM_ID:
             return self.ITEM_ID[name]
+        else:
+            return None
+
+    def get_distance(self, id):
+        return self.CInfo[id]["search_area_width"]
+
+    def get_position(self, id):
+        distance = int(self.CInfo[id]["search_area_width"])
+        if 0 < distance < 300:
+            return "front"
+        if 300 <= distance <= 600:
+            return "middle"
+        if 600 < distance:
+            return "back"
         else:
             return None
 

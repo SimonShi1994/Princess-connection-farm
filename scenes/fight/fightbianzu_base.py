@@ -1,8 +1,11 @@
 import time
-
+import os
+import cv2
 from core.constant import MAOXIAN_BTN, FIGHT_BTN, DXC_ELEMENT, HAOYOU_BTN, JUESE_BTN
 from scenes.scene_base import PCRMsgBoxBase
 import random
+from DataCenter import LoadPCRData
+from core.cv import UIMatcher
 
 
 class FightBianZuBase(PCRMsgBoxBase):
@@ -30,6 +33,84 @@ class FightBianZuBase(PCRMsgBoxBase):
         :return: False - 选取编组失败
         """
         return self._a.set_fight_team(bianzu, duiwu)
+
+    def click_unit_by_cid(self, cid, screen=None):
+        # 寻找角色，确认碎片图片中心点并点击
+        if screen is None:
+            screen = self.getscreen()
+        cid = str(cid)
+        b = str(cid[0:4] + "11")
+        c = str(cid[0:4] + "31")
+        d = str(cid[0:4] + "61")
+        imgpath_1 = "img/juese/unit/" + b + ".bmp"
+        imgpath_2 = "img/juese/unit/" + c + ".bmp"
+        imgpath_3 = "img/juese/unit/" + d + ".bmp"
+        imgpath = [imgpath_1, imgpath_2]
+        if os.path.exists(imgpath_3):
+            imgpath.append(imgpath_3)
+
+        for i in imgpath:
+            at = (47, 116, 908, 363)
+            r_list = UIMatcher.img_where(screen, i, threshold=0.8, at=at,
+                                         method=cv2.TM_CCOEFF_NORMED, is_black=False, black_threshold=1500)
+            if r_list is not False:
+                if len(r_list) == 2:
+                    x_arg = int(r_list[0])
+                    y_arg = int(r_list[1])
+                    self.click(x_arg, y_arg)
+                    break
+
+    def select_by_namelst(self, cname_lst):
+        # 将角色拆分三种位置，方便选择。注意：此函数选择角色只选第一屏，不翻页
+        data = LoadPCRData()
+        if cname_lst is []:
+            return
+        cidlst = []
+        for i in cname_lst:
+            cidlst.append(data.get_id(name=i))
+        front_lst = []
+        middle_lst = []
+        back_lst = []
+        print(cidlst)
+        for i in cidlst:
+            if data.get_position(i) == "front":
+                front_lst.append(i)
+            if data.get_position(i) == "middle":
+                middle_lst.append(i)
+            if data.get_position(i) == "back":
+                back_lst.append(i)
+        print(front_lst)
+        print(middle_lst)
+        print(back_lst)
+        # 根据不同位置，加入角色
+        fc = [66, 125, 214]
+        bc = [231, 235, 239]
+        # 前卫
+        while True:
+            self.click(149, 87)
+            if self.check_color(fc, bc, 227, 87, color_type="rgb"):
+                break
+        time.sleep(2)
+        for i in front_lst:
+            self.click_unit_by_cid(i)
+
+        # 中卫
+        while True:
+            self.click(244, 87)
+            if self.check_color(fc, bc, 326, 87, color_type="rgb"):
+                break
+        time.sleep(2)
+        for i in middle_lst:
+            self.click_unit_by_cid(i)
+
+        # 后卫
+        while True:
+            self.click(341, 87)
+            if self.check_color(fc, bc, 423, 87, color_type="rgb"):
+                break
+        time.sleep(2)
+        for i in back_lst:
+            self.click_unit_by_cid(i)
 
     def click_juese_by_rc(self, r, c):
         # 通过行列来选中角色，没什么用。而且仅限前两排
