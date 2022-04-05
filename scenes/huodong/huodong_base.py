@@ -96,7 +96,7 @@ class HuodongMapBase(ZhuXianBase):
         self.lock_img(HUODONG_BTN["NORMAL_ON"], elseclick=HUODONG_BTN["NORMAL_ON"], method="sq")
 
     def to_leftdown(self):
-        time.sleep(1)
+        time.sleep(4)
         obj = self.d.touch.down(47, 466)
         time.sleep(0.1)
         obj.move(47, 96)
@@ -110,7 +110,8 @@ class HuodongMapBase(ZhuXianBase):
         obj.up(416, 80)
         time.sleep(1)
 
-    def _check_coord(self, t):
+    @staticmethod
+    def _check_coord(t):
         # t: tuple -> PCRComponent
         # t: None -> raise!
         if t is None:
@@ -278,131 +279,58 @@ class HuodongMenu(PCRSceneBase):
             self._a.restart_this_task()
         return screen
 
-    def goto_map(self) -> "HuodongMapBase":
-        return self.goto(HuodongMapBase, self.fun_click(HUODONG_BTN["huodongguanka"]))
+    def goto_map(self, map_id) -> "HuodongMapBase":
+        return self.goto(map_id, self.fun_click(HUODONG_BTN["huodongguanka"]))
 
     def goto_jiaohuan(self) -> "Jiaohuan":
         return self.goto(Jiaohuan, self.fun_click(HUODONG_BTN["taofazheng_btn"]))
 
     def goto_nboss(self) -> "BOSS_FightInfoBase":
-        obj = self.d.touch.down(923, 205)
-        time.sleep(0.1)
-        obj.move(923, 85)
-        time.sleep(0.8)
-        obj.up(923, 85)
-        screen = self.getscreen()
-        self.click_img(img=HUODONG_BTN["nboss"].img, screen=screen, at=(681, 130, 789, 302))
-        return self.goto(BOSS_FightInfoBase, gotofun=None)
+        while True:
+            a = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(681, 130, 789, 302))
+            if not a:
+                time.sleep(2)
+                obj = self.d.touch.down(923, 205)
+                time.sleep(0.1)
+                obj.move(923, 85)
+                time.sleep(0.8)
+                obj.up(923, 85)
+                time.sleep(0.5)
+                continue
+            else:
+                break
+        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
 
     def goto_hboss(self) -> "BOSS_FightInfoBase":
-        screen = self.getscreen()
-        self.click_img(img=HUODONG_BTN["hboss"].img, screen=screen, at=(681, 130, 789, 302))
-        return self.goto(BOSS_FightInfoBase, gotofun=None)
+        time.sleep(2)
+        while True:
+            a = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(681, 130, 789, 302))
+            if not a:
+                time.sleep(2)
+                obj = self.d.touch.down(923, 205)
+                time.sleep(0.1)
+                obj.move(923, 307)
+                time.sleep(0.8)
+                obj.up(923, 307)
+                time.sleep(0.5)
+            else:
+                break
+        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
 
     def goto_vhboss(self) -> "BOSS_FightInfoBase":
-        obj = self.d.touch.down(923, 205)
-        time.sleep(0.1)
-        obj.move(923, 307)
-        time.sleep(0.8)
-        obj.up(923, 307)
-        screen = self.getscreen()
-        self.click_img(img=HUODONG_BTN["vhboss"].img, screen=screen, at=(681, 130, 789, 302))
-        return self.goto(BOSS_FightInfoBase, gotofun=None)
-
-    def shua_Boss(self, team_order="none", boss_type=None, once=False):
-        """
-        刷活动Boss。最好已经打过一遍了。
-        之后可能有剧情，因此默认跳过剧情。
-        这个函数的结束位置在home，无论如何都会返回主页
-        return
-            0 - 挑战成功
-            1 - 挑战失败
-            -1 - 无法进入
-        """
         while True:
-            if boss_type == "N" or boss_type == "n":
-                fi = self.goto_nboss()
-            elif boss_type == "H" or boss_type == "h":
-                fi = self.goto_hboss()
-            elif boss_type == "VH" or boss_type == "vh":
-                fi = self.goto_vhboss()
+            a = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(681, 130, 789, 302))
+            if not a:
+                time.sleep(2)
+                obj = self.d.touch.down(923, 205)
+                time.sleep(0.1)
+                obj.move(923, 307)
+                time.sleep(0.8)
+                obj.up(923, 307)
+                time.sleep(0.5)
             else:
-                self.log.write_log("warning", "错误的boss类型，跳过该任务")
-                return
-            screen = self.getscreen()
-            if fi.get_bsq_right(screen) == -1:
                 break
-            if fi.check_taofa(screen):
-                # 检查是否打满3次，可以扫荡
-                one_quan = 30
-                if boss_type == "N" or boss_type == "n":
-                    one_quan = 20
-                if once is False:
-                    fi.easy_saodang(target_cishu="max", one_quan=one_quan)
-                else:
-                    fi.easy_saodang(target_cishu="1", one_quan=one_quan)
-                self.fclick(1, 1)
-                self.enter()
-                break
-            else:
-                fb: FightBianZuHuoDong = self.goto(FightBianZuHuoDong, self.fun_click(HUODONG_BTN["tiaozhan2_on"]))
-                fb.select_team(team_order)
-                zd = fb.goto_zhandou()
-                zd.auto_and_fast(1)
-                during = zd.get_during()
-                after = None
-                while True:
-                    out = during.check(timeout=300, double_check=3)
-                    if isinstance(out, during.FightingWin):
-                        self.log.write_log("info", "你胜利了。")
-                        if self.is_exists(HUODONG_BTN["taofazheng_btn"]):
-                            break
-                        out.next()
-                        # if self.is_exists(HUODONG_BTN["taofazheng_btn"]):
-                        #     break
-                        if self.is_exists(HUODONG_BTN["queren"]):
-                            self.click_btn(HUODONG_BTN["queren"])
-                        after = out.get_after()
-                        break
-                    elif isinstance(out, during.FightingLose):
-                        self.log.write_log("warning", f"打不过难度为{boss_type}的活动Boss")
-                        out.exit_me()
-                        self._a.lock_home()
-                        return
-                    elif isinstance(out, during.FightingDialog):
-                        out.skip()
-                    elif self.is_exists(HUODONG_BTN["taofazheng_btn"]):
-                        break
-                    elif self.is_exists(HUODONG_BTN["queren"]):
-                        self.click_btn(HUODONG_BTN["queren"])
-                        continue
-                    else:
-                        continue
-
-                if after is not None:
-                    while True:
-                        if self.is_exists(HUODONG_BTN["shadow_return"], threshold=0.9):
-                            self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1,
-                                          timeout=120)
-                            time.sleep(5)
-                            self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1,
-                                          timeout=120)
-                            self.enter()
-                            continue
-                        out = after.check()
-                        if isinstance(out, after.FightingWinZhuXian2):
-                            out.next()
-                            if self.is_exists(HUODONG_BTN["shadow_return"], threshold=0.9):
-                                self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1,
-                                              timeout=120)
-                                time.sleep(5)
-                                self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1,
-                                              timeout=120)
-                                self.enter()
-                                continue
-                if once is True:
-                    break
-                self.enter()
+        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
 
 
 class Jiaohuan(PCRSceneBase):
