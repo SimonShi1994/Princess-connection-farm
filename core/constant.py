@@ -295,6 +295,7 @@ HUODONG_BTN = {
     "bossqsl": p(666, 425, img="img/huodong/bossqsl.bmp", at=(622, 416, 710, 434)),
     "long_next": p(807, 488, img="img/huodong/long_next.bmp", at=(713, 473, 902, 504)),
     "short_next": p(846, 489, img="img/huodong/short_next.bmp", at=(811, 474, 881, 504)),
+    "short_next2": p(830, 489, img="img/huodong/short_next.bmp", at=(795, 474, 865, 504)),
     "taofazheng_btn": p(597, 357, img="img/huodong/taofazheng_btn.bmp", at=(573, 349, 622, 366)),
     "huodongguanka": p(556, 202, img="img/huodong/huodongguanka.bmp", at=(515, 192, 598, 213)),
     "dangqianliebiao": p(660, 303, img="img/huodong/dangqianliebiao.bmp", at=(620, 293, 701, 314)),
@@ -314,6 +315,7 @@ HUODONG_BTN = {
     "shadow_help": p(920, 26, img="img/huodong/shadow_help.bmp", at=(909, 14, 931, 38)),
     "NORMAL_ON": p(763, 82, img="img/huodong/normal_on.bmp", at=(740, 71, 786, 93)),
     "HARD_ON": p(886, 82, img="img/huodong/hard_on.bmp", at=(864, 73, 909, 92)),
+    "queren": p(476, 369, img="img/huodong/queren.bmp", at=(448, 354, 505, 384)),  # 解锁BOSS扫荡
 
 }
 
