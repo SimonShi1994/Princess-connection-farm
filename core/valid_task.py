@@ -1045,6 +1045,9 @@ VALID_TASK = ValidTask() \
          [TaskParam("map_id", int, "活动Normal图号", "1~15的数字", 1),
           TaskParam("cishu", str, "刷几次", "max表示全刷，或者也可以输入一个整数。", "max"),
           TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("hd08", "exchange_tfz", "交换讨伐证（试验性）", "交换讨伐证，不中途重置",
+         [TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)])
 
 customtask_addr = "customtask"
