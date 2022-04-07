@@ -1048,6 +1048,9 @@ VALID_TASK = ValidTask() \
           TaskParam(**huodong_entrance_ind_kwargs)]) \
     .add("hd08", "exchange_tfz", "交换讨伐证（试验性）", "交换讨伐证，不中途重置",
          [TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("hd09", "huodong_getbonus", "获取活动任务奖励", "活动任务奖励",
+         [TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)])
 
 customtask_addr = "customtask"

@@ -316,6 +316,19 @@ HUODONG_BTN = {
     "NORMAL_ON": p(763, 82, img="img/huodong/normal_on.bmp", at=(740, 71, 786, 93)),
     "HARD_ON": p(886, 82, img="img/huodong/hard_on.bmp", at=(864, 73, 909, 92)),
     "queren": p(476, 369, img="img/huodong/queren.bmp", at=(448, 354, 505, 384)),  # 解锁BOSS扫荡
+    "tfz_bottom": p(769, 442, img="img/huodong/tfz_bottom.bmp", at=(734, 432, 804, 453)),  # 讨伐证交换右下角
+    "reset": p(477, 477, img="img/huodong/chongzhi.bmp", at=(447, 463, 507, 492)),  # 奖励提示重置
+    "zaicijiaohuan_blue": p(589, 426, img="img/huodong/zaicijiaohuan.bmp", at=(545, 413, 633, 440)),
+    "zaicijiaohuan_white": p(479, 426, img="img/huodong/zaicijiaohuan_white.bmp", at=(435, 412, 523, 441)),
+    "chakanyihuode": p(480, 426, img="img/huodong/chakanyihuode.bmp", at=(406, 411, 554, 441)),
+    "reset2": p(588, 426, img="img/huodong/chongzhi2.bmp", at=(523, 410, 654, 442)),
+    "reset3": p(651, 428, img="img/huodong/chongzhi3.bmp", at=(627, 414, 676, 443)),
+    "queren_white": p(482, 426, img="img/ui/queren.bmp", at=(452, 414, 512, 439)),
+    "reset_confirm1": p(585, 477, img="img/huodong/chongzhiqueren.bmp", at=(558, 461, 613, 493)),
+    "reset_confirm2": p(590, 368, img="img/huodong/chongzhiqueren2.bmp", at=(557, 352, 624, 384)),
+    "liwu": p(911, 424, img="img/huodong/liwu.bmp", at=(896, 411, 926, 438)),
+    "wanchengqingkuang": p(558, 452, img="img/huodong/wanchengqingkuang.bmp", at=(527, 443, 590, 462)),
+    "minus_on": p(630, 374, img="img/huodong/minus_on.bmp", at=(599, 349, 661, 400)),
 
 }
 
