@@ -26,10 +26,10 @@ class FightInfoBase(PCRMsgBoxBase):
         sc1 = self.getscreen()
         while True:
             self.click(926, 248)
-            time.sleep(0.5)
+            time.sleep(1)
             sc2 = self.getscreen()
-            p = self.img_equal(sc1, sc2, at=at)
-            if p < 0.95:
+            con = self.img_equal(sc1, sc2, at=at)
+            if con < 0.95:
                 break
             else:
                 sc1 = sc2
@@ -313,6 +313,9 @@ class FightInfoBase(PCRMsgBoxBase):
                 out.skip()
             elif isinstance(out, D.HaoYouMsg):
                 out.exit_with_off()
+            # elif isinstance(out, D.LevelUpBox):
+            #     out.OK()
+            #     self.start_shuatu()
 
     def easy_saodang(self,
                      target_cishu: Union[int, str] = "max",

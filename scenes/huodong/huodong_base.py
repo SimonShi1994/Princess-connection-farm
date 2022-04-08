@@ -334,11 +334,42 @@ class HuodongMenu(PCRSceneBase):
                 break
         return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
 
+    def get_bonus(self):
+        if self.check_color(fc=[222, 89, 123], bc=[255, 255, 255], xcor=896, ycor=400, color_type="rgb"):
+            self.click_btn(HUODONG_BTN["liwu"], until_appear=HUODONG_BTN["wanchengqingkuang"])
+            self.click(344, 22)  # 每日
+            time.sleep(0.2)
+            self.click(781, 433)  # 收取
+            time.sleep(1)
+            self.click(478, 468)  # 关闭
+            time.sleep(1)
+
+            self.click(547, 22)  # 普通
+            time.sleep(0.2)
+            self.click(781, 433)  # 收取
+            time.sleep(1)
+            self.click(478, 468)  # 关闭
+            time.sleep(1)
+
+            self.click(710, 22)  # 特别
+            time.sleep(0.2)
+            self.click(781, 433)  # 收取
+            time.sleep(1)
+            self.click(478, 468)  # 关闭
+            time.sleep(1)
+
+            self.click(860, 22)  # 称号
+            time.sleep(0.2)
+            self.click(781, 433)  # 收取
+            time.sleep(1)
+            self.click(478, 468)  # 关闭
+            time.sleep(1)
+
 
 class Jiaohuan(PCRSceneBase):
     def __init__(self, a):
         super().__init__(a)
-        self.feature = self.fun_feature_exist(HUODONG_BTN["dangqianliebiao"])
+        self.feature = self.fun_feature_exist(HUODONG_BTN["tfz_bottom"])
 
     def get_taofazheng(self, screen=None):
         self.check_ocr_running()
@@ -351,28 +382,78 @@ class Jiaohuan(PCRSceneBase):
         self.lock_img(HUODONG_BTN["blsd"], elseclick=(785, 38))
         self.click(721, 156)  # 100次
         self.click(500, 272)  # 跳过
-        self.click(500, 379)  # 5次后一键
-        self.fclick(1, 1)
+        obj = self.d.touch.down(868, 270)
+        time.sleep(0.1)
+        obj.move(868, 120)
+        time.sleep(0.8)
+        obj.up(868, 120)
+        self.click(502, 233)  # 5次后一键
+        self.click(724, 352)  # 交换不确认
+        time.sleep(0.5)
+        self.click(483, 475)  # 关闭
 
     def exchange_all(self, reset=False):
-        while True:
-            a = self.get_taofazheng()
-            if a > 10:
-                self.click(825, 371)
-                time.sleep(2)
+        time.sleep(0.5)
+        a = self.get_taofazheng()
+        if a > 1:
+            self.click(825, 371)
+            time.sleep(2)
+            while True:
+                out = self.lock_img({
+                    HUODONG_BTN["zaicijiaohuan_blue"]: 1,  # 再次交换（没有到碎片）
+                    HUODONG_BTN["zaicijiaohuan_white"]: 2,  # 再次交换（到碎片了，在中间）
+                    HUODONG_BTN["tfz_bottom"]: 3,  # 换完了，回到交换页了
+                    HUODONG_BTN["reset"]: 4,  # 抽干了，重置
+                    HUODONG_BTN["reset2"]: 5,  # 两分栏，是讨伐证空了
+                    HUODONG_BTN["queren_white"]: 6,  # 换完了，白色确认中间
+                    HUODONG_BTN["chakanyihuode"]: 7,  # 换完了，白色确认中间
+                    HUODONG_BTN["reset_confirm1"]: 8,  # 选择中途重置的确认
 
-                # 这轮换完/不足一轮
-                if self.is_exists(HUODONG_BTN["exchange_queren"]):
-                    self.click_btn(HUODONG_BTN["return"], until_appear=HUODONG_BTN["dangqianliebiao"])
-                # TODO:多周目扩充
-                # self.lock_img(HUODONG_BTN["return"])
-                pass
-            elif a <= 10:
-                self.lock_img(HUODONG_BTN["return"])
-                self.click_btn(HUODONG_BTN["return"], until_appear=HUODONG_BTN["dangqianliebiao"])
-                return
-            else:
-                return
+                }, elseclick=(1, 1), timeout=20, is_raise=False)
+
+                if out == 1:
+                    self.click(HUODONG_BTN["zaicijiaohuan_blue"])
+                    continue
+                elif out == 2:
+                    if reset is True:
+                        self.click(HUODONG_BTN["reset3"])
+                        time.sleep(1)
+                    else:
+                        self.click(HUODONG_BTN["zaicijiaohuan_white"])
+                    continue
+                elif out == 3:
+                    a = self.get_taofazheng()
+                    if a > 1:
+                        self.click(825, 371)
+                        time.sleep(2)
+                    else:
+                        break
+                    continue
+                elif out == 4:
+                    self.click(HUODONG_BTN["reset"])
+                    continue
+                elif out == 5:
+                    break
+                elif out == 6:
+                    self.click(HUODONG_BTN["queren_white"])
+                    continue
+                elif out == 7:
+                    self.click(HUODONG_BTN["chakanyihuode"])
+                    continue
+                elif out == 8:
+                    self.click(HUODONG_BTN["reset_confirm1"])
+                    time.sleep(1.5)
+                    self.click(HUODONG_BTN["reset_confirm2"])
+                    time.sleep(1.5)
+                    self.fclick(1, 1)
+                    continue
+                else:
+                    self.fclick(1, 1)
+                    continue
+        else:
+            pass
+
+
 
     def goto_menu(self):
-        return self.goto(HuodongMapBase, self.fun_click(HUODONG_BTN["huodongguanka"]))
+        return self.goto(HuodongMenu, self.fun_click(HUODONG_BTN["huodongguanka"]))

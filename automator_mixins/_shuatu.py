@@ -1849,7 +1849,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             c, cishu_left = MAP.shua_11(cishu_left, team_order, get_zhiyuan)
         self.lock_home()
 
-    def exchange_tfz(self, code="current", entrance_ind="auto",
+    def exchange_tfz(self, code="current", entrance_ind="auto", reset=False,
                      var=None):
         """
         code: 见scenes/huodng/huodong_manager.py
@@ -1862,7 +1862,8 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         map_base = HuodongMapBase(self)
         jiaohuan = map_base.goto_menu().goto_jiaohuan()
-        jiaohuan.exchange_all()
+        jiaohuan.setting()
+        jiaohuan.exchange_all(reset=reset)
         self.lock_home()
 
     def shua_hd_boss(self, team_order="none", code="current", entrance_ind="auto", once=False, boss_type=None, var=None):
@@ -1890,6 +1891,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 fi = act_menu.goto_vhboss()
             else:
                 self.log.write_log("warning", "错误的boss类型，跳过该任务")
+                self.lock_home()
                 return
 
             # 进入BOSS界面，FI
@@ -1898,7 +1900,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             # boss挑战券是否足够
             if fi.get_bsq_right(screen) == -1:
                 break
-            if fi.check_taofa(screen):
+            if fi.check_taofa(screen) and self.is_exists(HUODONG_BTN["minus_on"]):
                 # 检查是否打满3次，可以扫荡
                 one_quan = 30
                 if boss_type == "N" or boss_type == "n":
@@ -1912,6 +1914,8 @@ class ShuatuMixin(ShuatuBaseMixin):
                 counter += 1
                 break
             else:
+                if not self.is_exists(HUODONG_BTN["minus_on"]):
+                    self.log.write_log("warning", f"无法一次打完难度为{boss_type}活动Boss，请注意")
                 # 不满3次，无法扫荡，手工推图
                 fb: FightBianZuHuoDong = act_menu.goto(FightBianZuHuoDong,
                                                        act_menu.fun_click(HUODONG_BTN["tiaozhan2_on"]))
@@ -2111,3 +2115,16 @@ class ShuatuMixin(ShuatuBaseMixin):
             else:
                 break
         self.lock_home()
+
+    def huodong_getbonus(self, code="current", entrance_ind="auto"):
+        self.lock_home()
+        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.lock_home()
+            return
+        map_base = HuodongMapBase(self)
+        menu = map_base.goto_menu()
+        menu.get_bonus()
+        self.lock_home()
+
+
