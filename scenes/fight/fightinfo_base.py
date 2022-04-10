@@ -22,11 +22,11 @@ class FightInfoBase(PCRMsgBoxBase):
         self.feature = self.fun_feature_exist(FIGHT_BTN["baochou"])
 
     def next_map(self):
-        at = (231, 38, 293, 62)
+        at = (231, 35, 283, 65)
         sc1 = self.getscreen()
         while True:
             self.click(926, 248)
-            time.sleep(1)
+            time.sleep(1.5)
             sc2 = self.getscreen()
             con = self.img_equal(sc1, sc2, at=at)
             if con < 0.95:
