@@ -4,7 +4,7 @@ from math import floor, inf
 
 from DataCenter import LoadPCRData
 from core.MoveRecord import movevar
-from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, ACTIVITY_COORD, VH_COORD, \
+from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, VH_COORD, \
     HANGHUI_BTN, HUODONG_BTN, JUQING_BTN, MAIN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
@@ -1802,6 +1802,10 @@ class ShuatuMixin(ShuatuBaseMixin):
         # List of str -> List of int
         tu_order = [int(s) for s in tu_order]
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
         self.log.write_log("info", f"开始刷活动Hard：{MAP.NAME} - {tu_order}")
         out = MAP.shua_hard(tu_order)
         self.lock_home()
@@ -1814,6 +1818,10 @@ class ShuatuMixin(ShuatuBaseMixin):
         """
         self.lock_home()
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
         self.log.write_log("info", f"开始刷活动VHBoss：{MAP.NAME}")
         MAP.shua_VHBoss(team_order)
         self.lock_home()
@@ -1834,6 +1842,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             cishu = int(cishu)
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
         if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
         self.log.write_log("info", f"开始刷活动1-1：{MAP.NAME}")
@@ -1858,6 +1867,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
         if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
         map_base = HuodongMapBase(self)
@@ -1874,6 +1884,10 @@ class ShuatuMixin(ShuatuBaseMixin):
         """
         self.lock_home()
         act_map = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if act_map is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
         act_map.goto_menu()
         self.log.write_log("info", f"开始刷活动Boss,难度{boss_type}")
         counter = 0
@@ -1976,6 +1990,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         MAP: HuodongMapBase = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
         if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
         self.log.write_log("info",f"类型：{type(MAP)}")
@@ -2072,6 +2087,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             return
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code=code, entrance_ind=entrance_ind)
         if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
         XY11 = MAP._check_coord(MAP.XY11)
@@ -2120,6 +2136,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
         if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
         map_base = HuodongMapBase(self)
