@@ -4,7 +4,7 @@ from math import floor, inf
 
 from DataCenter import LoadPCRData
 from core.MoveRecord import movevar
-from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, ACTIVITY_COORD, VH_COORD, \
+from core.constant import HARD_COORD, NORMAL_COORD, FIGHT_BTN, MAOXIAN_BTN, MAX_MAP, VH_COORD, \
     HANGHUI_BTN, HUODONG_BTN, JUQING_BTN, MAIN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
@@ -14,7 +14,7 @@ from core.pcr_config import force_as_ocr_as_possible, debug
 from core.valid_task import ShuatuToTuple
 from scenes.fight.fightinfo_base import FightInfoBase
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian, FightInfoZhuXianNormal
-from scenes.huodong.huodong_base import HuodongMapBase, HuodongMenu
+from scenes.huodong.huodong_base import HuodongMapBase, HuodongMenu, FightBianZuHuoDong
 
 from ._shuatu_base import ShuatuBaseMixin
 
@@ -1802,6 +1802,10 @@ class ShuatuMixin(ShuatuBaseMixin):
         # List of str -> List of int
         tu_order = [int(s) for s in tu_order]
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
         self.log.write_log("info", f"开始刷活动Hard：{MAP.NAME} - {tu_order}")
         out = MAP.shua_hard(tu_order)
         self.lock_home()
@@ -1814,6 +1818,10 @@ class ShuatuMixin(ShuatuBaseMixin):
         """
         self.lock_home()
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
         self.log.write_log("info", f"开始刷活动VHBoss：{MAP.NAME}")
         MAP.shua_VHBoss(team_order)
         self.lock_home()
@@ -1834,6 +1842,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             cishu = int(cishu)
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
         if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
         self.log.write_log("info", f"开始刷活动1-1：{MAP.NAME}")
@@ -1849,7 +1858,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             c, cishu_left = MAP.shua_11(cishu_left, team_order, get_zhiyuan)
         self.lock_home()
 
-    def exchange_tfz(self, code="current", entrance_ind="auto",
+    def exchange_tfz(self, code="current", entrance_ind="auto", reset=False,
                      var=None):
         """
         code: 见scenes/huodng/huodong_manager.py
@@ -1858,14 +1867,16 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
         if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
         map_base = HuodongMapBase(self)
         jiaohuan = map_base.goto_menu().goto_jiaohuan()
-        jiaohuan.exchange_all()
+        jiaohuan.setting()
+        jiaohuan.exchange_all(reset=reset)
         self.lock_home()
 
-    def shua_hd_boss(self, team_order="none", code="current", entrance_ind="auto", boss_type=None, var=None):
+    def shua_hd_boss(self, team_order="none", code="current", entrance_ind="auto", once=False, boss_type=None, var=None):
         """
         打活动Boss，team_order见shuatu_daily_ocr。
         code: 见scenes/huodng/huodong_manager.py
@@ -1873,28 +1884,123 @@ class ShuatuMixin(ShuatuBaseMixin):
         """
         self.lock_home()
         act_map = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
-        act_menu = act_map.goto_menu()
+        if act_map is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
+        act_map.goto_menu()
         self.log.write_log("info", f"开始刷活动Boss,难度{boss_type}")
-        act_menu.shua_Boss(team_order=team_order, boss_type=boss_type)
+        counter = 0
+        while True:
+            if once is True:
+                if counter > 0:
+                    self.log.write_log("info", "打够一次了")
+                    return
+            act_menu = HuodongMenu(self).enter()
+            if boss_type == "N" or boss_type == "n":
+                fi = act_menu.goto_nboss()
+            elif boss_type == "H" or boss_type == "h":
+                fi = act_menu.goto_hboss()
+            elif boss_type == "VH" or boss_type == "vh":
+                fi = act_menu.goto_vhboss()
+            else:
+                self.log.write_log("warning", "错误的boss类型，跳过该任务")
+                self.lock_home()
+                return
+
+            # 进入BOSS界面，FI
+
+            screen = act_menu.getscreen()
+            # boss挑战券是否足够
+            if fi.get_bsq_right(screen) == -1:
+                break
+            if fi.check_taofa(screen) and self.is_exists(HUODONG_BTN["minus_on"]):
+                # 检查是否打满3次，可以扫荡
+                one_quan = 30
+                if boss_type == "N" or boss_type == "n":
+                    one_quan = 20
+                # 打几次
+                if once is False:
+                    fi.easy_saodang(target_cishu="max", one_quan=one_quan)
+                else:
+                    fi.easy_saodang(target_cishu="1", one_quan=one_quan)
+                act_menu.fclick(1, 1)
+                counter += 1
+                break
+            else:
+                if not self.is_exists(HUODONG_BTN["minus_on"]):
+                    self.log.write_log("warning", f"无法一次打完难度为{boss_type}活动Boss，请注意")
+                # 不满3次，无法扫荡，手工推图
+                fb: FightBianZuHuoDong = act_menu.goto(FightBianZuHuoDong,
+                                                       act_menu.fun_click(HUODONG_BTN["tiaozhan2_on"]))
+                fb.select_team(team_order)
+                zd = fb.goto_zhandou()
+                zd.auto_and_fast(1)
+                time.sleep(1)
+                counter += 1
+
+            while True:
+                out = self.lock_img({
+                    HUODONG_BTN["shadow_return"]: 1,  # 可以看到return的情况
+                    HUODONG_BTN["shadow_help"]: 1,  # 信赖度
+                    HUODONG_BTN["NORMAL_ON"]: 2,  # Normal，在map了
+                    HUODONG_BTN["HARD_ON"]: 2,  # Hard，在map了
+                    JUQING_BTN["caidanyuan"]: 1,  # 剧情菜单
+                    HUODONG_BTN["speaker_box"]: 1,
+                    HUODONG_BTN["taofazheng_btn"]: 3,
+                    HUODONG_BTN["long_next"]: 4,
+                    HUODONG_BTN["short_next"]: 5,
+                    HUODONG_BTN["short_next2"]: 5,
+                    FIGHT_BTN["menu"]: 6,
+
+                }, elseclick=(1, 1), timeout=20, is_raise=False, threshold=0.9)
+
+                if out == 1:
+                    self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
+                    time.sleep(4)
+                    self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
+                    break
+                elif out == 2:
+                    self.click_btn(HUODONG_BTN["return"], until_appear=HUODONG_BTN["taofazheng_btn"])
+                    continue
+                elif out == 3:
+                    time.sleep(4)
+                    self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
+                    break
+                elif out == 4:
+                    self.click_btn(HUODONG_BTN["long_next"])
+                    continue
+                elif out == 5:
+                    self.click(838, 489)
+                    continue
+                elif out == 6:
+                    time.sleep(6)
+                    continue
+                else:
+                    self.fclick(1, 1)
+                    continue
+            self.fclick(1, 1)
         self.lock_home()
 
     def tui_hd_map(self, diff="N", team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
-                   if_full=0):
+                   if_full=0, var=None):
 
         self.lock_home()
         if not self.check_shuatu():
             return
-        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code=code, entrance_ind=entrance_ind)
+        MAP: HuodongMapBase = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
         if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
+        self.log.write_log("info",f"类型：{type(MAP)}")
         XY11 = MAP._check_coord(MAP.XY11)
         H1 = MAP._check_coord(MAP.HARD_COORD[1])
         first_time = True
         while True:
             if self.check_shuatu() is False:
                 break
-            MAP.enter()
+            MAP = HuodongMapBase(self).enter()
             if diff == "N":
                 MAP.goto_normal()
             else:
@@ -1943,18 +2049,18 @@ class ShuatuMixin(ShuatuBaseMixin):
                     HUODONG_BTN["speaker_box"]: 1,
                     HUODONG_BTN["taofazheng_btn"]: 4,
 
-                }, elseclick=(1, 1), timeout=20, is_raise=False, threshold=0.8)
+                }, elseclick=(1, 1), timeout=20, is_raise=False, threshold=0.9)
 
                 if out == 1:
                     self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
-                    HuodongMenu(self).goto_map()
+                    HuodongMenu(self).goto_map(MAP)
                     continue
                 elif out == 2:
                     continue
                 elif out == 3:
                     continue
                 elif out == 4:
-                    HuodongMenu(self).goto_map()
+                    HuodongMenu(self).goto_map(MAP)
                     continue
                 else:
                     self.chulijiaocheng(None)
@@ -1965,11 +2071,77 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
 
     def tui_hd_map_normal(self, team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
-                          if_full=0):
+                          if_full=0, var=None):
         self.tui_hd_map(diff="N", team_order=team_order, code=code, entrance_ind=entrance_ind, get_zhiyuan=get_zhiyuan,
                         if_full=if_full)
 
     def tui_hd_map_hard(self, team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
-                        if_full=0):
+                        if_full=0, var=None):
         self.tui_hd_map(diff="H", team_order=team_order, code=code, entrance_ind=entrance_ind, get_zhiyuan=get_zhiyuan,
                         if_full=if_full)
+
+    def shua_hd_map_normal(self, code="current", entrance_ind="auto", map_id=1, cishu="max", var=None):
+
+        self.lock_home()
+        if not self.check_shuatu():
+            return
+        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code=code, entrance_ind=entrance_ind)
+        if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
+        XY11 = MAP._check_coord(MAP.XY11)
+        MAP.enter().goto_normal()
+        MAP.to_leftdown()
+        fi = MAP.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
+        if map_id > 1:
+            next_time = map_id - 1
+            for _ in range(next_time):
+                fi.next_map()
+        fi = FightInfoBase(self)
+        s = fi.easy_saodang(one_tili=10, target_cishu=cishu)
+        if s != 0:
+            return
+        # 处理弹窗
+        while True:
+            time.sleep(3)
+            self.fclick(1, 1)
+            time.sleep(1)
+            out = self.lock_img({
+                HUODONG_BTN["shadow_return"]: 1,  # 可以看到return的情况
+                HUODONG_BTN["shadow_help"]: 1,  # 信赖度
+                HUODONG_BTN["NORMAL_ON"]: 2,  # Normal，在map了
+                HUODONG_BTN["HARD_ON"]: 2,  # Hard，在map了
+                JUQING_BTN["caidanyuan"]: 3,  # 剧情菜单
+                HUODONG_BTN["speaker_box"]: 1,
+                HUODONG_BTN["taofazheng_btn"]: 4,
+
+            }, elseclick=(1, 1), timeout=20, is_raise=False, threshold=0.9)
+
+            if out == 1:
+                self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
+                break
+            elif out == 2:
+                break
+            elif out == 3:
+                self.guojuqing(story_type="huodong")
+                break
+            elif out == 4:
+                break
+            else:
+                break
+        self.lock_home()
+
+    def huodong_getbonus(self, code="current", entrance_ind="auto"):
+        self.lock_home()
+        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
+        map_base = HuodongMapBase(self)
+        menu = map_base.goto_menu()
+        menu.get_bonus()
+        self.lock_home()
+
+

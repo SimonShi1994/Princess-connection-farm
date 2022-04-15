@@ -8,7 +8,7 @@ from scenes.fight.fighting_zhuxian import LoveUpScene, HaoYouMsg, FightingDialog
 from scenes.huodong.huodong_fight import BOSS_FightInfoBase
 from scenes.zhuxian.zhuxian_base import ZhuXianBase
 from scenes.scene_base import PCRSceneBase, PossibleSceneList, PCRMsgBoxBase
-from core.constant import p, FIGHT_BTN, HUODONG_BTN, MAIN_BTN
+from core.constant import p, FIGHT_BTN, HUODONG_BTN, MAIN_BTN, JUQING_BTN
 from typing import Union
 
 
@@ -82,6 +82,8 @@ class HuodongMapBase(ZhuXianBase):
         elif self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
             self.fclick(1, 1)
             self._a.restart_this_task()
+        elif self.is_exists(JUQING_BTN["caidanyuan"], screen=screen):  # 打倒多个boss会出现对话
+            self.fclick(1, 1)
         return screen
 
     def feature_normal_or_hard(self, screen):
@@ -92,13 +94,11 @@ class HuodongMapBase(ZhuXianBase):
     def goto_hard(self):
         self.lock_img(HUODONG_BTN["HARD_ON"], elseclick=HUODONG_BTN["HARD_ON"], method="sq")
 
-
     def goto_normal(self):
         self.lock_img(HUODONG_BTN["NORMAL_ON"], elseclick=HUODONG_BTN["NORMAL_ON"], method="sq")
 
-
     def to_leftdown(self):
-        time.sleep(1)
+        time.sleep(4)
         obj = self.d.touch.down(47, 466)
         time.sleep(0.1)
         obj.move(47, 96)
@@ -112,7 +112,8 @@ class HuodongMapBase(ZhuXianBase):
         obj.up(416, 80)
         time.sleep(1)
 
-    def _check_coord(self, t):
+    @staticmethod
+    def _check_coord(t):
         # t: tuple -> PCRComponent
         # t: None -> raise!
         if t is None:
@@ -261,95 +262,114 @@ class HuodongMenu(PCRSceneBase):
     def __init__(self, a):
         super().__init__(a)
         self.feature = self.fun_feature_exist(HUODONG_BTN["taofazheng_btn"])
+        self.initPC = self.clear_map
 
-    def goto_map(self) -> "HuodongMapBase":
-        return self.goto(HuodongMapBase, self.fun_click(HUODONG_BTN["huodongguanka"]))
+    def clear_map(self, screen):
+        a = self.img_where_all(img="img/ui/quxiao2.bmp", screen=screen, at=(300, 270, 439, 450))
+        # 信赖度解锁：如果是推图，则到地图页面跳出。如果是扫荡，则在结算页面跳出。
+        b = self.img_where_all(img="img/ui/close_btn_1.bmp", screen=screen, at=(365, 266, 593, 516))
+        # 剧情解锁，记录解锁等
+        if len(a) > 0:
+            self.click(int(a[0]), int(a[1]))
+        elif len(b) > 0:
+            self.click(int(b[0]), int(b[1]))
+        elif self.is_exists(MAIN_BTN["karin_middle"], screen=screen):
+            self.chulijiaocheng(None)
+            self._a.restart_this_task()
+        elif self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
+            self.fclick(1, 1)
+            self._a.restart_this_task()
+        return screen
+
+    def goto_map(self, map_id) -> "HuodongMapBase":
+        return self.goto(map_id, self.fun_click(HUODONG_BTN["huodongguanka"]))
 
     def goto_jiaohuan(self) -> "Jiaohuan":
         return self.goto(Jiaohuan, self.fun_click(HUODONG_BTN["taofazheng_btn"]))
 
     def goto_nboss(self) -> "BOSS_FightInfoBase":
-        screen = self.getscreen()
-        self.click_img(img=HUODONG_BTN["nboss"].img, screen=screen, at=(681, 130, 789, 302))
-        return self.goto(BOSS_FightInfoBase, gotofun=None)
+        while True:
+            a = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(681, 130, 789, 302))
+            if not a:
+                time.sleep(2)
+                obj = self.d.touch.down(923, 205)
+                time.sleep(0.1)
+                obj.move(923, 85)
+                time.sleep(0.8)
+                obj.up(923, 85)
+                time.sleep(0.5)
+                continue
+            else:
+                break
+        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
 
     def goto_hboss(self) -> "BOSS_FightInfoBase":
-        screen = self.getscreen()
-        self.click_img(img=HUODONG_BTN["hboss"].img, screen=screen, at=(681, 130, 789, 302))
-        return self.goto(BOSS_FightInfoBase, gotofun=None)
+        time.sleep(2)
+        while True:
+            a = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(681, 130, 789, 302))
+            if not a:
+                time.sleep(2)
+                obj = self.d.touch.down(923, 205)
+                time.sleep(0.1)
+                obj.move(923, 307)
+                time.sleep(0.8)
+                obj.up(923, 307)
+                time.sleep(0.5)
+            else:
+                break
+        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
 
     def goto_vhboss(self) -> "BOSS_FightInfoBase":
-        screen = self.getscreen()
-        self.click_img(img=HUODONG_BTN["vhboss"].img, screen=screen, at=(681, 130, 789, 302))
-        return self.goto(BOSS_FightInfoBase, gotofun=None)
-
-    def shua_Boss(self, team_order="none", boss_type=None):
-        """
-        刷活动Boss。最好已经打过一遍了。
-        之后可能有剧情，因此默认跳过剧情。
-        这个函数的结束位置在home，无论如何都会返回主页
-        return
-            0 - 挑战成功
-            1 - 挑战失败
-            -1 - 无法进入
-        """
-        if boss_type == "N" or boss_type == "n":
-            fi = self.goto_nboss()
-        elif boss_type == "H" or boss_type == "h":
-            fi = self.goto_hboss()
-        elif boss_type == "VH" or boss_type == "vh":
-            fi = self.goto_vhboss()
-        else:
-            self.log.write_log("warning", "错误的boss类型，跳过该任务")
-            return
-
         while True:
-            screen = self.getscreen()
-            if fi.get_bsq_right(screen) == -1:
-                break
-            if fi.check_taofa(screen):
-                # 检查是否打满3次，可以扫荡
-                one_quan = 30
-                if boss_type == "N" or boss_type == "n":
-                    one_quan = 20
-                fi.easy_saodang(target_cishu="max", one_quan=one_quan)
-                break
+            a = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(681, 130, 789, 302))
+            if not a:
+                time.sleep(2)
+                obj = self.d.touch.down(923, 205)
+                time.sleep(0.1)
+                obj.move(923, 307)
+                time.sleep(0.8)
+                obj.up(923, 307)
+                time.sleep(0.5)
             else:
-                fb: FightBianZuHuoDong = self.goto(FightBianZuHuoDong, self.fun_click(HUODONG_BTN["tiaozhan2_on"]))
-                fb.select_team(team_order)
-                zd = fb.goto_zhandou()
-                zd.auto_and_fast(1)
-                during = zd.get_during()
-                after = None
-                while True:
-                    out = during.check(timeout=300, double_check=3)
-                    if isinstance(out, during.FightingWin):
-                        self.log.write_log("info", "你胜利了。")
-                        out.next()
-                        after = out.get_after()
-                        break
-                    elif isinstance(out, during.FightingLose):
-                        self.log.write_log("warning", "打不过难度为{boss_type}的活动Boss")
-                        out.exit_me()
-                        self._a.lock_home()
-                        return
-                    elif isinstance(out, during.FightingDialog):
-                        out.skip()
-                    else:
-                        continue
-                if after is not None:
-                    while True:
-                        out = after.check()
-                        if isinstance(out, after.FightingWinZhuXian2):
-                            out.next()
-                            self.chulijiaocheng(turnback=None)
-                            return 0
+                break
+        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
+
+    def get_bonus(self):
+        if self.check_color(fc=[222, 89, 123], bc=[255, 255, 255], xcor=896, ycor=400, color_type="rgb"):
+            self.click_btn(HUODONG_BTN["liwu"], until_appear=HUODONG_BTN["wanchengqingkuang"])
+            self.click(344, 22)  # 每日
+            time.sleep(0.2)
+            self.click(781, 433)  # 收取
+            time.sleep(1)
+            self.click(478, 468)  # 关闭
+            time.sleep(1)
+
+            self.click(547, 22)  # 普通
+            time.sleep(0.2)
+            self.click(781, 433)  # 收取
+            time.sleep(1)
+            self.click(478, 468)  # 关闭
+            time.sleep(1)
+
+            self.click(710, 22)  # 特别
+            time.sleep(0.2)
+            self.click(781, 433)  # 收取
+            time.sleep(1)
+            self.click(478, 468)  # 关闭
+            time.sleep(1)
+
+            self.click(860, 22)  # 称号
+            time.sleep(0.2)
+            self.click(781, 433)  # 收取
+            time.sleep(1)
+            self.click(478, 468)  # 关闭
+            time.sleep(1)
 
 
 class Jiaohuan(PCRSceneBase):
     def __init__(self, a):
         super().__init__(a)
-        self.feature = self.fun_feature_exist(HUODONG_BTN["dangqianliebiao"])
+        self.feature = self.fun_feature_exist(HUODONG_BTN["tfz_bottom"])
 
     def get_taofazheng(self, screen=None):
         self.check_ocr_running()
@@ -362,28 +382,78 @@ class Jiaohuan(PCRSceneBase):
         self.lock_img(HUODONG_BTN["blsd"], elseclick=(785, 38))
         self.click(721, 156)  # 100次
         self.click(500, 272)  # 跳过
-        self.click(500, 379)  # 5次后一键
-        self.fclick(1, 1)
+        obj = self.d.touch.down(868, 270)
+        time.sleep(0.1)
+        obj.move(868, 120)
+        time.sleep(0.8)
+        obj.up(868, 120)
+        self.click(502, 233)  # 5次后一键
+        self.click(724, 352)  # 交换不确认
+        time.sleep(0.5)
+        self.click(483, 475)  # 关闭
 
     def exchange_all(self, reset=False):
-        while True:
-            a = self.get_taofazheng()
-            if a > 10:
-                self.click(825, 371)
-                time.sleep(2)
+        time.sleep(0.5)
+        a = self.get_taofazheng()
+        if a > 1:
+            self.click(825, 371)
+            time.sleep(2)
+            while True:
+                out = self.lock_img({
+                    HUODONG_BTN["zaicijiaohuan_blue"]: 1,  # 再次交换（没有到碎片）
+                    HUODONG_BTN["zaicijiaohuan_white"]: 2,  # 再次交换（到碎片了，在中间）
+                    HUODONG_BTN["tfz_bottom"]: 3,  # 换完了，回到交换页了
+                    HUODONG_BTN["reset"]: 4,  # 抽干了，重置
+                    HUODONG_BTN["reset2"]: 5,  # 两分栏，是讨伐证空了
+                    HUODONG_BTN["queren_white"]: 6,  # 换完了，白色确认中间
+                    HUODONG_BTN["chakanyihuode"]: 7,  # 换完了，白色确认中间
+                    HUODONG_BTN["reset_confirm1"]: 8,  # 选择中途重置的确认
 
-                # 这轮换完/不足一轮
-                if self.is_exists(HUODONG_BTN["exchange_queren"]):
-                    self.click_btn(HUODONG_BTN["return"], until_appear=HUODONG_BTN["dangqianliebiao"])
-                # TODO:多周目扩充
-                # self.lock_img(HUODONG_BTN["return"])
-                pass
-            elif a <= 10:
-                self.lock_img(HUODONG_BTN["return"])
-                self.click_btn(HUODONG_BTN["return"], until_appear=HUODONG_BTN["dangqianliebiao"])
-                return
-            else:
-                return
+                }, elseclick=(1, 1), timeout=20, is_raise=False)
+
+                if out == 1:
+                    self.click(HUODONG_BTN["zaicijiaohuan_blue"])
+                    continue
+                elif out == 2:
+                    if reset is True:
+                        self.click(HUODONG_BTN["reset3"])
+                        time.sleep(1)
+                    else:
+                        self.click(HUODONG_BTN["zaicijiaohuan_white"])
+                    continue
+                elif out == 3:
+                    a = self.get_taofazheng()
+                    if a > 1:
+                        self.click(825, 371)
+                        time.sleep(2)
+                    else:
+                        break
+                    continue
+                elif out == 4:
+                    self.click(HUODONG_BTN["reset"])
+                    continue
+                elif out == 5:
+                    break
+                elif out == 6:
+                    self.click(HUODONG_BTN["queren_white"])
+                    continue
+                elif out == 7:
+                    self.click(HUODONG_BTN["chakanyihuode"])
+                    continue
+                elif out == 8:
+                    self.click(HUODONG_BTN["reset_confirm1"])
+                    time.sleep(1.5)
+                    self.click(HUODONG_BTN["reset_confirm2"])
+                    time.sleep(1.5)
+                    self.fclick(1, 1)
+                    continue
+                else:
+                    self.fclick(1, 1)
+                    continue
+        else:
+            pass
+
+
 
     def goto_menu(self):
-        return self.goto(HuodongMapBase, self.fun_click(HUODONG_BTN["huodongguanka"]))
+        return self.goto(HuodongMenu, self.fun_click(HUODONG_BTN["huodongguanka"]))

@@ -223,6 +223,11 @@ class EnhanceMixin(ShuatuBaseMixin):
                                 self.click_btn(JUESE_BTN["zdqh_1"], until_appear=JUESE_BTN["zdqh_ok"])
                                 self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
                                 continue
+
+                        # 解决部分卡推荐强化菜单的问题
+                        time.sleep(0.5)
+                        self.fclick(1, 1)
+
                         if debug:
                             self.log.write_log('debug', "等级装备强化任务完成")
                         # 好感度升级

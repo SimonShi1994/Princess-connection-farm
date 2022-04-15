@@ -21,13 +21,18 @@ class FightInfoBase(PCRMsgBoxBase):
         # 检测编组设定
         self.feature = self.fun_feature_exist(FIGHT_BTN["baochou"])
 
-    def next_map(self, at=None, screen=None):
-        if screen is None:
-            screen = self.getscreen()
-        if at is None:
-            at = (231, 38, 293, 62)
-        self.lock_change(at, threshold=0.84, similarity=0.01, elseclick=(926, 248), elsedelay=3, is_raise=True,
-                         screen=screen)
+    def next_map(self):
+        at = (231, 35, 283, 65)
+        sc1 = self.getscreen()
+        while True:
+            self.click(926, 248)
+            time.sleep(1.5)
+            sc2 = self.getscreen()
+            con = self.img_equal(sc1, sc2, at=at)
+            if con < 0.95:
+                break
+            else:
+                sc1 = sc2
 
     def to_last_map(self, max_tu: int = 15):  # 尽量从1-1开始点
         at = (231, 38, 293, 62)
@@ -35,11 +40,12 @@ class FightInfoBase(PCRMsgBoxBase):
         sc1 = self.getscreen()
         while True:
             self.click(926, 248)
+            time.sleep(0.5)
             if count == max_tu:
                 self.log.write_log("info", "已到最后一图")
                 return "finish"
             count += 1
-            time.sleep(2)
+            self.log.write_log("info", f"在{count}图")
             sc2 = self.getscreen()
             p = self.img_equal(sc1, sc2, at=at)
             if p > 0.95:
@@ -307,6 +313,9 @@ class FightInfoBase(PCRMsgBoxBase):
                 out.skip()
             elif isinstance(out, D.HaoYouMsg):
                 out.exit_with_off()
+            # elif isinstance(out, D.LevelUpBox):
+            #     out.OK()
+            #     self.start_shuatu()
 
     def easy_saodang(self,
                      target_cishu: Union[int, str] = "max",

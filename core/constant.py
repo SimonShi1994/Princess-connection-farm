@@ -295,6 +295,7 @@ HUODONG_BTN = {
     "bossqsl": p(666, 425, img="img/huodong/bossqsl.bmp", at=(622, 416, 710, 434)),
     "long_next": p(807, 488, img="img/huodong/long_next.bmp", at=(713, 473, 902, 504)),
     "short_next": p(846, 489, img="img/huodong/short_next.bmp", at=(811, 474, 881, 504)),
+    "short_next2": p(830, 489, img="img/huodong/short_next.bmp", at=(795, 474, 865, 504)),
     "taofazheng_btn": p(597, 357, img="img/huodong/taofazheng_btn.bmp", at=(573, 349, 622, 366)),
     "huodongguanka": p(556, 202, img="img/huodong/huodongguanka.bmp", at=(515, 192, 598, 213)),
     "dangqianliebiao": p(660, 303, img="img/huodong/dangqianliebiao.bmp", at=(620, 293, 701, 314)),
@@ -314,6 +315,20 @@ HUODONG_BTN = {
     "shadow_help": p(920, 26, img="img/huodong/shadow_help.bmp", at=(909, 14, 931, 38)),
     "NORMAL_ON": p(763, 82, img="img/huodong/normal_on.bmp", at=(740, 71, 786, 93)),
     "HARD_ON": p(886, 82, img="img/huodong/hard_on.bmp", at=(864, 73, 909, 92)),
+    "queren": p(476, 369, img="img/huodong/queren.bmp", at=(448, 354, 505, 384)),  # 解锁BOSS扫荡
+    "tfz_bottom": p(769, 442, img="img/huodong/tfz_bottom.bmp", at=(734, 432, 804, 453)),  # 讨伐证交换右下角
+    "reset": p(477, 477, img="img/huodong/chongzhi.bmp", at=(447, 463, 507, 492)),  # 奖励提示重置
+    "zaicijiaohuan_blue": p(589, 426, img="img/huodong/zaicijiaohuan.bmp", at=(545, 413, 633, 440)),
+    "zaicijiaohuan_white": p(479, 426, img="img/huodong/zaicijiaohuan_white.bmp", at=(435, 412, 523, 441)),
+    "chakanyihuode": p(480, 426, img="img/huodong/chakanyihuode.bmp", at=(406, 411, 554, 441)),
+    "reset2": p(588, 426, img="img/huodong/chongzhi2.bmp", at=(523, 410, 654, 442)),
+    "reset3": p(651, 428, img="img/huodong/chongzhi3.bmp", at=(627, 414, 676, 443)),
+    "queren_white": p(482, 426, img="img/ui/queren.bmp", at=(452, 414, 512, 439)),
+    "reset_confirm1": p(585, 477, img="img/huodong/chongzhiqueren.bmp", at=(558, 461, 613, 493)),
+    "reset_confirm2": p(590, 368, img="img/huodong/chongzhiqueren2.bmp", at=(557, 352, 624, 384)),
+    "liwu": p(911, 424, img="img/huodong/liwu.bmp", at=(896, 411, 926, 438)),
+    "wanchengqingkuang": p(558, 452, img="img/huodong/wanchengqingkuang.bmp", at=(527, 443, 590, 462)),
+    "minus_on": p(630, 374, img="img/huodong/minus_on.bmp", at=(599, 349, 661, 400)),
 
 }
 
@@ -1019,6 +1034,11 @@ HARD_COORD = {
         2: p(485, 363, name="H33-2"),
         3: p(779, 253, name="H33-3"),
     },
+    34: {
+        1: p(177, 348, name="H34-1"),
+        2: p(485, 241, name="H34-2"),
+        3: p(777, 303, name="H34-3"),
+    },
 }
 
 VH_COORD = {
@@ -1096,7 +1116,7 @@ MAOXIAN_BTN = {
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
 }
 
-MAX_MAP = 33
+MAX_MAP = 34
 
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(77, 61, 141, 72)),
@@ -1132,6 +1152,7 @@ ZHUXIAN_ID = {
     31: p(img="img/zhuxian/31L.bmp", at=(60, 55, 175, 77)),
     32: p(img="img/zhuxian/32L.bmp", at=(89, 58, 193, 73)),
     33: p(img="img/zhuxian/33L.bmp", at=(61, 58, 196, 75)),
+    34: p(img="img/zhuxian/34L.bmp", at=(61, 58, 202, 77)),
 }
 
 # ZHUXIAN_SUB_ID
@@ -1169,6 +1190,10 @@ ZHUXIAN_FSJYSL_ID = {
     32: p(img="img/zhuxian/32R.bmp", at=(214, 60, 250, 75)),
     33: p(img="img/zhuxian/33R.bmp", at=(214, 60, 250, 75)),
 }
+# ZHUXIAN_TKSTYSY_ID = {
+#     34: p(img="img/zhuxian/34R.bmp", at=(219, 60, 251, 74)),
+#
+# }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
@@ -1178,6 +1203,7 @@ ZHUXIAN_SECOND_ID = {
     (28, 29): ZHUXIAN_DSTEHSA_ID,
     (30, 31): ZHUXIAN_FTLDY_ID,
     (32, 33): ZHUXIAN_FSJYSL_ID,
+    # (34, 35): ZHUXIAN_TKSTYSY_ID,
 }
 
 NORMAL_COORD = {
@@ -1850,6 +1876,26 @@ NORMAL_COORD = {
             1: p(109, 239, name="33-1"),
         },
     },
+    34: {
+        "right": {
+            14: p(810, 336, name="34-14"),
+            13: p(647, 351, name="34-13"),
+            12: p(707, 230, name="34-12"),
+            11: p(570, 193, name="34-11"),
+            10: p(431, 228, name="34-10"),
+            9: p(462, 353, name="34-9"),
+            8: p(328, 336, name="34-8"),
+        },
+        "left": {
+            7: p(642, 363, name="34-7"),
+            6: p(605, 257, name="34-6"),
+            5: p(452, 245, name="34-5"),
+            4: p(394, 359, name="34-4"),
+            3: p(311, 255, name="34-3"),
+            2: p(202, 326, name="34-2"),
+            1: p(164, 189, name="34-1"),
+        },
+    },
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),
@@ -1868,6 +1914,7 @@ RANKS_DICT = {
     14: p(img="img/ranks/14.bmp", at=(211, 111, 282, 136)),
     15: p(img="img/ranks/15.bmp", at=(216, 111, 281, 135)),
     16: p(img="img/ranks/16.bmp", at=(216, 114, 279, 132)),
+    17: p(img="img/ranks/17.bmp", at=(212, 112, 280, 134)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
@@ -1921,35 +1968,6 @@ USER_DEFAULT_DICT = {
 
 }
 
-'''
-!!!!警告!!!!!
-!!!!下面这个是活动的坐标，请加入的时候一定要打上活动的备注！！！！！！
-'''
-ACTIVITY_COORD = {
-    # 珠希与美冬的无人岛0金币生活 2020/8/30
-    "shuihei_summer_activity": {
-        "left": {
-            9: p(835, 340),
-            8: p(734, 293),
-            7: p(653, 208),
-            6: p(580, 278),
-            5: p(489, 311),
-            4: p(405, 398),
-            3: p(334, 301),
-            2: p(270, 218),
-            1: p(165, 290)
-        },
-        "right": {
-            16: p(822, 239),
-            15: p(688, 175),
-            14: p(624, 249),
-            13: p(541, 330),
-            12: p(464, 243),
-            11: p(363, 351),
-            10: p(301, 216)
-        }
-    }
-}
 
 # 显然后面还没写
 # 等有空补全

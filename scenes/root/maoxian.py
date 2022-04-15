@@ -105,6 +105,8 @@ class MaoXian(SevenBTNMixin):
                     return False
             else:
                 xx, yy = MAIN_BTN["round_btn"][entrance_ind]
+            self.click(xx, yy)
+            time.sleep(6)
             out = self.lock_img({
                 HUODONG_BTN["sjxz"]: 1,  # 数据下载
                 HUODONG_BTN["NORMAL_ON"]: 2,  # Normal，进入
@@ -132,8 +134,10 @@ class MaoXian(SevenBTNMixin):
                 "GOTO LABEL A"
                 continue
             elif out == 4:
-                self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=180)
-                return HuodongMenu(self._a).enter().goto_map()
+                self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=0.2, timeout=180)
+                time.sleep(5)
+                self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=0.2, timeout=180)
+                return HuodongMenu(self._a).enter().goto_map(map_id=MAP)
             else:
                 # out = False
                 self.chulijiaocheng(None)
@@ -141,4 +145,4 @@ class MaoXian(SevenBTNMixin):
                 "GOTO LABEL A"
                 continue
 
-        return self.goto(HuodongMapBase, gotofun=None)
+        return self.goto(MAP, gotofun=None)
