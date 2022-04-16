@@ -2068,14 +2068,14 @@ class ShuatuMixin(ShuatuBaseMixin):
 
                 if out == 1:
                     self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
-                    HuodongMenu(self).goto_map(MAP)
+                    HuodongMenu(self).goto_map(type(MAP))
                     continue
                 elif out == 2:
                     continue
                 elif out == 3:
                     continue
                 elif out == 4:
-                    HuodongMenu(self).goto_map(MAP)
+                    HuodongMenu(self).goto_map(type(MAP))
                     continue
                 else:
                     self.chulijiaocheng(None)
