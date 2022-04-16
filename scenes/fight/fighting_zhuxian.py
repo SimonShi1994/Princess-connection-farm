@@ -195,6 +195,7 @@ class AfterFightingWin(PossibleSceneList):
             self.LevelUpBox(a),
             self.TuanDuiZhanBox(a),
             self.ChaoChuShangXianBox(a),
+            LoveUpScene(a),
             HaoYouMsg(a),
             FightingWinZhuXian2(a),
             AfterFightKKR(a),  # kkr剧情跳脸

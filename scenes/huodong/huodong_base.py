@@ -57,10 +57,18 @@ class FightBianZuHuoDong(FightBianZuBase):
 
 class HuodongMapBase(ZhuXianBase):
     NAME = "UNDEFINED"
+    # 坐标
     XY11 = None  # Normal(1,1)的坐标，用于刷1-1
+    XY21 = None
+    XY31 = None
     HARD_COORD = None  # 大号刷Hard用坐标
     XY_HARD_BOSS = None
     XY_VH_BOSS = None
+    # 常数
+    N_slice = 1
+    N1 = 15
+    N2 = 15
+    N3 = 15
 
     def __init__(self, a):
         super().__init__(a)
@@ -91,11 +99,40 @@ class HuodongMapBase(ZhuXianBase):
         hard = self.is_exists(HUODONG_BTN["HARD_ON"], screen=screen)
         return normal or hard
 
-    def goto_hard(self):
+    def goto_hd_hard(self):
         self.lock_img(HUODONG_BTN["HARD_ON"], elseclick=HUODONG_BTN["HARD_ON"], method="sq")
+        return self
 
-    def goto_normal(self):
+    def goto_hd_normal(self):
         self.lock_img(HUODONG_BTN["NORMAL_ON"], elseclick=HUODONG_BTN["NORMAL_ON"], method="sq")
+
+    def go_left(self, times):
+        if times >= 1:
+            for _ in range(times):
+                time.sleep(1)
+                self.click(28, 269)
+                time.sleep(2)
+        else:
+            pass
+
+    def go_right(self, times):
+        if times >= 1:
+            for _ in range(times):
+                time.sleep(1)
+                self.click(931, 269)
+                time.sleep(2)
+        else:
+            pass
+
+    def goto_hd_n2(self):
+        self.lock_img(HUODONG_BTN["NORMAL_ON"], elseclick=HUODONG_BTN["NORMAL_ON"], method="sq")
+        N_slice = self._check_constant(self.N_slice)
+        if N_slice == 1:
+            self.click(28, 269)
+        if N_slice == 2:
+            self.click(28, 269)
+            time.sleep(2)
+            self.click(28, 269)
 
     def to_leftdown(self):
         time.sleep(4)
@@ -124,7 +161,16 @@ class HuodongMapBase(ZhuXianBase):
             else:
                 return p
 
-    def goto_menu(self) -> "HuodongMenu":
+    @staticmethod
+    def _check_constant(c):
+        # t: tuple -> PCRComponent
+        # t: None -> raise!
+        if c is None:
+            raise Exception("该活动图并没有设定该常数：", c)
+        else:
+            return c
+
+    def goto_hd_menu(self) -> "HuodongMenu":
         return self.goto(HuodongMenu, self.fun_click(HUODONG_BTN["return"]))
 
     def shua_11(self, cishu: Union[str, int] = "max", team_order="nobody", get_zhiyuan=True, ):
@@ -143,7 +189,7 @@ class HuodongMapBase(ZhuXianBase):
         """
         self.set_initFC()
         XY11 = self._check_coord(self.XY11)
-        self.goto_normal()
+        self.goto_hd_n1()
         self.to_leftdown()
         fi = self.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
         if fi is None:
@@ -190,7 +236,7 @@ class HuodongMapBase(ZhuXianBase):
 
         for tu in tu_order:
             self.set_initFC()
-            self.goto_hard()
+            self.goto_hd_hard()
             XY = self._check_coord(self.HARD_COORD[tu])
             fi = self.click_xy_and_open_fightinfo(*XY, typ=FightInfoBase)
             self.clear_initFC()
@@ -215,7 +261,7 @@ class HuodongMapBase(ZhuXianBase):
             -1 - 无法进入
         """
         XY = self._check_coord(self.XY_VH_BOSS)
-        self.goto_hard()
+        self.goto_hd_hard()
         out = self.lock_img(HUODONG_BTN["bossqsl"], elseclick=XY, elsedelay=2, retry=3, is_raise=False)
         if out is False:
             self.log.write_log("info", "无法进入VHBoss，今天可能已经打过了。")
@@ -289,7 +335,9 @@ class HuodongMenu(PCRSceneBase):
 
     def goto_nboss(self) -> "BOSS_FightInfoBase":
         while True:
-            a = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(681, 130, 789, 302))
+            a1 = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(681, 130, 789, 302))
+            a2 = self.img_where_all(img=HUODONG_BTN["nboss_en"].img, at=(681, 130, 789, 302))
+            a = a1 + a2
             if not a:
                 time.sleep(2)
                 obj = self.d.touch.down(923, 205)
@@ -306,7 +354,9 @@ class HuodongMenu(PCRSceneBase):
     def goto_hboss(self) -> "BOSS_FightInfoBase":
         time.sleep(2)
         while True:
-            a = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(681, 130, 789, 302))
+            a1 = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(681, 130, 789, 302))
+            a2 = self.img_where_all(img=HUODONG_BTN["hboss_en"].img, at=(681, 130, 789, 302))
+            a = a1 + a2
             if not a:
                 time.sleep(2)
                 obj = self.d.touch.down(923, 205)
@@ -321,7 +371,9 @@ class HuodongMenu(PCRSceneBase):
 
     def goto_vhboss(self) -> "BOSS_FightInfoBase":
         while True:
-            a = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(681, 130, 789, 302))
+            a1 = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(681, 130, 789, 302))
+            a2 = self.img_where_all(img=HUODONG_BTN["vhboss_en"].img, at=(681, 130, 789, 302))
+            a = a1 + a2
             if not a:
                 time.sleep(2)
                 obj = self.d.touch.down(923, 205)
@@ -452,8 +504,6 @@ class Jiaohuan(PCRSceneBase):
                     continue
         else:
             pass
-
-
 
     def goto_menu(self):
         return self.goto(HuodongMenu, self.fun_click(HUODONG_BTN["huodongguanka"]))

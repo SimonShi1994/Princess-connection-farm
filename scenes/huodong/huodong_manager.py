@@ -19,15 +19,14 @@ TYPE: 活动图类型
     1： 特殊，1-15分两页，横向分布
 
 NMAP： Normal在图1的最后关卡
-XYAA： 第一图的第一个坐标
+XY11： 第一图的第一个坐标
 XY21： 第二图的第一个坐标
+    ...
 '''
 
 
 class Map20220415(HuodongMapBase):
     NAME = "盛开在阿斯特莱亚的双轮之花复刻"
-    TYPE = 1
-    NMAP = 11
     XY11 = (152, 398)
     XY21 = (104, 382)
     XY_VH_BOSS = (647, 183)
@@ -38,6 +37,8 @@ class Map20220415(HuodongMapBase):
         4: (533, 384),
         5: (750, 332),
     }
+    N_slice = 2
+    N1 = 11
 
 
 class Map20220331(HuodongMapBase):

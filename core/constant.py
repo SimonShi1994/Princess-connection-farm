@@ -329,6 +329,9 @@ HUODONG_BTN = {
     "liwu": p(911, 424, img="img/huodong/liwu.bmp", at=(896, 411, 926, 438)),
     "wanchengqingkuang": p(558, 452, img="img/huodong/wanchengqingkuang.bmp", at=(527, 443, 590, 462)),
     "minus_on": p(630, 374, img="img/huodong/minus_on.bmp", at=(599, 349, 661, 400)),
+    "nboss_en": p(738, 154, img="img/huodong/nboss_en.bmp", at=(706, 142, 770, 167)),
+    "hboss_en": p(738, 217, img="img/huodong/hboss_en.bmp", at=(714, 205, 762, 230)),
+    "vhboss_en": p(738, 252, img="img/huodong/vhboss_en.bmp", at=(705, 240, 771, 265)),
 
 }
 
@@ -1967,7 +1970,6 @@ USER_DEFAULT_DICT = {
     }
 
 }
-
 
 # 显然后面还没写
 # 等有空补全
