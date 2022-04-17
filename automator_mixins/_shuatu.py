@@ -1888,7 +1888,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     HUODONG_BTN["shadow_return"]: 1,  # 可以看到return的情况
                     HUODONG_BTN["shadow_help"]: 1,  # 信赖度
                     HUODONG_BTN["NORMAL_ON"]: 2,  # Normal，在map了
-                    HUODONG_BTN["HARD_ON"]: 2,  # Hard，在map了
+                    HUODONG_BTN["HARD_ON"]: 1,  # Hard，在map了
                     JUQING_BTN["caidanyuan"]: 1,  # 剧情菜单
                     HUODONG_BTN["speaker_box"]: 1,
                     HUODONG_BTN["taofazheng_btn"]: 3,

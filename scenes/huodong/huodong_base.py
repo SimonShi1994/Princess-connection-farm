@@ -90,6 +90,8 @@ class HuodongMapBase(ZhuXianBase):
         elif self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
             self.fclick(1, 1)
             self._a.restart_this_task()
+        elif self.is_exists(HUODONG_BTN["shadow_return"], screen=screen):
+            self.fclick(1, 1)
         elif self.is_exists(JUQING_BTN["caidanyuan"], screen=screen):  # 打倒多个boss会出现对话
             self.fclick(1, 1)
         return screen
