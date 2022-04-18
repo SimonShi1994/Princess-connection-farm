@@ -126,7 +126,7 @@ class HuodongMapBase(ZhuXianBase):
         else:
             pass
 
-    def goto_hd_n2(self):
+    def goto_hd_n1(self):
         self.lock_img(HUODONG_BTN["NORMAL_ON"], elseclick=HUODONG_BTN["NORMAL_ON"], method="sq")
         N_slice = self._check_constant(self.N_slice)
         if N_slice == 1:
