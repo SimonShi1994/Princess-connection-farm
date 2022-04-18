@@ -286,6 +286,7 @@ NIUDAN_BTN = {
     "niudan_sheding": p(476, 433, img="img/niudan/niudan_sheding.bmp", at=(452, 420, 501, 446)),
     "chiyoushu": p(528, 413, img="img/niudan/chiyoushu.bmp", at=(505, 405, 552, 422)),
     "xuanzezhong": p(604, 262, img="img/niudan/xuanzezhong.bmp", at=(577, 251, 632, 274)),
+    "qianwangjiaohuan": p(479, 441, img="img/niudan/qianwangjiaohuan.bmp", at=(413, 426, 545, 456)),
 
 }
 
