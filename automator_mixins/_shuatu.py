@@ -1968,7 +1968,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             now = 0
             if self.check_shuatu() is False:
                 break
-            # MAP = HuodongMapBase(self).enter()
+            HuodongMapBase(self).enter()
             if diff == "N":
                 # 先到最左
                 MAP.goto_hd_normal()
