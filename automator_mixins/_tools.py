@@ -16,7 +16,6 @@ from core.MoveRecord import movevar
 from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING_BTN, p
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
-from core.log_handler import pcr_log
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, use_pcrocr_to_process_basic_text
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
@@ -475,7 +474,7 @@ class ToolsMixin(BaseMixin):
             return int(ret['words_result'][1]['words'].split('/')[0])
 
     def rename(self, name, auto_id):  # 重命名
-        # 2021/1/4 CyiceK对代码进行了维护
+        # 2022/4/17 CyiceK对代码进行了维护
         name = name.split(' ')
         name_len = len(name)
         if auto_id:
@@ -483,9 +482,9 @@ class ToolsMixin(BaseMixin):
         else:
             name = name[random.randint(0, name_len - 1)]
         self.click(871, 513)  # 主菜单
-        self.lock_img('img/zhucaidan/bangzhu.bmp', ifclick=[(370, 250)])  # 锁定帮助 点击简介
-        self.lock_img('img/bianji.bmp', ifclick=[(900, 155)])  # 锁定 点击铅笔修改按钮
-        self.lock_img('img/biangeng.bmp', ifclick=[(480, 270)])  # 锁定 玩家名 点击游戏渲染编辑框
+        self.lock_img('img/zhucaidan/bangzhu.bmp', ifclick=[(386, 208)])  # 锁定帮助 点击简介
+        self.lock_img('img/bianji.bmp', ifclick=[(900, 168)])  # 锁定 点击铅笔修改按钮
+        self.lock_img('img/biangeng.bmp', ifclick=[(591, 369)])  # 锁定 玩家名 点击游戏渲染编辑框
         time.sleep(1)
         self.click(290, 425)  # 点击编辑框
         self.d.clear_text()
@@ -495,7 +494,7 @@ class ToolsMixin(BaseMixin):
         self.click(590, 370)  # 变更按钮
         time.sleep(1)
         self.lock_img('img/zhucaidan/bangzhu.bmp', elseclick=[(32, 32)])  # 锁定帮助
-        pcr_log(self.account).write_log(level='info', message='账号：%s已修改名字' % name)
+        self.log.write_log(level='info', message='账号：%s已修改名字' % name)
 
     def get_bar(self, bar: PCRelement, screen=None):
         """

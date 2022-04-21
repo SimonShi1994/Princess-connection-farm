@@ -12,7 +12,8 @@ import requests
 from requests.adapters import HTTPAdapter
 
 from core.pcr_config import s_sckey, log_lev, log_cache, qqbot_key, qqbot_select, qq, qqbot_private_send_switch, \
-    qqbot_group_send_switch, tg_token, tg_mute, debug, proxy_http, proxy_https, wework_corpid, wework_corpsecret
+    qqbot_group_send_switch, tg_token, tg_mute, debug, proxy_http, proxy_https, wework_corpid, wework_corpsecret, \
+    wework_agid
 
 BOT_PROXY = {
     "http": proxy_http if len(proxy_http) > 0 else None,
@@ -39,6 +40,7 @@ class Bot:
         self.wework_url = "https://qyapi.weixin.qq.com"
         self.corpid = wework_corpid
         self.corpsecret = wework_corpsecret
+        self.coragid = wework_agid
         self.qqbot_select = qqbot_select
         self.req_post = requests.Session()
         self.req_post.mount('http://', HTTPAdapter(max_retries=5))
@@ -119,7 +121,7 @@ class Bot:
                     self.qq_bot(s_level, message=message, acc_state=acc_state)
                 if len(tg_token) != 0:
                     self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
-                if len(wework_corpid) != 0 and len(wework_corpsecret) != 0:
+                if len(wework_corpid) != 0 and len(wework_corpsecret) != 0 and len(wework_agid) != 0:
                     qywx = Qywx(s_level, acc_state)
                     if not message == '':
                         qywx.send_msg_message(message)
@@ -350,19 +352,18 @@ class Qywx(Bot):
     def __init__(self, s_level, acc_state):
         super().__init__()
         self.message = ''
-        self.info_format = f"""
-                                *>>>公主连结农场脚本【{s_level}】<<<*\n
-                               欢迎您使用~\n
-                               *#### 当前系统运行信息 ####*\n- {self.cpu_info}\n- {self.memory_info}\n——————————————————\n
-                               目前农场信息：\n
-                               \n{self.message}\n
-                               目前状态信息：\n
-                               \n{acc_state}\n
-                               [来自GITHUB一款开源脚本 (// . //)](https://github.com/SimonShi1994/Princess-connection-farm)\n
-                """
+        self.info_format = f"""*>>>公主连结农场脚本【{s_level}】<<<*\n
+        欢迎您使用~\n
+        *#### 当前系统运行信息 ####*\n
+        - {self.cpu_info}\n- {self.memory_info}\n
+        ——————————————————\n
+        目前农场信息：\n\n{self.message}\n
+        目前状态信息：\n\n{acc_state}\n
+        [来自GITHUB一款开源脚本 (// . //)](https://github.com/SimonShi1994/Princess-connection-farm)\n"""
 
-    def send_message(self, msg, msgtype, agid):
+    def send_message(self, msg, msgtype):
         upload_token = self.get_upload_token(self.corpid, self.corpsecret)
+        agid = self.coragid
         if msgtype == "text":
             self.message = msg
             data = self.msg_messages(self.info_format, agid, msgtype='text', msgid="content")
@@ -391,47 +392,47 @@ class Qywx(Bot):
         else:
             raise SendFailed("{} 发送失败".format(msg))
 
-    def send_msg_message(self, msg, agid=1000002):
+    def send_msg_message(self, msg):
         try:
-            self.send_message(msg, 'text', agid)
+            self.send_message(msg, 'text')
         except Exception as e:
             pass
 
-    def send_image_message(self, path, agid=1000002):
+    def send_image_message(self, path):
         if path.endswith("jpg") == False and path.endswith("png") == False:
             raise Exception("图片只能为jpg或png格式")
         if os.path.getsize(path) > 1048576:
             raise Exception("图片大小不能超过1MB")
         try:
-            self.send_message(path, 'image', agid)
+            self.send_message(path, 'image')
         except Exception as e:
             pass
 
-    def send_voice_message(self, path, agid=1000002):
+    def send_voice_message(self, path):
         if path.endswith("amr") == False:
             raise Exception("语音文件只能为amr格式，并且不能大于2MB，不能超过60s")
         if os.path.getsize(path) > 2097152:
             raise Exception("语音文件大小不能超过2MB，并且不能超过60s，只能为amr格式")
         try:
-            self.send_message(path, 'voice', agid)
+            self.send_message(path, 'voice')
         except Exception as e:
             pass
 
-    def send_video_message(self, path, agid=1000002):
+    def send_video_message(self, path):
         if path.endswith("mp4") == False:
             raise Exception("视频文件只能为mp4格式，并且不能大于10MB")
         if os.path.getsize(path) > 10485760:
             raise Exception("视频文件大小不能超过10MB,只能为mp4格式")
         try:
-            self.send_message(path, 'video', agid)
+            self.send_message(path, 'video')
         except Exception as e:
             pass
 
-    def send_file_message(self, path, agid=1000002):
+    def send_file_message(self, path):
         if os.path.getsize(path) > 20971520:
             raise Exception("文件大小不能超过20MB")
         try:
-            self.send_message(path, 'file', agid)
+            self.send_message(path, 'file')
         except Exception as e:
             pass
 
