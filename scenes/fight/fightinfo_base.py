@@ -22,33 +22,44 @@ class FightInfoBase(PCRMsgBoxBase):
         self.feature = self.fun_feature_exist(FIGHT_BTN["baochou"])
 
     def next_map(self):
-        at = (231, 35, 283, 65)
+        at1 = (231, 35, 283, 65)
+        at2 = (189, 35, 269, 63)
+        at3 = (62, 34, 212, 62)
         sc1 = self.getscreen()
         while True:
             self.click(926, 248)
             time.sleep(1.5)
             sc2 = self.getscreen()
-            con = self.img_equal(sc1, sc2, at=at)
+            con1 = self.img_equal(sc1, sc2, at=at1)
+            con2 = self.img_equal(sc1, sc2, at=at2)
+            con3 = self.img_equal(sc1, sc2, at=at3)
+            con = con1 * con2 * con3
             if con < 0.95:
                 break
             else:
                 sc1 = sc2
 
     def to_last_map(self, max_tu: int = 15):  # 尽量从1-1开始点
-        at = (231, 38, 293, 62)
+        at1 = (231, 35, 283, 65)
+        at2 = (189, 35, 269, 63)
+        at3 = (62, 34, 212, 62)
         count = 1
         sc1 = self.getscreen()
         while True:
             self.click(926, 248)
-            time.sleep(0.5)
-            if count == max_tu:
-                self.log.write_log("info", "已到最后一图")
-                return "finish"
             count += 1
+            time.sleep(0.5)
             self.log.write_log("info", f"在{count}图")
+
+            if count == max_tu:
+                self.log.write_log("info", "推断最后一图")
+                return "finish"
             sc2 = self.getscreen()
-            p = self.img_equal(sc1, sc2, at=at)
-            if p > 0.95:
+            con1 = self.img_equal(sc1, sc2, at=at1)
+            con2 = self.img_equal(sc1, sc2, at=at2)
+            con3 = self.img_equal(sc1, sc2, at=at3)
+            con = con1 * con2 * con3
+            if con > 0.95:
                 self.log.write_log("info", "已到最后一图")
                 break
             else:

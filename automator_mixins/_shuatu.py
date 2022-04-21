@@ -351,61 +351,6 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.continueDo9(142, 267)  # 1-1
         self.lock_home()
 
-    # 刷活动normal图(有bug，不可用）
-    def do_activity_normal(self, buy_tili=0, activity_name="", mode=0):
-        self.lock_home()
-        if activity_name == "":
-            raise Exception("请指定活动名")
-
-        def enter_activity():
-            # 进入冒险
-            time.sleep(2)
-            self.click(480, 505)
-            time.sleep(2)
-            while True:
-                screen_shot_ = self.getscreen()
-                if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
-                    break
-            # 点击进入活动
-            self.click(415, 430)
-            time.sleep(3)
-
-        def GetXYTD_activity(activity_name, mode, num):
-            if mode == 0:
-                D = ACTIVITY_COORD[activity_name]
-                DR = D["right"]
-                DL = D["left"]
-                if num in DR:
-                    return DR[num].x, DR[num].y, 1, "right"
-                else:
-                    return DL[num].x, DL[num].y, 1, "left"
-            elif mode == 1:
-                D = HARD_COORD[activity_name]
-                return D[num].x, D[num].y, 1, None
-
-        enter_activity()
-        while True:
-            screen_shot_ = self.getscreen()
-            self.click(480, 380)
-            time.sleep(0.5)
-            self.click(480, 380)
-            if UIMatcher.img_where(screen_shot_, 'img/home/zhuxian.bmp'):
-                self.click(880, 80)
-            if UIMatcher.img_where(screen_shot_, 'img/juqing/caidanyuan.bmp'):
-                self.chulijiaocheng(turnback=None)
-                enter_activity()
-            if UIMatcher.img_where(screen_shot_, 'img/normal.jpg'):
-                break
-        for i in range(1, 5):
-            result = self.zhandouzuobiao(*GetXYTD_activity(activity_name=activity_name, mode=mode, num=i),
-                                         buy_tili=buy_tili, duiwu=-2,
-                                         bianzu=-2, juqing_in_fight=1, end_mode=1)
-            if result < 3:
-                raise Exception("你的练度不适合刷活动图，请提升练度后重试")
-        result = self.zhandouzuobiao(*GetXYTD_activity(activity_name=activity_name, mode=mode, num=5),
-                                     buy_tili=buy_tili, use_saodang=True, times="all",
-                                     juqing_in_fight=1, end_mode=1)
-        self.lock_home()
 
     @staticmethod
     def parse_tu_str(tustr: str):
@@ -1846,7 +1791,6 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.lock_home()
             return
         self.log.write_log("info", f"开始刷活动1-1：{MAP.NAME}")
-
         c, cishu_left = MAP.shua_11(cishu, team_order, get_zhiyuan)
 
         if c == 0 and (cishu_left == "max" or cishu_left > 0):
@@ -1871,7 +1815,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.lock_home()
             return
         map_base = HuodongMapBase(self)
-        jiaohuan = map_base.goto_menu().goto_jiaohuan()
+        jiaohuan = map_base.goto_hd_menu().goto_jiaohuan()
         jiaohuan.setting()
         jiaohuan.exchange_all(reset=reset)
         self.lock_home()
@@ -1888,7 +1832,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
-        act_map.goto_menu()
+        act_map.goto_hd_menu()
         self.log.write_log("info", f"开始刷活动Boss,难度{boss_type}")
         counter = 0
         while True:
@@ -1929,7 +1873,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 break
             else:
                 if not self.is_exists(HUODONG_BTN["minus_on"]):
-                    self.log.write_log("warning", f"无法一次打完难度为{boss_type}活动Boss，请注意")
+                    self.log.write_log("warning", f"无法扫荡难度为{boss_type}活动Boss，请注意")
                 # 不满3次，无法扫荡，手工推图
                 fb: FightBianZuHuoDong = act_menu.goto(FightBianZuHuoDong,
                                                        act_menu.fun_click(HUODONG_BTN["tiaozhan2_on"]))
@@ -1944,7 +1888,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     HUODONG_BTN["shadow_return"]: 1,  # 可以看到return的情况
                     HUODONG_BTN["shadow_help"]: 1,  # 信赖度
                     HUODONG_BTN["NORMAL_ON"]: 2,  # Normal，在map了
-                    HUODONG_BTN["HARD_ON"]: 2,  # Hard，在map了
+                    HUODONG_BTN["HARD_ON"]: 1,  # Hard，在map了
                     JUQING_BTN["caidanyuan"]: 1,  # 剧情菜单
                     HUODONG_BTN["speaker_box"]: 1,
                     HUODONG_BTN["taofazheng_btn"]: 3,
@@ -1986,37 +1930,108 @@ class ShuatuMixin(ShuatuBaseMixin):
                    if_full=0, var=None):
 
         self.lock_home()
+        # 体力检查
         if not self.check_shuatu():
             return
         MAP: HuodongMapBase = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        # 活动期间检查
         if MAP is False:
             self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
-        self.log.write_log("info",f"类型：{type(MAP)}")
-        XY11 = MAP._check_coord(MAP.XY11)
+        self.log.write_log("debug", f"类型：{type(MAP)}")
+        # 获取初始坐标及常数
         H1 = MAP._check_coord(MAP.HARD_COORD[1])
+        N_slice = MAP._check_constant(MAP.N_slice)
+        XY11 = MAP._check_coord(MAP.XY11)
+        if N_slice >= 2:
+            XY21 = MAP._check_coord(MAP.XY21)
+        if N_slice == 3:
+            XY31 = MAP._check_coord(MAP.XY31)
+        N1 = MAP._check_constant(MAP.N1)
+        if N_slice >= 2:
+            N2 = MAP._check_constant(MAP.N2)
+        if N_slice == 3:
+            N3 = MAP._check_constant(MAP.N3)
+        # 函数内参数，第一次根据要求选编队，后续就不用选了，减少用时
         first_time = True
+
+        # 推图大循环
+        # 初始化Normal分片计数器,bool,T代表完成，F代表未完成
+        if N_slice == 3:
+            n3 = False
+        if N_slice >= 2:
+            n2 = False
+        n1 = False
+
         while True:
+            now = 0
             if self.check_shuatu() is False:
                 break
-            MAP = HuodongMapBase(self).enter()
+            HuodongMapBase(self).enter()
             if diff == "N":
-                MAP.goto_normal()
+                # 先到最左
+                MAP.goto_hd_normal()
+                MAP.go_left(N_slice - 1)
+                # 分段计数器
+                now = 1
+                if N_slice >= 2:
+                    # 第一分片已完成，向右到第二分片
+                    if n1 is True:
+                        MAP.go_right(1)
+                        now = 2
+                    # 第二分片已完成，向右到第三分片
+                    if n2 is True:
+                        MAP.go_right(1)
+                        now = 3
             else:
-                MAP.goto_hard()
+                MAP.goto_hd_hard()
             MAP.to_leftdown()
             if diff == "N":
                 # Normal 难度
-                fi = MAP.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
-                a = fi.to_last_map()
+                if now is 2:
+                    fi = MAP.click_xy_and_open_fightinfo(*XY21, typ=FightInfoBase)
+                    max_tu = N2 - N1
+                    print(max_tu)
+                    a = fi.to_last_map(max_tu=max_tu)
+                # 第二分片已完成，向右到第三分片
+                elif now is 3:
+                    fi = MAP.click_xy_and_open_fightinfo(*XY31, typ=FightInfoBase)
+                    max_tu = N3 - N2
+                    a = fi.to_last_map(max_tu=max_tu)
+                else:
+                    max_tu = N1
+                    fi = MAP.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
+                    a = fi.to_last_map(max_tu=max_tu)
             else:
                 # Hard难度
                 fi = MAP.click_xy_and_open_fightinfo(*H1, typ=FightInfoBase)
                 a = fi.to_last_map(max_tu=5)
             if a == "finish" and fi.get_upperright_stars() == 3:
-                self.log.write_log("info", "已完成推图")
-                break
+                if diff == "N":
+                    self.fclick(1, 1)
+                    if now is 1:
+                        n1 = True
+                        if N_slice == 1:
+                            break
+                        else:
+                            continue
+                    elif now is 2:
+                        n2 = True
+                        if N_slice == 2:
+                            break
+                        else:
+                            continue
+                    else:
+                        # now is 3:
+                        n3 = True
+                        if N_slice == 3:
+                            break
+                        else:
+                            continue
+                if diff == "H":
+                    break
+
             else:
                 if first_time:
                     st = fi.easy_shoushua(team_order=team_order, one_tili=10, max_speed=2, get_zhiyuan=get_zhiyuan,
@@ -2053,14 +2068,14 @@ class ShuatuMixin(ShuatuBaseMixin):
 
                 if out == 1:
                     self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
-                    HuodongMenu(self).goto_map(MAP)
+                    HuodongMenu(self).goto_map(type(MAP))
                     continue
                 elif out == 2:
                     continue
                 elif out == 3:
                     continue
                 elif out == 4:
-                    HuodongMenu(self).goto_map(MAP)
+                    HuodongMenu(self).goto_map(type(MAP))
                     continue
                 else:
                     self.chulijiaocheng(None)
@@ -2090,12 +2105,37 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
-        XY11 = MAP._check_coord(MAP.XY11)
-        MAP.enter().goto_normal()
+        N_slice = MAP._check_constant(MAP.N_slice)
+        if N_slice == 1:
+            XY11 = MAP._check_coord(MAP.XY11)
+        if N_slice == 2:
+            XY21 = MAP._check_coord(MAP.XY21)
+        if N_slice == 3:
+            XY31 = MAP._check_coord(MAP.XY31)
+        N1 = MAP._check_constant(MAP.N1)
+        N2 = MAP._check_constant(MAP.N2)
+        N3 = MAP._check_constant(MAP.N3)
+        MAP.goto_hd_normal()
+        MAP.go_left(N_slice-1)
         MAP.to_leftdown()
-        fi = MAP.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
-        if map_id > 1:
+        # 要打的本在第一段
+        if 1 < map_id <= N1:
+            fi = MAP.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
             next_time = map_id - 1
+            for _ in range(next_time):
+                fi.next_map()
+        # 要打的本在第二段
+        if N1 < map_id <= N2:
+            MAP.go_right(1)
+            fi = MAP.click_xy_and_open_fightinfo(*XY21, typ=FightInfoBase)
+            next_time = map_id - N1 - 1
+            for _ in range(next_time):
+                fi.next_map()
+        # 要打的本在第三段
+        if N2 < map_id <= N3:
+            MAP.go_right(2)
+            fi = MAP.click_xy_and_open_fightinfo(*XY31, typ=FightInfoBase)
+            next_time = map_id - N2 - 1
             for _ in range(next_time):
                 fi.next_map()
         fi = FightInfoBase(self)
@@ -2140,7 +2180,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.lock_home()
             return
         map_base = HuodongMapBase(self)
-        menu = map_base.goto_menu()
+        menu = map_base.goto_hd_menu()
         menu.get_bonus()
         self.lock_home()
 

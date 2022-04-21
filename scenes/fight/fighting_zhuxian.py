@@ -145,7 +145,7 @@ class TuanDuiZhanBox(PCRMsgBoxBase):
         self.click_btn(MAOXIAN_BTN["tuanduizhan_quxiao"])  # 跳过团队站
 
 
-class LoveUpScene(FightingWinBase):
+class LoveUpScene(PCRMsgBoxBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "LoveUpScene"
@@ -190,11 +190,14 @@ class AfterFightingWin(PossibleSceneList):
         self.AfterFightKKR = AfterFightKKR
         self.FightingWinZhuXian2 = FightingWinZhuXian2
         self.HaoYouMsg = HaoYouMsg
+        self.LevelUpBox = LoveUpScene
+
         scene_list = [
             self.XianDingShangDianBox(a),
             self.LevelUpBox(a),
             self.TuanDuiZhanBox(a),
             self.ChaoChuShangXianBox(a),
+            LoveUpScene(a),
             HaoYouMsg(a),
             FightingWinZhuXian2(a),
             AfterFightKKR(a),  # kkr剧情跳脸
