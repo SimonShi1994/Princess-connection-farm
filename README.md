@@ -238,6 +238,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 2022/04/25 By UVJkiNTQ
 - BUG修复
   - 修正会战Boss的寻找逻辑
+  
+2022/04/21 By Cyicek
+- 框架更新
+  - 补充wework推送的wework_agid变量
+- BUG修复
+  - 修复账号批量重命名点到四格漫画
 
 2022/04/19 By UVJkiNTQ
 - 框架更新
