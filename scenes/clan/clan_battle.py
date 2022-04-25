@@ -37,15 +37,15 @@ class ClanBattleMAP(SevenBTNMixin):
 
     def goto_battlepre(self) -> Union[int, "ClanBattlePre"]:  # 点击进入BOSS
         time.sleep(5)
-        r = self.img_where_all(img="img/hanghui/battle/boss_lp.bmp", threshold=0.5, at=(13, 133, 916, 379), )
+        r = self.img_where_all(img="img/hanghui/battle/boss_arrow.bmp", threshold=0.5, at=(45, 61, 876, 329))
         if not r:
             self.log.write_log("warning", "未识别到BOSS，可能不在公会战期间")
             return -1
         else:
             x = r[0]
             y = r[1]
-            x1 = int(x) + 77
-            y1 = int(y) - 43
+            x1 = int(x)
+            y1 = int(y) + 74
             return self.goto(ClanBattlePre, self.fun_click(x1, y1))
 
     def get_cishu(self):

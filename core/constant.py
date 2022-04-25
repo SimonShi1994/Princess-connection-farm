@@ -439,7 +439,7 @@ HANGHUI_BTN = {
 
     # # # 会战相关 # # #
     "rank_info": p(276, 106, img="img/hanghui/battle/rank_info.bmp", at=(270, 96, 283, 116)),
-    "boss_lp": p(212, 369, img="img/hanghui/battle/boss_lp.bmp", at=(191, 361, 234, 377)),
+    "boss_arrow": p(806, 69, img="img/hanghui/battle/boss_arrow.bmp", at=(787, 55, 831, 96)),
     "fanhuanshijian": p(541, 406, img="img/hanghui/battle/fanhuanshijian.bmp", at=(511, 398, 572, 414)),
     "shbg": p(704, 47, img="img/hanghui/battle/shbg.bmp", at=(672, 37, 737, 58)),  # 怪物详情界面
     "monizhan_unselected": p(745, 107, img="img/hanghui/battle/monizhan_unselected.bmp", at=(710, 98, 780, 117)),
