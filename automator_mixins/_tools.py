@@ -94,6 +94,12 @@ class ToolsMixin(BaseMixin):
             if self.is_exists(MAIN_BTN["tiaoguo"], screen=screen_shot_):
                 self.click(893, 39, post_delay=0.5)  # 跳过
                 continue
+            if self.is_exists(JUQING_BTN["tiaoguo_1"], screen=screen_shot_, at=(865, 20, 949, 61)):
+                self.click(893, 39, post_delay=0.5)  # 跳过
+                continue
+            if self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen_shot_):
+                self.click(589, 367, post_delay=0.5)  # 跳过
+                continue
             if self.is_exists(MAIN_BTN["xzcw"], screen=screen_shot_):
                 raise Exception("下载错误")
             if self.is_exists(MAIN_BTN["jingsaikaishi"], screen=screen_shot_):
@@ -103,8 +109,8 @@ class ToolsMixin(BaseMixin):
             num_of_white, _, x, y = UIMatcher.find_gaoliang(screen_shot_)
             if num_of_white < 77000:
                 cnt += 1
-                time.sleep(1.5)  # 防止黑屏错误识别
-                if cnt >= 2:
+                time.sleep(2)  # 防止黑屏错误识别
+                if cnt >= 5:
                     self.chulijiaocheng(None)  # 增加对教程的处理功能
             try:
                 r_list = self.img_where_all(img=MAIN_BTN["guanbi"], screen=screen_shot_)
