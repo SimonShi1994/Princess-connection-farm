@@ -40,7 +40,7 @@ class ClanBattleMAP(SevenBTNMixin):
 
     def goto_battlepre(self) -> Union[int, "ClanBattlePre"]:  # 点击进入BOSS
         time.sleep(5)
-        r = self.img_where_all(img="img/hanghui/battle/boss_arrow.bmp", threshold=0.5, at=(45, 61, 876, 329))
+        r = self.img_where_all(img="img/hanghui/battle/boss_arrow.bmp", threshold=0.5, at=(45, 1, 908, 367))
         if not r:
             self.log.write_log("warning", "未识别到BOSS，可能不在公会战期间")
             return -1
