@@ -1,12 +1,10 @@
 import time
 from typing import Union
 
-from automator_mixins._base import OCRRecognizeError
-from core.constant import HANGHUI_BTN, FIGHT_BTN, DXC_ELEMENT, HAOYOU_BTN
-from scenes.root.seven_btn import SevenBTNMixin
+from core.constant import HANGHUI_BTN, FIGHT_BTN
 from scenes.fight.fightbianzu_base import FightBianZuBase
 from scenes.fight.fighting_zhuxian import FightingZhuXian
-from scenes.fight.fighting_base import FightingBase, FightingWinBase, FightingLoseBase
+from scenes.root.seven_btn import SevenBTNMixin
 from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
 
 
@@ -28,6 +26,9 @@ class ClanBattleMAP(SevenBTNMixin):
         elif self.is_exists(HANGHUI_BTN["kkr_dialog"], screen=screen):
             self.click(160, 100)
             self.click(160, 100)
+        elif self.is_exists(img="img/duiwu.jpg", screen=screen, is_black=True, black_threshold=800):
+            time.sleep(4)
+            self.fclick(1, 1)
         # if self.is_exists(HANGHUI_BTN["kkr_dialog2"], screen=screen):
         #     self.click(160, 100)
         #     self.click(160, 100)
@@ -40,7 +41,7 @@ class ClanBattleMAP(SevenBTNMixin):
 
     def goto_battlepre(self) -> Union[int, "ClanBattlePre"]:  # 点击进入BOSS
         time.sleep(5)
-        r = self.img_where_all(img="img/hanghui/battle/boss_arrow.bmp", threshold=0.5, at=(45, 61, 876, 329))
+        r = self.img_where_all(img="img/hanghui/battle/boss_arrow.bmp", threshold=0.5, at=(45, 1, 908, 367))
         if not r:
             self.log.write_log("warning", "未识别到BOSS，可能不在公会战期间")
             return -1

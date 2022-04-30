@@ -173,9 +173,12 @@ class RoutineMixin(ShuatuBaseMixin):
             youmianfei = self.check_color(fc, bc, xcor, ycor, color_type="rgb")
             if youmianfei and a:  # 仅当有免费十连时抽取免费十连
                 fujiangshezhi()
-                self.click_btn(NIUDAN_BTN["niudan_shilian"], until_appear=NIUDAN_BTN["putong_quxiao_new"])
-                self.click_btn(NIUDAN_BTN["putong_ok_new"], until_disappear=NIUDAN_BTN["putong_ok_new"])
-                time.sleep(1.5)
+                # 20220430 修改：修复扭蛋确认和取消的偏移，兼容一定范围
+                self.click(NIUDAN_BTN["niudan_shilian"])
+                self.lock_img(NIUDAN_BTN["putong_quxiao_new"], at=(265, 297, 475, 507))
+                sc = self.getscreen()
+                self.click_img(sc, img="img/ui/queren_blue.bmp", at=(485, 285, 691, 504))
+                self.lock_no_img(NIUDAN_BTN["putong_quxiao_new"], at=(265, 297, 475, 507))
                 self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
                 time.sleep(2)
                 if self.is_exists(img="img/ui/quxiao2.bmp", at=(300, 428, 439, 458)):

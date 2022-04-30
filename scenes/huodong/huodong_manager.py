@@ -3,7 +3,8 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
-        "current": Map20220415,
+        "current": Map20220430,
+        "20220430": Map20220430,
         "20220415": Map20220415,
         "20220331": Map20220331,
         "20220208": Map20220208,
@@ -12,6 +13,7 @@ def get_huodong_by_code(code: str):
         return HUODONG_CODE[code]
     else:
         raise ValueError(f"没有编号为{code}的活动，请检查scenes/huodng/huodong_manager.py！")
+
 
 '''
 TYPE: 活动图类型
@@ -23,6 +25,25 @@ XY11： 第一图的第一个坐标
 XY21： 第二图的第一个坐标
     ...
 '''
+
+
+class Map20220430(HuodongMapBase):
+    NAME = "牧场里的四农士 贫穷农场奋斗记"
+    XY11 = (330, 191)
+    XY21 = (134, 249)
+    XY31 = (247, 284)
+    XY_VH_BOSS = (837, 278)
+    HARD_COORD = {
+        1: (233, 193),
+        2: (344, 272),
+        3: (191, 363),
+        4: (429, 400),
+        5: (653, 322),
+    }
+    N_slice = 3
+    N1 = 5
+    N2 = 12
+    N3 = 15
 
 
 class Map20220415(HuodongMapBase):
