@@ -5,7 +5,7 @@ from core.constant import MAIN_BTN, DXC_ELEMENT, HAOYOU_BTN, MAOXIAN_BTN
 from core.pcr_checker import LockTimeoutError
 from scenes.fight.fighting_base import FightingBase, FightingWinBase, FightingLoseBase
 from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
-from scenes.zhuxian.zhuxian_msg import LevelUpBox
+
 
 if TYPE_CHECKING:
     from scenes.zhuxian.zhuxian_normal import ZhuXianNormal
@@ -191,7 +191,7 @@ class AfterFightingWin(PossibleSceneList):
         self.AfterFightKKR = AfterFightKKR
         self.FightingWinZhuXian2 = FightingWinZhuXian2
         self.HaoYouMsg = HaoYouMsg
-        self.LevelUpBox = LevelUpBox
+        self.LoveUpScene = LoveUpScene
 
         scene_list = [
             self.XianDingShangDianBox(a),
