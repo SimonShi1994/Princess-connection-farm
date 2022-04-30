@@ -118,7 +118,9 @@ class MaoXian(SevenBTNMixin):
 
             if out == 1:
                 # 数据下载
-                self.click_btn(p(477, 360), until_disappear=HUODONG_BTN["sjxz"])
+                self.click(477, 360)  # 无语音
+                self.click(589, 365)  # 设置默认无语音后的兼容
+                self.lock_no_img(HUODONG_BTN["sjxz"])
                 self.wait_for_loading()
                 self.chulijiaocheng(None)
                 self._a.get_zhuye().goto_maoxian()
