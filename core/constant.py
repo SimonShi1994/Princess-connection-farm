@@ -286,6 +286,7 @@ NIUDAN_BTN = {
     "niudan_sheding": p(476, 433, img="img/niudan/niudan_sheding.bmp", at=(452, 420, 501, 446)),
     "chiyoushu": p(528, 413, img="img/niudan/chiyoushu.bmp", at=(505, 405, 552, 422)),
     "xuanzezhong": p(604, 262, img="img/niudan/xuanzezhong.bmp", at=(577, 251, 632, 274)),
+    "qianwangjiaohuan": p(479, 441, img="img/niudan/qianwangjiaohuan.bmp", at=(413, 426, 545, 456)),
 
 }
 
@@ -329,6 +330,9 @@ HUODONG_BTN = {
     "liwu": p(911, 424, img="img/huodong/liwu.bmp", at=(896, 411, 926, 438)),
     "wanchengqingkuang": p(558, 452, img="img/huodong/wanchengqingkuang.bmp", at=(527, 443, 590, 462)),
     "minus_on": p(630, 374, img="img/huodong/minus_on.bmp", at=(599, 349, 661, 400)),
+    "nboss_en": p(738, 154, img="img/huodong/nboss_en.bmp", at=(706, 142, 770, 167)),
+    "hboss_en": p(738, 217, img="img/huodong/hboss_en.bmp", at=(714, 205, 762, 230)),
+    "vhboss_en": p(738, 252, img="img/huodong/vhboss_en.bmp", at=(705, 240, 771, 265)),
 
 }
 
@@ -435,7 +439,7 @@ HANGHUI_BTN = {
 
     # # # 会战相关 # # #
     "rank_info": p(276, 106, img="img/hanghui/battle/rank_info.bmp", at=(270, 96, 283, 116)),
-    "boss_lp": p(212, 369, img="img/hanghui/battle/boss_lp.bmp", at=(191, 361, 234, 377)),
+    "boss_arrow": p(806, 69, img="img/hanghui/battle/boss_arrow.bmp", at=(787, 55, 831, 96)),
     "fanhuanshijian": p(541, 406, img="img/hanghui/battle/fanhuanshijian.bmp", at=(511, 398, 572, 414)),
     "shbg": p(704, 47, img="img/hanghui/battle/shbg.bmp", at=(672, 37, 737, 58)),  # 怪物详情界面
     "monizhan_unselected": p(745, 107, img="img/hanghui/battle/monizhan_unselected.bmp", at=(710, 98, 780, 117)),
@@ -1967,7 +1971,6 @@ USER_DEFAULT_DICT = {
     }
 
 }
-
 
 # 显然后面还没写
 # 等有空补全

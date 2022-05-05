@@ -73,6 +73,7 @@ class EnhanceMixin(ShuatuBaseMixin):
 
                         # 装备级等级强化
                         while True:
+                            time.sleep(1)
                             ers = ecb.get_equip_status()
                             ehs = ecb.get_enhance_status()
                             now_rank = ecb.get_rank()
@@ -209,6 +210,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                                 out.OK()
                                         # 扫荡结束
                                         # 保险起见
+                                        time.sleep(2)
                                         for _ in range(6):
                                             self.click(1, 1)
                                         if debug:

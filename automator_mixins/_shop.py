@@ -127,8 +127,8 @@ class ShopMixin(ToolsMixin):
         time.sleep(1)
         coin = self.show_coin()
         a = len(dxc_fraglist)
-        if coin < 800 * a:
-            self.log.write_log('info', "代币不足")
+        if coin < 800 * a or a == 0:
+            self.log.write_log('info', "代币不足或无碎片购买需求")
         else:
             self.tick_frag(fraglist=dxc_fraglist)
         self.log.write_log('info', "地下城购买完毕")
@@ -140,8 +140,8 @@ class ShopMixin(ToolsMixin):
         time.sleep(2)
         coin = self.show_coin()
         a = len(jjc_fraglist)
-        if coin < 800 * a:
-            pass
+        if coin < 800 * a or a == 0:
+            self.log.write_log('info', "代币不足或无碎片购买需求")
         else:
             self.tick_frag(fraglist=jjc_fraglist)
         self.log.write_log('info', "JJC购买完毕")
@@ -153,8 +153,8 @@ class ShopMixin(ToolsMixin):
         time.sleep(2)
         coin = self.show_coin()
         a = len(pjjc_fraglist)
-        if coin < 800 * a:
-            pass
+        if coin < 800 * a or a == 0:
+            self.log.write_log('info', "代币不足或无碎片购买需求")
         else:
             self.tick_frag(fraglist=pjjc_fraglist)
         self.log.write_log('info', "PJJC购买完毕")

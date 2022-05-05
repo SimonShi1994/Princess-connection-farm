@@ -35,6 +35,7 @@
 |           s_sckey            |                     s_sckey为Server酱API                     | string |          | SCU6390~94d830b |
 | wework_corpid | wework的pid | string | |  |
 | wework_corpsecret | wework的secret | string | |  |
+| wework_agid | wework的agid | string | | |
 |         sentstate          |                 全体BOT播定时报脚本任务状态                 |  int   | 单位分钟 |        5        |
 | sent_state_img | 播报任务状态时是否推送运行截图 | bool |  | Flase |
 |           log_lev            | log_levBOT的日志等级，微信日志等级 仅有0/1/2/3，越小越详细，注意每天接口调用有上限！ |  int   |          |        1        |

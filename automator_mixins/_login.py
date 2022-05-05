@@ -104,7 +104,7 @@ class LoginMixin(ToolsMixin):
         self.d.send_keys(str(pwd))
         time.sleep(random.uniform(0.2, 1))
         self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
-        # time.sleep(0.5)
+        time.sleep(1.5)
         toast_message = self.d.toast.get_message()
         # print(toast_message)
         if toast_message == "密码错误":

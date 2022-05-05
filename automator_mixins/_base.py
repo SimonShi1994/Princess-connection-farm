@@ -1614,7 +1614,7 @@ class BaseMixin:
                                                                                    f"{i} && exit" + "'")
             run_cmd(
                 f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
-                                                                               '/lib && chmod 444 libsecsdk.so'
+                                                                               '/lib && chmod 000 libsecsdk.so'
                                                                                ' && exit' + "'")
             run_cmd(
                 f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
@@ -1622,7 +1622,7 @@ class BaseMixin:
                                                                                ' && exit' + "'")
             run_cmd(
                 f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
-                                                                               '/lib && chmod 755 libweibosdkcore.so'
+                                                                               '/lib && chmod 000 libweibosdkcore.so'
                                                                                ' && exit' + "'")
             # time.sleep(3)
             # self.d.session("com.bilibili.priconne")
