@@ -1051,6 +1051,12 @@ VALID_TASK = ValidTask() \
           TaskParam(**huodong_entrance_ind_kwargs)]) \
     .add("hd09", "huodong_getbonus", "获取活动任务奖励", "活动任务奖励",
          [TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("hd10", "huodong_read_juqing", "获取活动剧情奖励", "获取活动剧情奖励",
+         [TaskParam(**huodong_code_kwargs),
+          TaskParam(**huodong_entrance_ind_kwargs)]) \
+    .add("hd11", "huodong_read_xinlai", "获取活动信赖奖励", "获取活动信赖奖励",
+         [TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)])
 
 customtask_addr = "customtask"
