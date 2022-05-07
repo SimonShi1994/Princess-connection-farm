@@ -8,7 +8,7 @@ from scenes.fight.fighting_zhuxian import LoveUpScene, HaoYouMsg, FightingDialog
 from scenes.huodong.huodong_fight import BOSS_FightInfoBase
 from scenes.zhuxian.zhuxian_base import ZhuXianBase
 from scenes.scene_base import PCRSceneBase, PossibleSceneList, PCRMsgBoxBase
-from core.constant import p, FIGHT_BTN, HUODONG_BTN, MAIN_BTN, JUQING_BTN
+from core.constant import p, FIGHT_BTN, HUODONG_BTN, MAIN_BTN, JUQING_BTN, JUESE_BTN
 from typing import Union
 
 
@@ -328,6 +328,81 @@ class HuodongMenu(PCRSceneBase):
             self.fclick(1, 1)
             self._a.restart_this_task()
         return screen
+
+    def hd_juqing(self):
+        self.clear_initFC()
+        self.lock_img(img="img/ui/close_btn_1.bmp", elseclick=(874, 342), elsedelay=1.5)
+        while True:
+            time.sleep(1)
+            lst = self.img_where_all(img="img/juqing/new_content.bmp", method="sq", at=(245, 98, 320, 442))
+            if len(lst) > 0:
+                x = lst[0] + 383
+                y = lst[1] + 50
+                '''
+                280, 246
+                663, 297
+                '''
+                self.click(x, y)  # 进入剧情
+                time.sleep(1)
+                self._a.guojuqing(story_type="huodong")
+                continue
+            if self.is_exists(JUESE_BTN["lxydjq"]):
+                self._a.guojuqing(story_type="huodong")
+                continue
+            if self.is_exists(JUESE_BTN["lxydjq"].img, at=(394, 73, 564, 100)):
+                self._a.guojuqing(story_type="huodong")
+                continue
+            else:
+                self.log.write_log("info", "无可读剧情")
+                self.fclick(1, 1)
+                break
+
+    def hd_xinlaidu(self):
+        self.clear_initFC()
+        self.click(498, 270)
+        # 角色循环
+        counter = 0  # 下拉次数计数器
+        while True:
+            self.lock_img(HUODONG_BTN["xinlaiduliwu"])
+            time.sleep(1)
+            lst = self.img_where_all(img="img/juqing/new_content.bmp", method="sq", at=(468, 60, 545, 466))
+            if len(lst) > 0:
+                x = lst[0] + 250
+                y = lst[1] + 20
+                self.click(x, y)  # 进入角色信赖度
+                self.lock_no_img(HUODONG_BTN["wanfa"])
+                self.lock_img(HUODONG_BTN["xinlaiduliwu2"])
+                time.sleep(1)
+                # 进入到角色界面了
+                # 点击气泡
+                while True:
+                    time.sleep(1)
+                    lst = self.img_where_all(img="img/juqing/rong.bmp", at=(3, 43, 863, 427))
+                    if len(lst) > 0:
+                        a = lst[0] + 50
+                        b = lst[1] + 30
+                        self.click(a, b)  # 进入剧情
+                        time.sleep(1)
+                        self._a.guojuqing(story_type="xinlai")
+                        continue
+                    else:
+                        self.log.write_log("info", "无未读剧情")
+                        self.click_btn(HUODONG_BTN["return"])
+                        break
+                continue
+            else:
+                if counter > 1:
+                    self.log.write_log("info", "无未读角色")
+                    break
+                time.sleep(2)
+                obj = self.d.touch.down(920, 165)
+                time.sleep(0.1)
+                obj.move(920, 282)
+                time.sleep(0.8)
+                obj.up(923, 282)
+                time.sleep(1)
+                counter += 1
+                continue
 
     def goto_map(self, map_id) -> "HuodongMapBase":
         return self.goto(map_id, self.fun_click(HUODONG_BTN["huodongguanka"]))
