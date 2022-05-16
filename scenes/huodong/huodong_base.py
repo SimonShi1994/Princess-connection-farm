@@ -331,7 +331,7 @@ class HuodongMenu(PCRSceneBase):
 
     def hd_juqing(self):
         self.clear_initFC()
-        self.lock_img(img="img/ui/close_btn_1.bmp", elseclick=(874, 342), elsedelay=1.5)
+        self.lock_img(img="img/ui/close_btn_1.bmp", elseclick=(874, 342), elsedelay=3)
         while True:
             time.sleep(1)
             lst = self.img_where_all(img="img/juqing/new_content.bmp", method="sq", at=(245, 98, 320, 442))

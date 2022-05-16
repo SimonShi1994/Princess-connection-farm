@@ -3,7 +3,8 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
-        "current": Map20220430,
+        "current": Map20220531,
+        "20220531": Map20220531,
         "20220430": Map20220430,
         "20220415": Map20220415,
         "20220331": Map20220331,
@@ -25,6 +26,19 @@ XY11： 第一图的第一个坐标
 XY21： 第二图的第一个坐标
     ...
 '''
+
+
+class Map20220531(HuodongMapBase):
+    NAME = "不可思议之国的璃乃 小小爱丽丝与希望的绘本"
+    XY11 = (165, 277)
+    # XY_VH_BOSS = (543, 206)
+    HARD_COORD = {
+        1: (264, 220),
+        2: (472, 371),
+        3: (709, 342),
+        4: (946, 183),
+        5: (358, 263),
+    }
 
 
 class Map20220430(HuodongMapBase):
