@@ -1,7 +1,7 @@
 import time
 from typing import TYPE_CHECKING, Union, Type
 
-from core.constant import MAIN_BTN, DXC_ELEMENT, HAOYOU_BTN, MAOXIAN_BTN
+from core.constant import MAIN_BTN, DXC_ELEMENT, HAOYOU_BTN, MAOXIAN_BTN, FIGHT_BTN
 from core.pcr_checker import LockTimeoutError
 from scenes.fight.fighting_base import FightingBase, FightingWinBase, FightingLoseBase
 from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
@@ -116,7 +116,18 @@ class HaoYouMsg(PCRMsgBoxBase):
         self.exit(self.fun_click(369,476))
 
 
+class LevelUpBox(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "LevelUpBox"
+        self.feature = self.fun_feature_exist(FIGHT_BTN["dengjitisheng"])
+
+    def OK(self):
+        self.exit(self.fun_click(38, 24))  # Outside
+
+
 class DuringFightingZhuXian(PossibleSceneList):
+
     def __init__(self, a, *args, **kwargs):
         self.LoveUpScene = LoveUpScene
         self.FightingWinZhuXian = FightingWinZhuXian
@@ -127,6 +138,7 @@ class DuringFightingZhuXian(PossibleSceneList):
 
         scene_list = [
             LoveUpScene(a),
+            LevelUpBox(a),
             FightingWinZhuXian(a),
             FightingLoseZhuXian(a),
             FightingDialog(a),
