@@ -1835,6 +1835,8 @@ class ShuatuMixin(ShuatuBaseMixin):
         act_map.goto_hd_menu()
         self.log.write_log("info", f"开始刷活动Boss,难度{boss_type}")
         counter = 0
+        if boss_type == "VH" or boss_type == "vh":
+            once = True
         while True:
             if once is True:
                 if counter > 0:

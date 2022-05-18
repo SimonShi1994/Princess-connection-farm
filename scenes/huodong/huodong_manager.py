@@ -3,8 +3,9 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
-        "current": Map20220531,
+        "current": Map20220518,
         "20220531": Map20220531,
+        "20220518": Map20220518,
         "20220430": Map20220430,
         "20220415": Map20220415,
         "20220331": Map20220331,
@@ -39,6 +40,21 @@ class Map20220531(HuodongMapBase):
         4: (946, 183),
         5: (358, 263),
     }
+
+
+class Map20220518(HuodongMapBase):
+    NAME = "将军道中记 白翼的武士"
+    XY11 = (184, 296)
+    XY_VH_BOSS = (861, 216)
+    HARD_COORD = {
+        1: (88, 371),
+        2: (218, 232),
+        3: (333, 275),
+        4: (439, 392),
+        5: (671, 334),
+    }
+    N_slice = 1
+    N1 = 15
 
 
 class Map20220430(HuodongMapBase):

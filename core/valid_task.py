@@ -1020,13 +1020,13 @@ VALID_TASK = ValidTask() \
           TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("hd03", "shua_hd_boss", "推/刷活动Boss（N or H），", "刷Normal或者Hard难度活动Boss，用完挑战券，一次打不死会直接退出。",
-         [TaskParam("boss_type", str, "刷什么难度的Boss", "N表示普通，H表示困难", "N"),
+    .add("hd03", "shua_hd_boss", "推/刷活动Boss（N or H or VH），", "刷活动Boss，用完挑战券，一次打不死会直接退出。",
+         [TaskParam("boss_type", str, "刷什么难度的Boss", "N表示普通，H表示困难，VH表示极难", "N"),
           TaskParam("once", bool, "是否只打一次", "只打一次解锁地图用", False),
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("hd04", "dahaohuodong_VHBoss", "推/刷活动VHBoss", "刷活动VHBoss图，如果没赢很可能有BUG",
+    .add("hd04", "dahaohuodong_VHBoss", "推/刷活动VHBoss，hd03兼容性更好", "刷活动VHBoss图，如果没赢很可能有BUG",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
