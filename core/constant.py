@@ -221,6 +221,7 @@ JUQING_BTN = {
     "baochouqueren": p(478, 41, img="img/juqing/baochouqueren.bmp", at=(433, 28, 523, 55)),
     "locked": p(279, 151, img="img/juqing/locked.bmp", at=(259, 133, 300, 170)),
     "auto": p(806, 100, img="img/juqing/auto.bmp", at=(793, 90, 819, 111)),
+    "rong": p(595, 193, img="img/juqing/rong.bmp", at=(588, 185, 603, 202)),  # 新内容的“容”
 }
 
 LIWU_BTN = {
@@ -333,6 +334,9 @@ HUODONG_BTN = {
     "nboss_en": p(738, 154, img="img/huodong/nboss_en.bmp", at=(706, 142, 770, 167)),
     "hboss_en": p(738, 217, img="img/huodong/hboss_en.bmp", at=(714, 205, 762, 230)),
     "vhboss_en": p(738, 252, img="img/huodong/vhboss_en.bmp", at=(705, 240, 771, 265)),
+    "wanfa": p(856, 26, img="img/huodong/wanfa.bmp", at=(846, 15, 867, 38)),
+    "xinlaiduliwu": p(128, 449, img="img/huodong/xinlaiduliwu.bmp", at=(71, 439, 185, 459)),
+    "xinlaiduliwu2": p(126, 449, img="img/huodong/xinlaiduliwu2.bmp", at=(72, 440, 181, 458)),
 
 }
 

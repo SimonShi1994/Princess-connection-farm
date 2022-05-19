@@ -1835,6 +1835,8 @@ class ShuatuMixin(ShuatuBaseMixin):
         act_map.goto_hd_menu()
         self.log.write_log("info", f"开始刷活动Boss,难度{boss_type}")
         counter = 0
+        if boss_type == "VH" or boss_type == "vh":
+            once = True
         while True:
             if once is True:
                 if counter > 0:
@@ -2172,7 +2174,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 break
         self.lock_home()
 
-    def huodong_getbonus(self, code="current", entrance_ind="auto"):
+    def huodong_getbonus(self, code="current", entrance_ind="auto", var=None):
         self.lock_home()
         MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
         if MAP is False:
@@ -2184,4 +2186,26 @@ class ShuatuMixin(ShuatuBaseMixin):
         menu.get_bonus()
         self.lock_home()
 
+    def huodong_read_juqing(self, code="current", entrance_ind="auto", var=None):
+        self.lock_home()
+        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
+        map_base = HuodongMapBase(self)
+        menu = map_base.goto_hd_menu()
+        menu.hd_juqing()
+        self.lock_home()
 
+    def huodong_read_xinlai(self, code="current", entrance_ind="auto", var=None):
+        self.lock_home()
+        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        if MAP is False:
+            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+            self.lock_home()
+            return
+        map_base = HuodongMapBase(self)
+        menu = map_base.goto_hd_menu()
+        menu.hd_xinlaidu()
+        self.lock_home()

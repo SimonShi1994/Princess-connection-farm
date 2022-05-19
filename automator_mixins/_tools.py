@@ -13,7 +13,7 @@ from scenes.root.juese import get_name_from_plate_path
 
 from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING_BTN, p
+from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING_BTN, p, HUODONG_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, use_pcrocr_to_process_basic_text
@@ -893,6 +893,17 @@ class ToolsMixin(BaseMixin):
         self.lock_home()
 
     def guojuqing(self, story_type="", no_skip=False):
+        """
+        获取右上角当前关卡的星星数
+        :param no_skip: 设置为True时，认为无skip可点
+        :param story_type:
+                        zhuxian: 主线剧情，检测到关闭按钮退出函数;
+                        huodong: 活动入场剧情，检测到关闭按钮/左上返回时退出函数;
+                        haogandu: 好感度剧情，检测到报酬确认后返回上级界面;
+                        xinlai: 信赖剧情，检测到进入剧情的右箭头（三角）是退出;
+
+        """
+
         while True:
             screen = self.getscreen()
             lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp", at=(233, 98, 285, 319), screen=screen)
@@ -964,6 +975,8 @@ class ToolsMixin(BaseMixin):
             if story_type == "huodong" and self.is_exists("img/huodong/return.bmp", screen=screen, ):
                 self.fclick(1, 1)
                 self.log.write_log('info', "完成了这段剧情")
+                break
+            if story_type == "xinlai" and self.is_exists(HUODONG_BTN["xinlaiduliwu2"], screen=screen, ):
                 break
             else:
                 self.fclick(479, 260)
