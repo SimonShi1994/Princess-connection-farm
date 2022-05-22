@@ -324,9 +324,9 @@ class FightInfoBase(PCRMsgBoxBase):
                 out.skip()
             elif isinstance(out, D.HaoYouMsg):
                 out.exit_with_off()
-            # elif isinstance(out, D.LevelUpBox):
-            #     out.OK()
-            #     self.start_shuatu()
+            elif isinstance(out, D.LevelUpBox):
+                out.OK()
+                self.start_shuatu()
 
     def easy_saodang(self,
                      target_cishu: Union[int, str] = "max",
