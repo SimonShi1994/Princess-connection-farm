@@ -86,7 +86,7 @@ class ShopMixin(ToolsMixin):
         screen = self.getscreen()
         # at = (241, 105, 925, 392)
         at = (278, 109, 890, 269)
-        r_list = UIMatcher.img_where(screen, imgpath, threshold=0.8, at=at,
+        r_list = UIMatcher.img_where(screen, imgpath, threshold=0.88, at=at,
                                      method=cv2.TM_CCOEFF_NORMED, is_black=False, black_threshold=1500)
         # r_list = self.img_where_all(img=imgpath, at=(241, 105, 925, 392))
         # 根据偏移，点击勾选碎片
