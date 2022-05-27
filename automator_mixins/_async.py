@@ -319,7 +319,7 @@ class AsyncMixin(ToolsMixin):
                 # 有两个协议需要同意
                 self.click(1, 1)
                 while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
-                    self.d.touch.down(810, 378).sleep(1).up(810, 378)
+                    self.d.touch.down(808, 353).sleep(1).up(808, 353)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
                     if self.d(description="请滑动阅读协议内容").exists():
