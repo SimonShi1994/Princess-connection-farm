@@ -1,7 +1,7 @@
 import time
 from typing import Union
 
-from core.constant import HANGHUI_BTN, FIGHT_BTN
+from core.constant import HANGHUI_BTN, FIGHT_BTN, DXC_ELEMENT
 from scenes.fight.fightbianzu_base import FightBianZuBase
 from scenes.fight.fighting_zhuxian import FightingZhuXian
 from scenes.root.seven_btn import SevenBTNMixin
@@ -110,14 +110,26 @@ class FanHuanQueRen(PCRMsgBoxBase):
         return self.goto(FightingZhuXian, self.fun_click(HANGHUI_BTN["zhandou_confirm2"]))
 
 
+class ZhiYuanQueRen(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "ZhiYuanQueRen"
+        self.feature = self.fun_feature_exist(DXC_ELEMENT["zyjsqr"])
+
+    def ok(self):
+        return self.goto(FightingZhuXian, self.fun_click(DXC_ELEMENT["zyjsqr_ok"]))
+
+
 class AfterEnterTiaoZhan(PossibleSceneList):
     def __init__(self, a):
         self.TuanDuiZhanQueRen = TuanDuiZhanQueRen
+        self.ZhiYuanQueRen = ZhiYuanQueRen
         self.next_scene = FightingZhuXian
         scene_list = [
             TuanDuiZhanQueRen(a),
             FightingZhuXian(a),
             FanHuanQueRen(a),
+            ZhiYuanQueRen(a),
         ]
         super().__init__(a, scene_list, double_check=1.)
 
@@ -127,12 +139,20 @@ class FightBianZuHangHui(FightBianZuBase):
         super().__init__(*args, **kwargs)
         self.scene_name = "FightBianZuZhuXian"
 
-    def goto_fight(self) -> "FightingHangHui":
+    def goto_fight(self):
         # 前往战斗开始！
-        out = self.goto(AfterEnterTiaoZhan, self.fun_click(FIGHT_BTN["zhandoukaishi"]))
-        if isinstance(out, TuanDuiZhanQueRen):
-            return out.ok()
-        elif isinstance(out, FanHuanQueRen):
-            return out.ok()
-        else:
-            return out
+        while True:
+            time.sleep(2)
+            out = self.goto(AfterEnterTiaoZhan, self.fun_click(FIGHT_BTN["zhandoukaishi"]))
+            if isinstance(out, TuanDuiZhanQueRen):
+                self.click(HANGHUI_BTN["zhandou_confirm"])
+                continue
+            elif isinstance(out, FanHuanQueRen):
+                self.click(HANGHUI_BTN["fhsjqr"])
+                continue
+            elif isinstance(out, ZhiYuanQueRen):
+                self.click(DXC_ELEMENT["zyjsqr_ok"])
+                continue
+            else:
+                break
+        return out
