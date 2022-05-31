@@ -165,8 +165,8 @@ class ShopMixin(ToolsMixin):
         time.sleep(2)
         coin = self.show_coin()
         a = len(clan_fraglist)
-        if coin < 800 * a:
-            pass
+        if coin < 800 * a or a == 0:
+            self.log.write_log('info', "代币不足或无碎片购买需求")
         else:
             self.tick_frag(fraglist=clan_fraglist)
         self.log.write_log('info', "行会购买完毕")
