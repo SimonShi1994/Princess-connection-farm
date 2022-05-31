@@ -146,9 +146,9 @@ class HuodongMapBase(ZhuXianBase):
         time.sleep(1)
         obj = self.d.touch.down(84, 80)
         time.sleep(0.1)
-        obj.move(416, 80)
+        obj.move(600, 80)
         time.sleep(0.8)
-        obj.up(416, 80)
+        obj.up(600, 80)
         time.sleep(1)
 
     @staticmethod
