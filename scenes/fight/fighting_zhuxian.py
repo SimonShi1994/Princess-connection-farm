@@ -130,6 +130,7 @@ class DuringFightingZhuXian(PossibleSceneList):
 
     def __init__(self, a, *args, **kwargs):
         self.LoveUpScene = LoveUpScene
+        self.LevelUpBox = LevelUpBox
         self.FightingWinZhuXian = FightingWinZhuXian
         self.FightingLoseZhuXian = FightingLoseZhuXian
         self.FightingDialog = FightingDialog

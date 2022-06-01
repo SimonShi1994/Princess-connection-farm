@@ -1491,6 +1491,8 @@ class ShuatuMixin(ShuatuBaseMixin):
                             continue
                         if isinstance(out, During.LoveUpScene):
                             out.skip()
+                        if isinstance(out, During.LevelUpBox):
+                            out.OK()
                         if isinstance(out, During.FightingLoseZhuXian):
                             state["flag"] = "lose"
                             out.goto_zhuxian(type(S))

@@ -86,7 +86,7 @@ class ShopMixin(ToolsMixin):
         screen = self.getscreen()
         # at = (241, 105, 925, 392)
         at = (278, 109, 890, 269)
-        r_list = UIMatcher.img_where(screen, imgpath, threshold=0.8, at=at,
+        r_list = UIMatcher.img_where(screen, imgpath, threshold=0.88, at=at,
                                      method=cv2.TM_CCOEFF_NORMED, is_black=False, black_threshold=1500)
         # r_list = self.img_where_all(img=imgpath, at=(241, 105, 925, 392))
         # 根据偏移，点击勾选碎片
@@ -165,8 +165,8 @@ class ShopMixin(ToolsMixin):
         time.sleep(2)
         coin = self.show_coin()
         a = len(clan_fraglist)
-        if coin < 800 * a:
-            pass
+        if coin < 800 * a or a == 0:
+            self.log.write_log('info', "代币不足或无碎片购买需求")
         else:
             self.tick_frag(fraglist=clan_fraglist)
         self.log.write_log('info', "行会购买完毕")

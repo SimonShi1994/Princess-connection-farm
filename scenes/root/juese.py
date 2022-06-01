@@ -190,7 +190,8 @@ class CharBase(SevenBTNMixin):
         return screen
 
     def loveplus(self, read_story=False):
-        if self.is_exists(img="img/juese/red_mid.bmp", method="sq", at=(53, 331, 61, 341)):  # 好感度剧情红点
+        if self.is_exists(JUESE_BTN["hgdjq"]):  # 好感度剧情红点
+        # if self.is_exists(img="img/juese/red_mid.bmp", method="sq", at=(53, 331, 61, 341)):  # 好感度剧情红点
             self.click_btn(JUESE_BTN["hgdjq"], until_appear=JUESE_BTN["juesejuqing"])
             self.click_btn(JUESE_BTN["hgdts"], until_appear=JUESE_BTN["zengli"])
             if self.is_exists(JUESE_BTN["haoganzuida"]):
@@ -205,9 +206,8 @@ class CharBase(SevenBTNMixin):
                         self.click(386, 353)  # 勾选
                         self.click(589, 425)  # 确认
                 self.lock_img(JUESE_BTN["juqingjiesuo"], at=(429, 22, 525, 257))
-                sc = self.getscreen()
-                self.lock_img(img=JUESE_BTN["guanbi"].img, at=(358, 280, 595, 509), screen=sc)
-                self.click_img(img=JUESE_BTN["guanbi"].img, at=(358, 280, 595, 509), screen=sc)  # 关闭
+                self.lock_img(img=JUESE_BTN["guanbi"].img, at=(358, 280, 595, 509))
+                self.click_img(img=JUESE_BTN["guanbi"].img, at=(358, 280, 595, 509))  # 关闭
             self.lock_img(JUESE_BTN["juesejuqing"])
             self.log.write_log("info", "无法再提升好感度")
 
