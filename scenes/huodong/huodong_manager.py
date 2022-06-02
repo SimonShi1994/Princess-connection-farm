@@ -40,6 +40,8 @@ class Map20220531(HuodongMapBase):
         4: (946, 183),
         5: (358, 263),
     }
+    N_slice = 1
+    N1 = 15
 
 
 class Map20220518(HuodongMapBase):
