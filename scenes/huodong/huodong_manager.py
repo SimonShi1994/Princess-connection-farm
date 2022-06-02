@@ -33,6 +33,7 @@ class Map20220531(HuodongMapBase):
     NAME = "不可思议之国的璃乃 小小爱丽丝与希望的绘本"
     XY11 = (165, 277)
     # XY_VH_BOSS = (543, 206)
+    HARD_Legacy = False
     HARD_COORD = {
         1: (264, 220),
         2: (472, 371),
