@@ -61,6 +61,7 @@ class HuodongMapBase(ZhuXianBase):
     XY11 = None  # Normal(1,1)的坐标，用于刷1-1
     XY21 = None
     XY31 = None
+    HARD_Legacy = True
     HARD_COORD = None  # 大号刷Hard用坐标
     XY_HARD_BOSS = None
     XY_VH_BOSS = None
@@ -235,14 +236,23 @@ class HuodongMapBase(ZhuXianBase):
         assert self.HARD_COORD is not None
         for t in tu_order:
             assert t in self.HARD_COORD
+        HARD_Legacy = self.HARD_Legacy
 
         for tu in tu_order:
             self.set_initFC()
             self.goto_hd_hard()
-            XY = self._check_coord(self.HARD_COORD[tu])
-            fi = self.click_xy_and_open_fightinfo(*XY, typ=FightInfoBase)
+            self.to_leftdown()
+            if not HARD_Legacy:
+                H11 = self._check_coord(self.HARD_COORD[1])
+                fi = self.click_xy_and_open_fightinfo(*H11, typ=FightInfoBase)
+                next_time = tu - 1
+                for _ in range(next_time):
+                    fi.next_map()
+            else:
+                XY = self._check_coord(self.HARD_COORD[tu])
+                fi = self.click_xy_and_open_fightinfo(*XY, typ=FightInfoBase)
             self.clear_initFC()
-            out = fi.easy_saodang(target_cishu="max", one_tili=-1, check_cishu=True)
+            out = fi.easy_saodang(target_cishu="max", one_tili=20, check_cishu=True)
             if out == 1:
                 return 1
             elif out == 4:
@@ -264,6 +274,7 @@ class HuodongMapBase(ZhuXianBase):
         """
         XY = self._check_coord(self.XY_VH_BOSS)
         self.goto_hd_hard()
+        self.to_leftdown()
         out = self.lock_img(HUODONG_BTN["bossqsl"], elseclick=XY, elsedelay=2, retry=3, is_raise=False)
         if out is False:
             self.log.write_log("info", "无法进入VHBoss，今天可能已经打过了。")
