@@ -235,10 +235,13 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2022/06/02 By UVJkiNTQ
+2022/06/16 By UVJkiNTQ
+- 惯例更新
+  - 更新活动（玲奈的彩虹舞台复刻）
+  
+2022/06/14 By UVJkiNTQ
 - 惯例更新
   - 启用35图
-  - 
   
 2022/06/02 By UVJkiNTQ
 - 框架更新
