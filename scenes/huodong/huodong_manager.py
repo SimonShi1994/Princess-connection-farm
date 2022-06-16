@@ -3,7 +3,8 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
-        "current": Map20220531,
+        "current": Map20220616,
+        "20220616": Map20220616,
         "20220531": Map20220531,
         "20220518": Map20220518,
         "20220430": Map20220430,
@@ -18,15 +19,28 @@ def get_huodong_by_code(code: str):
 
 
 '''
-TYPE: 活动图类型
-    0： 普通，最常见，1-15在同一页
-    1： 特殊，1-15分两页，横向分布
-
 NMAP： Normal在图1的最后关卡
 XY11： 第一图的第一个坐标
 XY21： 第二图的第一个坐标
+N_slice： Normal图切了几段
+N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20220616(HuodongMapBase):
+    NAME = "玲奈的彩虹舞台复刻"
+    XY11 = (131, 417)
+    XY_VH_BOSS = (868, 296)
+    HARD_COORD = {
+        1: (91, 231),
+        2: (236, 310),
+        3: (416, 231),
+        4: (503, 340),
+        5: (706, 331),
+    }
+    N_slice = 1
+    N1 = 15
 
 
 class Map20220531(HuodongMapBase):
