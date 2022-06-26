@@ -3,7 +3,8 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
-        "current": Map20220616,
+        "current": Map20220630,
+        "20220629": Map20220630,
         "20220616": Map20220616,
         "20220531": Map20220531,
         "20220518": Map20220518,
@@ -26,6 +27,22 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20220630(HuodongMapBase):
+    NAME = "七夕剑客旅情谭 天际川流夏之恋"
+    XY11 = (197, 270)
+    XY21 = (168, 360)
+    XY_VH_BOSS = (868, 282)
+    HARD_COORD = {
+        1: (76, 321),
+        2: (234, 221),
+        3: (289, 396),
+        4: (579, 329),
+        5: (718, 227),
+    }
+    N_slice = 2
+    N1 = 10
 
 
 class Map20220616(HuodongMapBase):
