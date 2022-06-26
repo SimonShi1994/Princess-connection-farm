@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220625
+# Princess connection 公主连结农场脚本v2.8.20220626
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -101,9 +101,9 @@
 
   适合管理，方便依赖升级
 
-  https://www.123pan.com/s/dDG9-Z83WA
+  https://www.123pan.com/s/dDG9-Mc3WA
   
-  提取码:rcUK
+  提取码:mK4h
   
   **安装教程**与**python3.8.10安装包**均在压缩包内
 
@@ -234,6 +234,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/06/26 By Cyicek
+- BUG修复
+  - 修复登陆界面提示“密码不安全，请立即修改密码”卡住的BUG
+  - 增添国内蓝叠5的支持
+  - venv反人类教程改正
 
 2022/06/25 By UVJkiNTQ
 - 惯例更新

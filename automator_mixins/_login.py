@@ -111,6 +111,8 @@ class LoginMixin(ToolsMixin):
             raise BadLoginException("密码错误！")
         elif toast_message == "系统检测到您的账号异常，请前往网页主站重新登录并进行验证":
             raise BadLoginException("账号异常！")
+        elif toast_message == "密码不安全，请立即修改密码":
+            raise BadLoginException("密码不安全！")
         # else:
         #     print(f"toast_message:{toast_message}")
 
