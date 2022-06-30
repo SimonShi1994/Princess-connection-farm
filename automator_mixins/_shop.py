@@ -46,7 +46,7 @@ class ShopMixin(ToolsMixin):
         drag_count = 0
         buy_count = 0
         while True:
-
+            # 退出条件
             if drag_count > 2:
                 if self.is_exists(SHOP_BTN["jiechusuoyou"]):
                     if buy_count > 0:
@@ -57,32 +57,36 @@ class ShopMixin(ToolsMixin):
 
             for frag_ in fraglist[:]:
                 imgpath_ = get_frag_img_path(charname=frag_)
+                # 查找单个碎片，能勾就勾上
                 a = self.click_frag(imgpath=imgpath_)
+
+                # 找到了，勾上了
                 if a == 0:
                     buy_count += 1
                     fraglist.remove(frag_)
+                    # 打印剩余碎片
                     self.log.write_log('info', str(fraglist))
                     time.sleep(1)
+                    # 如果买完了清单里的
                     if len(fraglist) == 0:
                         if self.is_exists(SHOP_BTN["jiechusuoyou"]):
                             self.buy_press()
                             return
                         else:
                             return
-                    else:
-                        continue
-                else:
-                    self.dragdown()
-                    time.sleep(3)
-                    drag_count = drag_count + 1
-                    if drag_count > 2:
-                        if self.is_exists(SHOP_BTN["jiechusuoyou"]):
-                            self.buy_press()
-                            return
-                    continue
+
+            # 单页没找到，翻页继续找
+            self.dragdown()
+            drag_count += 1
+            continue
 
     def click_frag(self, imgpath):
         # 寻找单个碎片，确认碎片图片中心点
+        '''
+        return:
+        0: 正常勾选
+        2: 找不到
+        '''
         screen = self.getscreen()
         # at = (241, 105, 925, 392)
         at = (278, 109, 890, 269)
@@ -102,6 +106,7 @@ class ShopMixin(ToolsMixin):
             return 2
 
     def dragdown(self):
+        self.log.write_log("info", "开始下拉")
         obj = self.d.touch.down(584, 377)
         time.sleep(0.1)
         obj.move(584, 110)
@@ -121,6 +126,7 @@ class ShopMixin(ToolsMixin):
         # 进入商店
         self.click(617, 435)
         time.sleep(2)
+        self.clear_all_initFC()
         # 地下城碎片
         self.click(359, 65)
         self.click_btn(SHOP_BTN["dxc_btn"], until_appear=SHOP_BTN["dxc_coin"])
