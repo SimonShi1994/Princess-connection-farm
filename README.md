@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220626
+# Princess connection 公主连结农场脚本v2.8.20220707
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -235,13 +235,25 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2022/07/07 By TheAutumnOfRice
+
+- BUG修复
+  - 修复通关地下城OCR`d5`中，攒TP模式(mode=4)阵容上错的BUG
+  - 修复`hd03`中VH已经打过一次还想试图点进去后会卡死的BUG
+- 功能新增
+  - 在通关地下城OCR`d5`中添加战斗细节参数`fight_detail`，可以控制auto,速度和角色连点，也许可以更好地帮助攒TP。
+- 其它优化
+  - 在主界面上增加对异常处理的警告信息
+
 2022/06/26 By Cyicek
+
 - BUG修复
   - 修复登陆界面提示“密码不安全，请立即修改密码”卡住的BUG
   - 增添国内蓝叠5的支持
   - venv反人类教程改正
 
 2022/06/25 By UVJkiNTQ
+
 - 惯例更新
   - 更新活动（七夕剑客旅情谭 天际川流夏之恋）
 - BUG修复
