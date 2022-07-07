@@ -239,6 +239,15 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - 框架更新
   - Linux兼容适配，理论也支持MacOS。由于监听键盘输入（Keyboard库），Linux下需要root运行。使用Pyenv时，注意先安装Tk库（GUI），再pyenv install 3.8.10。
 
+2022/07/07 By TheAutumnOfRice
+- BUG修复
+  - 修复通关地下城OCR`d5`中，攒TP模式(mode=4)阵容上错的BUG
+  - 修复`hd03`中VH已经打过一次还想试图点进去后会卡死的BUG
+- 功能新增
+  - 在通关地下城OCR`d5`中添加战斗细节参数`fight_detail`，可以控制auto,速度和角色连点，也许可以更好地帮助攒TP。
+- 其它优化
+  - 在主界面上增加对异常处理的警告信息
+
 2022/06/26 By Cyicek
 - BUG修复
   - 修复登陆界面提示“密码不安全，请立即修改密码”卡住的BUG

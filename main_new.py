@@ -640,6 +640,12 @@ if __name__ == "__main__":
             rprint("干炸里脊数据库更新时间：", DataCenterTime)
         if last_schedule != "":
             rprint("当前绑定计划：", RWarn(last_schedule))
+            error_schedules = Schedule(last_schedule, None).get_error_schedules()
+            if len(error_schedules) > 0:
+                eprint('----------------------------------------')
+                eprint("警告：上次运行中存在未处理的错误，这将导致相关任务不会被运行！")
+                eprint("更多关于异常处理的信息请移步docs/introduce_to_schedule.md中的2.4节进行了解。")
+                eprint('----------------------------------------')
     while True:
         try:
             cmd = input(f"Main[{last_schedule}]> ")

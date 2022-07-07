@@ -1516,18 +1516,43 @@ class Schedule:
         else:
             return "等待执行"
 
+    def get_error_schedules(self):
+        """获取全部存在error的子计划的名称"""
+        error_schedules = []
+        status = self.get_status(last_state=True)
+        for sch in status:
+            if sch["status"] == "err":
+                error_schedules.append(sch["name"])
+        return error_schedules
+
     def get_status(self, last_state=False):
         """
         获取当前计划执行状态
         last_state：不是获得当前状态，而是获取上次状态
-        其中，每个rec的状态包括：
-        status：状态
-            wait 等待执行
-            skip 跳过
-            busy 正在执行
-            fin  完成
-            err  错误
-            last 上次
+        Status:
+        List Of 每个子sub的状态[{
+            name:      子sub的名称
+            mode:      "batch"或者"batches"，表示是单批模式还是多批顺序模式
+            status:    状态字符串
+                - fin:  已完成
+                - skip：已跳过
+                - busy: 正在执行
+                - last: 未完成
+                    （非fin,skip,err，但由于PCR未启动，无法进一步判断其当前状态.
+                    当PCR启动后，last可能变为skip、busy或wait三者之一。）
+                - wait: 待执行
+                - err:  有错误
+            cnt:       该子任务中已经结束的用户总数（出错总数+完成总数）
+            tol:       该子任务中的全部用户数
+            error:  dict(出错用户名:出错原因）
+            detail: 见usercenter/get_batch_state的返回值
+                特别的，detail["detail"][用户名]["current"] 某一用户当前的任务进度字符串
+
+            * 当mode为batches时，cnt,tol,error,detail均为当前批次的状态，且增加以下条目
+            current:   当前批次的批名称
+            batch_fin： 已经完成的批次数
+            batch_tot： 总批次数
+        }]
         """
         L = []
         for i, j in self.subs.items():

@@ -395,6 +395,7 @@ class HuodongMenu(PCRSceneBase):
                         self.click(a, b)  # 进入剧情
                         time.sleep(1)
                         self._a.guojuqing(story_type="xinlai")
+                        self.fclick(1, 1)
                         continue
                     else:
                         self.log.write_log("info", "无未读剧情")
@@ -421,7 +422,7 @@ class HuodongMenu(PCRSceneBase):
     def goto_jiaohuan(self) -> "Jiaohuan":
         return self.goto(Jiaohuan, self.fun_click(HUODONG_BTN["taofazheng_btn"]))
 
-    def goto_nboss(self) -> "BOSS_FightInfoBase":
+    def goto_nboss(self, timeout=None) -> "BOSS_FightInfoBase":
         while True:
             a1 = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(681, 130, 789, 302))
             a2 = self.img_where_all(img=HUODONG_BTN["nboss_en"].img, at=(681, 130, 789, 302))
@@ -437,9 +438,9 @@ class HuodongMenu(PCRSceneBase):
                 continue
             else:
                 break
-        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
+        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]), timeout=timeout)
 
-    def goto_hboss(self) -> "BOSS_FightInfoBase":
+    def goto_hboss(self, timeout=None) -> "BOSS_FightInfoBase":
         time.sleep(2)
         while True:
             a1 = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(681, 130, 789, 302))
@@ -455,9 +456,9 @@ class HuodongMenu(PCRSceneBase):
                 time.sleep(0.5)
             else:
                 break
-        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
+        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]), timeout=timeout)
 
-    def goto_vhboss(self) -> "BOSS_FightInfoBase":
+    def goto_vhboss(self, timeout=None) -> "BOSS_FightInfoBase":
         while True:
             a1 = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(681, 130, 789, 302))
             a2 = self.img_where_all(img=HUODONG_BTN["vhboss_en"].img, at=(681, 130, 789, 302))
@@ -472,7 +473,7 @@ class HuodongMenu(PCRSceneBase):
                 time.sleep(0.5)
             else:
                 break
-        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
+        return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]), timeout=timeout)
 
     def get_bonus(self):
         # if self.check_color(fc=[222, 89, 123], bc=[255, 255, 255], xcor=896, ycor=400, color_type="rgb"):

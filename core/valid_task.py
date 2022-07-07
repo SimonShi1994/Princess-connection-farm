@@ -726,8 +726,8 @@ VALID_TASK = ValidTask() \
           TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
                                        "mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss\n"
                                        "mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss\n"
-                                       "mode 3：用只打第一小关，无论怎样都退出\n"
-                                       "mode 4:（攒TP）用队伍[1,2,3,...,N-1]攒TP，N为总层数；用队伍[N,N+1,...]打Boss （不支持借人）"),
+                                       "mode 3：用队伍1只打第一小关，无论怎样都退出\n"
+                                       "mode 4:（攒TP）用队伍[1,2,3,...,N-1]攒TP(无AUTO)，N为总层数；用队伍[N,N+1,...]打Boss （不支持借人）"),
           TaskParam("stop_criteria", int, "终止条件", "设置为0时，只要战斗中出现人员伤亡，直接结束\n"
                                                   "设置为1时，一直战斗到当前队伍无人幸存，才结束\n"
                                                   "注：如果在小关遇到停止条件，则直接结束\n"
@@ -742,7 +742,16 @@ VALID_TASK = ValidTask() \
                                            "若为\"zhanli\"，则按照相关排序，选择前五最高为当前队伍\n"
                                            "若为\"a-b\",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b", inputbox=TeamInputer()),
           TaskParam("safety_stop", int, "安全保护", "防止大号误撤退。\n设置为0时，不管；\n设置为1时，若小关伤亡惨重，直接返回主页不撤退。", 1),
-          TaskParam("assist", int, "支援设置", "0表示不用支援，1~16选支援第1/2行的第n个（1-8）(9-16)，等级限制会自动选择第n+1个", 0)]) \
+          TaskParam("assist", int, "支援设置", "0表示不用支援，1~16选支援第1/2行的第n个（1-8）(9-16)，等级限制会自动选择第n+1个", 0),
+          TaskParam("fight_detail", str, '战斗细节', '（默认推荐）空字符串： 默认全程auto，不过mode=4在攒TP时关闭auto\n'
+                                                 '（攒TP时可用）用逗号隔开N个子串（N为队伍总数）：每个队伍对应的战斗细节\n'
+                                                 '    对每个隔开的子串：仅应该包含AB12345XYZ这10种字符之一。\n'
+                                                 '    auto控制：A - 打开auto   B - 关闭auto  若不设置，默认打开auto（攒TP时默认关闭）\n'
+                                                 '    连点控制：12345分别表示从左到右的5个位置是否需要在战斗中连点\n'
+                                                 '    速度控制：XYZ分别表示1，2，4倍速 若不设置，默认4倍速。\n'
+                                                 '        eg. 若用4队攒TP（连点12位，为了防止打太快设置2倍速），56队打BOSS（全程AUTO），则该参数可以设置为：\n'
+                                                 '        B12Y,B12Y,B12Y,B12Y,AZ,AZ', default=""),
+          ]) \
     .add("j1", "doJJC", "竞技场", "竞技场白给脚本") \
     .add("j2", "doPJJC", "公主竞技场", "公主竞技场白给脚本") \
     .add('r1', "gonghuizhijia", "家园领取", "收取公会之家的奖励",
@@ -1026,7 +1035,7 @@ VALID_TASK = ValidTask() \
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("hd04", "dahaohuodong_VHBoss", "推/刷活动VHBoss，hd03兼容性更好", "刷活动VHBoss图，如果没赢很可能有BUG",
+    .add("hd04", "dahaohuodong_VHBoss", "推/刷活动VHBoss", "刷活动VHBoss图",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
@@ -1086,10 +1095,12 @@ def list_all_customtasks(verbose=1) -> List[str]:
             except Exception as e:
                 if verbose:
                     print("打开模块", i, "失败！", e)
+                    import traceback
+                    traceback.print_exc()
     if verbose:
         print("加载完成，一共加载成功", count, "个模块。")
     return tasks
 
 
-for l in list_all_customtasks(0):
+for l in list_all_customtasks(verbose=debug):
     VALID_TASK.add_custom(l)
