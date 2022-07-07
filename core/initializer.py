@@ -31,12 +31,14 @@ from core.usercentre import AutomatorRecorder, parse_batch, list_all_flags
 from core.utils import diffday, PrintToStr
 from core.safe_u2 import run_adb
 
-abs_dir = os.path.abspath(adb_dir)
+
 if add_adb_to_path:
-    # print("添加到环境变量：", abs_dir)
-    env = os.getenv("path")
-    env = abs_dir + ";" + env
-    os.putenv("path", env)
+    if sys.platform == "win32":
+        abs_dir = os.path.abspath(adb_dir)
+        # print("添加到环境变量：", abs_dir)
+        env = os.getenv("path")
+        env = abs_dir + ";" + env
+        os.putenv("path", env)
 
 
 def _connect():  # 连接adb与uiautomator
