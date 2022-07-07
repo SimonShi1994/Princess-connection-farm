@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220626
+# Princess connection 公主连结农场脚本v2.8.20220707
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -234,6 +234,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/07/07 By UVJkiNTQ
+- 框架更新
+  - Linux兼容适配，理论也支持MacOS。由于监听键盘输入（Keyboard库），Linux下需要root运行。使用Pyenv时，注意先安装Tk库（GUI），再pyenv install 3.8.10。
 
 2022/06/26 By Cyicek
 - BUG修复

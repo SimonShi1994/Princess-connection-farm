@@ -475,35 +475,36 @@ class HuodongMenu(PCRSceneBase):
         return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]))
 
     def get_bonus(self):
-        if self.check_color(fc=[222, 89, 123], bc=[255, 255, 255], xcor=896, ycor=400, color_type="rgb"):
-            self.click_btn(HUODONG_BTN["liwu"], until_appear=HUODONG_BTN["wanchengqingkuang"])
-            self.click(344, 22)  # 每日
-            time.sleep(0.2)
-            self.click(781, 433)  # 收取
-            time.sleep(1)
-            self.click(478, 468)  # 关闭
-            time.sleep(1)
+        # if self.check_color(fc=[222, 89, 123], bc=[255, 255, 255], xcor=896, ycor=400, color_type="rgb"):
+        # 待我找到一个稳定的识别有礼物的办法。礼物上的标数不稳定会跳动。 BY 
+        self.click_btn(HUODONG_BTN["liwu"], until_appear=HUODONG_BTN["wanchengqingkuang"])
+        self.click(344, 22)  # 每日
+        time.sleep(0.2)
+        self.click(781, 433)  # 收取
+        time.sleep(1)
+        self.click(478, 468)  # 关闭
+        time.sleep(1)
 
-            self.click(547, 22)  # 普通
-            time.sleep(0.2)
-            self.click(781, 433)  # 收取
-            time.sleep(1)
-            self.click(478, 468)  # 关闭
-            time.sleep(1)
+        self.click(547, 22)  # 普通
+        time.sleep(0.2)
+        self.click(781, 433)  # 收取
+        time.sleep(1)
+        self.click(478, 468)  # 关闭
+        time.sleep(1)
 
-            self.click(710, 22)  # 特别
-            time.sleep(0.2)
-            self.click(781, 433)  # 收取
-            time.sleep(1)
-            self.click(478, 468)  # 关闭
-            time.sleep(1)
+        self.click(710, 22)  # 特别
+        time.sleep(0.2)
+        self.click(781, 433)  # 收取
+        time.sleep(1)
+        self.click(478, 468)  # 关闭
+        time.sleep(1)
 
-            self.click(860, 22)  # 称号
-            time.sleep(0.2)
-            self.click(781, 433)  # 收取
-            time.sleep(1)
-            self.click(478, 468)  # 关闭
-            time.sleep(1)
+        self.click(860, 22)  # 称号
+        time.sleep(0.2)
+        self.click(781, 433)  # 收取
+        time.sleep(1)
+        self.click(478, 468)  # 关闭
+        time.sleep(1)
 
 
 class Jiaohuan(PCRSceneBase):
