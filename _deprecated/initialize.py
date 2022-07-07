@@ -1,4 +1,5 @@
 import os
+import sys
 from multiprocessing import Pool, Manager
 
 import keyboard
@@ -121,8 +122,10 @@ def connect():  # 连接adb与uiautomator
     except Exception as e:
         pcr_log('admin').write_log(level='error', message='连接失败, 原因: {}'.format(e))
         exit(1)
-
-    result = os.popen('cd adb & adb devices')  # 返回adb devices列表
+    if sys.platform == "win32":
+        result = os.popen('cd adb & adb devices')  # 返回adb devices列表
+    else:
+        result = os.popen('adb devices')  # 返回adb devices列表
     res = result.read()
     lines = res.splitlines()[0:]
     while lines[0] != 'List of devices attached ':
