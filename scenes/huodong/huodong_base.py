@@ -477,7 +477,7 @@ class HuodongMenu(PCRSceneBase):
 
     def get_bonus(self):
         # if self.check_color(fc=[222, 89, 123], bc=[255, 255, 255], xcor=896, ycor=400, color_type="rgb"):
-        # 待我找到一个稳定的识别有礼物的办法。礼物上的标数不稳定会跳动。 BY 
+        # 待我找到一个稳定的识别有礼物的办法。礼物上的标数不稳定会跳动。 BY UVJkiNTQ
         self.click_btn(HUODONG_BTN["liwu"], until_appear=HUODONG_BTN["wanchengqingkuang"])
         self.click(344, 22)  # 每日
         time.sleep(0.2)
