@@ -111,7 +111,7 @@ def run_adb(cmd: str, timeout=None):
         if sys.platform == "win32":
             subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
         else:
-            subprocess.check_output(f"adb {cmd}", timeout=timeout)
+            subprocess.check_output(f"adb {cmd}", timeout=timeout, shell=True)
     except Exception as e:
         __log.write_log('error', f"adb启动失败,{e},试图修复。")
         try:
@@ -120,7 +120,7 @@ def run_adb(cmd: str, timeout=None):
                 subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
             else:
                 os.system("pkill adb")
-                subprocess.check_output(f"adb {cmd}", timeout=timeout)
+                subprocess.check_output(f"adb {cmd}", timeout=timeout, shell=True)
         except Exception as e:
             __log.write_log('error', f"执行adb命令{cmd}失败了：{e}")
 
