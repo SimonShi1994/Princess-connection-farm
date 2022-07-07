@@ -1,5 +1,6 @@
 from core.constant import FIGHT_BTN
 from scenes.scene_base import PCRSceneBase
+import threading
 
 
 class FightingBase(PCRSceneBase):
@@ -18,10 +19,48 @@ class FightingBase(PCRSceneBase):
             screen = self.getscreen()
         self._a.set_fight_speed(level, max_level, screen, max_retry)
 
-    def auto_and_fast(self,max_speed):
-        self.set_auto(1,self.last_screen)
-        self.set_speed(max_speed,max_speed,self.last_screen)
+    def auto_and_fast(self, max_speed):
+        self.set_auto(1, self.last_screen)
+        self.set_speed(max_speed, max_speed, self.last_screen)
 
+    def fighting_action(self, action_str=""):
+        """
+        action_str:
+            仅应该包含12345这5种字符之一。
+            连点控制：12345分别表示从左到右的5个位置是否需要在战斗中连点
+            空字符串：什么都不会发生
+
+        e.g.:
+            with self.fighting_action("12"):
+                # 其它命令，但是在执行的同时会并行执行连点操作
+                ...
+            # 结束连点
+        """
+        liandian_list = []
+        for i in '12345':
+            if i in action_str:
+                liandian_list.append(int(i))
+        parent = self
+
+        class FightingAction:
+            def __init__(self):
+                self.thread_flag = True
+
+            def action_thread(self):
+                while self.thread_flag:
+                    for ld in liandian_list:
+                        parent.click(FIGHT_BTN["fighting_five_char"][ld])
+
+            def __enter__(self):
+                if action_str != "":
+                    self.thread_flag = True
+                    T = threading.Thread(target=self.action_thread, name="ActionThread", daemon=True)
+                    T.start()
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                self.thread_flag = False
+
+        return FightingAction()
 
 class FightingWinBase(PCRSceneBase):
     def __init__(self, *args, **kwargs):

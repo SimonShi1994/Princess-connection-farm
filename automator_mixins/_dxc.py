@@ -721,7 +721,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         self.lock_home()
 
     def shuatuDD_OCR(self, dxc_id: int, mode: int, stop_criteria: int = 0, after_stop: int = 0, teams=None,
-                     safety_stop=1, assist=0):  # 刷地下城
+                     safety_stop=1, assist=0, fight_detail: str = ""):  # 刷地下城
         """
         2021-04-22 Add By TheAutumnOfRice
 
@@ -734,7 +734,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             mode 0：不打Boss，用队伍1只打小关
             mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss
             mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss
-            mode 3：用只打第一小关，无论怎样都退出
+            mode 3：用队伍1只打第一小关，无论怎样都退出
             mode 4：（攒TP）用队伍[1,2,3,...,N-1]攒TP，N为总层数；用队伍[N,N+1,...]打Boss （不支持借人）
         :param stop_criteria: 终止条件
             设置为0时，只要战斗中出现人员伤亡，直接结束
@@ -760,6 +760,15 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             设置为0时，不借人。
             设置为1~16时，借第n个人（若设置为1，则借左上角的，以此类推）
             注：若指定了具体编队，则借人在编队后进行；否则借人将先进行。
+        :param fight_detail: 战斗操作细节
+            （推荐）空字符串： 默认全程auto，不过mode=4在攒TP时关闭auto
+            （攒TP时可用）用逗号隔开N个子串（N为队伍总数）：每个队伍对应的战斗细节
+                对每个隔开的子串：仅应该包含AB12345XYZ这10种字符之一。
+                auto控制：A - 打开auto   B - 关闭auto  若不设置，默认打开auto（攒TP时默认关闭）
+                连点控制：12345分别表示从左到右的5个位置是否需要在战斗中连点
+                速度控制：XYZ分别表示1，2，4倍速 若不设置，默认4倍速。
+                eg. 若用4队攒TP（连点12位，为了防止打太快设置2倍速），56队打BOSS（全程AUTO），则该参数可以设置为：
+                    B12Y,B12Y,B12Y,B12Y,AZ,AZ
         """
         # 2020-08-01 Fix By TheAutumnOfRice 对快速截屏的兼容性
         from core.constant import DXC_COORD
@@ -770,6 +779,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.lock_home()
             else:
                 self.log.write_log("info", "触发停止条件，撤退。")
+                self.lock_img(DXC_ELEMENT["in_sytzcs"], elseclick=(1, 1))
                 S = DXCSelectB(self)
                 S.goto_chetui().ok()
                 self.lock_home()
@@ -831,7 +841,10 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             while True:
                 if cur_layer < max_layer:
                     # 打小怪的配置
-                    cur_team = 0
+                    if mode < 4:
+                        cur_team = 0
+                    else:
+                        cur_team = cur_layer - 1
                 else:
                     if not _team_init:
                         # 初始化打Boss队伍配置
@@ -894,6 +907,8 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         cur_team += 1
                         if cur_team >= len(teams):
                             self.log.write_log("info", "你的队伍都死光啦！")
+                            for _ in range(10):
+                                self.click(1, 1)
                             stop_fun()
                             return
                         else:
@@ -905,19 +920,33 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
             # 开始战斗
             out = out.goto_zhandou()
-            screen = self.getscreen()
+            current_detail = ""
             if cur_layer < max_layer:
-                if mode == 4:
-                    # 攒TP
-                    out.set_auto(0, screen)
-                else:
-                    # 不攒TP
-                    out.set_auto(1, screen)
+                current_auto = 0
             else:
-                out.set_auto(1, screen)
+                current_auto = 1
+            current_speed = 2
+            # 战斗中连点
+            if fight_detail != "":
+                sub_detail = fight_detail.split(",")[cur_team]
+                self.log.write_log("info", f"当前使用战斗细节：{sub_detail}")
+                if 'A' in sub_detail:
+                    current_auto = 1
+                elif 'B' in sub_detail:
+                    current_auto = 0
+                if 'X' in sub_detail:
+                    current_speed = 0
+                elif 'Y' in sub_detail:
+                    current_speed = 1
+                elif 'Z' in sub_detail:
+                    current_speed = 2
+                current_detail = ''.join([i for i in sub_detail if i in '12345'])
+            screen = self.getscreen()
+            out.set_auto(current_auto, screen)
             screen = self.last_screen
-            out.set_speed(2, 2, screen)  # 三倍速
-            state = out.wait_for_end()
+            out.set_speed(current_speed, 2, screen)  # 三倍速
+            with out.fighting_action(current_detail):
+                state = out.wait_for_end()
             if state == 1:
                 # 战斗胜利
                 self.log.write_log("info", f"战胜了地下城{dxc_id}-{cur_layer}!")

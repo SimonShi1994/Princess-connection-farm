@@ -544,6 +544,14 @@ FIGHT_BTN = {
         4: p(425, 167),
         5: p(531, 170),
     },
+    "fighting_five_char": {
+        # 战斗中5头像
+        1: p(237, 442),
+        2: p(355, 439),
+        3: p(479, 439),
+        4: p(599, 439),
+        5: p(721, 437),
+    },
     "team_close": p(476, 477, img="img/ui/close_btn_1.bmp", at=(374, 455, 580, 503)),  # 选队界面的关闭按钮
     "shbg": p(img="img/fight/shbg.bmp", at=(804, 24, 902, 54)),  # 伤害报告
     "duiwu_icon": p(img="img/fight/duiwu_icon.bmp", at=(896, 78, 924, 97)),
