@@ -1844,7 +1844,12 @@ class ShuatuMixin(ShuatuBaseMixin):
                 if counter > 0:
                     self.log.write_log("info", "打够一次了")
                     return
-            act_menu = HuodongMenu(self).enter()
+            try:
+                act_menu = HuodongMenu(self).enter(timeout=20)
+            except LockTimeoutError:
+                self.log.write_log("warning", "无法进入BOSS关卡，可能已经刷过了，跳过该任务！")
+                self.lock_home()
+                return
             if boss_type == "N" or boss_type == "n":
                 fi = act_menu.goto_nboss()
             elif boss_type == "H" or boss_type == "h":
