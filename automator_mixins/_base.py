@@ -824,7 +824,7 @@ class BaseMixin:
             if debug:
                 self.log.write_log('debug', str(tu))
                 self.log.write_log('debug', str(l))
-            if l[0] < max_threshold or (len(l)>1 and l[0] - l[1] < diff_threshold):
+            if l[0] < max_threshold or (len(l) > 1 and l[0] - l[1] < diff_threshold):
                 time.sleep(0.5)
                 continue
             else:
@@ -1594,12 +1594,12 @@ class BaseMixin:
             for i in clear_list:
                 if i == clear_list[3]:
                     for j in not_clear_file:
-                        run_cmd(
-                            f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force {j} .. "
-                                                                                           f"&& exit" + "'")
+                        run_adb(
+                            f'-s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force {j} .. "
+                                                                       f"&& exit" + "'")
                 else:
-                    run_cmd(
-                        f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
+                    run_adb(
+                        f'-s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
                 # if i == clear_list[3]:
                 #     for j in not_clear_file:
                 #         run_cmd(
@@ -1608,20 +1608,20 @@ class BaseMixin:
 
             clear_list2 = ["time_*", "data_*"]
             for i in clear_list2:
-                run_cmd(
-                    f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + f"cd /data/data/com.bilibili"
+                run_adb(
+                    f'-s {self.address} shell "su -c ' + "'" + f"cd /data/data/com.bilibili"
                                                                                    f".priconne/files && rm -rf "
                                                                                    f"{i} && exit" + "'")
-            run_cmd(
-                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
+            run_adb(
+                f'-s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
                                                                                '/lib && chmod 000 libsecsdk.so'
                                                                                ' && exit' + "'")
-            run_cmd(
-                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
+            run_adb(
+                f'-s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
                                                                                '/lib && chmod 444 libtersafe2.so'
                                                                                ' && exit' + "'")
-            run_cmd(
-                f'cd {adb_dir} && adb -s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
+            run_adb(
+                f'-s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
                                                                                '/lib && chmod 000 libweibosdkcore.so'
                                                                                ' && exit' + "'")
             # time.sleep(3)
@@ -1943,6 +1943,7 @@ class BaseMixin:
     def ocr_A_B(self, x1, y1, x2, y2, screen_shot=None, allow_AB=None):
         if allow_AB is None:
             allow_AB = "0123456789"
+
         def ABfun(s):
             assert s != "-1", "什么都没有检测到"
             assert "/" in s, "字符串中应该有/"
@@ -1952,7 +1953,7 @@ class BaseMixin:
             return a, b
 
         if use_pcrocr_to_process_basic_text:
-            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr="/"+allow_AB)
+            out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, custom_ocr="pcr", allowstr="/" + allow_AB)
         else:
             out = self.ocr_center(x1, y1, x2, y2, screen_shot=screen_shot, language='eng')
         try:

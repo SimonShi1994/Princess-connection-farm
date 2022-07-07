@@ -29,6 +29,7 @@ from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_
 from core.safe_u2 import OfflineException, ReadTimeoutException, random_sleep, run_adb
 from core.usercentre import AutomatorRecorder, parse_batch, list_all_flags
 from core.utils import diffday, PrintToStr
+from core.safe_u2 import run_adb
 
 abs_dir = os.path.abspath(adb_dir)
 if add_adb_to_path:
@@ -54,12 +55,12 @@ def _connect():  # 连接adb与uiautomator
             # print(port_list)
             print("自动搜寻模拟器：" + str(port_list))
             for port in port_list:
-                os.system(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(port))
+                run_adb(f'connect {emulator_ip}:{str(port)}')
         elif len(emulator_ports) != 0:
             for port in emulator_ports:
-                os.system(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(port))
+                run_adb(f'connect {emulator_ip}:{str(port)}')
         else:
-            os.system(f"cd {adb_dir} & adb devices")  # adb devices = adb start-server
+            run_adb("devices")  # adb devices = adb start-server
         # os.system 函数正常情况下返回是进程退出码，0为正常退出码，其余为异常
         """
         if os.system('cd adb & adb connect ' + selected_emulator) != 0:
