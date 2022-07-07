@@ -1,6 +1,7 @@
 # coding=utf-8
 # import matplotlib.pylab as plt
 import os
+import sys
 import threading
 
 from core import log_handler
@@ -47,7 +48,10 @@ def connect():  # 连接adb与uiautomator
     except:
         print('连接失败')
 
-    result = os.popen('cd adb & adb devices')  # 返回adb devices列表
+    if sys.platform == "win32":
+        result = os.popen('cd adb & adb devices')  # 返回adb devices列表
+    else:
+        result = os.popen('adb devices')  # 返回adb devices列表
     res = result.read()
     lines = res.splitlines()[1:]
 

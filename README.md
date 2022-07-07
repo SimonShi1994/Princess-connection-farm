@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220707
+# Princess connection 公主连结农场脚本v2.8.20220707.1
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -235,8 +235,11 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2022/07/07 By TheAutumnOfRice
+2022/07/07 By UVJkiNTQ
+- 框架更新
+  - Linux兼容适配，理论也支持MacOS。由于监听键盘输入（Keyboard库），Linux下需要root运行。使用Pyenv时，注意先安装Tk库（GUI），再pyenv install 3.8.10。
 
+2022/07/07 By TheAutumnOfRice
 - BUG修复
   - 修复通关地下城OCR`d5`中，攒TP模式(mode=4)阵容上错的BUG
   - 修复`hd03`中VH已经打过一次还想试图点进去后会卡死的BUG
@@ -246,14 +249,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
   - 在主界面上增加对异常处理的警告信息
 
 2022/06/26 By Cyicek
-
 - BUG修复
   - 修复登陆界面提示“密码不安全，请立即修改密码”卡住的BUG
   - 增添国内蓝叠5的支持
   - venv反人类教程改正
 
 2022/06/25 By UVJkiNTQ
-
 - 惯例更新
   - 更新活动（七夕剑客旅情谭 天际川流夏之恋）
 - BUG修复

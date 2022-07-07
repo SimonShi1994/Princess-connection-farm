@@ -331,7 +331,7 @@ class UIMatcher:
         作者：bbpp222006
         协议：MIT License
 
-        检测高亮位置(忽略了上板边,防止成就栏弹出遮挡)
+        检测高亮位置
         @return: 高亮中心相对坐标[x,y]
         """
         if screen.shape[0] > screen.shape[1]:
@@ -342,16 +342,15 @@ class UIMatcher:
         # GPL 3.0
         num_of_black = len(np.argwhere(binary == 0))
         #
-        index_1 = np.mean(np.argwhere(binary[63:, :] == 255), axis=0).astype(int)
+        index_1 = np.floor(np.mean(np.argwhere(binary == 255), axis=0))
 
         screen = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
-        cv2.circle(screen, (index_1[1], index_1[0] + 63), 10, (255, 0, 0), -1)
 
         # plt.cla()
         # plt.imshow(screen)
         # plt.pause(0.01)
         # print('亮点个数:', len(np.argwhere(binary == 255)), '暗点个数:', len(np.argwhere(binary == 0)))
-        return num_of_white, num_of_black, index_1[1] / screen.shape[1], (index_1[0] + 63) / screen.shape[0]
+        return num_of_white, num_of_black, index_1[1] / screen.shape[1], index_1[0] / screen.shape[0]
 
     @classmethod
     def img_similar(cls, screen_short, threshold=0.84, at=None, method=cv2.TM_CCOEFF_NORMED):

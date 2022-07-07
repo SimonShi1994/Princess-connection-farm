@@ -15,6 +15,7 @@ from core.pcr_config import *
 from core.richutils import RTitle as RError, RValue as RWarn
 from core.usercentre import AutomatorRecorder, list_all_users, parse_batch, check_users_exists
 from core.utils import is_ocr_running
+from core.safe_u2 import run_adb
 
 
 def wprint(*args, **kwargs):
@@ -38,7 +39,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.8.20220707"
+script_version = "Ver 2.8.20220707.1"
 
 
 def GetLastSchedule():
@@ -56,8 +57,8 @@ def StartPCR():
     global PCR
     if PCR is None:
         print("控制器正在连接中……")
-        os.system(f"cd {adb_dir} & adb kill-server")
-        os.system(f"cd {adb_dir} & adb devices")
+        run_adb("kill-server")
+        run_adb("devices")
         time.sleep(5)
         PCR = PCRInitializer()
         PCR.connect()
@@ -657,18 +658,21 @@ if __name__ == "__main__":
             elif order == "break":
                 break
             elif order == "adb":
-                os.system(f"cd {adb_dir} & {cmd}")
+                run_adb(f'{cmd}')
             elif order == "init":
                 if enable_auto_find_emulator:
                     emulator_ip = "127.0.0.1"
                     port_list = set(check_known_emulators())
-                    os.system("taskkill /im adb.exe /f")
+                    if sys.platform == "win32":
+                        os.system("taskkill /im adb.exe /f")
+                    else:
+                        os.system("pkill adb")
                     # print(port_list)
                     print("自动搜寻模拟器：" + str(port_list))
                     for port in port_list:
-                        os.system(f'cd {adb_dir} & adb connect ' + emulator_ip + ':' + str(port))
+                        run_adb(f'connect {emulator_ip}:{str(port)}')
                 else:
-                    os.system(f"cd {adb_dir} & adb start-server")
+                    run_adb("start-server")
                 os.system('python -m uiautomator2 init')
                 # os.system(f"cd batches & ren *.txt *.json")
                 # os.system(f"cd groups & ren *.txt *.json")
@@ -681,7 +685,7 @@ if __name__ == "__main__":
                     exit(1)
                 else:
                     print("初始化 uiautomator2 成功")
-                    os.system(f"cd {adb_dir} & adb kill-server")
+                    run_adb("kill-server")
             elif order == "app":
                 Start_App()
             elif order == "help":
