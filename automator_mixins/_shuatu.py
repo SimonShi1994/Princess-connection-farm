@@ -1763,15 +1763,17 @@ class ShuatuMixin(ShuatuBaseMixin):
         code: 见scenes/huodng/huodong_manager.py
         entrance_ind：在冒险界面进入活动，设置为"auto"时，自动寻找剧情活动按钮；设置为int时，固定为从右往左数第几个按钮
         """
-        self.lock_home()
-        MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
-        if MAP is False:
-            self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
-            self.lock_home()
-            return
-        self.log.write_log("info", f"开始刷活动VHBoss：{MAP.NAME}")
-        MAP.shua_VHBoss(team_order)
-        self.lock_home()
+        self.shua_hd_boss(team_order=team_order, code=code, entrance_ind=entrance_ind, once=True, boss_type="VH",
+                          var=var, )
+        # self.lock_home()
+        # MAP = self.get_zhuye().goto_maoxian().goto_huodong(code, entrance_ind)
+        # if MAP is False:
+        #     self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
+        #     self.lock_home()
+        #     return
+        # self.log.write_log("info", f"开始刷活动VHBoss：{MAP.NAME}")
+        # MAP.shua_VHBoss(team_order)
+        # self.lock_home()
 
     def xiaohaohuodong_11(self, cishu="max", team_order="zhanli", get_zhiyuan=True, code="current", entrance_ind="auto",
                           var=None):
@@ -1844,20 +1846,20 @@ class ShuatuMixin(ShuatuBaseMixin):
                 if counter > 0:
                     self.log.write_log("info", "打够一次了")
                     return
+            act_menu = HuodongMenu(self).enter()
             try:
-                act_menu = HuodongMenu(self).enter(timeout=20)
+                if boss_type == "N" or boss_type == "n":
+                    fi = act_menu.goto_nboss(timeout=20)
+                elif boss_type == "H" or boss_type == "h":
+                    fi = act_menu.goto_hboss(timeout=20)
+                elif boss_type == "VH" or boss_type == "vh":
+                    fi = act_menu.goto_vhboss(timeout=20)
+                else:
+                    self.log.write_log("warning", "错误的boss类型，跳过该任务")
+                    self.lock_home()
+                    return
             except LockTimeoutError:
-                self.log.write_log("warning", "无法进入BOSS关卡，可能已经刷过了，跳过该任务！")
-                self.lock_home()
-                return
-            if boss_type == "N" or boss_type == "n":
-                fi = act_menu.goto_nboss()
-            elif boss_type == "H" or boss_type == "h":
-                fi = act_menu.goto_hboss()
-            elif boss_type == "VH" or boss_type == "vh":
-                fi = act_menu.goto_vhboss()
-            else:
-                self.log.write_log("warning", "错误的boss类型，跳过该任务")
+                self.log.write_log("warning", "无法进入BOSS关卡，跳过该任务！")
                 self.lock_home()
                 return
 

@@ -743,14 +743,14 @@ VALID_TASK = ValidTask() \
                                            "若为\"a-b\",其中a为1~5的整数，b为1~3的整数，则选择编组a队伍b", inputbox=TeamInputer()),
           TaskParam("safety_stop", int, "安全保护", "防止大号误撤退。\n设置为0时，不管；\n设置为1时，若小关伤亡惨重，直接返回主页不撤退。", 1),
           TaskParam("assist", int, "支援设置", "0表示不用支援，1~16选支援第1/2行的第n个（1-8）(9-16)，等级限制会自动选择第n+1个", 0),
-          TaskParam("fight_detail", str, '空字符串： 默认全程auto，不过mode=4在攒TP时关闭auto\n'
-                                         '（攒TP时可用）用逗号隔开N个子串（N为队伍总数）：每个队伍对应的战斗细节\n'
-                                         '    对每个隔开的子串：仅应该包含AB12345XYZ这10种字符之一。\n'
-                                         '    auto控制：A - 打开auto   B - 关闭auto  若不设置，默认打开auto（攒TP时默认关闭）\n'
-                                         '    连点控制：12345分别表示从左到右的5个位置是否需要在战斗中连点\n'
-                                         '    速度控制：XYZ分别表示1，2，4倍速 若不设置，默认4倍速。\n'
-                                         '        eg. 若用4队攒TP（连点12位，为了防止打太快设置2倍速），56队打BOSS（全程AUTO），则该参数可以设置为：\n'
-                                         '        B12Y,B12Y,B12Y,B12Y,AZ,AZ', default=""),
+          TaskParam("fight_detail", str, '战斗细节', '（默认推荐）空字符串： 默认全程auto，不过mode=4在攒TP时关闭auto\n'
+                                                 '（攒TP时可用）用逗号隔开N个子串（N为队伍总数）：每个队伍对应的战斗细节\n'
+                                                 '    对每个隔开的子串：仅应该包含AB12345XYZ这10种字符之一。\n'
+                                                 '    auto控制：A - 打开auto   B - 关闭auto  若不设置，默认打开auto（攒TP时默认关闭）\n'
+                                                 '    连点控制：12345分别表示从左到右的5个位置是否需要在战斗中连点\n'
+                                                 '    速度控制：XYZ分别表示1，2，4倍速 若不设置，默认4倍速。\n'
+                                                 '        eg. 若用4队攒TP（连点12位，为了防止打太快设置2倍速），56队打BOSS（全程AUTO），则该参数可以设置为：\n'
+                                                 '        B12Y,B12Y,B12Y,B12Y,AZ,AZ', default=""),
           ]) \
     .add("j1", "doJJC", "竞技场", "竞技场白给脚本") \
     .add("j2", "doPJJC", "公主竞技场", "公主竞技场白给脚本") \
@@ -1035,7 +1035,7 @@ VALID_TASK = ValidTask() \
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
-    .add("hd04", "dahaohuodong_VHBoss", "推/刷活动VHBoss，hd03兼容性更好", "刷活动VHBoss图，如果没赢很可能有BUG",
+    .add("hd04", "dahaohuodong_VHBoss", "推/刷活动VHBoss", "刷活动VHBoss图",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
