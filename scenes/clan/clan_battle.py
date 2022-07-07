@@ -49,7 +49,7 @@ class ClanBattleMAP(SevenBTNMixin):
             x = r[0]
             y = r[1]
             x1 = int(x)
-            y1 = int(y) + 74
+            y1 = int(y) + 115
             return self.goto(ClanBattlePre, self.fun_click(x1, y1))
 
     def get_cishu(self):
