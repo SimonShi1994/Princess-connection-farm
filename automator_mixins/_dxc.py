@@ -921,8 +921,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             # 开始战斗
             out = out.goto_zhandou()
             current_detail = ""
-            if cur_layer < max_layer:
-                current_auto = 0
+            if mode == 4:
+                if cur_layer < max_layer:
+                    current_auto = 0
+                else:
+                    current_auto = 1
             else:
                 current_auto = 1
             current_speed = 2
