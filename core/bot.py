@@ -331,7 +331,8 @@ class Bot:
                 r = self.req_post.post('https://tgmessage-cyicek.vercel.app/api', proxies=BOT_PROXY, data=tg_textinfo)
 
         except Exception as e:
-            raise SendFailed('TG推送服务器错误', e)
+            pass
+            # raise SendFailed('TG推送服务器错误', e)
             # time.sleep(600)
             # self.tg_bot(s_level, message=message, acc_state=acc_state, img=img, img_title=img_title)
 

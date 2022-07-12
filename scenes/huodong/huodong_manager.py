@@ -4,6 +4,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
         "current": Map20220630,
+        "20220716": Map20220716,
         "20220629": Map20220630,
         "20220616": Map20220616,
         "20220531": Map20220531,
@@ -27,6 +28,45 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20220816(HuodongMapBase):
+    NAME = "森林里的胆小鬼与神圣学院的问题儿童复刻"
+    XY11 = (140, 371)
+    XY_VH_BOSS = (863, 265)
+    HARD_COORD = {
+        1: (89, 211),
+        2: (215, 294),
+        3: (379, 226),
+        4: (499, 335),
+        5: (684, 325),
+    }
+
+
+# class Map20220731(HuodongMapBase):
+#     NAME = "美里的夏日声援 追梦的盛夏棒球队"
+#     XY11 = (0, 0)
+#     XY_VH_BOSS = (0, 0)
+#     HARD_COORD = {
+#         1: (0, 0),
+#         2: (0, 0),
+#         3: (0, 0),
+#         4: (0, 0),
+#         5: (0, 0),
+#     }
+
+
+class Map20220716(HuodongMapBase):
+    NAME = "盛夏的真步真步王国复刻"
+    XY11 = (219, 252)
+    XY_VH_BOSS = (867, 296)
+    HARD_COORD = {
+        1: (106, 225),
+        2: (280, 308),
+        3: (424, 226),
+        4: (515, 340),
+        5: (691, 330),
+    }
 
 
 class Map20220630(HuodongMapBase):
