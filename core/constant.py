@@ -1261,7 +1261,7 @@ MAOXIAN_BTN = {
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
 }
 
-MAX_MAP = 35
+MAX_MAP = 36
 
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(77, 61, 141, 72)),
@@ -1299,6 +1299,7 @@ ZHUXIAN_ID = {
     33: p(img="img/zhuxian/33L.bmp", at=(61, 58, 196, 75)),
     34: p(img="img/zhuxian/34L.bmp", at=(61, 58, 202, 77)),
     35: p(img="img/zhuxian/35L.bmp", at=(61, 57, 203, 76)),
+    36: p(img="img/zhuxian/36L.bmp", at=(60, 57, 162, 76)),
 }
 
 # ZHUXIAN_SUB_ID
@@ -1340,6 +1341,10 @@ ZHUXIAN_DKSTYSY_ID = {
     34: p(img="img/zhuxian/34R.bmp", at=(219, 60, 251, 74)),
     35: p(img="img/zhuxian/35R.bmp", at=(217, 57, 252, 77)),
 }
+ZHUXIAN_WNHP_ID = {
+    36: p(img="img/zhuxian/36R.bmp", at=(177, 55, 215, 77)),
+    # 37: p(img="img/zhuxian/37R.bmp", at=(217, 57, 252, 77)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
@@ -1350,6 +1355,7 @@ ZHUXIAN_SECOND_ID = {
     (30, 31): ZHUXIAN_FTLDY_ID,
     (32, 33): ZHUXIAN_FSJYSL_ID,
     (34, 35): ZHUXIAN_DKSTYSY_ID,
+    (36, 37): ZHUXIAN_WNHP_ID,
 }
 
 NORMAL_COORD = {

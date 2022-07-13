@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220708
+# Princess connection 公主连结农场脚本v2.8.20220713
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -235,18 +235,22 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2022/07/08 By TheAutumnOfRice
+2022/07/13 By UVJkiNTQ
+- 惯例更新
+  - 预更新活动至9月中
+  - 主线`36`图
+- BUG修复
+  - 修复活动boss券识别问题，当券特别少的时候
 
+2022/07/08 By TheAutumnOfRice
 - BUG修复
   - 修复通关地下城OCR`d5`中，非攒TP模式仍关闭auto的BUG
 
 2022/07/07 By UVJkiNTQ
-
 - 框架更新
   - Linux兼容适配，理论也支持MacOS。由于监听键盘输入（Keyboard库），Linux下需要root运行。使用Pyenv时，注意先安装Tk库（GUI），再pyenv install 3.8.10。
 
 2022/07/07 By TheAutumnOfRice
-
 - BUG修复
   - 修复通关地下城OCR`d5`中，攒TP模式(mode=4)阵容上错的BUG
   - 修复`hd03`中VH已经打过一次还想试图点进去后会卡死的BUG
