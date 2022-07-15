@@ -5,6 +5,7 @@ import os
 import queue
 import random
 import subprocess
+import sys
 import threading
 import time
 from collections import OrderedDict
@@ -1543,6 +1544,12 @@ class BaseMixin:
             p = subprocess.Popen(f'{commands}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             p.stdout.readlines()
 
+        def run_adb_cmd(commands):
+            if sys.platform == "win32":
+                run_cmd(f"{adb_dir}/adb {commands}")
+            else:
+                run_cmd(f"adb {commands}")
+
         # print("》》》匿名开始《《《", self.address)
         # tmp_rand = []
         tmp_rand = random.sample(range(1, 10), 3)
@@ -1568,21 +1575,20 @@ class BaseMixin:
             8: 'Redmi',
             9: 'LG',
         }
-        run_cmd('cd %s & adb -s %s shell setprop ro.product.model %s && exit' % (
-            adb_dir, self.address, phone_model[tmp_rand[0]]))
-        run_cmd('cd %s & adb -s %s shell setprop ro.product.brand %s && exit' % (
-            adb_dir, self.address, phone_model[tmp_rand[0]]))
-        run_cmd('cd %s & adb -s %s shell setprop ro.product.manufacturer %s && exit' % (adb_dir,
-                                                                                        self.address,
-                                                                                        phone_manufacturer[
-                                                                                            tmp_rand[1]]))
-        run_cmd('cd %s & adb -s %s shell setprop phone.imei %s && exit' % (adb_dir, self.address, _get_imei(15)))
-        run_cmd('cd %s & adb -s %s shell setprop ro.product.name %s && exit' % (
-            adb_dir, self.address, phone_model[tmp_rand[2]]))
-        run_cmd('cd %s & adb -s %s shell setprop phone.imsi %s && exit' % (adb_dir, self.address, _get_imei(15)))
-        run_cmd('cd %s & adb -s %s shell setprop phone.linenum %s && exit' % (adb_dir, self.address, _get_imei(11)))
-        run_cmd('cd %s & adb -s %s shell setprop phone.simserial %s && exit' % (
-            adb_dir, self.address, _get_imei(20)))
+        run_adb_cmd(' -s %s shell setprop ro.product.model %s && exit' % (
+            self.address, phone_model[tmp_rand[0]]))
+        run_adb_cmd(' -s %s shell setprop ro.product.brand %s && exit' % (
+            self.address, phone_model[tmp_rand[0]]))
+        run_adb_cmd(' -s %s shell setprop ro.product.manufacturer %s && exit' % (self.address,
+                                                                                 phone_manufacturer[
+                                                                                     tmp_rand[1]]))
+        run_adb_cmd(' -s %s shell setprop phone.imei %s && exit' % (self.address, _get_imei(15)))
+        run_adb_cmd(' -s %s shell setprop ro.product.name %s && exit' % (
+            self.address, phone_model[tmp_rand[2]]))
+        run_adb_cmd(' -s %s shell setprop phone.imsi %s && exit' % (self.address, _get_imei(15)))
+        run_adb_cmd(' -s %s shell setprop phone.linenum %s && exit' % (self.address, _get_imei(11)))
+        run_adb_cmd(' -s %s shell setprop phone.simserial %s && exit' % (
+            self.address, _get_imei(20)))
         # print("》》》匿名完毕《《《")
         if clear_traces_and_cache:
             # self.d.app_stop("com.bilibili.priconne")
@@ -1594,11 +1600,11 @@ class BaseMixin:
             for i in clear_list:
                 if i == clear_list[3]:
                     for j in not_clear_file:
-                        run_adb(
+                        run_adb_cmd(
                             f'-s {self.address} shell "su -c ' + "'" + f"cd {i} && mv -force {j} .. "
                                                                        f"&& exit" + "'")
                 else:
-                    run_adb(
+                    run_adb_cmd(
                         f'-s {self.address} shell "su -c ' + "'" + f"cd {i} && rm -rf * && exit" + "'")
                 # if i == clear_list[3]:
                 #     for j in not_clear_file:
@@ -1608,22 +1614,22 @@ class BaseMixin:
 
             clear_list2 = ["time_*", "data_*"]
             for i in clear_list2:
-                run_adb(
+                run_adb_cmd(
                     f'-s {self.address} shell "su -c ' + "'" + f"cd /data/data/com.bilibili"
-                                                                                   f".priconne/files && rm -rf "
-                                                                                   f"{i} && exit" + "'")
-            run_adb(
+                                                               f".priconne/files && rm -rf "
+                                                               f"{i} && exit" + "'")
+            run_adb_cmd(
                 f'-s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
-                                                                               '/lib && chmod 000 libsecsdk.so'
-                                                                               ' && exit' + "'")
-            run_adb(
+                                                           '/lib && chmod 000 libsecsdk.so'
+                                                           ' && exit' + "'")
+            run_adb_cmd(
                 f'-s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
-                                                                               '/lib && chmod 444 libtersafe2.so'
-                                                                               ' && exit' + "'")
-            run_adb(
+                                                           '/lib && chmod 444 libtersafe2.so'
+                                                           ' && exit' + "'")
+            run_adb_cmd(
                 f'-s {self.address} shell "su -c ' + "'" + 'cd data/data/com.bilibili.priconne'
-                                                                               '/lib && chmod 000 libweibosdkcore.so'
-                                                                               ' && exit' + "'")
+                                                           '/lib && chmod 000 libweibosdkcore.so'
+                                                           ' && exit' + "'")
             # time.sleep(3)
             # self.d.session("com.bilibili.priconne")
             # self.d.app_wait("com.bilibili.priconne")

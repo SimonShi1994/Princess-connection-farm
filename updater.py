@@ -7,7 +7,12 @@ import requests
 from requests.adapters import HTTPAdapter
 
 from core.pcr_config import trace_tree
-from main_new import script_version
+
+try:
+    from main_new import script_version
+except Exception:
+    script_version = "Null"
+    print("目前版本不存在")
 
 
 class Pcr_Downloader:
@@ -33,12 +38,10 @@ class Pcr_Downloader:
         'github_cn_url1': f'https://ghproxy.com/https://github.com/SimonShi1994/Princess-connection-farm/archive'
                           f'/{trace_tree}.zip ',
         'github_cn_url2': f'https://g.0x6.xyz/https://github.com/SimonShi1994/Princess-connection-farm/archive'
-                          f'/{trace_tree}.zip ',
-        'github_cn_url3': f'https://gitee.com/klctiy/Princess-connection-farm/repository/archive/'
                           f'/{trace_tree}.zip '
     }
     download_url_list = ['_', 'github_url', 'github_us1_url', 'github_us2_url', 'github_jp1_url', 'github_jp2_url',
-                         'github_kr_url', 'github_hk_url', 'github_cn_url1', 'github_cn_url2', 'github_cn_url3']
+                         'github_kr_url', 'github_hk_url', 'github_cn_url1', 'github_cn_url2']
     req = requests.session()
 
     def introduction(self):
@@ -252,7 +255,7 @@ class Pcr_Downloader:
     def select_connect(self):
         print('----下载线路----')
         print('1.github官网\n2.github美国镜像1\n3.github美国镜像2\n4.github日本东京镜像1\n5.github日本东京镜像2\n6.github韩国首尔镜像\n7.github'
-              '中国香港镜像\n8.github中国节点1\n9.github中国节点2\n10.gitee码云镜像')
+              '中国香港镜像\n8.github中国节点1\n9.github中国节点2')
         cmd = input('请选择下载线路：')
         print('----更新方式----')
         print('1.在本目录下新建文件夹更新\n2.覆盖常规更新[请自行做好相应的备份！]')

@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220713
+# Princess connection 公主连结农场脚本v2.8.20220715
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -145,7 +145,7 @@
 
 目前来看，雷电4，蓝叠，雷神模拟器均可以使用。一般来说，只要支持adb连接的模拟器都可以使用。
 
-**重要：模拟器分辨率要求540*960**
+**重要：模拟器分辨率要求540*960 DPI为240** 
 
 **重要**：目前关于API部分已经移入 config.ini 中，如何填入请参考目录下的md文件，config.ini在运行main_new.py后自动生成
 
@@ -160,11 +160,11 @@
 |    TG 电报（:+1:）    | :x:          | :heavy_check_mark: | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
 |     QQBot[开发中]     |              |                    |                          |                    |                                                       |
 
-Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
+Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
-## :taxi:使用方式
+## :taxi:使用方式&帮助
 
-- 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
+- 环境配置完成后，再检查模拟器分辨率为540*960和DPI为240。确认无误
 
 - 使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
 
@@ -234,6 +234,12 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/07/15 By CyiceK
+- BUG修复
+  - 改善自动搜寻的搜寻逻辑，修复部分bug
+  - 修复清理pcr缓存失效的bug
+  - 删除码云镜像链接（因为有README中有github的图片外链，审核不通过
 
 2022/07/13 By UVJkiNTQ
 - 惯例更新

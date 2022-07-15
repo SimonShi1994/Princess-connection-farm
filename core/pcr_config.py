@@ -247,7 +247,7 @@ use_my_id = GC.add_bool("pcrfarm_setting", "use_my_id", False)
 
 enable_auto_find_emulator = GC.add_bool('emulator_setting', 'enable_auto_find_emulator', False)
 one_way_search_auto_find_emulator = GC.add_bool('emulator_setting', 'one_way_search_auto_find_emulator', False)
-emulators_port_interval: Optional[list] = (GC.add_list('emulator_setting', 'emulators_port_interval', [30000, 5000]))
+emulators_port_interval: Optional[list] = (GC.add_list('emulator_setting', 'emulators_port_interval', [65535, 5000]))
 emulators_port_list: Optional[list] = (GC.add_list('emulator_setting', 'emulators_port_list', []))
 emulator_ports: Optional[list] = (GC.add_list('emulator_setting', 'emulator_ports', []))
 adb_dir = GC.add_abspath('emulator_setting', 'adb_dir', "adb")
