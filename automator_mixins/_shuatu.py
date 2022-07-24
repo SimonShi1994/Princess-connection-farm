@@ -2214,6 +2214,10 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.log.write_log("warning", "无法找到活动入口，请确认是否活动期间")
             self.lock_home()
             return
+        if MAP.XINLAI is False:
+            self.log.write_log("warning", "该活动无信赖度章节")
+            self.lock_home()
+            return
         map_base = HuodongMapBase(self)
         menu = map_base.goto_hd_menu()
         menu.hd_xinlaidu()

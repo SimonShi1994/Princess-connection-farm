@@ -122,6 +122,7 @@ class Map20220716(HuodongMapBase):
         4: (515, 340),
         5: (691, 330),
     }
+    XINLAI = False
 
 
 class Map20220630(HuodongMapBase):
