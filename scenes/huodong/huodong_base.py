@@ -70,6 +70,7 @@ class HuodongMapBase(ZhuXianBase):
     N1 = 15
     N2 = 15
     N3 = 15
+    XINLAI = True
 
     def __init__(self, a):
         super().__init__(a)
