@@ -290,7 +290,7 @@ class AsyncMixin(ToolsMixin):
             if async_blocking_sw == 0:
                 # 用于判断堵塞的异步开关
                 async_blocking_sw = 1
-                self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
+                # self.c_async(self, account, self.aor_purse(), sync=False)  # 异步暂停判断
             if sent_state_img:
                 self.c_async(self, account, self.c_img_server_bot(), sync=False)  # 异步server截图发送播报
                 # self.c_async(self, account, self.bot_get_command(), sync=False)  # 异步获取远端命令
