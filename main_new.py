@@ -39,7 +39,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.8.20220731"
+script_version = "Ver 2.8.20220815"
 
 
 def GetLastSchedule():
@@ -403,6 +403,9 @@ def ShowPCRPerformance():
     print("* 出现验证码后等待时间 captcha_wait_time：", captcha_wait_time)
     print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", RTrue("已开启") if captcha_popup else RFalse("未开启"))
     print("* 缓存清理 clear_traces_and_cache：", RTrue("已开启") if clear_traces_and_cache else RFalse("未开启"))
+    print("* 装备名称模糊搜索 enable_zhuangbei_fuzzy_search：", RTrue("已开启") if enable_zhuangbei_fuzzy_search else RFalse("未开启"))
+    if enable_zhuangbei_fuzzy_search:
+        print("  - 模糊搜索阈值 zhuangbei_fuzzy_search_cutoff：", zhuangbei_fuzzy_search_cutoff)
 
 
 def ShowTaskInfo():

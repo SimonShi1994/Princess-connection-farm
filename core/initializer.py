@@ -490,7 +490,7 @@ class PCRInitializer:
 
     def _add_task(self, task):
         """
-        队列中添加任务五元组
+        队列中添加任务6元组
         """
         rs = AutomatorRecorder(task[1], task[3]).get_run_status()
         if task[5] and rs["finished"]:
@@ -828,8 +828,8 @@ class PCRInitializer:
         priority, account, task_name, rec_addr, task, continue_ = msg["task"]
         if msg["status"] in ["fail", "success"]:
             self.finished_tasks += [msg["task"]]
-            if task in self.running_tasks:
-                del self.running_tasks[self.running_tasks.index(task)]
+            if msg["task"] in self.running_tasks:
+                del self.running_tasks[self.running_tasks.index(msg["task"])]
             if msg["status"] == "fail":
                 self.write_log(
                     f"账号{account}执行失败！设备：{msg['device']} 状态：{AutomatorRecorder.get_user_state(account, rec_addr)}")
@@ -837,16 +837,16 @@ class PCRInitializer:
                 self.write_log(f"账号{account}执行成功！")
         elif msg["status"] == "start":
             self.write_log(f"账号{account}开始执行，设备：{msg['device']} 进度存储目录 {rec_addr}")
-            if task not in self.running_tasks:
-                self.running_tasks += [task]
+            if msg["task"] not in self.running_tasks:
+                self.running_tasks += [msg["task"]]
         elif msg["status"] == "retry":
-            if task in self.running_tasks:
-                del self.running_tasks[self.running_tasks.index(task)]
+            if msg["task"] in self.running_tasks:
+                del self.running_tasks[self.running_tasks.index(msg["task"])]
             self._add_task(msg["task"])
             self.write_log(f"账号{account}重新进入任务队列，进度存储目录 {rec_addr}")
         elif msg["status"] == "forcekill":
-            if task in self.running_tasks:
-                del self.running_tasks[self.running_tasks.index(task)]
+            if msg["task"] in self.running_tasks:
+                del self.running_tasks[self.running_tasks.index(msg["task"])]
             self.write_log(
                 f"账号{account}强制退出！设备：{msg['device']} 状态：{AutomatorRecorder.get_user_state(account, rec_addr)}")
             self.paused_tasks += msg["task"]
@@ -967,13 +967,18 @@ class PCRInitializer:
         self.send_message(device, "close game at now!!!")
 
     def stop(self, join=False, clear=False, force=False):
+        """
+        join : 是否block直到全部设备空闲
+        clear：是否搁置目前任务队列中的全部任务并向全部设备发送关闭信号
+        force：是否强制关闭设备，而不是等待当前任务运行结束
+        """
         if clear:
             self.pause_tasks()
-        for d in self.in_queue.keys():
-            if force:
-                self.forcekill_device(d)
-            else:
-                self.stop_device(d)
+            for d in self.in_queue.keys():
+                if force:
+                    self.forcekill_device(d)
+                else:
+                    self.stop_device(d)
         if join:
             while not self.devices.full():
                 time.sleep(1)

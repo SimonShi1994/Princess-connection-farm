@@ -8,7 +8,7 @@ import time
 from collections import defaultdict
 from io import BytesIO
 from typing import Optional, TYPE_CHECKING
-
+from difflib import get_close_matches
 from rich.table import Table as RTable
 
 from core.constant import USER_DEFAULT_DICT as UDD
@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from pcrdata.pcrdata import PCRData
     from core.utils import WowSearch
 import rich.box as rbox
+import openpyxl
 from core.richutils import RText, ROrderGrid, ROneTable, RValue, RComment, RLRProgress
 
 JSNameWow: Optional[WowSearch] = None
@@ -100,6 +101,13 @@ def BindAccount(account):
     with open("bind_account.txt", "w", encoding="utf-8") as f:
         f.write(account)
     print("account绑定成功：", account)
+
+
+def MH_ZB(name, args):
+    t = float(get_arg(args, "t", "0.6"))
+    lst = list(data.EQU_ID.keys())
+    words = get_close_matches(name, lst, 1, t)
+    print("阈值：", t, "模糊查询结果：", words)
 
 
 def ZB_KC_FIX():
@@ -441,6 +449,9 @@ def JS_TRACK(name, rank=0, zb_str="", track_str=None):
                 zb_str = '010111'
             elif B == 5:
                 zb_str = '011111'
+            elif B == 6:
+                zb_str = '111111'
+                track_str = track_str.rstrip(".6")
             else:
                 raise Exception("错误的lib_track_str！")
         obj[name]["track"] = track_str
@@ -782,6 +793,203 @@ def ZB_ST_ADVICE(args, verbose=True):
     print(table)
 
 
+def XLS_OUTPUT():
+    global last_account, AR
+    wb = openpyxl.load_workbook("pcrdata/sample_xlsx.xlsx")
+    os.makedirs("xls", exist_ok=True)
+    dest_filename = f"xls/{last_account}.xlsx"
+    ws1 = wb.worksheets[0]
+    juese = AR.get("juese_info", UDD["juese_info"])
+    data = LoadPCRData()
+
+    for nam, info in juese.items():
+        row = []
+        if nam not in data.C_ID:
+            _id = -1
+            print("存在未知角色：", nam, "你可能需要进行js fix！")
+        else:
+            _id = data.get_id(nam)
+        position = data.get_position(_id)
+        distance = data.CInfo[_id]["search_area_width"]
+        row.append(data.get_id(nam))  # ID
+        row.append(nam)  # Name
+
+        if "track_rank" in info and "track_zb" in info:
+            _track_zb = info["track_zb"]
+            _track_rank = info["track_rank"]
+            zb_str = "".join([str(int(z)) for z in _track_zb])
+            if zb_str == "010101":
+                track = f"{_track_rank}.3"
+            elif zb_str == "010111":
+                track = f"{_track_rank}.4"
+            elif zb_str == "011111":
+                track = f"{_track_rank}.5"
+            elif zb_str == "111111":
+                track = f"{_track_rank}"
+            else:
+                track = ""
+            row.append(track)
+        else:
+            row.append("")
+        if position == "front":
+            row.append("前卫")
+        elif position == "middle":
+            row.append("中卫")
+        else:
+            row.append("后卫")
+        row.append(distance)
+        row.append(info['dengji'])
+        row.append(info['haogan'])
+        row.append(info['star'])
+        row.append(info['rank'])
+        for zb in info['zb']:
+            row.append(int(zb))
+        if "track_rank" in info:
+            row.append(info["track_rank"])
+        else:
+            row.append("")
+        if "track_zb" in info:
+            for zb in info["track_zb"]:
+                row.append(int(zb))
+        else:
+            for _ in range(6):
+                row.append("")
+        row.append(datetime.datetime.fromtimestamp(info["last_update"]).strftime("%Y/%m/%d %H:%M:%S"))
+        ws1.append(row)
+    ws2 = wb.worksheets[1]
+    kc = AR.get("zhuangbei_kucun", UDD["zhuangbei_kucun"])
+    for nam, info in kc.items():
+        if nam in data.EQU_ID:
+            _id = data.get_id(nam)
+        else:
+            _id = -1
+            print("存在未知装备：", nam, "你可能需要进行zb kc fix！")
+        row = []
+        row.append(_id)
+        row.append(nam)
+        row.append(info[0])  # num
+        row.append(datetime.datetime.fromtimestamp(info[1]).strftime("%Y/%m/%d %H:%M:%S"))
+        row.append(info[2])  # 备注
+        ws2.append(row)
+    wb.save(dest_filename)
+    wb.close()
+    print("已经保存到：", dest_filename, "中！")
+
+
+def XLS_INPUT(_all=False):
+    global last_account, AR
+    dest_filename = f"xls/{last_account}.xlsx"
+    print("正在读取：", dest_filename)
+    wb = openpyxl.load_workbook(dest_filename)
+    ws1 = wb.worksheets[0]
+    juese = AR.get("juese_info", UDD["juese_info"])
+    data = LoadPCRData()
+    for r in range(3, ws1.max_row + 1):
+        _id = int(ws1.cell(r, 1).value)
+        _nam = str(ws1.cell(r, 2).value)
+        _track_str = ws1.cell(r, 3).value
+        _lv = int(ws1.cell(r, 6).value)
+        _haogan = int(ws1.cell(r, 7).value)
+        _star = int(ws1.cell(r, 8).value)
+        _rank = int(ws1.cell(r, 9).value)
+        _zb = [ws1.cell(r, x).value for x in [10, 11, 12, 13, 14, 15]]
+        _track_rank = ws1.cell(r, 16).value
+        _track_zb = [ws1.cell(r, x).value for x in [17, 18, 19, 20, 21, 22]]
+
+        # Check Name
+        if _nam not in data.C_ID:
+            print("读取到名称", _nam, "不在数据库中，跳过该条目！")
+            continue
+        if _nam not in juese:
+            print("角色", _nam, "不在你的数据中，添加该角色！")
+            juese[_nam] = {
+                "dengji": 1,
+                "rank": 1,
+                "haogan": 1,
+                "zb": [False] * 6,
+                "star": 1,
+                "last_update": time.time(),
+            }
+        info = juese[_nam]
+        # Add Track
+        if _track_str is not None:
+            _track_str = str(_track_str)
+            if _track_str == "false":
+                info["track"] = False
+                if "track_rank" in info: del info["track_rank"]
+                if "track_zb" in info: del info["track_zb"]
+            else:
+                if '.' not in _track_str:
+                    A = int(_track_str)
+                    rank = A
+                    zb_str = "111111"
+                else:
+                    A, B = _track_str.split('.')
+                    A = int(A)
+                    B = int(B)
+                    rank = A
+                    if B == 3:
+                        zb_str = '010101'
+                    elif B == 4:
+                        zb_str = '010111'
+                    elif B == 5:
+                        zb_str = '011111'
+                    elif B == 6:
+                        zb_str = '111111'
+                        _track_str = _track_str.rstrip(".6")
+                    else:
+                        raise Exception(f"错误的一键追踪指令：{_track_str}！")
+                info["track"] = _track_str
+                info["track_rank"] = rank
+                info["track_zb"] = ParseZBStr(zb_str)
+        else:
+            if _track_rank is not None and all([x is not None for x in _track_zb]):
+                # config track str
+                zb_str = "".join([str(z) for z in _track_zb])
+                if zb_str == "010101":
+                    track = f"{_track_rank}.3"
+                elif zb_str == "010111":
+                    track = f"{_track_rank}.4"
+                elif zb_str == "011111":
+                    track = f"{_track_rank}.5"
+                elif zb_str == "111111":
+                    track = f"{_track_rank}"
+                else:
+                    track = "false"
+                info["track"] = track
+                info["track_rank"] = int(_track_rank)
+                info["track_zb"] = ParseZBStr(zb_str)
+            else:
+                info["track"] = False
+                if "track_rank" in info: del info["track_rank"]
+                if "track_zb" in info: del info["track_zb"]
+        # ALL
+        if _all:
+            zb_str = "".join([str(z) for z in _zb])
+            info["haogan"] = _haogan
+            info["dengji"] = _lv
+            info["rank"] = _rank
+            info["star"] = _star
+            info["last_update"] = time.time()
+            info['zb'] = ParseZBStr(zb_str)
+
+    AR.set("juese_info", juese)
+    if _all:
+        ws2 = wb.worksheets[1]
+        kc = AR.get("zhuangbei_kucun", UDD["zhuangbei_kucun"])
+        for r in range(2, ws2.max_row + 1):
+            _nam = ws2.cell(r, 2).value
+            _num = int(ws2.cell(r, 3).value)
+
+            if _nam not in data.EQU_ID:
+                print("读取到名称", _nam, "不在数据库中，跳过该条目！")
+                continue
+
+            kc[_nam] = [_num, time.time(), "From XLS"]
+        AR.set("zhuangbei_kucun", kc)
+    wb.close()
+
+
 if __name__ == "__main__":
     GetLastAccount()
     print("---  PCR数据中心  ---")
@@ -810,6 +1018,7 @@ if __name__ == "__main__":
                 print("update 更新数据库[需要sqlite3, brotli依赖]")
                 print("bind (account) 绑定一个账号，可以查看它的数据")
                 if last_account != "":
+                    print("mh 试用可能能提高OCR精度的模糊查询")
                     print("zb 查看装备相关帮助")
                     print("js 查看角色相关帮助")
                     print("lib 查看图书馆插件")
@@ -820,7 +1029,13 @@ if __name__ == "__main__":
                 precmd = cmd.strip()[5:]
                 print("已经绑定前缀", precmd, "！不输入直接回车取消绑定。")
                 continue
-
+            elif cmd == "mh":
+                print("帮助 模糊查询-------------------------")
+                print("mh zb (装备名称) [t=[0.6]]，t为0~1的阈值  对装备名称进行模糊查询")
+                print("不支持角色的模糊查询，因为角色名字实在太短了。")
+            elif order == "mh" and len(cmds) >= 3 and cmds[1] == "zb":
+                aftercmd = cmds[3:]
+                MH_ZB(cmds[2], aftercmd)
             elif order == "unbind":
                 UnBind()
             elif order == "bind" and len(cmds) == 2:
@@ -962,8 +1177,17 @@ if __name__ == "__main__":
                         FromLibrary(False)
             elif cmd == "xls":
                 print("帮助 xls操作------------------------")
-                print("xls output 导出到xls/account.xls [敬请期待]")
-                print("xls input 从xls/account.xls导入 [敬请期待]")
+                print("xls output 导出到xls/{account}.xlsx")
+                print("xls input [-all] 从xls/{account.xlsx}导入\n"
+                      "（选择all：全部导入（不推荐）；否则：只导入追踪信息）")
+            elif order == "xls" and len(cmds) >= 2:
+                if len(cmds) == 2 and cmds[1] == 'output':
+                    XLS_OUTPUT()
+                elif len(cmds) in [2, 3] and cmds[1] == 'input':
+                    if len(cmds) == 3 and cmds[2] == '-all':
+                        XLS_INPUT(True)
+                    elif len(cmds) == 2:
+                        XLS_INPUT(False)
         except Exception as e:
             raise e
             print("输入错误！", e)

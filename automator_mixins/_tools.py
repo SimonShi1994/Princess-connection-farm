@@ -16,14 +16,15 @@ from core.MoveRecord import movevar
 from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING_BTN, p, HUODONG_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
-from core.pcr_config import debug, fast_screencut, lockimg_timeout, use_pcrocr_to_process_basic_text
+from core.pcr_config import debug, fast_screencut, lockimg_timeout, use_pcrocr_to_process_basic_text, \
+    enable_zhuangbei_fuzzy_search, zhuangbei_fuzzy_search_cutoff
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import get_all_group
 from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, get_time_str, checkNameValid
 from ._base import BaseMixin
 from scenes.root.juese import CharMenu
-
+from difflib import get_close_matches
 
 
 class ToolsMixin(BaseMixin):
@@ -734,6 +735,7 @@ class ToolsMixin(BaseMixin):
                             count += 1
                             continue
                         title = make_it_as_zhuangbei_as_possible(title)
+                        title = self._zhuangbei_fuzzy_search(title)
                         title = self._check_img_in_list_or_dir(title, (616, 76, 884, 194), "ocrfix/zb", "EQU_ID", sc)
                         out, original_out = self.get_daoju_number(sc, True)
                         comment = ""
@@ -806,6 +808,19 @@ class ToolsMixin(BaseMixin):
             if data is not None:
                 setattr(self, "data_cache", data)
         return data
+
+    def _zhuangbei_fuzzy_search(self, name):
+        if enable_zhuangbei_fuzzy_search:
+            data = self._load_data_cache()
+            lst = list(data.EQU_ID.keys())
+            cutoff = zhuangbei_fuzzy_search_cutoff
+            out = get_close_matches(name, lst, 1, cutoff)
+            if len(out) > 0:
+                return out[0]
+            else:
+                return name
+        else:
+            return name
 
     def _check_img_in_list_or_dir(self, target_txt, target_pic_at, target_dir, target_list_name, screen):
 

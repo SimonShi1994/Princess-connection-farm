@@ -200,7 +200,9 @@ def TaskEditor(taskname):
                 print("detail [(ID)] 查看指定ID的详细参数，若ID不指定，查看全部任务的详细参数")
                 print("moredetail [(ID)] 查看指定ID的更详细参数，若ID不指定，查看全部任务的更详细参数")
                 print("edit (ID) [-s] 修改某一个任务 设置了-s后，不会显示具体数值。")
-                print("list -h 显示行会指令")
+                print("list -[前缀] 显示以[前缀]开头的全部任务")
+                print("list -h 显示行会指令 （和活动指令，因为hd也是h开头的……）")
+                print("list -hd 显示活动指令")
                 print("list -d 显示地下城指令")
                 print("list -j 显示竞技场指令")
                 print("list -r 显示日常指令")
@@ -302,6 +304,7 @@ def TaskEditor(taskname):
                     edit_one_task(obj["tasks"][int(cmds[1])], False)
                 else:
                     edit_one_task(obj["tasks"][int(cmds[1])], True)
+                is_edited = '*'
             else:
                 print("不认识的命令。")
         except Exception as e:
