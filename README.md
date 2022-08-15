@@ -83,71 +83,93 @@
 - [x] 活动推图（普通&困难）；刷任意活动普通图、刷全Hard图
 - [x] 活动刷Normal、Hard、VH Boss
 
-## :globe_with_meridians:环境
+## :globe_with_meridians:安装
 
-方法1-通过python venv
+1. #### git clone项目
 
-**本地ocr仅有本地4**
+   [github下载](https://github.com/SimonShi1994/Princess-connection-farm/archive/refs/heads/master.zip)
 
-- 完整包（Python3.8.10便携包+依赖包）
+   [github下不动点我下](https://ghproxy.com/https://github.com/SimonShi1994/Princess-connection-farm/archive/refs/heads/master.zip)
 
-  解压即用，简单方便
+   下载好了，解压出来
 
-  https://www.123pan.com/s/dDG9-P03WA
-  
-  提取码:73nD
+2. #### 项目环境配置
 
-- 单体依赖包（搭配venv+包管理器）
+   ##### 方法1-通过python venv（推荐）
 
-  适合管理，方便依赖升级
+   把下面的其中一个包中的`.venv`文件夹放入刚刚解压好的项目当中
 
-  https://www.123pan.com/s/dDG9-Mc3WA
-  
-  提取码:mK4h
-  
-  **安装教程**与**python3.8.10安装包**均在压缩包内
+   <img src="docs/img/venv_install.bmp" width = "90%" height = "90%" align=center />
 
-请解压到本项目下确保在项目下有` \.venv\Scripts`该目录结构  ~~不要套娃成这样` \.venv\.venv\Scripts`~~
+   **本地ocr仅有本地4，请运行main_new后查看config中的OCR模式是否仅有本地4**
 
+   下面二选一，选择性下载
 
+   - 依赖完整包（Python3.8.10便携包+依赖包）
 
-方法2-传统pip install
+     解压即用，简单方便
 
-- 需要 3.9>Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
+     https://www.123pan.com/s/dDG9-P03WA
 
-- **Q**我可以不要OCR吗？**A**不行，以后只会对非OCR越来越不友好=。=
+     提取码:73nD
 
-- ~~【不推荐】本地OCR 1/2
-  需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe)
-  或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)~~
+   - 依赖单体包（搭配venv+包管理器）
 
-- 自行打开`requirements.txt`确认依赖无误
+     适合管理，方便依赖升级
 
-  * 注意！requirements.txt中含有四种OCR依赖，默认均被注释。你需要先根据你的需求取消其中几种的注释，再进行依赖安装。
+     https://www.123pan.com/s/dDG9-Mc3WA
 
-- 先cd进项目目录下
+     提取码:mK4h
 
-- 需要执行指令安装依赖（可能需要到`换源/科学上网`）:
+     **安装教程**与**python3.8.10安装包**均在压缩包内
 
-  ```
-  pip install -r requirements.txt
-  ```
+   请解压到本项目下确保在项目下有` \.venv\Scripts` 该目录结构  ~~不要套娃成这样` \.venv\.venv\Scripts`~~
 
-- 如果上面的指令执行后感觉比较慢的话，可以试一下:
+   
 
-  ```
-  pip install -r requirements.txt -i https://pypi.douban.com/simple
-  ```
+   ##### 方法2-传统pip install
 
-~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。~~（建议先试一下不设置的情况
+   - 需要 3.9>Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
-~~建议使用雷电模拟器4但不意味着其他模拟器无法使用，本项目中均以雷电模拟器4为示例。~~
+   - **Q:**我可以不要OCR吗？**A:**不行，以后只会对非OCR越来越不友好=。=
 
-目前来看，雷电4，蓝叠，雷神模拟器均可以使用。一般来说，只要支持adb连接的模拟器都可以使用。
+   - ~~【不推荐】本地OCR 1/2
+     需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe)
+     或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)~~
 
-**重要：模拟器分辨率要求540*960**
+   - 自行打开`requirements.txt`确认依赖无误
 
-**重要**：目前关于API部分已经移入 config.ini 中，如何填入请参考目录下的md文件，config.ini在运行main_new.py后自动生成
+     * 注意！requirements.txt中含有四种OCR依赖，默认均被`#`注释。你需要先根据你的需求取消其中几种的注释，再进行依赖安装。
+
+   - 先cd进解压出来的项目目录下
+
+   - 需要执行指令安装依赖（可能需要到`换源/科学上网`）:
+
+     ```
+     pip install -r requirements.txt
+     ```
+
+   - 如果上面的指令执行后感觉比较慢的话，可以试一下:
+
+     ```
+     pip install -r requirements.txt -i https://pypi.douban.com/simple
+     ```
+
+3. #### 模拟器配置环境
+
+   开启模拟器的adb
+
+   在main_new控制台用init命令进行初始化，初始化成功会看到模拟器安装上了`ATX`小黄车
+
+   ~~可能需要将模拟器设置为桥接模式，同时需要打开开发者usb调试，也可能用不上。~~（建议先试一下不设置的情况
+
+   ~~建议使用雷电模拟器4但不意味着其他模拟器无法使用，本项目中均以雷电模拟器4为示例。~~
+
+   目前来看，雷电4，蓝叠，雷神，夜神，逍遥模拟器均可以使用。一般来说，只要支持adb连接的模拟器都可以使用（建议非雷电模拟器，打开自动搜寻模拟器），甚至可以混合搭配使用（adb端口不冲突的情况下）。
+
+   **重要：模拟器分辨率要求540*960 DPI为240** 
+
+**重要：**目前关于API部分已经移入 config.ini 中，如何填入请参考目录下的md文件，config.ini在运行main_new.py后自动生成
 
 ## :loudspeaker:推送
 
@@ -160,15 +182,23 @@
 |    TG 电报（:+1:）    | :x:          | :heavy_check_mark: | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
 |     QQBot[开发中]     |              |                    |                          |                    |                                                       |
 
-Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
+Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
-## :taxi:使用方式
+## :taxi:使用方式&帮助
 
-- 环境配置完成后，再检查模拟器分辨率为540*960。确认无误
+- **Q:**卡在登陆页面，脚本点击不对
 
-- 使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
+   **A:**环境配置完成后，检查模拟器分辨率为540*960和DPI为240。确认无误
 
-- 关于本地OCR1删库问题，可以使用清华源安装
+- **Q:**脚本任务报错，提示OCRXXX 
+
+  **A:**使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
+
+  **app.py启动失败？**手动运行`python app.py`查看是否缺失依赖或者下载模型失败等原因，~~或许是你依赖没装，指requirements.txt没有打开并选择安装哪一个OCR~~
+
+- **Q:**本地OCR1安装失败
+
+  **A:**关于本地OCR1删库问题，可以使用清华源安装
 
   也可以到docs文件夹下打开cmd
 
@@ -176,15 +206,25 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
   pip install muggle_ocr-1.0.3-py3-none-any.whl
   ```
 
-- 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
+- **Q:**我不懂命令格式怎么输入
 
-- 出现`“No module named 'XXX'`，请在项目目录执行`pip install -r requirements.txt`重新安装依赖，或手动执行`pip install XXX`
+  **A:**输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 
-- 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
+- **Q:**出现`“No module named 'XXX'`
 
-- 如果模拟器没有安装 ATX ，请在打开模拟器后，在控制台里输入init进行初始化模拟器环境
+  **A:**请在项目目录执行`pip install -r requirements.txt`重新安装依赖，或手动执行`pip install XXX`
 
-- **第一次使用，完全不懂怎么办，请阅读下列新手方法**
+- **Q:**我想一键自启动咋办，每次输命令太麻烦了
+
+  **A:**可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
+
+- **Q:**脚本连接上模拟器后报错
+
+  **A:**可能模拟器没有安装 ATX ，请在打开模拟器后，在控制台里输入init进行初始化模拟器环境。**还有问题加群问**
+
+- **Q:**第一次使用，完全不懂怎么？
+
+  **A:**请阅读下列新手方法
 
   [Schedule使用方法](docs/introduce_to_schedule.md)
 
@@ -206,9 +246,9 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
   [手把手教你写自定义任务](sample_customtask/sample_task.py)
 
-- 感觉还是不会使用，怎么办？
+- **Q:**感觉看完还是不会使用，怎么办？
 
-更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
+  **A:**建议加群后虚心问问聪明的群友，哪里不会问哪里，更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
 
 
 ## :warning:额外说明
@@ -264,6 +304,21 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - 杂项
   - trace_exception_for_debug被默认设置为True usercentre.py中的debug信息默认不显示。 write_debug_to_log默认设置为False。
   - edit中一些显示问题的修复
+
+2022/07/31 By UVJkiNTQ
+- BUG修复
+  - 再次尝试修复活动切换下一关函数
+  - 增加了一个活动是否存在信赖剧情的开关
+
+2022/07/17 By UVJkiNTQ
+- BUG修复
+  - 修复活动切换下一关函数失效导致重复打1-2的问题
+
+2022/07/15 By CyiceK
+- BUG修复
+  - 改善自动搜寻的搜寻逻辑，修复部分bug
+  - 修复清理pcr缓存失效的bug
+  - 删除码云镜像链接（因为有README中有github的图片外链，审核不通过
 
 2022/07/13 By UVJkiNTQ
 
@@ -348,6 +403,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 - BUG修复
   - 修正会战Boss的寻找逻辑
   
+
 2022/04/21 By Cyicek
 - 框架更新
   - 补充wework推送的wework_agid变量
@@ -431,8 +487,8 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
   - 修复Normal图存在N2/N3时图号识别的问题
 - 框架更新
   - 增加了手动刷图时，可以按分类排序后再选择（比如按攻击力排序来借6⭐猫拳）
- 
- 
+
+
 2022/03/07 By CyiceK
 - 优化验证码逻辑 rc5
 

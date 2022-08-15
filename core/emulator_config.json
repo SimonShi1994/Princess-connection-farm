@@ -30,7 +30,7 @@
       "desc": null,
       "name": "夜神模拟器",
       "process_name": "NoxVMHandle.exe",
-      "re_port": "^6\\d{3,5}",
+      "re_port": "^62\\d{3,5}",
       "type": "nox",
       "unique_id": "BigNoxVM/RT/NoxVMHandle.exe",
       "upload_tip_level": 0

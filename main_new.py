@@ -687,7 +687,7 @@ if __name__ == "__main__":
                     print("初始化 uiautomator2 失败,请检查是否有模拟器没有安装上ATX")
                     exit(1)
                 else:
-                    print("初始化 uiautomator2 成功")
+                    print("初始化 uiautomator2 或许成功，请自行打开模拟器内的ATX APP查看组件工作是否正常")
                     run_adb("kill-server")
             elif order == "app":
                 Start_App()

@@ -70,6 +70,7 @@ class Map20220917(HuodongMapBase):
     }
     N_slice = 2
     N1 = 9
+    XINLAI = False
 
 
 class Map20220831(HuodongMapBase):
@@ -96,6 +97,7 @@ class Map20220816(HuodongMapBase):
         4: (499, 335),
         5: (684, 325),
     }
+    XINLAI = False
 
 
 class Map20220731(HuodongMapBase):
@@ -109,6 +111,7 @@ class Map20220731(HuodongMapBase):
         4: (471, 395),
         5: (673, 357),
     }
+    XINLAI = False
 
 
 class Map20220716(HuodongMapBase):
@@ -122,6 +125,7 @@ class Map20220716(HuodongMapBase):
         4: (515, 340),
         5: (691, 330),
     }
+    XINLAI = False
 
 
 class Map20220630(HuodongMapBase):
