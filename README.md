@@ -125,25 +125,27 @@
 
    请解压到本项目下确保在项目下有` \.venv\Scripts` 该目录结构  ~~不要套娃成这样` \.venv\.venv\Scripts`~~
 
-   
-
-   ##### 方法2-传统pip install
+##### 方法2-传统pip install
 
 - 需要 3.9>Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
 
 - **Q\:**我可以不要OCR吗？**A\:**不行，以后只会对非OCR越来越不友好=。=
 
-- ~~【不推荐】本地OCR 1/2
-  需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe)
-  或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)~~
+- ~~ 本地OCR 1/2
 
-   - 自行打开`requirements.txt`确认依赖无误
+> 尽管CyiceK不推荐本地1和2，但是我，TheAutumnOfRice，强力推荐你使用本地1！它的中文识别率非常的好，如果你需要用角色识别、库存识别以及刷图推荐等功能，强烈推荐
+> 本地1！给你带来绝对不止一心半点的方便！相比本地4，它就是安装麻烦了点，但值得，不是么？
 
-     * 注意！requirements.txt中含有四种OCR依赖，默认均被`#`注释。你需要先根据你的需求取消其中几种的注释，再进行依赖安装。
+需求 [[本地OCR1]VS C++ Build Tool](https://download.microsoft.com/download/5/f/7/5f7acaeb-8363-451f-9425-68a90f98b238/visualcppbuildtools_full.exe)
+或 [[本地OCR2]VC_redist.x64.exe](https://download.visualstudio.microsoft.com/download/pr/89a3b9df-4a09-492e-8474-8f92c115c51d/B1A32C71A6B7D5978904FB223763263EA5A7EB23B2C44A0D60E90D234AD99178/VC_redist.x64.exe)~~
 
-   - 先cd进解压出来的项目目录下
+- 自行打开`requirements.txt`确认依赖无误
 
-   - 需要执行指令安装依赖（可能需要到`换源/科学上网`）:
+  * 注意！requirements.txt中含有四种OCR依赖，默认均被`#`注释。你需要先根据你的需求取消其中几种的注释，再进行依赖安装。
+
+- 先cd进解压出来的项目目录下
+
+- 需要执行指令安装依赖（可能需要到`换源/科学上网`）:
 
      ```
      pip install -r requirements.txt
@@ -167,7 +169,7 @@
 
    目前来看，雷电4，蓝叠，雷神，夜神，逍遥模拟器均可以使用。一般来说，只要支持adb连接的模拟器都可以使用（建议非雷电模拟器，打开自动搜寻模拟器），甚至可以混合搭配使用（adb端口不冲突的情况下）。
 
-   **重要：模拟器分辨率要求540*960 DPI为240** 
+   **重要：模拟器分辨率要求540\*960 DPI为240**
 
 **重要：**目前关于API部分已经移入 config.ini 中，如何填入请参考目录下的md文件，config.ini在运行main_new.py后自动生成
 
@@ -186,19 +188,19 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 ## :taxi:使用方式&帮助
 
-- **Q** 卡在登陆页面，脚本点击不对
+- **Q:** 卡在登陆页面，脚本点击不对
 
-  **A** 环境配置完成后，检查模拟器分辨率为540*960和DPI为240。确认无误
+  **A:** 环境配置完成后，检查模拟器分辨率为540*960和DPI为240。确认无误
 
-- **Q** 脚本任务报错，提示OCRXXX
+- **Q:** 脚本任务报错，提示OCRXXX
 
-  **A** 使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
+  **A:** 使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
 
-  **app.py启动失败？**手动运行`python app.py`查看是否缺失依赖或者下载模型失败等原因，~~或许是你依赖没装，指requirements.txt没有打开并选择安装哪一个OCR~~
+  **app.py启动失败？** 手动运行`python app.py`查看是否缺失依赖或者下载模型失败等原因，~~或许是你依赖没装，指requirements.txt没有打开并选择安装哪一个OCR~~
 
-- **Q** 本地OCR1安装失败
+- **Q:** 本地OCR1安装失败
 
-  **A** 关于本地OCR1删库问题，可以使用清华源安装
+  **A:** 关于本地OCR1删库问题，可以使用清华源安装
 
   也可以到docs文件夹下打开cmd
 
@@ -206,25 +208,25 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
   pip install muggle_ocr-1.0.3-py3-none-any.whl
   ```
 
-- **Q** 我不懂命令格式怎么输入
+- **Q:** 我不懂命令格式怎么输入
 
-  **A** 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
+  **A:** 输入`python main_new.py`，启动脚本。该项目支持控制台，可以输入help查看帮助。
 
-- **Q** 出现`“No module named 'XXX'`
+- **Q:** 出现`“No module named 'XXX'`
 
-  **A** 请在项目目录执行`pip install -r requirements.txt`重新安装依赖，或手动执行`pip install XXX`
+  **A:** 请在项目目录执行`pip install -r requirements.txt`重新安装依赖，或手动执行`pip install XXX`
 
-- **Q** 我想一键自启动咋办，每次输命令太麻烦了
+- **Q:** 我想一键自启动咋办，每次输命令太麻烦了
 
-  **A** 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
+  **A:** 可以参照**run.bat**写一个一键启动脚本，更多参见Schedule使用方法 - 2.5命令运行
 
-- **Q** 脚本连接上模拟器后报错
+- **Q:** 脚本连接上模拟器后报错
 
-  **A** 可能模拟器没有安装 ATX ，请在打开模拟器后，在控制台里输入init进行初始化模拟器环境。**还有问题加群问**
+  **A:** 可能模拟器没有安装 ATX ，请在打开模拟器后，在控制台里输入init进行初始化模拟器环境。**还有问题加群问**
 
-- **Q** 第一次使用，完全不懂怎么？
+- **Q:** 第一次使用，完全不懂怎么？
 
-  **A** 请阅读下列新手方法
+  **A:** 请阅读下列新手方法
 
   [Schedule使用方法](docs/introduce_to_schedule.md)
 
@@ -234,23 +236,23 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
   [CONFIG配置文件解读](docs/INI文件配置解读.md)
 
-- **Q** 想用的功能没人维护，代码又看不懂，怎么上手？
+- **Q:** 想用的功能没人维护，代码又看不懂，怎么上手？
 
-  **A** 请阅读下列开发文档（开发文档正在开发中）
+  **A:** 请阅读下列开发文档（开发文档正在开发中）
 
   [比较好上手的项目开发手册](docs/比较好上手的项目开发手册.md)
 
   [Scene框架的使用](docs/Scene框架的使用.md)
 
-- **Q** 想增加自用的功能，有没有什么方便的方法？
+- **Q:** 想增加自用的功能，有没有什么方便的方法？
 
-  **A** 请去edit中查看customtask的相关帮助哦！手把手教你写自定义任务，在项目中也提供了样例任务：
+  **A:** 请去edit中查看customtask的相关帮助哦！手把手教你写自定义任务，在项目中也提供了样例任务：
 
   [手把手教你写自定义任务](sample_customtask/sample_task.py)
 
-- **Q** 感觉看完还是不会使用，怎么办？
+- **Q:** 感觉看完还是不会使用，怎么办？
 
-  **A**  建议加群后虚心问问聪明的群友，哪里不会问哪里，更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
+  **A:**  建议加群后虚心问问聪明的群友，哪里不会问哪里，更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
 
 
 ## :warning:额外说明
