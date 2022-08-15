@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220713
+# Princess connection 公主连结农场脚本v2.8.20220815
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -184,13 +184,27 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
 - 如果模拟器没有安装 ATX ，请在打开模拟器后，在控制台里输入init进行初始化模拟器环境
 
-- **第一次使用，完全不懂怎么办，请阅读下列新手方法** 
+- **第一次使用，完全不懂怎么办，请阅读下列新手方法**
 
   [Schedule使用方法](docs/introduce_to_schedule.md)
 
   [如何接入打码平台](docs/如何接入打码平台.md)
 
   [如何使用开关模块](docs/switch_guide.md)
+
+  [CONFIG配置文件解读](docs/INI文件配置解读.md)
+
+- **想用的功能没人维护，代码又看不懂，怎么上手？**
+  
+  [比较好上手的项目开发手册](docs/比较好上手的项目开发手册.md)
+
+  [Scene框架的使用](docs/Scene框架的使用.md)
+
+- **想增加自用的功能，有没有什么方便的方法？**
+
+  请去edit中查看customtask的相关帮助哦！手把手教你写自定义任务，在项目中也提供了样例任务：
+
+  [手把手教你写自定义任务](sample_customtask/sample_task.py)
 
 - 感觉还是不会使用，怎么办？
 
@@ -203,9 +217,10 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
-2. 感谢[CyiceK](https://github.com/1076472672) 、[Dr-Bluemond](https://github.com/Dr-Bluemond) 、[TheAutumnOfRice](https://github.com/TheAutumnOfRice) 、[UVJkiNTQ](https://github.com/UVJkiNTQ) 以及其他众多贡献者对本项目的倾力帮助。
+2. 感谢[CyiceK](https://github.com/1076472672) 、[Dr-Bluemond](https://github.com/Dr-Bluemond)
+   、[TheAutumnOfRice](https://github.com/TheAutumnOfRice) 、[UVJkiNTQ](https://github.com/UVJkiNTQ) 以及其他众多贡献者对本项目的倾力帮助。
 
-3. **来个 star 吧(*/ω＼*)，有问题请提交issue**
+3. __来个 star 吧(*/ω＼*)，有问题请提交issue__
 
 4. 您的一点支持会是我们完善本项目的强大动力！(*/ω＼*)
 
@@ -235,7 +250,23 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2022/08/15 By TheAutumnOfRice
+
+- 文档完善
+  - 开坑 `docs/[开发] 比较好上手的项目开发手册.md`，目前更新到4.2节。
+- 功能新增
+  - 数据中心中终于支持xls的导入和导出了！
+  - 装备识别现在支持模糊搜索，对OCR精度的依赖减小。可以去数据中心使用`mh`命令试用。 可以在config中控制模糊搜索的参数。
+- 惯例更新
+  - 主线`37`图，Rank`18`图
+- 框架更新
+  - 修复了PCRInitializer的API中的一些逻辑小问题
+- 杂项
+  - trace_exception_for_debug被默认设置为True usercentre.py中的debug信息默认不显示。 write_debug_to_log默认设置为False。
+  - edit中一些显示问题的修复
+
 2022/07/13 By UVJkiNTQ
+
 - 惯例更新
   - 预更新活动至9月中
   - 主线`36`图
@@ -243,6 +274,7 @@ Tips:QQPush机器人经常换号 Wechat在4月底将全部弃用，转Wework
   - 修复活动boss券识别问题，当券特别少的时候
 
 2022/07/08 By TheAutumnOfRice
+
 - BUG修复
   - 修复通关地下城OCR`d5`中，非攒TP模式仍关闭auto的BUG
 

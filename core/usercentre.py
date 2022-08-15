@@ -100,7 +100,7 @@ from core.valid_task import VALID_TASK, getcustomtask as _getcustomtask, list_al
                 "_last_rec":dir  # 用户无法编辑、查看此条。_last_rec文件夹下无_fin文件时执行。
                 # 还可以补充其它condition，但暂时没想到。
             }
-            "record":int  # 记录模式
+            "record":int  # 记录模式  0：正常运行； 1：持久运行，不受到restart影响； 2：循环运行，结束后自动restart
         }
         
         # 等待执行计划

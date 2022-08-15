@@ -167,7 +167,7 @@ GC = GlobalConfig()
 debug = GC.add_bool('debug', 'debug', False)
 save_debug_img = GC.add_bool('debug', 'save_debug_img', True)
 ignore_warning = GC.add_bool('debug', 'ignore_warning', True)
-trace_exception_for_debug = GC.add_bool('debug', 'trace_exception_for_debug', False)
+trace_exception_for_debug = GC.add_bool('debug', 'trace_exception_for_debug', True)
 use_template_cache = GC.add_bool('debug', 'use_template_cache', True)
 baidu_ocr_img = GC.add_bool('debug', 'baidu_ocr_img', False)
 disable_timeout_raise = GC.add_bool('debug', 'disable_timeout_raise', False)
@@ -177,9 +177,10 @@ u2_record_filter = GC.add_list('debug', 'u2_record_filter', [])
 debug_record_filter = GC.add_list('debug', 'debug_record_filter', ['_lock_img', '_move_check'])
 trace_tree = GC.add_str('debug', 'trace_tree', 'master')
 colorlogsw = GC.add_bool('debug', 'colorlogsw', True)
-write_debug_to_log = GC.add_bool('debug', 'write_debug_to_log', True)
-do_not_show_debug_if_in_these_files = GC.add_list('debug','do_not_show_debug_if_in_these_files',
-                                                  ['get_screen.py','pcr_checker.py','valid_task.py','bot.py'])
+write_debug_to_log = GC.add_bool('debug', 'write_debug_to_log', False)
+do_not_show_debug_if_in_these_files = GC.add_list('debug', 'do_not_show_debug_if_in_these_files',
+                                                  ['get_screen.py', 'pcr_checker.py', 'valid_task.py', 'bot.py',
+                                                   'usercentre.py'])
 skip_codename_output_if_in_these_files = GC.add_list('debug','skip_codename_output_if_in_these_files',
                                                      ['_base.py','cv.py','scene_base.py','pcr_checker.py'])
 show_codename_in_log = GC.add_bool('debug','show_codename_in_log',True)
@@ -244,6 +245,9 @@ clear_traces_and_cache = GC.add_bool("pcrfarm_setting", "clear_traces_and_cache"
 auto_start_app = GC.add_bool("pcrfarm_setting", "auto_start_app", True)
 inline_app = GC.add_bool("pcrfarm_setting", "inline_app", True)
 use_my_id = GC.add_bool("pcrfarm_setting", "use_my_id", False)
+
+enable_zhuangbei_fuzzy_search = GC.add_bool("pcrfarm_setting", "enable_zhuangbei_fuzzy_search", True)
+zhuangbei_fuzzy_search_cutoff = GC.add_float("pcrfarm_setting", "zhuangbei_fuzzy_search_cutoff", 0.6)
 
 enable_auto_find_emulator = GC.add_bool('emulator_setting', 'enable_auto_find_emulator', False)
 one_way_search_auto_find_emulator = GC.add_bool('emulator_setting', 'one_way_search_auto_find_emulator', False)
