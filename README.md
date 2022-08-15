@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220815
+# Princess connection 公主连结农场脚本v2.8.20220816
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -294,7 +294,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2022/08/15 By TheAutumnOfRice
+2022/08/16 By TheAutumnOfRice
 
 - 文档完善
   - 开坑 `docs/[开发] 比较好上手的项目开发手册.md`，目前更新到4.2节。
