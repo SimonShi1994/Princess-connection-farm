@@ -89,7 +89,8 @@
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
 |wait_for_launch_time|自启动模拟器最大忍耐超时时间|int||600|
 |ignore_serials|不连接的模拟器|str||["emulator-5554"]|
-
+|enable_zhuangbei_fuzzy_search|启动装备名称模糊搜索|bool|开启后，库存识别中会用模糊搜索辅助OCR|True|
+|zhuangbei_fuzzy_search_cutoff|装备名称模糊搜索阈值|float|0~1,越高越严格|0.6|
 
 
 

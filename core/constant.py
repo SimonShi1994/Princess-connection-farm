@@ -1261,7 +1261,7 @@ MAOXIAN_BTN = {
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
 }
 
-MAX_MAP = 36
+
 
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(77, 61, 141, 72)),
@@ -1300,7 +1300,10 @@ ZHUXIAN_ID = {
     34: p(img="img/zhuxian/34L.bmp", at=(61, 58, 202, 77)),
     35: p(img="img/zhuxian/35L.bmp", at=(61, 57, 203, 76)),
     36: p(img="img/zhuxian/36L.bmp", at=(60, 57, 162, 76)),
+    37: p(img="img/zhuxian/37L.bmp", at=(88, 58, 161, 74)),
 }
+
+MAX_MAP = max(ZHUXIAN_ID)
 
 # ZHUXIAN_SUB_ID
 
@@ -1343,7 +1346,7 @@ ZHUXIAN_DKSTYSY_ID = {
 }
 ZHUXIAN_WNHP_ID = {
     36: p(img="img/zhuxian/36R.bmp", at=(177, 55, 215, 77)),
-    # 37: p(img="img/zhuxian/37R.bmp", at=(217, 57, 252, 77)),
+    37: p(img="img/zhuxian/37R.bmp", at=(181, 60, 211, 73)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -2470,6 +2473,7 @@ RANKS_DICT = {
     15: p(img="img/ranks/15.bmp", at=(216, 111, 281, 135)),
     16: p(img="img/ranks/16.bmp", at=(216, 114, 279, 132)),
     17: p(img="img/ranks/17.bmp", at=(212, 112, 280, 134)),
+    18: p(img="img/ranks/18.bmp", at=(216, 114, 279, 133)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
