@@ -4,7 +4,9 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
-        # "20220930": Map20220930,
+        "20221031": Map20221031,
+        "20221017": Map20221017,
+        "20220930": Map20220930,
         "20220917": Map20220917,
         "20220831": Map20220831,
         "20220816": Map20220816,
@@ -43,19 +45,48 @@ N1： Normal图如果分段，第1段最后一图的图号
 '''
 
 
-# class Map20220930(HuodongMapBase):
-#     NAME = "回响!尖叫!万圣鬼怪狂欢节"
-#     XY11 = (0, 0)
-#     XY_VH_BOSS = (0, 0)
-#     HARD_COORD = {
-#         1: (0, 0),
-#         2: (0, 0),
-#         3: (0, 0),
-#         4: (0, 0),
-#         5: (0, 0),
-#     }
-#
-#
+class Map20221031(HuodongMapBase):
+    NAME = "礼物大恐慌！兰德索尔的圣诞老人们复刻"
+    XY11 = (88, 353)
+    XY21 = (130,351)
+    XY_VH_BOSS = (837, 259)
+    HARD_COORD = {
+        1: (78, 317),
+        2: (221, 216),
+        3: (321, 361),
+        4: (544, 345),
+        5: (673, 225),
+    }
+    N_slice = 2
+    N1 = 9
+
+
+class Map20221017(HuodongMapBase):
+    NAME = "龙之探索者复刻"
+    XY11 = (143, 350)
+    XY_VH_BOSS = (817, 234)
+    HARD_COORD = {
+        1: (73, 356),
+        2: (228, 246),
+        3: (314, 345),
+        4: (512, 342),
+        5: (668, 321),
+    }
+
+
+class Map20220930(HuodongMapBase):
+    NAME = "回响!尖叫!万圣鬼怪狂欢节"
+    XY11 = (159, 306)
+    XY_VH_BOSS = (830, 274)
+    HARD_COORD = {
+        1: (94, 211),
+        2: (201, 344),
+        3: (326, 216),
+        4: (524, 233),
+        5: (628, 328),
+    }
+
+
 class Map20220917(HuodongMapBase):
     NAME = "小小的勇气·万圣节之夜复刻"
     XY11 = (88, 380)
@@ -75,7 +106,7 @@ class Map20220917(HuodongMapBase):
 
 class Map20220831(HuodongMapBase):
     NAME = "Happy·Change·Angels"
-    XY11 = (107, 377)
+    XY11 = (167, 363)
     XY_VH_BOSS = (841, 278)
     HARD_COORD = {
         1: (105, 224),
@@ -84,6 +115,8 @@ class Map20220831(HuodongMapBase):
         4: (572, 226),
         5: (660, 354),
     }
+    N_slice = 1
+    XINLAI = True
 
 
 class Map20220816(HuodongMapBase):

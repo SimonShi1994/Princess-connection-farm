@@ -19,10 +19,10 @@ class ClanBattleMAP(SevenBTNMixin):
     def gonghuizhan_precheck(self, screen):
         if self.is_exists(HANGHUI_BTN["queren"], screen=screen):  # 报酬确认
             self.click(HANGHUI_BTN["queren"])
-            time.sleep(1)
+            time.sleep(2)
         elif self.is_exists(HANGHUI_BTN["guanbi"], screen=screen):  # 公会战开始、排名公布
             self.click(HANGHUI_BTN["guanbi"])
-            time.sleep(1)
+            time.sleep(2)
         elif self.is_exists(HANGHUI_BTN["kkr_dialog"], screen=screen):
             self.click(160, 100)
             self.click(160, 100)
@@ -34,9 +34,9 @@ class ClanBattleMAP(SevenBTNMixin):
         #     self.click(160, 100)
         elif self.is_exists(HANGHUI_BTN["sudu"], screen=screen):  # 战斗速度上限设定（关闭）
             self.click(349, 282)
-            time.sleep(1)
+            time.sleep(2)
             self.click(479, 365)
-            time.sleep(1)
+            time.sleep(2)
         return screen
 
     def goto_battlepre(self) -> Union[int, "ClanBattlePre"]:  # 点击进入BOSS
