@@ -1,6 +1,6 @@
 import time
 
-from core.constant import MAIN_BTN, HANGHUI_BTN, PCRelement, TUANDUIZHAN_BTN, DXC_ELEMENT
+from core.constant import MAIN_BTN, HANGHUI_BTN, PCRelement, TUANDUIZHAN_BTN, DXC_ELEMENT, HUODONG_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.log_handler import pcr_log
@@ -439,7 +439,7 @@ class HanghuiMixin(ToolsMixin):
             set_last_record()
         self.lock_home()
 
-    def tuanduizhan(self, team_order="none", if_full=0, get_zhiyuan=False, once=True):
+    def tuanduizhan(self, team_order="zhanli", if_full=0, get_zhiyuan=False, once=True):
         self.lock_home()
         # 能找到带举办中的团队战图标
         if not self.lock_img(img=TUANDUIZHAN_BTN["tuanduizhan"], ifclick=(875, 272),
@@ -447,7 +447,14 @@ class HanghuiMixin(ToolsMixin):
             pcr_log(self.account).write_log("info", f"{self.account}该用户未解锁行会战或非行会战期间")
             return
         while True:
+            time.sleep(2)
+            self.fclick(1, 1)
+            if self.is_exists(HUODONG_BTN["speaker_box"]):
+                self.fclick(1, 1)
+                self.restart_this_task()
             cbm = ClanBattleMAP(self).enter()
+            if self.is_exists(HUODONG_BTN["speaker_box"]):
+                self.restart_this_task()
             cishu = cbm.get_cishu()
             if cishu == -1:  # 返还时间
                 cbp = cbm.goto_battlepre()
@@ -478,12 +485,12 @@ class HanghuiMixin(ToolsMixin):
                 self.lock_img(HANGHUI_BTN["huodebaochou"], timeout=180, ifclick=(90, 380), ifdelay=1)
             self.lock_img(HANGHUI_BTN["xiayibu"], ifclick=(807, 489), ifdelay=0.1, elseclick=(90, 380),
                           elsedelay=1)
-            self.lock_img(HANGHUI_BTN["rank_info"])
+            self.lock_img(HANGHUI_BTN["rank_info"], elseclick=(1, 1), elsedelay=0.5)
             time.sleep(4)
+            self.lock_img(HANGHUI_BTN["rank_info"], elseclick=(1, 1), elsedelay=0.5)
             if once:  # 只打一次
                 break
             continue
-
         self.lock_home()
 
 

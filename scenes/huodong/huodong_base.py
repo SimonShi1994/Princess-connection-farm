@@ -534,6 +534,7 @@ class Jiaohuan(PCRSceneBase):
         self.click(724, 352)  # 交换不确认
         time.sleep(0.5)
         self.click(483, 475)  # 关闭
+        time.sleep(1)  # 兼容快速截图，防止拖影
 
     def exchange_all(self, reset=False):
         time.sleep(0.5)
