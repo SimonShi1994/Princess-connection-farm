@@ -389,7 +389,7 @@ class HuodongMenu(PCRSceneBase):
                 # 点击气泡
                 while True:
                     time.sleep(1)
-                    lst = self.img_where_all(img="img/juqing/rong.bmp", at=(3, 43, 863, 427))
+                    lst = self.img_where_all(img="img/juqing/rong.bmp", at=(3, 43, 863, 427), threshold=0.7)
                     if len(lst) > 0:
                         a = lst[0] + 50
                         b = lst[1] + 30
