@@ -2205,6 +2205,8 @@ class ShuatuMixin(ShuatuBaseMixin):
         map_base = HuodongMapBase(self)
         menu = map_base.goto_hd_menu()
         menu.hd_juqing()
+        time.sleep(5)
+        self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=0.2, timeout=120)
         self.lock_home()
 
     def huodong_read_xinlai(self, code="current", entrance_ind="auto", var=None):
