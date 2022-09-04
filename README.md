@@ -294,6 +294,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2022/09/04 By UVJkiNTQ
+
+- 框架更新
+  - 修复了活动信赖领取的bug
+  - 修复了活动剧情卡来信的bug
+  - 尝试性修复了攒免费十连引发的问题
+
 2022/08/31 By UVJkiNTQ
 
 - 框架更新
