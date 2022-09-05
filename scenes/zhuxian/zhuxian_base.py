@@ -1,7 +1,7 @@
 import time
 from typing import TYPE_CHECKING, Optional
 
-from core.constant import MAOXIAN_BTN, ZHUXIAN_ID, ZHUXIAN_SECOND_ID, DXC_ELEMENT, NORMAL_COORD, HARD_COORD
+from core.constant import MAOXIAN_BTN, ZHUXIAN_ID, ZHUXIAN_SECOND_ID, DXC_ELEMENT, NORMAL_COORD, HARD_COORD, MAIN_BTN
 from core.pcr_checker import retry_run, Checker, LockError
 from core.pcr_config import save_debug_img, use_pcrocr_to_detect_zhuxian, debug
 from scenes.errors import MaoxianRecognizeError, ZhuxianIDRecognizeError
@@ -33,7 +33,8 @@ class ZhuXianBase(SevenBTNMixin):
 
     def outside_fc(self):
         def ck1(screen):
-            return self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen)
+            return self.is_exists(DXC_ELEMENT["dxc_kkr"], screen=screen) or self.is_exists(MAIN_BTN["kailu_middle"],
+                                                                                           screen=screen)
 
         def do1():
             self.chulijiaocheng(None)

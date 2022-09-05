@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20220831
+# Princess connection 公主连结农场脚本v2.8.20220905
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -294,17 +294,20 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2022/09/04 By UVJkiNTQ
+2022/09/05 By UVJkiNTQ, TheAutumnOfRice
 
-- 框架更新
+- BUG修复
+  - 修复main_new中`adb`映射的BUG
+  - 修复了VH进图卡动画的问题
   - 修复了活动信赖领取的bug
   - 修复了活动剧情卡来信的bug
   - 尝试性修复了攒免费十连引发的问题
 
 2022/08/31 By UVJkiNTQ
 
-- 框架更新
+- BUG修复
   - 修复了公会战的一些问题
+- 惯例更新
   - 补充了一些活动坐标 至 2022/10/31
 
 2022/08/16 By TheAutumnOfRice

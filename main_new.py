@@ -39,7 +39,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.8.20220904"
+script_version = "Ver 2.8.20220905"
 
 
 def GetLastSchedule():
@@ -661,7 +661,7 @@ if __name__ == "__main__":
             elif order == "break":
                 break
             elif order == "adb":
-                run_adb(f'{cmd}')
+                run_adb(f'{cmd[3:]}', use_os_instead_of_subprocess=True)
             elif order == "init":
                 if enable_auto_find_emulator:
                     emulator_ip = "127.0.0.1"
@@ -687,7 +687,7 @@ if __name__ == "__main__":
                     print("初始化 uiautomator2 失败,请检查是否有模拟器没有安装上ATX")
                     exit(1)
                 else:
-                    print("初始化 uiautomator2 或许成功，请自行打开模拟器内的ATX APP查看组件工作是否正常")
+                    print("初始化 uiautomator2 或许成功，请自行打开模拟器内的ATX APP（小黄车）查看组件工作是否正常")
                     run_adb("kill-server")
             elif order == "app":
                 Start_App()
