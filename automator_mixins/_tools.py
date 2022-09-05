@@ -930,6 +930,7 @@ class ToolsMixin(BaseMixin):
             # 选择无语音选项
             if self.is_exists(JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 452)):
                 self.click_img(img=JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 452))
+                time.sleep(2)
                 continue
             # 选择快进剧情
             if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen) and no_skip is False:

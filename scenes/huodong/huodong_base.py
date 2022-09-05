@@ -389,7 +389,7 @@ class HuodongMenu(PCRSceneBase):
                 # 点击气泡
                 while True:
                     time.sleep(1)
-                    lst = self.img_where_all(img="img/juqing/rong.bmp", at=(3, 43, 863, 427))
+                    lst = self.img_where_all(img="img/juqing/rong.bmp", at=(3, 43, 863, 427), threshold=0.7)
                     if len(lst) > 0:
                         a = lst[0] + 50
                         b = lst[1] + 30
@@ -534,6 +534,7 @@ class Jiaohuan(PCRSceneBase):
         self.click(724, 352)  # 交换不确认
         time.sleep(0.5)
         self.click(483, 475)  # 关闭
+        time.sleep(1)  # 兼容快速截图，防止拖影
 
     def exchange_all(self, reset=False):
         time.sleep(0.5)
