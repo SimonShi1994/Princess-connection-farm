@@ -182,7 +182,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
                 time.sleep(2)
                 if self.is_exists(img="img/ui/quxiao2.bmp", at=(300, 428, 439, 458)):
-                    self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["juesexiangqing"])
+                    self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["chiyoushu"])
                     continue
                 else:
                     break

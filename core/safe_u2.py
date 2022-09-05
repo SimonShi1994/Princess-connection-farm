@@ -106,12 +106,18 @@ def timeout(seconds, error_info):
     return deco
 
 
-def run_adb(cmd: str, timeout=None):
+def run_adb(cmd: str, timeout=None, use_os_instead_of_subprocess=False):
     try:
         if sys.platform == "win32":
-            subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
+            if use_os_instead_of_subprocess:
+                os.system(f"{adb_dir}/adb {cmd}")
+            else:
+                subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
         else:
-            subprocess.check_output(f"adb {cmd}", timeout=timeout, shell=True)
+            if use_os_instead_of_subprocess:
+                os.system(f"adb {cmd}")
+            else:
+                subprocess.check_output(f"adb {cmd}", timeout=timeout, shell=True)
     except Exception as e:
         __log.write_log('error', f"adb启动失败,{e},试图修复。")
         try:
