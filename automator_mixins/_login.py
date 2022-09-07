@@ -279,7 +279,7 @@ class LoginMixin(ToolsMixin):
                     # 答题过的id为str，优先队列执行
                     if type(_id) is str and \
                             (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
-                        self.d(text="确认").click()
+                        self.d(text="提交").click()
                         _id = -1
                         return -1  # 不清楚验证码是否验证成功，会导致toast无法执行
 
@@ -315,7 +315,7 @@ class LoginMixin(ToolsMixin):
                     # print(p)
                     # if p <= 0.99:
                     #     nonlocal state
-                    #     self.d(text="确认").click()
+                    #     self.d(text="提交").click()
                     #     state = True
                     # else:
                     #     state = False
