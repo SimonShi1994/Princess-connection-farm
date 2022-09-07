@@ -34,8 +34,8 @@ class FightBianZuBase(PCRMsgBoxBase):
         """
         return self._a.set_fight_team(bianzu, duiwu)
 
-    def click_unit_by_cid(self, cid, screen=None):
-        # 寻找角色，确认碎片图片中心点并点击
+    def click_unit_by_cid(self, cid, screen=None, replace=False):
+        # 根据角色cid寻找角色，确认碎片图片中心点并点击。正常点过返回0，没找到返回1。
         if screen is None:
             screen = self.getscreen()
         cid = str(cid)
@@ -48,7 +48,7 @@ class FightBianZuBase(PCRMsgBoxBase):
         imgpath = [imgpath_1, imgpath_2]
         if os.path.exists(imgpath_3):
             imgpath.append(imgpath_3)
-
+        clicked = False
         for i in imgpath:
             at = (47, 116, 908, 363)
             r_list = UIMatcher.img_where(screen, i, threshold=0.8, at=at,
@@ -58,20 +58,83 @@ class FightBianZuBase(PCRMsgBoxBase):
                     x_arg = int(r_list[0])
                     y_arg = int(r_list[1])
                     self.click(x_arg, y_arg)
+                    clicked = True
                     break
+        if clicked:
+            return 0
+        else:
+            return 1
 
-    def select_by_namelst(self, cname_lst):
+    def replace(self, position="front", amt: int = 1, prefer_cid=None):
+        '''
+        队伍补全函数,
+        ；amt表示需要补全的个数, >0
+        ；position表示角色的位置，前/中/后，可用值："front", "middle", "back"
+        ；优先寻找prefer_cid列表中的角色（编号)，如果都没有或者缺数量，自动选择当前编组画面内的可用角色（按最前）补缺
+        '''
+        assert position in ["front", "middle", "back"]
+        if prefer_cid is None:
+            prefer_cid = []
+        img_path = "img/juese/" + position + ".bmp"
+        aa = 0
+        if len(prefer_cid) > 0:
+            for i in prefer_cid:
+                if aa >= amt:
+                    break
+                c = self.click_unit_by_cid(i)
+                if c == 0:
+                    amt -= 1
+        while True:
+            if aa >= amt:
+                self.log.write_log("debug", "已从备选中选到")
+                break
+            self.log.write_log("debug", "无备选，自动选一个同位置的")
+            sc1 = self.getscreen()
+            time.sleep(1.8)
+            sc2 = self.getscreen()
+            lst1 = self.img_where_all_prob(img=img_path, at=(58, 114, 906, 341), screen=sc1)
+            lst2 = self.img_where_all_prob(img=img_path, at=(58, 114, 906, 341), screen=sc2)
+            lst = lst1 + lst2
+            lst.sort(key=lambda elem: elem[1])
+            lst.sort(key=lambda elem: elem[2])
+            t = 0
+            while True:
+                if self.is_exists(img=img_path, at=lst[t][3], is_black=True, black_threshold=100):
+                    t += 1
+                else:
+                    x = lst[t][1]
+                    y = lst[t][2]
+                    aa += 1
+                    self.click(x, y)
+                    if aa < amt:
+                        continue
+                    else:
+                        self.log.write_log("debug", "同位置选到了")
+                        break
+            break
+
+    def select_by_namelst(self, cname_lst, replace=False, prefer=None):
         # 将角色拆分三种位置，方便选择。注意：此函数选择角色只选第一屏，不翻页
+        if prefer is None:
+            prefer = []
         data = LoadPCRData()
         if cname_lst is []:
             return
         cidlst = []
+        preferlst = []
         for i in cname_lst:
             cidlst.append(data.get_id(name=i))
+        for i in prefer:
+            preferlst.append(data.get_id(name=i))
         front_lst = []
         middle_lst = []
         back_lst = []
-        print(cidlst)
+        front_prefer = []
+        middle_prefer = []
+        back_prefer = []
+        a = 0
+        b = 0
+        c = 0
         for i in cidlst:
             if data.get_position(i) == "front":
                 front_lst.append(i)
@@ -79,9 +142,13 @@ class FightBianZuBase(PCRMsgBoxBase):
                 middle_lst.append(i)
             if data.get_position(i) == "back":
                 back_lst.append(i)
-        print(front_lst)
-        print(middle_lst)
-        print(back_lst)
+        for i in preferlst:
+            if data.get_position(i) == "front":
+                front_prefer.append(i)
+            if data.get_position(i) == "middle":
+                middle_prefer.append(i)
+            if data.get_position(i) == "back":
+                back_prefer.append(i)
         # 根据不同位置，加入角色
         fc = [66, 125, 214]
         bc = [231, 235, 239]
@@ -92,7 +159,13 @@ class FightBianZuBase(PCRMsgBoxBase):
                 break
         time.sleep(2)
         for i in front_lst:
-            self.click_unit_by_cid(i)
+            a += self.click_unit_by_cid(i)
+            # 没找的个数
+        time.sleep(2)
+        if a > 0:
+            if replace:
+                # 如果需要替代
+                self.replace(position="front", amt=a, prefer_cid=front_prefer)
 
         # 中卫
         while True:
@@ -101,7 +174,12 @@ class FightBianZuBase(PCRMsgBoxBase):
                 break
         time.sleep(2)
         for i in middle_lst:
-            self.click_unit_by_cid(i)
+            b += self.click_unit_by_cid(i)
+        time.sleep(2)
+        if b > 0:
+            if replace:
+                # 如果需要替代
+                self.replace(position="middle", amt=b, prefer_cid=middle_prefer)
 
         # 后卫
         while True:
@@ -110,7 +188,12 @@ class FightBianZuBase(PCRMsgBoxBase):
                 break
         time.sleep(2)
         for i in back_lst:
-            self.click_unit_by_cid(i)
+            c += self.click_unit_by_cid(i)
+        time.sleep(2)
+        if c > 0:
+            if replace:
+                # 如果需要替代
+                self.replace(position="back", amt=c, prefer_cid=back_prefer)
 
     def click_juese_by_rc(self, r, c):
         # 通过行列来选中角色，没什么用。而且仅限前两排
@@ -166,6 +249,8 @@ class FightBianZuBase(PCRMsgBoxBase):
             return self.select_by_sort(team_order, change)
         elif team_order in ["none", ""]:
             return None
+        elif isinstance(team_order, list):
+            return self.select_by_namelst(cname_lst=team_order)
         elif team_order == "nobody":
             self.select_by_sort("none", 1)
         else:

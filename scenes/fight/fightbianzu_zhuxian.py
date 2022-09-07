@@ -13,6 +13,7 @@ class ZhiYuanQueRen(PCRMsgBoxBase):
     def ok(self):
         return self.goto(FightingZhuXian, self.fun_click(DXC_ELEMENT["zyjsqr_ok"]))
 
+
 class AfterEnterTiaoZhan(PossibleSceneList):
     def __init__(self, a):
         self.ZhiYuanQueRen = ZhiYuanQueRen
@@ -23,11 +24,11 @@ class AfterEnterTiaoZhan(PossibleSceneList):
         ]
         super().__init__(a, scene_list, double_check=1.)
 
+
 class FightBianZuZhuXian(FightBianZuBase):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
         self.scene_name="FightBianZuZhuXian"
-
 
     def goto_fight(self) -> "FightingZhuXian":
         # 前往战斗开始！

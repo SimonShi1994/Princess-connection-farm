@@ -89,7 +89,7 @@ MAIN_BTN = {
     # 主页
     "zhuye": p(131, 533, name="我的主页"),
     # 行会按钮 
-    "hanghui": p(693, 430, img="img/home/hanghui_btn.bmp", at=(677, 419, 702, 441), name="行会"),
+    "hanghui": p(688, 402, img="img/home/hanghui_btn.bmp", at=(677, 419, 702, 441), name="行会"),
     # 角色
     "juese": p(213, 507),
     # 剧情
@@ -723,6 +723,16 @@ JUESE_BTN = {
 
     "rank_max": p(654, 242, img="img/juese/rank_max.bmp", at=(630, 231, 678, 253)),
 
+    # 队伍界面
+    "duiwuyilan": p(482, 42, img="img/juqing/duiwuyilan.bmp", at=(418, 30, 546, 54)),
+    "sort_down2": p(864, 87, img="img/juese/sort_down2.bmp", at=(825, 77, 904, 98)),
+    "sort_up2": p(863, 88, img="img/juese/sort_up2.bmp", at=(824, 79, 903, 97)),
+    "duiwubianzu": p(478, 41, img="img/juese/duiwubianzu.bmp", at=(415, 29, 542, 54)),
+    "save_team": p(836, 452, img="img/juese/save_team.bmp", at=(814, 439, 859, 466)),
+    "front": p(247, 312, img="img/juese/front.bmp", at=(239, 306, 256, 318)),
+    "middle": p(354, 202, img="img/juese/middle.bmp", at=(347, 196, 361, 208)),
+    "back": p(459, 201, img="img/juese/back.bmp", at=(452, 195, 467, 208)),
+
 }
 MAX_DXC = 6  # 一共出了多少个地下城关
 
@@ -1260,8 +1270,6 @@ MAOXIAN_BTN = {
 
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
 }
-
-
 
 ZHUXIAN_ID = {
     1: p(img="img/zhuxian/1.bmp", at=(77, 61, 141, 72)),
