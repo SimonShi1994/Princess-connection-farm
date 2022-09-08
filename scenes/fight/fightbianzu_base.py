@@ -29,7 +29,7 @@ class FightBianZuBase(PCRMsgBoxBase):
     def select_by_duiwu(self, bianzu, duiwu):
         """
         :param bianzu: 编组编号1~5
-        :param duiwu: 队伍编号1~3
+        :param duiwu: 队伍编号1~3,8~10
         :return: False - 选取编组失败
         """
         return self._a.set_fight_team(bianzu, duiwu)

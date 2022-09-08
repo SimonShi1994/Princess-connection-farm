@@ -1015,11 +1015,11 @@ class ToolsMixin(BaseMixin):
         else:
             return False
 
-    def clear_and_save_team(self, cnamelst: list, slot: str, positive: bool, replace: bool, prefer=None):
+    def clear_and_save_team(self, cnamelst: list, slot: str,  replace: bool, prefer=None):
         self.lock_home()
         cm = self.get_zhuye().goto_juese()
         ct = cm.goto_wodeduiwu()
-        ct.edit_team(team_slot=slot, positive=positive)
+        ct.edit_team(team_slot=slot)
         cbz = CharBianZu(self)
         cbz.clear_team()
         cbz.select_by_namelst(cnamelst, replace=replace, prefer=prefer)

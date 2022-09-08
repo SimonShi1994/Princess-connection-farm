@@ -840,6 +840,12 @@ VALID_TASK = ValidTask() \
                     inputbox=ListInputer(desc="请输入行会商店角色碎片，一行一个角色名称")),
           ]) \
     .add("t10", "setting", "设置初始化", "初始化设置，例如跳过动画，隐藏外传等，，提升脚本运行效率。", ) \
+    .add("t11", "clear_and_save_team", "按角色名称选取角色，并存入编队", "自动编队后存储，支持缺失位置自动补完或指定替补池",
+         [TaskParam("cnamelst", list, "角色列表", "请填入标准简中角色名", inputbox=ListInputer(desc="请输入角色名，一行一个")),
+          TaskParam("slot", str, "拟存储的队伍位置", "A-B形式，分组1~5，队伍1~3及~10", "1-1"),
+          TaskParam("replace", bool, "是否补全5人队", "当找不到指定角色时，是否自动补充同位置的角色", False),
+          TaskParam("prefer", list, "替补的角色列表", "当找不到指定角色时，优先选择这些角色。"
+                    "如果该列表空白且开启了补全，则自动选同位置最前可用的", inputbox=ListInputer(desc="请输入替补角色名，一行一个"))]) \
     .add("s1", "shuajingyan", "刷经验1-1【别用，除非OCR】", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "废弃参数", "随便输入一个整数")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1【别用，除非OCR】", "刷图3-1，比较节省刷图卷。",

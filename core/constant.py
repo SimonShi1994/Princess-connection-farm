@@ -587,6 +587,8 @@ FIGHT_BTN = {
     "no_tili": p(724, 413, img="img/fight/no_tili.bmp", at=(709, 406, 739, 421)),
     "fighting_caidan": p(img="img/fight/fighting_caidan.bmp", at=(882, 18, 918, 32)),
     "zhandou_failed": p(img="img/fight/zhandou_failed.bmp"),
+    "jiangxu": p(892, 88, img="img/fight/jiangxu.bmp", at=(880, 79, 904, 98)),
+    "shengxu": p(892, 87, img="img/fight/shengxu.bmp", at=(881, 77, 903, 98)),
 }
 
 SHOP_BTN = {

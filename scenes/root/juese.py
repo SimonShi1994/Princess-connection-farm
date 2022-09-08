@@ -206,15 +206,18 @@ class CharTeam(PCRMsgBoxBase):
         }
         self.click_btn(tid_dict[tid], until_appear=JUESE_BTN["duiwubianzu"])
 
-    def edit_team(self, team_slot="1-1", positive=True) -> "CharBianZu":
+    def edit_team(self, team_slot="1-1") -> "CharBianZu":
         gid, tid = team_slot.split("-")
         gid = int(gid)
         tid = int(tid)
         self.select_group(gid)
-        if positive:
+        if 0 < tid < 4:
             self.sort_up()
-        else:
+        elif 7 < tid < 11:
             self.sort_down()
+            tid = 11 - tid
+        else:
+            raise Exception("只支持1~3和8~10的队伍序号")
         self.edit_subteam(tid)
 
 

@@ -259,14 +259,20 @@ class FightBaseMixin(ToolsMixin):
         设置战斗队伍
         要求场景：处于”队伍编组“情况下。
         :param bianzu: 编组编号1~5
-        :param duiwu: 队伍编号1~3
+        :param duiwu: 队伍编号1~3, 8~10
         :return: False - 选取编组失败
         """
         assert bianzu in [1, 2, 3, 4, 5]
-        assert duiwu in [1, 2, 3]
+        assert duiwu in [1, 2, 3, 8, 9, 10]
         self.click_btn(FIGHT_BTN["my_team"], until_disappear=FIGHT_BTN["zhandoukaishi"])
         self.click(FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
-        self.click(FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
+        if duiwu < 4:
+            self.lock_img(FIGHT_BTN["shengxu"], elseclick=(825, 84))
+            self.click(FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
+        else:
+            self.lock_img(FIGHT_BTN["jiangxu"], elseclick=(825, 84))
+            duiwu = 11 - duiwu
+            self.click(FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
         if not self.is_exists(JJC_BTN["dwbz"]):
             if self.is_exists(HANGHUI_BTN["duiwubianzu"]):
                 self.click(587, 369)
