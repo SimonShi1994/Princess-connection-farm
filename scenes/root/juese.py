@@ -4,13 +4,15 @@ import time
 import cv2
 
 from DataCenter import LoadPCRData
-from core.constant import JUESE_BTN, RANKS_DICT, MAIN_BTN, DXC_ELEMENT, MAOXIAN_BTN, JUQING_BTN
+from core.constant import JUESE_BTN, RANKS_DICT, MAIN_BTN, DXC_ELEMENT, MAOXIAN_BTN, JUQING_BTN, FIGHT_BTN
 from core.cv import UIMatcher
 from core.pcr_checker import PCRRetry, ContinueNow
 from core.pcr_config import debug, use_pcrocr_to_detect_rank
 from core.utils import make_it_as_juese_as_possible, make_it_as_number_as_possible
+from scenes.fight.fightbianzu_base import FightBianZuBase
 from scenes.fight.fightinfo_base import FightInfoBase
 from scenes.root.seven_btn import SevenBTNMixin
+from scenes.scene_base import PCRMsgBoxBase
 
 
 def get_name_from_plate_path(img_path):
@@ -170,6 +172,66 @@ class CharMenu(SevenBTNMixin):
         ycor = 448
         return self.check_color(fc, bc, xcor, ycor, color_type="rgb")
 
+    def goto_wodeduiwu(self) -> "CharTeam":
+        return self.goto(CharTeam, self.fun_click(JUESE_BTN["duiwu"]))
+
+
+class CharTeam(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "CharMenu"
+        self.feature = self.fun_feature_exist(JUESE_BTN["duiwuyilan"])
+
+    def sort_down(self):
+        if self.is_exists(JUESE_BTN["sort_down2"]):
+            return
+        else:
+            self.click_btn(JUESE_BTN["sort_up2"], until_appear=JUESE_BTN["sort_down2"])
+        time.sleep(1)
+
+    def sort_up(self):
+        if self.is_exists(JUESE_BTN["sort_up2"]):
+            return
+        else:
+            self.click_btn(JUESE_BTN["sort_down2"], until_appear=JUESE_BTN["sort_up2"])
+
+    def select_group(self, gid: int):
+        self.click(FIGHT_BTN["team_h"][gid], pre_delay=1, post_delay=1, )
+
+    def edit_subteam(self, tid: int) -> "CharBianZu":
+        tid_dict = {
+            1: (872, 201),
+            2: (868, 322),
+            3: (870, 426)
+        }
+        self.click_btn(tid_dict[tid], until_appear=JUESE_BTN["duiwubianzu"])
+
+    def edit_team(self, team_slot="1-1") -> "CharBianZu":
+        gid, tid = team_slot.split("-")
+        gid = int(gid)
+        tid = int(tid)
+        self.select_group(gid)
+        if 0 < tid < 4:
+            self.sort_up()
+        elif 7 < tid < 11:
+            self.sort_down()
+            tid = 11 - tid
+        else:
+            raise Exception("只支持1~3和8~10的队伍序号")
+        self.edit_subteam(tid)
+
+
+class CharBianZu(FightBianZuBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "CharMenu"
+        self.feature = self.fun_feature_exist(JUESE_BTN["duiwubianzu"])
+
+    def save_team(self) -> "CharTeam":
+        self.click_btn(JUESE_BTN["save_team"])
+
+
+
 
 class CharBase(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
@@ -191,7 +253,7 @@ class CharBase(SevenBTNMixin):
 
     def loveplus(self, read_story=False):
         if self.is_exists(JUESE_BTN["hgdjq"]):  # 好感度剧情红点
-        # if self.is_exists(img="img/juese/red_mid.bmp", method="sq", at=(53, 331, 61, 341)):  # 好感度剧情红点
+            # if self.is_exists(img="img/juese/red_mid.bmp", method="sq", at=(53, 331, 61, 341)):  # 好感度剧情红点
             self.click_btn(JUESE_BTN["hgdjq"], until_appear=JUESE_BTN["juesejuqing"])
             self.click_btn(JUESE_BTN["hgdts"], until_appear=JUESE_BTN["zengli"])
             if self.is_exists(JUESE_BTN["haoganzuida"]):

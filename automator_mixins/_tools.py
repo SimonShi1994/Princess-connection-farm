@@ -23,7 +23,7 @@ from core.tkutils import TimeoutMsgBox
 from core.usercentre import get_all_group
 from core.utils import make_it_as_number_as_possible, make_it_as_zhuangbei_as_possible, get_time_str, checkNameValid
 from ._base import BaseMixin
-from scenes.root.juese import CharMenu
+from scenes.root.juese import CharMenu, CharBianZu, CharTeam
 from difflib import get_close_matches
 
 
@@ -1015,4 +1015,15 @@ class ToolsMixin(BaseMixin):
         else:
             return False
 
+    def clear_and_save_team(self, cnamelst: list, slot: str,  replace: bool, prefer=None):
+        self.lock_home()
+        cm = self.get_zhuye().goto_juese()
+        ct = cm.goto_wodeduiwu()
+        ct.edit_team(team_slot=slot)
+        cbz = CharBianZu(self)
+        cbz.clear_team()
+        cbz.select_by_namelst(cnamelst, replace=replace, prefer=prefer)
+        cbz.save_team()
+        self.fclick(1, 1)
+        self.lock_home()
 
