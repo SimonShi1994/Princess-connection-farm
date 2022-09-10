@@ -26,6 +26,15 @@ class MaoXian(SevenBTNMixin):
 
         self.initFC = None
         self.feature = feature
+        self.initPC = self.clear_note
+
+    def clear_note(self, screen):
+        if self.is_exists(MAOXIAN_BTN["notshow"], screen=screen):
+            x, y = self.img_where_all(MAOXIAN_BTN["NOTSHOW"], screen=screen)
+            self.click(x-100, y)
+            time.sleep(1)
+            self.click(x, y+70)
+        return screen
 
     def goto_zhuxian(self) -> "ZhuXianBase":
         from scenes.zhuxian.zhuxian_base import ZhuXianBase

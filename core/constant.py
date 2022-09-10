@@ -1271,6 +1271,7 @@ MAOXIAN_BTN = {
     "duiwu_loss": p(img="img/maoxian/duiwu_loss.bmp", at=(832, 17, 869, 53)),  # Normal/Hard失败时，“队伍”图标偏上
 
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
+    "notshow": p(461, 359, img="img/maoxian/notshow.bmp", at=(393, 345, 530, 374)),
 }
 
 ZHUXIAN_ID = {

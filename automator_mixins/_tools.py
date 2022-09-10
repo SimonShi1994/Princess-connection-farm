@@ -926,6 +926,8 @@ class ToolsMixin(BaseMixin):
             # 连续阅读兼容
             if self.is_exists(img="img/ui/queren_blue.bmp"):
                 self.click_img(img="img/ui/queren_blue.bmp", screen=screen)
+                self.lock_no_img(img="img/ui/queren_blue.bmp")
+                time.sleep(3)
                 continue
             # 选择无语音选项
             if self.is_exists(JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 452)):
@@ -975,7 +977,7 @@ class ToolsMixin(BaseMixin):
             # 主线剧情退出检测
             if self.is_exists(JUQING_BTN["guanbi"], screen=screen) and story_type == "zhuxian":
                 self.click_btn(JUQING_BTN["guanbi"])
-                time.sleep(1)
+                time.sleep(2)
                 self.fclick(1, 1)
                 self.log.write_log('info', "完成了这段剧情")
                 break
