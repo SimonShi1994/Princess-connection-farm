@@ -2117,11 +2117,11 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.lock_home()
             return
         N_slice = MAP._check_constant(MAP.N_slice)
-        if N_slice == 1:
+        if N_slice >= 1:
             XY11 = MAP._check_coord(MAP.XY11)
-        if N_slice == 2:
+        if N_slice >= 2:
             XY21 = MAP._check_coord(MAP.XY21)
-        if N_slice == 3:
+        if N_slice >= 3:
             XY31 = MAP._check_coord(MAP.XY31)
         N1 = MAP._check_constant(MAP.N1)
         N2 = MAP._check_constant(MAP.N2)

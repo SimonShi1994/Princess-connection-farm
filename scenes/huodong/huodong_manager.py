@@ -101,8 +101,6 @@ class Map20220917(HuodongMapBase):
     }
     N_slice = 2
     N1 = 9
-    XINLAI = False
-
 
 class Map20220831(HuodongMapBase):
     NAME = "Happy·Change·Angels"
