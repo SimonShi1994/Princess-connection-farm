@@ -2,10 +2,6 @@ import asyncio
 import sys
 import time
 
-<<<<<<< Updated upstream
-import keyboard
-=======
->>>>>>> Stashed changes
 import psutil
 
 from automator_mixins._base import DEBUG_RECORD
@@ -258,13 +254,6 @@ class AsyncMixin(ToolsMixin):
             import keyboard
         # print(Multithreading({}).is_stopped())
         while Multithreading({}).is_stopped():
-<<<<<<< Updated upstream
-            keyboard.wait('shift+p')
-            block_sw = 1
-            self.log.write_log('info', "下一步，脚本暂停,按shift+p恢复")
-            await asyncio.sleep(0.8)
-            keyboard.wait('shift+p')
-=======
             if sys.platform == "win32":
                 keyboard.wait('shift+p')
             block_sw = 1
@@ -272,7 +261,6 @@ class AsyncMixin(ToolsMixin):
             await asyncio.sleep(0.8)
             if sys.platform == "win32":
                 keyboard.wait('shift+p')
->>>>>>> Stashed changes
             block_sw = 0
             self.log.write_log('info', "恢复运行")
             await asyncio.sleep(0.8)
