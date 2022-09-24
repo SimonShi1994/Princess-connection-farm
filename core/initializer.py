@@ -13,7 +13,10 @@ from random import random
 from typing import List, Tuple, Optional, Dict, Union
 
 import adbutils
+<<<<<<< Updated upstream
 import keyboard
+=======
+>>>>>>> Stashed changes
 
 from automator_mixins._base import Multithreading, ForceKillException, FastScreencutException
 from automator_mixins._captcha import CaptionSkip
@@ -554,7 +557,13 @@ class PCRInitializer:
         """
         a = device.a
         try:
+<<<<<<< Updated upstream
             keyboard.release('p')
+=======
+            if sys.platform == "win32":
+                import keyboard
+                keyboard.release('p')
+>>>>>>> Stashed changes
             Multithreading({}).state_sent_resume()
             a.init_device(device.serial)
             a.init_account(account, rec_addr)
