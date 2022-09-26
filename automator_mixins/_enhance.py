@@ -210,9 +210,8 @@ class EnhanceMixin(ShuatuBaseMixin):
                                                 out.OK()
                                         # 扫荡结束
                                         # 保险起见
-                                        time.sleep(2)
-                                        for _ in range(6):
-                                            self.click(1, 1)
+                                        time.sleep(4)
+                                        self.fclick(1, 1)
                                         if debug:
                                             self.log.write_log('debug', "刷图/扫荡完毕")
                                     continue
