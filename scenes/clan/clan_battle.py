@@ -150,7 +150,8 @@ class FightBianZuHangHui(FightBianZuBase):
                 self.click(HANGHUI_BTN["zhandou_confirm"])
                 continue
             elif isinstance(out, FanHuanQueRen):
-                self.click_img(HANGHUI_BTN["zhandou_confirm"].img)
+                sc = self.getscreen()
+                self.click_img(screen=sc, img=HANGHUI_BTN["zhandou_confirm"].img)
                 continue
             elif isinstance(out, ZhiYuanQueRen):
                 self.click(DXC_ELEMENT["zyjsqr_ok"])
