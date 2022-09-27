@@ -26,12 +26,14 @@ class ClanBattleMAP(SevenBTNMixin):
         elif self.is_exists(HANGHUI_BTN["kkr_dialog"], screen=screen):
             self.click(160, 100)
             self.click(160, 100)
+            time.sleep(2)
         elif self.is_exists(img="img/duiwu.jpg", screen=screen, is_black=True, black_threshold=800):
             time.sleep(4)
             self.fclick(1, 1)
-        # if self.is_exists(HANGHUI_BTN["kkr_dialog2"], screen=screen):
-        #     self.click(160, 100)
-        #     self.click(160, 100)
+        elif self.is_exists(HANGHUI_BTN["kkr_dialog2"], screen=screen):
+            self.click(160, 100)
+            self.click(160, 100)
+            time.sleep(2)
         elif self.is_exists(HANGHUI_BTN["sudu"], screen=screen):  # 战斗速度上限设定（关闭）
             self.click(349, 282)
             time.sleep(2)
@@ -148,7 +150,8 @@ class FightBianZuHangHui(FightBianZuBase):
                 self.click(HANGHUI_BTN["zhandou_confirm"])
                 continue
             elif isinstance(out, FanHuanQueRen):
-                self.click(HANGHUI_BTN["fhsjqr"])
+                sc = self.getscreen()
+                self.click_img(screen=sc, img=HANGHUI_BTN["zhandou_confirm"].img)
                 continue
             elif isinstance(out, ZhiYuanQueRen):
                 self.click(DXC_ELEMENT["zyjsqr_ok"])
