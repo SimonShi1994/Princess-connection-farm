@@ -1,3 +1,4 @@
+from scenes.waizhuan.wz_base import WZ_Panel
 from typing import TYPE_CHECKING, Union
 
 from core.constant import MAIN_BTN, MAOXIAN_BTN, ZHUCAIDAN_BTN
@@ -25,6 +26,9 @@ class ZhuCaiDan(SevenBTNMixin):
 
     def back_title(self) -> "BackTitle":
         return self.goto(BackTitle,self.fun_click(MAIN_BTN["huidaobiaotihuamian"]))
+
+    def goto_waizhuan(self) -> "WZ_Panel":
+        return self.goto(WZ_Panel,self.fun_click(ZHUCAIDAN_BTN["waizhuan"]))
 
 
 class BackTitle(PCRMsgBoxBase):
