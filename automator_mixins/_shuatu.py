@@ -2230,20 +2230,20 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
 
         def tui_map(diff):
-            MAP: WZ_MapBase = self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_map(code=code)
+            Menu: WZ_Menu = self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_menu(code)
             # 获取初始坐标及常数
-            HXY1 = MAP._check_coord(MAP.HXY1)
-            N_slice = MAP._check_constant(MAP.N_slice)
-            NXY1 = MAP._check_coord(MAP.NXY1)
+            HXY1 = Menu._check_coord(Menu.HXY1)
+            N_slice = Menu._check_constant(Menu.N_slice)
+            NXY1 = Menu._check_coord(Menu.NXY1)
             if N_slice >= 2:
-                NXY2 = MAP._check_coord(MAP.NXY2)
+                NXY2 = Menu._check_coord(Menu.NXY2)
             if N_slice == 3:
-                NXY3 = MAP._check_coord(MAP.NXY3)
-            N1 = MAP._check_constant(MAP.N1)
+                NXY3 = Menu._check_coord(Menu.NXY3)
+            N1 = Menu._check_constant(Menu.N1)
             if N_slice >= 2:
-                N2 = MAP._check_constant(MAP.N2)
+                N2 = Menu._check_constant(Menu.N2)
             if N_slice == 3:
-                N3 = MAP._check_constant(MAP.N3)
+                N3 = Menu._check_constant(Menu.N3)
             # 函数内参数，第一次根据要求选编队，后续就不用选了，减少用时
             first_time = True
 
@@ -2259,7 +2259,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 now = 0
                 if self.check_shuatu() is False:
                     break
-                WZ_MapBase(self).enter()
+                MAP = Menu.goto_map()
                 if diff == "N":
                     # 先到最左
                     MAP.goto_wz_normal()
@@ -2283,7 +2283,6 @@ class ShuatuMixin(ShuatuBaseMixin):
                     if now is 2:
                         fi = MAP.click_xy_and_open_fightinfo(*NXY2, typ=FightInfoBase)
                         max_tu = N2 - N1
-                        print(max_tu)
                         a = fi.to_last_map(max_tu=max_tu)
                     # 第二分片已完成，向右到第三分片
                     elif now is 3:
@@ -2298,6 +2297,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     # Hard难度
                     fi = MAP.click_xy_and_open_fightinfo(*HXY1, typ=FightInfoBase)
                     a = fi.to_last_map(max_tu=5)
+
                 if a == "finish" and fi.get_upperright_stars() == 3:
                     if diff == "N":
                         self.fclick(1, 1)
@@ -2359,25 +2359,21 @@ class ShuatuMixin(ShuatuBaseMixin):
 
                     if out == 1:
                         self.lock_img(WZ_BTN["help"], elseclick=(31, 30), elsedelay=1, timeout=120)
-                        WZ_Menu(self).goto_map(type(MAP))
-                        continue
+                        break
                     elif out == 2:
-                        continue
+                        break
                     elif out == 3:
-                        continue
+                        self.guojuqing(story_type="huodong")
+                        break
                     elif out == 4:
-                        WZ_Menu(self).goto_map(type(MAP))
-                        continue
+                        break
                     else:
-                        self.get_zhuye().goto_zhucaidan().goto_waizhuan(code)
-                        continue
-
-            self.fclick(1, 1)
-            self.lock_home()
+                        break
+            WZ_MapBase(self).enter().goto_menu()
 
         def tui_nboss():
             # 开始Nboss
-            Menu = HuodongMenu(self)
+            Menu = WZ_Menu(self).enter()
             while True:
                 lst = self.img_where_all(img=WZ_BTN["nboss"].img, at=(735, 139, 877, 364), threshold=0.95)
                 if len(lst) > 0:
@@ -2424,7 +2420,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         def tui_hboss():
             # 开始hboss
-            Menu = HuodongMenu(self)
+            Menu = WZ_Menu(self).enter()
             while True:
                 lst = self.img_where_all(img=WZ_BTN["hboss"].img, at=(735, 139, 877, 364), threshold=0.95)
                 if len(lst) > 0:
@@ -2524,7 +2520,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.click(478, 468)  # 关闭
             time.sleep(1)
 
-        self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_map(code)
+        self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_menu(code)
         self.fclick(1, 1)
         time.sleep(1)
         boss_count = self.img_where_all(img=WZ_BTN["boss_pass"].img, at=(673, 78, 806, 376), threshold=0.8)
@@ -2552,7 +2548,6 @@ class ShuatuMixin(ShuatuBaseMixin):
             time.sleep(5)
             tui_vhboss()
 
-        self.lock_home()
-        self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_map(code)
+        self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_menu(code)
         get_liwu()
         self.lock_home()

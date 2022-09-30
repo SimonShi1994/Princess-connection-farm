@@ -1,4 +1,4 @@
-from scenes.waizhuan.wz_base import WZ_Panel
+from scenes.waizhuan.wz_base import WZ_Gallery
 from typing import TYPE_CHECKING, Union
 
 from core.constant import MAIN_BTN, MAOXIAN_BTN, ZHUCAIDAN_BTN
@@ -8,6 +8,7 @@ from scenes.scene_base import PCRMsgBoxBase
 
 if TYPE_CHECKING:
     from scenes.zhucaidan.haoyou import HaoYouRoot
+
 
 class ZhuCaiDan(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
@@ -27,8 +28,8 @@ class ZhuCaiDan(SevenBTNMixin):
     def back_title(self) -> "BackTitle":
         return self.goto(BackTitle,self.fun_click(MAIN_BTN["huidaobiaotihuamian"]))
 
-    def goto_waizhuan(self) -> "WZ_Panel":
-        return self.goto(WZ_Panel,self.fun_click(ZHUCAIDAN_BTN["waizhuan"]))
+    def goto_waizhuan(self) -> "WZ_Gallery":
+        return self.goto(WZ_Gallery,self.fun_click(ZHUCAIDAN_BTN["waizhuan"]))
 
 
 class BackTitle(PCRMsgBoxBase):
