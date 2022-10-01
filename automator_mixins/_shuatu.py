@@ -2226,7 +2226,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         menu.hd_xinlaidu()
         self.lock_home()
 
-    def tui_wz(self, code=1, team_order="none", if_full=2, get_zhiyuan=False):
+    def tui_wz(self, code="01", team_order="none", if_full=2, get_zhiyuan=False):
         self.lock_home()
 
         def tui_map(diff):
@@ -2254,7 +2254,6 @@ class ShuatuMixin(ShuatuBaseMixin):
             if N_slice >= 2:
                 n2 = False
             n1 = False
-
             while True:
                 now = 0
                 if self.check_shuatu() is False:
@@ -2359,16 +2358,18 @@ class ShuatuMixin(ShuatuBaseMixin):
 
                     if out == 1:
                         self.lock_img(WZ_BTN["help"], elseclick=(31, 30), elsedelay=1, timeout=120)
-                        break
+                        continue
                     elif out == 2:
-                        break
+                        continue
                     elif out == 3:
                         self.guojuqing(story_type="huodong")
-                        break
+                        continue
                     elif out == 4:
-                        break
+                        continue
                     else:
-                        break
+                        self.fclick(1, 1)
+                        continue
+            self.fclick(1, 1)
             WZ_MapBase(self).enter().goto_menu()
 
         def tui_nboss():

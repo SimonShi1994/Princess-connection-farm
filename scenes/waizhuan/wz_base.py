@@ -12,6 +12,12 @@ class WZ_Gallery(PCRSceneBase):
     def __init__(self, a):
         super().__init__(a)
         self.feature = self.fun_feature_exist(WZ_BTN["waizhuan_head"])
+        self.initPC = self.clear_map
+
+    def clear_map(self, screen):
+        if self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
+            self.fclick(1, 1)
+        return screen
 
     def goto_wz_menu(self, code: str) -> "WZ_Menu":
         from scenes.waizhuan.wz_manager import get_wz_by_code
@@ -89,6 +95,12 @@ class WZ_Menu(PCRSceneBase):
         elif self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
             self.fclick(1, 1)
             self._a.restart_this_task()
+        elif self.is_exists(JUQING_BTN["caidanyuan"], screen=screen):  # 打倒多个boss会出现对话
+            self.fclick(1, 1)
+        elif self.is_exists(HUODONG_BTN["shadow_return"], screen=screen):
+            self.fclick(1, 1)
+        elif self.is_exists(HUODONG_BTN["speaker_box"], screen=screen):
+            self.fclick(1, 1)
         return screen
 
     def wz_juqing(self):
@@ -218,6 +230,10 @@ class WZ_MapBase(WZ_Menu, ZhuXianBase):
 
     def clear_map(self, screen):
         if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen):  # 打倒多个boss会出现对话
+            self.fclick(1, 1)
+        elif self.is_exists(HUODONG_BTN["shadow_return"], screen=screen):
+            self.fclick(1, 1)
+        elif self.is_exists(HUODONG_BTN["speaker_box"], screen=screen):
             self.fclick(1, 1)
         return screen
 

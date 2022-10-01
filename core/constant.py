@@ -270,6 +270,7 @@ WZ_BTN = {
     "vhboss": p(789, 315, img="img/waizhuan/vhboss.bmp", at=(764, 302, 814, 329)),
     "boss_pass": p(701, 223, img="img/waizhuan/boss_pass.bmp", at=(694, 217, 709, 229)),
     "enter_wz": p(587, 476, img="img/waizhuan/enter_wz.bmp", at=(542, 460, 632, 493)),
+    "speaker_box": p(188, 405, img="img/waizhuan/speaker_box.bmp", at=(182, 392, 195, 418)),
 }
 NIUDAN_BTN = {
     # 扭蛋的坐标会偏移！
