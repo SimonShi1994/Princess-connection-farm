@@ -1023,6 +1023,12 @@ VALID_TASK = ValidTask() \
          [TaskParam("max_tu", str, "终点图号", "max表示推到底，A-B表示推到A-B图为止。", "max"),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           TaskParam("max_do", int, "最多借几次", "最多借几次（最多推几关）。", 2)]) \
+    .add("s12", "tui_wz", "推外传，获取奖励", "简单获取外传的一次性奖励",
+         [TaskParam("code", str, "第几个外传", "比如第一个就输入01", "07"),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
+                    inputbox=team_order_inputer),
+          TaskParam("get_zhiyuan", bool, "是否支援", "是否需要选择第一个支援位来支援"),
+          TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用")]) \
     .add("hd01", "tui_hd_map_normal", "推活动普通图", "用于推N1-15。",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),

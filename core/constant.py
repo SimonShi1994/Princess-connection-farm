@@ -259,7 +259,19 @@ JIAYUAN_BTN = {
     "xinxi": p(img="img/jiayuan/xinxi.bmp"),
     "zhuye": p(img="img/jiayuan/wodezhuye.bmp", at=(47, 488, 130, 537)),
 }
-
+WZ_BTN = {
+    "help": p(920, 26, img="img/waizhuan/help.bmp", at=(910, 13, 931, 40)),  # 外传menu面板特征
+    "waizhuan_btn": p(836, 268, img="img/waizhuan/waizhuan_btn.bmp", at=(811, 254, 862, 283)),
+    "waizhuan_head": p(88, 26, img="img/waizhuan/waizhuan_head.bmp", at=(60, 8, 116, 45)),
+    "wanfa": p(857, 26, img="img/waizhuan/wanfa.bmp", at=(849, 14, 865, 39)),
+    "saodang_btn": p(917, 134, img="img/waizhuan/saodang.bmp", at=(903, 121, 932, 147)),
+    "nboss": p(794, 171, img="img/waizhuan/nboss.bmp", at=(766, 156, 823, 186)),
+    "hboss": p(799, 243, img="img/waizhuan/hboss.bmp", at=(764, 229, 834, 257)),
+    "vhboss": p(789, 315, img="img/waizhuan/vhboss.bmp", at=(764, 302, 814, 329)),
+    "boss_pass": p(701, 223, img="img/waizhuan/boss_pass.bmp", at=(694, 217, 709, 229)),
+    "enter_wz": p(587, 476, img="img/waizhuan/enter_wz.bmp", at=(542, 460, 632, 493)),
+    "speaker_box": p(188, 405, img="img/waizhuan/speaker_box.bmp", at=(182, 392, 195, 418)),
+}
 NIUDAN_BTN = {
     # 扭蛋的坐标会偏移！
     "PT_reset_ok": p(479, 365),
@@ -489,7 +501,8 @@ ZHUCAIDAN_BTN = {
     "chushou2": p(584, 483),
     "sortico": p(img="img/zhucaidan/sortico.bmp", at=(800, 21, 824, 41)),
     "sale_short": p(846, 428, img="img/zhucaidan/sale_short.bmp", at=(820, 419, 871, 436)),
-    "sale_long": p(771, 428, img="img/zhucaidan/sale_short.bmp", at=(745, 419, 796, 436))
+    "sale_long": p(771, 428, img="img/zhucaidan/sale_short.bmp", at=(745, 419, 796, 436)),
+    "waizhuan": p(837, 269, img="img/zhucaidan/waizhuan.bmp", at=(812, 256, 862, 282)),
 
 }
 FIGHT_BTN = {
