@@ -30,11 +30,11 @@ flasgger==0.9.5 -i https://pypi.douban.com/simple
 
 
 ## localOCR1
-# tensorflow == 2.4.0 -i https://pypi.douban.com/simple
+tensorflow == 2.4.0 -i https://pypi.douban.com/simple
 # muggle_ocr -i https://pypi.tuna.tsinghua.edu.cn/simple
-# numpy==1.19.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
-# pillow -i https://pypi.douban.com/simple
-# pyyaml -i https://pypi.douban.com/simple
+numpy==1.19.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+pillow -i https://pypi.douban.com/simple
+pyyaml -i https://pypi.douban.com/simple
 
 ## localOCR2 need git
 # git+https://github.com/myhub/tr.git@master

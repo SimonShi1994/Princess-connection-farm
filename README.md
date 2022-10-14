@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20221001
+# Princess connection 公主连结农场脚本v2.8.20221014
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -294,11 +294,18 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2022/10/14 By TheAutumnOfRice
+
+- 惯例更新
+  - 新增39图，修改了39N图的坐标错误
+
 2022/10/01 By UVJkiNTQ
+
 - 功能新增
   - 添加外传支持，任务`s12`
 
 2022/09/27 By UVJkiNTQ
+
 - BUG修复
   - 修复返还时间确认出战卡住的问题
   - 修复首次教程引导卡可可萝的问题
