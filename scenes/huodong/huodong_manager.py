@@ -106,7 +106,7 @@ class Map20221110(HuodongMapBase):
 
 class Map20221031(HuodongMapBase):
     NAME = "魔法提督可爱莫妮卡！"
-    XY11 = (127, 362)
+    XY11 = (166, 367)
     XY_VH_BOSS = (869, 252)
     HARD_COORD = {
         1: (92, 313),
