@@ -4,8 +4,12 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20221231": Map20221231,
+        "20221216": Map20221216,
+        "20221130": Map20221130,
+        "20221116": Map20221110,
         "20221031": Map20221031,
-        "20221017": Map20221017,
+        "20221016": Map20221016,
         "20220930": Map20220930,
         "20220917": Map20220917,
         "20220831": Map20220831,
@@ -45,7 +49,20 @@ N1： Normal图如果分段，第1段最后一图的图号
 '''
 
 
-class Map20221031(HuodongMapBase):
+class Map20221231(HuodongMapBase):
+    NAME = "新年美食公主，孤注一掷的少女们!"
+    XY11 = (184, 342)
+    XY_VH_BOSS = (869, 242)
+    HARD_COORD = {
+        1: (82, 251),
+        2: (244, 207),
+        3: (290, 390),
+        4: (578, 384),
+        5: (677, 220),
+    }
+
+
+class Map20221216(HuodongMapBase):
     NAME = "礼物大恐慌！兰德索尔的圣诞老人们复刻"
     XY11 = (88, 353)
     XY21 = (130,351)
@@ -61,7 +78,46 @@ class Map20221031(HuodongMapBase):
     N1 = 9
 
 
-class Map20221017(HuodongMapBase):
+class Map20221130(HuodongMapBase):
+    NAME = "名媛初登梦想秘境 圣诞夜的恋爱游戏"
+    XY11 = (153, 393)
+    XY_VH_BOSS = (0, 0)
+    HARD_COORD = {
+        1: (112, 184),
+        2: (264, 215),
+        3: (310, 379),
+        4: (533, 414),
+        5: (647, 275),
+    }
+
+
+class Map20221110(HuodongMapBase):
+    NAME = "Re:从零开始收集的异世界餐桌"
+    XY11 = (153, 393)
+    XY_VH_BOSS = (0, 0)
+    HARD_COORD = {
+        1: (112, 184),
+        2: (264, 215),
+        3: (310, 379),
+        4: (533, 414),
+        5: (647, 275),
+    }
+
+
+class Map20221031(HuodongMapBase):
+    NAME = "魔法提督可爱莫妮卡！"
+    XY11 = (127, 362)
+    XY_VH_BOSS = (869, 252)
+    HARD_COORD = {
+        1: (92, 313),
+        2: (250, 212),
+        3: (385, 398),
+        4: (555, 351),
+        5: (687, 214),
+    }
+
+
+class Map20221016(HuodongMapBase):
     NAME = "龙之探索者复刻"
     XY11 = (143, 350)
     XY_VH_BOSS = (817, 234)
@@ -101,6 +157,7 @@ class Map20220917(HuodongMapBase):
     }
     N_slice = 2
     N1 = 9
+
 
 class Map20220831(HuodongMapBase):
     NAME = "Happy·Change·Angels"
