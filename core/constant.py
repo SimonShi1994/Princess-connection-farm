@@ -347,6 +347,9 @@ HUODONG_BTN = {
     "hboss_en": p(738, 217, img="img/huodong/hboss_en.bmp", at=(714, 205, 762, 230)),
     "vhboss_en": p(738, 252, img="img/huodong/vhboss_en.bmp", at=(705, 240, 771, 265)),
     "wanfa": p(856, 26, img="img/huodong/wanfa.bmp", at=(846, 15, 867, 38)),
+    "nboss_sp": p(738, 154, img="img/huodong/nboss_sp.bmp", at=(710, 147, 767, 161)),
+    "hboss_sp": p(738, 190, img="img/huodong/hboss_sp.bmp", at=(717, 182, 760, 199)),
+    "vhboss_sp": p(738, 253, img="img/huodong/vhboss_sp.bmp", at=(701, 246, 775, 261)),
     "xinlaiduliwu": p(128, 449, img="img/huodong/xinlaiduliwu.bmp", at=(71, 439, 185, 459)),
     "xinlaiduliwu2": p(126, 449, img="img/huodong/xinlaiduliwu2.bmp", at=(72, 440, 181, 458)),
 

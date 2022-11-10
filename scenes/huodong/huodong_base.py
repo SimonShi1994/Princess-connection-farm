@@ -427,7 +427,8 @@ class HuodongMenu(PCRSceneBase):
         while True:
             a1 = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(681, 130, 789, 302))
             a2 = self.img_where_all(img=HUODONG_BTN["nboss_en"].img, at=(681, 130, 789, 302))
-            a = a1 + a2
+            a3 = self.img_where_all(img=HUODONG_BTN["nboss_sp"].img, at=(681, 130, 789, 302))
+            a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
                 obj = self.d.touch.down(923, 205)
@@ -446,7 +447,8 @@ class HuodongMenu(PCRSceneBase):
         while True:
             a1 = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(681, 130, 789, 302))
             a2 = self.img_where_all(img=HUODONG_BTN["hboss_en"].img, at=(681, 130, 789, 302))
-            a = a1 + a2
+            a3 = self.img_where_all(img=HUODONG_BTN["hboss_sp"].img, at=(681, 130, 789, 302))
+            a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
                 obj = self.d.touch.down(923, 205)
@@ -463,7 +465,8 @@ class HuodongMenu(PCRSceneBase):
         while True:
             a1 = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(681, 130, 789, 302))
             a2 = self.img_where_all(img=HUODONG_BTN["vhboss_en"].img, at=(681, 130, 789, 302))
-            a = a1 + a2
+            a3 = self.img_where_all(img=HUODONG_BTN["vhboss_sp"].img, at=(681, 130, 789, 302))
+            a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
                 obj = self.d.touch.down(923, 205)
