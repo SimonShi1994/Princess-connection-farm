@@ -94,6 +94,7 @@ class Map20221130(HuodongMapBase):
 class Map20221110(HuodongMapBase):
     NAME = "Re:从零开始收集的异世界餐桌"
     XY11 = (152, 195)
+    XY21 = (139, 221)
     XY_VH_BOSS = (825, 216)
     HARD_COORD = {
         1: (113, 253),

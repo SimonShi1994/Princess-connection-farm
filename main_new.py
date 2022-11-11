@@ -39,7 +39,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.8.20221110"
+script_version = "Ver 2.8.20221111"
 
 
 def GetLastSchedule():
