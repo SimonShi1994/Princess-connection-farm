@@ -102,6 +102,8 @@ class Map20221110(HuodongMapBase):
         4: (518, 251),
         5: (640, 313),
     }
+    N_slice = 2
+    N1 = 10
 
 
 class Map20221031(HuodongMapBase):
