@@ -164,6 +164,7 @@ class RoutineMixin(ShuatuBaseMixin):
                             self.log.write_log("info", "设定附奖完成。")
                     self.fclick(1, 1)
 
+        fujiangshezhi()
         while True:
             fc = [255, 89, 74]
             bc = [255, 247, 247]
@@ -172,7 +173,7 @@ class RoutineMixin(ShuatuBaseMixin):
             a = self.is_exists(NIUDAN_BTN["chiyoushu"])
             youmianfei = self.check_color(fc, bc, xcor, ycor, color_type="rgb")
             if youmianfei and a:  # 仅当有免费十连时抽取免费十连
-                fujiangshezhi()
+
                 # 20220430 修改：修复扭蛋确认和取消的偏移，兼容一定范围
                 self.click(NIUDAN_BTN["niudan_shilian"])
                 self.lock_img(NIUDAN_BTN["putong_quxiao_new"], at=(265, 297, 475, 507))
@@ -187,7 +188,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 else:
                     break
             else:
-                self.log.write_log("warning", "非免费十连期间")
+                self.log.write_log("warning", "无免费十连")
                 break
         self.lock_home()
 
