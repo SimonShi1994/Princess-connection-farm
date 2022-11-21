@@ -1330,6 +1330,7 @@ ZHUXIAN_ID = {
     37: p(img="img/zhuxian/37L.bmp", at=(88, 58, 161, 74)),
     38: p(img="img/zhuxian/38L.bmp", at=(63, 57, 179, 76)),
     39: p(img="img/zhuxian/39L.bmp", at=(62, 58, 178, 75)),
+    40: p(img="img/zhuxian/40L.bmp", at=(61, 57, 178, 76)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1381,6 +1382,10 @@ ZHUXIAN_LTSDY_ID = {
     38: p(img="img/zhuxian/38R.bmp", at=(196, 60, 232, 76)),
     39: p(img="img/zhuxian/39R.bmp", at=(197, 58, 231, 75)),
 }
+ZHUXIAN_SKPSX_ID = {
+    40: p(img="img/zhuxian/40R.bmp", at=(196, 57, 234, 76)),
+    # 41: p(img="img/zhuxian/39R.bmp", at=(197, 58, 231, 75)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
@@ -1393,6 +1398,7 @@ ZHUXIAN_SECOND_ID = {
     (34, 35): ZHUXIAN_DKSTYSY_ID,
     (36, 37): ZHUXIAN_WNHP_ID,
     (38, 39): ZHUXIAN_LTSDY_ID,
+    (40, 41): ZHUXIAN_SKPSX_ID,
 }
 
 NORMAL_COORD = {
@@ -2508,6 +2514,7 @@ RANKS_DICT = {
     16: p(img="img/ranks/16.bmp", at=(216, 114, 279, 132)),
     17: p(img="img/ranks/17.bmp", at=(212, 112, 280, 134)),
     18: p(img="img/ranks/18.bmp", at=(216, 114, 279, 133)),
+    19: p(img="img/ranks/19.bmp", at=(213, 111, 281, 135)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
