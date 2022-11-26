@@ -31,7 +31,7 @@ class WZ_Gallery(PCRSceneBase):
             "06": (830, 342),
             "07": (380, 440),
             "08": (600, 440),
-            "09": (830, 440),
+            "09": (740, 440),
         }
         T = BTN_DICT[code]
         self.click(T[0], T[1])
