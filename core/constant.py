@@ -1380,10 +1380,10 @@ ZHUXIAN_WNHP_ID = {
 }
 ZHUXIAN_LTSDY_ID = {
     38: p(img="img/zhuxian/38R.bmp", at=(196, 60, 232, 76)),
-    39: p(img="img/zhuxian/39R.bmp", at=(197, 58, 231, 75)),
+    39: p(img="img/zhuxian/39R.bmp", at=(201, 61, 232, 74)),
 }
 ZHUXIAN_SKPSX_ID = {
-    40: p(img="img/zhuxian/40R.bmp", at=(196, 57, 234, 76)),
+    40: p(img="img/zhuxian/40R.bmp", at=(198, 60, 233, 75)),
     # 41: p(img="img/zhuxian/39R.bmp", at=(197, 58, 231, 75)),
 }
 ZHUXIAN_SECOND_ID = {

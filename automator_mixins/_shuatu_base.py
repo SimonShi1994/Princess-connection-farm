@@ -1345,7 +1345,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             id = self.check_dict_id(ZHUXIAN_ID, screen, diff_threshold=0)
             for second in ZHUXIAN_SECOND_ID:
                 if id in second:
-                    id = self.check_dict_id(ZHUXIAN_SECOND_ID[second], screen, diff_threshold=0.1)
+                    id = self.check_dict_id(ZHUXIAN_SECOND_ID[second], screen, diff_threshold=0.1, max_threshold=0.75)
                     break
             if id is None:
                 time.sleep(1)
