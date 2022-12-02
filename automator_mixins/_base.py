@@ -1387,7 +1387,7 @@ class BaseMixin:
             count[0] = 0
 
         FC.add(Checker(f))
-        FC.lock(delay=1, until="break")
+        FC.lock(delay=1, until="break", timeout=999)
         if turnback == "shuatu":
             # 返回冒险
             self.click(480, 505)
