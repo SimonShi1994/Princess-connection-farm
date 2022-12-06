@@ -144,6 +144,7 @@ class LoginMixin(ToolsMixin):
                     if debug:
                         self.log.write_log('debug', "发现协议")
                     self._move_check()
+                    self.d.touch.down(808, 324).sleep(1).up(808, 324)
                     self.d.touch.down(808, 353).sleep(1).up(808, 353)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
@@ -495,6 +496,7 @@ class LoginMixin(ToolsMixin):
                 if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
                     if debug:
                         self.log.write_log('debug', "发现协议")
+                    self.d.touch.down(808, 324).sleep(1).up(808, 324)
                     self.d.touch.down(808, 353).sleep(1).up(808, 353)
                     if self.d(text="请滑动阅读协议内容").exists():
                         self.d(text="同意").click()
