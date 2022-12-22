@@ -1331,6 +1331,7 @@ ZHUXIAN_ID = {
     38: p(img="img/zhuxian/38L.bmp", at=(63, 57, 179, 76)),
     39: p(img="img/zhuxian/39L.bmp", at=(62, 58, 178, 75)),
     40: p(img="img/zhuxian/40L.bmp", at=(61, 57, 178, 76)),
+    41: p(img="img/zhuxian/41L.bmp", at=(87, 59, 173, 74)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1384,7 +1385,7 @@ ZHUXIAN_LTSDY_ID = {
 }
 ZHUXIAN_SKPSX_ID = {
     40: p(img="img/zhuxian/40R.bmp", at=(198, 60, 233, 75)),
-    # 41: p(img="img/zhuxian/39R.bmp", at=(197, 58, 231, 75)),
+    41: p(img="img/zhuxian/41R.bmp", at=(194, 59, 229, 76)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,

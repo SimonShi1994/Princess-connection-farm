@@ -266,6 +266,25 @@ def create_reward_info():
     return RInfo
 
 
+def create_quest_reward_info():
+    QRInfo = {}
+    mid_str = ','.join([f"reward_type_{i},reward_id_{i},reward_num_{i}" for i in range(1, 6)])
+    out = cur.execute(f"select reward_group_id,{mid_str} from quest_reward_data")
+    for rid, *p in out:
+        QRInfo[rid] = []
+        for a, b, c in zip(p[::3], p[1::3], p[2::3]):
+            if a == 0:
+                continue
+            QRInfo[rid] += [
+                {
+                    "typ": a,
+                    "rid": b,
+                    "num": c,
+                }
+            ]
+    return QRInfo
+
+
 def dict_plus(d1, d2, is_copy=True):
     if is_copy:
         d = d1.copy()
@@ -292,7 +311,9 @@ class PCRData:
         self.MInfo = create_MInfo()
         self.WInfo = create_wave_info()
         self.RInfo = create_reward_info()
+        self.QRInfo = create_quest_reward_info()
         self.EInfo = create_equip_info(self.ID_EQU)
+
         get_craft_info(self.EInfo)
         get_equip_base_info(self.EInfo)
         self.C_ID, self.ID_C = get_chara_id_name()
@@ -363,6 +384,20 @@ class PCRData:
             EQUIP_PROB[key].sort(reverse=True)
         return EQUIP_PROB
 
+    def get_max_normal_or_hard_ID(self):
+        keys = [i for i in self.MInfo.keys() if str(i).startswith("12")]
+        return (max(keys) // 1000) % 100
+
+    def get_max_vh_ID(self):
+        keys = [i for i in self.MInfo.keys() if str(i).startswith("13")]
+        return (max(keys) // 1000) % 100, (max(keys) % 1000)
+
+    def get_max_track(self):
+        k, v = next(iter(self.CInfo.items()))
+        max_rank = max(v['rank'])
+        equ = v['rank'][max_rank]
+        return max_rank, sum([1 if i < 999999 else 0 for i in equ])
+
     def equip_name(self, equip_id):
         return self.ID_EQU[equip_id]
 
@@ -402,6 +437,18 @@ class PCRData:
             return "back"
         else:
             return None
+
+    def get_VH_chara_ID(self, A, B):
+        info = [i for i in self.QRInfo[int(f"13{A:03}{B:03}1")] if i['typ'] == 2][0]
+        chara = info['rid']
+        chara_name = self.ID_ITEM[chara].rstrip('的纯净记忆碎片')
+        return self.C_ID[chara_name]
+
+    def get_H_chara_ID(self, A, B):
+        info = [i for i in self.QRInfo[int(f"12{A:03}{B:03}1")] if i['typ'] == 2][0]
+        chara = info['rid']
+        chara_name = self.ID_ITEM[chara].rstrip('的记忆碎片')
+        return self.C_ID[chara_name]
 
     @staticmethod
     def get_map_id(mode, A, B):
