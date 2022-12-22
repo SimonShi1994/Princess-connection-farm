@@ -990,6 +990,20 @@ def XLS_INPUT(_all=False):
     wb.close()
 
 
+def ShowDatasetTop():
+    print("当前数据库中最高图号：", f"N/H{data.get_max_normal_or_hard_ID()}",
+          f"VH{'-'.join([str(i) for i in data.get_max_vh_ID()])}")
+    print("当前数据库中最高跟踪：", '-'.join([str(i) for i in data.get_max_track()]))
+
+
+def ShowHardCharaName(A, B):
+    print(f"H{A}-{B} 可以刷 {data.get_name(data.get_H_chara_ID(A, B))} 碎片！")
+
+
+def ShowVHCharaName(A, B):
+    print(f"VH{A}-{B} 可以刷 {data.get_name(data.get_VH_chara_ID(A, B))} 碎片！")
+
+
 if __name__ == "__main__":
     GetLastAccount()
     print("---  PCR数据中心  ---")
@@ -998,6 +1012,7 @@ if __name__ == "__main__":
         print("数据库未加载")
     else:
         print("数据库上次更新时间：", datetime.datetime.fromtimestamp(data.last_update_time).strftime("%Y-%m-%d %H:%M:%S"))
+        ShowDatasetTop()
 
     print("help 帮助")
     print("exit 退出")
@@ -1016,9 +1031,10 @@ if __name__ == "__main__":
             if order == "help":
                 print("帮助----------------------------")
                 print("update 更新数据库[需要sqlite3, brotli依赖]")
+                print("mh 试用可能能提高OCR精度的模糊查询")
+                print("what 数据库查询相关功能")
                 print("bind (account) 绑定一个账号，可以查看它的数据")
                 if last_account != "":
-                    print("mh 试用可能能提高OCR精度的模糊查询")
                     print("zb 查看装备相关帮助")
                     print("js 查看角色相关帮助")
                     print("lib 查看图书馆插件")
@@ -1029,6 +1045,17 @@ if __name__ == "__main__":
                 precmd = cmd.strip()[5:]
                 print("已经绑定前缀", precmd, "！不输入直接回车取消绑定。")
                 continue
+            elif cmd == "what":
+                print("帮助 数据库查询------------------------")
+                print("what HC (A) (B) 查询H图A-B刷什么角色的碎片")
+                print("what VHC (A) (B) 查询VH图A-B刷什么角色的碎片")
+            elif order == "what":
+                if cmds[1] == "HC":
+                    A, B = int(cmds[2]), int(cmds[3])
+                    ShowHardCharaName(A, B)
+                elif cmds[1] == "VHC":
+                    A, B = int(cmds[2]), int(cmds[3])
+                    ShowVHCharaName(A, B)
             elif cmd == "mh":
                 print("帮助 模糊查询-------------------------")
                 print("mh zb (装备名称) [t=[0.6]]，t为0~1的阈值  对装备名称进行模糊查询")
@@ -1043,6 +1070,7 @@ if __name__ == "__main__":
             elif order == "update":
                 UpdateData()
                 data = LoadPCRData()
+                ShowDatasetTop()
             elif order == "exit":
                 break
             elif cmd == "zb":

@@ -567,6 +567,13 @@ class PCRInitializer:
             a.start_async()
             a.start_shuatu()
             out = a.RunTasks(task, continue_, max_reboot, rec_addr=rec_addr)
+            if a.pause_after_task:
+                a.pause_after_task = False
+                a.log.write_log("info", "检测到[任务结束后暂停]flag已经激活，且任务已经结束，已经暂停，并将该flag移除。"
+                                        "使用resume命令解除暂停。解除暂停后，脚本将继续执行切换用户的命令。")
+                a.freeze = True
+                while a.freeze:
+                    time.sleep(1)
             if out:
                 a.change_acc()
             return out
@@ -715,6 +722,9 @@ class PCRInitializer:
                             print(device.serial, " - Automator 执行记录：")
                             for q in device.a.output_debug_info(msg["running"]):
                                 print(q)
+                        elif msg["method"] == "pause_after_task":
+                            device.a.pause_after_task = not device.a.pause_after_task
+                            print(device.serial, " - [任务结束后暂停]flag：", "已激活" if device.a.pause_after_task else "未激活")
                         else:
                             print(device.serial, " - 不认识的msg！", msg)
 
@@ -953,6 +963,9 @@ class PCRInitializer:
 
     def set_freeze(self, value, device=None):
         self.send_message(device, {"method": "freeze", "value": value})
+
+    def pause_after_task(self, device=None):
+        self.send_message(device, {"method": "pause_after_task"})
 
     def show_task_index(self, device=None):
         self.send_message(device, {"method": "taskindex"})

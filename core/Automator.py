@@ -41,6 +41,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         self.init_device(address)
         if output_msg_fun is not None:
             self.output_msg_fun = output_msg_fun  # 向外传输信息
+        self.pause_after_task = False
 
     def run_custom_task(self, pymodule: str, funcname: str, var=None, **kwargs):
         func = None

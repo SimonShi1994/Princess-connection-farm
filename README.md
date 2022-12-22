@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20221206
+# Princess connection 公主连结农场脚本v2.8.20221223
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -293,6 +293,15 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/12/23 By TheAutumnOfRice
+
+- 惯例更新
+  - 41图
+- 功能新增
+  - 新增运行时命令pause_after_task：在当前任务运行结束后暂停任务
+  - 数据中心增加当前数据库中最高图号、最高Rank显示
+  - 数据中心新增`what`命令，支持查询VH和H图目标碎片
 
 2022/12/06 By Cyicek
 

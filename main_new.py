@@ -39,7 +39,7 @@ import cv2
 PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
-script_version = "Ver 2.8.20221206"
+script_version = "Ver 2.8.20221223"
 
 
 def GetLastSchedule():
@@ -725,6 +725,7 @@ if __name__ == "__main__":
                         print("<Shift+P> 暂停/继续 (关闭enable_pause，可以使用命令暂停/继续某一个指定device）")
                     else:
                         print("pause/resume [-d (device_id)] 暂停/继续 （开启enable_pause，可以用热键暂停device）")
+                        print("pause_after_task [-d (device_id)] 在当前任务结束后暂停任务")
                     print("task [-d (device_id)] 查看某个device当前的task列表")
                     print("skip [-d (device_id)] [-t (task_id)] 跳过当前任务；若指定-t，则跳转到指定任务（通过task查看ID）")
                     print("!!!________FOR DEBUG________!!!")
@@ -785,6 +786,15 @@ if __name__ == "__main__":
                 else:
                     device = None
                 SCH.pcr.set_freeze(True, device)
+            elif order == "pause_after_task":
+                assert SCH is not None, "当前无运行的Schedule！"
+                argv = cmds[1:]
+                device_id = get_arg(argv, "-d", None)
+                if device_id is not None:
+                    device = SCH.pcr.devices.get_device_by_id(device_id)
+                else:
+                    device = None
+                SCH.pcr.pause_after_task(device)
             elif order == "resume":
                 assert SCH is not None, "当前无运行的Schedule！"
                 argv = cmds[1:]
