@@ -19,6 +19,15 @@ class WZ_Gallery(PCRSceneBase):
             self.fclick(1, 1)
         return screen
 
+    def scroll_down(self):
+        time.sleep(1)
+        obj = self.d.touch.down(702, 399)
+        time.sleep(0.1)
+        obj.move(702, 232)
+        time.sleep(0.8)
+        obj.up(702, 232)
+        time.sleep(1)
+
     def goto_wz_menu(self, code: str) -> "WZ_Menu":
         from scenes.waizhuan.wz_manager import get_wz_by_code
         MAP = get_wz_by_code(code)
@@ -33,6 +42,15 @@ class WZ_Gallery(PCRSceneBase):
             "08": (600, 440),
             "09": (740, 440),
         }
+        code_int = int(code)
+        time.sleep(2)
+        while True:
+            if 9 < code_int:
+                self.scroll_down()
+                code_int = code_int - 3
+            else:
+                code = "0" + str(code_int)
+                break
         T = BTN_DICT[code]
         self.click(T[0], T[1])
         while True:
