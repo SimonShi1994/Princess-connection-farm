@@ -2277,6 +2277,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 else:
                     MAP.goto_wz_hard()
                 MAP.to_leftdown()
+                MAP.to_leftdown()
                 if diff == "N":
                     # Normal 难度
                     if now is 2:
