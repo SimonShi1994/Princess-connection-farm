@@ -21,6 +21,7 @@ def get_wz_by_code(code: str):
         "06": Map06,
         "07": Map07,
         "09": Map09,
+        "10": Map10,
     }
 
     return WZ_CODE[code]
@@ -76,5 +77,12 @@ class Map07(WZ_Menu):
 class Map09(WZ_Menu):
     NAME = "忘却的圣歌"
     NXY1 = (281, 223)
+    HXY1 = (102, 402)
+    N_slice = 1
+
+
+class Map10(WZ_Menu):
+    NAME = "破晓之星大危机"
+    NXY1 = (136, 235)
     HXY1 = (102, 402)
     N_slice = 1
