@@ -84,5 +84,5 @@ class Map09(WZ_Menu):
 class Map10(WZ_Menu):
     NAME = "破晓之星大危机"
     NXY1 = (136, 235)
-    HXY1 = (102, 402)
+    HXY1 = (138, 319)
     N_slice = 1
