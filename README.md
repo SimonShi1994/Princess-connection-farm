@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20221226.1
+# Princess connection 公主连结农场脚本v2.8.20221231
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -293,6 +293,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2022/12/31 By TheAutumnOfRice
+
+- 惯例BUG修复
+  - 活动图H图坐标修复
+- 功能新增
+  - 数据中心支持角色追踪到max，即自动与当前数据库中最高rank和装备对齐。使用`js (XXX) track max`即可。
 
 2022/12/26 By UVJkiNTQ
 
