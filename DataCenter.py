@@ -26,6 +26,23 @@ JSNameWow: Optional[WowSearch] = None
 ZBNameWow: Optional[WowSearch] = None
 
 
+def refresh_track_max(v):
+    global data
+    if "track_max" in v and v["track_max"] is True:
+        A, B = data.get_max_track()
+        if B == 3:
+            track_zb = [False, True, False, True, False, True]
+        elif B == 4:
+            track_zb = [False, True, False, True, True, True]
+        elif B == 5:
+            track_zb = [False, True, True, True, True, True]
+        else:
+            raise ValueError(f"Max track is {A}-{B}???")
+        v["track_zb"] = track_zb
+        v["track_rank"] = A
+        v["track"] = f"{A}.{B}"
+
+
 def LoadPCRData() -> "PCRData":
     global data, JSNameWow, ZBNameWow
     if not os.path.isdir("pcrdata"):
@@ -356,6 +373,7 @@ def JS_SHOW(name):
     print("角色信息：", name, " 角色ID：", ID // 100)
     if name in obj:
         v = obj[name]
+        refresh_track_max(v)
         if 'star' in v:
             print("星：", *['★'] * v['star'])
         if 'dengji' in v:
@@ -379,7 +397,10 @@ def JS_SHOW(name):
         if 'track_rank' in v and 'track_zb' in v:
             flag = True
             CELL[(0, 3)] = 'R'
-            CELL[(0, 4)] = str(v['track_rank'])
+            if "track_max" in v and v["track_max"] is True:
+                CELL[(0, 4)] = str(v['track_rank']) + " (MAX)"
+            else:
+                CELL[(0, 4)] = str(v['track_rank'])
             for i in range(6):
                 CELL[(1 + i // 2, i % 2 + 3)] = '■' if v['track_zb'][i] else '□'
         else:
@@ -425,6 +446,7 @@ def JS_TRACK(name, rank=0, zb_str="", track_str=None):
         print("你并没有获得这个角色。")
         return
     if rank == -1:
+        obj[name]["track_max"] = False
         obj[name]["track"] = False
         if "track_rank" in obj[name]:
             del obj[name]["track_rank"]
@@ -433,30 +455,35 @@ def JS_TRACK(name, rank=0, zb_str="", track_str=None):
         AR.set("juese_info", obj)
         JS_SHOW(name)
         return
-    if track_str is not None:
-        if '.' not in track_str:
-            A = int(track_str)
-            rank = A
-            zb_str = "111111"
-        else:
-            A, B = track_str.split('.')
-            A = int(A)
-            B = int(B)
-            rank = A
-            if B == 3:
-                zb_str = '010101'
-            elif B == 4:
-                zb_str = '010111'
-            elif B == 5:
-                zb_str = '011111'
-            elif B == 6:
-                zb_str = '111111'
-                track_str = track_str.rstrip(".6")
+    if track_str == "max":
+        obj[name]["track_max"] = True
+        refresh_track_max(obj[name])
+    else:
+        obj[name]["track_max"] = False
+        if track_str is not None:
+            if '.' not in track_str:
+                A = int(track_str)
+                rank = A
+                zb_str = "111111"
             else:
-                raise Exception("错误的lib_track_str！")
-        obj[name]["track"] = track_str
-    obj[name]["track_rank"] = int(rank)
-    obj[name]["track_zb"] = ParseZBStr(zb_str)
+                A, B = track_str.split('.')
+                A = int(A)
+                B = int(B)
+                rank = A
+                if B == 3:
+                    zb_str = '010101'
+                elif B == 4:
+                    zb_str = '010111'
+                elif B == 5:
+                    zb_str = '011111'
+                elif B == 6:
+                    zb_str = '111111'
+                    track_str = track_str.rstrip(".6")
+                else:
+                    raise Exception("错误的lib_track_str！")
+            obj[name]["track"] = track_str
+        obj[name]["track_rank"] = int(rank)
+        obj[name]["track_zb"] = ParseZBStr(zb_str)
     AR.set("juese_info", obj)
     JS_SHOW(name)
 
@@ -491,6 +518,7 @@ def JS_TRACKINFO():
     table.add_column("当前可满", justify='center')
     table.add_column("下一RANK", justify='center')
     for k, v in obj.items():
+        refresh_track_max(v)
         if not ('track_rank' in v and 'track_zb' in v and 'zb' in v and 'rank' in v):
             continue
         if k not in data.C_ID:
@@ -597,6 +625,7 @@ def ZB_ST_LACK(args):
     for k, v in juese.items():
         if k in data.C_ID and "track_rank" in v and "track_zb" in v \
                 and "rank" in v and "zb" in v:
+            refresh_track_max(v)
             ne = data.calc_rankup_equip(data.C_ID[k], v["rank"], v["zb"], v["track_rank"], v["track_zb"])
             data.dict_plus(need_equip, ne, False)
     if has_arg(args, "--item"):
@@ -676,6 +705,7 @@ def ZB_ST_ADVICE(args, verbose=True):
     for k, v in juese.items():
         if k in data.C_ID and "track_rank" in v and "track_zb" in v \
                 and "rank" in v and "zb" in v:
+            refresh_track_max(v)
             ne = data.calc_rankup_equip(data.C_ID[k], v["rank"], v["zb"], v["track_rank"], v["track_zb"])
             # for n in list(ne.keys()):
             #     lv = data.EInfo[n]['plevel']
@@ -803,6 +833,7 @@ def XLS_OUTPUT():
     data = LoadPCRData()
 
     for nam, info in juese.items():
+        refresh_track_max(info)
         row = []
         if nam not in data.C_ID:
             _id = -1
@@ -828,7 +859,10 @@ def XLS_OUTPUT():
                 track = f"{_track_rank}"
             else:
                 track = ""
-            row.append(track)
+            if "track_max" in info and info["track_max"] == "max":
+                row.append("max")
+            else:
+                row.append(track)
         else:
             row.append("")
         if position == "front":
@@ -914,34 +948,39 @@ def XLS_INPUT(_all=False):
         # Add Track
         if _track_str is not None:
             _track_str = str(_track_str)
-            if _track_str == "false":
-                info["track"] = False
-                if "track_rank" in info: del info["track_rank"]
-                if "track_zb" in info: del info["track_zb"]
+            if _track_str == "max":
+                info["track_max"] = True
+                refresh_track_max(info)
             else:
-                if '.' not in _track_str:
-                    A = int(_track_str)
-                    rank = A
-                    zb_str = "111111"
+                info["track_max"] = False
+                if _track_str == "false":
+                    info["track"] = False
+                    if "track_rank" in info: del info["track_rank"]
+                    if "track_zb" in info: del info["track_zb"]
                 else:
-                    A, B = _track_str.split('.')
-                    A = int(A)
-                    B = int(B)
-                    rank = A
-                    if B == 3:
-                        zb_str = '010101'
-                    elif B == 4:
-                        zb_str = '010111'
-                    elif B == 5:
-                        zb_str = '011111'
-                    elif B == 6:
-                        zb_str = '111111'
-                        _track_str = _track_str.rstrip(".6")
+                    if '.' not in _track_str:
+                        A = int(_track_str)
+                        rank = A
+                        zb_str = "111111"
                     else:
-                        raise Exception(f"错误的一键追踪指令：{_track_str}！")
-                info["track"] = _track_str
-                info["track_rank"] = rank
-                info["track_zb"] = ParseZBStr(zb_str)
+                        A, B = _track_str.split('.')
+                        A = int(A)
+                        B = int(B)
+                        rank = A
+                        if B == 3:
+                            zb_str = '010101'
+                        elif B == 4:
+                            zb_str = '010111'
+                        elif B == 5:
+                            zb_str = '011111'
+                        elif B == 6:
+                            zb_str = '111111'
+                            _track_str = _track_str.rstrip(".6")
+                        else:
+                            raise Exception(f"错误的一键追踪指令：{_track_str}！")
+                    info["track"] = _track_str
+                    info["track_rank"] = rank
+                    info["track_zb"] = ParseZBStr(zb_str)
         else:
             if _track_rank is not None and all([x is not None for x in _track_zb]):
                 # config track str
@@ -1120,7 +1159,7 @@ if __name__ == "__main__":
                 print("js fix 修复因为ocr失误引起的角色名称错误")
                 print("js trackinfo 显示角色的养成（跟踪）状态")
                 print("js (name) 或 js (name) show 查看某一个角色的信息")
-                print("js (name) track 查看角色追踪帮助")
+                print("js (name) track 查看角色追踪帮助 (track 可缩写为t)")
                 print("js (name) set 查看修改信息帮助")
             elif order == "js" and len(cmds) >= 2:
                 if len(cmds) == 2 and cmds[1] == "clear":
@@ -1136,7 +1175,7 @@ if __name__ == "__main__":
                     print("拼音查询：如qiange(shengdanjie)或qiangeshengdanjie")
                     print("部分拼音查询：如qg(sdj)或qgsdj")
                     print("ID查询：如1084或108401")
-                elif len(cmds) == 3 and cmds[2] == 'track':  # cmds[1]=(name)
+                elif len(cmds) == 3 and cmds[2] in ['track', 't']:  # cmds[1]=(name)
                     print("帮助 角色追踪-----------------------")
                     print("js (name) track false 关闭追踪")
                     print("js (name) track (rank) (ZB_STR)")
@@ -1149,12 +1188,15 @@ if __name__ == "__main__":
                     print("         8.4: [XOXOOO]")
                     print("         8.5: [XOOOOO]")
                     print("         8 :  [OOOOOO]")
-                elif len(cmds) == 4 and cmds[2] == "track":
+                    print("js (name) track max")
+                    print("    按照数据库中的最高值设定追踪目标，追踪目标会随着数据库更新自动更新。")
+
+                elif len(cmds) == 4 and cmds[2] in ["track", 't']:
                     if cmds[3] == "false":
                         JS_TRACK(cmds[1], -1)
                     else:
                         JS_TRACK(cmds[1], track_str=cmds[3])
-                elif len(cmds) == 5 and cmds[2] == "track":
+                elif len(cmds) == 5 and cmds[2] in ["track", 't']:
                     JS_TRACK(cmds[1], int(cmds[3]), cmds[4])
                 elif len(cmds) == 3 and cmds[2] == "set":
                     print("帮助 角色设置----------------------")
