@@ -663,8 +663,8 @@ if __name__ == "__main__":
             elif order == "adb":
                 run_adb(f'{cmd[3:]}', use_os_instead_of_subprocess=True)
             elif order == "init":
+                emulator_ip = "127.0.0.1"
                 if enable_auto_find_emulator:
-                    emulator_ip = "127.0.0.1"
                     port_list = set(check_known_emulators())
                     if sys.platform == "win32":
                         os.system("taskkill /im adb.exe /f")
@@ -676,6 +676,8 @@ if __name__ == "__main__":
                         run_adb(f'connect {emulator_ip}:{str(port)}')
                 else:
                     run_adb("start-server")
+                    for port in emulator_ports:
+                        run_adb(f"connect {emulator_ip}:{str(port)}")
                 os.system('python -m uiautomator2 init')
                 # os.system(f"cd batches & ren *.txt *.json")
                 # os.system(f"cd groups & ren *.txt *.json")
