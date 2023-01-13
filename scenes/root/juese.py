@@ -231,8 +231,6 @@ class CharBianZu(FightBianZuBase):
         self.click_btn(JUESE_BTN["save_team"])
 
 
-
-
 class CharBase(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -336,6 +334,11 @@ class CharBase(SevenBTNMixin):
     def get_haogan(self, screen=None):
         if screen is None: screen = self.getscreen()
         at = (271, 390, 291, 405)
+        return self.ocr_int(*at, screen)
+
+    def get_zhuanwu(self, screen=None):
+        if screen is None: screen = self.getscreen()
+        at = (260, 135, 286, 148)
         return self.ocr_int(*at, screen)
 
     def next_char(self, screen=None):
@@ -673,6 +676,13 @@ class CharZhuanwu(CharBase):
                         return 4
                     else:
                         return 1
+
+    def get_zhuanwu_isEquip(self, screen=None):
+        if self.is_exists(img="img/juese/zhuanwu_isEquip.bmp", at=(876, 127, 886, 137), screen=screen, method="sq",
+                          threshold=0.95):
+            return True
+        else:
+            return False
 
     def wear_zhuanwu(self):
         self.click_btn(JUESE_BTN["wear"], until_appear=JUESE_BTN["wear_confirm"])

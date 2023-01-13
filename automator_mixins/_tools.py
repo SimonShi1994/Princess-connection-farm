@@ -865,10 +865,12 @@ class ToolsMixin(BaseMixin):
                 os.makedirs(path)
             sd = sorted(d)
             with open(os.path.join(path, self.account + ".txt"), "w", encoding="utf-8") as f:
-                f.write("\t".join(["名称", "星级", "Rank", "等级", "左上", "右上", "左中", "右中", "左下", "右下", "好感", "更新时间"]) + "\n")
+                f.write("\t".join(["名称", "星级", "Rank", "等级", "左上", "右上", "左中", "右中", "左下", "右下", "好感", "专武是否已解锁", "专武",
+                                   "更新时间"]) + "\n")
                 for k in sd:
                     v = d[k]
                     f.write("\t".join([str(s) for s in [k, v["star"], v["rank"], v["dengji"], *v["zb"], v["haogan"],
+                                                        v["zhuanwu_isEquip"], v["zhuanwu"],
                                                         get_time_str(v["last_update"])]]) + "\n")
 
         mv.regflag("count", 0)
@@ -888,6 +890,18 @@ class ToolsMixin(BaseMixin):
             D["dengji"] = S.get_level(sc)
             D["rank"] = S.get_rank(sc)
             D["zb"] = S.get_six_clothes(sc)
+            S = S.goto_zhuanwu()
+            zhuanwu_isEquip = S.get_zhuanwu_isEquip()
+            #print(f'zhuanwu_isEquip:{zhuanwu_isEquip}')
+
+            if zhuanwu_isEquip:
+                sc = self.getscreen()
+                D["zhuanwu_isEquip"] = True
+                D["zhuanwu"] = S.get_zhuanwu(sc)
+            else:
+                D["zhuanwu_isEquip"] = False
+                D["zhuanwu"] = 0
+
             S = S.goto_kaihua()
             sc = self.getscreen()
             NAME = S.get_name(sc)
@@ -895,6 +909,9 @@ class ToolsMixin(BaseMixin):
                 break
             D["star"] = S.get_stars(sc)
             D["last_update"] = time.time()
+            # print(f'※{NAME}:\n')
+            # for i in D:
+            #     print(f'\t{i}:{D[i]}')
             if NAME not in data:
                 data[NAME] = {}
             data[NAME].update(D)
@@ -1017,7 +1034,7 @@ class ToolsMixin(BaseMixin):
         else:
             return False
 
-    def clear_and_save_team(self, cnamelst: list, slot: str,  replace: bool, prefer=None):
+    def clear_and_save_team(self, cnamelst: list, slot: str, replace: bool, prefer=None):
         self.lock_home()
         cm = self.get_zhuye().goto_juese()
         ct = cm.goto_wodeduiwu()
@@ -1028,4 +1045,3 @@ class ToolsMixin(BaseMixin):
         cbz.save_team()
         self.fclick(1, 1)
         self.lock_home()
-
