@@ -2080,6 +2080,9 @@ class ShuatuMixin(ShuatuBaseMixin):
 
                 if out == 1:
                     self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=1, timeout=120)
+                    if self.is_exists(HUODONG_BTN["wanfa"].img) and self.is_exists(HUODONG_BTN["return"]):
+                        self.click_btn(HUODONG_BTN["return"])
+                        time.sleep(2)
                     HuodongMenu(self).goto_map(type(MAP))
                     continue
                 elif out == 2:
