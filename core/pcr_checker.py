@@ -473,11 +473,20 @@ class FunctionChecker:
                     raise e
                 else:
                     return None
+
+            # 3.8->3.10 适配部分
+            try:
+                # 测试代码
+                isinstance(until, collections.Iterable)
+                _collections = collections
+            except AttributeError:
+                _collections = collections.abc
+
             if until is None and rv is not None:
                 return rv
-            elif isinstance(until, collections.Iterable) and rv in until:
+            elif isinstance(until, _collections.Iterable) and rv in until:
                 return rv
-            elif isinstance(until, collections.Callable) and until(rv):
+            elif isinstance(until, _collections.Callable) and until(rv):
                 return rv
             elif until is not None and rv == until:
                 return rv

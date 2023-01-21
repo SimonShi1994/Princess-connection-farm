@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230117
+# Princess connection 公主连结农场脚本v2.8.20230121
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -127,7 +127,9 @@
 
 ##### 方法2-传统pip install
 
-- 需要 3.9>Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）**不要3.9！！！**
+- 需要 3.11>Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）
+
+  **3.8以上请取消掉`requirements.txt`中所有的版本限制，需注意Pillow版本支持范围（9.2）。本地OCR1在3.8以上无法使用！！！**
 
 - **Q\:**我可以不要OCR吗？**A\:**不行，以后只会对非OCR越来越不友好=。=
 
@@ -293,6 +295,16 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2023/01/21 By CyiceK,UVJkiNTQ,duoshoumiao
+
+- 惯例更新
+  - 完善自动搜寻模拟器的debug信息打印
+- BUG修复
+  - 修复B站牛皮癣广告卡住问题
+  - 协议跳过优化
+  - 由原来的python3.8最高支持版本改为python3.10
+  - 女神祭卡住问题修复
+  - 下载数据卡住问题修复
 
 2023/01/17 By TheAutumnOfRice
 

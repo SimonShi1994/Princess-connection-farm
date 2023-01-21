@@ -159,7 +159,7 @@ class Device:
 
     def is_connected(self):
         try:
-            self.device.say_hello()
+            self.device.get_state()
         except:
             return False
         else:

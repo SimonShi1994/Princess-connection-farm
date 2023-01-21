@@ -754,16 +754,16 @@ class RoutineMixin(ShuatuBaseMixin):
         time.sleep(2)
         self.click(854, 437)
         self.fclick(1, 1)
-        # 收取庆典任务奖励，每周
-        self.click(510, 123)
-        time.sleep(1.5)
-        self.click(854, 437)
-        self.fclick(1, 1)
-        # 收取庆典任务奖励，挑战
-        self.click(626, 123)
-        time.sleep(1.5)
-        self.click(854, 437)
-        self.fclick(1, 1)
+        # # 收取庆典任务奖励，每周
+        # self.click(510, 123)
+        # time.sleep(1.5)
+        # self.click(854, 437)
+        # self.fclick(1, 1)
+        # # 收取庆典任务奖励，挑战
+        # self.click(626, 123)
+        # time.sleep(1.5)
+        # self.click(854, 437)
+        # self.fclick(1, 1)
         # 前往女神宝库
         self.click(793, 80)
         time.sleep(1.5)

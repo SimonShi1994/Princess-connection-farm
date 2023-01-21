@@ -15,7 +15,8 @@ import threading
 import psutil
 
 from core.log_handler import pcr_log
-from core.pcr_config import adb_dir, emulators_port_interval, emulators_port_list, one_way_search_auto_find_emulator
+from core.pcr_config import adb_dir, emulators_port_interval, emulators_port_list, one_way_search_auto_find_emulator, \
+    debug
 from core.safe_u2 import run_adb
 
 emulator_ip = "127.0.0.1"
@@ -244,6 +245,8 @@ def get_port(PID, re_rules=None):
     a = os.popen(cmd)
     # 此时打开的a是一个对象，如果直接打印的话是对象内存地址
     text = a.read()
+    if debug:
+        _log.write_log('debug', text)
     # 要用read（）方法读取后才是文本对象
     first_line = text.split(':')
     # print(first_line)
@@ -289,6 +292,9 @@ def get_port(PID, re_rules=None):
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     encoding='utf-8').communicate()[0].split(' ')
+            if debug:
+                _log.write_log("debug", "adb连接返回消息:"+adb_connect_info)
+
             error_str = ["failed", "10068", "cannot", "already"]
             for check_str in error_str:
                 if check_str in adb_connect_info:
@@ -332,12 +338,16 @@ def get_port(PID, re_rules=None):
                     else:
                         break
                 else:
+                    if debug:
+                        _log.write_log("debug", cd[0]+"不在规定端口范围内！")
                     por = cd[0]
                     # print(por)
                     break
         elif i < len(first_line) - 1:
             i += 1
         else:
+            if debug:
+                _log.write_log("debug", "模拟器adb端口获取列表为空")
             # print("模拟器adb端口获取列表为空")
             break
     # print(por)
@@ -363,6 +373,8 @@ def check_known_emulators():
                 # print(e)
                 # result = get_ports(e)
                 ps = get_processes(e)
+                if debug:
+                    _log.write_log("debug", "当前系统进程情况为:"+str(ps))
                 # print(ps)
                 if one_way_search_auto_find_emulator:
                     if not result:
