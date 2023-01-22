@@ -663,8 +663,8 @@ if __name__ == "__main__":
             elif order == "adb":
                 run_adb(f'{cmd[3:]}', use_os_instead_of_subprocess=True)
             elif order == "init":
+                emulator_ip = "127.0.0.1"
                 if enable_auto_find_emulator:
-                    emulator_ip = "127.0.0.1"
                     port_list = set(check_known_emulators())
                     if sys.platform == "win32":
                         os.system("taskkill /im adb.exe /f")
@@ -676,6 +676,30 @@ if __name__ == "__main__":
                         run_adb(f'connect {emulator_ip}:{str(port)}')
                 else:
                     run_adb("start-server")
+                    if selected_emulator == "蓝叠5HyperV":
+                        if bluestacks5_hyperv_conf_path == "" or not os.path.exists(bluestacks5_hyperv_conf_path):
+                            print("当前模拟器类型为 蓝叠5HyperV，"
+                                  "但并未设置 bluestacks5_hyperv_conf_path 或其指向的文件不存在。")
+                        else:
+                            conf = open(bluestacks5_hyperv_conf_path)
+                            line = conf.readline()
+                            port = -1
+                            conf_key = "bst.instance.Nougat64.status.adb_port"
+                            while line:
+                                if not line.startswith(conf_key):
+                                    line = conf.readline()
+                                    continue
+                                port = int(line[len(conf_key) + 2:len(line) - 2])
+                                break
+                            conf.close()
+                            if port == -1:
+                                print("未能从 bluestacks5_hyperv_conf_path 中读取到模拟器端口。")
+                            else:
+                                run_adb(f'connect {emulator_ip}:{str(port)}')
+                    else:
+                        for port in emulator_ports:
+                            run_adb(f"connect {emulator_ip}:{str(port)}")
+
                 os.system('python -m uiautomator2 init')
                 # os.system(f"cd batches & ren *.txt *.json")
                 # os.system(f"cd groups & ren *.txt *.json")

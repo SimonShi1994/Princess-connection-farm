@@ -254,6 +254,8 @@ one_way_search_auto_find_emulator = GC.add_bool('emulator_setting', 'one_way_sea
 emulators_port_interval: Optional[list] = (GC.add_list('emulator_setting', 'emulators_port_interval', [65535, 5000]))
 emulators_port_list: Optional[list] = (GC.add_list('emulator_setting', 'emulators_port_list', []))
 emulator_ports: Optional[list] = (GC.add_list('emulator_setting', 'emulator_ports', []))
+bluestacks5_hyperv_conf_path = GC.add_str('emulator_setting', 'bluestacks5_hyperv_conf_path',
+                                          'C:/ProgramData/BlueStacks_nxt/bluestacks.conf')
 adb_dir = GC.add_abspath('emulator_setting', 'adb_dir', "adb")
 global_adb_restart = GC.add_bool('emulator_setting', 'global_adb_restart', True)
 restart_adb_during_emulator_launch_delay = GC.add_int('emulator_setting', 'restart_adb_during_emulator_launch_delay',
