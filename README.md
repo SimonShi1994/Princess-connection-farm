@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230121
+# Princess connection 公主连结农场脚本v2.8.20230126
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -295,6 +295,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2023/01/26 By sgpublic
+
+- BUG修复
+  - 修复了 `init` 指令没有使用 `emulator_ports` 导致无法初始化随机端口模拟器的问题
+- 功能新增
+  - 新增了针对运行在 Hyper-V 环境下的 `蓝蝶 5 国际版 Nougat 64 bit` 的 `init` 指令支持
+
 2023/01/21 By CyiceK,UVJkiNTQ,duoshoumiao
 
 - 惯例更新
