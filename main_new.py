@@ -354,13 +354,13 @@ def ShowAutoConsole():
             eprint(f"  !! 错误，不支持的模拟器。当前仅支持：{EMULATOR_DICT.keys()}")
     else:
         print("* 模拟器自动控制未配置，前往config.ini - emulator_console进行配置")
-    if selected_emulator == "蓝蝶5HyperV":
-        print("* 使用模拟器：蓝蝶5HyperV")
+    if selected_emulator == "蓝叠5HyperV":
+        print("* 使用模拟器：蓝叠5HyperV")
         if bluestacks5_hyperv_conf_path == "" or not os.path.exists(bluestacks5_hyperv_conf_path):
             eprint("  -  !! 当前模拟器类型为 蓝叠5HyperV，"
                    "但并未设置 bluestacks5_hyperv_conf_path 或其指向的文件不存在。")
         else:
-            print("  - 蓝蝶5HyperV配置文件路径：", bluestacks5_hyperv_conf_path)
+            print("  - 蓝叠5HyperV配置文件路径：", bluestacks5_hyperv_conf_path)
     print("* 自动启动app.py auto_start_app：", RTrue("已开启") if auto_start_app else RFalse("未开启"))
     print("* 内部方式启动app：", RTrue("已开启") if inline_app else RFalse("未开启"))
 

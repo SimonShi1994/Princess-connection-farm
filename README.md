@@ -300,7 +300,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 - BUG修复
   - 修复了 `init` 指令没有使用 `emulator_ports` 导致无法初始化随机端口模拟器的问题
 - 功能新增
-  - 新增了针对运行在 Hyper-V 环境下的 `蓝蝶 5 国际版 Nougat 64 bit` 的 `init` 指令支持
+  - 新增了针对运行在 Hyper-V 环境下的 `蓝叠 5 国际版 Nougat 64 bit` 的 `init` 指令支持
 
 2023/01/21 By CyiceK,UVJkiNTQ,duoshoumiao
 
