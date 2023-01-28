@@ -339,10 +339,12 @@ def ShowAutoConsole():
             launcher = EMULATOR_DICT[selected_emulator]()
             print("  - 控制器所在路径 emulator_console：", emulator_console)
             print("  - 自启动模拟器编号 emulator_id：", emulator_id)
-            print("  - 自动分配模拟器地址 auto_emulator_address：", RTrue("已开启") if auto_emulator_address else RFalse("未开启"))
+            print("  - 自动分配模拟器地址 auto_emulator_address：",
+                  RTrue("已开启") if auto_emulator_address else RFalse("未开启"))
             for i in emulator_id:
                 print("  - ID: ", i, " Serial:", launcher.id_to_serial(i))
-            print("  - 闲置自动关闭模拟器 quit_emulator_when_free：", RTrue("已开启") if quit_emulator_when_free else RFalse("未开启"))
+            print("  - 闲置自动关闭模拟器 quit_emulator_when_free：",
+                  RTrue("已开启") if quit_emulator_when_free else RFalse("未开启"))
             if quit_emulator_when_free:
                 print("  - - 最大闲置时间 max_free_time：", max_free_time)
             print(" - 打开模拟器时重连adb间隔 restart_adb_during_emulator_launch_delay： ",
@@ -352,6 +354,13 @@ def ShowAutoConsole():
             eprint(f"  !! 错误，不支持的模拟器。当前仅支持：{EMULATOR_DICT.keys()}")
     else:
         print("* 模拟器自动控制未配置，前往config.ini - emulator_console进行配置")
+    if selected_emulator == "蓝叠5HyperV":
+        print("* 使用模拟器：蓝叠5HyperV")
+        if bluestacks5_hyperv_conf_path == "" or not os.path.exists(bluestacks5_hyperv_conf_path):
+            eprint("  -  !! 当前模拟器类型为 蓝叠5HyperV，"
+                   "但并未设置 bluestacks5_hyperv_conf_path 或其指向的文件不存在。")
+        else:
+            print("  - 蓝叠5HyperV配置文件路径：", bluestacks5_hyperv_conf_path)
     print("* 自动启动app.py auto_start_app：", RTrue("已开启") if auto_start_app else RFalse("未开启"))
     print("* 内部方式启动app：", RTrue("已开启") if inline_app else RFalse("未开启"))
 
@@ -403,7 +412,8 @@ def ShowPCRPerformance():
     print("* 出现验证码后等待时间 captcha_wait_time：", captcha_wait_time)
     print("* 出现验证码后是否弹出置顶提示框 captcha_popup：", RTrue("已开启") if captcha_popup else RFalse("未开启"))
     print("* 缓存清理 clear_traces_and_cache：", RTrue("已开启") if clear_traces_and_cache else RFalse("未开启"))
-    print("* 装备名称模糊搜索 enable_zhuangbei_fuzzy_search：", RTrue("已开启") if enable_zhuangbei_fuzzy_search else RFalse("未开启"))
+    print("* 装备名称模糊搜索 enable_zhuangbei_fuzzy_search：",
+          RTrue("已开启") if enable_zhuangbei_fuzzy_search else RFalse("未开启"))
     if enable_zhuangbei_fuzzy_search:
         print("  - 模糊搜索阈值 zhuangbei_fuzzy_search_cutoff：", zhuangbei_fuzzy_search_cutoff)
 
@@ -428,9 +438,11 @@ def ShowDebugInfo():
     print("* 输出Debug信息 debug：", RTrue("已开启") if debug else RFalse("未开启"))
     print("* 把debug信息记录到文件中 write_debug_to_log：", RTrue("已开启") if write_debug_to_log else RFalse("未开启"))
     print("* 忽略警告信息 ignore_warning：", RTrue("已开启") if ignore_warning else RFalse("未开启"))
-    print("* 保存错误堆栈 trace_exception_for_debug:", RTrue("已开启") if trace_exception_for_debug else RFalse("未开启"))
+    print("* 保存错误堆栈 trace_exception_for_debug:",
+          RTrue("已开启") if trace_exception_for_debug else RFalse("未开启"))
     print("* 保存baiduocr的图片 baidu_ocr_img：", RTrue("已开启") if baidu_ocr_img else RFalse("未开启"))
-    print("* 屏蔽图像匹配超时报错 disable_timeout_raise：", RTrue("已开启") if disable_timeout_raise else RFalse("未开启"))
+    print("* 屏蔽图像匹配超时报错 disable_timeout_raise：",
+          RTrue("已开启") if disable_timeout_raise else RFalse("未开启"))
     print("* U2指令记录队列大小 u2_record_size：", u2_record_size)
     print("* U2指令过滤列表 u2_record_filter:", u2_record_filter)
     print("* Automator指令记录队列大小 debug_record_size: ", debug_record_size)
@@ -440,7 +452,8 @@ def ShowDebugInfo():
     print("* 在log中显示文件名 show_filename_in_log：", RTrue("已开启") if show_filename_in_log else RFalse("未开启"))
     print("* 在log中显示行数 show_linenumber_in_log：", RTrue("已开启") if show_linenumber_in_log else RFalse("未开启"))
     print("* 以下文件中的信息不显示在debug中 do_not_show_debug_if_in_these_files：", do_not_show_debug_if_in_these_files)
-    print("* 打印函数名时，跳过以下文件中的函数： skip_codename_output_if_in_these_files：", skip_codename_output_if_in_these_files)
+    print("* 打印函数名时，跳过以下文件中的函数： skip_codename_output_if_in_these_files：",
+          skip_codename_output_if_in_these_files)
 
 
 def CheckConstantImgs():
@@ -609,17 +622,22 @@ if __name__ == "__main__":
             if not running_input:
                 eprint("警告： 你设置了自动关机（end_shutdown）脚本运行结束后，会强制自动关机！")
             else:
-                wprint("提示： 你设置了自动关机（end_shutdown），但开启了实时控制（running_input），所以除非手动输入join-shutdown，并不会自动关机。")
+                wprint(
+                    "提示： 你设置了自动关机（end_shutdown），但开启了实时控制（running_input），所以除非手动输入join-shutdown，并不会自动关机。")
         if force_as_ocr_as_possible:
             wprint("提示： 你正在强制OCR模式下运行(force_as_ocr_as_possible)，app必须开启！")
         else:
-            eprint("警告： 你没有开启强制OCR模式(force_as_ocr_as_possible),目前基本上所有的非OCR版本都很难用了，请尽量使用OCR模式！")
+            eprint(
+                "警告： 你没有开启强制OCR模式(force_as_ocr_as_possible),目前基本上所有的非OCR版本都很难用了，请尽量使用OCR模式！")
         if clear_traces_and_cache:
-            eprint("警告： 你正在PCR干净模式下运行(clear_traces_and_cache)，这会导致退出账号后自动清理缓存，这将有利于减少验证码，但大大增加进号过剧情所用时间！")
+            eprint(
+                "警告： 你正在PCR干净模式下运行(clear_traces_and_cache)，这会导致退出账号后自动清理缓存，这将有利于减少验证码，但大大增加进号过剧情所用时间！")
         if enable_auto_find_emulator:
-            eprint("警告： 你开起了自动寻找模拟器（enable_auto_find_emulator），这会大大增加模拟器寻找时间。如果不想使用模拟器混搭，不需要开启该项。")
+            eprint(
+                "警告： 你开起了自动寻找模拟器（enable_auto_find_emulator），这会大大增加模拟器寻找时间。如果不想使用模拟器混搭，不需要开启该项。")
         if fast_screencut:
-            eprint("警告： 你正在快速截图（fast_screencut）模式下运行，这会大大增加截图速度，但可能降低脚本稳定性。如果出现奇怪的脚本错乱，试试关闭快速截图。")
+            eprint(
+                "警告： 你正在快速截图（fast_screencut）模式下运行，这会大大增加截图速度，但可能降低脚本稳定性。如果出现奇怪的脚本错乱，试试关闭快速截图。")
         else:
             wprint("提示： 你没有开启快速截图（fast_screencut），这使得截图速度大大降低，但能确保稳定性提升。")
         if not captcha_skip:
@@ -627,7 +645,8 @@ if __name__ == "__main__":
         else:
             wprint("提示： 你没有开启自动过验证码（captcha_skip），如果出现验证码，需要手动点掉！")
         if not trace_exception_for_debug:
-            wprint("提示： 你没有打开错误追踪(trace_exception_for_debug)，这将不会在出错后显示错误位置，如果需要反馈错误，请打开该选项！")
+            wprint(
+                "提示： 你没有打开错误追踪(trace_exception_for_debug)，这将不会在出错后显示错误位置，如果需要反馈错误，请打开该选项！")
         if emulator_console != "":
             wprint("提示： 你启用了模拟器自动控制（emulator_console），如果想要关闭，可以将该项字符串清空。")
         if enable_pause:
@@ -663,8 +682,8 @@ if __name__ == "__main__":
             elif order == "adb":
                 run_adb(f'{cmd[3:]}', use_os_instead_of_subprocess=True)
             elif order == "init":
+                emulator_ip = "127.0.0.1"
                 if enable_auto_find_emulator:
-                    emulator_ip = "127.0.0.1"
                     port_list = set(check_known_emulators())
                     if sys.platform == "win32":
                         os.system("taskkill /im adb.exe /f")
@@ -676,6 +695,30 @@ if __name__ == "__main__":
                         run_adb(f'connect {emulator_ip}:{str(port)}')
                 else:
                     run_adb("start-server")
+                    if selected_emulator == "蓝叠5HyperV":
+                        if bluestacks5_hyperv_conf_path == "" or not os.path.exists(bluestacks5_hyperv_conf_path):
+                            print("当前模拟器类型为 蓝叠5HyperV，"
+                                  "但并未设置 bluestacks5_hyperv_conf_path 或其指向的文件不存在。")
+                        else:
+                            conf = open(bluestacks5_hyperv_conf_path)
+                            line = conf.readline()
+                            port = -1
+                            conf_key = "bst.instance.Nougat64.status.adb_port"
+                            while line:
+                                if not line.startswith(conf_key):
+                                    line = conf.readline()
+                                    continue
+                                port = int(line[len(conf_key) + 2:len(line) - 2])
+                                break
+                            conf.close()
+                            if port == -1:
+                                print("未能从 bluestacks5_hyperv_conf_path 中读取到模拟器端口。")
+                            else:
+                                run_adb(f'connect {emulator_ip}:{str(port)}')
+                    else:
+                        for port in emulator_ports:
+                            run_adb(f"connect {emulator_ip}:{str(port)}")
+
                 os.system('python -m uiautomator2 init')
                 # os.system(f"cd batches & ren *.txt *.json")
                 # os.system(f"cd groups & ren *.txt *.json")
@@ -701,8 +744,10 @@ if __name__ == "__main__":
                         print("first 清除计划", last_schedule, "的运行记录并重新执行")
                         print("continue 继续执行计划", last_schedule)
                         print("state 显示计划", last_schedule, "的运行状态")
-                        print("clear (name) 清除计划", last_schedule, "中名为Name的子计划的错误，name设置为-all时，全部清除。")
-                        print("restart (name) 清除计划", last_schedule, "中名为Name的子计划的运行记录，name设置为-all时，全部清除。")
+                        print("clear (name) 清除计划", last_schedule,
+                              "中名为Name的子计划的错误，name设置为-all时，全部清除。")
+                        print("restart (name) 清除计划", last_schedule,
+                              "中名为Name的子计划的运行记录，name设置为-all时，全部清除。")
                         print("unbind", "解除与计划", last_schedule, "的绑定。")
 
                     print("state -tuitu 显示所有用户推图的状态")
@@ -718,7 +763,8 @@ if __name__ == "__main__":
                     print("device 查看当前设备状态")
                     print("queue 查看当前任务队列")
                     print("join [-nowait] 一直运行至队列为空，设备全部闲置后退出，设置-nowait后将忽略等待执行的任务")
-                    print("join-shutdown [-nowait] 一直运行至队列为空、设备全部闲置时，关机，设置-nowait后将忽略等待执行的任务")
+                    print(
+                        "join-shutdown [-nowait] 一直运行至队列为空、设备全部闲置时，关机，设置-nowait后将忽略等待执行的任务")
                     print("reconnect 重新搜索模拟器")
                     print("以下device_id若不指定，默认将信息发给全部Device。device_id可通过device命令查看，为整数。")
                     if enable_pause:
@@ -732,7 +778,8 @@ if __name__ == "__main__":
                     # print("last_screen [-d (device_id)] 监视某一个设备的最后一次截图")
                     print("u2rec [-d (device_id)] 查看某个device的u2运行记录")
                     print("rec [-d (device_id)] [-r] 查看某个device的Automator运行记录,-r只查看running的记录。")
-                    print("debug (on/off) [-d (device_id)] [-m (module_name)] 打开/关闭某个设备的调试显示，-m可指定某一个模块，默认为全部模块。")
+                    print(
+                        "debug (on/off) [-d (device_id)] [-m (module_name)] 打开/关闭某个设备的调试显示，-m可指定某一个模块，默认为全部模块。")
                     print("debug show [-d (device_id)] 显示某一个设备的每个模块的调试启动状况。")
                     print("exec [-d (device_id)] [-f (script_file)] 进入python命令调试模式，若指定-f，则执行某一文件。")
             elif order == "qq":
