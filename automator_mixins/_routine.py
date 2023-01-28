@@ -123,6 +123,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 return self.getscreen()
             return screen
 
+
         self.register_precheck("skip_load", sheding_zairu)
         self.register_precheck("skip_note", tiaoguo_tishi)
         self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
@@ -162,6 +163,7 @@ class RoutineMixin(ShuatuBaseMixin):
                             self.click(589, 365)
                             self.lock_img(NIUDAN_BTN["xuanzezhong"].img, at=at)
                             self.log.write_log("info", "设定附奖完成。")
+                            self.register_precheck("skip_note", tiaoguo_tishi)
                     self.fclick(1, 1)
 
         fujiangshezhi()
