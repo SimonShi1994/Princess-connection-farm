@@ -61,7 +61,8 @@
 |max_reboot|最大出错重试次数|int||3|
 |force_timeout_reboot|强制超时重启|bool|如果出现线程扰乱，可以关闭该项，但可能造成永久性卡死|True|
 |       running_input          |           开启后，可以在运行时向控制台输入指令                   |  bool |          |      True  |
-|selected_emulator|使用的模拟器的名称|string||雷电|
+|selected_emulator|使用的模拟器的名称|string|若使用蓝叠5国际版Nougat x64，且运行在 Hyper-V 环境下，请填写为 `蓝叠5HyperV`，并检查配置 `bluestacks5_hyperv_conf_path`|雷电|
+|bluestacks5_hyperv_conf_path|蓝叠5国际版配置文件路径|string|当 `selected_emulator` 配置为 `蓝叠5HyperV` 时，读取此配置指向的配置文件以获取模拟器端口|C:/ProgramData/BlueStacks_nxt/bluestacks.conf|
 |enable_auto_find_emulator|启动自动模拟器搜索，理论支持各种模拟器共同使用|bool|建议关闭|False|
 |one_way_search_auto_find_emulator|是否用单向的方式搜寻模拟器|bool|单向不能混搭，但是搜寻速度更快|False|
 |emulators_port_interval|自动搜索模拟器端口区间|list||[5565,5566]|
