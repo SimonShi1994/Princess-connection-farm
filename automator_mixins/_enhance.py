@@ -209,8 +209,12 @@ class EnhanceMixin(ShuatuBaseMixin):
                                             if isinstance(out, MsgList.ChaoChuShangXianBox):
                                                 out.OK()
                                         # 扫荡结束
-                                        # 保险起见
-                                        time.sleep(4)
+                                        #
+                                        if debug:
+                                            self.log.write_log('debug', "保险起见，4s")
+                                        time.sleep(2)
+                                        self.fclick(1, 1)
+                                        time.sleep(2)
                                         self.fclick(1, 1)
                                         if debug:
                                             self.log.write_log('debug', "刷图/扫荡完毕")
