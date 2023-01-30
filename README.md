@@ -300,6 +300,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 2023/01/30 By sgpublic
+
 - 模拟器支持
   - 完整支持运行在 Hyper-V 环境下的 `蓝叠 5 国际版 Nougat 64 bit` 模拟器。
 
