@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230128.1
+# Princess connection 公主连结农场脚本v2.8.20230130
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -194,6 +194,10 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
   **A:** 环境配置完成后，检查模拟器分辨率为540*960和DPI为240。确认无误
 
+- **Q:** 使用蓝叠模拟器时，在登陆页面不输入账号密码
+
+  **A:** 蓝叠模拟器默认使用实体键盘，需开启虚拟键盘，蓝叠 5 国际版 Nougat x64 步骤：前往“设置”-“语言和输入法”-“实体键盘”，开启“显示虚拟键盘”。
+
 - **Q:** 脚本任务报错，提示OCRXXX
 
   **A:** 使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
@@ -295,6 +299,11 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2023/01/30 By sgpublic
+
+- 模拟器支持
+  - 完整支持运行在 Hyper-V 环境下的 `蓝叠 5 国际版 Nougat 64 bit` 模拟器。
+
 2023/01/28 By sgpublic,UVJkiNTQ
 
 - 模拟器支持

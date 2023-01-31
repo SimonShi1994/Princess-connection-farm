@@ -21,7 +21,7 @@ from core.Automator import Automator
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.emulator_port import *
 from core.launcher import LauncherBase, LDLauncher, BSLauncher
-from core.pcr_config import GC, enable_pause, debug
+from core.pcr_config import GC, enable_pause, debug, bluestacks5_hyperv_conf_path
 from core.pcr_config import enable_auto_find_emulator, emulator_ports, selected_emulator, max_reboot, \
     trace_exception_for_debug, sentstate, emulator_console, emulator_id, quit_emulator_when_free, \
     max_free_time, adb_dir, add_adb_to_path, captcha_skip, captcha_userstr, ignore_serials, \
@@ -58,6 +58,17 @@ def _connect():  # 连接adb与uiautomator
             print("自动搜寻模拟器：" + str(port_list))
             for port in port_list:
                 run_adb(f'connect {emulator_ip}:{str(port)}')
+        elif selected_emulator == "蓝叠5HyperV":
+            conf = open(bluestacks5_hyperv_conf_path)
+            line = conf.readline()
+            conf_key = "bst.instance.Nougat64.status.adb_port"
+            while line:
+                if not line.startswith(conf_key):
+                    line = conf.readline()
+                    continue
+                run_adb(f'connect {emulator_ip}:{line[len(conf_key) + 2:len(line) - 2]}')
+                break
+            conf.close()
         elif len(emulator_ports) != 0:
             for port in emulator_ports:
                 run_adb(f'connect {emulator_ip}:{str(port)}')
