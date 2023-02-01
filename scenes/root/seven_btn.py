@@ -26,6 +26,7 @@ class SevenBTNMixin(PCRSceneBase):
         from scenes.root.juese import CharMenu
         def gotofun():
             self.click(MAIN_BTN["juese"])
+            self.fclick(268, 20)
         return self.goto(CharMenu,gotofun)  # Type:JueSe
 
     def goto_maoxian(self)->"MaoXian":

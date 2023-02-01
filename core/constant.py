@@ -223,6 +223,7 @@ JUQING_BTN = {
     "locked": p(279, 151, img="img/juqing/locked.bmp", at=(259, 133, 300, 170)),
     "auto": p(806, 100, img="img/juqing/auto.bmp", at=(793, 90, 819, 111)),
     "rong": p(595, 193, img="img/juqing/rong.bmp", at=(588, 185, 603, 202)),  # 新内容的“容”
+    "return": p(31, 30, img="img/huodong/return.bmp", at=(15, 21, 47, 40)),
 }
 
 LIWU_BTN = {
@@ -741,6 +742,13 @@ JUESE_BTN = {
     "scgm_and_zdzbqhqr": p(480, 40, img="img/juese/scgm_and_zdzbqhqr.bmp", at=(340, 26, 620, 55)),
 
     "rank_max": p(654, 242, img="img/juese/rank_max.bmp", at=(630, 231, 678, 253)),
+    "yijianpeizhi": p(249,336,img="img/juese/yijianpeizhi.bmp",at=(204,321,294,351)),
+    "shezhi": p(587,477,img="img/juese/shezhi.bmp",at=(555,461,619,493)),
+    "unlock": p(272,334,img="img/juese/unlock.bmp",at=(234,321,311,348)),
+    "fight6": p(836,452,img="img/juese/fight6.bmp",at=(808,437,865,468)),
+    "cnkh": p(272,335,img="img/juese/cnkh.bmp",at=(234,325,310,346)),
+    "six_star_confirm": p(588,478,img="img/juese/six_star_confirm.bmp",at=(544,466,632,490)),
+    "already_six": p(245,339,img="img/juese/already_six.bmp",at=(129,323,362,356)),
 
     # 队伍界面
     "duiwuyilan": p(482, 42, img="img/juqing/duiwuyilan.bmp", at=(418, 30, 546, 54)),
@@ -751,6 +759,7 @@ JUESE_BTN = {
     "front": p(247, 312, img="img/juese/front.bmp", at=(239, 306, 256, 318)),
     "middle": p(354, 202, img="img/juese/middle.bmp", at=(347, 196, 361, 208)),
     "back": p(459, 201, img="img/juese/back.bmp", at=(452, 195, 467, 208)),
+    "shuxingzhitisheng": p(477,89,img="img/juese/shuxingzhitisheng.bmp",at=(418,71,537,108)),
 
 }
 MAX_DXC = 6  # 一共出了多少个地下城关

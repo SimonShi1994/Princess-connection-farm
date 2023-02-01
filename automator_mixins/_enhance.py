@@ -1,7 +1,7 @@
 import time
 
 from automator_mixins._shuatu_base import ShuatuBaseMixin
-from core.constant import JUESE_BTN, FIGHT_BTN, MAIN_BTN
+from core.constant import JUESE_BTN, FIGHT_BTN, MAIN_BTN, HUODONG_BTN
 from core.pcr_config import debug
 from scenes.dxc.dxc_fight import FightBianzuDXC
 from scenes.dxc.dxc_fight import FightingWinDXC, FightingLossDXC
@@ -506,3 +506,85 @@ class EnhanceMixin(ShuatuBaseMixin):
         #             print('计数：%s' % charcount)
 
         self.lock_home()
+
+    def starup_six(self, charname=None, cname_lst=None):
+        # 六星开花
+        self.lock_home()
+        cm = self.get_zhuye().goto_juese()
+        # 进入角色选择
+        win_status = 0
+        cm.sort_by("star")
+        cm.sort_down()
+
+        while True:
+            sc = self.getscreen()
+            plate_path = get_plate_img_path(charname)
+            for j in plate_path:
+                a = cm.click_plate(j, screen=sc)
+                if a is True:
+                    cm.clear_initFC()
+                    ecb = CharZhuangBei(self).enter()
+                    ekh = ecb.goto_kaihua()
+                    # TODO:升星页面
+                    while True:
+                        if win_status == 1 or self.is_exists(JUESE_BTN["cnkh"]):
+                            self.click_btn(JUESE_BTN["cnkh"])
+                            cor = self.img_where_all(JUESE_BTN["six_star_confirm"])
+                            self.click(cor[0], cor[1])
+                            self.log.write_log('info', "成功升6星")
+                            break
+                        if win_status == -1:
+                            break
+                        if self.is_exists(JUESE_BTN["yijianpeizhi"]):
+                            self.click_btn(JUESE_BTN["yijianpeizhi"], until_appear=JUESE_BTN["shezhi"])
+                            self.click_btn(JUESE_BTN["shezhi"], until_appear=JUESE_BTN["shuxingzhitisheng"])
+                            self.fclick(477, 435)
+                            time.sleep(5)
+                            if self.is_exists(HUODONG_BTN["speaker_box"]):
+                                self.fclick(1, 1)
+                            continue
+                        if self.is_exists(JUESE_BTN["unlock"]):
+                            self.log.write_log("debug","开花准备完毕")
+                            self.click_btn(JUESE_BTN["unlock"], until_appear=JUESE_BTN["fight6"])
+                            self.click_btn(JUESE_BTN["fight6"])
+                            fi = FightInfoBase(self)
+                            fb = fi.goto_tiaozhan()
+                            #TODO: 如果之前打过，这里需要清空
+                            fb.select_by_namelst(cname_lst)
+                            F = fb.goto_fight()
+                            F.set_auto(1)
+                            D = F.get_during()
+                            while True:
+                                out = D.check()
+                                if isinstance(out, D.FightingWinZhuXian):
+                                    self.log.write_log("info", f"战胜了！")
+                                    out.next()
+                                    A = out.get_after()
+                                    while True:
+                                        out = A.check()
+                                        if isinstance(out, A.FightingWinZhuXian2):
+                                            out.next()
+                                            win_status = 1
+                                            break
+                                        # elif isinstance(out, A.XianDingShangDianBox):
+                                        #     out.Cancel()
+                                        # elif isinstance(out, A.LevelUpBox):
+                                        #     out.OK()
+                                        #     self.start_shuatu()
+                                        # elif isinstance(out, A.AfterFightKKR):
+                                        #     out.skip()
+                                        #     self.restart_this_task()
+                                        elif isinstance(out, A.ChaoChuShangXianBox):
+                                            out.OK()
+
+                                elif isinstance(out, D.FightingLoseZhuXian):
+                                    self.log.write_log("info", f"战败了！")
+                                    win_status = -1
+                                    self.fclick(1, 1)
+                                    break
+                                elif isinstance(out, D.FightingDialog):
+                                    out.skip()
+                        if self.is_exists(JUESE_BTN["already_six"]):
+                            self.log.write_log("info", "已经6星了")
+                            break
+                    self.lock_home()
