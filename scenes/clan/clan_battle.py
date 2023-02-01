@@ -19,9 +19,9 @@ class ClanBattleMAP(SevenBTNMixin):
     def gonghuizhan_precheck(self, screen):
         if self.is_exists(HANGHUI_BTN["queren"], screen=screen):  # 报酬确认
             self.click(HANGHUI_BTN["queren"])
-            time.sleep(2)
-        elif self.is_exists(HANGHUI_BTN["guanbi"], screen=screen):  # 公会战开始、排名公布
-            self.click(HANGHUI_BTN["guanbi"])
+        elif self.is_exists(HANGHUI_BTN["guanbi"].img, screen=screen):  # boss难度提升
+            a = self.img_where_all(HANGHUI_BTN["guanbi"].img)
+            self.click(a[0], a[1])
             time.sleep(2)
         elif self.is_exists(HANGHUI_BTN["kkr_dialog"], screen=screen):
             self.click(160, 100)

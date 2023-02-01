@@ -1314,6 +1314,7 @@ class BaseMixin:
         有圆menu就点跳过，跳过
         有跳过点跳过
         都没有就点边界点
+        有返回点返回
         # 有取消点取消
         :turnback:
             "shuatu": 返回刷图页面
@@ -1377,6 +1378,8 @@ class BaseMixin:
                     time.sleep(1)
             elif self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen_shot_):
                 self.click(JUQING_BTN["tiaoguo_2"])
+            elif self.is_exists(JUQING_BTN["return"], screen=screen_shot_):
+                self.click(JUQING_BTN["return"])
             else:
                 process_count[0] += 1
                 if process_count[0] % 3 == 0:
