@@ -253,6 +253,8 @@ class HuodongMapBase(ZhuXianBase):
                 XY = self._check_coord(self.HARD_COORD[tu])
                 fi = self.click_xy_and_open_fightinfo(*XY, typ=FightInfoBase)
             self.clear_initFC()
+            if fi is None:
+                raise Exception("无法进入活动图！是不是活动坐标有问题？")
             out = fi.easy_saodang(target_cishu="max", one_tili=20, check_cishu=True)
             if out == 1:
                 return 1
