@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230201
+# Princess connection 公主连结农场脚本v2.8.20230202
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -299,13 +299,21 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2023/02/02 By TheAutumnOfRice
+
+- BUG修复
+  - Normal42坐标修复
+  - 修复了过主线剧情时明明有剧情却检测为没剧情的BUG
+
+- 杂项
+  - 活动图无法进入时，提示相关信息
+
 2023/02/01 By UVJkiNTQ
 
 - BUG修复
   - 活动坐标修复
   - 活动导航修复(卡日记)
   - 公会战提示更新
-
 
 2023/01/30 By sgpublic
 
