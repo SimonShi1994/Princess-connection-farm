@@ -299,6 +299,11 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+2023/02/04 By UVJkiNTQ
+
+- 框架更新
+ - 添加6星开花分片
+
 2023/02/02 By TheAutumnOfRice
 
 - BUG修复
