@@ -20,7 +20,7 @@ import uiautomator2 as u2
 from core import log_handler
 from core.MoveRecord import MoveSkipException, MoveRestartException
 from core.MoveRecord import moveset
-from core.constant import PCRelement, MAIN_BTN, JUQING_BTN, DXC_ELEMENT, MAOXIAN_BTN, HUODONG_BTN
+from core.constant import PCRelement, MAIN_BTN, JUQING_BTN, DXC_ELEMENT, MAOXIAN_BTN
 from core.cv import UIMatcher, PreProcesses
 from core.get_screen import ReceiveFromMinicap
 from core.pcr_checker import ExceptionSet, ElementChecker, Checker, ReturnValue
@@ -1378,8 +1378,8 @@ class BaseMixin:
                     time.sleep(1)
             elif self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen_shot_):
                 self.click(JUQING_BTN["tiaoguo_2"])
-            elif self.is_exists(HUODONG_BTN["return"], threshold=0.95, screen=screen_shot_):
-                self.click(HUODONG_BTN["return"])
+            elif self.is_exists(JUQING_BTN["return"], threshold=0.95, screen=screen_shot_):
+                self.click(JUQING_BTN["return"])
             else:
                 process_count[0] += 1
                 if process_count[0] % 3 == 0:
