@@ -1378,7 +1378,7 @@ class BaseMixin:
                     time.sleep(1)
             elif self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen_shot_):
                 self.click(JUQING_BTN["tiaoguo_2"])
-            elif self.is_exists(HUODONG_BTN["return"], screen=screen_shot_):
+            elif self.is_exists(HUODONG_BTN["return"], threshold=0.95, screen=screen_shot_):
                 self.click(HUODONG_BTN["return"])
             else:
                 process_count[0] += 1

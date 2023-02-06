@@ -846,6 +846,10 @@ VALID_TASK = ValidTask() \
           TaskParam("replace", bool, "是否补全5人队", "当找不到指定角色时，是否自动补充同位置的角色", False),
           TaskParam("prefer", list, "替补的角色列表", "当找不到指定角色时，优先选择这些角色。"
                     "如果该列表空白且开启了补全，则自动选同位置最前可用的", inputbox=ListInputer(desc="请输入替补角色名，一行一个"))]) \
+    .add("t12", "starup_six", "六星开花", "自选指定4人，进行6星开花",
+         [TaskParam("cnamelst", list, "4个角色名字", "请填入标准简中角色名",
+                    inputbox=ListInputer(desc="请输入角色名，一行一个")),
+          TaskParam("charname", str, "拟开花的角色名", "请填入标准简中角色名")]) \
     .add("s1", "shuajingyan", "刷经验1-1【别用，除非OCR】", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "废弃参数", "随便输入一个整数")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1【别用，除非OCR】", "刷图3-1，比较节省刷图卷。",
