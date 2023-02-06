@@ -61,7 +61,7 @@ class HuodongMapBase(ZhuXianBase):
     XY11 = None  # Normal(1,1)的坐标，用于刷1-1
     XY21 = None
     XY31 = None
-    HARD_Legacy = True
+    HARD_Legacy = False
     HARD_COORD = None  # 大号刷Hard用坐标
     XY_HARD_BOSS = None
     XY_VH_BOSS = None
