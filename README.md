@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230203
+# Princess connection 公主连结农场脚本v2.8.20230210
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -299,6 +299,21 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2023/02/10 By TheAutumnOfRice
+
+- 框架更新
+  - _shuatu中的活动图功能并入HuodongMapBase基类中。
+- BUG修复
+  - 修复了20230210活动前篇后篇的进入问题
+
+2023/02/06 By UVJkiNTQ
+
+- 功能新增
+- 添加6星开花，任务`t12`
+- BUG修复
+- 处理教程进一步修复
+- 修复了活动图shua_hard坐标问题，采用兼容性方案（从1-1开始往右点）
 
 2023/02/03 By 0x114514BB
 

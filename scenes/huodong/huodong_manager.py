@@ -1,4 +1,7 @@
 import datetime
+import time
+
+from core.constant import HUODONG_BTN
 from scenes.huodong.huodong_base import HuodongMapBase
 
 
@@ -109,6 +112,13 @@ class Map20230210(HuodongMapBase):
         5: (687, 341),
     }
 
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去后篇”：点它
+        if self.is_exists(HUODONG_BTN["hou"]):
+            self.click_btn(HUODONG_BTN["hou"], until_appear=HUODONG_BTN["qian"])
+
 
 class Map20230131(HuodongMapBase):
     NAME = "羁绊相连心相惜前篇"
@@ -121,6 +131,13 @@ class Map20230131(HuodongMapBase):
         4: (535, 375),
         5: (644, 210),
     }
+
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去前篇”：点它
+        if self.is_exists(HUODONG_BTN["qian"]):
+            self.click_btn(HUODONG_BTN["qian"], until_appear=HUODONG_BTN["hou"])
 
 
 class Map20230115(HuodongMapBase):
