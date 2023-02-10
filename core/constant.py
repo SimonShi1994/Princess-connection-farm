@@ -354,7 +354,8 @@ HUODONG_BTN = {
     "vhboss_sp": p(738, 253, img="img/huodong/vhboss_sp.bmp", at=(701, 246, 775, 261)),
     "xinlaiduliwu": p(128, 449, img="img/huodong/xinlaiduliwu.bmp", at=(71, 439, 185, 459)),
     "xinlaiduliwu2": p(126, 449, img="img/huodong/xinlaiduliwu2.bmp", at=(72, 440, 181, 458)),
-
+    "hou": p(662, 106, img="img/huodong/hou.bmp", at=(656, 99, 669, 113)),
+    "qian": p(662, 106, img="img/huodong/qian.bmp", at=(655, 99, 669, 113)),
 }
 
 HANGHUI_BTN = {
