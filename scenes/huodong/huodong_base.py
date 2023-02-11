@@ -431,13 +431,13 @@ class HuodongMapBase(ZhuXianBase):
 
     def huodong_getbonus(self):
         # 20230210 from _shuatu
-        map_base = HuodongMapBase(self)
+        map_base = HuodongMapBase(self._a)
         menu = map_base.goto_hd_menu()
         menu.get_bonus()
 
     def huodong_read_juqing(self):
         # 20230210 from _shuatu
-        map_base = HuodongMapBase(self)
+        map_base = HuodongMapBase(self._a)
         menu = map_base.goto_hd_menu()
         menu.hd_juqing()
         time.sleep(5)
@@ -445,13 +445,13 @@ class HuodongMapBase(ZhuXianBase):
 
     def huodong_read_xinlai(self):
         # 20230210 from _shuatu
-        map_base = HuodongMapBase(self)
+        map_base = HuodongMapBase(self._a)
         menu = map_base.goto_hd_menu()
         menu.hd_xinlaidu()
 
     def exchange_tfz(self, reset=False, ):
         # 20230210 from _shuatu
-        map_base = HuodongMapBase(self)
+        map_base = HuodongMapBase(self._a)
         jiaohuan = map_base.goto_hd_menu().goto_jiaohuan()
         jiaohuan.setting()
         jiaohuan.exchange_all(reset=reset)
