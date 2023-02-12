@@ -792,10 +792,22 @@ VALID_TASK = ValidTask() \
     .add("r10", "shengjidiaocha", "圣迹调查", "进行圣迹调查",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
                     inputbox=TeamOrderInputer)]) \
+    .add("r10-n", "shengjidiaocha_new", "圣迹调查新版", "进行圣迹调查（可选关）",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
+                    inputbox=TeamOrderInputer),
+          TaskParam("tu_order", list, "图号", "只包含1~3的列表，表示圣迹调查图号，每个均刷5次。",
+                    inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~3的整数"))
+          ]) \
     .add("r11", "shouqunvshenji", "收取女神祭", "收取女神祭") \
     .add("r12", "shendiandiaocha", "神殿调查", "进行神殿调查",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
                     inputbox=TeamOrderInputer)]) \
+    .add("r12-n", "shendiandiaocha_new", "神殿调查新版", "进行神殿调查（可选关）",
+         [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
+                    inputbox=TeamOrderInputer),
+          TaskParam("tu_order", list, "图号", "只包含1~2的列表，表示神殿调查图号，每个均刷5次。",
+                    inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~2的整数"))
+          ]) \
     .add("f1", "tianjiahaoyou", "添加好友", "按照ID添加好友。", [
     TaskParam("friend_id", str, "好友ID", "要添加的好友的数字ID")]) \
     .add("f2", "tongguoshenqing", "通过申请", "处理全部的好友申请，可以指定按前缀过滤。",

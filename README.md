@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230211
+# Princess connection 公主连结农场脚本v2.8.20230212
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -299,6 +299,16 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2023/02/12 By 0x114514BB
+
+- 功能新增
+  - 支持选关的圣迹调查和神殿调查，任务`r10-n`和`r12-n`
+- BUG修复
+  - 修复选取已保存的队伍时卡在调星界面的BUG
+  - 修复Screencut小工具OCR报错的BUG
+  - 修复Screencut小工具Where指令不输出结果的BUG
+  - 更新Screencut小工具提示
 
 2023/02/11 By TheAutumnOfRice
 

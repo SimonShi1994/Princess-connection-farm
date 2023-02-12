@@ -137,6 +137,8 @@ class AutomatorDebuger(Automator):
         super().__init__("debug")  # 设置为debug时，不会自动连接
         self._obj = {}
         self._pcrocr = None
+        # 2023/02/12 修复logger不存在的错误，取消log文件生成需要更改pcr_log，暂时创建个假帐户
+        self.init_account("screencut_tool")
 
     @staticmethod
     def Init():
@@ -188,6 +190,9 @@ class AutomatorDebuger(Automator):
     def Equal(self, file1, file2, at=None):
         print("Equality:", self.img_equal(file1, file2, at))
 
+    def Where(self, file1, file2, th="0.9"):
+        print("Where[MidX, MidY, (X1, Y1, X2, Y2)]:\n", self.img_where_all(screen=ImgBox(filepath=file1).IMG, img=file2, threshold=float(th)))
+        
     def Show(self, file="test.bmp", at=None, verbose=True, return_click=False):
         img = ImgBox(filepath=file)
         self._obj = dict(txt=None, pnt=None, move=False, rec=None)
@@ -395,10 +400,10 @@ if __name__ == "__main__":
                 print("connect [address]:  连接到address的device，默认emulator-5554")
                 print("shot [file]: （需要connect）截图并保存到文件file并显示，默认test.bmp")
                 print("show [file]: 打开文件file并显示，默认test.bmp")
-                print("prob screen [template]: 检验template在screen中的最大匹配度(0~1)，默认template为test.bmp")
+                print("prob [screen] [template]: 检验template在screen中的最大匹配度(0~1)，默认template为test.bmp")
                 print("equal file1 file2: 检查两个图片的相似度")
-                print("where screen template threshold：以threshold为阈值，求template在screen中的未知（中点和x1,y1,x2,y2）")
-                print("login account [password]  在开始界面进行登录，如果不输入password，则默认使用users中储存的密码。")
+                print("where [screen] [template] threshold：以threshold(默认0.9)为阈值，求template在screen中的位置（中点和x1,y1,x2,y2）")
+                print("login account [password]  在开始界面进行登录，如果不输入password，则默认使用users中储存的密码")
                 print("input string 清空当前输入并且输入string")
                 print("initpcrocr： 初始化PCROCR")
                 print("exec 进入编程调试模式")
@@ -410,6 +415,7 @@ if __name__ == "__main__":
                 print("双击左键： 框选复位")
                 print("o : 对选定区域调用ocr_center")
                 print("12340 ： initpcrocr后，对选定区域进行指定模式的OCR检测")
+                print("注意： 使用OCR时请将光标悬浮在图片上，否则不会输出OCR结果")
             elif order == "init":
                 a.Init()
             elif order == "initpcrocr":
@@ -449,7 +455,7 @@ if __name__ == "__main__":
                     print("Wrong Order!")
             elif order == "where":
                 if len(cmds) == 4:
-                    a.img_where_all(screen=ImgBox(filepath=cmds[1]).IMG, img=cmds[2], threshold=float(cmds[3]))
+                    a.Where(cmds[1], cmds[2], cmds[3])
                 else:
                     print("Wrong Order!")
             elif order == "login":

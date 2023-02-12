@@ -740,6 +740,32 @@ class RoutineMixin(ShuatuBaseMixin):
         S.doit(team_order)
         self.lock_home()
 
+    def shengjidiaocha_new(self, team_order="zhanli", tu_order=[]):
+        """
+        圣迹调查
+        选关刷，不能扫荡则以team_order战斗
+        """
+        self.clear_all_initFC()
+        if not self.check_shuatu():
+            return
+
+        S = self.get_zhuye().goto_maoxian().goto_diaocha().goto_shengji()
+        S.doit_new(team_order, tu_order, True)
+        self.lock_home()
+
+    def shendiandiaocha_new(self, team_order="zhanli", tu_order=[]):
+        """
+        神殿调查
+        选关刷，不能扫荡则以team_order战斗
+        """
+        self.clear_all_initFC()
+        if not self.check_shuatu():
+            return
+
+        S = self.get_zhuye().goto_maoxian().goto_diaocha().goto_shendian()
+        S.doit_new(team_order, tu_order, False)
+        self.lock_home()
+
     def shouqunvshenji(self):
         """
         收取女神祭

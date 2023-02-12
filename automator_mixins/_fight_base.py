@@ -273,6 +273,9 @@ class FightBaseMixin(ToolsMixin):
             self.lock_img(FIGHT_BTN["jiangxu"], elseclick=(825, 84))
             duiwu = 11 - duiwu
             self.click(FIGHT_BTN["team_v"][duiwu], pre_delay=1, post_delay=1)
+        # 2023/02/12 处理改星提示窗
+        if self.is_exists(FIGHT_BTN["team_confirm"], threshold=0.9):
+            self.click(590, 475)
         if not self.is_exists(JJC_BTN["dwbz"]):
             if self.is_exists(HANGHUI_BTN["duiwubianzu"]):
                 self.click(587, 369)

@@ -608,6 +608,7 @@ FIGHT_BTN = {
     "zhandou_failed": p(img="img/fight/zhandou_failed.bmp"),
     "jiangxu": p(892, 88, img="img/fight/jiangxu.bmp", at=(880, 79, 904, 98)),
     "shengxu": p(892, 87, img="img/fight/shengxu.bmp", at=(881, 77, 903, 98)),
+    "team_confirm": p(483, 41, img="img/fight/team_confirm.bmp", at=(394, 28, 571, 54)),
 }
 
 SHOP_BTN = {
