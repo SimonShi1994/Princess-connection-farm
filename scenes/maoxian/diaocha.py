@@ -54,6 +54,31 @@ class DiaoChaXuanGuanBase(SevenBTNMixin):
             except LockMaxRetryError:
                 self.fclick(1, 1)
 
+    def doit_new(self, team_order="zhanli", tu_order=[], shengji=True):
+        # 自上到下，未来圣迹调查追加到LV5需要滑动
+        ec = [(539, 146), (541, 255), (540, 355)]
+        # 圣迹3关，神殿两关(日服至今未追加)
+        N_SHENGJI = 3
+        N_SHENDIAN = 2
+        # 检查输入
+        valid_range = range(1, N_SHENGJI+1 if shengji else N_SHENDIAN + 1)
+        for i in tu_order:
+            assert i in valid_range, f'输入了错误的{"圣迹" if shengji else "神殿"}调查图号-{tu_order}！'
+        # 第i关坐标为ec[n-i]
+        if shengji:
+            ec_l = [ ec[N_SHENGJI-i] for i in tu_order]
+        else:
+            ec_l = [ ec[2-i] for i in tu_order]
+        for xx, yy in ec_l:
+            if not self._a.check_shuatu():
+                break
+            try:
+                DC: DiaoChaInfoBox = self.goto(DiaoChaInfoBox, gotofun=self.fun_click(xx, yy), use_in_feature_only=True,
+                                               retry=2, interval=2, before_clear=False)
+                DC.shua(team_order)
+                self.fclick(1, 1)
+            except LockMaxRetryError:
+                self.fclick(1, 1)
 
 class ShengJiDiaoCha(DiaoChaXuanGuanBase):
     def __init__(self, *args, **kwargs):

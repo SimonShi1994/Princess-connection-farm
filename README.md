@@ -300,6 +300,16 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2023/02/12 By 0x114514BB
+
+- 功能新增
+  - 支持选关的圣迹调查和神殿调查，任务`r10-n`和`r12-n`
+- BUG修复
+  - 修复选取已保存的队伍时卡在调星界面的BUG
+  - 修复Screencut小工具OCR报错的BUG
+  - 修复Screencut小工具Where指令不输出结果的BUG
+  - 更新Screencut小工具提示
+
 2023/02/11 By TheAutumnOfRice
 
 - BUG修复 修复了0210更新后部分活动任务无法使用的BUG
