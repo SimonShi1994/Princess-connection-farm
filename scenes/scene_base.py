@@ -39,7 +39,12 @@ PCRSceneBase类也会提供Automator中的常用方法，如click, lock_img等�
 class PCRSceneBase:
 
     def __init__(self, a, *args, **kwargs):
-        self._a: "Automator" = a
+        if isinstance(a, Automator):
+            self._a = a
+        elif isinstance(a, PCRSceneBase):
+            self._a = a._a
+        else:
+            raise AttributeError("不正确的场景参数：", a)
         self.scene_name = "BaseScene"
         self._a.scenes += [self]
         self.initFC = None
