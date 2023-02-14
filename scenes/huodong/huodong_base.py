@@ -578,7 +578,7 @@ class HuodongMapBase(ZhuXianBase):
             next_time = map_id - N2 - 1
             for _ in range(next_time):
                 fi.next_map()
-        fi = FightInfoBase(self)
+        fi = FightInfoBase(self._a)
         s = fi.easy_saodang(one_tili=10, target_cishu=cishu)
         if s != 0:
             return
