@@ -487,7 +487,7 @@ class HuodongMapBase(ZhuXianBase):
             self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=0.2, timeout=180)
             time.sleep(5)
             self.lock_img(HUODONG_BTN["taofazheng_btn"], elseclick=(31, 30), elsedelay=0.2, timeout=180)
-            return HuodongMenu(self._a).enter().goto_map(map_id=self)
+            return HuodongMenu(self._a).enter().goto_map(map_id=type(self))
         else:
             # out = False
             self.chulijiaocheng(None)
