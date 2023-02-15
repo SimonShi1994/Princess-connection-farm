@@ -119,6 +119,9 @@ class PCRSceneBase:
         def nothing():
             pass
 
+        if isinstance(scene, PCRSceneBase):
+            scene = type(scene)
+
         if gotofun is None:
             gotofun = nothing
         next_scene = scene(self._a)
