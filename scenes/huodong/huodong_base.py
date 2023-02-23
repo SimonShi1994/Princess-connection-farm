@@ -986,6 +986,9 @@ class Jiaohuan(PCRSceneBase):
                     self.fclick(1, 1)
                     continue
         else:
+            if a == 1:
+                self.click(610, 375)
+                self._a.restart_this_task()
             pass
 
     def goto_menu(self):

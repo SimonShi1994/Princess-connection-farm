@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230216.1
+# Princess connection 公主连结农场脚本v2.8.20230223
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -300,6 +300,10 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2023/02/23 By UVJkiNTQ
+- BUG修复 
+  - 修复活动兑换讨伐证数量为1时卡住的错误
+
 2023/02/16 By TheAutumnOfRice
 
 - 惯例更新
@@ -308,7 +312,8 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 2023/02/14 By TheAutumnOfRice
 
-- BUG修复 进一步修复了0210更新后部分活动任务无法使用的BUG
+- BUG修复 
+  - 进一步修复了0210更新后部分活动任务无法使用的BUG
 
 2023/02/12 By 0x114514BB
 
