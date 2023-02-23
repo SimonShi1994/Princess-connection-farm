@@ -228,8 +228,13 @@ class BaseMixin:
 
     def register_basic_ES(self):
         # Loading时，啥事不干（防止卡住，只检测last_screen）
-        loading_fc = self.getFC(False).wait_for_loading()
-        self.ES.register(loading_fc, "wait_for_loading")
+        # loading_fc = self.getFC(False).wait_for_loading()
+        # self.ES.register(loading_fc, "wait_for_loading")
+
+        # 20230223 By TheAutumnOfRice:
+        # 加了wait_for_loading反而卡一些有黑屏但是并不在loading的场景。
+        # 现在想想ExceptionSet真的是败笔，使用上完全比不上precheck。
+        pass
 
     def save_last_screen(self, filename):
         dir = Path(filename).parent
