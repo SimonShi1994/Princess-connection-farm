@@ -5,15 +5,21 @@
 
 ## 名词解释和使用方式
 
+> 2023.2.23 By TheAutumnOfRice: 就目前开发的情况来看，正常人不会主动去写Checker，ExceptionSet，当初引入这些东西的初衷是希望能设计一种
+> 函数封装，支持对一系列函数进行整体的循环处理。现在想想，其实根本用不到。但是既然程序没有出错，那就暂且不做进一步修改了。
+
+
+> 但是另一方面，Scene确实是一个非常好用的工具。而Checker和ExceptionSet的功能，现在可以用更为牛逼的precheck功能来代替了。因此建议下面的
+> 文档都别看，直接看Scene相关的就行了。
+
 - Checker
 
   Checker是种特殊的函数的封装，它的输入参数不作限制，但是输出为bool类型。
   ```
   Checker(fun: Callable[[Any], bool], vardict: Optional[Dict[str, Any]] = None, funvar=None, name=None)
   ```
-  其中，vardict可以给该函数传递默认参数，funvar则是该函数需求参数的列表（如果不指定，则会通过inspect自动分配），
-  name则是用于__repr__的一个Checker名字。
-  
+  其中，vardict可以给该函数传递默认参数，funvar则是该函数需求参数的列表（如果不指定，则会通过inspect自动分配）， name则是用于__repr__的一个Checker名字。
+
   Checker是FunctionChecker的重要组成部分，在众多“发生了什么 - 就做什么”之中， Checker扮演了那个判断“发生了什么”的函数。
   
 - FunctionChecker
