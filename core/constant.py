@@ -210,6 +210,7 @@ JJC_BTN = {
 }
 JUQING_BTN = {
     "caidanyuan": p(916, 35, img="img/juqing/caidanyuan.bmp", at=(901, 23, 932, 48)),
+    "shadow_caidanyuan": p(918, 41, img="img/juqing/shadow_caidanyuan.bmp", at=(900, 23, 936, 59)),
     "xinneirong": p(img="img/ui/xinneirong.bmp", at=(462, 70, 495, 87)),
     "zhuxianjuqing": p(836, 111, img="img/juqing/zhuxianjuqing.bmp", at=(812, 97, 858, 125)),
     "tiaoguo_1": p(804, 38, img="img/juqing/tiaoguo_1.bmp", at=(765, 24, 849, 65)),

@@ -727,6 +727,15 @@ class HuodongMenu(PCRSceneBase):
         elif self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
             self.fclick(1, 1)
             self._a.restart_this_task()
+        elif self.is_exists(JUQING_BTN["shadow_caidanyuan"], screen=screen):
+            self._a.guojuqing(story_type="huodong")
+            self._a.restart_this_task()
+        elif self.is_exists(JUQING_BTN["caidanyuan"], screen=screen):
+            self._a.guojuqing(story_type="huodong")
+            self._a.restart_this_task()
+        elif self.is_exists(HUODONG_BTN["speaker_box"], screen=screen):
+            self._a.guojuqing(story_type="huodong")
+            self._a.restart_this_task()
         return screen
 
     def hd_juqing(self):
