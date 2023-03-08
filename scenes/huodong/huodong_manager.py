@@ -8,6 +8,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
         "20230418": Map20230418,
+        "20230308": Map20230308,
         "20230228": Map20230228,
         "20230216": Map20230216,
         "20230210": Map20230210,
@@ -70,6 +71,18 @@ class Map20230418(HuodongMapBase):
         5: (684, 230),
     }
 
+class Map20230308(HuodongMapBase):
+    NAME = "星光公主 Re:M@ster 复刻"
+    XY11 = (142,340)
+    XY_VH_BOSS = (854, 258)
+    HARD_COORD = {
+        1: (109, 242),
+        2: (214, 395),
+        3: (409, 358),
+        4: (548, 253),
+        5: (673, 313),
+    }
+    N_slice = 1
 
 class Map20230228(HuodongMapBase):
     NAME = "灰姑娘课程 璀璨的日子 有着苹果的滋味"
