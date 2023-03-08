@@ -670,7 +670,8 @@ huodong_code_kwargs = {
     "key": "code",
     "typ": str,
     "title": "图号代码",
-    "desc": """输入"current"表示当前进行的活动，其它代码见scenes/huodong/huodong_manager.py""",
+    "desc": """输入"current"表示当前进行的活动，其它代码见scenes/huodong/huodong_manager.py中，
+get_huodong_by_code函数里HUODONG_CODE字典。例如，输入"20230115"表示进行活动"狂奔!兰德索尔公会竞速赛复刻"。""",
     "default": "current",
 }
 huodong_entrance_ind_kwargs = {
@@ -679,7 +680,7 @@ huodong_entrance_ind_kwargs = {
     "title": "活动入口位置",
     "desc": """冒险界面的小圆按钮哪个是活动？
     "auto" - 自动寻找位置
-    "1"/"2"/"3" - 从右往左数第几个位置。
+    "1"/"2"/"3" - 从右往左数第几个位置（例如有三个按钮：活动/复刻活动/露娜塔，若要刷复刻活动，则输入"2"。
     """,
     "default": "auto",
 }
