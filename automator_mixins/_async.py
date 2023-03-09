@@ -352,4 +352,5 @@ class AsyncMixin(ToolsMixin):
 
     @DEBUG_RECORD
     def fix_reboot(self, back_home=True):
+        self.init_all_checks()
         self._fix_reboot(back_home)

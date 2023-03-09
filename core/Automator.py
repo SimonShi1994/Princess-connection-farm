@@ -86,11 +86,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                 # 标记当前执行的位置！
                 self.task_current(title)
                 # 防止泄露全局影响
-                self.ES.FCs.clear()  # 清除全部ES
-                self.headers_group.clear()  # 清除全部header
-                self.register_basic_ES()
-                self.prechecks.clear()
-                self.enable_precheck = True
+                self.init_all_checks()
                 flag = False
                 try:
                     self.__getattribute__(funname)(**kwargs, var=var)
@@ -102,6 +98,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                         raise e
                 if flag:
                     self.__getattribute__(funname)(**kwargs)
+                self.init_all_checks()
 
             return fun
 
@@ -184,10 +181,13 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
                         # 初次执行，记录一下
                         self.task_start()
                     if first_init_home:
+                        self.init_all_checks()
                         self.init_home()  # 处理第一次进home的一系列问题
                     before_ = False
                 try:
+                    self.init_all_checks()
                     self.ms.run(continue_=continue_)
+                    self.init_all_checks()
                 except UnknownMovesetException as e:
                     pcr_log(account).write_log("warning", message=f'记录文件冲突，自动刷新运行记录：{str(e)}')
                     self.ms.run(continue_=False)

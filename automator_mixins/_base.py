@@ -184,6 +184,13 @@ class BaseMixin:
         self.output_msg_fun = lambda x: print("OutputMsg:", x)
         # self.register_basic_ES()
 
+    def init_all_checks(self):
+        self.ES.FCs.clear()  # 清除全部ES
+        self.headers_group.clear()  # 清除全部header
+        self.register_basic_ES()
+        self.prechecks.clear()
+        self.enable_precheck = True
+
     def request_restart_adb(self):
         # 请求全局adb重启的函数
         self.output_msg_fun({"action": {
@@ -197,12 +204,14 @@ class BaseMixin:
         """
         重置当前任务
         """
+        self.init_all_checks()
         raise MoveRestartException()
 
     def skip_this_task(self):
         """
         跳过当前任务
         """
+        self.init_all_checks()
         raise MoveSkipException()
 
     def register_precheck(self, name: str, func: Callable[[np.ndarray], np.ndarray]):
