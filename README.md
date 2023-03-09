@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230308.1
+# Princess connection 公主连结农场脚本v2.8.20230309
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -299,6 +299,12 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2023/03/09 By TheAutumnOfRice
+
+- BUG修复
+  - 修复了任务列表中最后一个任务的precheck不会被clear的问题
+  - 修复了存在附奖扭蛋的情况下，不抽卡的BUG
 
 2023/03/08 By UVJkiNTQ, TheAutumnOfRice
 

@@ -163,7 +163,8 @@ class RoutineMixin(ShuatuBaseMixin):
                             self.click(589, 365)
                             self.lock_img(NIUDAN_BTN["xuanzezhong"].img, at=at)
                             self.log.write_log("info", "设定附奖完成。")
-                            self.register_precheck("skip_note", tiaoguo_tishi)
+                            self.restart_this_task()  # 一次性弹窗的终极解决方案
+                            # self.register_precheck("skip_note", tiaoguo_tishi)
                     self.fclick(1, 1)
 
         fujiangshezhi()
