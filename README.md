@@ -304,6 +304,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 - 惯例更新
   - 44图
+  - 活动`星光公主 Re:M@ster 复刻后篇`
 
 2023/03/09 By TheAutumnOfRice
 
