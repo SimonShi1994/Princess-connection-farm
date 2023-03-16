@@ -8,6 +8,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
         "20230418": Map20230418,
+        "20230316": Map20230316,
         "20230308": Map20230308,
         "20230228": Map20230228,
         "20230216": Map20230216,
@@ -71,9 +72,31 @@ class Map20230418(HuodongMapBase):
         5: (684, 230),
     }
 
+
+class Map20230316(HuodongMapBase):
+    NAME = "星光公主 Re:M@ster 复刻后篇"
+    XY11 = (150, 306)
+    XY_VH_BOSS = (860, 238)
+    HARD_COORD = {
+        1: (72, 217),
+        2: (175, 378),
+        3: (393, 372),
+        4: (537, 250),
+        5: (664, 328),
+    }
+    N_slice = 1
+
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去后篇”：点它
+        if self.is_exists(HUODONG_BTN["hou"]):
+            self.click_btn(HUODONG_BTN["hou"], until_appear=HUODONG_BTN["qian"])
+
+
 class Map20230308(HuodongMapBase):
-    NAME = "星光公主 Re:M@ster 复刻"
-    XY11 = (142,340)
+    NAME = "星光公主 Re:M@ster 复刻前篇"
+    XY11 = (142, 340)
     XY_VH_BOSS = (854, 258)
     HARD_COORD = {
         1: (109, 242),
@@ -83,6 +106,14 @@ class Map20230308(HuodongMapBase):
         5: (673, 313),
     }
     N_slice = 1
+
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去前篇”：点它
+        if self.is_exists(HUODONG_BTN["qian"]):
+            self.click_btn(HUODONG_BTN["qian"], until_appear=HUODONG_BTN["hou"])
+
 
 class Map20230228(HuodongMapBase):
     NAME = "灰姑娘课程 璀璨的日子 有着苹果的滋味"
