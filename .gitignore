@@ -32,6 +32,8 @@ PCRError/
 pcrdata/data.db
 ocrfix/
 poetry.lock
+rank_window.bmp
+zhuxian_title.bmp
 
 # 测试用文件夹
 /test/
