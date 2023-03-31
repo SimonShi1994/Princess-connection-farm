@@ -166,7 +166,7 @@ if __name__ == "__main__":
                 print("最后，请修改core/constant.py中的整数MAX_MAP为当前最新图的图号。")
             elif order == "2b":
                 print("------- 新增NORMAL坐标 -------")
-                IDX = input("请输入要录入的图号： （请输入整数，输入-1 退出）").strip()
+                IDX = input("请输入要录入的图号：（如26，则表示更新26图中的某些小图的坐标） （请输入整数，输入-1 退出）").strip()
                 if IDX == "-1": continue
                 IDX = int(IDX)
                 print(f"请进入图{IDX}的NORMAL状态。")
@@ -228,7 +228,7 @@ if __name__ == "__main__":
                 trycopy(CODE)
             elif order == "2c":
                 print("------- 新增HARD坐标 -------")
-                IDX = input("请输入要录入的图号： （请输入整数，输入-1 退出）").strip()
+                IDX = input("请输入要录入的图号：（如26，则表示更新26图中的某些小图的坐标）（请输入整数，输入-1 退出）").strip()
                 if IDX == "-1": continue
                 IDX = int(IDX)
                 print(f"请进入图{IDX}的HARD状态。")
@@ -258,12 +258,12 @@ if __name__ == "__main__":
                 trycopy(CODE)
             elif order == "2d":
                 print("------- 新增VH坐标 -------")
-                IDX = input("请输入要录入的图号： （请输入整数，输入-1 退出）").strip()
+                IDX = input("请输入要录入的图号：（如26，则表示更新26图中的某些小图的坐标） （请输入整数，输入-1 退出）").strip()
                 if IDX == "-1": continue
                 IDX = int(IDX)
                 print(f"请进入图{IDX}的VH状态。")
                 input("按下回车继续")
-                AA, BB = input(f"请输入两个整数a,b，分别代表即将录入的图号为 VH{IDX}-a 至 VH{IDX}-b：").split(" ")
+                AA, BB = input(f"请输入两个整数a b，用空格隔开，分别代表即将录入的图号为 VH{IDX}-a 至 VH{IDX}-b：").split(" ")
                 AA = int(AA)
                 BB = int(BB)
                 print("正在截图……为了避免信息丢失，强制使用慢速截图。")

@@ -70,11 +70,11 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
         out = self.ocr_int(*at, screen_shot=screen)
         return out
 
-    def check_taofa(self, screen=None):
+    def check_taofa(self, min_taofa=3, screen=None):
         # 是否可扫荡
         if screen is None:
             screen = self.getscreen()
-        if self.get_taofashu() >= 3:
+        if self.get_taofashu(screen) >= min_taofa:
             return True
         else:
             return False

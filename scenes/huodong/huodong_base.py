@@ -362,7 +362,7 @@ class HuodongMapBase(ZhuXianBase):
             # boss挑战券是否足够
             if fi.get_bsq_right(screen) == -1:
                 break
-            if fi.check_taofa(screen) and self.is_exists(HUODONG_BTN["minus_on"]):
+            if fi.check_taofa(3 if boss_type == "N" else 1, screen=screen) and self.is_exists(HUODONG_BTN["minus_on"]):
                 # 检查是否打满3次，可以扫荡
                 one_quan = 30
                 if boss_type == "N" or boss_type == "n":
