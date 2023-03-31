@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230316
+# Princess connection 公主连结农场脚本v2.8.20230331
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -299,6 +299,12 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2023/03/31 By TheAutumnOfRice
+
+- 惯例更新
+  - 活动`钢铁圣女与神圣学院的问题儿童`
+  - 活动图的HardBoss现在只需要打一次就能扫荡。
 
 2023/03/16 By TheAutumnOfRice
 
