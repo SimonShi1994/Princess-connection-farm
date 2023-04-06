@@ -40,7 +40,7 @@ PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
 
-script_version = "Ver 2.8.20230331"
+script_version = "Ver 2.8.20230406"
 
 
 
@@ -590,7 +590,7 @@ if __name__ == "__main__":
             s.mount('https://', HTTPAdapter(max_retries=2))
             # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='gb18030')  # 改变标准输出的默认编码
             api_url = f"https://api.github.com/repos/SimonShi1994/Princess-connection-farm/commits/{trace_tree}"
-            all_info = s.get(api_url)
+            all_info = s.get(api_url, timeout=5)
             if all_info.status_code == 403:
                 update_info = "最新版本为 {请求频繁，当前无法连接到github！请休息2分钟后再试}"
             elif all_info.status_code == 200:

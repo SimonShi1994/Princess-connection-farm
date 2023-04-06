@@ -84,6 +84,8 @@ class LoginMixin(ToolsMixin):
                 continue
             if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
                 time.sleep(0.8)
+                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
+                    self.click(344, 498)
                 self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
                 continue
             if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
@@ -259,6 +261,8 @@ class LoginMixin(ToolsMixin):
                 # 单独控件检测应该放在最后
                 elif self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
                     # time.sleep(0.8)
+                    if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
+                        self.click(344, 498)
                     self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click(timeout=5)
                     # time.sleep(captcha_sleep_times)
                     return -1
@@ -504,6 +508,8 @@ class LoginMixin(ToolsMixin):
                     time.sleep(2)
                     continue
                 if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
+                    if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
+                        self.click(344, 498)
                     self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
                     time.sleep(2)
                     continue
