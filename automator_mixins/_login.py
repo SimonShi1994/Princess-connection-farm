@@ -86,7 +86,7 @@ class LoginMixin(ToolsMixin):
                 time.sleep(0.8)
                 if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
                     if not self.is_exists(START_UI["gouxuan"]):
-                        self.lock_img(START_UI["gouxuan"], elseclick=(344, 498), elsedelay=1)
+                        self.lock_img(START_UI["gouxuan"], elseclick=(293, 424), elsedelay=1, retry=2)
                 self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
                 continue
             if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
@@ -264,7 +264,7 @@ class LoginMixin(ToolsMixin):
                     # time.sleep(0.8)
                     if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
                         if not self.is_exists(START_UI["gouxuan"]):
-                            self.lock_img(START_UI["gouxuan"], elseclick=(344, 498), elsedelay=1)
+                            self.lock_img(START_UI["gouxuan"], elseclick=(293, 424), elsedelay=1, retry=2)
                     self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click(timeout=5)
                     # time.sleep(captcha_sleep_times)
                     return -1
@@ -512,7 +512,7 @@ class LoginMixin(ToolsMixin):
                 if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
                     if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
                         if not self.is_exists(START_UI["gouxuan"]):
-                            self.lock_img(START_UI["gouxuan"], elseclick=(344, 498), elsedelay=1)
+                            self.lock_img(START_UI["gouxuan"], elseclick=(293, 424), elsedelay=1, retry=2)
                     self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
                     time.sleep(2)
                     continue
