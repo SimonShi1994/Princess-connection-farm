@@ -58,6 +58,7 @@ START_UI = {
     "wenzidianji": p(img="img/ui/wenzidianji.bmp"),
     "yanzhengshibai": p(img="img/ui/yanzhengshibai.bmp"),
     "xieyihuakuai": p(img="img/ui/xieyi_slide.bmp", at=(708, 124, 825, 364)),
+    "gouxuan": p(344, 498, img="img/ui/gouxuan.bmp", at=(273, 407, 308, 440)),  # 同意协议勾选
 }
 
 HAOYOU_BTN = {
