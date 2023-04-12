@@ -347,54 +347,16 @@ class RoutineMixin(ShuatuBaseMixin):
             self.log.write_log("info", "该时间段内已经买过经验了！")
             return
         self.lock_home()
-        count = 0
-        self.click(616, 434)
+        self.lock_img(SHOP_BTN["tongchang"], elseclick=(616, 434), elsedelay=5)
 
-        while True:
-            self.click(82, 84)
-            screen_shot_ = self.getscreen()
-            if self.is_exists("img/exp.jpg", screen=screen_shot_) \
-                    or self.is_exists("img/exp2.jpg", screen=screen_shot_) \
-                    or self.is_exists("img/exp3.bmp", screen=screen_shot_) \
-                    or self.is_exists("img/exp4.bmp", screen=screen_shot_):
-                break
-            count += 1
-            time.sleep(1)
-            if count > 5:
-                break
-        if count <= 5:
-            time.sleep(2)
-            self.click(279, 68)
-            time.sleep(1)
-            self.click(386, 148)
-            time.sleep(1)
-            self.click(556, 148)
-            time.sleep(1)
-            self.click(729, 148)
-            time.sleep(1)
-            self.click(897, 148)
-            time.sleep(1)
-            self.click(787, 435)
-            time.sleep(1)
-            self.click(596, 478)
-            time.sleep(1)
-            self.click(475, 478)
-            time.sleep(1)
-            if qianghuashi:  # 上面买完药水，下面的强化石会自动上去，所以直接点一圈就好了
-                self.click(386, 148)
-                time.sleep(1)
-                self.click(556, 148)
-                time.sleep(1)
-                self.click(729, 148)
-                time.sleep(1)
-                self.click(897, 148)
-                time.sleep(1)
-                self.click(795, 437)
-                time.sleep(1)
-                self.click(596, 478)
-                time.sleep(1)
-                self.click(475, 478)
-                time.sleep(1)
+        if qianghuashi:
+            self.click(700, 120, post_delay=0.5)
+        else:
+            self.click(332, 120, post_delay=0.5)
+        self.click(860, 124, post_delay=0.5)
+        self.click(791, 436, post_delay=1)
+        self.click(593, 471, post_delay=0.5)
+
         ts["buyexp"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()

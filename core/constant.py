@@ -615,6 +615,7 @@ FIGHT_BTN = {
 
 SHOP_BTN = {
     "goumaibaoshi": p(462, 40, img="img/shop/goumaibaoshi.bmp", at=(420, 30, 504, 51)),
+    "tongchang": p(275, 67, img="img/shop/tongchang.bmp", at=(248, 55, 302, 80)),
     "mana_ball": p(img="img/shop/mana_ball.bmp", at=(744, 13, 762, 34)),
     "dxc_coin": p(img="img/shop/dxc_coin.bmp", at=(744, 14, 762, 33)),
     "jjc_coin": p(img="img/shop/jjc_coin.bmp", at=(744, 14, 763, 32)),
@@ -792,7 +793,9 @@ DXC_ELEMENT = {
     "shouqubaochou_ok": p(480, 477, img="img/ui/queren.bmp", at=(450, 465, 509, 489)),
     "qianwangdixiacheng": p(805, 495),
     "qyxzqr": p(478, 88, img="img/dxc/qyxzqr.bmp", at=(411, 76, 546, 100)),
-    "quyuxuanzequeren_ok": p(586, 433, img="img/ui/queren_blue.bmp", at=(559, 418, 613, 447)),
+    "quyuxuanzequeren_skip": p(479, 433, img="img/dxc/qyxzqr_skip.bmp", at=(459, 422, 500, 445)),
+    "quyuxuanzequeren_tz": p(624, 432, img="img/dxc/qyxzqr_tz.bmp", at=(605, 421, 644, 444)),
+    "quyuxuanzequeren_ok": p(628, 436, img="img/ui/queren_blue.bmp", at=(559, 418, 613, 447)),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
@@ -870,6 +873,7 @@ DXC_ENTRANCE = {
     4: p(831, 246, name="沧海的孤塔"),
     5: p(607, 241, name="EX 2"),
     6: p(831, 235, name="EX 3"),
+    7: p(839, 231, name="EX 4"),
 }
 DXC_ENTRANCE_DRAG = {
     1: "left",
@@ -878,6 +882,7 @@ DXC_ENTRANCE_DRAG = {
     4: "left",
     5: "right",
     6: "right",
+    7: "right"
 }
 DXC_COORD = {
     # 每个地下城里面每一个关卡的位置
@@ -922,7 +927,10 @@ DXC_COORD = {
         3: p(224, 226),
         4: p(477, 204),
         5: p(715, 218),
-    }
+    },
+    7: {
+
+    },
 }
 
 HARD_COORD = {
@@ -1302,6 +1310,9 @@ MAOXIAN_BTN = {
 
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
     "notshow": p(461, 359, img="img/maoxian/notshow.bmp", at=(393, 345, 530, 374)),
+
+    "suoxumana": p(79, 458, img="img/maoxian/suoxumana.bmp", at=(40, 450, 118, 467)),
+    "kkr_qianbao": p(465, 258, img="img/maoxian/kkr_qianbao.bmp", at=(405, 248, 525, 269)),
 }
 
 ZHUXIAN_ID = {
@@ -1349,6 +1360,7 @@ ZHUXIAN_ID = {
     42: p(img="img/zhuxian/42L.bmp", at=(92, 59, 196, 75)),
     43: p(img="img/zhuxian/43L.bmp", at=(93, 59, 195, 74)),
     44: p(img="img/zhuxian/44L.bmp", at=(91, 60, 178, 73)),
+    45: p(img="img/zhuxian/45L.bmp", at=(91, 59, 178, 74)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1410,6 +1422,7 @@ ZHUXIAN_PKTSBF_ID = {
 }
 ZHUXIAN_SKMBM_ID = {
     44: p(img="img/zhuxian/44R.bmp", at=(200, 60, 232, 74)),
+    45: p(img="img/zhuxian/45R.bmp", at=(200, 60, 231, 73)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -1425,7 +1438,7 @@ ZHUXIAN_SECOND_ID = {
     (38, 39): ZHUXIAN_LTSDY_ID,
     (40, 41): ZHUXIAN_SKPSX_ID,
     (42, 43): ZHUXIAN_PKTSBF_ID,
-    (44,): ZHUXIAN_SKMBM_ID,
+    (44, 45): ZHUXIAN_SKMBM_ID,
 }
 
 NORMAL_COORD = {

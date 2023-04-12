@@ -2,7 +2,7 @@
 地下城选大关，小关部分
 """
 import time
-from typing import Optional
+from typing import Optional, Union
 
 from automator_mixins._base import OCRRecognizeError
 from core.constant import DXC_ELEMENT, DXC_ENTRANCE_DRAG, DXC_ENTRANCE, JUQING_BTN, MAIN_BTN
@@ -10,6 +10,7 @@ from core.pcr_checker import LockError, LockTimeoutError
 from scenes.dxc.dxc_fight import FightInfoDXC
 from scenes.scene_base import PossibleSceneList, PCRMsgBoxBase, PCRSceneBase
 from scenes.zhuxian.zhuxian_base import SevenBTNMixin
+
 
 
 class PossibleDXCMenu(PossibleSceneList):
@@ -45,7 +46,7 @@ class DXCSelectA(SevenBTNMixin):
         })
         return cishu
 
-    def enter_dxc(self, dxc_id) -> "DXCSelectB":
+    def enter_dxc(self, dxc_id, skip=False) -> Union["DXCSelectB", str]:
         drag = DXC_ENTRANCE_DRAG[dxc_id]
 
         def do_fun():
@@ -68,8 +69,16 @@ class DXCSelectA(SevenBTNMixin):
             elif isinstance(PS, DXCSelectB):
                 return PS
             elif isinstance(PS, QuYuXuanZeQueRen):
-                PS = PS.ok()
-                continue
+                if PS.can_skip():
+                    if skip:
+                        PS.skip()
+                        return "Skip"
+                    else:
+                        PS = PS.tz()
+                        continue
+                else:
+                    PS = PS.ok()
+                    continue
             else:
                 raise LockTimeoutError("进入地下城失败！")
 
@@ -145,8 +154,28 @@ class QuYuXuanZeQueRen(PCRMsgBoxBase):
         super().__init__(a)
         self.feature = self.fun_feature_exist(DXC_ELEMENT["qyxzqr"])
 
+    def can_skip(self, screen=None):
+        if screen is None:
+            screen = self.getscreen()
+        if self.is_exists(DXC_ELEMENT["quyuxuanzequeren_skip"], screen=screen):
+            return True
+        else:
+            return False
+
     def ok(self):
         return self.goto(PossibleDXCMenu, self.fun_click(DXC_ELEMENT["quyuxuanzequeren_ok"]))
+
+    def tz(self):
+        return self.goto(PossibleDXCMenu, self.fun_click(DXC_ELEMENT["quyuxuanzequeren_tz"]))
+
+    def skip(self):
+        from scenes.zhuxian.zhuxian_msg import SaoDangJieGuo
+        SD: SaoDangJieGuo = self.goto(SaoDangJieGuo, self.fun_click(DXC_ELEMENT["quyuxuanzequeren_skip"]))
+        MsgList = SD.OK()  # 扫荡后的一系列MsgBox
+        MsgList.exit_all(True)
+        self.fclick(1, 1)
+        self.fclick(1, 1)
+
 
 class DXCKKR(PCRMsgBoxBase):
     def __init__(self, a):
