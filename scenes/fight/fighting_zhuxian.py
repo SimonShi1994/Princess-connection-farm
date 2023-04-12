@@ -127,6 +127,7 @@ class LevelUpBox(PCRMsgBoxBase):
 
 
 class DuringFightingZhuXian(PossibleSceneList):
+    from scenes.zhuxian.zhuxian_msg import KKRQianBao
 
     def __init__(self, a, *args, **kwargs):
         self.LoveUpScene = LoveUpScene
@@ -138,6 +139,7 @@ class DuringFightingZhuXian(PossibleSceneList):
         self.TuanDuiZhanBox = TuanDuiZhanBox
 
         scene_list = [
+            self.KKRQianBao(a),
             LoveUpScene(a),
             LevelUpBox(a),
             FightingWinZhuXian(a),
@@ -198,7 +200,8 @@ class FightingWinZhuXian(FightingWinBase):
 
 
 class AfterFightingWin(PossibleSceneList):
-    from scenes.zhuxian.zhuxian_msg import XianDingShangDianBox, LevelUpBox, TuanDuiZhanBox, ChaoChuShangXianBox
+    from scenes.zhuxian.zhuxian_msg import XianDingShangDianBox, LevelUpBox, TuanDuiZhanBox, ChaoChuShangXianBox, \
+        KKRQianBao
 
     def __init__(self, a, *args, **kwargs):
         self.AfterFightKKR = AfterFightKKR
@@ -207,6 +210,7 @@ class AfterFightingWin(PossibleSceneList):
         self.LoveUpScene = LoveUpScene
 
         scene_list = [
+            self.KKRQianBao(a),
             self.XianDingShangDianBox(a),
             self.LevelUpBox(a),
             self.TuanDuiZhanBox(a),

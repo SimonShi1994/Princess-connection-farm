@@ -760,6 +760,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             设置为0时，不借人。
             设置为1~16时，借第n个人（若设置为1，则借左上角的，以此类推）
             注：若指定了具体编队，则借人在编队后进行；否则借人将先进行。
+            注：若指定了借人，那么不会跳过地下城！
         :param fight_detail: 战斗操作细节
             （推荐）空字符串： 默认全程auto，不过mode=4在攒TP时关闭auto
             （攒TP时可用）用逗号隔开N个子串（N为队伍总数）：每个队伍对应的战斗细节
@@ -803,7 +804,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.log.write_log("info", "地下城次数已经耗尽。")
                 self.lock_home()
                 return
-            S = S.enter_dxc(dxc_id)
+            S = S.enter_dxc(dxc_id, skip=(assist == 0))
+            if S == "skip":
+                self.log.write_log("info", "已经跳过地下城！")
+                self.lock_home()
+                return
 
         # 已经进入地下城
         cur_layer = S.get_jieshu()

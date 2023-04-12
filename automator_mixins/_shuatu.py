@@ -1490,6 +1490,8 @@ class ShuatuMixin(ShuatuBaseMixin):
                         out = During.check()
                         if out is None:
                             continue
+                        if isinstance(out, During.KKRQianBao):
+                            out.set_and_ok()
                         if isinstance(out, During.LoveUpScene):
                             out.skip()
                         if isinstance(out, During.LevelUpBox):
@@ -1568,13 +1570,12 @@ class ShuatuMixin(ShuatuBaseMixin):
                             out = next.check()
                             if out is None:
                                 break
+                            if isinstance(out, next.KKRQianBao):
+                                out.set_and_ok()
                             if isinstance(out, next.XianDingShangDianBox):
                                 # 限定商店
                                 if xianding:
-                                    shop = out.Go()
-                                    shop.buy_all()
-                                    shop.back()
-                                    break
+                                    out.buy_all()
                                 else:
                                     out.Cancel()
                             if isinstance(out, next.TuanDuiZhanBox):

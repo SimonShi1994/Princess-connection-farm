@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Union
 
-from core.constant import FIGHT_BTN, MAOXIAN_BTN, MAIN_BTN
+from core.constant import FIGHT_BTN, MAOXIAN_BTN, MAIN_BTN, SHOP_BTN
 from core.pcr_checker import LockError
 from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
 
@@ -86,19 +86,35 @@ class XianDingShangDianBox(PCRMsgBoxBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "XianDingShangDianBox"
-        self.feature = self.fun_feature_exist(MAOXIAN_BTN["xianding"])
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["suoxumana"])
 
-    def Go(self) -> "XianDingShangDian":
-        from scenes.shop.xianding import XianDingShangDian
-        return self.goto(XianDingShangDian, self.fun_click(MAOXIAN_BTN["xianding"]))
+    def buy_all(self):
+        self.click(659, 122, post_delay=0.5)
+        self.click(858, 120, post_delay=0.5)
+        self.lock_img(SHOP_BTN["xianding_ok"], elseclick=(822, 469))
+        self.click_btn(SHOP_BTN["xianding_ok"])
+        self.fclick(1, 1, times=10, post_delay=1.0)
+        self.fclick(1, 1)
 
     def Cancel(self):
-        self.exit(self.fun_click(1, 1))  # OutSide
+        self.fclick(1, 1)
+
+
+class KKRQianBao(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "KKRQianBao"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["kkr_qianbao"])
+
+    def set_and_ok(self):
+        self.click(388, 302, post_delay=0.5)
+        self.click(475, 366)
 
 
 class AfterSaoDangScene(PossibleSceneList):
     def __init__(self, a):
         msgbox_list = [
+            KKRQianBao(a),
             ChaoChuShangXianBox(a),
             LevelUpBox(a),
             TuanDuiZhanBox(a),
@@ -108,6 +124,7 @@ class AfterSaoDangScene(PossibleSceneList):
         self.LevelUpBox = LevelUpBox
         self.TuanDuiZhanBox = TuanDuiZhanBox
         self.XianDingShangDianBox = XianDingShangDianBox
+        self.KKRQianBao = KKRQianBao
         super().__init__(a,msgbox_list)
 
     def exit_all(self,xianding=False):
@@ -122,10 +139,7 @@ class AfterSaoDangScene(PossibleSceneList):
             if isinstance(out, self.XianDingShangDianBox):
                 # 限定商店
                 if xianding:
-                    shop = out.Go()
-                    shop.buy_all()
-                    shop.back()
-                    break
+                    out.buy_all()
                 else:
                     out.Cancel()
             if isinstance(out, self.TuanDuiZhanBox):
@@ -135,6 +149,8 @@ class AfterSaoDangScene(PossibleSceneList):
                 self._a.start_shuatu()  # 体力又有了！
             if isinstance(out, self.ChaoChuShangXianBox):
                 out.OK()
+            if isinstance(out, self.KKRQianBao):
+                out.set_and_ok()
 
 
 class BuyTiliBox(PCRMsgBoxBase):
