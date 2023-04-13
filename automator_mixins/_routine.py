@@ -347,7 +347,9 @@ class RoutineMixin(ShuatuBaseMixin):
             self.log.write_log("info", "该时间段内已经买过经验了！")
             return
         self.lock_home()
-        self.lock_img(SHOP_BTN["tongchang"], elseclick=(616, 434), elsedelay=5)
+
+        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(616, 434), elsedelay=5)
+        self.lock_img(SHOP_BTN["tongchang"], elseclick=SHOP_BTN["tongchang"], elsedelay=1)
 
         if qianghuashi:
             self.click(700, 120, post_delay=0.5)
