@@ -711,19 +711,19 @@ VALID_TASK = ValidTask() \
                                               "则程序进入什么都不做的等待，否则跳过。", 300)]) \
     .add("h10", "tuanduizhan", "自动摸会战", "自动用完公会战次数",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="none",
-                   inputbox=team_order_inputer),
+                    inputbox=team_order_inputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
           TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍配合使用", 0),
           TaskParam("once", bool, "是否只打一次", "摸一下", True)]) \
-    .add("d1", "dixiacheng_ocr", "地下城(使用OCR)", "小号地下城借人换mana",
+    .add("d1", "dixiacheng_ocr", "地下城【无法使用，请使用d5】", "【无法使用，请使用d5】小号地下城借人换mana",
          [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个", 1),
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False),
           TaskParam("stuck_today", bool, "卡住地下城", "设置为True时，无论如何，进去地下城但是不打。\n设置为False时，为正常借人。", False),
           TaskParam("stuck_notzhandoukaishi", bool, "无法出击但不撤退", "设置为True时，如果发现无法出击，那就不撤退。\n设置为False时，则相反。", False), ]) \
-    .add("d2", "dixiacheng", "地下城", "【不推荐使用】小号地下城借人换mana",
+    .add("d2", "dixiacheng", "地下城【无法使用，请使用d5】", "【无法使用，请使用d5】小号地下城借人换mana",
          [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False)]) \
     .add("d5", "shuatuDD_OCR", "通关地下城OCR", "【适合大号，借人可能有BUG】通用的打通地下城函数",
-         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5,6"),
+         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5,6,7"),
           TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
                                        "mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss\n"
                                        "mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss\n"
@@ -879,9 +879,9 @@ VALID_TASK = ValidTask() \
     .add("s3", "shuatuHH", "刷H图【别用，除非OCR】", "使用扫荡券刷指定困难副本",
          [TaskParam("tu_dict", list, "刷图列表", "要刷的困难图", inputbox=ShuatuHHBox()),
           TaskParam("use_ocr", bool, "使用OCR", "是否使用OCR来优化刷图", False)]) \
-    .add("s5", "chushihua", "初始化【已经修复】", "从1-3自动推到3-1，已经推过的部分不会再推。") \
-    .add("s5-2", "chushihua2", "快速初始化【已经修复】", "从1-3自动推到3-1，已经推过的部分不会再推。\n"
-                                              "先刷经验后推图，效率更高，但是会刷很多次1-1.") \
+    .add("s5", "chushihua", "初始化【很可能无法使用】", "从1-3自动推到3-1，已经推过的部分不会再推。") \
+    .add("s5-2", "chushihua2", "快速初始化【很可能无法使用】", "从1-3自动推到3-1，已经推过的部分不会再推。\n"
+                                                 "先刷经验后推图，效率更高，但是会刷很多次1-1.") \
     .add("s6", "zidongtuitu_normal", "自动推Normal图【已经修复】", "使用等级前五的角色自动推Normal图\n"
                                                          "如果某一关没有三星过关，则强化重打。\n"
                                                          "若强化了还是打不过，则退出。\n"

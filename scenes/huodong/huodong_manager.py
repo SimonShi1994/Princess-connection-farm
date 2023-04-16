@@ -7,7 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
-        "20230418": Map20230418,
+        "20230416": Map20230416,
         "20230331": Map20230331,
         "20230316": Map20230316,
         "20230308": Map20230308,
@@ -61,7 +61,7 @@ N1： Normal图如果分段，第1段最后一图的图号
 '''
 
 
-class Map20230418(HuodongMapBase):
+class Map20230416(HuodongMapBase):
     NAME = "恩赐的财团与神圣学院的问题儿童复刻"
     XY11 = (123, 230)
     XY_VH_BOSS = (864, 288)
