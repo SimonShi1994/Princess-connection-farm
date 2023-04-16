@@ -193,6 +193,7 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
                      target_cishu: Union[int, str] = "max",
                      one_quan: int = 0,
                      additional_info=None,
+                     min_taofa=3,
                      ):
         """
         target_cishu: 目标次数， max则满。
@@ -215,7 +216,7 @@ class BOSS_FightInfoBase(PCRMsgBoxBase):
         screen = self.getscreen()
         exitflag = 0
         taofashu = self.get_taofashu(screen)
-        if taofashu < 3:
+        if taofashu < min_taofa:
             self.log.write_log("warning", "未打满三次，无法扫荡！")
             self.exit_me()
             return 3

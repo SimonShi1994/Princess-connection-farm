@@ -362,16 +362,17 @@ class HuodongMapBase(ZhuXianBase):
             # boss挑战券是否足够
             if fi.get_bsq_right(screen) == -1:
                 break
-            if fi.check_taofa(3 if boss_type == "N" else 1, screen=screen) and self.is_exists(HUODONG_BTN["minus_on"]):
+            min_taofa = 3 if boss_type == "N" else 1
+            if fi.check_taofa(min_taofa, screen=screen) and self.is_exists(HUODONG_BTN["minus_on"]):
                 # 检查是否打满3次，可以扫荡
                 one_quan = 30
                 if boss_type == "N" or boss_type == "n":
                     one_quan = 20
                 # 打几次
                 if once is False:
-                    fi.easy_saodang(target_cishu="max", one_quan=one_quan)
+                    fi.easy_saodang(target_cishu="max", one_quan=one_quan, min_taofa=min_taofa)
                 else:
-                    fi.easy_saodang(target_cishu="1", one_quan=one_quan)
+                    fi.easy_saodang(target_cishu="1", one_quan=one_quan, min_taofa=min_taofa)
                 act_menu.fclick(1, 1)
                 counter += 1
                 break
