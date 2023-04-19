@@ -14,6 +14,7 @@ from core.pcr_config import force_as_ocr_as_possible, debug
 from core.valid_task import ShuatuToTuple
 from scenes.fight.fightinfo_base import FightInfoBase
 from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian, FightInfoZhuXianNormal
+from scenes.fight.fighting_zhuxian import AfterFightingWin
 from scenes.huodong.huodong_base import HuodongMapBase, HuodongMenu, FightBianZuHuoDong
 from scenes.waizhuan.wz_base import WZ_MapBase, WZ_Menu
 
@@ -1482,6 +1483,38 @@ class ShuatuMixin(ShuatuBaseMixin):
                     F.set_speed(2, max_level=2, screen=self.last_screen)
                     state = {"flag": None}
                     last_time = time.time()
+
+                    def jiesuan(next: AfterFightingWin):
+                        while True:
+                            if time.time() - last_time > 120:
+                                raise LockTimeoutError("在结算页面超时！")
+                            out = next.check()
+                            if out is None:
+                                break
+                            if isinstance(out, next.KKRQianBao):
+                                out.set_and_ok()
+                            if isinstance(out, next.XianDingShangDianBox):
+                                # 限定商店
+                                if xianding:
+                                    out.buy_all()
+                                else:
+                                    out.Cancel()
+                            if isinstance(out, next.TuanDuiZhanBox):
+                                out.OK()
+                            if isinstance(out, next.LevelUpBox):
+                                out.OK()
+                                self.start_shuatu()  # 体力又有了！
+                            if isinstance(out, next.ChaoChuShangXianBox):
+                                out.OK()
+                            if isinstance(out, next.AfterFightKKR):
+                                out.skip()
+                                # 再次进图
+                                self.get_zhuye().goto_maoxian().goto_zhuxian()
+                                break
+                            if isinstance(out, next.FightingWinZhuXian2):
+                                # 外出后可能还有Box，需要小心谨慎
+                                out.next()
+
                     while True:
                         if time.time() - last_time > 300:
                             # TOO LONG
@@ -1519,6 +1552,8 @@ class ShuatuMixin(ShuatuBaseMixin):
                     if state["flag"] == "win" and state["star"] < 3 and win_without_threestar_is_lose:
                         self.log.write_log("info", f"没有三星通关（{state['star']}/3），算作失败！")
                         state["flag"] = "lose"
+                        next = state["next"]
+                        jiesuan(next)
                     if state["flag"] == "lose":
                         if lose_action == "exit":
                             self.log.write_log("info", f"战败于{m}{a}-{b}，结束刷图！")
@@ -1564,38 +1599,9 @@ class ShuatuMixin(ShuatuBaseMixin):
                         self.log.write_log("info", f"战胜了{m}{a}-{b} ({state['star']}/3)！")
                         last_time = time.time()
                         next = state["next"]
-                        while True:
-                            if time.time() - last_time > 120:
-                                raise LockTimeoutError("在结算页面超时！")
-                            out = next.check()
-                            if out is None:
-                                break
-                            if isinstance(out, next.KKRQianBao):
-                                out.set_and_ok()
-                            if isinstance(out, next.XianDingShangDianBox):
-                                # 限定商店
-                                if xianding:
-                                    out.buy_all()
-                                else:
-                                    out.Cancel()
-                            if isinstance(out, next.TuanDuiZhanBox):
-                                out.OK()
-                            if isinstance(out, next.LevelUpBox):
-                                out.OK()
-                                self.start_shuatu()  # 体力又有了！
-                            if isinstance(out, next.ChaoChuShangXianBox):
-                                out.OK()
-                            if isinstance(out, next.AfterFightKKR):
-                                out.skip()
-                                # 再次进图
-                                self.get_zhuye().goto_maoxian().goto_zhuxian()
-                                break
-                            if isinstance(out, next.FightingWinZhuXian2):
-                                # 外出后可能还有Box，需要小心谨慎
-                                out.next()
+                        jiesuan(next)
                         # 开init
                         S.set_initFC()
-
                         # 手刷结束
                         t -= 1
                     raise ContinueNow("DOIT")  # 把t次刷完

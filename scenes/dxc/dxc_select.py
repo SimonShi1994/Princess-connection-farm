@@ -72,7 +72,7 @@ class DXCSelectA(SevenBTNMixin):
                 if PS.can_skip():
                     if skip:
                         PS.skip()
-                        return "Skip"
+                        return "skip"
                     else:
                         PS = PS.tz()
                         continue

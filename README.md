@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230416
+# Princess connection 公主连结农场脚本v2.8.20230419
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -299,6 +299,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2023/04/19 By TheAutumnOfRice
+
+- BUG修复
+  - 修复了地下城跳过之后必定重启的问题
+  - 修复了开启debug状态下，emulator_port报错的问题
+  - 修复了未三星通关也算失败的情况下卡住的问题
 
 2023/04/16 By TheAutumnOfRice
 
