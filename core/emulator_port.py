@@ -293,7 +293,7 @@ def get_port(PID, re_rules=None):
                     stderr=subprocess.STDOUT,
                     encoding='utf-8').communicate()[0].split(' ')
             if debug:
-                _log.write_log("debug", "adb连接返回消息:"+adb_connect_info)
+                _log.write_log("debug", f"adb连接返回消息:{adb_connect_info}")
 
             error_str = ["failed", "10068", "cannot", "already"]
             for check_str in error_str:
