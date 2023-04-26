@@ -63,7 +63,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                         # 应急处理：从主页返回
                         self.lock_home()  # 回首页
                         self.click(480, 505, post_delay=1)
-                        self.lock_img('img/dixiacheng.jpg', elseclick=(480, 505), elsedelay=1, alldelay=1)
+                        self.lock_img("img/home/dxc.bmp" , elseclick=(480, 505), elsedelay=1, alldelay=1)
                         self.click(900, 138, post_delay=3)
                         self.lock_img(DXC_ELEMENT["chetui"])  # 锁定撤退
                 elif self.is_exists('img/dxc/chetui.bmp', at=(758, 410, 866, 454), is_black=True,
@@ -494,7 +494,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         time.sleep(1)
         while True:
             screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
+            if UIMatcher.img_where(screen_shot_, "img/home/dxc.bmp"):
                 break
             self.click(480, 505)
             time.sleep(1)
@@ -537,7 +537,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
         time.sleep(1)
         while True:
             screen_shot_ = self.getscreen()
-            if UIMatcher.img_where(screen_shot_, 'img/dixiacheng.jpg'):
+            if UIMatcher.img_where(screen_shot_, "img/home/dxc.bmp"):
                 break
             self.click(480, 505)
             time.sleep(1)

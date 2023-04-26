@@ -715,12 +715,12 @@ VALID_TASK = ValidTask() \
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
           TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍配合使用", 0),
           TaskParam("once", bool, "是否只打一次", "摸一下", True)]) \
-    .add("d1", "dixiacheng_ocr", "地下城【无法使用，请使用d5】", "【无法使用，请使用d5】小号地下城借人换mana",
+    .add("d1", "dixiacheng_ocr", "地下城OCR版本", "小号地下城借人换mana",
          [TaskParam("assist_num", int, "支援位置选择", "选支援第一行的第n个（1-8），等级限制会自动选择第n+1个", 1),
           TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False),
           TaskParam("stuck_today", bool, "卡住地下城", "设置为True时，无论如何，进去地下城但是不打。\n设置为False时，为正常借人。", False),
           TaskParam("stuck_notzhandoukaishi", bool, "无法出击但不撤退", "设置为True时，如果发现无法出击，那就不撤退。\n设置为False时，则相反。", False), ]) \
-    .add("d2", "dixiacheng", "地下城【无法使用，请使用d5】", "【无法使用，请使用d5】小号地下城借人换mana",
+    .add("d2", "dixiacheng", "地下城非OCR版本", "小号地下城借人换mana",
          [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False)]) \
     .add("d5", "shuatuDD_OCR", "通关地下城OCR", "【适合大号，借人可能有BUG】通用的打通地下城函数",
          [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5,6,7"),
