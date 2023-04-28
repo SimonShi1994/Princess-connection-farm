@@ -99,7 +99,7 @@ MAIN_BTN = {
     # 冒险按钮
     "maoxian": p(480, 515, img="img/home/maoxian.bmp", at=(421, 447, 535, 535)),
     # 地下城
-    "dxc": p(935, 77, img="img/home/dxc.bmp", at=(841, 94, 903, 126)),
+    "dxc": p(935, 77, img="img/home/dxc.bmp", at=(814, 68, 943, 201)),
     # 主线关卡
     "zhuxian": p(500, 90, img="img/home/zhuxian.bmp", at=(526, 117, 587, 186)),
     # 公会之家
@@ -773,6 +773,7 @@ DXC_ELEMENT = {
     # 由于识别率不佳，暂时不用
     # "right": p(14, 242, img="img/dxc/right.bmp", at=(10, 195, 56, 277)),
     # "left": p(945, 242, img="img/dxc/left.bmp", at=(898, 194, 949, 277)),
+    # "dxc_old_icon": p(img="img/dxc/dixiacheng.bmp", at=(150, 468, 22, 339)),
     "right": p(14, 242),
     "left": p(945, 242),
     "zyjsqr": p(img="img/dxc/zyjsqr.bmp", at=(412, 29, 549, 54)),

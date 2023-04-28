@@ -305,6 +305,11 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 - 坐标更新
   - 新增活动20230428
 
+2023/04/26 By CyiceK
+
+- BUG修复
+  - 修复了d1 d2卡冒险界面点击地下城的问题
+
 2023/04/19 By TheAutumnOfRice
 
 - BUG修复
