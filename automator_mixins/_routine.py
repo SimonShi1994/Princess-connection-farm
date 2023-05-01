@@ -167,6 +167,7 @@ class RoutineMixin(ShuatuBaseMixin):
                             self.restart_this_task()  # 一次性弹窗的终极解决方案
                             # self.register_precheck("skip_note", tiaoguo_tishi)
                     self.fclick(1, 1)
+                    time.sleep(2)
 
         fujiangshezhi()
         while True:
@@ -185,7 +186,7 @@ class RoutineMixin(ShuatuBaseMixin):
                 self.click_img(sc, img="img/ui/queren_blue.bmp", at=(485, 285, 691, 504))
                 self.lock_no_img(NIUDAN_BTN["putong_quxiao_new"], at=(265, 297, 475, 507))
                 self.lock_img(JIAYUAN_BTN["zhuye"], elseclick=[(900, 40)])
-                time.sleep(2)
+
                 if self.is_exists(img="img/ui/quxiao2.bmp", at=(300, 428, 439, 458)):
                     self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["chiyoushu"])
                     continue
