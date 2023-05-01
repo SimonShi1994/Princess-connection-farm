@@ -127,6 +127,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.register_precheck("skip_load", sheding_zairu)
         self.register_precheck("skip_note", tiaoguo_tishi)
         self.click_btn(MAIN_BTN["niudan"], until_appear=NIUDAN_BTN["gem"])
+        time.sleep(2)
 
         self.remove_precheck("skip_note")
 
