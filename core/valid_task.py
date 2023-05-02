@@ -789,6 +789,7 @@ VALID_TASK = ValidTask() \
                                        "mode 2: 刷次上关卡，若无法点进则刷最上关卡（适合小号日常探索）"),
           TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
                     inputbox=TeamOrderInputer),
+          TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           ]) \
     .add("r10", "shengjidiaocha", "圣迹调查", "进行圣迹调查",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",

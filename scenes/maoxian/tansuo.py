@@ -84,7 +84,7 @@ class TanSuoInfoBox(FightInfoBase):
         self.state = None
         self.NAME = ""
 
-    def shua(self, team_order):
+    def shua(self, team_order, zhiyuan_mode=0):
         screen = self.getscreen()
         stars = self.get_upperright_stars(screen)
         if stars == 3:
@@ -92,14 +92,14 @@ class TanSuoInfoBox(FightInfoBase):
             quan = self.get_saodangquan(screen)
             if quan == 0:
                 self.log.write_log("info", f"扫荡券不足，使用手动！")
-                return self.tiaozhan(team_order)
+                return self.tiaozhan(team_order, zhiyuan_mode)
             else:
                 return self.saodang_all()
         else:
             # 战斗
             self.log.write_log("info", "还未过关，进行战斗！")
-            return self.tiaozhan(team_order)
-
+            return self.tiaozhan(team_order, zhiyuan_mode)
+    
     def saodang_all(self):
         # self.set_saodang_to_max()  #
         # for _ in range(10):
@@ -112,9 +112,18 @@ class TanSuoInfoBox(FightInfoBase):
         self.state = True
         return PossibleTansuoScene(self._a)
 
-    def tiaozhan(self, team_order):
+    def tiaozhan(self, team_order, zhiyuan_mode=0):
         T = self.goto_tiaozhan()
-        T.select_team(team_order)
+        # T.select_team(team_order)
+        select_result = T.select_team_with_zhiyuan(team_order, zhiyuan_mode, 0)
+        if(select_result == "return"):
+            # 视为战败
+            self.state = False
+            # 点击返回取消编组
+            T.abadon_fight()
+            self.exit_me()
+            return PossibleTansuoScene(self._a)
+
         F = T.goto_fight()
         F.set_auto(1)
         F.set_speed(2, max_level=2)
@@ -137,6 +146,7 @@ class TanSuoInfoBox(FightInfoBase):
                 self.log.write_log("info", f"战败于：{self.NAME}！")
                 self.state = False
                 out.exit(self.fun_click(814, 493))
+                self.exit_me()
                 return PossibleTansuoScene(self._a)
 
 
