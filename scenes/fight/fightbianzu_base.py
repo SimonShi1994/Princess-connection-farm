@@ -1,6 +1,5 @@
 import time
 import os
-import cv2
 from core.constant import MAOXIAN_BTN, FIGHT_BTN, DXC_ELEMENT, HAOYOU_BTN, JUESE_BTN
 from scenes.scene_base import PCRMsgBoxBase
 import random
@@ -51,8 +50,7 @@ class FightBianZuBase(PCRMsgBoxBase):
         clicked = False
         for i in imgpath:
             at = (47, 116, 908, 363)
-            r_list = UIMatcher.img_where(screen, i, threshold=0.8, at=at,
-                                         method=cv2.TM_CCOEFF_NORMED, is_black=False, black_threshold=1500)
+            r_list = UIMatcher.img_where(screen, i, threshold=0.8, at=at)
             if r_list is not False:
                 if len(r_list) == 2:
                     x_arg = int(r_list[0])
@@ -319,6 +317,7 @@ class FightBianZuBase(PCRMsgBoxBase):
 
             if force_haoyou and not self.is_exists(HAOYOU_BTN["haoyou_sup"]):
                 out = 4
+                # TODO: 第一个不一定是好友
                 self.log.write_log("info", "没有好友了，不借了！")
             else:
                 now_count = self.get_fight_current_member_count()
@@ -343,6 +342,8 @@ class FightBianZuBase(PCRMsgBoxBase):
                     else:
                         self.click_juese_by_rc(2, c - 8)
                 time.sleep(0.5)
+                # 存在一些逻辑问题 by 0x114514BB
+                # 编组中有重复角色的情况下会导致借人失败
                 new_count = self._a.get_fight_current_member_count()
                 if new_count == now_count + 1:
                     self.log.write_log(level='info', message="借人成功！")
@@ -353,5 +354,82 @@ class FightBianZuBase(PCRMsgBoxBase):
         else:
             self.log.write_log(level='info', message="无支援人物!")
             out = 3
-        self.click_btn(DXC_ELEMENT["quanbu_white"], until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
+        self.click_btn(DXC_ELEMENT["quanbu_white"], 
+                       until_appear=DXC_ELEMENT["quanbu_blue"], elsedelay=0.1)
         return out
+
+    def abadon_fight(self):
+        '''
+        放弃战斗，返回上一级界面
+        '''
+        self.exit(self.fun_click(FIGHT_BTN["xuanguan_quxiao"]))
+
+    #    2023/5/1 by 0x114514BB 从_shuatu.py/shuatu_daily_ocr中抽取
+    #    目前为止zhiyuan_sort从未被手动指定过，忽略；if_full在fightinfo_base中有所使用
+    def select_team_with_zhiyuan(self, team_order='zhanli', zhiyuan_mode=0, if_full=0):
+        '''
+        :param team_order:
+            使用队伍 "A-B" 形式，表示编组A选择B。
+            若为 order指令：则按以下order排序后取前5.
+                - "zhanli" 按战力排序
+                - "dengji" 按等级排序
+                - "xingshu" 按星数排序
+                - ... 更多选项请参阅FightBianZuBase.select_team
+            若为"none"：不换人
+        :param zhiyuan_mode:
+            支援模式:
+                0  - 不使用支援
+                1  - 当有好友助战时使用好友支援+自己队伍，否则直接结束推图。
+                -1 - 当有好友助战时仅使用好友支援一人推图，否则直接结束推图。
+                2  - 当有好友助战时使用好友支援+自己队伍，否则不使用支援自己推图。
+                -2 - 当有好友助战时仅使用好友支援一人推图，否则不使用支援自己推图。
+                3  - 任意选择一个支援+自己队伍推图。
+                -3 - 任意选择一个支援仅支援一人推图。
+        :paran if_full:
+            人满时的下人选项:
+                -1  - 返回人满  
+                0   - 随机下一个人  
+                1~5 - 下第n个人
+        函数的返回值：
+            None - 成功编组
+            "return" - 结束刷图
+            ...待补充
+        '''
+        if zhiyuan_mode == 0:
+            self.select_team(team_order)  # 不使用支援
+        else:
+            # 先判断正负
+            if zhiyuan_mode < 0:
+                self.clear_team()
+            else:
+                self.select_team(team_order)
+            # 再判断好友
+            if abs(zhiyuan_mode) == 1:
+                # 仅使用好友支援。
+                has_haoyou = self.get_zhiyuan(force_haoyou=True, if_full=if_full)
+                if has_haoyou > 0:
+                    self.log.write_log("info", f"似乎没有好友能借 【CODE={has_haoyou}】，结束推图！")
+                    return "return"
+                else:
+                    self.log.write_log("info", "好友借人成功！")
+            elif abs(zhiyuan_mode) == 2:
+                # 好友支援，否则不支援
+                has_haoyou = self.get_zhiyuan(force_haoyou=True, if_full=if_full)
+                if has_haoyou > 0:
+                    self.log.write_log("info", f"似乎没有好友能借 【CODE={has_haoyou}】，该自己推图了！")
+                    if self.get_fight_current_member_count() < 5:
+                        self.select_team(team_order)  # 重选一次
+                else:
+                    self.log.write_log("info", "好友借人成功！")
+            elif abs(zhiyuan_mode) == 3:
+                # 任意支援
+                code = self.get_zhiyuan(if_full=if_full)
+                if code > 0:
+                    self.log.write_log("warning", f"借人出现奇怪的错误 【CODE={code}】，不知所措，自己推图！")
+                    if self.get_fight_current_member_count() < 5:
+                        self.select_team(team_order)  # 重选一次
+                else:
+                    self.log.write_log("info", "任意借人成功！")
+            else:
+                raise ValueError("zhiyuan_mode只能为-3~3！")
+        return None
