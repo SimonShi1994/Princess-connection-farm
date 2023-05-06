@@ -558,7 +558,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.AR.set("time_status", ts)
         self.lock_home()
 
-    def tansuo_new_ocr(self, mode=0, team_order="zhanli", var={}):
+    def tansuo_new_ocr(self, mode=0, team_order="zhanli", zhiyuan_mode=0, var={}):
         """
         :param mode:
         重写探索：刷/打最上可行的关卡
@@ -572,6 +572,9 @@ class RoutineMixin(ShuatuBaseMixin):
             - "dengji" 按等级排序
             - "xingshu" 按星数排序
         若为"none"：不换人
+        若为"nobody" -  不上任何人（只上支援，没支援就会出错
+         :param zhiyuan_mode:
+        支援模式，默认为0（不借人）
         """
         ts = self.AR.get("time_status", UDD["time_status"])
         if not diffday(time.time(), ts["tansuo"]):
@@ -594,7 +597,7 @@ class RoutineMixin(ShuatuBaseMixin):
                         self.log.write_log("warning", "无法进入探索，可能还未解锁！")
                         J.back()
                         return
-                    P = B.shua(team_order)
+                    P = B.shua(team_order, zhiyuan_mode)
                     while True:
                         out = P.check()
                         if isinstance(out, P.TanSuoMenu):
@@ -603,6 +606,7 @@ class RoutineMixin(ShuatuBaseMixin):
                         elif isinstance(out, P.TanSuoXuanGuanBase):
                             # 还可能没刷完
                             if B.state == False:  # 战败！
+                                J.back()
                                 return
                             break
                 else:

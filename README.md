@@ -300,6 +300,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2023/05/02 By 0x114514BB
+
+- 功能新增
+  - 现在OCR探索任务r9-ocr可以借支援了
+- 框架更新
+  - _shuatu中的借支援移动到FightBianzu_Base中
+
 2023/04/28 By TheAutumnOfRice
 
 - 坐标更新

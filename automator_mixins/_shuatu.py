@@ -1433,50 +1433,11 @@ class ShuatuMixin(ShuatuBaseMixin):
                     # 体力次数都够了，进入挑战
                     TZ = M.goto_tiaozhan()
                     # 设置支援
-                    if zhiyuan_mode == 0:
-                        TZ.select_team(team_order)  # 不使用支援
-                    elif abs(zhiyuan_mode) == 1:
-                        # 仅使用好友支援。
-                        if zhiyuan_mode < 0:
-                            TZ.clear_team()
-                        else:
-                            TZ.select_team(team_order)
-                        has_haoyou = TZ.get_zhiyuan(force_haoyou=True)
-                        if has_haoyou > 0:
-                            self.log.write_log("info", f"似乎没有好友能借 【CODE={has_haoyou}】，结束推图！")
-                            self.lock_home()
-                            return "return"
-                        else:
-                            self.log.write_log("info", "好友借人成功！")
-                    elif abs(zhiyuan_mode) == 2:
-                        # 好友支援，否则不支援
-                        if zhiyuan_mode < 0:
-                            TZ.clear_team()
-                        else:
-                            TZ.select_team(team_order)
-                        has_haoyou = TZ.get_zhiyuan(force_haoyou=True)
-                        if has_haoyou > 0:
-                            self.log.write_log("info", f"似乎没有好友能借 【CODE={has_haoyou}】，该自己推图了！")
-                            if TZ.get_fight_current_member_count() < 5:
-                                TZ.select_team(team_order)  # 重选一次
-                        else:
-                            self.log.write_log("info", "好友借人成功！")
-                    elif abs(zhiyuan_mode) == 3:
-                        # 任意支援
-                        if zhiyuan_mode < 0:
-                            TZ.clear_team()
-                        else:
-                            TZ.select_team(team_order)
-                        code = TZ.get_zhiyuan()
-                        if code > 0:
-                            self.log.write_log("warning", f"借人出现奇怪的错误 【CODE={code}】，不知所措，自己推图！")
-                            if TZ.get_fight_current_member_count() < 5:
-                                TZ.select_team(team_order)  # 重选一次
-                        else:
-                            self.log.write_log("info", "任意借人成功！")
-                    else:
-                        raise Exception("zhiyuan_mode只能为-3~3！")
-
+                    select_result = TZ.select_team_with_zhiyuan(team_order, zhiyuan_mode)
+                    if(select_result == 'return'):
+                        self.lock_home()
+                        return 'return'
+                    # 进入战斗
                     F = TZ.goto_fight()
                     During = F.get_during()
                     F.set_auto(1, screen=self.last_screen)
