@@ -275,6 +275,8 @@ WZ_BTN = {
     "boss_pass": p(701, 223, img="img/waizhuan/boss_pass.bmp", at=(694, 217, 709, 229)),
     "enter_wz": p(587, 476, img="img/waizhuan/enter_wz.bmp", at=(542, 460, 632, 493)),
     "speaker_box": p(188, 405, img="img/waizhuan/speaker_box.bmp", at=(182, 392, 195, 418)),
+    "shujuxiazai": p(479,146,img="img/waizhuan/shujuxiazai.bmp",at=(435,134,523,159)),
+    "shujuxiazai_ok": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
 }
 NIUDAN_BTN = {
     # 扭蛋的坐标会偏移！
@@ -511,7 +513,7 @@ ZHUCAIDAN_BTN = {
     "sale_short": p(846, 428, img="img/zhucaidan/sale_short.bmp", at=(820, 419, 871, 436)),
     "sale_long": p(771, 428, img="img/zhucaidan/sale_short.bmp", at=(745, 419, 796, 436)),
     "waizhuan": p(837, 269, img="img/zhucaidan/waizhuan.bmp", at=(812, 256, 862, 282)),
-
+    "wz_locked": p(736, 269, img="img/zhucaidan/wz_locked.bmp", at=(696, 237, 776, 301)),
 }
 FIGHT_BTN = {
     "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(892, 410, 930, 434)),

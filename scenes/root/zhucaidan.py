@@ -1,3 +1,4 @@
+from __future__ import annotations
 from scenes.waizhuan.wz_base import WZ_Gallery
 from typing import TYPE_CHECKING, Union
 
@@ -28,8 +29,12 @@ class ZhuCaiDan(SevenBTNMixin):
     def back_title(self) -> "BackTitle":
         return self.goto(BackTitle,self.fun_click(MAIN_BTN["huidaobiaotihuamian"]))
 
-    def goto_waizhuan(self) -> "WZ_Gallery":
-        return self.goto(WZ_Gallery,self.fun_click(ZHUCAIDAN_BTN["waizhuan"]))
+    def goto_waizhuan(self) -> Union[WZ_Gallery, ZhuCaiDan]:
+        if(self.is_exists(ZHUCAIDAN_BTN["wz_locked"])):
+           # 进不去，返回自己
+           return self
+        else:
+           return self.goto(WZ_Gallery,self.fun_click(ZHUCAIDAN_BTN["waizhuan"]))
 
 
 class BackTitle(PCRMsgBoxBase):

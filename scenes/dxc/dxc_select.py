@@ -46,7 +46,10 @@ class DXCSelectA(SevenBTNMixin):
         })
         return cishu
 
-    def enter_dxc(self, dxc_id, skip=False) -> Union["DXCSelectB", str]:
+    def enter_dxc(self, dxc_id, skip=False, skip_only=False) -> Union["DXCSelectB", str]:
+        '''
+        skip_only: mode 5使用，不能跳过就不进入
+        '''
         drag = DXC_ENTRANCE_DRAG[dxc_id]
 
         def do_fun():
@@ -76,6 +79,9 @@ class DXCSelectA(SevenBTNMixin):
                     else:
                         PS = PS.tz()
                         continue
+                elif skip_only:
+                    self.fclick(1,1)
+                    return "cannot_skip"
                 else:
                     PS = PS.ok()
                     continue

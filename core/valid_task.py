@@ -753,6 +753,8 @@ VALID_TASK = ValidTask() \
                                                  '        eg. 若用4队攒TP（连点12位，为了防止打太快设置2倍速），56队打BOSS（全程AUTO），则该参数可以设置为：\n'
                                                  '        B12Y,B12Y,B12Y,B12Y,AZ,AZ', default=""),
           ]) \
+    .add("d6", "dixiacheng_skip", "地下城跳过战斗", "一键刷地下城并跳过战斗（要求通关）", 
+         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5,6,7"),]) \
     .add("j1", "doJJC", "竞技场", "竞技场白给脚本") \
     .add("j2", "doPJJC", "公主竞技场", "公主竞技场白给脚本") \
     .add('r1', "gonghuizhijia", "家园领取", "收取公会之家的奖励",
