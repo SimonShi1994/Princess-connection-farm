@@ -17,6 +17,7 @@ from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian, FightInfoZhuXianNor
 from scenes.fight.fighting_zhuxian import AfterFightingWin
 from scenes.huodong.huodong_base import HuodongMapBase, HuodongMenu, FightBianZuHuoDong
 from scenes.waizhuan.wz_base import WZ_MapBase, WZ_Menu
+from scenes.scene_base import PCRSceneBase
 
 from ._shuatu_base import ShuatuBaseMixin
 
@@ -1884,7 +1885,18 @@ class ShuatuMixin(ShuatuBaseMixin):
 
     def tui_wz(self, code="01", team_order="none", if_full=2, get_zhiyuan=False):
         self.lock_home()
+        
+        def check_wz_menu(code):
+            sPossibleWZEnteringScene: PCRSceneBase = self.get_zhuye().goto_zhucaidan().goto_waizhuan()
+            if(sPossibleWZEnteringScene.scene_name != "WZ_Gallery"):
+                self.log.write_log("error", f"外传未解锁！请先通关主线3-2!")
+                # todo：外层return
+                self.lock_home()
+                return False
+            else:
+                return sPossibleWZEnteringScene.goto_wz_menu(code)
 
+        # 进图，前提：能进外传
         def tui_map(diff):
             Menu: WZ_Menu = self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_menu(code)
             # 获取初始坐标及常数
@@ -1949,10 +1961,19 @@ class ShuatuMixin(ShuatuBaseMixin):
                         max_tu = N1
                         fi = MAP.click_xy_and_open_fightinfo(*NXY1, typ=FightInfoBase)
                         a = fi.to_last_map(max_tu=max_tu)
+                    if(fi):
+                        a = fi.to_last_map(max_tu=max_tu)
+                    else:
+                        raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}"+
+                                            "的错误，可能坐标存在偏移！")
                 else:
                     # Hard难度
                     fi = MAP.click_xy_and_open_fightinfo(*HXY1, typ=FightInfoBase)
-                    a = fi.to_last_map(max_tu=5)
+                    if(fi):
+                        a = fi.to_last_map(max_tu=5)
+                    else:
+                        raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Hard图"+
+                                            "的错误，可能坐标存在偏移！")
 
                 if a == "finish" and fi.get_upperright_stars() == 3:
                     if diff == "N":
@@ -1980,24 +2001,16 @@ class ShuatuMixin(ShuatuBaseMixin):
                         break
 
                 else:
-                    if first_time:
-                        st = fi.easy_shoushua(team_order=team_order, one_tili=10, max_speed=2, get_zhiyuan=get_zhiyuan,
+                    st = fi.easy_shoushua(team_order=team_order, one_tili=10, max_speed=2, get_zhiyuan=get_zhiyuan,
                                               if_full=if_full)  # 打完默认回fi
-                        if st == 1:
-                            return
-                        if st == 3:
-                            self.stop_shuatu()
-                            return
+                    if st == 1 or st == 3:
+                        self.stop_shuatu()
+                        self.fclick(1, 1)
+                        WZ_MapBase(self).enter().goto_menu()
+                    if first_time:
                         first_time = False
                         continue
-                    else:
-                        st = fi.easy_shoushua(team_order="none", one_tili=10, max_speed=2, get_zhiyuan=get_zhiyuan,
-                                              if_full=if_full)
-                        if st == 1:
-                            return
-                        if st == 3:
-                            self.stop_shuatu()
-                            return
+
 
                     time.sleep(3)
                     self.fclick(1, 1)
@@ -2178,34 +2191,30 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.click(478, 468)  # 关闭
             time.sleep(1)
 
-        self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_menu(code)
+        if not check_wz_menu(code):
+            return 
+        
         self.fclick(1, 1)
         time.sleep(1)
         boss_count = self.img_where_all(img=WZ_BTN["boss_pass"].img, at=(673, 78, 806, 376), threshold=0.8)
         passes = len(boss_count) / 3
         self.log.write_log("info", f"已通关{passes}个boss")
-        if passes == 3:
-            pass
-        elif passes == 2:
-            tui_vhboss()
-        elif passes == 1:
-            tui_map("H")
-            time.sleep(5)
-            tui_hboss()
-            time.sleep(5)
-            tui_vhboss()
-            self.lock_home()
-        else:
+
+        if passes < 1:
             tui_map("N")
             time.sleep(5)
             tui_nboss()
             time.sleep(5)
+        if passes < 2:
             tui_map("H")
             time.sleep(5)
             tui_hboss()
             time.sleep(5)
+        if passes < 3:
             tui_vhboss()
-
+        else:
+            self.log.write_log("info", f"该外传已全部通关，前往领取任务奖励")
+        self.lock_home()
         self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_menu(code)
         get_liwu()
         self.lock_home()

@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230428
+# Princess connection 公主连结农场脚本v2.8.20230514
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -299,6 +299,18 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2023/05/14 By 0x114514BB
+
+- 功能新增
+  - d6，跳过地下城战斗，简化配置
+- BUG修复
+  - 修复了推外传卡数据下载的问题
+  - 修复了推外传任务的若干bug
+- 坐标更新
+  - 添加部分外传坐标
+- 杂项
+  - 略微完善了d5的提示
 
 2023/05/02 By 0x114514BB
 

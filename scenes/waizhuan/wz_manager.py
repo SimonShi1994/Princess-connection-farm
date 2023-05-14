@@ -22,6 +22,9 @@ def get_wz_by_code(code: str):
         "07": Map07,
         "09": Map09,
         "10": Map10,
+        "11": Map11,
+        "13": Map13,
+        "14": Map14
     }
 
     return WZ_CODE[code]
@@ -42,7 +45,7 @@ class Map02(WZ_Menu):
 class Map03(WZ_Menu):
     NAME = "吸血鬼猎人伊利亚"
     NXY1 = (171, 297)
-    HXY1 = (47, 266)
+    HXY1 = (122, 266)
 
 
 class Map04(WZ_Menu):
@@ -74,6 +77,14 @@ class Map07(WZ_Menu):
     NXY3 = (227, 246)
 
 
+# 有个抽象的过场剧情，暂时不好写
+# class Map08(WZ_Menu):
+#     NAME = "暮光破坏者"
+#     NXY1 = (136, 235)
+#     HXY1 = (138, 319)
+#     N_slice = 1
+
+
 class Map09(WZ_Menu):
     NAME = "忘却的圣歌"
     NXY1 = (281, 223)
@@ -84,5 +95,41 @@ class Map09(WZ_Menu):
 class Map10(WZ_Menu):
     NAME = "破晓之星大危机"
     NXY1 = (136, 235)
+    HXY1 = (138, 319)
+    N_slice = 1
+
+
+class Map11(WZ_Menu):
+    NAME = "情人节之战！ 正中红心的甜蜜战斗"
+    NXY1 = (63, 208)
+    NXY2 = (196, 377)
+    HXY1 = (90, 356)
+    N_slice = 2
+    N1 = 6
+
+
+# 有个抽象的解谜任务，暂时不好写
+# class Map12(WZ_Menu):
+#     NAME = "王都的名侦探 叹息的追缉者"
+#     NXY1 = (169, 386)
+#     HXY1 = (138, 319)
+#     MT1 = (394, 191)
+#     ans1 = (522, 280)
+#     N_slice = 1
+
+
+class Map13(WZ_Menu):
+    NAME = "盛开在阿斯特莱亚的双轮之花"
+    NXY1 = (113, 393)
+    NXY2 = (104, 387)
+    HXY1 = (73, 405)
+    N_slice = 1
+    N1 = 12
+
+
+class Map14(WZ_Menu):
+    NAME = "将军道中记 白翼的武士"
+    # 坐标有问题先别用
+    NXY1 = (177, 287)
     HXY1 = (138, 319)
     N_slice = 1

@@ -11,6 +11,7 @@ class WZ_Gallery(PCRSceneBase):
 
     def __init__(self, a):
         super().__init__(a)
+        self.scene_name = "WZ_Gallery"
         self.feature = self.fun_feature_exist(WZ_BTN["waizhuan_head"])
         self.initPC = self.clear_map
 
@@ -21,11 +22,12 @@ class WZ_Gallery(PCRSceneBase):
 
     def scroll_down(self):
         time.sleep(1)
-        obj = self.d.touch.down(702, 399)
+        obj = self.d.touch.down(934, 250)
         time.sleep(0.1)
-        obj.move(702, 232)
+        # 目前适配9+6 未来加page
+        obj.move(934, 390)
         time.sleep(0.8)
-        obj.up(702, 232)
+        obj.up(934, 390)
         time.sleep(1)
 
     def goto_wz_menu(self, code: str) -> "WZ_Menu":
@@ -47,7 +49,7 @@ class WZ_Gallery(PCRSceneBase):
         while True:
             if 9 < code_int:
                 self.scroll_down()
-                code_int = code_int - 3
+                code_int = code_int - 6
             else:
                 code = "0" + str(code_int)
                 break
@@ -59,7 +61,7 @@ class WZ_Gallery(PCRSceneBase):
                 WZ_BTN["saodang_btn"]: 2,  # 在map
                 WZ_BTN["enter_wz"]: 3,
                 JUQING_BTN["caidanyuan"]: 4,
-
+                WZ_BTN["shujuxiazai"]: 5,
             }, elseclick=(T[0], T[1]), timeout=20, is_raise=False, threshold=0.85)
 
             if out == 1:
@@ -73,6 +75,16 @@ class WZ_Gallery(PCRSceneBase):
             elif out == 4:
                 self._a.guojuqing(story_type="huodong")
                 self.fclick(1, 1)
+                continue
+            elif out == 5:
+                # 选择无语音选项
+                # 外传剧情下载弹两种框，一种和剧情框相同，一种只有确认取消
+                if self.is_exists(JUQING_BTN["wuyuyin"], at=(410, 277, 553, 452)):
+                    self.click_btn(JUQING_BTN["wuyuyin"])
+                    time.sleep(2)
+                else:                   
+                    self.click_btn(WZ_BTN["shujuxiazai_ok"])
+                    time.sleep(2)
                 continue
             else:
                 self.fclick(1, 1)
@@ -97,7 +109,8 @@ class WZ_Menu(PCRSceneBase):
         super().__init__(a)
         self.feature = self.fun_feature_exist(WZ_BTN["help"])
         self.initPC = self.clear_map
-
+        self.scene_name = "WZ_Menu"
+    
     def clear_map(self, screen):
         a = self.img_where_all(img="img/ui/quxiao2.bmp", screen=screen, at=(300, 270, 439, 450))
         # 信赖度解锁：如果是推图，则到地图页面跳出。如果是扫荡，则在结算页面跳出。
