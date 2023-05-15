@@ -659,9 +659,10 @@ def ZB_ST_LACK(args):
         4: '金',
         5: '紫',
         6: '红',
+        7: '绿',
     }
     min_rare = int(get_arg(args, "--min-rare", "0"))
-    max_rare = int(get_arg(args, "--max-rare", "6"))
+    max_rare = int(get_arg(args, "--max-rare", "7"))
     max_tu = get_arg(args, "--max-tu", None)
     if max_tu is not None:
         max_tu = int(max_tu)
@@ -696,7 +697,7 @@ def ZB_ST_ADVICE(args, verbose=True):
     if max_tu is not None:
         max_tu = int(max_tu)
     min_rare = int(get_arg(args, "--min-rare", "0"))
-    max_rare = int(get_arg(args, "--max-rare", "6"))
+    max_rare = int(get_arg(args, "--max-rare", "7"))
     num_w = float(get_arg(args, "--num-w", "0.1"))
     need_equip = {}
     js_need = {}

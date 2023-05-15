@@ -110,9 +110,9 @@ def run_adb(cmd: str, timeout=None, use_os_instead_of_subprocess=False):
     try:
         if sys.platform == "win32":
             if use_os_instead_of_subprocess:
-                os.system(f"{adb_dir}/adb {cmd}")
+                os.system(f"\"{adb_dir}\"/adb {cmd}")
             else:
-                subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
+                subprocess.check_output(f"\"{adb_dir}\"/adb {cmd}", timeout=timeout)
         else:
             if use_os_instead_of_subprocess:
                 os.system(f"adb {cmd}")
@@ -123,7 +123,7 @@ def run_adb(cmd: str, timeout=None, use_os_instead_of_subprocess=False):
         try:
             if sys.platform == "win32":
                 os.system("taskkill /im adb.exe /f")
-                subprocess.check_output(f"{adb_dir}/adb {cmd}", timeout=timeout)
+                subprocess.check_output(f"\"{adb_dir}\"/adb {cmd}", timeout=timeout)
             else:
                 os.system("pkill adb")
                 subprocess.check_output(f"adb {cmd}", timeout=timeout, shell=True)
