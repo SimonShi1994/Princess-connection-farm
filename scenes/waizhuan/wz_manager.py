@@ -24,7 +24,8 @@ def get_wz_by_code(code: str):
         "10": Map10,
         "11": Map11,
         "13": Map13,
-        "14": Map14
+        "14": Map14,
+        "15": Map15
     }
 
     return WZ_CODE[code]
@@ -129,7 +130,15 @@ class Map13(WZ_Menu):
 
 class Map14(WZ_Menu):
     NAME = "将军道中记 白翼的武士"
-    # 坐标有问题先别用
+    # H关坐标有问题先别用
     NXY1 = (177, 287)
+    HXY1 = (138, 319)
+    N_slice = 1
+
+
+class Map15(WZ_Menu):
+    NAME = "铃奈的 Rainbow Stage"
+    # H关坐标有问题先别用
+    NXY1 = (131, 409)
     HXY1 = (138, 319)
     N_slice = 1
