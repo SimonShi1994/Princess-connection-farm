@@ -196,7 +196,10 @@ class LoginMixin(ToolsMixin):
                 # 答题过的id为str，优先队列执行
                 if type(_id) is str and \
                         (self.d(text="Geetest").exists() or self.d(description="Geetest").exists()):
-                    self.d(text="提交").click()
+                    if self.d(text="提交").exists():
+                        self.d(text="提交").click()
+                    else:
+                        self.d(text="确认").click()
                     _id = -1
                     return -1  # 不清楚验证码是否验证成功，会导致toast无法执行
 
@@ -337,18 +340,22 @@ class LoginMixin(ToolsMixin):
                     # 这是关闭验证码 self.click(674, 74, post_delay=3)
                     # 结果出来为四个字的坐标
                     answer_result, _len, _id = cs.skip_caption(captcha_img=screen, question_type="X6004")
-                    for i in range(0, _len + 1):
+                    for i in range(0, _len):
                         x = int(answer_result[i].split(',')[0]) + 157
                         y = int(answer_result[i].split(',')[1]) + 1
-                        self.log.write_log('info', f">{self.account}-验证码第{i}坐标识别：{x},{y}")
-                        self.click(x, y)
+                        if not (94 < x < 371) and not (128 < y < 441):
+                            # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
+                            if debug:
+                                self.log.write_log('debug', ">[范围]刷新验证码")
+                            # 刷新验证码
+                            answer_result = [255, 439]
                         if answer_result == [255, 439]:
                             self.click(687, 72)
                             # self.d(text="登录").click(timeout=1)
                             self.log.write_log('info', "平台识别不出来，刷新")
-                        else:
-                            pass
-                            # time.sleep(captcha_sleep_times)
+
+                        self.log.write_log('info', f">{self.account}-验证码第{i}坐标识别：{x},{y}")
+                        self.click(x, y)
                     _time += 1
                     return True
 

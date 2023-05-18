@@ -179,14 +179,6 @@ class CaptionSkip:
                     # 464,364|551,376|506,271|390,233
                     answer_result = answer_result.text.split('|')
                     count_len = len(answer_result)
-                    if not (94 < int(answer_result[0]) < 371) and not (128 < int(answer_result[1]) < 441):
-                        # 左上 94,128 右下 371,441,对返回的结果的范围进行限制
-                        self.send_error(caption_id.text)
-                        if debug:
-                            self.log.write_log('debug', ">[范围]刷新验证码")
-                        # 刷新验证码
-                        answer_result = [255, 439]
-                        return answer_result, count_len, 0
                     return answer_result, count_len, caption_id.text
 
             elif answer_result.text == "#答案不确定" or answer_result.text in self.no_result or self._count_times >= 7:
