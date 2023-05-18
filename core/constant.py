@@ -58,7 +58,7 @@ START_UI = {
     "wenzidianji": p(img="img/ui/wenzidianji.bmp"),
     "yanzhengshibai": p(img="img/ui/yanzhengshibai.bmp"),
     "xieyihuakuai": p(img="img/ui/xieyi_slide.bmp", at=(708, 124, 825, 364)),
-    "gouxuan": p(344, 498, img="img/ui/gouxuan.bmp", at=(273, 407, 308, 440)),  # 同意协议勾选
+    "gouxuan": p(340, 430, img="img/ui/gouxuan.bmp", at=(273, 407, 308, 440)),  # 同意协议勾选
 }
 
 HAOYOU_BTN = {
@@ -99,7 +99,7 @@ MAIN_BTN = {
     # 冒险按钮
     "maoxian": p(480, 515, img="img/home/maoxian.bmp", at=(421, 447, 535, 535)),
     # 地下城
-    "dxc": p(935, 77, img="img/home/dxc.bmp", at=(841, 94, 903, 126)),
+    "dxc": p(935, 77, img="img/home/dxc.bmp", at=(814, 68, 943, 201)),
     # 主线关卡
     "zhuxian": p(500, 90, img="img/home/zhuxian.bmp", at=(526, 117, 587, 186)),
     # 公会之家
@@ -615,6 +615,7 @@ FIGHT_BTN = {
 
 SHOP_BTN = {
     "goumaibaoshi": p(462, 40, img="img/shop/goumaibaoshi.bmp", at=(420, 30, 504, 51)),
+    "tongchang": p(275, 67, img="img/shop/tongchang.bmp", at=(248, 55, 302, 80)),
     "mana_ball": p(img="img/shop/mana_ball.bmp", at=(744, 13, 762, 34)),
     "dxc_coin": p(img="img/shop/dxc_coin.bmp", at=(744, 14, 762, 33)),
     "jjc_coin": p(img="img/shop/jjc_coin.bmp", at=(744, 14, 763, 32)),
@@ -772,6 +773,7 @@ DXC_ELEMENT = {
     # 由于识别率不佳，暂时不用
     # "right": p(14, 242, img="img/dxc/right.bmp", at=(10, 195, 56, 277)),
     # "left": p(945, 242, img="img/dxc/left.bmp", at=(898, 194, 949, 277)),
+    # "dxc_old_icon": p(img="img/dxc/dixiacheng.bmp", at=(150, 468, 22, 339)),
     "right": p(14, 242),
     "left": p(945, 242),
     "zyjsqr": p(img="img/dxc/zyjsqr.bmp", at=(412, 29, 549, 54)),
@@ -792,7 +794,9 @@ DXC_ELEMENT = {
     "shouqubaochou_ok": p(480, 477, img="img/ui/queren.bmp", at=(450, 465, 509, 489)),
     "qianwangdixiacheng": p(805, 495),
     "qyxzqr": p(478, 88, img="img/dxc/qyxzqr.bmp", at=(411, 76, 546, 100)),
-    "quyuxuanzequeren_ok": p(586, 433, img="img/ui/queren_blue.bmp", at=(559, 418, 613, 447)),
+    "quyuxuanzequeren_skip": p(479, 433, img="img/dxc/qyxzqr_skip.bmp", at=(459, 422, 500, 445)),
+    "quyuxuanzequeren_tz": p(624, 432, img="img/dxc/qyxzqr_tz.bmp", at=(605, 421, 644, 444)),
+    "quyuxuanzequeren_ok": p(628, 436, img="img/ui/queren_blue.bmp", at=(559, 418, 613, 447)),
     "dxc_kkr": p(img="img/dxc/dxc_kkr.bmp", at=(442, 175, 527, 271)),
     # 判断是否在地下城商店内（用于新手教程）
     "dxc_in_shop": p(873, 437, img="img/dxc/dxc_in_shop.bmp", at=(810, 427, 933, 446)),
@@ -868,8 +872,9 @@ DXC_ENTRANCE = {
     2: p(366, 245, name="密林的大树"),
     3: p(600, 246, name="断崖的遗迹"),
     4: p(831, 246, name="沧海的孤塔"),
-    5: p(607, 241, name="EX 2"),
-    6: p(831, 235, name="EX 3"),
+    5: p(371, 246, name="EX 2"),
+    6: p(605, 236, name="EX 3"),
+    7: p(837, 231, name="EX 4"),
 }
 DXC_ENTRANCE_DRAG = {
     1: "left",
@@ -878,6 +883,7 @@ DXC_ENTRANCE_DRAG = {
     4: "left",
     5: "right",
     6: "right",
+    7: "right"
 }
 DXC_COORD = {
     # 每个地下城里面每一个关卡的位置
@@ -922,7 +928,14 @@ DXC_COORD = {
         3: p(224, 226),
         4: p(477, 204),
         5: p(715, 218),
-    }
+    },
+    7: {
+        1: p(611, 252),
+        2: p(334, 184),
+        3: p(152, 198),
+        4: p(597, 227),
+        5: p(781, 186),
+    },
 }
 
 HARD_COORD = {
@@ -1302,6 +1315,9 @@ MAOXIAN_BTN = {
 
     "no_tili_right": p(img="img/maoxian/no_tili_right.bmp", at=(711, 404, 734, 421)),  # 没有体力的红杠杠 --
     "notshow": p(461, 359, img="img/maoxian/notshow.bmp", at=(393, 345, 530, 374)),
+
+    "suoxumana": p(79, 458, img="img/maoxian/suoxumana.bmp", at=(40, 450, 118, 467)),
+    "kkr_qianbao": p(465, 258, img="img/maoxian/kkr_qianbao.bmp", at=(405, 248, 525, 269)),
 }
 
 ZHUXIAN_ID = {
@@ -1349,6 +1365,7 @@ ZHUXIAN_ID = {
     42: p(img="img/zhuxian/42L.bmp", at=(92, 59, 196, 75)),
     43: p(img="img/zhuxian/43L.bmp", at=(93, 59, 195, 74)),
     44: p(img="img/zhuxian/44L.bmp", at=(91, 60, 178, 73)),
+    45: p(img="img/zhuxian/45L.bmp", at=(91, 59, 178, 74)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1410,6 +1427,7 @@ ZHUXIAN_PKTSBF_ID = {
 }
 ZHUXIAN_SKMBM_ID = {
     44: p(img="img/zhuxian/44R.bmp", at=(200, 60, 232, 74)),
+    45: p(img="img/zhuxian/45R.bmp", at=(200, 60, 231, 73)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -1425,7 +1443,7 @@ ZHUXIAN_SECOND_ID = {
     (38, 39): ZHUXIAN_LTSDY_ID,
     (40, 41): ZHUXIAN_SKPSX_ID,
     (42, 43): ZHUXIAN_PKTSBF_ID,
-    (44,): ZHUXIAN_SKMBM_ID,
+    (44, 45): ZHUXIAN_SKMBM_ID,
 }
 
 NORMAL_COORD = {
@@ -1473,7 +1491,7 @@ NORMAL_COORD = {
             12: p(847, 214, name="3-12"),
             11: p(813, 328, name="3-11"),
             10: p(679, 388, name="3-10"),
-            9: p(684, 277, name="3-9"),
+            9: p(735, 260, name="3-9"),
             8: p(610, 189, name="3-8"),
             7: p(539, 293, name="3-7"),
             6: p(486, 402, name="3-6"),
@@ -1486,7 +1504,7 @@ NORMAL_COORD = {
     },
     4: {
         "right": {
-            13: p(667, 429, name="4-13"),
+            13: p(670, 360, name="4-13"),
             12: p(783, 334, name="4-12"),
             11: p(734, 224, name="4-11"),
             10: p(614, 249, name="4-10"),
@@ -1524,7 +1542,7 @@ NORMAL_COORD = {
     },
     6: {
         "right": {
-            14: p(674, 392, name="6-14"),
+            14: p(674, 362, name="6-14"),
             13: p(541, 373, name="6-13"),
             12: p(616, 241, name="6-12"),
             11: p(477, 224, name="6-11"),
@@ -1547,7 +1565,7 @@ NORMAL_COORD = {
             14: p(760, 240, name="7-14"),
             13: p(630, 257, name="7-13"),
             12: p(755, 350, name="7-12"),
-            11: p(664, 410, name="7-11"),
+            11: p(650, 360, name="7-11"),
             10: p(544, 400, name="7-10"),
             9: p(505, 300, name="7-9"),
             8: p(410, 240, name="7-8"),
@@ -1568,7 +1586,7 @@ NORMAL_COORD = {
             14: p(584, 260, name="8-14"),
             13: p(715, 319, name="8-13"),
             12: p(605, 398, name="8-12"),
-            11: p(478, 374, name="8-11"),
+            11: p(480, 345, name="8-11"),
             10: p(357, 405, name="8-10"),
             9: p(263, 324, name="8-9"),
             8: p(130, 352, name="8-8"),
@@ -1608,7 +1626,7 @@ NORMAL_COORD = {
         "right": {
             17: p(821, 299, name="10-17"),
             16: p(703, 328, name="10-16"),
-            15: p(608, 391, name="10-15"),
+            15: p(608, 361, name="10-15"),
             14: p(485, 373, name="10-14"),
             13: p(372, 281, name="10-13"),
             12: p(320, 421, name="10-12"),
@@ -1629,7 +1647,7 @@ NORMAL_COORD = {
     },
     11: {
         "right": {
-            17: p(663, 408, name="11-17"),
+            17: p(640, 360, name="11-17"),
             16: p(542, 338, name="11-16"),
             15: p(468, 429, name="11-15"),
             14: p(398, 312, name="11-14"),
@@ -1675,11 +1693,11 @@ NORMAL_COORD = {
     },
     13: {
         "right": {
-            17: p(749, 329),
-            16: p(585, 314),
-            15: p(659, 424),
-            14: p(499, 429),
-            13: p(443, 307),
+            17: p(711, 329),
+            16: p(570, 300),
+            15: p(540, 405),
+            14: p(420, 405),
+            13: p(405, 270),
             12: p(333, 385),
             11: p(202, 356),
         },
@@ -1699,8 +1717,8 @@ NORMAL_COORD = {
     14: {
         "right": {
             14: p(787, 239),
-            13: p(679, 300),
-            12: p(674, 411),
+            13: p(695, 260),
+            12: p(674, 350),
             11: p(543, 369),
             10: p(404, 388),
             9: p(457, 268),
@@ -1720,7 +1738,7 @@ NORMAL_COORD = {
         "right": {
             14: p(592, 253),
             13: p(745, 311),
-            12: p(648, 404),
+            12: p(648, 355),
             11: p(500, 405),
             10: p(348, 370),
             9: p(289, 249),
@@ -1741,7 +1759,7 @@ NORMAL_COORD = {
             14: p(802, 245),
             13: p(644, 237),
             12: p(723, 365),
-            11: p(574, 406),
+            11: p(574, 360),
             10: p(475, 282),
             9: p(353, 365),
 
@@ -1780,7 +1798,7 @@ NORMAL_COORD = {
     18: {
         "right": {
             14: p(798, 326),
-            13: p(662, 381),
+            13: p(662, 361),
             12: p(571, 291),
             11: p(481, 414),
             10: p(393, 320),
@@ -1800,8 +1818,8 @@ NORMAL_COORD = {
     19: {
         "right": {
             14: p(754, 237),
-            13: p(607, 252),
-            12: p(685, 383),
+            13: p(585, 252),
+            12: p(685, 355),
             11: p(526, 397),
             10: p(460, 282),
             9: p(322, 230),
@@ -1821,12 +1839,12 @@ NORMAL_COORD = {
         "right": {
             14: p(826, 246),
             13: p(747, 336),
-            12: p(611, 386),
-            11: p(572, 277),
+            12: p(611, 360),
+            11: p(572, 250),
             10: p(445, 319),
         },
         "left": {
-            9: p(733, 418),
+            9: p(714, 410),
             8: p(631, 377),
             7: p(642, 243),
             6: p(514, 272),
@@ -1841,8 +1859,8 @@ NORMAL_COORD = {
         "right": {
             14: p(779, 210),
             13: p(716, 340),
-            12: p(593, 259),
-            11: p(589, 399),
+            12: p(623, 239),
+            11: p(575, 355),
             10: p(433, 397),
             9: p(447, 254),
             8: p(294, 220),
@@ -1860,9 +1878,9 @@ NORMAL_COORD = {
     22: {
         "right": {
             14: p(742, 220),
-            13: p(607, 266),
+            13: p(607, 240),
             12: p(757, 344),
-            11: p(615, 398),
+            11: p(615, 368),
             10: p(467, 357),
             9: p(457, 209),
             8: p(298, 223),
@@ -1880,8 +1898,8 @@ NORMAL_COORD = {
     23: {
         "right": {
             14: p(779, 235),
-            13: p(637, 273),
-            12: p(702, 393),
+            13: p(637, 250),
+            12: p(710, 353),
             11: p(538, 375),
             10: p(470, 245),
 
@@ -1902,8 +1920,8 @@ NORMAL_COORD = {
         "right": {
             14: p(769, 238),
             13: p(710, 352),
-            12: p(585, 391),
-            11: p(491, 299),
+            12: p(585, 361),
+            11: p(485, 280),
             10: p(426, 401),
             9: p(300, 366),
             8: p(336, 236),
@@ -1921,8 +1939,8 @@ NORMAL_COORD = {
     25: {
         "right": {
             14: p(751, 328),
-            13: p(629, 263),
-            12: p(600, 401),
+            13: p(629, 243),
+            12: p(600, 360),
             11: p(441, 403),
             10: p(494, 274),
             9: p(347, 282),
