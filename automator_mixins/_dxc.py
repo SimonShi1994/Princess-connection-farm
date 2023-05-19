@@ -736,6 +736,7 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
             mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss
             mode 3：用队伍1只打第一小关，无论怎样都退出
             mode 4：（攒TP）用队伍[1,2,3,...,N-1]攒TP，N为总层数；用队伍[N,N+1,...]打Boss （不支持借人）
+            mode 5: 直接跳过战斗，不能跳过则放弃刷地下城
         :param stop_criteria: 终止条件
             设置为0时，只要战斗中出现人员伤亡，直接结束
             设置为1时，一直战斗到当前队伍无人幸存，才结束
@@ -804,9 +805,16 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
                 self.log.write_log("info", "地下城次数已经耗尽。")
                 self.lock_home()
                 return
-            S = S.enter_dxc(dxc_id, skip=(assist == 0))
+            if(mode == 5):
+                S = S.enter_dxc(dxc_id, skip=True, skip_only=True)
+            else:
+                S = S.enter_dxc(dxc_id, skip=(assist == 0))
             if S == "skip":
-                self.log.write_log("info", "已经跳过地下城！")
+                self.log.write_log("info", f"已经跳过地下城{dxc_id}！")
+                self.lock_home()
+                return
+            elif S == "cannot_skip":
+                self.log.write_log("info", f"无法跳过地下城{dxc_id}，放弃任务！")
                 self.lock_home()
                 return
 
@@ -986,3 +994,11 @@ class DXCMixin(DXCBaseMixin, ToolsMixin):
 
         # 打赢了
         self.lock_home()
+
+    def dixiacheng_skip(self, dxc_id):
+        """
+        2023-05-14 by 0x114514BB
+        只负责跳过地下城战斗
+        :param dxc_id: 地下城的ID
+        """
+        return self.shuatuDD_OCR(dxc_id, 5)

@@ -275,6 +275,8 @@ WZ_BTN = {
     "boss_pass": p(701, 223, img="img/waizhuan/boss_pass.bmp", at=(694, 217, 709, 229)),
     "enter_wz": p(587, 476, img="img/waizhuan/enter_wz.bmp", at=(542, 460, 632, 493)),
     "speaker_box": p(188, 405, img="img/waizhuan/speaker_box.bmp", at=(182, 392, 195, 418)),
+    "shujuxiazai": p(479,146,img="img/waizhuan/shujuxiazai.bmp",at=(435,134,523,159)),
+    "shujuxiazai_ok": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
 }
 NIUDAN_BTN = {
     # 扭蛋的坐标会偏移！
@@ -511,7 +513,7 @@ ZHUCAIDAN_BTN = {
     "sale_short": p(846, 428, img="img/zhucaidan/sale_short.bmp", at=(820, 419, 871, 436)),
     "sale_long": p(771, 428, img="img/zhucaidan/sale_short.bmp", at=(745, 419, 796, 436)),
     "waizhuan": p(837, 269, img="img/zhucaidan/waizhuan.bmp", at=(812, 256, 862, 282)),
-
+    "wz_locked": p(736, 269, img="img/zhucaidan/wz_locked.bmp", at=(696, 237, 776, 301)),
 }
 FIGHT_BTN = {
     "auto_on": p(914, 420, img="img/fight/auto_on.bmp", at=(892, 410, 930, 434)),
@@ -1366,6 +1368,7 @@ ZHUXIAN_ID = {
     43: p(img="img/zhuxian/43L.bmp", at=(93, 59, 195, 74)),
     44: p(img="img/zhuxian/44L.bmp", at=(91, 60, 178, 73)),
     45: p(img="img/zhuxian/45L.bmp", at=(91, 59, 178, 74)),
+    46: p(img="img/zhuxian/46L.bmp", at=(90, 59, 175, 73)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1429,6 +1432,9 @@ ZHUXIAN_SKMBM_ID = {
     44: p(img="img/zhuxian/44R.bmp", at=(200, 60, 232, 74)),
     45: p(img="img/zhuxian/45R.bmp", at=(200, 60, 231, 73)),
 }
+ZHUXIAN_LTLQS_ID = {
+    46: p(img="img/zhuxian/46R.bmp", at=(198, 61, 232, 74)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
@@ -1444,6 +1450,7 @@ ZHUXIAN_SECOND_ID = {
     (40, 41): ZHUXIAN_SKPSX_ID,
     (42, 43): ZHUXIAN_PKTSBF_ID,
     (44, 45): ZHUXIAN_SKMBM_ID,
+    (46,): ZHUXIAN_LTLQS_ID,
 }
 
 NORMAL_COORD = {
@@ -1837,23 +1844,23 @@ NORMAL_COORD = {
     },
     20: {
         "right": {
-            14: p(826, 246),
-            13: p(747, 336),
-            12: p(611, 386),
-            11: p(572, 277),
-            10: p(445, 319),
+            14: p(826, 245, name="20-14"),
+            13: p(747, 338, name="20-13"),
+            12: p(616, 363, name="20-12"),
+            11: p(561, 260, name="20-11"),
+            10: p(447, 316, name="20-10"),
+            9: p(405, 418, name="20-9"),
+            8: p(297, 375, name="20-8"),
         },
         "left": {
-            9: p(733, 418),
-            8: p(631, 377),
-            7: p(642, 243),
-            6: p(514, 272),
-            5: p(454, 375),
-            4: p(368, 305),
-            3: p(303, 205),
-            2: p(192, 266),
-            1: p(243, 379),
-        }
+            7: p(643, 245, name="20-7"),
+            6: p(510, 278, name="20-6"),
+            5: p(447, 388, name="20-5"),
+            4: p(364, 312, name="20-4"),
+            3: p(298, 203, name="20-3"),
+            2: p(197, 275, name="20-2"),
+            1: p(240, 375, name="20-1"),
+        },
     },
     21: {
         "right": {
@@ -2561,6 +2568,7 @@ RANKS_DICT = {
     18: p(img="img/ranks/18.bmp", at=(216, 114, 279, 133)),
     19: p(img="img/ranks/19.bmp", at=(213, 111, 281, 135)),
     20: p(img="img/ranks/20.bmp", at=(216, 115, 280, 131)),
+    21: p(img="img/ranks/21.bmp", at=(216, 114, 280, 133)),
 }
 USER_DEFAULT_DICT = {
     # 给self.AR.get用的初值dict
