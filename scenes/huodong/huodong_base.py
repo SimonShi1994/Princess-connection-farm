@@ -560,7 +560,7 @@ class HuodongMapBase(ZhuXianBase):
         MAP.go_left(N_slice - 1)
         MAP.to_leftdown()
         # 要打的本在第一段
-        if 1 < map_id <= N1:
+        if 1 <= map_id <= N1:
             fi = MAP.click_xy_and_open_fightinfo(*XY11, typ=FightInfoBase)
             next_time = map_id - 1
             for _ in range(next_time):
