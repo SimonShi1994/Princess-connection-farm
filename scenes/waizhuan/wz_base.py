@@ -18,6 +18,8 @@ class WZ_Gallery(PCRSceneBase):
     def clear_map(self, screen):
         if self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
             self.fclick(1, 1)
+        if self.is_exists(WZ_BTN["shadow_waizhuan"], screen=screen):
+            self.fclick(1, 1)
         return screen
 
     def scroll_down(self):

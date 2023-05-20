@@ -277,6 +277,7 @@ WZ_BTN = {
     "speaker_box": p(188, 405, img="img/waizhuan/speaker_box.bmp", at=(182, 392, 195, 418)),
     "shujuxiazai": p(479, 146, img="img/waizhuan/shujuxiazai.bmp", at=(435, 134, 523, 159)),
     "shujuxiazai_ok": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
+    "shadow_waizhuan": p(61, 33, img="img/waizhuan/shadow_waizhuan.bmp", at=(2, 6, 120, 61)),
 }
 NIUDAN_BTN = {
     # 扭蛋的坐标会偏移！
