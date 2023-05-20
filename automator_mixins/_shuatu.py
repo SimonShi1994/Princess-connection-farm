@@ -1951,21 +1951,29 @@ class ShuatuMixin(ShuatuBaseMixin):
                     if now is 2:
                         fi = MAP.click_xy_and_open_fightinfo(*NXY2, typ=FightInfoBase)
                         max_tu = N2 - N1
-                        a = fi.to_last_map(max_tu=max_tu)
+                        if (fi):
+                            a = fi.to_last_map(max_tu=max_tu)
+                        else:
+                            raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}" +
+                                               "的错误，可能坐标存在偏移！")
                     # 第二分片已完成，向右到第三分片
                     elif now is 3:
                         fi = MAP.click_xy_and_open_fightinfo(*NXY3, typ=FightInfoBase)
                         max_tu = N3 - N2
-                        a = fi.to_last_map(max_tu=max_tu)
+                        if (fi):
+                            a = fi.to_last_map(max_tu=max_tu)
+                        else:
+                            raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}" +
+                                               "的错误，可能坐标存在偏移！")
                     else:
                         max_tu = N1
                         fi = MAP.click_xy_and_open_fightinfo(*NXY1, typ=FightInfoBase)
-                        a = fi.to_last_map(max_tu=max_tu)
-                    if(fi):
-                        a = fi.to_last_map(max_tu=max_tu)
-                    else:
-                        raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}"+
-                                            "的错误，可能坐标存在偏移！")
+                        if (fi):
+                            a = fi.to_last_map(max_tu=max_tu)
+                        else:
+                            raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}" +
+                                               "的错误，可能坐标存在偏移！")
+
                 else:
                     # Hard难度
                     fi = MAP.click_xy_and_open_fightinfo(*HXY1, typ=FightInfoBase)

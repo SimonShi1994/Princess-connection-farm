@@ -25,7 +25,7 @@ def get_wz_by_code(code: str):
         "11": Map11,
         "13": Map13,
         "14": Map14,
-        "15": Map15
+        "15": Map15,
     }
 
     return WZ_CODE[code]
@@ -77,7 +77,6 @@ class Map07(WZ_Menu):
     NXY2 = (659, 285)
     NXY3 = (227, 246)
 
-
 # 有个抽象的过场剧情，暂时不好写
 # class Map08(WZ_Menu):
 #     NAME = "暮光破坏者"
@@ -106,8 +105,7 @@ class Map11(WZ_Menu):
     NXY2 = (196, 377)
     HXY1 = (90, 356)
     N_slice = 2
-    N1 = 6
-
+    N1 = 5
 
 # 有个抽象的解谜任务，暂时不好写
 # class Map12(WZ_Menu):
@@ -118,27 +116,23 @@ class Map11(WZ_Menu):
 #     ans1 = (522, 280)
 #     N_slice = 1
 
-
 class Map13(WZ_Menu):
     NAME = "盛开在阿斯特莱亚的双轮之花"
     NXY1 = (113, 393)
     NXY2 = (104, 387)
     HXY1 = (73, 405)
-    N_slice = 1
-    N1 = 12
-
+    N_slice = 2
+    N1 = 11
 
 class Map14(WZ_Menu):
     NAME = "将军道中记 白翼的武士"
-    # H关坐标有问题先别用
     NXY1 = (177, 287)
-    HXY1 = (138, 319)
+    HXY1 = (88, 371)
     N_slice = 1
 
 
 class Map15(WZ_Menu):
     NAME = "铃奈的 Rainbow Stage"
-    # H关坐标有问题先别用
     NXY1 = (131, 409)
-    HXY1 = (138, 319)
+    HXY1 = (91, 231)
     N_slice = 1

@@ -82,7 +82,7 @@ class WZ_Gallery(PCRSceneBase):
                 if self.is_exists(JUQING_BTN["wuyuyin"], at=(410, 277, 553, 452)):
                     self.click_btn(JUQING_BTN["wuyuyin"])
                     time.sleep(2)
-                else:                   
+                else:
                     self.click_btn(WZ_BTN["shujuxiazai_ok"])
                     time.sleep(2)
                 continue
@@ -110,7 +110,7 @@ class WZ_Menu(PCRSceneBase):
         self.feature = self.fun_feature_exist(WZ_BTN["help"])
         self.initPC = self.clear_map
         self.scene_name = "WZ_Menu"
-    
+
     def clear_map(self, screen):
         a = self.img_where_all(img="img/ui/quxiao2.bmp", screen=screen, at=(300, 270, 439, 450))
         # 信赖度解锁：如果是推图，则到地图页面跳出。如果是扫荡，则在结算页面跳出。
@@ -167,9 +167,10 @@ class WZ_Menu(PCRSceneBase):
 
     def goto_nboss(self, timeout=None) -> "BOSS_FightInfoBase":
         while True:
-            a1 = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(681, 130, 789, 302))
-            a2 = self.img_where_all(img=HUODONG_BTN["nboss_en"].img, at=(681, 130, 789, 302))
-            a = a1 + a2
+            a1 = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(682, 152, 826, 358))
+            a2 = self.img_where_all(img=HUODONG_BTN["nboss_cn"].img, at=(682, 152, 826, 358))
+            a3 = self.img_where_all(img=HUODONG_BTN["nboss_en"].img, at=(682, 152, 826, 358))
+            a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
                 obj = self.d.touch.down(923, 205)
@@ -186,9 +187,10 @@ class WZ_Menu(PCRSceneBase):
     def goto_hboss(self, timeout=None) -> "BOSS_FightInfoBase":
         time.sleep(2)
         while True:
-            a1 = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(681, 130, 789, 302))
-            a2 = self.img_where_all(img=HUODONG_BTN["hboss_en"].img, at=(681, 130, 789, 302))
-            a = a1 + a2
+            a1 = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(682, 152, 826, 358))
+            a2 = self.img_where_all(img=HUODONG_BTN["hboss_cn"].img, at=(682, 152, 826, 358))
+            a3 = self.img_where_all(img=HUODONG_BTN["hboss_en"].img, at=(682, 152, 826, 358))
+            a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
                 obj = self.d.touch.down(923, 205)
@@ -199,13 +201,15 @@ class WZ_Menu(PCRSceneBase):
                 time.sleep(0.5)
             else:
                 break
+
         return self.goto(BOSS_FightInfoBase, self.fun_click(a[0], a[1]), timeout=timeout)
 
     def goto_vhboss(self, timeout=None) -> "BOSS_FightInfoBase":
         while True:
-            a1 = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(681, 130, 789, 302))
-            a2 = self.img_where_all(img=HUODONG_BTN["vhboss_en"].img, at=(681, 130, 789, 302))
-            a = a1 + a2
+            a1 = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(682, 152, 826, 358))
+            a2 = self.img_where_all(img=HUODONG_BTN["vhboss_cn"].img, at=(682, 152, 826, 358))
+            a3 = self.img_where_all(img=HUODONG_BTN["vhboss_en"].img, at=(682, 152, 826, 358))
+            a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
                 obj = self.d.touch.down(923, 205)
