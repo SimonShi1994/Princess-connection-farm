@@ -85,6 +85,7 @@
 |captcha_wait_time|出现验证码后等待用户输入的时间|int||60|
 |clear_traces_and_cache|是否启用PCR干净模式|bool||False|
 |use_my_id|是否使用自己提供的身份证|bool|                             |True|
+|account_login_mode|账号登录模式|str|autofill: (默认值)自动填充账户密码登录<br>manual：手动切换账号登录|autofill|
 |auto_start_app|执行first/continue后是否自动打开app.py|bool||True|
 |inline_app|是否采用内部方式打开app（无窗口，无输出）|bool||True|
 |captcha_popup|出现验证码后是否弹出置顶提示框|bool||True|
