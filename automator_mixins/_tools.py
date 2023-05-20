@@ -182,14 +182,23 @@ class ToolsMixin(BaseMixin):
         time.sleep(0.5)
         self.click(709, 275)  # 关闭外传
         dragdown()
-        self.click(709, 204)  # 呼出队伍星级不同，不提示
+        self.click(481, 144)  # 保存外传数据，减少换号下载
         time.sleep(0.5)
-        self.click(709, 372)  # 更改选择框
+        self.click(707, 396)  # 呼出队伍星级不同，不提示
+        time.sleep(0.5)
+        dragdown()
+        self.click(709, 244)  # 更改选择框
+        dragdown()
+        self.click(709, 321)  # 好感度播放设定，关
+        time.sleep(0.5)
+        dragdown()
+        self.click(709, 129)  # 好感度确认， 关
+        self.click(484, 254)  # 商店默认跳普通
+        self.click(708, 383)  # 不播放团队战动画
         dragdown()
         dragdown()
-        self.click(709, 266)  # 好感度播放设定，关
-        time.sleep(0.5)
-        self.click(709, 396)  # 好感度确认， 关
+        time.sleep(1)
+        self.click(484, 399)
 
         # 战斗
         self.click(769, 87)  # 战斗tab
@@ -212,8 +221,8 @@ class ToolsMixin(BaseMixin):
         self.click(709, 376)  # 快速开始，提示关
         dragdown()
         time.sleep(0.5)
-        self.click(107, 246)  # 双场跳过
-        self.click(484, 410)  # UB快速
+        self.click(107, 167)  # 双场跳过
+        self.click(483, 355)  # UB快速
         time.sleep(0.5)
 
         self.click(479, 479)  # 关闭
