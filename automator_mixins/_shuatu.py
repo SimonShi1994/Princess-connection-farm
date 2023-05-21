@@ -2041,14 +2041,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         def tui_nboss():
             # 开始Nboss
-            Menu = WZ_Menu(self).enter()
-            while True:
-                lst = self.img_where_all(img=WZ_BTN["nboss"].img, at=(735, 139, 877, 364), threshold=0.95)
-                if len(lst) > 0:
-                    time.sleep(5)
-                    self.click(lst[0], lst[1])
-                    break
-                time.sleep(1)
+            Menu = WZ_Menu(self).enter().goto_nboss()
             fb: FightBianZuHuoDong = Menu.goto(FightBianZuHuoDong,
                                                Menu.fun_click(HUODONG_BTN["tiaozhan2_on"]))
             fb.select_team(team_order=team_order)
@@ -2088,14 +2081,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         def tui_hboss():
             # 开始hboss
-            Menu = WZ_Menu(self).enter()
-            while True:
-                lst = self.img_where_all(img=WZ_BTN["hboss"].img, at=(735, 139, 877, 364), threshold=0.95)
-                if len(lst) > 0:
-                    time.sleep(5)
-                    self.click(lst[0], lst[1])
-                    break
-                time.sleep(1)
+            Menu = WZ_Menu(self).enter().goto_hboss()
             fb: FightBianZuHuoDong = Menu.goto(FightBianZuHuoDong,
                                                Menu.fun_click(HUODONG_BTN["tiaozhan2_on"]))
             fb.select_team(team_order="1-1")
@@ -2135,14 +2121,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         def tui_vhboss():
             # 开始vhboss
-            Menu = HuodongMenu(self)
-            while True:
-                lst = self.img_where_all(img=WZ_BTN["vhboss"].img, at=(735, 139, 877, 364), threshold=0.95)
-                if len(lst) > 0:
-                    time.sleep(5)
-                    self.click(lst[0], lst[1])
-                    break
-                time.sleep(1)
+            Menu = HuodongMenu(self).goto_vhboss()
             fb: FightBianZuHuoDong = Menu.goto(FightBianZuHuoDong,
                                                Menu.fun_click(HUODONG_BTN["tiaozhan2_on"]))
             fb.select_team(team_order=team_order)
