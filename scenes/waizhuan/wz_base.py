@@ -34,6 +34,7 @@ class WZ_Gallery(PCRSceneBase):
 
     def goto_wz_menu(self, code: str) -> "WZ_Menu":
         from scenes.waizhuan.wz_manager import get_wz_by_code
+        self.clear_initFC()
         MAP = get_wz_by_code(code)
         BTN_DICT = {
             "01": (380, 155),

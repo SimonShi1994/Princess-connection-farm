@@ -34,7 +34,7 @@ class ZhuCaiDan(SevenBTNMixin):
            # 进不去，返回自己
            return self
         else:
-           return self.goto(WZ_Gallery,self.fun_click(ZHUCAIDAN_BTN["waizhuan"]))
+           return self.goto(WZ_Gallery, self.fun_click(ZHUCAIDAN_BTN["waizhuan"]))
 
 
 class BackTitle(PCRMsgBoxBase):

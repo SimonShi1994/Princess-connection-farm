@@ -1887,15 +1887,13 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
         
         def check_wz_menu(code):
-            sPossibleWZEnteringScene: PCRSceneBase = self.get_zhuye().goto_zhucaidan().goto_waizhuan()
-            if(sPossibleWZEnteringScene.scene_name != "WZ_Gallery"):
-                self.log.write_lo
-                g("error", f"外传未解锁！请先通关主线3-2!")
+            sPossibleWZEnteringScene = self.get_zhuye().goto_zhucaidan().goto_waizhuan()
+            if sPossibleWZEnteringScene.scene_name != "WZ_Gallery":
+                self.log.write_log("error", f"外传未解锁！请先通关主线3-2!")
                 # todo：外层return
                 self.lock_home()
                 return False
             else:
-                sPossibleWZEnteringScene._a.clear_all_prechecks()
                 return sPossibleWZEnteringScene.goto_wz_menu(code)
 
         # 进图，前提：能进外传
