@@ -1887,8 +1887,8 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
         
         def check_wz_menu(code):
-            sPossibleWZEnteringScene = self.get_zhuye().goto_zhucaidan().goto_waizhuan()
-            if sPossibleWZEnteringScene.scene_name != "WZ_Gallery":
+            sPossibleWZEnteringScene: PCRSceneBase = self.get_zhuye().goto_zhucaidan().goto_waizhuan()
+            if(sPossibleWZEnteringScene.scene_name != "WZ_Gallery"):
                 self.log.write_log("error", f"外传未解锁！请先通关主线3-2!")
                 # todo：外层return
                 self.lock_home()
@@ -1951,33 +1951,22 @@ class ShuatuMixin(ShuatuBaseMixin):
                     if now is 2:
                         fi = MAP.click_xy_and_open_fightinfo(*NXY2, typ=FightInfoBase)
                         max_tu = N2 - N1
-                        if (fi):
-                            a = fi.to_last_map(max_tu=max_tu)
-                        else:
-                            raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}" +
-                                               "的错误，可能坐标存在偏移！")
                     # 第二分片已完成，向右到第三分片
                     elif now is 3:
                         fi = MAP.click_xy_and_open_fightinfo(*NXY3, typ=FightInfoBase)
                         max_tu = N3 - N2
-                        if (fi):
-                            a = fi.to_last_map(max_tu=max_tu)
-                        else:
-                            raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}" +
-                                               "的错误，可能坐标存在偏移！")
                     else:
                         max_tu = N1
                         fi = MAP.click_xy_and_open_fightinfo(*NXY1, typ=FightInfoBase)
-                        if (fi):
-                            a = fi.to_last_map(max_tu=max_tu)
-                        else:
-                            raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}" +
-                                               "的错误，可能坐标存在偏移！")
-
+                    if fi:
+                        a = fi.to_last_map(max_tu=max_tu)
+                    else:
+                        raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}"+
+                                            "的错误，可能坐标存在偏移！")
                 else:
                     # Hard难度
                     fi = MAP.click_xy_and_open_fightinfo(*HXY1, typ=FightInfoBase)
-                    if(fi):
+                    if fi:
                         a = fi.to_last_map(max_tu=5)
                     else:
                         raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Hard图"+
@@ -2052,7 +2041,14 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         def tui_nboss():
             # 开始Nboss
-            Menu = WZ_Menu(self).enter().goto_nboss()
+            Menu = WZ_Menu(self).enter()
+            while True:
+                lst = self.img_where_all(img=WZ_BTN["nboss"].img, at=(735, 139, 877, 364), threshold=0.95)
+                if len(lst) > 0:
+                    time.sleep(5)
+                    self.click(lst[0], lst[1])
+                    break
+                time.sleep(1)
             fb: FightBianZuHuoDong = Menu.goto(FightBianZuHuoDong,
                                                Menu.fun_click(HUODONG_BTN["tiaozhan2_on"]))
             fb.select_team(team_order=team_order)
@@ -2092,7 +2088,14 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         def tui_hboss():
             # 开始hboss
-            Menu = WZ_Menu(self).enter().goto_hboss()
+            Menu = WZ_Menu(self).enter()
+            while True:
+                lst = self.img_where_all(img=WZ_BTN["hboss"].img, at=(735, 139, 877, 364), threshold=0.95)
+                if len(lst) > 0:
+                    time.sleep(5)
+                    self.click(lst[0], lst[1])
+                    break
+                time.sleep(1)
             fb: FightBianZuHuoDong = Menu.goto(FightBianZuHuoDong,
                                                Menu.fun_click(HUODONG_BTN["tiaozhan2_on"]))
             fb.select_team(team_order="1-1")
@@ -2132,7 +2135,14 @@ class ShuatuMixin(ShuatuBaseMixin):
 
         def tui_vhboss():
             # 开始vhboss
-            Menu = WZ_Menu(self).enter().goto_vhboss()
+            Menu = HuodongMenu(self)
+            while True:
+                lst = self.img_where_all(img=WZ_BTN["vhboss"].img, at=(735, 139, 877, 364), threshold=0.95)
+                if len(lst) > 0:
+                    time.sleep(5)
+                    self.click(lst[0], lst[1])
+                    break
+                time.sleep(1)
             fb: FightBianZuHuoDong = Menu.goto(FightBianZuHuoDong,
                                                Menu.fun_click(HUODONG_BTN["tiaozhan2_on"]))
             fb.select_team(team_order=team_order)

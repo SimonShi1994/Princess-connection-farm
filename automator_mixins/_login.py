@@ -5,7 +5,7 @@ from id_validator import validator
 
 from core.constant import MAIN_BTN, ZHUCAIDAN_BTN, START_UI
 from core.pcr_config import debug, captcha_wait_time, captcha_popup, captcha_skip, captcha_senderror, \
-    captcha_senderror_times, use_my_id, captcha_sleep_times
+    captcha_senderror_times, use_my_id, account_login_mode
 from core.safe_u2 import timeout
 from core.tkutils import TimeoutMsgBox
 from core.usercentre import AutomatorRecorder
@@ -52,6 +52,20 @@ class LoginMixin(ToolsMixin):
                 self.appRunning = False
                 continue
 
+    @DEBUG_RECORD
+    def do_manual_login(self, ac):
+        """
+        :param ac: 游戏账户名称
+        :return:
+        
+        
+        打开切换账号界面后，弹框手动登录，到达游戏主页后方可点击弹框的确认。
+        """
+        self.log.write_log('warning', f"正在手动登录{ac}，请确认到达游戏主页后方可点击弹窗的确认按钮，否则可能出现意外错误！")
+        TimeoutMsgBox("手动登录", f"请手动登录{self.address}\n账号：{ac}", geo="200x80",
+                                      join=True)
+        self.log.write_log('info', f"你已确认登录{ac}！")
+        
     @DEBUG_RECORD
     def do_login(self, ac, pwd):  # 执行登陆逻辑
         """
@@ -503,53 +517,94 @@ class LoginMixin(ToolsMixin):
 
                 # if self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").exists():
                 #     self.d(resourceId="com.bilibili.priconne:id/unitySurfaceView").click()
-
-                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_other").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_other").click()
-                    time.sleep(2)
-                    continue
-                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
-                    time.sleep(2)
-                    continue
-                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").click()
-                    time.sleep(2)
-                    continue
-                if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
-                    if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
-                        if not self.is_exists(START_UI["gouxuan"]):
-                            self.lock_img(START_UI["gouxuan"], elseclick=(293, 424), elsedelay=1, retry=2)
-                    self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
-                    time.sleep(2)
-                    continue
-                if self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
-                    self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
-                    break
-                if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
-                    self.click(687, 72)
-                    # 防止卡验证码
-                    continue
-                if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
-                    if debug:
-                        self.log.write_log('debug', "发现协议")
-                    try:
-                        r = self.img_where_all(START_UI["xieyihuakuai"], threshold=0.99)
-                        self.d.touch.down(r[0], r[1]).sleep(1).up(r[0], r[1])
-                    except:
-                        # 退化成老办法
-                        self.d.touch.down(808, 324).sleep(1).up(808, 324)
-                        self.d.touch.down(808, 353).sleep(1).up(808, 353)
-                    if self.d(text="请滑动阅读协议内容").exists():
-                        self.d(text="同意").click()
-                    if self.d(description="请滑动阅读协议内容").exists():
-                        # 雷电三
-                        self.d(description="同意").click()
-                    # time.sleep(6)
+                if account_login_mode == "manual":
+                    # 顶栏"切换账号"按钮
+                    if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
+                        self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
+                        time.sleep(2)
+                        continue
+                    # "切换账号"界面的"登录"按钮, 检测到这个就退出
+                    if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login").exists():
+                        break
+                    if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
+                        self.click(687, 72)
+                        # 防止卡验证码
+                        continue
+                    if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                        if debug:
+                            self.log.write_log('debug', "发现协议")
+                        try:
+                            r = self.img_where_all(START_UI["xieyihuakuai"], threshold=0.99)
+                            self.d.touch.down(r[0], r[1]).sleep(1).up(r[0], r[1])
+                        except:
+                            # 退化成老办法
+                            self.d.touch.down(808, 324).sleep(1).up(808, 324)
+                            self.d.touch.down(808, 353).sleep(1).up(808, 353)
+                        if self.d(text="请滑动阅读协议内容").exists():
+                            self.d(text="同意").click()
+                        if self.d(description="请滑动阅读协议内容").exists():
+                            # 雷电三
+                            self.d(description="同意").click()
+                        # time.sleep(6)
+                    else:
+                        self.click(560, 430)  # 原本是945 13
+                        self.click(678, 377)  # 下载
+                    
                 else:
-                    self.click(560, 430)  # 原本是945 13
-                    self.click(678, 377)  # 下载
-            return self.do_login(ac, pwd)
+                    if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_other").exists():
+                        self.d(resourceId="com.bilibili.priconne:id/tv_gsc_other").click()
+                        time.sleep(2)
+                        continue
+                    # 顶栏"切换账号"按钮
+                    if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").exists():
+                        self.d(resourceId="com.bilibili.priconne:id/tv_gsc_wel_change").click()
+                        time.sleep(2)
+                        continue
+                    # "切换账号"界面的"登录"按钮
+                    if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").exists():
+                        self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").click()
+                        time.sleep(2)
+                        continue
+                    # "切换账号"界面的"登录"按钮
+                    if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
+                        if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
+                            if not self.is_exists(START_UI["gouxuan"]):
+                                self.lock_img(START_UI["gouxuan"], elseclick=(293, 424), elsedelay=1, retry=2)
+                        self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
+                        time.sleep(2)
+                        continue
+                    if self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
+                        self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
+                        break
+                    if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
+                        self.click(687, 72)
+                        # 防止卡验证码
+                        continue
+                    if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                        if debug:
+                            self.log.write_log('debug', "发现协议")
+                        try:
+                            r = self.img_where_all(START_UI["xieyihuakuai"], threshold=0.99)
+                            self.d.touch.down(r[0], r[1]).sleep(1).up(r[0], r[1])
+                        except:
+                            # 退化成老办法
+                            self.d.touch.down(808, 324).sleep(1).up(808, 324)
+                            self.d.touch.down(808, 353).sleep(1).up(808, 353)
+                        if self.d(text="请滑动阅读协议内容").exists():
+                            self.d(text="同意").click()
+                        if self.d(description="请滑动阅读协议内容").exists():
+                            # 雷电三
+                            self.d(description="同意").click()
+                        # time.sleep(6)
+                    else:
+                        self.click(560, 430)  # 原本是945 13
+                        self.click(678, 377)  # 下载
+            if account_login_mode == "manual":
+                return self.do_manual_login(ac)
+            else:
+                return self.do_login(ac, pwd)
+                
+                
         except Exception as e:
             # if error_flag:
             #     raise e

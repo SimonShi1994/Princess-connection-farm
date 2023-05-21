@@ -300,9 +300,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2023/05/19 By UVJkiNTQ, 0x114514BB
+2023/05/20 By 0x114514BB
 - BUG修复
-  - 修复外传BUG
+  - 修复Bind不存在的schedule导致脚本无法启动的问题
+  - 修复外传13-15坐标错误
+  - 修复推外传图逻辑错误
+- 功能新增
+  - 手动切换账户模式：鉴于近期登录风控频繁出现，添加手动切换账户模式，详见`automator_mixin/_login.py`的`do_manual_login`说明。
 
 2023/05/19 By UVJkiNTQ
 - 惯例更新
@@ -1450,7 +1454,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 2021/1/23 By:TheAutumnOfRice
 
-- pcr_config结构变动：现在允许动态增删改查以及自动补全缺失了
+- 结构变动：现在允许动态增删改查以及自动补全缺失了
 - 增加app的内部模式`inline_app`，优化app启动体验，防止app过量启动
 - batch支持随机优先级了（见edit-batch-random）
 - 修复了开关相关的BUG
