@@ -40,7 +40,7 @@ PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
 
-script_version = "Ver 2.8.20230519"
+script_version = "Ver 2.8.20230520"
 
 
 
@@ -79,11 +79,16 @@ def BindSchedule(schedule):
     global SCH, PCR, last_schedule
     if SCH is not None:
         raise Exception("无法绑定Schedule：请先结束之前的Schedule！")
-    if schedule != "":
-        last_schedule = schedule
-    with open("bind_schedule.txt", "w", encoding="utf-8") as f:
-        f.write(schedule)
-    print("Schedule绑定成功：", schedule)
+    try:
+        Schedule(schedule, None)
+    except Exception as e:
+        eprint(f"* 绑定Schedule[{schedule}]出现错误: {e}")
+    else:
+        if schedule != "":
+            last_schedule = schedule
+        with open("bind_schedule.txt", "w", encoding="utf-8") as f:
+            f.write(schedule)
+        print("Schedule绑定成功：", schedule)
 
 
 def RunningInput():
@@ -418,6 +423,7 @@ def ShowPCRPerformance():
           RTrue("已开启") if enable_zhuangbei_fuzzy_search else RFalse("未开启"))
     if enable_zhuangbei_fuzzy_search:
         print("  - 模糊搜索阈值 zhuangbei_fuzzy_search_cutoff：", zhuangbei_fuzzy_search_cutoff)
+    print("* 账号登录模式 account_login_mode：", account_login_mode)
 
 
 def ShowTaskInfo():

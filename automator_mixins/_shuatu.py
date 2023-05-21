@@ -1951,17 +1951,14 @@ class ShuatuMixin(ShuatuBaseMixin):
                     if now is 2:
                         fi = MAP.click_xy_and_open_fightinfo(*NXY2, typ=FightInfoBase)
                         max_tu = N2 - N1
-                        a = fi.to_last_map(max_tu=max_tu)
                     # 第二分片已完成，向右到第三分片
                     elif now is 3:
                         fi = MAP.click_xy_and_open_fightinfo(*NXY3, typ=FightInfoBase)
                         max_tu = N3 - N2
-                        a = fi.to_last_map(max_tu=max_tu)
                     else:
                         max_tu = N1
                         fi = MAP.click_xy_and_open_fightinfo(*NXY1, typ=FightInfoBase)
-                        a = fi.to_last_map(max_tu=max_tu)
-                    if(fi):
+                    if fi:
                         a = fi.to_last_map(max_tu=max_tu)
                     else:
                         raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}"+
@@ -1969,7 +1966,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                 else:
                     # Hard难度
                     fi = MAP.click_xy_and_open_fightinfo(*HXY1, typ=FightInfoBase)
-                    if(fi):
+                    if fi:
                         a = fi.to_last_map(max_tu=5)
                     else:
                         raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Hard图"+

@@ -402,7 +402,7 @@ if __name__ == "__main__":
                 print("show [file]: 打开文件file并显示，默认test.bmp")
                 print("prob [screen] [template]: 检验template在screen中的最大匹配度(0~1)，默认template为test.bmp")
                 print("equal file1 file2: 检查两个图片的相似度")
-                print("where [screen] [template] threshold：以threshold(默认0.9)为阈值，求template在screen中的位置（中点和x1,y1,x2,y2）")
+                print("where screen template [threshold]：以threshold(默认0.9)为阈值，求template在screen中的位置（中点和x1,y1,x2,y2）")
                 print("login account [password]  在开始界面进行登录，如果不输入password，则默认使用users中储存的密码")
                 print("input string 清空当前输入并且输入string")
                 print("initpcrocr： 初始化PCROCR")
@@ -456,6 +456,8 @@ if __name__ == "__main__":
             elif order == "where":
                 if len(cmds) == 4:
                     a.Where(cmds[1], cmds[2], cmds[3])
+                elif len(cmds) == 3:
+                    a.Where(cmds[1], cmds[2], 0.9)
                 else:
                     print("Wrong Order!")
             elif order == "login":

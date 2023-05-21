@@ -108,7 +108,6 @@ class Map11(WZ_Menu):
     N_slice = 2
     N1 = 6
 
-
 # 有个抽象的解谜任务，暂时不好写
 # class Map12(WZ_Menu):
 #     NAME = "王都的名侦探 叹息的追缉者"
@@ -118,27 +117,23 @@ class Map11(WZ_Menu):
 #     ans1 = (522, 280)
 #     N_slice = 1
 
-
 class Map13(WZ_Menu):
     NAME = "盛开在阿斯特莱亚的双轮之花"
     NXY1 = (113, 393)
     NXY2 = (104, 387)
     HXY1 = (73, 405)
-    N_slice = 1
+    N_slice = 2
     N1 = 12
-
 
 class Map14(WZ_Menu):
     NAME = "将军道中记 白翼的武士"
-    # H关坐标有问题先别用
     NXY1 = (177, 287)
-    HXY1 = (138, 319)
+    HXY1 = (88, 371)
     N_slice = 1
 
 
 class Map15(WZ_Menu):
     NAME = "铃奈的 Rainbow Stage"
-    # H关坐标有问题先别用
     NXY1 = (131, 409)
-    HXY1 = (138, 319)
+    HXY1 = (91, 231)
     N_slice = 1
