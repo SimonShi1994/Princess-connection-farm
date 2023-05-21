@@ -269,14 +269,12 @@ WZ_BTN = {
     "waizhuan_head": p(88, 26, img="img/waizhuan/waizhuan_head.bmp", at=(60, 8, 116, 45)),
     "wanfa": p(857, 26, img="img/waizhuan/wanfa.bmp", at=(849, 14, 865, 39)),
     "saodang_btn": p(917, 134, img="img/waizhuan/saodang.bmp", at=(903, 121, 932, 147)),
-    "nboss": p(794, 171, img="img/waizhuan/nboss.bmp", at=(766, 156, 823, 186)),
-    "hboss": p(799, 243, img="img/waizhuan/hboss.bmp", at=(764, 229, 834, 257)),
-    "vhboss": p(789, 315, img="img/waizhuan/vhboss.bmp", at=(764, 302, 814, 329)),
     "boss_pass": p(701, 223, img="img/waizhuan/boss_pass.bmp", at=(694, 217, 709, 229)),
     "enter_wz": p(587, 476, img="img/waizhuan/enter_wz.bmp", at=(542, 460, 632, 493)),
     "speaker_box": p(188, 405, img="img/waizhuan/speaker_box.bmp", at=(182, 392, 195, 418)),
-    "shujuxiazai": p(479,146,img="img/waizhuan/shujuxiazai.bmp",at=(435,134,523,159)),
+    "shujuxiazai": p(479, 146, img="img/waizhuan/shujuxiazai.bmp", at=(435, 134, 523, 159)),
     "shujuxiazai_ok": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
+    "shadow_waizhuan": p(61, 33, img="img/waizhuan/shadow_waizhuan.bmp", at=(2, 6, 120, 61)),
 }
 NIUDAN_BTN = {
     # 扭蛋的坐标会偏移！
@@ -323,7 +321,7 @@ HUODONG_BTN = {
     "return": p(31, 30, img="img/huodong/return.bmp", at=(15, 21, 47, 40)),
     "exchange_queren": p(479, 426, img="img/ui/ok_btn_2.bmp", at=(456, 412, 501, 440)),
     "nboss": p(738, 155, img="img/huodong/nboss.bmp", at=(721, 147, 755, 163)),
-    "hboss": p(737, 218, img="img/huodong/hboss.bmp", at=(721, 209, 754, 227)),
+    "hboss": p(738, 243, img="img/huodong/hboss.bmp", at=(720, 229, 756, 258)),
     "vhboss": p(739, 281, img="img/huodong/vhboss.bmp", at=(719, 274, 760, 289)),
     "baochou": p(89, 456, img="img/huodong/baochou.bmp", at=(62, 422, 117, 490)),
     "no_quan_right": p(904, 424, img="img/huodong/no_quan_right.bmp", at=(893, 418, 915, 431)),
@@ -352,6 +350,9 @@ HUODONG_BTN = {
     "nboss_en": p(738, 154, img="img/huodong/nboss_en.bmp", at=(706, 142, 770, 167)),
     "hboss_en": p(738, 217, img="img/huodong/hboss_en.bmp", at=(714, 205, 762, 230)),
     "vhboss_en": p(738, 252, img="img/huodong/vhboss_en.bmp", at=(705, 240, 771, 265)),
+    "nboss_cn": p(738, 170, img="img/huodong/nboss_cn.bmp", at=(702, 157, 774, 183)),
+    "hboss_cn": p(738, 242, img="img/huodong/hboss_cn.bmp", at=(707, 230, 769, 255)),
+    "vhboss_cn": p(738, 315, img="img/huodong/vhboss_cn.bmp", at=(714, 302, 762, 329)),
     "wanfa": p(856, 26, img="img/huodong/wanfa.bmp", at=(846, 15, 867, 38)),
     "nboss_sp": p(738, 154, img="img/huodong/nboss_sp.bmp", at=(710, 147, 767, 161)),
     "hboss_sp": p(738, 190, img="img/huodong/hboss_sp.bmp", at=(717, 182, 760, 199)),
@@ -749,13 +750,13 @@ JUESE_BTN = {
     "scgm_and_zdzbqhqr": p(480, 40, img="img/juese/scgm_and_zdzbqhqr.bmp", at=(340, 26, 620, 55)),
 
     "rank_max": p(654, 242, img="img/juese/rank_max.bmp", at=(630, 231, 678, 253)),
-    "yijianpeizhi": p(249,336,img="img/juese/yijianpeizhi.bmp",at=(204,321,294,351)),
-    "shezhi": p(587,477,img="img/juese/shezhi.bmp",at=(555,461,619,493)),
-    "unlock": p(272,334,img="img/juese/unlock.bmp",at=(234,321,311,348)),
-    "fight6": p(836,452,img="img/juese/fight6.bmp",at=(808,437,865,468)),
-    "cnkh": p(272,335,img="img/juese/cnkh.bmp",at=(234,325,310,346)),
-    "six_star_confirm": p(588,478,img="img/juese/six_star_confirm.bmp",at=(544,466,632,490)),
-    "already_six": p(245,339,img="img/juese/already_six.bmp",at=(129,323,362,356)),
+    "yijianpeizhi": p(249, 336, img="img/juese/yijianpeizhi.bmp", at=(204, 321, 294, 351)),
+    "shezhi": p(587, 477, img="img/juese/shezhi.bmp", at=(555, 461, 619, 493)),
+    "unlock": p(272, 334, img="img/juese/unlock.bmp", at=(234, 321, 311, 348)),
+    "fight6": p(836, 452, img="img/juese/fight6.bmp", at=(808, 437, 865, 468)),
+    "cnkh": p(272, 335, img="img/juese/cnkh.bmp", at=(234, 325, 310, 346)),
+    "six_star_confirm": p(588, 478, img="img/juese/six_star_confirm.bmp", at=(544, 466, 632, 490)),
+    "already_six": p(245, 339, img="img/juese/already_six.bmp", at=(129, 323, 362, 356)),
 
     # 队伍界面
     "duiwuyilan": p(482, 42, img="img/juqing/duiwuyilan.bmp", at=(418, 30, 546, 54)),
@@ -766,7 +767,7 @@ JUESE_BTN = {
     "front": p(247, 312, img="img/juese/front.bmp", at=(239, 306, 256, 318)),
     "middle": p(354, 202, img="img/juese/middle.bmp", at=(347, 196, 361, 208)),
     "back": p(459, 201, img="img/juese/back.bmp", at=(452, 195, 467, 208)),
-    "shuxingzhitisheng": p(477,89,img="img/juese/shuxingzhitisheng.bmp",at=(418,71,537,108)),
+    "shuxingzhitisheng": p(477, 89, img="img/juese/shuxingzhitisheng.bmp", at=(418, 71, 537, 108)),
 
 }
 MAX_DXC = 6  # 一共出了多少个地下城关
