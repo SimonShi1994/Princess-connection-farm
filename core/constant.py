@@ -321,7 +321,7 @@ HUODONG_BTN = {
     "return": p(31, 30, img="img/huodong/return.bmp", at=(15, 21, 47, 40)),
     "exchange_queren": p(479, 426, img="img/ui/ok_btn_2.bmp", at=(456, 412, 501, 440)),
     "nboss": p(738, 155, img="img/huodong/nboss.bmp", at=(721, 147, 755, 163)),
-    "hboss": p(738, 243, img="img/waizhuan/hboss.bmp", at=(720, 229, 756, 258)),
+    "hboss": p(738, 243, img="img/huodong/hboss.bmp", at=(720, 229, 756, 258)),
     "vhboss": p(739, 281, img="img/huodong/vhboss.bmp", at=(719, 274, 760, 289)),
     "baochou": p(89, 456, img="img/huodong/baochou.bmp", at=(62, 422, 117, 490)),
     "no_quan_right": p(904, 424, img="img/huodong/no_quan_right.bmp", at=(893, 418, 915, 431)),
