@@ -246,6 +246,7 @@ auto_start_app = GC.add_bool("pcrfarm_setting", "auto_start_app", True)
 inline_app = GC.add_bool("pcrfarm_setting", "inline_app", True)
 use_my_id = GC.add_bool("pcrfarm_setting", "use_my_id", False)
 account_login_mode = GC.add_str("pcrfarm_setting", "account_login_mode", "autofill")
+account_login_switch_fallback = GC.add_str("pcrfarm_setting", "account_login_switch_fallback", "autofill")
 
 enable_zhuangbei_fuzzy_search = GC.add_bool("pcrfarm_setting", "enable_zhuangbei_fuzzy_search", True)
 zhuangbei_fuzzy_search_cutoff = GC.add_float("pcrfarm_setting", "zhuangbei_fuzzy_search_cutoff", 0.6)

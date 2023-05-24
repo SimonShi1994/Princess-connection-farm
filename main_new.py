@@ -40,7 +40,7 @@ PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
 
-script_version = "Ver 2.8.20230522"
+script_version = "Ver 2.8.20230525"
 
 
 
@@ -424,6 +424,7 @@ def ShowPCRPerformance():
     if enable_zhuangbei_fuzzy_search:
         print("  - 模糊搜索阈值 zhuangbei_fuzzy_search_cutoff：", zhuangbei_fuzzy_search_cutoff)
     print("* 账号登录模式 account_login_mode：", account_login_mode)
+    print("* 切换账号失败后回退登录模式 account_login_switch_fallback：", account_login_switch_fallback)
 
 
 def ShowTaskInfo():

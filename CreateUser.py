@@ -33,17 +33,20 @@ DOC_STR = {
         帮助: user
         user -l 列举全部用户列表
         user Account 显示某用户的所有信息
-        user -c Account Password 创建一个新用户。
-            Account: 用户名    Password: 密码
+        user -c Account Password [BiliName]创建一个新用户。
+            Account: 用户名    Password: 密码    BiliName: 可选，B站昵称，切换登录使用
             对已经存在的用户将覆盖原本的信息
         user -c -file Filename 从指定文件Filename创建用户
-            该文件每一行要求分隔符（空格或Tab）隔开的两个元素 Account Password
+            该文件每一行要求分隔符（空格或Tab）隔开的两或三个元素，如：
+            Account Password
+            Account Password BiliName
             对已经存在的用户将覆盖原本的信息。
         user -d Account 删除指定Account的账户
         user -d -file Filename 从指定文件Filename删除用户
             该文件每一行为一个Account，表示要删除的用户
         user -d -all 删除全部用户
         user Account [-p Password] 更改某一账户的密码
+        user Account [-b BiliName] 更改某一账户的B站昵称
         """,
     "task?":
         """
@@ -315,23 +318,28 @@ def show_account(account):
     print(A.getuser())
 
 
-def create_account(account, password):
+def create_account(account, password, biliname=None):
     A = AutomatorRecorder(account)
     d = dict(account=account, password=password)
+    if biliname:
+        d['biliname'] = biliname
     A.setuser(d)
 
 
 def create_account_from_file(file):
     # 此处会有以前的task参数
+    # 为什么不用split?
     pattern = re.compile('\\s*(.*?)[\\s-]+([^\\s-]+)[\\s]*([^\\s]*)')
     with open(file, "r", encoding="utf-8") as f:
         for line in f:
             result = pattern.findall(line)
+            # [(acc, pw, biliname)] or [(acc, pw, '')]
             if len(result) != 0:
-                account, password, task = result[0]
+                # biliname 的非空检测在create_account内完成
+                account, password, biliname = result[0]
             else:
                 continue
-            create_account(account, password)
+            create_account(account, password, biliname)
 
 
 def del_account(account):
@@ -354,11 +362,13 @@ def del_all_account():
         del_account(acc)
 
 
-def edit_account(account, password=None):
+def edit_account(account, password=None, biliname=None):
     A = AutomatorRecorder(account)
     d = A.getuser()
     if password is not None:
         d["password"] = password
+    if biliname is not None:
+        d["biliname"] = biliname
     A.setuser(d)
 
 
@@ -1052,6 +1062,8 @@ if __name__ == "__main__":
                     create_account_from_file(cmds[3])
                 elif len(cmds) == 4 and cmds[1] == "-c":
                     create_account(cmds[2], cmds[3])
+                elif len(cmds) == 5 and cmds[1] == "-c":
+                    create_account(cmds[2], cmds[3], cmds[4])
                 elif len(cmds) == 4 and cmds[1] == '-d' and cmds[2] == "-file":
                     del_account_from_file(cmds[3])
                 elif len(cmds) == 3 and cmds[1] == '-d' and cmds[2] == '-all':
@@ -1059,7 +1071,9 @@ if __name__ == "__main__":
                 elif len(cmds) == 3 and cmds[1] == "-d":
                     del_account(cmds[2])
                 elif len(cmds) == 4 and cmds[2] == "-p":
-                    edit_account(cmds[1], cmds[3])
+                    edit_account(cmds[1], password=cmds[3])
+                elif len(cmds) == 4 and cmds[2] == "-b":
+                    edit_account(cmds[1], biliname=cmds[3])
                 elif len(cmds) == 2 and cmds[1][0] != "-":
                     show_account(cmds[1])
                 else:
