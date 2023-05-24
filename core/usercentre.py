@@ -12,10 +12,11 @@ from core.valid_task import VALID_TASK, getcustomtask as _getcustomtask, list_al
 用户文件存储说明：
 默认路径：/users
 存储格式：json
-必须要含有的元素：
+要含有的元素：
 {
     "account":"..."  # 用户名
     "password":"..." # 密码
+    "biliname":"..." # 账号对应的Bilibili ID名称（可选，登录的时候看到的ID）
     # "taskfile":"..." #任务配置文件名 如果为""则不进行任务。 <- 已经不需要了
 }
 
@@ -184,6 +185,7 @@ batch_addr = "batches"  # 存放批任务的文件夹
 schedule_addr = "schedules"  # 存放计划的文件夹
 switch_addr = "switches"  # 存放开关的文件夹
 
+
 def check_user_dict(d: dict, is_raise=False) -> bool:
     """
     检查一个用户配置文件是否合法。
@@ -196,6 +198,9 @@ def check_user_dict(d: dict, is_raise=False) -> bool:
         assert type(d["account"]) is str, f"account必须为字符串类型而不应是{type(d['account'])}"
         assert "password" in d, "必须含有password关键字以存储密码！"
         assert type(d["password"]) is str, f"password必须为字符串类型而不应是{type(d['password'])}"
+        # d biliname is optional
+        if "biliname" not in d:
+            print(f'[注意] 你未为账号{d["account"]}配置 Bilibili昵称，该账号将无法使用切换记录方式登录。')
         # assert "taskfile" in d, "必须含有任务列表taskfile！"
         # assert type(d["taskfile"]) is str, f"tasks必须为字符串类型而不应是{type(d['tasks'])}"
         return True
@@ -345,6 +350,7 @@ def list_all_groups(verbose=1) -> List[str]:
 def list_all_customtasks(verbose=1) -> List[str]:
     return _list_all_customtasks(verbose)
 
+
 def check_valid_batch(batch: dict, is_raise=True) -> bool:
     try:
         assert "batch" in batch
@@ -421,7 +427,6 @@ def check_valid_schedule(schedule: dict, is_raise=True) -> bool:
                     i["record"] = 0
                 assert "record" in i
                 assert type(i["record"]) is int
-
 
     except Exception as e:
         if is_raise:
@@ -549,11 +554,12 @@ def list_all_flags(skip_disable=True) -> Union[dict, Tuple[dict, list]]:
         return flags, list(disabled.keys())
 
 
-def init_user(account: str, password: str) -> bool:
+def init_user(account: str, password: str, biliname: Optional[str] = None) -> bool:
     """
     以account和password在user_addr下新增一条用户记录
     :param account: 用户名
     :param password: 密码
+    :param biliname: 账号对应的Bilibili ID名称（可选）
     :return: 是否成功创建
     """
     target_name = "%s/%s.json" % (user_addr, account)
@@ -562,13 +568,16 @@ def init_user(account: str, password: str) -> bool:
         return False
     try:
         f = open(target_name, "w", encoding="utf-8")
-        d = dict(account=account, password=password)
+        d = {k: v for k, v in
+             dict(account=account, password=password, biliname=biliname)
+             .items() if v}
         json.dump(d, f, indent=1)
         f.close()
     except Exception as e:
         print("存储配置时遇到错误：", e)
         return False
     return True
+
 
 def parse_batch(batch: dict):
     """
@@ -610,6 +619,7 @@ def get_all_group(acc, detailed_group: Optional[dict] = None):
     else:
         exist_group = [g for g in detailed_group if is_in_group(acc, detailed_group[g], is_detailed=True)]
     return exist_group
+
 
 class AutomatorRecorder:
     """

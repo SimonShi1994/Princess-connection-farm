@@ -1,5 +1,6 @@
 import os
 import sys
+import warnings
 from multiprocessing import Pool, Manager
 
 import keyboard
@@ -37,6 +38,7 @@ selected_emulator = all_emulators[selected_emulator]
 
 
 def runmain(params):
+    warnings.warn("Deprecated function", DeprecationWarning)
     acc = params[0]
     tas = params[1]
     queue = params[2]
@@ -70,7 +72,7 @@ def runmain(params):
         ])
         """
         a.start_shuatu()
-        a.login_auth(account, password)
+        a.login_auth(account, password, from_past=True)
         acclog.Account_Login(account)
 
         # 日志记录
@@ -103,6 +105,7 @@ def runmain(params):
 
 
 def connect():  # 连接adb与uiautomator
+    warnings.warn("Deprecated function", DeprecationWarning)
     try:
         if enable_auto_find_emulator:
             port_list = check_known_emulators()
@@ -150,6 +153,7 @@ def readjson():  # 读取账号
     # 等待一段时间再上限，建议将配置逻辑合并到AutomatorRecord中，调用getuser函数获取配置
     # 等刷图等逻辑合并到配置文件中后，可以弃用read()函数，runmain传参只需传入配置文件路径
     # 然后在Automator内部调用getuser获取account,password等一系列配置
+    warnings.warn("Deprecated function", DeprecationWarning)
     return list_all_users(0)
 
 
@@ -159,6 +163,7 @@ def execute(continue_=False, max_retry=3):
     :param continue_: 是否继续执行上次没执行完的脚本
     :param max_retry: 最大报错重试次数
     """
+    warnings.warn("Deprecated function", DeprecationWarning)
     try:
         # 连接adb与uiautomator
         devices = connect()
