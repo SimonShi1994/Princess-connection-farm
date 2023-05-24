@@ -164,13 +164,12 @@ class AutomatorDebuger(Automator):
         self.start_shuatu()
 
     def Login(self, account, password=None):
-        #
         self.Account(account)
         if password is None:
             d = self.AR.getuser()
-            self.login_auth(account, d["password"], from_past=True)
+            self.login_auth(account, d["password"])
         else:
-            self.login_auth(account, password, from_past=True)
+            self.login_auth(account, password)
         self.init_home()
 
     def Shot(self, file="test.bmp", show=True, force_slow=False):

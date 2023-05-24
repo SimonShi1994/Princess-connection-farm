@@ -73,7 +73,6 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         user = self.AR.getuser()  # 获取配置文件
         account = user["account"]
         password = user["password"]
-        biliname = user.get("biliname", None)  # 可能为空
         check_task_dict(tasks, True)
         self.ms = moveset(account, rec_addr)  # 创建行为列表用于断点恢复
         self.ms.startw(None, start=True)  # 使用自动序列创建的起手式
@@ -171,7 +170,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             try:
                 if before_:
                     self.task_current("登录")
-                    _return_code = self.login_auth(account, password, biliname)
+                    _return_code = self.login_auth(account, password)
                     if _return_code == -1:
                         # 标记错误！
                         self.task_error(str('%s账号出现了验证码' % self.account))
