@@ -38,6 +38,7 @@ class LoginMixin(ToolsMixin):
         协议：MIT License
         启动脚本，请确保已进入游戏页面。
         """
+        # 更换设备信息，匿名化登录
         self.phone_privacy()
         while True:
             # 判断jgm进程是否在前台, 最多等待20秒，否则唤醒到前台
@@ -94,10 +95,13 @@ class LoginMixin(ToolsMixin):
                 self.click(687, 72)
                 # 防止卡验证码
                 continue
-            if not self.d(resourceId=until_res).exists():
-                time.sleep(0.2)
-            else:
+            if self.d(resourceId=until_res).exists():
                 break
+            # 任何登录模式跳到账户密码输入界面都退出
+            elif self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
+                break
+            else:
+                time.sleep(0.2)
         else:
             raise Exception("进入登陆页面失败！")
 
@@ -123,7 +127,7 @@ class LoginMixin(ToolsMixin):
 
         self.log.write_log('warning',
                            f"正在手动登录{ac}，请确认到达游戏主页后方可点击弹窗的确认按钮，否则可能出现意外错误！")
-        TimeoutMsgBox("手动登录", f"请手动登录{self.address}\n账号：{ac}", geo="200x80",
+        TimeoutMsgBox("手动登录", f"请手动登录{self.address}\n用户名：{ac}\n账号：{self.account}", geo="200x80",
                       join=True)
         self.log.write_log('info', f"你已确认登录{ac}！")
         return 0
@@ -152,6 +156,7 @@ class LoginMixin(ToolsMixin):
 
             # 没bilibili昵称直接continue直通Fallback login，没什么好说的，抬走
             if not biliname:
+                time.sleep(0.5)
                 continue
 
             if biliname_found:
@@ -162,31 +167,27 @@ class LoginMixin(ToolsMixin):
                 self.d(resourceId="com.bilibili.priconne:id/iv_gsc_recode_head").click()
                 self.log.write_log('info', f"点击下拉框")
                 time.sleep(0.8)
+            else:
+                self.log.write_log('info', f"找不到下拉框！")
+                time.sleep(0.5)
+                continue
 
             for dropdown_retry in range(30):  # 30 * 3 = 90个号，实际上没这么多吧？
                 last_namelist = namelist
                 namelist = self.get_record_list_acc_name()
-                self.log.write_log('info', f"name = {namelist}")
-                self.log.write_log('info', f"last = {last_namelist}")
+                if need_recheck:
+                    self.log.write_log('info', f"截取到记录： {namelist}")
+                # self.log.write_log('info', f"last = {last_namelist}")
                 if last_namelist == namelist:
                     if need_recheck:
-                        need_recheck = True
+                        need_recheck = False
                         time.sleep(0.5)
                         continue
                     else:
                         self.log.write_log('warning', f"滑到底部了，重试!")
                         self.fclick(1, 1)
-                        # 检测是否符合可以拉清单的条件
-                        for _ in range(10):
-                            if not self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_item_name").exists:
-                                if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_name").exists:
-                                    break
-                                else:
-                                    time.sleep(0.5)
-                        else:
-                            self.log.write_log('error', "回退下拉菜单失败，重来！")
-                            self.fclick(1, 1)
-                            break
+                        time.sleep(0.5)
+                        break
                 else:
                     need_recheck = True
                     if biliname in namelist:
@@ -198,37 +199,47 @@ class LoginMixin(ToolsMixin):
                         else:
                             self.log.write_log('error', f"选取不到指定的昵称{biliname}，重来！")
                             self.fclick(1, 1)
+                            time.sleep(0.5)
                             break
                         biliname_found = True
                         self.log.write_log('info', f"找到你了，美味的小孩!")
                         time.sleep(2)
                         break
                     else:
-                        # 哎呦 滑了
-                        # 向下精准滑动3项 weditor实测坐标
-                        # {"x":290,"y":427,"width":380,"height":81}
-                        # drag up (330, 453) -> (330, 210) -> actually (330, 198)
-                        # 可能受到底层touch机制影响，实际位移坐标需要+12
-                        self.d.touch.down(330, 453).sleep(0.1).move(330, 198).sleep(0.2).up(330, 210).sleep(0.8)
-                        self.log.write_log('info', f"哎呦 滑了! x{dropdown_retry}")
+                        
+                        # 存在下拉菜单
+                        if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_item_name").exists:
+                            # 向下精准滑动3项 weditor实测坐标
+                            # {"x":290,"y":427,"width":380,"height":81}
+                            # drag up (330, 453) -> (330, 210) -> actually (330, 198)
+                            # 可能受到底层touch机制影响，实际位移坐标需要+12 
+                            self.d.touch.down(330, 453).sleep(0.1).move(330, 198).sleep(0.2).up(330, 210).sleep(0.8)
+                            # self.log.write_log('info', f"哎呦 滑了! x{dropdown_retry}")
+                        else:
+                            self.log.write_log('info', f"找不到下拉框！")
+                            self.fclick(1, 1)
+                            time.sleep(0.5)
+                            break
         else:
             # Fallback login
-            TimeoutMsgBox("Fallback login", f"Fallback login-{self.address}\n账号：{ac}, Biliname: {biliname}", geo="266x80",
-                          join=True)
-            self.log.write_log('error', f"找了三回啊三回还是找不到{ac}, Bilibili昵称:{biliname}, 回退原登录模式！")
+            # TimeoutMsgBox("Fallback login", f"Fallback login-{self.address}\n账号：{ac}, Biliname: {biliname}", geo="266x80",
+            #               join=True)
+            if biliname:
+                self.log.write_log('error', f"找了三回啊三回还是找不到{ac}, Bilibili昵称:{biliname}, 回退原登录模式！")
+            else:
+                self.log.write_log('error', f"账号{ac}的Bilibili昵称为空, 请检查对应User文件, 回退原登录模式！")
 
             if account_login_switch_fallback == 'manual':
                 return self.do_manual_login(ac)
             elif account_login_switch_fallback == 'skip':
-                return BadLoginException(
+                raise BadLoginException(
                     f"无法切换到指定账号{ac}, Bilibili昵称:{biliname}, 回退指定跳过！")  # return a sign of falied attempt
             else:
                 return self.do_autofill_login(ac, pwd)
 
         time.sleep(random.uniform(0.2, 1))
-        TimeoutMsgBox("Switch Login Success", f"Switch Login Success-{self.address}\n账号：{ac}, Biliname: {biliname}", geo="266x80",
-                      join=True)
-
+        # TimeoutMsgBox("Switch Login Success", f"Switch Login Success-{self.address}\n账号：{ac}, Biliname: {biliname}", geo="266x80",
+        #               join=True)
         self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login").click()
         time.sleep(1.5)
 
@@ -689,6 +700,11 @@ class LoginMixin(ToolsMixin):
                     # "切换账号"界面的"登录"按钮, 检测到这个就退出
                     if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login").exists():
                         break
+                    # 检测到"手机号登录"界面也退出
+                    if self.d(resourceId="com.bilibili.priconne:id/rl_gsc_area").exists():
+                        self.log.write_log("warning", "该模拟器上没有保存任何记录！")
+                        break
+
                 else:
                     # 自动登录填充要多检测一些东西
                     # 这个是啥？2023/5/24 Weditor实录无此项
@@ -701,21 +717,22 @@ class LoginMixin(ToolsMixin):
                         self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login_change").click()
                         time.sleep(2)
                         continue
-                    # "登录账号"界面的"bilibili"圆形图标
-                    if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
-                        # 检测协议同意，(293, 424)打勾
-                        if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
-                            if not self.is_exists(START_UI["gouxuan"]):
-                                self.lock_img(START_UI["gouxuan"], elseclick=(293, 424), elsedelay=1, retry=2)
-                        self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
-                        time.sleep(2)
-                        continue
-                    # acc输入框
-                    if self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
-                        self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
-                        break
 
                 # 合并分支
+                # "登录账号"界面的"bilibili"圆形图标
+                if self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").exists():
+                    # 检测协议同意，(293, 424)打勾
+                    if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_phone_terms").exists():
+                        if not self.is_exists(START_UI["gouxuan"]):
+                            self.lock_img(START_UI["gouxuan"], elseclick=(293, 424), elsedelay=1, retry=2)
+                    self.d(resourceId="com.bilibili.priconne:id/iv_gsc_account_login").click()
+                    time.sleep(2)
+                    continue
+                # acc输入框
+                if self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
+                    self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
+                    break
+
                 if self.d(text="Geetest").exists() or self.d(description="Geetest").exists():
                     self.click(687, 72)
                     # 防止卡验证码
@@ -737,7 +754,7 @@ class LoginMixin(ToolsMixin):
                         self.d(description="同意").click()
                     # time.sleep(6)
                 else:
-                    self.click(560, 430)  # 原本是945 13
+                    # self.click(560, 430)  # 原本是945 13
                     self.click(678, 377)  # 下载
 
             return self.do_login(ac, pwd, biliname, from_past)
