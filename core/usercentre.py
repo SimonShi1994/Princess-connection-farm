@@ -5,7 +5,7 @@ from typing import List, Optional, Union, Tuple
 
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.log_handler import pcr_log
-from core.pcr_config import debug
+from core.pcr_config import debug, account_login_mode
 from core.valid_task import VALID_TASK, getcustomtask as _getcustomtask, list_all_customtasks as _list_all_customtasks
 
 """
@@ -199,8 +199,6 @@ def check_user_dict(d: dict, is_raise=False) -> bool:
         assert "password" in d, "必须含有password关键字以存储密码！"
         assert type(d["password"]) is str, f"password必须为字符串类型而不应是{type(d['password'])}"
         # d biliname is optional
-        if "biliname" not in d:
-            print(f'[注意] 你未为账号{d["account"]}配置 Bilibili昵称，该账号将无法使用切换记录方式登录。')
         # assert "taskfile" in d, "必须含有任务列表taskfile！"
         # assert type(d["taskfile"]) is str, f"tasks必须为字符串类型而不应是{type(d['tasks'])}"
         return True
@@ -209,6 +207,10 @@ def check_user_dict(d: dict, is_raise=False) -> bool:
             raise e
         else:
             return False
+        
+def check_user_dict_have_biliname(d: dict) -> bool:
+    if account_login_mode == "switch" and "biliname" not in d:
+        print(f'[注意] 你未为账号{d["account"]}配置 Bilibili昵称，该账号将无法使用切换记录方式登录。')
 
 
 def check_task_dict(d: dict, is_raise=False) -> bool:
@@ -268,6 +270,7 @@ def list_all_users(verbose=1) -> List[str]:
                 f = open(target_name, "r", encoding="utf-8")
                 d = json.load(f)
                 check_user_dict(d, True)
+                check_user_dict_have_biliname(d)
                 f.close()
                 users += [i[:-5]]
                 if verbose:
@@ -673,10 +676,12 @@ class AutomatorRecorder:
             print("保存json出现错误：", e)
             return False
 
-    def getuser(self) -> dict:
+    def getuser(self, check_biliname=False) -> dict:
         target_name = "%s/%s.json" % (user_addr, self.account)
         d = self.load(target_name)
         check_user_dict(d, True)
+        if check_biliname:
+            check_user_dict_have_biliname(d)
         return d
 
     @staticmethod
@@ -730,6 +735,7 @@ class AutomatorRecorder:
 
     def setuser(self, userobj: dict, is_raise=False):
         target_name = "%s/%s.json" % (user_addr, self.account)
+        check_user_dict_have_biliname(userobj)
         if check_user_dict(userobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, userobj)
         else:

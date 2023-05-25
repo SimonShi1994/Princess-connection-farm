@@ -315,7 +315,7 @@ def TaskEditor(taskname):
 
 def show_account(account):
     A = AutomatorRecorder(account)
-    print(A.getuser())
+    print(A.getuser(check_biliname=True))
 
 
 def create_account(account, password, biliname=None):
