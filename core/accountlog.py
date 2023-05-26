@@ -26,7 +26,7 @@ def runmain(address, account, password):
     # plt.show()
 
     print('>>>>>>>即将登陆的账号为：', account, '密码：', password, '<<<<<<<')
-    a.login_auth(account, password)  # 注意！请把账号密码写在zhanghao2.txt内
+    a.login_auth(account, password, from_past=True)  # 注意！请把账号密码写在zhanghao2.txt内
     log.Account_Login(account)
     a.init_home()  # 初始化，确保进入首页
 

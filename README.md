@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230521
+# Princess connection 公主连结农场脚本v2.8.20230525
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -99,7 +99,7 @@
 
    把下面的其中一个包中的`.venv`文件夹放入刚刚解压好的项目当中
 
-   <img src="docs/img/venv_install.bmp" width = "90%" height = "90%" align=center />
+   <img src="docs/img/venv_install.bmp" width = "90%" height = "90%" alt="docs/img/venv_install.bmp" align=center />
 
    **本地ocr仅有本地4，请运行main_new后查看config中的OCR模式是否仅有本地4**
 
@@ -177,14 +177,14 @@
 
 ## :loudspeaker:推送
 
-|     支持推送的API     | 是否可以交互 | 是否支持图片发送   | 支持‘不受限制’的文字发送 | 使用第三方服务API  | 衍生支持                                              |
-| :-------------------: | ------------ | ------------------ | ------------------------ | ------------------ | ----------------------------------------------------- |
-| QQpush QQ:cold_sweat: | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
-| Wechat 微信（:hand:） | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
-|    Wework 企业微信    | :x:          | :x:                | :heavy_check_mark:       | :heavy_check_mark: | APP Bark_IOS Wework群机器人 钉钉群机器人 飞书群机器人 |
-|      Wework 本地      | :x:          | :x:                | :heavy_check_mark:       | :x:                | :x:                                                   |
-|    TG 电报（:+1:）    | :x:          | :heavy_check_mark: | :heavy_check_mark:       | :heavy_check_mark: | :x:                                                   |
-|     QQBot[开发中]     |              |                    |                          |                    |                                                       |
+|       支持推送的API        | 是否可以交互 | 是否支持图片发送           | 支持‘不受限制’的文字发送      | 使用第三方服务API         | 衍生支持                                  |
+|:---------------------:|--------|--------------------|--------------------|--------------------|---------------------------------------|
+| QQpush QQ:cold_sweat: | :x:    | :x:                | :heavy_check_mark: | :heavy_check_mark: | :x:                                   |
+|   Wechat 微信（:hand:）   | :x:    | :x:                | :heavy_check_mark: | :heavy_check_mark: | :x:                                   |
+|      Wework 企业微信      | :x:    | :x:                | :heavy_check_mark: | :heavy_check_mark: | APP Bark_IOS Wework群机器人 钉钉群机器人 飞书群机器人 |
+|       Wework 本地       | :x:    | :x:                | :heavy_check_mark: | :x:                | :x:                                   |
+|      TG 电报（:+1:）      | :x:    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x:                                   |
+|      QQBot[开发中]       |        |                    |                    |                    |                                       |
 
 Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
@@ -299,7 +299,19 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+ 
+2023/05/25 By 0x114514BB
+- 功能新增
+  - 现在支持切换记录的登陆模式！设置`account_login_mode`为`switch`即可使用。
+    使用前请`Edit`账户添加Bilibili昵称。该模式支持登陆失败时回退另一模式登录或跳过账号，可根据喜好自行配置。
+- 配置更新
+  - `account_login_mode`: 账号登录模式，详见[INI文件配置解读](docs/INI文件配置解读.md)
+  - `account_login_switch_fallback` 切换记录模式下，登录失败返回操作。
 
+2023/05/22 By PekoAAA
+- BUG修复
+  - 修正N26-14前的部分坐标
+ 
 2023/05/21 By UVJkiNTQ
 - BUG修复
   - 外传基础信息及逻辑修复
@@ -1382,7 +1394,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
   - 单独开关指定debug `debug`
   - 记录Automator和u2的操作信息 `rec`/`u2rec`
   - 支持命令调试 `exec`
-- 增加Bot的代理设置 （proxy_http,proxy_https)
+- 增加Bot的代理设置 (proxy_http,proxy_https)
 
 2021/3/1 By:TheAutumnOfRice
 
