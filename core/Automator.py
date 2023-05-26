@@ -23,7 +23,7 @@ from core.MoveRecord import moveset, UnknownMovesetException
 from core.bot import Bot
 from core.log_handler import pcr_log
 # 2020.7.19 如果要记录日志 采用如下格式 self.pcr_log.write_log(level='info','<your message>') 下同
-from core.pcr_config import trace_exception_for_debug, captcha_skip, debug
+from core.pcr_config import trace_exception_for_debug, captcha_skip, debug, account_login_mode
 from core.safe_u2 import OfflineException, ReadTimeoutException
 from core.usercentre import check_task_dict, list_all_flags, is_in_group
 from core.valid_task import VALID_TASK, getcustomtask
@@ -73,6 +73,9 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         user = self.AR.getuser()  # 获取配置文件
         account = user["account"]
         password = user["password"]
+        biliname = user.get("biliname", None)  # 可能为空
+        if account_login_mode == "switch" and not biliname:
+            self.log.write_log("warning", f'[注意] 你未为账号{account}配置 Bilibili昵称，该账号将无法使用切换记录方式登录。')
         check_task_dict(tasks, True)
         self.ms = moveset(account, rec_addr)  # 创建行为列表用于断点恢复
         self.ms.startw(None, start=True)  # 使用自动序列创建的起手式
@@ -170,7 +173,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             try:
                 if before_:
                     self.task_current("登录")
-                    _return_code = self.login_auth(account, password)
+                    _return_code = self.login_auth(account, password, biliname)
                     if _return_code == -1:
                         # 标记错误！
                         self.task_error(str('%s账号出现了验证码' % self.account))
