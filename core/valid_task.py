@@ -866,6 +866,7 @@ VALID_TASK = ValidTask() \
          [TaskParam("cnamelst", list, "4个角色名字", "请填入标准简中角色名",
                     inputbox=ListInputer(desc="请输入角色名，一行一个")),
           TaskParam("charname", str, "拟开花的角色名", "请填入标准简中角色名")]) \
+    .add("t13", "kkr_wallet", "购买可可萝的钱包", "公会之家买mana钱包",) \
     .add("s1", "shuajingyan", "刷经验1-1【别用，除非OCR】", "刷图1-1，经验获取效率最大。",
          [TaskParam("map", int, "废弃参数", "随便输入一个整数")]) \
     .add("s1-3", "shuajingyan3", "刷经验3-1【别用，除非OCR】", "刷图3-1，比较节省刷图卷。",

@@ -262,6 +262,13 @@ JIAYUAN_BTN = {
     "dengjitisheng": p(589, 431, img="img/jiayuan/dengjitisheng.bmp", at=(491, 410, 682, 452)),
     "xinxi": p(img="img/jiayuan/xinxi.bmp"),
     "zhuye": p(img="img/jiayuan/wodezhuye.bmp", at=(47, 488, 130, 537)),
+    "caidan": p(899,135,img="img/jiayuan/caidan.bmp",at=(885,118,913,152)),
+    "wanfa": p(717,414,img="img/jiayuan/wanfa.bmp",at=(692,386,743,443)),
+    "wallet_locked": p(635,412,img="img/jiayuan/kkr_wallet_locked.bmp",at=(594,371,676,453)),
+    "buy_confirm": p(477,107,img="img/jiayuan/buy_confirm.bmp",at=(393,75,562,140)),
+    "buy_complete": p(479,164,img="img/jiayuan/buy_complete.bmp",at=(408,134,550,195)),
+    "suijichuxing": p(58,268,img="img/jiayuan/suijichuxing.bmp",at=(30,239,87,298)),
+
 }
 WZ_BTN = {
     "help": p(920, 26, img="img/waizhuan/help.bmp", at=(910, 13, 931, 40)),  # 外传menu面板特征
