@@ -397,6 +397,30 @@ class CharZhuangBei(CharBase):
         a = self.check_color(fc, bc, xcor, ycor, color_type="gbr", screen=screen)
         return a
 
+    def get_eq_status(self, screen=None):
+        # 返回值： 0-槽位满了强化也满了 1-槽位满了没强化满; 2-槽位满了，可升Rank; 3-槽位没满，有库存;4-槽位没满，有库存，还能升rank;
+        #         5-槽位没满，没库存;
+        if screen is None:
+            screen = self.getscreen()
+        if self.is_exists(JUESE_BTN["yjzb_off"], method="sq", threshold=0.95, screen=screen):
+            if self.is_exists(JUESE_BTN["reachable"].img, at=(71, 136, 435, 349)):
+                return  5
+            else:
+                if self.is_exists(JUESE_BTN["red_small"].img, at=(95,90,437,309)):
+                    return 1
+                else:
+                    return 0
+        if self.is_exists(JUESE_BTN["yjzb"], screen=screen):
+            # 有装备可穿
+            return 3
+        if self.is_exists(JUESE_BTN["rank_on"], screen=screen):
+            if self.is_exists(JUESE_BTN["yjzb"], screen=screen):
+                # 没穿满，但可以升rank
+                return 4
+            else:
+                # 穿满了，可升rank
+                return 2
+
     def get_equip_status(self, screen=None):
         if screen is None:
             screen = self.getscreen()
@@ -623,6 +647,8 @@ class CharKaihua(CharBase):
             return False
 
         self.click_btn(JUESE_BTN["do_kaihua"], until_appear=JUESE_BTN["kaihua_confirm"])
+        self.click(402, 230) # MAX
+        time.sleep(0.5)
         self.click_btn(JUESE_BTN["kaihua_confirm"], until_disappear=JUESE_BTN["kaihua_confirm"])
         self.lock_img(JUESE_BTN["kaihua_complete"], side_check=kh_sideclick)  # 加速加速
         self.fclick(1, 1)  # 跳过剧情等

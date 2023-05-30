@@ -668,6 +668,7 @@ JUESE_BTN = {
     "zdqh_0": p(424, 424, img="img/juese/zdqh_0.bmp", at=(422, 407, 440, 423)),
     "zdqh_1": p(424, 424, img="img/juese/zdqh_1.bmp", at=(418, 406, 439, 424)),
     "zdqh_2": p(img="img/juese/zdqh_2.bmp", at=(310, 444, 431, 467)),
+    "red_small": p(img="img/juese/red_small.bmp"),  # 占位，位置不确定，一般直接引用
     "reachable": p(img="img/juese/reachable.bmp", at=(372, 158, 395, 170)),  # 占位，位置不确定，一般直接引用
     "enter_shuatu": p(669, 230, img="img/juese/enter_shuatu.bmp", at=(657, 202, 680, 258)),
     "equip_selected": p(527, 73, img="img/juese/equip_selected.bmp", at=(511, 63, 549, 86)),

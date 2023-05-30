@@ -74,14 +74,14 @@ class EnhanceMixin(ShuatuBaseMixin):
                         # 装备级等级强化
                         while True:
                             time.sleep(1)
-                            ers = ecb.get_equip_status()
-                            ehs = ecb.get_enhance_status()
+                            ers = ecb.get_eq_status()
                             now_rank = ecb.get_rank()
                             if debug:
                                 self.log.write_log('debug', "等级装备强化任务开始")
-                                self.log.write_log('debug', '角色状态：%s' % ehs)
+                                self.log.write_log('debug', '角色状态：%s' % ers)
 
-                            if ers == 2:
+                            # 能直接提升Rank的情况
+                            if ers == 2 or ers == 4:
                                 # 先处理升rank
                                 if do_rank and (now_rank < torank):
                                     # rank提升开且小于目标rank
@@ -96,28 +96,37 @@ class EnhanceMixin(ShuatuBaseMixin):
                                         continue
                                 else:
                                     # rank提升关闭，那就有装备就穿，等级拉满。由于提示升rank，不会缺装备
-                                    if ehs > 1:
+                                    if ers == 4:
                                         self.click_btn(JUESE_BTN["zdqh_1"], until_appear=JUESE_BTN["zdqh_ok"])
                                         self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
-                                        if ehs == 4:
-                                            continue
                                     # 拉满了跑路
+                                    if ers == 2:
+                                        # 已经满了
+                                        pass
                                     if debug:
                                         self.log.write_log('debug', "rank任务完成")
                                     break
                                 continue
 
-                            if ehs == 0:
+                            # 不能直接提升rank情况下：
+                            # 先做升级动作
+                            if ers == 3 or ecb.get_char_lv_status() is True:
+                                time.sleep(1)
+                                self.click_btn(JUESE_BTN["zdqh_1"], until_appear=JUESE_BTN["zdqh_ok"])
+                                self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
+                                continue
+
+                            # 情况1.穿满了，不缺，跑路
+                            if ers == 0 or ers == 1:
                                 # 穿满强化满等级满
                                 if debug:
                                     self.log.write_log('debug', "穿满，无动作")
                                 break
 
-                            if ehs == 1:
+                            # 情况2.穿满，缺件，开打
+                            if ers == 5:
                                 # 自动强化亮，判断是否缺装备。因为没强化满也会亮
-                                if self.is_exists(img="img/juese/reachable.bmp",
-                                                  at=(82, 150, 434, 347)) and do_shuatu is True \
-                                        and self.check_shuatu() is True:
+                                if self.check_shuatu() is True:
                                     time.sleep(2)
                                     self.click_btn(JUESE_BTN["zdqh_0"], until_appear=JUESE_BTN["tuijiancaidan"])
                                     time.sleep(2)
@@ -222,12 +231,6 @@ class EnhanceMixin(ShuatuBaseMixin):
                                 else:
                                     break
 
-                            if ehs > 2:
-                                # 自动强化有红点，等级不满或者没穿满，直接穿上且升级
-                                time.sleep(1)
-                                self.click_btn(JUESE_BTN["zdqh_1"], until_appear=JUESE_BTN["zdqh_ok"])
-                                self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
-                                continue
 
                         # 解决部分卡推荐强化菜单的问题
                         time.sleep(0.5)
