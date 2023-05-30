@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230530
+# Princess connection 公主连结农场脚本v2.8.20230531
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -306,6 +306,12 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
  
+2023/05/31 By UVJkiNTQ
+- 功能新增
+  - 新增购买mana钱包任务`t13`
+- BUG修复
+  - 修复角色升级任务`s8`在大版本更新后识别角色状态的问题
+
 2023/05/30 By 0x114514BB
 - 文档完善
   - 补充新登录模式的说明：[登录配置指引](docs/login_guide.md)
