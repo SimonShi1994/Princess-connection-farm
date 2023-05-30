@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230525
+# Princess connection 公主连结农场脚本v2.8.20230530
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -198,9 +198,15 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
   **A:** 蓝叠模拟器默认使用实体键盘，需开启虚拟键盘，蓝叠 5 国际版 Nougat x64 步骤：前往“设置”-“语言和输入法”-“实体键盘”，开启“显示虚拟键盘”。
 
+- **Q:** 如何配置登录模式？
+
+  **A:** 目前有`切换记录|switch`，`自动填充|autofill`，`手动登录|manual`三种登陆方法，详见：
+
+  [登录配置指引](docs/login_guide.md)
+
 - **Q:** 脚本任务报错，提示OCRXXX
 
-  **A:** 使用OCR相关的服务，必须启动app.py。使用2021-01-23后的版本程序默认自动启动app。
+  **A:** 使用OCR相关的服务，必须启动`app.py`。使用2021-01-23后的版本程序默认自动启动app。另外app.py服务默认占用5000端口，请确保该端口未被其他程序使用。（可在`app.py`中更改）
 
   **app.py启动失败？** 手动运行`python app.py`查看是否缺失依赖或者下载模型失败等原因，~~或许是你依赖没装，指requirements.txt没有打开并选择安装哪一个OCR~~
 
@@ -230,7 +236,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
   **A:** 可能模拟器没有安装 ATX ，请在打开模拟器后，在控制台里输入init进行初始化模拟器环境。**还有问题加群问**
 
-- **Q:** 第一次使用，完全不懂怎么？
+- **Q:** 第一次使用，完全不懂怎么上手？
 
   **A:** 请阅读下列新手方法
 
@@ -300,6 +306,11 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
  
+2023/05/30 By 0x114514BB
+- 文档完善
+  - 补充新登录模式的说明：[登录配置指引](docs/login_guide.md)
+  - 修复了`edit user`中说明的歧义语句。
+
 2023/05/25 By 0x114514BB
 - 功能新增
   - 现在支持切换记录的登陆模式！设置`account_login_mode`为`switch`即可使用。
