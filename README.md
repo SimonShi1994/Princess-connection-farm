@@ -306,10 +306,15 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
  
+2023/05/30 By 0x114514BB
+- 文档完善
+  - 补充新登录模式的说明：[登录配置指引](docs/login_guide.md)
+  - 修复了`edit user`中说明的歧义语句。
+
 2023/05/25 By 0x114514BB
 - 功能新增
   - 现在支持切换记录的登陆模式！设置`account_login_mode`为`switch`即可使用。
-    使用前请`Edit`账户添加Bilibili昵称。该模式支持登陆失败时回退另一模式登录或跳过账号，可根据喜好自行配置。详细说明请见：[登录配置指引](docs/login_guide.md)
+    使用前请`Edit`账户添加Bilibili昵称。该模式支持登陆失败时回退另一模式登录或跳过账号，可根据喜好自行配置。
 - 配置更新
   - `account_login_mode`: 账号登录模式，详见[INI文件配置解读](docs/INI文件配置解读.md)
   - `account_login_switch_fallback` 切换记录模式下，登录失败返回操作。
