@@ -33,8 +33,8 @@ DOC_STR = {
         帮助: user
         user -l 列举全部用户列表
         user Account 显示某用户的所有信息
-        user -c Account Password [BiliName]创建一个新用户。
-            Account: 用户名    Password: 密码    BiliName: 可选，B站昵称，切换登录使用
+        user -c Account Password BiliName 创建一个新用户。
+            Account: 用户名    Password: 密码    BiliName: B站昵称，切换登录使用，可留空
             对已经存在的用户将覆盖原本的信息
         user -c -file Filename 从指定文件Filename创建用户
             该文件每一行要求分隔符（空格或Tab）隔开的两或三个元素，如：
@@ -45,8 +45,8 @@ DOC_STR = {
         user -d -file Filename 从指定文件Filename删除用户
             该文件每一行为一个Account，表示要删除的用户
         user -d -all 删除全部用户
-        user Account [-p Password] 更改某一账户的密码
-        user Account [-b BiliName] 更改某一账户的B站昵称
+        user Account -p Password 更改某一账户的密码为Password
+        user Account -b BiliName 更改某一账户的B站昵称为BiliName
         """,
     "task?":
         """
