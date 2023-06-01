@@ -461,7 +461,8 @@ class CharZhuangBei(CharBase):
         # Return 1: 因为没体力而终止了
         # Return 2: 因为没次数而终止了
         self.fclick(1, 1)
-        if self.get_equip_status() == 0 or self.get_equip_status() == 1:
+        es = self.get_equip_status()
+        if es == 0 or es == 1:
             self.log.write_log("info", "已经不能再自动强化了。")
             return
         out = self.click_btn(JUESE_BTN["zdqh_1"], until_appear={
