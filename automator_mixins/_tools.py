@@ -13,7 +13,7 @@ from scenes.root.juese import get_name_from_plate_path
 
 from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING_BTN, p, HUODONG_BTN
+from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING_BTN, p, HUODONG_BTN, JIAYUAN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, use_pcrocr_to_process_basic_text, \
@@ -150,6 +150,24 @@ class ToolsMixin(BaseMixin):
         time.sleep(1)
         self.lock_home()  # 追加检测
 
+    def kkr_wallet(self):
+        self.lock_home()
+        self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], side_check=self.juqing_kkr,
+                      elsedelay=1)
+        self.click_btn(JIAYUAN_BTN["caidan"], until_appear=JIAYUAN_BTN["wanfa"])
+        if self.is_exists(JIAYUAN_BTN["wallet_locked"]):
+            self.click_btn(JIAYUAN_BTN["wallet_locked"],until_appear=JIAYUAN_BTN["buy_confirm"])
+            self.click(589, 425)
+            while True:
+                if self.is_exists(JIAYUAN_BTN["buy_complete"]):
+                    self.log.write_log("debug", "购买完毕")
+                    break
+                else:
+                    time.sleep(1)
+        else:
+            self.log.write_log("warning", "请检查是否已领取可可萝的钱包")
+        self.lock_home()
+
     def setting(self):
         def dragdown():
             time.sleep(1)
@@ -198,7 +216,9 @@ class ToolsMixin(BaseMixin):
         dragdown()
         dragdown()
         time.sleep(1)
-        self.click(484, 399)
+        self.click(711, 270)
+        self.click(709, 398)
+        time.sleep(1)
 
         # 战斗
         self.click(769, 87)  # 战斗tab

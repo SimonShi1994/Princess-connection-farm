@@ -398,42 +398,28 @@ class CharZhuangBei(CharBase):
         return a
 
     def get_equip_status(self, screen=None):
+        # 返回值： 0-槽位满了强化也满了 1-槽位满了没强化满; 2-槽位满了，可升Rank; 3-槽位没满，有库存;4-槽位没满，有库存，还能升rank;
+        #         5-槽位没满，没库存;
         if screen is None:
             screen = self.getscreen()
         if self.is_exists(JUESE_BTN["yjzb_off"], method="sq", threshold=0.95, screen=screen):
-            # 已经穿满
-            return 0
+            if self.is_exists(JUESE_BTN["reachable"].img, at=(71, 136, 435, 349)):
+                return  5
+            else:
+                if self.is_exists(JUESE_BTN["red_small"].img, at=(95,90,437,309)):
+                    return 1
+                else:
+                    return 0
         if self.is_exists(JUESE_BTN["yjzb"], screen=screen):
             # 有装备可穿
-            return 1
+            return 3
         if self.is_exists(JUESE_BTN["rank_on"], screen=screen):
-            # 可升rank
-            return 2
-
-    def get_enhance_status(self, screen=None):
-        if screen is None:
-            screen = self.getscreen()
-        # return: 0-穿满强化满 1-穿满强化没满 2-没穿满且等级没满； 3-等级没满 4-没穿满
-        if self.get_auto_upgrade_status(screen):
-            # 没穿满/等级没满，自动强化带红点
-            if self.get_char_lv_status(screen):
-                if self.get_equip_status(screen) == 0:
-                    # 装备及等级都没满，导致自动强化带红点
-                    return 2
-                else:
-                    # 只是等级没满
-                    return 3
-            else:
-                # 没穿满
+            if self.is_exists(JUESE_BTN["yjzb"], screen=screen):
+                # 没穿满，但可以升rank
                 return 4
-        else:
-            # 自动强化不亮/自动强化暗
-            if self.is_exists(JUESE_BTN["zdqh_0"], method="sq", threshold=0.95, screen=screen):
-                # 自动强化亮，需要刷装备或装备强化
-                return 1
-            if self.is_exists(JUESE_BTN["zdqh_2"], method="sq", threshold=0.95, screen=screen):
-                # 自动强化是暗的,已经穿满强化满
-                return 0
+            else:
+                # 穿满了，可升rank
+                return 2
 
     def get_rank(self, screen=None):
         if screen is None:
@@ -475,7 +461,8 @@ class CharZhuangBei(CharBase):
         # Return 1: 因为没体力而终止了
         # Return 2: 因为没次数而终止了
         self.fclick(1, 1)
-        if self.get_enhance_status() == 0:
+        es = self.get_equip_status()
+        if es == 0 or es == 1:
             self.log.write_log("info", "已经不能再自动强化了。")
             return
         out = self.click_btn(JUESE_BTN["zdqh_1"], until_appear={
@@ -623,6 +610,8 @@ class CharKaihua(CharBase):
             return False
 
         self.click_btn(JUESE_BTN["do_kaihua"], until_appear=JUESE_BTN["kaihua_confirm"])
+        self.click(402, 230) # MAX
+        time.sleep(0.5)
         self.click_btn(JUESE_BTN["kaihua_confirm"], until_disappear=JUESE_BTN["kaihua_confirm"])
         self.lock_img(JUESE_BTN["kaihua_complete"], side_check=kh_sideclick)  # 加速加速
         self.fclick(1, 1)  # 跳过剧情等

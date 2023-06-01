@@ -135,6 +135,8 @@ class WZ_Menu(PCRSceneBase):
             self.fclick(1, 1)
         elif self.is_exists(HUODONG_BTN["speaker_box"], screen=screen):
             self.fclick(1, 1)
+        elif self.is_exists(WZ_BTN["speaker_box2"], screen=screen):
+            self.fclick(1, 1)
         return screen
 
     def wz_juqing(self):
@@ -170,9 +172,9 @@ class WZ_Menu(PCRSceneBase):
 
     def goto_nboss(self, timeout=None) -> "BOSS_FightInfoBase":
         while True:
-            a1 = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(682, 152, 826, 358))
-            a2 = self.img_where_all(img=HUODONG_BTN["nboss_cn"].img, at=(682, 152, 826, 358))
-            a3 = self.img_where_all(img=HUODONG_BTN["nboss_en"].img, at=(682, 152, 826, 358))
+            a1 = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(675,128,837,374))
+            a2 = self.img_where_all(img=HUODONG_BTN["nboss_cn"].img, at=(675,128,837,374))
+            a3 = self.img_where_all(img=HUODONG_BTN["nboss_en"].img, at=(675,128,837,374))
             a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
@@ -190,9 +192,9 @@ class WZ_Menu(PCRSceneBase):
     def goto_hboss(self, timeout=None) -> "BOSS_FightInfoBase":
         time.sleep(2)
         while True:
-            a1 = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(682, 152, 826, 358))
-            a2 = self.img_where_all(img=HUODONG_BTN["hboss_cn"].img, at=(682, 152, 826, 358))
-            a3 = self.img_where_all(img=HUODONG_BTN["hboss_en"].img, at=(682, 152, 826, 358))
+            a1 = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(675,128,837,374))
+            a2 = self.img_where_all(img=HUODONG_BTN["hboss_cn"].img, at=(675,128,837,374))
+            a3 = self.img_where_all(img=HUODONG_BTN["hboss_en"].img, at=(675,128,837,374))
             a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
@@ -209,9 +211,9 @@ class WZ_Menu(PCRSceneBase):
 
     def goto_vhboss(self, timeout=None) -> "BOSS_FightInfoBase":
         while True:
-            a1 = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(682, 152, 826, 358))
-            a2 = self.img_where_all(img=HUODONG_BTN["vhboss_cn"].img, at=(682, 152, 826, 358))
-            a3 = self.img_where_all(img=HUODONG_BTN["vhboss_en"].img, at=(682, 152, 826, 358))
+            a1 = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(675,128,837,374))
+            a2 = self.img_where_all(img=HUODONG_BTN["vhboss_cn"].img, at=(675,128,837,374))
+            a3 = self.img_where_all(img=HUODONG_BTN["vhboss_en"].img, at=(675,128,837,374))
             a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
@@ -271,7 +273,9 @@ class WZ_MapBase(WZ_Menu, ZhuXianBase):
             self.fclick(1, 1)
         elif self.is_exists(HUODONG_BTN["shadow_return"], screen=screen):
             self.fclick(1, 1)
-        elif self.is_exists(HUODONG_BTN["speaker_box"], screen=screen):
+        elif self.is_exists(WZ_BTN["speaker_box"].img, screen=screen, at=(291,361,558,440)):
+            self.fclick(1, 1)
+        elif self.is_exists(WZ_BTN["speaker_box2"].img, screen=screen, at=(291,361,558,440)):
             self.fclick(1, 1)
         return screen
 

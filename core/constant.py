@@ -262,6 +262,13 @@ JIAYUAN_BTN = {
     "dengjitisheng": p(589, 431, img="img/jiayuan/dengjitisheng.bmp", at=(491, 410, 682, 452)),
     "xinxi": p(img="img/jiayuan/xinxi.bmp"),
     "zhuye": p(img="img/jiayuan/wodezhuye.bmp", at=(47, 488, 130, 537)),
+    "caidan": p(899,135,img="img/jiayuan/caidan.bmp",at=(885,118,913,152)),
+    "wanfa": p(717,414,img="img/jiayuan/wanfa.bmp",at=(692,386,743,443)),
+    "wallet_locked": p(635,412,img="img/jiayuan/kkr_wallet_locked.bmp",at=(594,371,676,453)),
+    "buy_confirm": p(477,107,img="img/jiayuan/buy_confirm.bmp",at=(393,75,562,140)),
+    "buy_complete": p(479,164,img="img/jiayuan/buy_complete.bmp",at=(408,134,550,195)),
+    "suijichuxing": p(58,268,img="img/jiayuan/suijichuxing.bmp",at=(30,239,87,298)),
+
 }
 WZ_BTN = {
     "help": p(920, 26, img="img/waizhuan/help.bmp", at=(910, 13, 931, 40)),  # 外传menu面板特征
@@ -275,6 +282,7 @@ WZ_BTN = {
     "shujuxiazai": p(479, 146, img="img/waizhuan/shujuxiazai.bmp", at=(435, 134, 523, 159)),
     "shujuxiazai_ok": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
     "shadow_waizhuan": p(61, 33, img="img/waizhuan/shadow_waizhuan.bmp", at=(2, 6, 120, 61)),
+    "speaker_box2": p(376,406,img="img/waizhuan/speaker_box2.bmp",at=(370,392,383,420)),
 }
 NIUDAN_BTN = {
     # 扭蛋的坐标会偏移！
@@ -660,6 +668,7 @@ JUESE_BTN = {
     "zdqh_0": p(424, 424, img="img/juese/zdqh_0.bmp", at=(422, 407, 440, 423)),
     "zdqh_1": p(424, 424, img="img/juese/zdqh_1.bmp", at=(418, 406, 439, 424)),
     "zdqh_2": p(img="img/juese/zdqh_2.bmp", at=(310, 444, 431, 467)),
+    "red_small": p(img="img/juese/red_small.bmp"),  # 占位，位置不确定，一般直接引用
     "reachable": p(img="img/juese/reachable.bmp", at=(372, 158, 395, 170)),  # 占位，位置不确定，一般直接引用
     "enter_shuatu": p(669, 230, img="img/juese/enter_shuatu.bmp", at=(657, 202, 680, 258)),
     "equip_selected": p(527, 73, img="img/juese/equip_selected.bmp", at=(511, 63, 549, 86)),

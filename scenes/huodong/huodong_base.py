@@ -823,9 +823,9 @@ class HuodongMenu(PCRSceneBase):
 
     def goto_nboss(self, timeout=None) -> "BOSS_FightInfoBase":
         while True:
-            a1 = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(681, 130, 789, 302))
-            a2 = self.img_where_all(img=HUODONG_BTN["nboss_en"].img, at=(681, 130, 789, 302))
-            a3 = self.img_where_all(img=HUODONG_BTN["nboss_sp"].img, at=(681, 130, 789, 302))
+            a1 = self.img_where_all(img=HUODONG_BTN["nboss"].img, at=(675,128,837,374))
+            a2 = self.img_where_all(img=HUODONG_BTN["nboss_en"].img, at=(675,128,837,374))
+            a3 = self.img_where_all(img=HUODONG_BTN["nboss_sp"].img, at=(675,128,837,374))
             a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
@@ -843,9 +843,9 @@ class HuodongMenu(PCRSceneBase):
     def goto_hboss(self, timeout=None) -> "BOSS_FightInfoBase":
         time.sleep(2)
         while True:
-            a1 = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(681, 130, 789, 302))
-            a2 = self.img_where_all(img=HUODONG_BTN["hboss_en"].img, at=(681, 130, 789, 302))
-            a3 = self.img_where_all(img=HUODONG_BTN["hboss_sp"].img, at=(681, 130, 789, 302))
+            a1 = self.img_where_all(img=HUODONG_BTN["hboss"].img, at=(675,128,837,374))
+            a2 = self.img_where_all(img=HUODONG_BTN["hboss_en"].img, at=(675,128,837,374))
+            a3 = self.img_where_all(img=HUODONG_BTN["hboss_sp"].img, at=(675,128,837,374))
             a = a1 + a2 + a3
             if not a:
                 time.sleep(2)
@@ -861,9 +861,9 @@ class HuodongMenu(PCRSceneBase):
 
     def goto_vhboss(self, timeout=None) -> "BOSS_FightInfoBase":
         while True:
-            a1 = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(681, 130, 789, 302))
-            a2 = self.img_where_all(img=HUODONG_BTN["vhboss_en"].img, at=(681, 130, 789, 302))
-            a3 = self.img_where_all(img=HUODONG_BTN["vhboss_sp"].img, at=(681, 130, 789, 302))
+            a1 = self.img_where_all(img=HUODONG_BTN["vhboss"].img, at=(675,128,837,374))
+            a2 = self.img_where_all(img=HUODONG_BTN["vhboss_en"].img, at=(675,128,837,374))
+            a3 = self.img_where_all(img=HUODONG_BTN["vhboss_cn"].img, at=(675,128,837,374))
             a = a1 + a2 + a3
             if not a:
                 time.sleep(2)

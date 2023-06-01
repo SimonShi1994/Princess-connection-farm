@@ -1557,7 +1557,7 @@ class ShuatuBaseMixin(FightBaseMixin):
 
             sc = self.getscreen()
             es = S.get_equip_status(sc)
-            if es==2:
+            if es==2 or es==4:
                 if do_rank:
                     self.log.write_log("info","可以升级RANK，升级！")
                     S.do_rankup(True)
@@ -1571,7 +1571,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             # 再次检查Rank
             sc = self.getscreen()
             es = S.get_equip_status(sc)
-            if es == 2:
+            if es==2 or es==4:
                 if do_rank:
                     self.log.write_log("info", "可以升级RANK，升级！")
                     S.do_rankup(True)
