@@ -74,7 +74,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                         # 装备级等级强化
                         while True:
                             time.sleep(1)
-                            ers = ecb.get_eq_status()
+                            ers = ecb.get_equip_status()
                             now_rank = ecb.get_rank()
                             if debug:
                                 self.log.write_log('debug', "等级装备强化任务开始")
