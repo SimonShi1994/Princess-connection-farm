@@ -274,7 +274,8 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
    ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
 2. 感谢[CyiceK](https://github.com/1076472672) 、[Dr-Bluemond](https://github.com/Dr-Bluemond)
-   、[TheAutumnOfRice](https://github.com/TheAutumnOfRice) 、[UVJkiNTQ](https://github.com/UVJkiNTQ) 以及其他众多贡献者对本项目的倾力帮助。
+   、[TheAutumnOfRice](https://github.com/TheAutumnOfRice) 、[UVJkiNTQ](https://github.com/UVJkiNTQ)、[0x114514BB](https://github.com/0x114514BB)
+   以及其他众多贡献者对本项目的倾力帮助。
 
 3. __来个 star 吧(\*/ω＼\*)，有问题请提交issue__
 
@@ -306,18 +307,25 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
  
-2023/05/31 By UVJkiNTQ
+2023/06/01 By UVJkiNTQ
 - 功能新增
   - 新增购买mana钱包任务`t13`
 - BUG修复
   - 修复角色升级任务`s8`在大版本更新后识别角色状态的问题
 
+2023/05/31 By TheAutumnOfRice
+
+- 惯例更新
+  - 工菜活动
+
 2023/05/30 By 0x114514BB
+
 - 文档完善
   - 补充新登录模式的说明：[登录配置指引](docs/login_guide.md)
   - 修复了`edit user`中说明的歧义语句。
 
 2023/05/25 By 0x114514BB
+
 - 功能新增
   - 现在支持切换记录的登陆模式！设置`account_login_mode`为`switch`即可使用。
     使用前请`Edit`账户添加Bilibili昵称。该模式支持登陆失败时回退另一模式登录或跳过账号，可根据喜好自行配置。
