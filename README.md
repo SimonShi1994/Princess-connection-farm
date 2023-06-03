@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230601
+# Princess connection 公主连结农场脚本v2.8.20230603
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -306,8 +306,17 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
- 
+
+2023/06/03 By 0x114514BB
+
+- 功能调整
+  - 若检测到账号未设置B站ID时，设置默认值与用户名相同，可以后续`Edit`修改
+- BUG修复
+  - 修复账户未配置B站ID时，提示刷屏的错误
+  - 修复切号模式登录下，因凭证过期跳出重新登录窗口时卡住的错误
+
 2023/06/01 By UVJkiNTQ
+
 - 功能新增
   - 新增购买mana钱包任务`t13`
 - BUG修复
@@ -334,15 +343,18 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
   - `account_login_switch_fallback` 切换记录模式下，登录失败返回操作。
 
 2023/05/22 By PekoAAA
+
 - BUG修复
   - 修正N26-14前的部分坐标
  
 2023/05/21 By UVJkiNTQ
+
 - BUG修复
   - 外传基础信息及逻辑修复
   - 修复UI更新导致的设置初始化任务`t10`偏移
   
 2023/05/20 By 0x114514BB
+
 - BUG修复
   - 修复Bind不存在的schedule导致脚本无法启动的问题
   - 修复外传13-15坐标错误
@@ -351,6 +363,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
   - 手动切换账户模式：鉴于近期登录风控频繁出现，添加手动切换账户模式，详见`automator_mixin/_login.py`的`do_manual_login`说明。
 
 2023/05/19 By UVJkiNTQ
+
 - 惯例更新
   - 复刻活动`牧场里的四农士 贫穷农场奋斗记`
 - BUG修复

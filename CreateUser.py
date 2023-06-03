@@ -100,6 +100,7 @@ DOC_STR = {
         batch BatchName 显示某项批配置的详细信息
         batch -c BatchName 创建一个名称为BatchName的批配置
         batch -e BatchName 进入BatchName的编辑模式
+        batch -d BatchName 删除名称为BatchName的批配置
         batch文件默认存放于./batches中。
         """,
     "schedule?":
@@ -343,7 +344,7 @@ def create_account_from_file(file):
 
 
 def del_account(account):
-    target = "%s/%s.json" % (user_addr, account)
+    target = "%s/%s.json" % (USER_ADDR, account)
     if os.path.exists(target):
         os.remove(target)
 
@@ -382,7 +383,7 @@ def create_task(TaskName):
 
 
 def del_task(TaskName):
-    target = "%s/%s.json" % (task_addr, TaskName)
+    target = "%s/%s.json" % (TASK_ADDR, TaskName)
     if os.path.exists(target):
         os.remove(target)
 
@@ -487,6 +488,18 @@ def print_batch(obj):
 def show_batch(BatchName):
     obj = AutomatorRecorder.getbatch(BatchName)
     print_batch(obj)
+
+
+def del_batch(batch):
+    target = "%s/%s.json" % (BATCH_ADDR, batch)
+    if os.path.exists(target):
+        os.remove(target)
+
+# 鸽了，还是下次重写usercentre吧 by 0x114514BB
+def del_all_batches():
+    pass
+#     for batch in list_all_users(0):
+#         del_account(acc)
 
 
 def edit_batch(BatchName):
@@ -604,7 +617,7 @@ def create_schedule(ScheduleName):
 
 
 def del_schedule(ScheduleName):
-    target = "%s/%s.txt" % (schedule_addr, ScheduleName)
+    target = "%s/%s.txt" % (SCHEDULE_ADDR, ScheduleName)
     if os.path.exists(target):
         os.remove(target)
 
@@ -1153,6 +1166,11 @@ if __name__ == "__main__":
                     create_batch(cmds[2])
                 elif len(cmds) == 3 and cmds[1] == "-e":
                     edit_batch(cmds[2])
+                elif len(cmds) == 3 and cmds[1] == "-d" and cmds[2] == "-all":
+                    del_all_batches()
+                    print("Wrong Order!")
+                elif len(cmds) == 3 and cmds[1] == "-d":
+                    del_batch(cmds[2])
                 elif len(cmds) == 2:
                     show_batch(cmds[1])
                 else:

@@ -61,13 +61,25 @@ class LoginMixin(ToolsMixin):
         # 在使用d.xpath之前先用个
         # d(resourceId="com.bilibili.priconne:id/tv_gsc_record_item_name")检查一下是否出现下拉列表，d.xpath会炸ADB
         # 为什么不直接用d()[index]? 因为uiautomator2有个四年都没修好的bug：https://github.com/openatx/uiautomator2/issues/360
-        if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_item_name").exists:
+        if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_item_name").exists():
             ids = self.d.xpath('//*[@resource-id="com.bilibili.priconne:id/tv_gsc_record_item_name"]').all()
             return [i.text for i in ids]
 
     @DEBUG_RECORD
-    def do_login_precheck(self, is_autofill=True, until_res="com.bilibili.priconne:id/et_gsc_account"):
+    def do_login_precheck(self, is_autofill=True, is_switch=False):
         # 上保险
+
+        # 任何登录模式跳到账户密码输入界面|重新登录界面都退出
+        quit_features = [
+            "com.bilibili.priconne:id/et_gsc_account",
+            "com.bilibili.priconne:id/et_gsc_account_re",
+        ]
+
+        quit_feature_found = False
+
+        if is_switch:
+            quit_features.append("com.bilibili.priconne:id/tv_gsc_record_login")
+
         for retry in range(300):
             self._move_check()
             self.click(945, 13)  # 防止卡住
@@ -95,26 +107,19 @@ class LoginMixin(ToolsMixin):
                 self.click(687, 72)
                 # 防止卡验证码
                 continue
-            if self.d(resourceId=until_res).exists():
-                break
-            # 任何登录模式跳到账户密码输入界面都退出
-            elif self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").exists():
+            for feature in quit_features:
+                if self.d(resourceId=feature).exists():
+                    quit_feature_found = True
+                    break
+            if quit_feature_found:
                 break
             else:
                 time.sleep(0.2)
         else:
             raise Exception("进入登陆页面失败！")
 
-    def do_autofill_login_precheck(self):
-        # shotcut
-        return self.do_login_precheck()
-
-    def do_switch_login_precheck(self):
-        # shotcut
-        return self.do_login_precheck(False, "com.bilibili.priconne:id/tv_gsc_record_login")
-
     @DEBUG_RECORD
-    def do_manual_login(self, ac):
+    def do_manual_login(self, ac, biliname):
         """
         :param ac: 游戏账户名称
         :return:
@@ -123,11 +128,11 @@ class LoginMixin(ToolsMixin):
         打开切换账号界面后，弹框手动登录，到达游戏主页后方可点击弹框的确认。
         """
 
-        self.do_switch_login_precheck()
+        self.do_login_precheck(is_autofill=False, is_switch=True)
 
         self.log.write_log('warning',
                            f"正在手动登录{ac}，请确认到达游戏主页后方可点击弹窗的确认按钮，否则可能出现意外错误！")
-        TimeoutMsgBox("手动登录", f"请手动登录{self.address}\n用户名：{ac}\n账号：{self.account}", geo="200x80",
+        TimeoutMsgBox("手动登录", f"请手动登录{self.address}\n账号：{self.account}\n用户名：{ac}\nB站ID：{biliname}", geo="200x120",
                       join=True)
         self.log.write_log('info', f"你已确认登录{ac}！")
         return 0
@@ -144,7 +149,7 @@ class LoginMixin(ToolsMixin):
         """
 
         self.log.write_log('info', f"正在尝试切换到账号{ac}，Bilibili ID: {biliname}！")
-        self.do_switch_login_precheck()
+        self.do_login_precheck(is_autofill=False, is_switch=True)
 
         last_namelist = []
         namelist = []
@@ -193,7 +198,7 @@ class LoginMixin(ToolsMixin):
                     if biliname in namelist:
                         for _ in range(10):
                             u2obj = self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_item_name", text=biliname)
-                            if u2obj.exists:
+                            if u2obj.exists():
                                 u2obj.click()
                                 break
                         else:
@@ -208,7 +213,7 @@ class LoginMixin(ToolsMixin):
                     else:
                         
                         # 存在下拉菜单
-                        if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_item_name").exists:
+                        if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_item_name").exists():
                             # 向下精准滑动3项 weditor实测坐标
                             # {"x":290,"y":427,"width":380,"height":81}
                             # drag up (330, 453) -> (330, 210) -> actually (330, 198)
@@ -229,37 +234,72 @@ class LoginMixin(ToolsMixin):
             else:
                 self.log.write_log('error', f"账号{ac}的Bilibili昵称为空, 请检查对应User文件, 回退原登录模式！")
 
-            if account_login_switch_fallback == 'manual':
-                return self.do_manual_login(ac)
-            elif account_login_switch_fallback == 'skip':
-                raise BadLoginException(
-                    f"无法切换到指定账号{ac}, Bilibili昵称:{biliname}, 回退指定跳过！")  # return a sign of falied attempt
-            else:
-                return self.do_autofill_login(ac, pwd)
+            return self.do_switch_login_fallback(ac, pwd, biliname)
 
+        # 不需要Fallback才尝试switch login
         time.sleep(random.uniform(0.2, 1))
         # TimeoutMsgBox("Switch Login Success", f"Switch Login Success-{self.address}\n账号：{ac}, Biliname: {biliname}", geo="266x80",
         #               join=True)
         self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_login").click()
-        time.sleep(1.5)
+        time.sleep(2.5)
 
+        # Re-login check 30天以上未登录或某些情况下会被睿站要求重新登录
+        # 检查点
+        if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login_re").exists():
+            self.log.write_log('error', f"切换记录登录失败，B站要求重新登录, 回退原登录模式！")
+            return self.do_switch_login_fallback(ac, pwd, biliname)
+        else:
+            return 0
+            
+            
+    @DEBUG_RECORD
+    def do_switch_login_fallback(self, ac, pwd, biliname):
+        '''
+        切号登录失败回退
+        '''
+
+        if account_login_switch_fallback == 'manual':
+            return self.do_manual_login(ac, biliname)
+        elif account_login_switch_fallback == 'skip':
+            raise BadLoginException(
+                f"无法切换到指定账号{ac}, Bilibili昵称:{biliname}, 回退指定跳过！")  # return a sign of falied attempt
+        else:
+            return self.do_autofill_login(ac, pwd)
 
 
     @DEBUG_RECORD
     def do_autofill_login(self, ac, pwd):
 
-        self.do_autofill_login_precheck()
+        self.do_login_precheck()
 
-        self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
-        self.d.clear_text()
-        self.d.send_keys(str(ac))
-        self.d(resourceId="com.bilibili.priconne:id/et_gsc_account_pwd").click()
-        self.d.clear_text()
-        self.d.send_keys(str(pwd))
-        time.sleep(random.uniform(0.2, 1))
-        self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
-        time.sleep(1.5)
-        toast_message = self.d.toast.get_message()
+        
+        # 注意：AutoFill里面还要检测re控件
+        # d(resourceId="com.bilibili.priconne:id/et_gsc_account_re")
+        # '''
+
+        if self.d(resourceId="com.bilibili.priconne:id/et_gsc_account_re").exists():
+            self.log.write_log('warning', f"检测到重新登录窗口, 正在尝试自动填充！")
+            self.d(resourceId="com.bilibili.priconne:id/et_gsc_account_re").click()
+            self.d.clear_text()
+            self.d.send_keys(str(ac))
+            self.d(resourceId="com.bilibili.priconne:id/et_gsc_account_pwd_re").click()
+            self.d.clear_text()
+            self.d.send_keys(str(pwd))
+            time.sleep(random.uniform(0.2, 1))
+            self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login_re").click()
+            time.sleep(1.5)
+            toast_message = self.d.toast.get_message()
+        else:
+            self.d(resourceId="com.bilibili.priconne:id/et_gsc_account").click()
+            self.d.clear_text()
+            self.d.send_keys(str(ac))
+            self.d(resourceId="com.bilibili.priconne:id/et_gsc_account_pwd").click()
+            self.d.clear_text()
+            self.d.send_keys(str(pwd))
+            time.sleep(random.uniform(0.2, 1))
+            self.d(resourceId="com.bilibili.priconne:id/tv_gsc_account_login").click()
+            time.sleep(1.5)
+            toast_message = self.d.toast.get_message()
         # print(toast_message)
         if toast_message == "密码错误":
             raise BadLoginException("密码错误！")

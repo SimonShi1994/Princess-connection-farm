@@ -177,13 +177,13 @@ from core.valid_task import VALID_TASK, getcustomtask as _getcustomtask, list_al
     对于高优先级的开关文件，确定了某一个flag处于激活或非激活状态后，将无视后来低优先级开关文件对次flag状态的更改。
 9.  如果同一组配置中包含了针对某一用户的矛盾的两个组，则按照名称顺序以第一个组为判断结果。
 """
-user_addr = "users"  # 存放用户配置的文件夹
-task_addr = "tasks"  # 存放任务配置的文件夹
+USER_ADDR = "users"  # 存放用户配置的文件夹
+TASK_ADDR = "tasks"  # 存放任务配置的文件夹
 # customtask_addr = "customtask"  # 存放自定义任务的文件夹 # 必须用.而不是/
-group_addr = "groups"  # 存放用户组的文件夹
-batch_addr = "batches"  # 存放批任务的文件夹
-schedule_addr = "schedules"  # 存放计划的文件夹
-switch_addr = "switches"  # 存放开关的文件夹
+GROUP_ADDR = "groups"  # 存放用户组的文件夹
+BATCH_ADDR = "batches"  # 存放批任务的文件夹
+SCHEDULE_ADDR = "schedules"  # 存放计划的文件夹
+SWITCH_ADDR = "switches"  # 存放开关的文件夹
 
 
 def check_user_dict(d: dict, is_raise=False) -> bool:
@@ -210,7 +210,13 @@ def check_user_dict(d: dict, is_raise=False) -> bool:
         
 def check_user_dict_have_biliname(d: dict) -> bool:
     if account_login_mode == "switch" and "biliname" not in d:
-        print(f'[注意] 你未为账号{d["account"]}配置 Bilibili昵称，该账号将无法使用切换记录方式登录。')
+        print(f'[注意] 你未为账号{d["account"]}配置 Bilibili昵称，将默认设置为B站名称。')
+        return False
+    else:
+        return True
+        
+
+    
 
 
 def check_task_dict(d: dict, is_raise=False) -> bool:
@@ -257,21 +263,23 @@ def list_all_users(verbose=1) -> List[str]:
     :param verbose: 0:不显示print 1:显示print
     :return: 列表，包含全部合法的用户配置文件
     """
-    if not os.path.exists(user_addr):
-        os.makedirs(user_addr)
-    ld = os.listdir(user_addr)
+    if not os.path.exists(USER_ADDR):
+        os.makedirs(USER_ADDR)
+    ld = os.listdir(USER_ADDR)
     users = []
     count = 0
     for i in ld:
         if not os.path.isdir(i) and i.endswith(".json"):
             try:
                 # 检查是否能打开文件，以及是否含有必要的参数
-                target_name = "%s/%s" % (user_addr, i)
-                f = open(target_name, "r", encoding="utf-8")
-                d = json.load(f)
+                target_name = "%s/%s" % (USER_ADDR, i)
+                with open(target_name, "r", encoding="utf-8") as f:
+                    d = json.load(f)
                 check_user_dict(d, True)
-                check_user_dict_have_biliname(d)
-                f.close()
+                if not check_user_dict_have_biliname(d):
+                    acc = os.path.splitext(i)[0]
+                    AutomatorRecorder.setuser_default_biliname_static(acc, d)
+                    
                 users += [i[:-5]]
                 if verbose:
                     print("用户配置", i, "加载成功！")
@@ -290,20 +298,19 @@ def list_all_tasks(verbose=1) -> List[str]:
     :param verbose: 0:不显示print 1:显示print
     :return: 列表，包含全部任务配置文件
     """
-    if not os.path.exists(task_addr):
-        os.makedirs(task_addr)
-    ld = os.listdir(task_addr)
+    if not os.path.exists(TASK_ADDR):
+        os.makedirs(TASK_ADDR)
+    ld = os.listdir(TASK_ADDR)
     tasks = []
     count = 0
     for i in ld:
         if not os.path.isdir(i) and i.endswith(".json"):
             try:
                 # 检查是否能打开文件，以及是否含有必要的参数
-                target_name = "%s/%s" % (task_addr, i)
-                f = open(target_name, "r", encoding="utf-8")
-                d = json.load(f)
+                target_name = "%s/%s" % (TASK_ADDR, i)
+                with open(target_name, "r", encoding="utf-8") as f:
+                    d = json.load(f)
                 check_task_dict(d, True)
-                f.close()
                 tasks += [i[:-5]]
                 if verbose:
                     print("任务配置", i, "加载成功！")
@@ -328,9 +335,9 @@ def check_users_exists(users: List[str], is_raise=True) -> bool:
 
 
 def list_all_groups(verbose=1) -> List[str]:
-    if not os.path.exists(group_addr):
-        os.makedirs(group_addr)
-    ld = os.listdir(group_addr)
+    if not os.path.exists(GROUP_ADDR):
+        os.makedirs(GROUP_ADDR)
+    ld = os.listdir(GROUP_ADDR)
     groups = []
     count = 0
     for i in ld:
@@ -381,9 +388,9 @@ def check_valid_batch(batch: dict, is_raise=True) -> bool:
 
 
 def list_all_batches(verbose=1) -> List[str]:
-    if not os.path.exists(batch_addr):
-        os.makedirs(batch_addr)
-    ld = os.listdir(batch_addr)
+    if not os.path.exists(BATCH_ADDR):
+        os.makedirs(BATCH_ADDR)
+    ld = os.listdir(BATCH_ADDR)
     batches = []
     count = 0
     for i in ld:
@@ -465,9 +472,9 @@ def check_valid_switch(switch: dict, is_raise=True) -> bool:
 
 
 def list_all_schedules(verbose=1) -> List[str]:
-    if not os.path.exists(schedule_addr):
-        os.makedirs(schedule_addr)
-    ld = os.listdir(schedule_addr)
+    if not os.path.exists(SCHEDULE_ADDR):
+        os.makedirs(SCHEDULE_ADDR)
+    ld = os.listdir(SCHEDULE_ADDR)
     schedules = []
     count = 0
     for i in ld:
@@ -490,9 +497,9 @@ def list_all_schedules(verbose=1) -> List[str]:
 
 
 def list_all_switches(verbose=1, get_detail=False) -> Union[List[str], List[Tuple[str, dict]]]:
-    if not os.path.exists(switch_addr):
-        os.makedirs(switch_addr)
-    ld = os.listdir(switch_addr)
+    if not os.path.exists(SWITCH_ADDR):
+        os.makedirs(SWITCH_ADDR)
+    ld = os.listdir(SWITCH_ADDR)
     switches = []
     count = 0
     for i in ld:
@@ -562,20 +569,19 @@ def init_user(account: str, password: str, biliname: Optional[str] = None) -> bo
     以account和password在user_addr下新增一条用户记录
     :param account: 用户名
     :param password: 密码
-    :param biliname: 账号对应的Bilibili ID名称（可选）
+    :param biliname: 账号对应的Bilibili ID名称，若空则自动设置为与账户名相同
     :return: 是否成功创建
     """
-    target_name = "%s/%s.json" % (user_addr, account)
+    target_name = "%s/%s.json" % (USER_ADDR, account)
     if os.path.exists(target_name):
         print("配置", account, "已经存在。")
         return False
     try:
-        f = open(target_name, "w", encoding="utf-8")
-        d = {k: v for k, v in
-             dict(account=account, password=password, biliname=biliname)
-             .items() if v}
-        json.dump(d, f, indent=1)
-        f.close()
+        with open(target_name, "w", encoding="utf-8") as f:
+            d = {k: v for k, v in
+                dict(account=account, password=password, biliname=biliname)
+                .items() if v}
+            json.dump(d, f, indent=1)
     except Exception as e:
         print("存储配置时遇到错误：", e)
         return False
@@ -648,9 +654,8 @@ class AutomatorRecorder:
         :return: 一个字典，json的内容
         """
         try:
-            f = open(jsonaddr, "r", encoding="utf-8")
-            d = json.load(f)
-            f.close()
+            with open(jsonaddr, "r", encoding="utf-8") as f:
+                d = json.load(f)
             return d
         except Exception as e:
             print("读取json出现错误：", e)
@@ -668,25 +673,25 @@ class AutomatorRecorder:
         if not os.path.isdir(dir):
             os.makedirs(dir)
         try:
-            f = open(jsonaddr, "w", encoding="utf-8")
-            json.dump(obj, f, indent=1)
-            f.close()
+            with open(jsonaddr, "w", encoding="utf-8") as f:
+                json.dump(obj, f, indent=1)
             return True
         except Exception as e:
             print("保存json出现错误：", e)
             return False
 
     def getuser(self, check_biliname=False) -> dict:
-        target_name = "%s/%s.json" % (user_addr, self.account)
+        target_name = "%s/%s.json" % (USER_ADDR, self.account)
         d = self.load(target_name)
         check_user_dict(d, True)
         if check_biliname:
-            check_user_dict_have_biliname(d)
+            if not check_user_dict_have_biliname(d):
+                return self.setuser_default_biliname(d)
         return d
 
     @staticmethod
     def gettask(taskfile) -> dict:
-        target_name = "%s/%s.json" % (task_addr, taskfile)
+        target_name = "%s/%s.json" % (TASK_ADDR, taskfile)
         d = AutomatorRecorder.load(target_name)
         check_task_dict(d, True)
         return d
@@ -697,7 +702,7 @@ class AutomatorRecorder:
 
     @staticmethod
     def getgroup(groupfile, is_raise=True) -> list:
-        target_name = "%s/%s.json" % (group_addr, groupfile)
+        target_name = "%s/%s.json" % (GROUP_ADDR, groupfile)
         if not os.path.exists(target_name):  # 不存在的组返回空
             return []
         users = []
@@ -714,36 +719,51 @@ class AutomatorRecorder:
 
     @staticmethod
     def getbatch(batchfile) -> dict:
-        target_name = "%s/%s.json" % (batch_addr, batchfile)
+        target_name = "%s/%s.json" % (BATCH_ADDR, batchfile)
         d = AutomatorRecorder.load(target_name)
         check_valid_batch(d)
         return d
 
     @staticmethod
     def getschedule(schedulefile):
-        target_name = "%s/%s.json" % (schedule_addr, schedulefile)
+        target_name = "%s/%s.json" % (SCHEDULE_ADDR, schedulefile)
         d = AutomatorRecorder.load(target_name)
         check_valid_schedule(d)
         return d
 
     @staticmethod
     def getswitch(switchfile):
-        target_name = "%s/%s.json" % (switch_addr, switchfile)
+        target_name = "%s/%s.json" % (SWITCH_ADDR, switchfile)
         d = AutomatorRecorder.load(target_name)
         check_valid_switch(d)
         return d
 
     def setuser(self, userobj: dict, is_raise=False):
-        target_name = "%s/%s.json" % (user_addr, self.account)
-        check_user_dict_have_biliname(userobj)
+        target_name = "%s/%s.json" % (USER_ADDR, self.account)
+        
         if check_user_dict(userobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, userobj)
         else:
             print("用户文件不合法，保存失败")
+            return False
+
+    def setuser_default_biliname(self, userobj: dict):
+        target_name = "%s/%s.json" % (USER_ADDR, self.account)
+        # 前面已经check过
+        userobj.setdefault("biliname", userobj.get("account"))
+        AutomatorRecorder.json_save(target_name, userobj)
+        return userobj
+
+    @staticmethod
+    def setuser_default_biliname_static(acc, userobj: dict):
+        target_name = "%s/%s.json" % (USER_ADDR, acc)
+        # 前面已经check过
+        userobj.setdefault("biliname", userobj.get("account"))
+        AutomatorRecorder.json_save(target_name, userobj)
 
     @staticmethod
     def settask(taskfile, taskobj: dict, is_raise=False):
-        target_name = "%s/%s.json" % (task_addr, taskfile)
+        target_name = "%s/%s.json" % (TASK_ADDR, taskfile)
         if check_task_dict(taskobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, taskobj)
         else:
@@ -751,7 +771,7 @@ class AutomatorRecorder:
 
     @staticmethod
     def setgroup(groupfile, acclist: list):
-        target_name = "%s/%s.json" % (group_addr, groupfile)
+        target_name = "%s/%s.json" % (GROUP_ADDR, groupfile)
         if len(acclist) == 0:
             if os.path.exists(target_name):
                 os.remove(target_name)
@@ -761,7 +781,7 @@ class AutomatorRecorder:
 
     @staticmethod
     def setbatch(batchfile, batchobj: dict, is_raise=False):
-        target_name = "%s/%s.json" % (batch_addr, batchfile)
+        target_name = "%s/%s.json" % (BATCH_ADDR, batchfile)
         if check_valid_batch(batchobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, batchobj)
         else:
@@ -769,7 +789,7 @@ class AutomatorRecorder:
 
     @staticmethod
     def setschedule(schedulefile, scheduleobj: dict, is_raise=False):
-        target_name = "%s/%s.json" % (schedule_addr, schedulefile)
+        target_name = "%s/%s.json" % (SCHEDULE_ADDR, schedulefile)
         if check_valid_schedule(scheduleobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, scheduleobj)
         else:
@@ -777,7 +797,7 @@ class AutomatorRecorder:
 
     @staticmethod
     def setswitch(switchfile, switchobj: dict, is_raise=False):
-        target_name = "%s/%s.json" % (switch_addr, switchfile)
+        target_name = "%s/%s.json" % (SWITCH_ADDR, switchfile)
         if check_valid_switch(switchobj, is_raise=is_raise):
             AutomatorRecorder.json_save(target_name, switchobj)
         else:
@@ -848,7 +868,7 @@ class AutomatorRecorder:
         :param default: 默认值，如果获取的记录不存在，则以default创建该记录
         :return: 该分区的dict
         """
-        target_name = "%s/%s/%s.json" % (user_addr, key, self.account)
+        target_name = "%s/%s/%s.json" % (USER_ADDR, key, self.account)
         dir = os.path.dirname(target_name)
         if default is not None and (not os.path.isdir(dir) or not os.path.exists(target_name)):
             self.json_save(target_name, default)
@@ -876,7 +896,7 @@ class AutomatorRecorder:
         :param obj: 要保存的dict
         :return: 是否保存成功
         """
-        target_name = "%s/%s/%s.json" % (user_addr, key, self.account)
+        target_name = "%s/%s/%s.json" % (USER_ADDR, key, self.account)
         return self.json_save(target_name, obj)
 
     def get_run_status(self):
