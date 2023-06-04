@@ -29,7 +29,7 @@ from core.usercentre import check_task_dict, list_all_flags, is_in_group
 from core.valid_task import VALID_TASK, getcustomtask
 
 
-class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin,HaoYouMixin,
+class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, HaoYouMixin,
                 JuQingMixin, EnhanceMixin, ShopMixin):
     def __init__(self, address, output_msg_fun: Callable[[dict], Any] = None):
         """
