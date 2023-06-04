@@ -311,6 +311,25 @@ class LoginMixin(ToolsMixin):
         #     print(f"toast_message:{toast_message}")
         return 0
 
+    def is_user_agreement_exists(self):
+        # 协议是否存在
+        return self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists() \
+                or self.d(text="用户协议与隐私政策").exists() or self.d(description="用户协议与隐私政策").exists()
+
+    def skip_user_agreement(self):
+        try:
+            r = self.img_where_all(START_UI["xieyihuakuai"], threshold=0.99)
+            self.d.touch.down(r[0], r[1]).sleep(1).up(r[0], r[1])
+        except:
+            # 退化成老办法
+            self.d.touch.down(808, 324).sleep(1).up(808, 324)
+            self.d.touch.down(808, 353).sleep(1).up(808, 353)
+        if self.d(text="请滑动阅读协议内容").exists() or self.d(text="用户协议与隐私政策").exists():
+            self.d(text="同意").click()
+        # 雷电三
+        if self.d(description="请滑动阅读协议内容").exists() or self.d(description="用户协议与隐私政策").exists():
+            self.d(description="同意").click()
+
     @DEBUG_RECORD
     def do_login(self, ac, pwd, biliname, from_past):  # 执行登陆逻辑
         """
@@ -339,6 +358,8 @@ class LoginMixin(ToolsMixin):
         else:
             self.do_autofill_login(ac, pwd)
 
+
+
         # 点击登录按钮之后的事件[PossiblePostLoginScenes?]
         while True:
             # 快速响应
@@ -347,7 +368,7 @@ class LoginMixin(ToolsMixin):
             sc = self.getscreen()
             if self.is_exists(MAIN_BTN["xiazai"], screen=sc):
                 self.click(MAIN_BTN["xiazai"])
-            if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+            if self.is_user_agreement_exists():
                 break
             elif self.is_exists(MAIN_BTN["liwu"], screen=sc):
                 break
@@ -368,22 +389,11 @@ class LoginMixin(ToolsMixin):
                 # 有两个协议需要同意
                 if debug:
                     self.log.write_log('debug', "等待认证")
-                while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                while self.is_user_agreement_exists():
                     if debug:
                         self.log.write_log('debug', "发现协议")
                     self._move_check()
-                    try:
-                        r = self.img_where_all(START_UI["xieyihuakuai"], threshold=0.99)
-                        self.d.touch.down(r[0], r[1]).sleep(1).up(r[0], r[1])
-                    except:
-                        # 退化成老办法
-                        self.d.touch.down(808, 324).sleep(1).up(808, 324)
-                        self.d.touch.down(808, 353).sleep(1).up(808, 353)
-                    if self.d(text="请滑动阅读协议内容").exists():
-                        self.d(text="同意").click()
-                    if self.d(description="请滑动阅读协议内容").exists():
-                        # 雷电三
-                        self.d(description="同意").click()
+                    self.skip_user_agreement()
                     # time.sleep(6)
                 if debug:
                     self.log.write_log('debug', "结束认证")
@@ -777,21 +787,10 @@ class LoginMixin(ToolsMixin):
                     self.click(687, 72)
                     # 防止卡验证码
                     continue
-                if self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                if self.is_user_agreement_exists():
                     if debug:
                         self.log.write_log('debug', "发现协议")
-                    try:
-                        r = self.img_where_all(START_UI["xieyihuakuai"], threshold=0.99)
-                        self.d.touch.down(r[0], r[1]).sleep(1).up(r[0], r[1])
-                    except:
-                        # 退化成老办法
-                        self.d.touch.down(808, 324).sleep(1).up(808, 324)
-                        self.d.touch.down(808, 353).sleep(1).up(808, 353)
-                    if self.d(text="请滑动阅读协议内容").exists():
-                        self.d(text="同意").click()
-                    if self.d(description="请滑动阅读协议内容").exists():
-                        # 雷电三
-                        self.d(description="同意").click()
+                    self.skip_user_agreement()
                     # time.sleep(6)
                 else:
                     # self.click(560, 430)  # 原本是945 13

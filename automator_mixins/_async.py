@@ -323,7 +323,9 @@ class AsyncMixin(ToolsMixin):
             for _ in range(3):
                 # 有两个协议需要同意
                 self.click(1, 1)
-                while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists():
+                # 需要复用
+                while self.d(text="请滑动阅读协议内容").exists() or self.d(description="请滑动阅读协议内容").exists() \
+                        or self.d(text="用户协议与隐私政策").exists() or self.d(description="用户协议与隐私政策").exists():
                     try:
                         r = self.img_where_all(START_UI["xieyihuakuai"], threshold=0.99)
                         self.d.touch.down(r[0], r[1]).sleep(1).up(r[0], r[1])
@@ -331,10 +333,11 @@ class AsyncMixin(ToolsMixin):
                         # 退化成老办法
                         self.d.touch.down(808, 324).sleep(1).up(808, 324)
                         self.d.touch.down(808, 353).sleep(1).up(808, 353)
-                    if self.d(text="请滑动阅读协议内容").exists():
+                    if self.d(text="请滑动阅读协议内容").exists() or self.d(text="用户协议与隐私政策").exists():
                         self.d(text="同意").click()
-                    if self.d(description="请滑动阅读协议内容").exists():
-                        # 雷电三
+                    # 雷电三
+                    if self.d(description="请滑动阅读协议内容").exists() or self.d(
+                            description="用户协议与隐私政策").exists():
                         self.d(description="同意").click()
                     time.sleep(6)
                 if self.d(resourceId="com.bilibili.priconne:id/vp_gs_announcement").exists():
