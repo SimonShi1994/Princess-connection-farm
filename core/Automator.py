@@ -29,7 +29,7 @@ from core.usercentre import check_task_dict, list_all_flags, is_in_group
 from core.valid_task import VALID_TASK, getcustomtask
 
 
-class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin,HaoYouMixin,
+class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, DXCMixin, AsyncMixin, HaoYouMixin,
                 JuQingMixin, EnhanceMixin, ShopMixin):
     def __init__(self, address, output_msg_fun: Callable[[dict], Any] = None):
         """
@@ -70,7 +70,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         :param first_init_home: 是否一开始执行init_home。
         :param rec_addr: 记录文件存放目录
         """
-        user = self.AR.getuser()  # 获取配置文件
+        user = self.AR.getuser(account_login_mode == "switch")  # 获取配置文件
         account = user["account"]
         password = user["password"]
         biliname = user.get("biliname", None)  # 可能为空

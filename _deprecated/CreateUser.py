@@ -141,7 +141,7 @@ def create_account_from_file(file):
 
 
 def del_account(account):
-    target = "%s/%s.txt" % (user_addr, account)
+    target = "%s/%s.txt" % (USER_ADDR, account)
     if os.path.exists(target):
         os.remove(target)
 
@@ -183,7 +183,7 @@ def create_task(TaskName):
 
 
 def del_task(TaskName):
-    target = "%s/%s.txt" % (task_addr, TaskName)
+    target = "%s/%s.txt" % (TASK_ADDR, TaskName)
     if os.path.exists(target):
         os.remove(target)
 
