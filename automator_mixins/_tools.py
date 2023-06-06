@@ -155,7 +155,7 @@ class ToolsMixin(BaseMixin):
         self.lock_img(JIAYUAN_BTN["quanbushouqu"], elseclick=MAIN_BTN["gonghuizhijia"], side_check=self.juqing_kkr,
                       elsedelay=1)
         self.click_btn(JIAYUAN_BTN["caidan"], until_appear=JIAYUAN_BTN["wanfa"])
-        if self.is_exists(JIAYUAN_BTN["wallet_locked"]):
+        if self.is_exists(JIAYUAN_BTN["wallet_locked"], threshold=0.96):
             self.click_btn(JIAYUAN_BTN["wallet_locked"],until_appear=JIAYUAN_BTN["buy_confirm"])
             self.click(589, 425)
             while True:

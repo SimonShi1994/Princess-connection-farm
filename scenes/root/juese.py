@@ -384,8 +384,9 @@ class CharZhuangBei(CharBase):
         fc = [69, 123, 247]  # G B R:红点
         bc = [243, 247, 239]  # G B R:面板白
         xcor = 645
-        ycor = 64
-        self.check_color(fc, bc, xcor, ycor, color_type="gbr", screen=screen)
+        ycor = 60
+        a = self.check_color(fc, bc, xcor, ycor, color_type="gbr", screen=screen)
+        return a
 
     def get_auto_upgrade_status(self, screen=None):
         if screen is None:
@@ -404,7 +405,7 @@ class CharZhuangBei(CharBase):
             screen = self.getscreen()
         if self.is_exists(JUESE_BTN["yjzb_off"], method="sq", threshold=0.95, screen=screen):
             if self.is_exists(JUESE_BTN["reachable"].img, at=(71, 136, 435, 349)):
-                return  5
+                return 5
             else:
                 if self.is_exists(JUESE_BTN["red_small"].img, at=(95,90,437,309)):
                     return 1
