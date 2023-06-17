@@ -262,12 +262,12 @@ JIAYUAN_BTN = {
     "dengjitisheng": p(589, 431, img="img/jiayuan/dengjitisheng.bmp", at=(491, 410, 682, 452)),
     "xinxi": p(img="img/jiayuan/xinxi.bmp"),
     "zhuye": p(img="img/jiayuan/wodezhuye.bmp", at=(47, 488, 130, 537)),
-    "caidan": p(899,135,img="img/jiayuan/caidan.bmp",at=(885,118,913,152)),
-    "wanfa": p(717,414,img="img/jiayuan/wanfa.bmp",at=(692,386,743,443)),
-    "wallet_locked": p(635,412,img="img/jiayuan/kkr_wallet_locked.bmp",at=(594,371,676,453)),
-    "buy_confirm": p(477,107,img="img/jiayuan/buy_confirm.bmp",at=(393,75,562,140)),
-    "buy_complete": p(479,164,img="img/jiayuan/buy_complete.bmp",at=(408,134,550,195)),
-    "suijichuxing": p(58,268,img="img/jiayuan/suijichuxing.bmp",at=(30,239,87,298)),
+    "caidan": p(899, 135, img="img/jiayuan/caidan.bmp", at=(885, 118, 913, 152)),
+    "wanfa": p(717, 414, img="img/jiayuan/wanfa.bmp", at=(692, 386, 743, 443)),
+    "wallet_locked": p(635, 412, img="img/jiayuan/kkr_wallet_locked.bmp", at=(594, 371, 676, 453)),
+    "buy_confirm": p(477, 107, img="img/jiayuan/buy_confirm.bmp", at=(393, 75, 562, 140)),
+    "buy_complete": p(479, 164, img="img/jiayuan/buy_complete.bmp", at=(408, 134, 550, 195)),
+    "suijichuxing": p(58, 268, img="img/jiayuan/suijichuxing.bmp", at=(30, 239, 87, 298)),
 
 }
 WZ_BTN = {
@@ -282,7 +282,7 @@ WZ_BTN = {
     "shujuxiazai": p(479, 146, img="img/waizhuan/shujuxiazai.bmp", at=(435, 134, 523, 159)),
     "shujuxiazai_ok": p(588, 369, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
     "shadow_waizhuan": p(61, 33, img="img/waizhuan/shadow_waizhuan.bmp", at=(2, 6, 120, 61)),
-    "speaker_box2": p(376,406,img="img/waizhuan/speaker_box2.bmp",at=(370,392,383,420)),
+    "speaker_box2": p(376, 406, img="img/waizhuan/speaker_box2.bmp", at=(370, 392, 383, 420)),
 }
 NIUDAN_BTN = {
     # 扭蛋的坐标会偏移！
@@ -1379,6 +1379,7 @@ ZHUXIAN_ID = {
     44: p(img="img/zhuxian/44L.bmp", at=(91, 60, 178, 73)),
     45: p(img="img/zhuxian/45L.bmp", at=(91, 59, 178, 74)),
     46: p(img="img/zhuxian/46L.bmp", at=(90, 59, 175, 73)),
+    47: p(img="img/zhuxian/47L.bmp", at=(60, 59, 179, 75)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1444,6 +1445,7 @@ ZHUXIAN_SKMBM_ID = {
 }
 ZHUXIAN_LTLQS_ID = {
     46: p(img="img/zhuxian/46R.bmp", at=(198, 61, 232, 74)),
+    47: p(img="img/zhuxian/47R.bmp", at=(197, 60, 232, 78)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -1460,7 +1462,7 @@ ZHUXIAN_SECOND_ID = {
     (40, 41): ZHUXIAN_SKPSX_ID,
     (42, 43): ZHUXIAN_PKTSBF_ID,
     (44, 45): ZHUXIAN_SKMBM_ID,
-    (46,): ZHUXIAN_LTLQS_ID,
+    (46, 47): ZHUXIAN_LTLQS_ID,
 }
 
 NORMAL_COORD = {
