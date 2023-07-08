@@ -357,8 +357,8 @@ class HuodongMapBase(ZhuXianBase):
                 return
 
             # 进入BOSS界面，FI
-            time.sleep(1)
-            self.click(47, 30)
+            # time.sleep(1)
+            # self.click(47, 30)
             screen = act_menu.getscreen()
             # boss挑战券是否足够
             if fi.get_bsq_right(screen) == -1:
