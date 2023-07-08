@@ -48,7 +48,7 @@ class ShopMixin(ToolsMixin):
         while True:
             # 退出条件
             if drag_count > 2:
-                if self.is_exists(SHOP_BTN["jiechusuoyou"]):
+                if self.is_exists(SHOP_BTN["quanbujiechu"]):
                     if buy_count > 0:
                         self.buy_press()
                         return
@@ -69,7 +69,7 @@ class ShopMixin(ToolsMixin):
                     time.sleep(1)
                     # 如果买完了清单里的
                     if len(fraglist) == 0:
-                        if self.is_exists(SHOP_BTN["jiechusuoyou"]):
+                        if self.is_exists(SHOP_BTN["quanbujiechu"]):
                             self.buy_press()
                             return
                         else:
