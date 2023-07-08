@@ -369,6 +369,7 @@ HUODONG_BTN = {
     "xinlaiduliwu2": p(126, 449, img="img/huodong/xinlaiduliwu2.bmp", at=(72, 440, 181, 458)),
     "hou": p(662, 106, img="img/huodong/hou.bmp", at=(656, 99, 669, 113)),
     "qian": p(662, 106, img="img/huodong/qian.bmp", at=(655, 99, 669, 113)),
+    "shadow_exchange": p(828,397,img="img/huodong/shadow_exchange.bmp",at=(779,385,877,410)),
 }
 
 HANGHUI_BTN = {
@@ -646,7 +647,8 @@ SHOP_BTN = {
     "querenchongzhi": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
     "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
-    "jiechusuoyou": p(596, 437, img="img/shop/jiechusuoyou.bmp", at=(562, 427, 630, 447)),
+    "quanbujiechu": p(596,437,img="img/shop/quanbujiechu.bmp",at=(563,427,630,447)),
+
 
 }
 
