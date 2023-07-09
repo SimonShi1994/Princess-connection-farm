@@ -357,8 +357,8 @@ class HuodongMapBase(ZhuXianBase):
                 return
 
             # 进入BOSS界面，FI
-            # time.sleep(1)
-            # self.click(47, 30)
+            time.sleep(1)
+            self.click(47, 30)
             screen = act_menu.getscreen()
             # boss挑战券是否足够
             if fi.get_bsq_right(screen) == -1:
@@ -942,10 +942,10 @@ class Jiaohuan(PCRSceneBase):
         time.sleep(0.5)
         a = self.get_taofazheng()
         if a > 1:
-            if self.is_exists(HUODONG_BTN["shadow_exchange"]):
+            if self.is_exists(HUODONG_BTN["shadow_exchange"], method="sq"):
                 self.click(610, 375)
-                self._a.restart_this_task()
-            self.click(825, 371)
+            else:
+                self.click(825, 371)
             time.sleep(2)
             while True:
                 out = self.lock_img({
