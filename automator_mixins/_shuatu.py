@@ -1885,6 +1885,10 @@ class ShuatuMixin(ShuatuBaseMixin):
 
     def tui_wz(self, code="01", team_order="none", if_full=2, get_zhiyuan=False):
         self.lock_home()
+
+        if code == "08" or code == "12":
+            self.log.write_log("error", f"由于场景限制，暂不支持外传08和外传12的自动推图！")
+            return
         
         def check_wz_menu(code):
             sPossibleWZEnteringScene: PCRSceneBase = self.get_zhuye().goto_zhucaidan().goto_waizhuan()

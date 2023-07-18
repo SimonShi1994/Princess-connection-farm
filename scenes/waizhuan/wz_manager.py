@@ -26,6 +26,8 @@ def get_wz_by_code(code: str):
         "13": Map13,
         "14": Map14,
         "15": Map15,
+        "16": Map16,
+        "17": Map17,
     }
 
     return WZ_CODE[code]
@@ -135,4 +137,16 @@ class Map15(WZ_Menu):
     NAME = "铃奈的 Rainbow Stage"
     NXY1 = (131, 409)
     HXY1 = (91, 231)
+    N_slice = 1
+
+class Map16(WZ_Menu):
+    NAME = "盛夏的真步真步王国"
+    NXY1 = (219, 252)
+    HXY1 = (106, 225)
+    N_slice = 1
+
+class Map17(WZ_Menu):
+    NAME = "森林里的胆小鬼与神圣学院的问题儿童"
+    NXY1 = (140, 371)
+    HXY1 = (89, 211)
     N_slice = 1

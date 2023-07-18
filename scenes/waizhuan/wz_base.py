@@ -26,7 +26,7 @@ class WZ_Gallery(PCRSceneBase):
         time.sleep(1)
         obj = self.d.touch.down(934, 250)
         time.sleep(0.1)
-        # 目前适配9+6 未来加page
+        # 目前适配9+9 未来加page
         obj.move(934, 390)
         time.sleep(0.8)
         obj.up(934, 390)
