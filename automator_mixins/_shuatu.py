@@ -1669,7 +1669,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         :param do_kucunshibie: 是否做库存识别
         :param do_jueseshibie: 是否做角色识别
         :param n: 当前为N几
-        :param max_tu: 最多考虑到图几。设置为max时，按数据库中最新值为准，但可能会超出当前最高可推图。
+        :param max_tu: 最多考虑到图几。设置为max时，为MAX_MAP
         """
 
         mv = movevar(var)

@@ -724,6 +724,8 @@ class PCRInitializer:
                                 print(idx, ":", tit)
                         elif msg["method"] == "skip":
                             device.a.SkipTask(msg["to_id"])
+                        elif msg["method"] == "restart":
+                            device.a.RestartTask()
                         elif msg["method"] == "u2rec":
                             Q = device.a.d.R.get()
                             print(device.serial, " - U2 执行记录：")
@@ -983,6 +985,9 @@ class PCRInitializer:
 
     def skip_task(self, to_id=None, device=None):
         self.send_message(device, {"method": "skip", "to_id": to_id})
+
+    def restart_task(self, device=None):
+        self.send_message(device, {"method": "restart"})
 
     def show_u2_record(self, device=None):
         self.send_message(device, {'method': 'u2rec'})
@@ -1457,8 +1462,7 @@ class Schedule:
         else:
             self.log("info", "Schedule线程已经启动了。")
 
-    @staticmethod
-    def _check(cond: dict) -> bool:
+    def _check(self, cond: dict) -> bool:
         """
         检查某个计划是否满足全部condition
         """
@@ -1483,6 +1487,13 @@ class Schedule:
             diff = time.time() - tm
             if diff < 8 * 3600 + 60:
                 return False
+        if "last_schedule" in cond:
+            # 前置子计划鸣潮必须完成
+            status = self.get_status(last_state=True)
+            for sub in status:
+                if sub["name"] == cond["last_schedule"] and sub["status"] != "fin":
+                    return False
+
         if "_last_rec" in cond:
             # 前置batch条件
             if not Schedule.is_complete(cond["_last_rec"]):
