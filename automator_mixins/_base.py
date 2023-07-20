@@ -384,6 +384,10 @@ class BaseMixin:
                 self.log.write_log('info', f"{self.address}- 强制停止")
                 self._move_method = ""
                 raise ForceKillException()
+            if self._move_method == "normalrestart":
+                self.log.write_log('info', f"{self.address} - 重开任务")
+                self._move_method = ""
+                raise MoveRestartException(self._move_msg)
             if self._move_method == "skip":
                 if self._move_msg is None:
 
