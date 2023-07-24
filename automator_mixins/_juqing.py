@@ -19,12 +19,19 @@ class JuQingMixin(ToolsMixin):
 
             if flag:
                 self.click_btn((JUQING_BTN["zhuxianjuqing"]), until_appear=(JUQING_BTN["wanfa"]))
-                self.click(765, 125)
-                time.sleep(3)
+                # 选择第几章
                 r_list = self.img_where_all(img="img/juqing/new_content.bmp")
-                x_arg = int(r_list[0]) + 200
-                y_arg = int(r_list[1]) + 50
-                self.click_btn(p(x_arg, y_arg), until_appear=(JUQING_BTN["quxiao"]))
+                if len(r_list):
+                    x_arg = int(r_list[0]) + 200
+                    y_arg = int(r_list[1]) + 50
+                    self.click_btn(p(x_arg, y_arg), until_disappear=(JUQING_BTN["wanfa"]))
+                # 选择第几话（右上角玩法消失）
+                time.sleep(1)
+                r_list = self.img_where_all(img="img/juqing/new_content.bmp")
+                if len(r_list):
+                    x_arg = int(r_list[0]) + 200
+                    y_arg = int(r_list[1]) + 50
+                    self.click_btn(p(x_arg, y_arg), until_appear=(JUQING_BTN["quxiao"]))
                 self.guojuqing(story_type="zhuxian")
             else:
                 self.log.write_log('info', "无新剧情")
