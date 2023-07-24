@@ -220,6 +220,7 @@ JUQING_BTN = {
     "wanfa": p(img="img/juqing/wanfa.bmp", at=(906, 17, 918, 42)),
     "quxiao": p(334, 372, img="img/hanghui/quxiao.bmp", at=(313, 361, 355, 382)),
     "wuyuyin": p(481, 362, img="img/juqing/wuyuyin.bmp", at=(453, 353, 508, 371)),
+    "wuyuyin_lianxu": p(481, 424, img="img/juqing/wuyuyin.bmp", at=(453, 415, 508, 433)),
     "guanbi": p(476, 432, img="img/juqing/guanbi.bmp", at=(447, 415, 505, 448)),
     "baochouqueren": p(478, 41, img="img/juqing/baochouqueren.bmp", at=(433, 28, 523, 55)),
     "locked": p(279, 151, img="img/juqing/locked.bmp", at=(259, 133, 300, 170)),

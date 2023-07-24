@@ -951,7 +951,7 @@ class ToolsMixin(BaseMixin):
         while True:
             screen = self.getscreen()
             lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp", at=(233, 98, 285, 319), screen=screen)
-            self.log.write_log('info ', f"{lst}")
+            # self.log.write_log('info ', f"{lst}")
             # 连续阅读兼容
             if self.is_exists(img="img/ui/queren_blue.bmp"):
                 self.click_img(img="img/ui/queren_blue.bmp", screen=screen)
@@ -959,8 +959,8 @@ class ToolsMixin(BaseMixin):
                 time.sleep(3)
                 continue
             # 选择无语音选项
-            if self.is_exists(JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 452)):
-                self.click_img(img=JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 452))
+            if self.is_exists(JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 520)):
+                self.click_img(img=JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 520))
                 time.sleep(2)
                 continue
             # 选择快进剧情
@@ -1006,7 +1006,13 @@ class ToolsMixin(BaseMixin):
             # 主线剧情退出检测
             if self.is_exists(JUQING_BTN["guanbi"], screen=screen) and story_type == "zhuxian":
                 self.click_btn(JUQING_BTN["guanbi"])
-                time.sleep(2)
+                time.sleep(1)
+                # 检测主线连续剧情
+                if self.is_exists(JUQING_BTN["wuyuyin_lianxu"], at=(410, 277, 553, 520)):
+                    self.click_btn(JUQING_BTN["wuyuyin_lianxu"], until_disappear=JUQING_BTN["wuyuyin_lianxu"])
+                    time.sleep(2)
+                    continue
+                time.sleep(1)
                 self.fclick(1, 1)
                 self.log.write_log('info', "完成了这段剧情")
                 break
