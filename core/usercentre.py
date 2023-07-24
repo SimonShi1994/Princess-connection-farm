@@ -98,6 +98,7 @@ from core.valid_task import VALID_TASK, getcustomtask as _getcustomtask, list_al
                 "start_hour":int  # 小时开始，只有小时数>start_hour时才会执行任务
                 "end_hour":int  # 小时结束，只有小时数<end_hour时才会执行任务
                 "can_juanzeng":account  # account可以发起捐赠了
+                "last_schedule": schedule_name  # 当指定的subschedule完成后才触发
                 "_last_rec":dir  # 用户无法编辑、查看此条。_last_rec文件夹下无_fin文件时执行。
                 # 还可以补充其它condition，但暂时没想到。
             }

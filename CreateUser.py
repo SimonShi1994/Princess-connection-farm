@@ -666,6 +666,8 @@ def _show_schedule(obj):
                     print("+ 时间段: ", con["start_hour"], "h ~ ", con["end_hour"], "h")
                 if "can_juanzeng" in con:
                     print("+ 当", con["can_juanzeng"], "可以捐赠")
+                if "last_schedule" in con:
+                    print("+ 当", con["last_schedule"], "子计划完成后")
             if i["record"] == 1:
                 print("+ 记录设置：持久运行")
             elif i["record"] == 2:
@@ -723,6 +725,7 @@ def _edit_asap_wait_config(typ):
             print("0 退出设置")
             print("1 条件：指定时间段")
             print("2 条件：可以捐赠")
+            print("3 条件：前置子计划完成")
             I = input(">").strip()
             if I == '0':
                 break
@@ -734,6 +737,9 @@ def _edit_asap_wait_config(typ):
             elif I == '2':
                 acc = input("请输入检测的账号：").strip()
                 obj["condition"]["can_juanzeng"] = acc
+            elif I == '3':
+                sch = input("请输入前置子计划的名称： ")
+                obj["condition"]["last_schedule"] = sch
             else:
                 print("输入错误!")
         obj["record"] = 0

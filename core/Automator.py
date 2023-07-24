@@ -49,7 +49,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
             self.log.write_log('info', "导入模块中……")
             py = getcustomtask(pymodule)
             func = getattr(py, funcname)
-            self.log.write_log('info',"导入成功！")
+            self.log.write_log('info', "导入成功！")
         except Exception as e:
             self.log.write_log("error", f"自定义脚本导入失败！{e}")
         if func is not None:
@@ -57,6 +57,9 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
 
     def SkipTask(self, to_id=None):
         self.send_move_method("skip", to_id)
+
+    def RestartTask(self):
+        self.send_move_method("normalrestart")
 
     def RunTasks(self, tasks: dict, continue_=True, max_retry=3,
                  first_init_home=True, rec_addr="rec"):

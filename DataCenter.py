@@ -11,7 +11,7 @@ from typing import Optional, TYPE_CHECKING
 from difflib import get_close_matches
 from rich.table import Table as RTable
 
-from core.constant import USER_DEFAULT_DICT as UDD
+from core.constant import USER_DEFAULT_DICT as UDD, MAX_MAP
 from core.usercentre import AutomatorRecorder
 from core.utils import get_time_str, WowSearch
 
@@ -696,6 +696,8 @@ def ZB_ST_ADVICE(args, verbose=True):
     max_tu = get_arg(args, "--max-tu", None)
     if max_tu is not None:
         max_tu = int(max_tu)
+    else:
+        max_tu = MAX_MAP
     min_rare = int(get_arg(args, "--min-rare", "0"))
     max_rare = int(get_arg(args, "--max-rare", "7"))
     num_w = float(get_arg(args, "--num-w", "0.1"))

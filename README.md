@@ -312,6 +312,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 - BUG修复
   - 修复过主线剧情任务`t8`闪退，并进行流程优化
 
+2023/07/20 By TheAutumnOfRice
+
+- 功能更新
+  - 控制台新增`restart`命令，可以重新开始当前任务。
+  - 自动规划刷图`s9-auto`设置最高图号为max时，不再读取数据库的最高数据，而是直接读constant.MAX_MAP。具体数值会动态显示于参数描述中。
+  - 添加了新的`schedule`的触发条件`last_schedule`:在前置子任务完成后触发。
+
 2023/07/18 By 0x114514BB
 
 - 惯例更新

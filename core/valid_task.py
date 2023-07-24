@@ -4,7 +4,7 @@ from math import inf
 from typing import List, Type, Any, Optional, Union
 
 from core import log_handler
-from core.constant import NORMAL_COORD, HARD_COORD
+from core.constant import NORMAL_COORD, HARD_COORD, MAX_MAP
 from core.pcr_config import debug
 
 
@@ -1023,15 +1023,16 @@ VALID_TASK = ValidTask() \
                     inputbox=team_order_inputer),
           TaskParam("zhiyuan_mode", **zhiyuan_mode_kwargs),
           ]) \
-    .add("s9-auto","daily_shuatu_auto","大号自动规划刷N图","每日刷图，但是基于角色识别和装备识别自动规划要刷的normal图！\n"
+    .add("s9-auto", "daily_shuatu_auto", "大号自动规划刷N图", "每日刷图，但是基于角色识别和装备识别自动规划要刷的normal图！\n"
                                                         "*你需要在data中事先设定角色的追踪*\n"
                                                         "大号专用，默认所有图均三星可扫荡。",
          [TaskParam("daily_tili", int, "每日体力", "每天最多用于刷N图体力购买次数，该记录每日清零。", 0),
           TaskParam("xianding", bool, "限定商店", "是否买空限定商店", True),
-          TaskParam("do_kucunshibie",bool,"前置库存识别","是否在该任务中前置库存识别任务",True),
-          TaskParam("do_jueseshibie",bool,"前置角色识别","是否在该任务中前置角色识别任务",True),
-          TaskParam("n",int,"N几","当前是N几",1),
-          TaskParam("max_tu",str,"最多考虑图几","为整数(A)时，最多考虑到图A为止；设置为max时，按数据库中最新值为准，但可能会超出当前最高可推图。"),
+          TaskParam("do_kucunshibie", bool, "前置库存识别", "是否在该任务中前置库存识别任务", True),
+          TaskParam("do_jueseshibie", bool, "前置角色识别", "是否在该任务中前置角色识别任务", True),
+          TaskParam("n", int, "N几", "当前是N几", 1),
+          TaskParam("max_tu", str, "最多考虑图几",
+                    f"为整数(A)时，最多考虑到图A为止；设置为max时，自动更新为最高图号（当前为{MAX_MAP}）"),
           ]) \
     .add("s10", "kuaisujieren", "好友快速借人", "借好友随便推一关，点进去什么图就推它的第一关。",
          [TaskParam("max_do", int, "最多借几次", "如果还有好友可以借，最多借几次，默认为2.", 2),
