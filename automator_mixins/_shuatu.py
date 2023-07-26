@@ -388,9 +388,28 @@ class ShuatuMixin(ShuatuBaseMixin):
             else:
                 TA, TB = [int(x) for x in to.split("-")]
             for aa in range(A, TA + 1):
+                LST = []
                 for bb in range(B if aa == A else 1,
                                 max(list(D[aa]['left']) + list(D[aa]['right'])) + 1 if aa < TA else TB + 1):
                     LST.append(f"{aa}-{bb}-1")
+                    output = self.shuatu_daily_ocr(
+                        tu_order=LST,
+                        daily_tili=buy_tili,
+                        xianding=xianding,
+                        not_three_star_action="do",
+                        zero_star_action="do",
+                        lose_action=lose_action,
+                        can_not_enter_action="exit",
+                        win_without_threestar_is_lose=win_without_threestar_is_lose,
+                        team_order=team_order,
+                        zhiyuan_mode=zhiyuan_mode,
+                        _use_daily=False,
+                        upgrade_kwargs=upgrade_kwargs,
+                        var=var,
+                    )
+                    if output == 1:
+                        return
+            return
         elif mode == 1:
             if from_ == "new":
                 self.get_zhuye().goto_maoxian().goto_hard().clear_initFC()
@@ -1098,6 +1117,9 @@ class ShuatuMixin(ShuatuBaseMixin):
                 3  - 任意选择一个支援+自己队伍推图。
                 -3 - 任意选择一个支援仅支援一人推图。
         :param _use_daily: 开启后，统计体力使用次数以及每个图刷过的次数（兼容shuatuNN）
+        :return: 刷图状态
+            0 - 正常结束（没有触发“终止刷图”）
+            1 - 异常结束（触发“终止刷图”）
         """
         self.check_ocr_running()  # 必须要OCR！
         # 每日更新
@@ -1195,11 +1217,11 @@ class ShuatuMixin(ShuatuBaseMixin):
         if len(cur) == 0:
             if _use_daily:
                 self.log.write_log("info", "今天的刷图任务已经全部完成啦。")
-            return
+            return 0
         if ds["buy_tili"] < daily_tili:
             self.start_shuatu()
         if not self.check_shuatu():
-            return
+            return 1
 
         #   ======== 开始刷图 =========  #
         S = self.get_zhuye()
@@ -1231,7 +1253,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                         self.log.write_log("info", f"无法进入图{m}{a}-{b}！结束刷图。")
                         self.save_last_screen(f"CanNotEnter1_{self.account}.bmp")
                         self.lock_home()
-                        return
+                        return 1
                     elif can_not_enter_action == "skip":
                         self.log.write_log("info", f"无法进入图{m}{a}-{b}！跳过该图。")
                         continue
@@ -1576,11 +1598,12 @@ class ShuatuMixin(ShuatuBaseMixin):
             elif cmd == "return":
                 if not _use_daily:
                     mv.clearflags()
-                return
+                return 1
         if not _use_daily:
             mv.clearflags()
         self.log.write_log("info", f"全部刷图任务已经完成。")
         self.lock_home()
+        return 0
 
     def meiriHtu(self, H_list, daily_tili, xianding, do_tuitu, var={}):
         """
