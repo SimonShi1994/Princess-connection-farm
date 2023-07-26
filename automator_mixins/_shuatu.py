@@ -392,23 +392,23 @@ class ShuatuMixin(ShuatuBaseMixin):
                 for bb in range(B if aa == A else 1,
                                 max(list(D[aa]['left']) + list(D[aa]['right'])) + 1 if aa < TA else TB + 1):
                     LST.append(f"{aa}-{bb}-1")
-                    output = self.shuatu_daily_ocr(
-                        tu_order=LST,
-                        daily_tili=buy_tili,
-                        xianding=xianding,
-                        not_three_star_action="do",
-                        zero_star_action="do",
-                        lose_action=lose_action,
-                        can_not_enter_action="exit",
-                        win_without_threestar_is_lose=win_without_threestar_is_lose,
-                        team_order=team_order,
-                        zhiyuan_mode=zhiyuan_mode,
-                        _use_daily=False,
-                        upgrade_kwargs=upgrade_kwargs,
-                        var=var,
-                    )
-                    if output == 1:
-                        return
+                output = self.shuatu_daily_ocr(
+                    tu_order=LST,
+                    daily_tili=buy_tili,
+                    xianding=xianding,
+                    not_three_star_action="do",
+                    zero_star_action="do",
+                    lose_action=lose_action,
+                    can_not_enter_action="exit",
+                    win_without_threestar_is_lose=win_without_threestar_is_lose,
+                    team_order=team_order,
+                    zhiyuan_mode=zhiyuan_mode,
+                    _use_daily=False,
+                    upgrade_kwargs=upgrade_kwargs,
+                    var=var,
+                )
+                if output == 1:
+                    return
             return
         elif mode == 1:
             if from_ == "new":
