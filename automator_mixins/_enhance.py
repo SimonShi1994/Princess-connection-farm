@@ -125,8 +125,7 @@ class EnhanceMixin(ShuatuBaseMixin):
 
                             # 情况2.穿满，缺件，开打
                             if ers == 5:
-                                # 自动强化亮，判断是否缺装备。因为没强化满也会亮
-                                if self.check_shuatu() is True:
+                                if do_shuatu is True:
                                     time.sleep(2)
                                     self.click_btn(JUESE_BTN["zdqh_0"], until_appear=JUESE_BTN["tuijiancaidan"])
                                     time.sleep(2)
