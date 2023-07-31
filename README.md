@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230726.1
+# Princess connection 公主连结农场脚本v2.8.20230731
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -306,6 +306,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2023/07/31 By UVJkiNTQ
+- 惯例更新
+  - 活动`慈乐之音的夏日演唱会 转瞬即逝的时光` 
+- Bug修复
+  - 角色升级`s8`中有体力不刷图的问题
+
 
 2023/07/26 By TheAutumnOfRice
 

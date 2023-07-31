@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20230731": Map20230731,
         "20230718": Map20220630,
         "20230630": Map20230630,
         "20230618": Map20220531,
@@ -65,6 +66,22 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20230731(HuodongMapBase):
+    N_slice = 1
+    NAME = "慈乐之音的夏日演唱会 转瞬即逝的时光"
+    XY11 = (157, 203)
+    XY_VH_BOSS = (867, 288)
+    HARD_COORD = {
+        1: (88, 218),
+        2: (234, 315),
+        3: (381, 227),
+        4: (465, 359),
+        5: (697, 328),
+    }
+
+
 class Map20230630(HuodongMapBase):
     N_slice = 3
     N1 = 5
