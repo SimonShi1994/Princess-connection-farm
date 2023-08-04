@@ -773,6 +773,9 @@ VALID_TASK = ValidTask() \
           TaskParam("limit_today", bool, "是否用times限制今天脚本购买mana的次数", "True/False", False), ]) \
     .add("r8", "buyExp", "购买经验", "买空商店里的经验药水",
          [TaskParam("qianghuashi", bool, "是否同时购买强化石", "True/False", False)]) \
+    .add("r8-xd", "buyXDShop", "限定商店", "买空限定商店",
+         [TaskParam("buy_exp", bool, "购买限定商店经验药水", "True/False", True),
+          TaskParam("buy_equip", bool, "购买限定商店装备碎片", "True/False", True)]) \
     .add("r9", "tansuo", "探索【不推荐】", "【非OCR，不推荐使用】进行探索活动",
          [TaskParam("mode", int, "模式", "只能为0~3的整数\n"
                                        "mode 0: 刷最上面的\n"

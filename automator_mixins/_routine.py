@@ -365,6 +365,65 @@ class RoutineMixin(ShuatuBaseMixin):
         self.AR.set("time_status", ts)
         self.lock_home()
 
+    def buyXDShop(self, buy_exp=True, buy_equip=True):
+        # 不检测diffday，直接检测限定商店为空/为满/无物可买
+        choice_x = 0
+
+        # 空
+        ts = self.AR.get("time_status", UDD["time_status"])
+        if not diffday(time.time(), ts["xdshop_closed"]):
+            self.log.write_log("info", "今日限定商店已关闭！")
+            return
+        
+        # 买东西确认 (590, 478)
+        # 商店关闭确认 (590, 367)
+        
+        # 进入商店
+        self.lock_home()
+        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(616, 434), elsedelay=5)
+
+        if self.is_exists(SHOP_BTN["xianding_locked"]):
+            self.log.write_log("info", "限定商店未开启，跳过任务")
+        else:
+            self.click(911, 69, post_delay=0.5, pre_delay=2)
+
+        if buy_exp and buy_equip:
+            choice_x = 700
+        elif buy_exp:
+            choice_x = 330
+        elif buy_equip:
+            choice_x = 515
+        else:
+            return
+            
+        # 选类别
+        self.click(choice_x, 120, post_delay=0.5)
+
+        # 无物 第一个已售罄
+        if self.is_exists(SHOP_BTN["sold_out"]):
+            self.log.write_log("info", "没有可购买的道具，跳过任务")
+            self.lock_home()
+            return
+
+        # 全勾
+        self.click(860, 124, post_delay=0.5)
+        # 批量购入
+        self.click(791, 436, post_delay=1)
+        # 确认
+        if self.is_exists(SHOP_BTN["buy_confirm"]):
+            self.click(590, 478, post_delay=0.5)
+            self.fclick(1, 1, post_delay=2)
+            # 买了之后，能关限定商店则关
+            self.lock_no_img(SHOP_BTN["xianding_shutdown"], elseclick=SHOP_BTN["xianding_shutdown"])
+            if self.is_exists(SHOP_BTN["xianding_shutdown_t"]):
+                self.click(590, 367, post_delay=0.5)
+                self.fclick(1, 1)
+                ts["xdshop_closed"] = time.time()
+                self.AR.set("time_status", ts)
+
+        # OCR检测 at=(388,430,412,444) 需要启动PCROCR
+        self.lock_home()
+
     def tansuo(self, mode=0):  # 探索函数
         """
         mode 0: 刷最上面的

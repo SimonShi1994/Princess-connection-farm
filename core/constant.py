@@ -637,6 +637,11 @@ SHOP_BTN = {
     "nvshenshi": p(img="img/shop/nvshenshi.bmp", at=(527, 13, 544, 33)),
     "xianding_cishu": p(img="img/shop/xianding_cishu.bmp", at=(252, 427, 299, 447)),
     "xianding_close": p(img="img/shop/xianding_close.bmp", at=(516, 213, 666, 244)),
+    "xianding_locked": p(909, 66, img="img/shop/xianding_locked.bmp",at=(871, 42, 948, 90)),
+    "sold_out": p(330, 277, img="img/shop/sold_out.bmp",at=(290, 268, 370, 286)),
+    "buy_confirm": p(477, 41,img="img/shop/buy_confirm.bmp",at=(432, 26, 523, 56)),
+    "xianding_shutdown": p(528, 437, img="img/shop/xianding_shutdown.bmp",at=(474, 418, 583, 456)),
+    "xianding_shutdown_t": p(479, 145, img="img/shop/xianding_shutdown_t.bmp",at=(410, 130, 548, 160)),
     "dxc_btn": p(363, 68, img="img/shop/dxc_btn.bmp", at=(314, 56, 400, 80)),
     "jjc_btn": p(447, 68, img="img/shop/jjc_btn.bmp", at=(411, 57, 485, 78)),
     "pjjc_btn": p(543, 68, img="img/shop/pjjc_btn.bmp", at=(500, 56, 588, 78)),
@@ -2614,6 +2619,7 @@ USER_DEFAULT_DICT = {
         "tansuo": 0,  # 上次探索时间
         "maizhuangbei": 0,  # 上次卖装备时间
         "shengji": 0,  # 上次圣迹调查时间
+        "xdshop_closed": 0 # 限定商店是否关闭
     },
     "daily_status": {
         # 每日刷图
