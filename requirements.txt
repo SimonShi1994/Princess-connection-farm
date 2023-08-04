@@ -2,25 +2,25 @@ adbutils -i https://pypi.douban.com/simple
 websocket_client==0.57.0 -i https://pypi.douban.com/simple
 pandas -i https://pypi.douban.com/simple
 openpyxl -i https://pypi.douban.com/simple
-gevent==20.6.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+# gevent==20.6.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 psutil==5.7.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 baidu-aip==2.2.18.0
 matplotlib==3.1.3 -i https://pypi.tuna.tsinghua.edu.cn/simple/
-opencv-python==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+opencv-python==4.3.0.38 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 uiautomator2 -i https://mirrors.aliyun.com/pypi/simple/
-opencv-contrib-python==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
-opencv-python-headless==4.3.0.36 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+opencv-contrib-python==4.3.0.38 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+opencv-python-headless==4.3.0.38 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 keyboard==0.13.5 -i https://pypi.tuna.tsinghua.edu.cn/simple/
 retrying -i https://pypi.douban.com/simple
-id-validator
-colorlog~=6.6.0
+id-validator -i https://pypi.douban.com/simple
+colorlog~=6.6.0 -i https://pypi.douban.com/simple
 
 ## For datacenter
-pypinyin
-rich
-cvxpy
-cvxopt
-brotli
+pypinyin -i https://pypi.douban.com/simple
+rich -i https://pypi.douban.com/simple
+cvxpy -i https://pypi.douban.com/simple
+cvxopt -i https://pypi.douban.com/simple
+brotli -i https://pypi.douban.com/simple
 
 ## web api server
 Flask~=2.0.2 -i https://pypi.douban.com/simple
@@ -28,42 +28,40 @@ flask-marshmallow==0.13.0 -i https://pypi.douban.com/simple
 flask-cors==3.0.8 -i https://pypi.douban.com/simple
 flasgger==0.9.5 -i https://pypi.douban.com/simple
 
-
-## localOCR1
-tensorflow == 2.4.0 -i https://pypi.douban.com/simple
+## (Optional, Deprecated) localOCR1
+# tensorflow == 2.12.0 -i https://pypi.douban.com/simple
 # muggle_ocr -i https://pypi.tuna.tsinghua.edu.cn/simple
-numpy==1.19.2 -i https://pypi.tuna.tsinghua.edu.cn/simple/
-pillow -i https://pypi.douban.com/simple
-pyyaml -i https://pypi.douban.com/simple
+# numpy==1.23.5 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+# pillow -i https://pypi.douban.com/simple
+# pyyaml -i https://pypi.douban.com/simple
 
-## localOCR2 need git
+## (Optional) localOCR2 need git
 # git+https://github.com/myhub/tr.git@master
 
-## localOCR3
-# ddddocr
+## (Optional) localOCR3
+ddddocr==1.4.7 -i https://pypi.douban.com/simple
 
 ## localOCR4
-# easyocr
+easyocr -i https://pypi.douban.com/simple
 
 ## python<3.8 protobuf==3.6.0
-protobuf==3.14.0
+protobuf==3.20.3 -i https://pypi.douban.com/simple
 
 ## For img_helper
-pyperclip
+pyperclip -i https://pypi.douban.com/simple
 
 ## For PCROCR
-cnocr==2.1.0
+cnocr==2.2.2.3 -i https://pypi.douban.com/simple
 
 ## For training PCROCR
-skorch==0.11.0
+skorch==0.11.0 -i https://pypi.douban.com/simple
 
-
-requests~=2.27.1
-Pillow~=8.2
-numpy~=1.19.2
-future~=0.18.2
-Werkzeug~=2.0.2
-argparse~=1.4.0
-torch~=1.10.2
-torchvision~=0.11.3
-tqdm~=4.62.3
+requests~=2.27.1 -i https://pypi.douban.com/simple
+Pillow~=9.2 -i https://pypi.douban.com/simple
+numpy==1.23.5 -i https://pypi.tuna.tsinghua.edu.cn/simple/
+future~=0.18.2 -i https://pypi.douban.com/simple
+Werkzeug~=2.0.2 -i https://pypi.douban.com/simple
+argparse~=1.4.0 -i https://pypi.douban.com/simple
+torch~=1.10.2 -i https://pypi.douban.com/simple
+torchvision~=0.11.3 -i https://pypi.douban.com/simple
+tqdm~=4.62.3 -i https://pypi.douban.com/simple
