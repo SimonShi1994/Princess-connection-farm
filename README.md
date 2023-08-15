@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230804
+# Princess connection 公主连结农场脚本v2.8.20230815.1
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -309,7 +309,9 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 2023/08/15 By UVJkiNTQ
 - 惯例更新
-  - 主线`49`图
+  - 主线`49`图及`Rank22`
+- Bug修复
+  - 免费十连不抽取的问题
 
 2023/08/04 By 0x114514BB
 - 功能更新

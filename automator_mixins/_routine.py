@@ -166,10 +166,11 @@ class RoutineMixin(ShuatuBaseMixin):
                             self.log.write_log("info", "设定附奖完成。")
                             self.restart_this_task()  # 一次性弹窗的终极解决方案
                             # self.register_precheck("skip_note", tiaoguo_tishi)
-                    self.fclick(1, 1)
-                    time.sleep(2)
+                self.fclick(1, 1)
+                time.sleep(2)
 
         fujiangshezhi()
+
         while True:
             fc = [255, 89, 74]
             bc = [255, 247, 247]
