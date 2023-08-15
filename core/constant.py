@@ -370,7 +370,7 @@ HUODONG_BTN = {
     "xinlaiduliwu2": p(126, 449, img="img/huodong/xinlaiduliwu2.bmp", at=(72, 440, 181, 458)),
     "hou": p(662, 106, img="img/huodong/hou.bmp", at=(656, 99, 669, 113)),
     "qian": p(662, 106, img="img/huodong/qian.bmp", at=(655, 99, 669, 113)),
-    "shadow_exchange": p(828,397,img="img/huodong/shadow_exchange.bmp",at=(779,385,877,410)),
+    "shadow_exchange": p(828, 397, img="img/huodong/shadow_exchange.bmp", at=(779, 385, 877, 410)),
 }
 
 HANGHUI_BTN = {
@@ -637,11 +637,11 @@ SHOP_BTN = {
     "nvshenshi": p(img="img/shop/nvshenshi.bmp", at=(527, 13, 544, 33)),
     "xianding_cishu": p(img="img/shop/xianding_cishu.bmp", at=(252, 427, 299, 447)),
     "xianding_close": p(img="img/shop/xianding_close.bmp", at=(516, 213, 666, 244)),
-    "xianding_locked": p(909, 66, img="img/shop/xianding_locked.bmp",at=(871, 42, 948, 90)),
-    "sold_out": p(330, 277, img="img/shop/sold_out.bmp",at=(290, 268, 370, 286)),
-    "buy_confirm": p(477, 41,img="img/shop/buy_confirm.bmp",at=(432, 26, 523, 56)),
-    "xianding_shutdown": p(528, 437, img="img/shop/xianding_shutdown.bmp",at=(474, 418, 583, 456)),
-    "xianding_shutdown_t": p(479, 145, img="img/shop/xianding_shutdown_t.bmp",at=(410, 130, 548, 160)),
+    "xianding_locked": p(909, 66, img="img/shop/xianding_locked.bmp", at=(871, 42, 948, 90)),
+    "sold_out": p(330, 277, img="img/shop/sold_out.bmp", at=(290, 268, 370, 286)),
+    "buy_confirm": p(477, 41, img="img/shop/buy_confirm.bmp", at=(432, 26, 523, 56)),
+    "xianding_shutdown": p(528, 437, img="img/shop/xianding_shutdown.bmp", at=(474, 418, 583, 456)),
+    "xianding_shutdown_t": p(479, 145, img="img/shop/xianding_shutdown_t.bmp", at=(410, 130, 548, 160)),
     "dxc_btn": p(363, 68, img="img/shop/dxc_btn.bmp", at=(314, 56, 400, 80)),
     "jjc_btn": p(447, 68, img="img/shop/jjc_btn.bmp", at=(411, 57, 485, 78)),
     "pjjc_btn": p(543, 68, img="img/shop/pjjc_btn.bmp", at=(500, 56, 588, 78)),
@@ -653,8 +653,7 @@ SHOP_BTN = {
     "querenchongzhi": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
     "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
-    "quanbujiechu": p(596,437,img="img/shop/quanbujiechu.bmp",at=(563,427,630,447)),
-
+    "quanbujiechu": p(596, 437, img="img/shop/quanbujiechu.bmp", at=(563, 427, 630, 447)),
 
 }
 
@@ -1389,6 +1388,7 @@ ZHUXIAN_ID = {
     46: p(img="img/zhuxian/46L.bmp", at=(90, 59, 175, 73)),
     47: p(img="img/zhuxian/47L.bmp", at=(60, 59, 179, 75)),
     48: p(img="img/zhuxian/48L.bmp", at=(65, 60, 177, 73)),
+    49: p(img="img/zhuxian/49L.bmp", at=(61, 59, 179, 75)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1458,6 +1458,7 @@ ZHUXIAN_LTLQS_ID = {
 }
 ZHUXIAN_ASTHY_ID = {
     48: p(img="img/zhuxian/48R.bmp", at=(198, 59, 233, 75)),
+    49: p(img="img/zhuxian/49R.bmp", at=(198, 59, 232, 76)),
 }
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
@@ -1475,7 +1476,7 @@ ZHUXIAN_SECOND_ID = {
     (42, 43): ZHUXIAN_PKTSBF_ID,
     (44, 45): ZHUXIAN_SKMBM_ID,
     (46, 47): ZHUXIAN_LTLQS_ID,
-    (48, ): ZHUXIAN_ASTHY_ID,
+    (48, 49): ZHUXIAN_ASTHY_ID,
 }
 
 NORMAL_COORD = {
@@ -2619,7 +2620,7 @@ USER_DEFAULT_DICT = {
         "tansuo": 0,  # 上次探索时间
         "maizhuangbei": 0,  # 上次卖装备时间
         "shengji": 0,  # 上次圣迹调查时间
-        "xdshop_closed": 0 # 限定商店是否关闭
+        "xdshop_closed": 0  # 限定商店是否关闭
     },
     "daily_status": {
         # 每日刷图
