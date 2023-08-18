@@ -13,7 +13,7 @@ from scenes.root.juese import get_name_from_plate_path
 
 from automator_mixins._base import DEBUG_RECORD
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING_BTN, p, HUODONG_BTN, JIAYUAN_BTN
+from core.constant import MAIN_BTN, PCRelement, ZHUCAIDAN_BTN, JUESE_BTN, JUQING_BTN, HUODONG_BTN, JIAYUAN_BTN, WZ_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.pcr_config import debug, fast_screencut, lockimg_timeout, use_pcrocr_to_process_basic_text, \
@@ -950,20 +950,29 @@ class ToolsMixin(BaseMixin):
 
         while True:
             screen = self.getscreen()
-            lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp", at=(233, 98, 285, 319), screen=screen)
-            # self.log.write_log('info ', f"{lst}")
             # 连续阅读兼容
             if self.is_exists(img="img/ui/queren_blue.bmp"):
                 self.click_img(img="img/ui/queren_blue.bmp", screen=screen)
                 self.lock_no_img(img="img/ui/queren_blue.bmp")
                 time.sleep(3)
                 continue
-            # 选择无语音选项
+            # 选择无语音选项[当启用下载语音]
             if self.is_exists(JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 520)):
                 self.click_img(img=JUQING_BTN["wuyuyin"].img, screen=screen, at=(410, 277, 553, 520))
                 time.sleep(2)
                 continue
-            # 选择快进剧情
+            # 选择无语音选项[当禁用下载语音]
+            elif self.is_exists(WZ_BTN["shujuxiazai"].img, screen=screen, at=(435, 134, 523, 159)):
+                self.click_img(img=WZ_BTN["shujuxiazai_ok"].img, screen=screen, at=(557, 354, 620, 385))
+                time.sleep(2)
+                continue
+            lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp", at=(233, 98, 285, 319), screen=screen)
+            # self.log.write_log('info ', f"{lst}")
+            # 选择支固定选红色
+            if len(lst) > 0:
+                self.click(int(lst[0]), int(lst[1]))
+                continue
+            # 选择快进剧情[选择支后再检测菜单圆]
             if self.is_exists(JUQING_BTN["caidanyuan"], screen=screen) and no_skip is False:
                 self.click_btn(JUQING_BTN["caidanyuan"], until_appear=(JUQING_BTN["auto"]))
                 if self.is_exists(JUQING_BTN["tiaoguo_1"], method="sq"):
@@ -976,10 +985,6 @@ class ToolsMixin(BaseMixin):
             # 确认快进，包括视频和剧情
             if self.is_exists(JUQING_BTN["tiaoguo_2"], screen=screen):
                 self.click_btn(JUQING_BTN["tiaoguo_2"])
-                continue
-            # 选择支固定选红色
-            if len(lst) > 0:
-                self.click(int(lst[0]), int(lst[1]))
                 continue
 
             # 退出形式
@@ -1012,6 +1017,11 @@ class ToolsMixin(BaseMixin):
                     self.click_btn(JUQING_BTN["wuyuyin_lianxu"], until_disappear=JUQING_BTN["wuyuyin_lianxu"])
                     time.sleep(2)
                     continue
+                # 检测主线连续剧情[禁用下载语音]
+                elif self.is_exists(WZ_BTN["shujuxiazai_ok"].img, at=(559, 418, 613, 447)):
+                    self.click_btn(WZ_BTN["shujuxiazai_ok"].img, until_disappear=WZ_BTN["shujuxiazai_ok"])
+                    time.sleep(2)
+                    continue
                 time.sleep(1)
                 self.fclick(1, 1)
                 self.log.write_log('info', "完成了这段剧情")
@@ -1032,7 +1042,7 @@ class ToolsMixin(BaseMixin):
             if story_type == "xinlai" and self.is_exists(HUODONG_BTN["xinlaiduliwu2"], screen=screen, ):
                 break
             else:
-                self.fclick(479, 260)
+                self.fclick(473, 260)
 
     def check_color(self, fc, bc, xcor, ycor, color_type="gbr", screen=None):
         # 主要用于检测点的颜色是否为前景色，通过比较RGB值与前景色/背景色的距离

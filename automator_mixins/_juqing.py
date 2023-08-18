@@ -1,5 +1,5 @@
 import time
-from core.constant import MAIN_BTN,  JUQING_BTN, p
+from core.constant import MAIN_BTN,  JUQING_BTN, WZ_BTN, p
 from automator_mixins._tools import ToolsMixin
 
 
@@ -31,7 +31,12 @@ class JuQingMixin(ToolsMixin):
                 if len(r_list):
                     x_arg = int(r_list[0]) + 200
                     y_arg = int(r_list[1]) + 50
-                    self.click_btn(p(x_arg, y_arg), until_appear=(JUQING_BTN["quxiao"]))
+
+                    self.click_btn(p(x_arg, y_arg), retry=15, until_appear=[WZ_BTN["shujuxiazai"], JUQING_BTN["jiesuotiaojian"]])
+                    if self.is_exists(JUQING_BTN["jiesuotiaojian"]):
+                        self.log.write_log("warning", "有尚未解锁的剧情，无法继续推进！")
+                        break
+
                 self.guojuqing(story_type="zhuxian")
             else:
                 self.log.write_log('info', "无新剧情")
