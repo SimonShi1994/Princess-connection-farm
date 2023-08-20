@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230815.1
+# Princess connection 公主连结农场脚本v2.8.20230820
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -306,6 +306,18 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2023/08/20 By UVJkiNTQ
+- 惯例更新
+  - 更新角色相关头像、碎片资源。更新至日服进度且已支持环奈。
+
+2023/08/18 By PPF
+- 惯例更新
+  - 复刻活动`美里的夏日声援 追梦的盛夏棒球队`
+
+2023/08/16 By 0x114514BB
+- BUG修复
+  - 进一步修复自动过剧情的若干BUG
 
 2023/08/15 By UVJkiNTQ
 - 惯例更新
