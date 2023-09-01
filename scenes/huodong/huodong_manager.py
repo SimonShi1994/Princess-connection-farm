@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20230831": Map20230831,
         "20230818": Map20220731,
         "20230731": Map20230731,
         "20230718": Map20220630,
@@ -67,6 +68,22 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20230831(HuodongMapBase):
+    N_slice = 2
+    N1 = 5
+    NAME = "大江户的非法病历 Dr.深月的诊疗室"
+    XY11 = (174, 264)
+    XY21 = (218, 189)
+    XY_VH_BOSS = (857, 301)
+    HARD_COORD = {
+        1: (85, 359),
+        2: (217, 203),
+        3: (406, 234),
+        4: (560, 341),
+        5: (674, 229),
+    }
 
 
 class Map20230731(HuodongMapBase):
