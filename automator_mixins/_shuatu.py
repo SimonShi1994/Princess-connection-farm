@@ -1832,7 +1832,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
 
     def tui_hd_map(self, diff="N", team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
-                   if_full=0, var=None):
+                   if_full=0,if_auto=True, var=None):
 
         self.lock_home()
         # 体力检查
@@ -1845,19 +1845,19 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.lock_home()
             return
         self.log.write_log("debug", f"类型：{type(MAP)}")
-        MAP.tui_hd_map(diff=diff, team_order=team_order, get_zhiyuan=get_zhiyuan, if_full=if_full)
+        MAP.tui_hd_map(diff=diff, team_order=team_order, get_zhiyuan=get_zhiyuan, if_full=if_full,if_auto=if_auto)
         self.fclick(1, 1)
         self.lock_home()
 
     def tui_hd_map_normal(self, team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
-                          if_full=0, var=None):
+                          if_full=0,if_auto=True, var=None):
         self.tui_hd_map(diff="N", team_order=team_order, code=code, entrance_ind=entrance_ind, get_zhiyuan=get_zhiyuan,
-                        if_full=if_full)
+                        if_full=if_full,if_auto=if_auto)
 
     def tui_hd_map_hard(self, team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
-                        if_full=0, var=None):
+                        if_full=0,if_auto=True, var=None):
         self.tui_hd_map(diff="H", team_order=team_order, code=code, entrance_ind=entrance_ind, get_zhiyuan=get_zhiyuan,
-                        if_full=if_full)
+                        if_full=if_full,if_auto=if_auto)
 
     def shua_hd_map_normal(self, code="current", entrance_ind="auto", map_id=1, cishu="max", var=None):
 
