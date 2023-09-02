@@ -178,7 +178,7 @@ class HuodongMapBase(ZhuXianBase):
         return self.goto(HuodongMenu, self.fun_click(HUODONG_BTN["return"]))
 
     def tui_hd_map(self, diff="N", team_order="none", entrance_ind="auto", get_zhiyuan=False,
-                   if_full=0, ):
+                   if_full=0,if_auto=True, ):
         # 20230210：这段代码从_shuatu/tui_hd_map中移植而来。
         # 获取初始坐标及常数
         MAP = self
@@ -276,7 +276,7 @@ class HuodongMapBase(ZhuXianBase):
             else:
                 if first_time:
                     st = fi.easy_shoushua(team_order=team_order, one_tili=10, max_speed=2, get_zhiyuan=get_zhiyuan,
-                                          if_full=if_full)  # 打完默认回fi
+                                          if_full=if_full, if_auto=if_auto)  # 打完默认回fi
                     if st == 1:
                         return
                     if st == 3:
@@ -286,7 +286,7 @@ class HuodongMapBase(ZhuXianBase):
                     continue
                 else:
                     st = fi.easy_shoushua(team_order="none", one_tili=10, max_speed=2, get_zhiyuan=get_zhiyuan,
-                                          if_full=if_full)
+                                          if_full=if_full, if_auto=if_auto)
                     if st == 1:
                         return
                     if st == 3:

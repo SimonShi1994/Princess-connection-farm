@@ -321,9 +321,13 @@ class LoginMixin(ToolsMixin):
             r = self.img_where_all(START_UI["xieyihuakuai"], threshold=0.99)
             self.d.touch.down(r[0], r[1]).sleep(1).up(r[0], r[1])
         except:
+            self.log.write_log("info", "开始下拉")
+            obj = self.d.touch.down(484, 340)
+            time.sleep(0.1)
+            obj.move(484, 110)
             # 退化成老办法
-            self.d.touch.down(808, 324).sleep(1).up(808, 324)
-            self.d.touch.down(808, 353).sleep(1).up(808, 353)
+            # self.d.touch.down(808, 324).sleep(1).up(808, 324)
+            # self.d.touch.down(808, 353).sleep(1).up(808, 353)
         if self.d(text="请滑动阅读协议内容").exists() or self.d(text="用户协议与隐私政策").exists():
             self.d(text="同意").click()
         # 雷电三
