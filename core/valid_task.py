@@ -1058,12 +1058,14 @@ VALID_TASK = ValidTask() \
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
           TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
+          TaskParam("if_auto",bool,"是否开启auto","用满配水星不开auto推图更快",True),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
     .add("hd02", "tui_hd_map_hard", "推活动困难图", "用于推H1-5。",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
           TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用", 0),
+          TaskParam("if_auto",bool,"是否开启auto","用满配水星不开auto推图更快",True),
           TaskParam(**huodong_code_kwargs),
           TaskParam(**huodong_entrance_ind_kwargs)]) \
     .add("hd03", "shua_hd_boss", "推/刷活动Boss（N or H or VH），", "刷活动Boss，用完挑战券，一次打不死会直接退出。",

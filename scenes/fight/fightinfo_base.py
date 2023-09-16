@@ -242,7 +242,8 @@ class FightInfoBase(PCRMsgBoxBase):
                       check_cishu=True,
                       max_speed=1,
                       get_zhiyuan=False,
-                      if_full=0
+                      if_full=0,
+                      if_auto=True
                       ):
         """
         team_order:  见select_team
@@ -257,6 +258,8 @@ class FightInfoBase(PCRMsgBoxBase):
             是否使用支援
         if_full:
             换下的人，详见get_zhiyuan函数
+        if_auto:
+            是否开启auto
 
         <return>
             0: 挑战成功
@@ -288,7 +291,10 @@ class FightInfoBase(PCRMsgBoxBase):
         if get_zhiyuan:
             T.get_zhiyuan(if_full=if_full)
         F = T.goto_fight()
-        F.set_auto(1)
+        if if_auto:
+            F.set_auto(1)
+        else:
+            F.set_auto(0)
         F.set_speed(max_speed, max_speed, self.last_screen)
         D = F.get_during()
         while True:
