@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20230917": Map20220831,
         "20230831": Map20230831,
         "20230818": Map20220731,
         "20230731": Map20230731,
@@ -416,7 +417,7 @@ class Map20220917(HuodongMapBase):
 
 
 class Map20220831(HuodongMapBase):
-    NAME = "Happy·Change·Angels"
+    NAME = "快乐变身 双生天使"
     XY11 = (167, 363)
     XY_VH_BOSS = (841, 278)
     HARD_COORD = {
