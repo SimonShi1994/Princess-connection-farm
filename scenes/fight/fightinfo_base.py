@@ -27,7 +27,11 @@ class FightInfoBase(PCRMsgBoxBase):
         at3 = (144, 399, 399, 482)  # 报酬
         at4 = (857, 17, 922, 68)  # 星
         sc1 = self.getscreen()
+        cnt = 0
         while True:
+            cnt += 1
+            if cnt > 100:
+                raise Exception("连续按了100次”下一张图“了，可能出BUG了！")
             self.click(930, 247)
             time.sleep(0.5)
             sc2 = self.getscreen()

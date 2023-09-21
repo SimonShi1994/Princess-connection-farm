@@ -479,6 +479,9 @@ def JS_TRACK(name, rank=0, zb_str="", track_str=None):
                 elif B == 6:
                     zb_str = '111111'
                     track_str = track_str.rstrip(".6")
+                elif B == 0:
+                    zb_str = '000000'
+                    track_str = track_str.rstrip(".0")
                 else:
                     raise Exception("错误的lib_track_str！")
             obj[name]["track"] = track_str
@@ -525,6 +528,9 @@ def JS_TRACKINFO():
             continue
         cid = data.C_ID[k]
         need_equip_before = data.calc_rankup_equip(cid, v['rank'], [False] * 6, v['track_rank'], v['track_zb'])
+        if need_equip_before == "FUCK":
+            print(f"找不到 {k}（ID：{data.C_ID[k]}） 的装备数据，这也太抽象了吧！暂时跳过吧……")
+            continue
         before_store = data.calc_equips_decompose(need_equip_before)
         need_equip_after = data.calc_rankup_equip(cid, v['rank'], v['zb'], v['track_rank'], v['track_zb'])
         after_store = data.calc_equips_decompose(need_equip_after, store=store)
@@ -627,6 +633,9 @@ def ZB_ST_LACK(args):
                 and "rank" in v and "zb" in v:
             refresh_track_max(v)
             ne = data.calc_rankup_equip(data.C_ID[k], v["rank"], v["zb"], v["track_rank"], v["track_zb"])
+            if ne == "FUCK":
+                print(f"找不到 {k}（ID：{data.C_ID[k]}） 的装备数据，这也太抽象了吧！暂时跳过吧……")
+                continue
             data.dict_plus(need_equip, ne, False)
     if has_arg(args, "--item"):
         lack = need_equip
@@ -710,6 +719,9 @@ def ZB_ST_ADVICE(args, verbose=True):
                 and "rank" in v and "zb" in v:
             refresh_track_max(v)
             ne = data.calc_rankup_equip(data.C_ID[k], v["rank"], v["zb"], v["track_rank"], v["track_zb"])
+            if ne == "FUCK":
+                print(f"找不到 {k}（ID：{data.C_ID[k]}） 的装备数据，这也太抽象了吧！暂时跳过吧……")
+                continue
             # for n in list(ne.keys()):
             #     lv = data.EInfo[n]['plevel']
             #     if lv < min_rare or lv > max_rare:
@@ -1113,6 +1125,7 @@ if __name__ == "__main__":
                 UpdateData()
                 data = LoadPCRData()
                 ShowDatasetTop()
+
             elif order == "exit":
                 break
             elif cmd == "zb":
