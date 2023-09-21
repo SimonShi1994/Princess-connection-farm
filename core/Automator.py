@@ -59,7 +59,7 @@ class Automator(HanghuiMixin, LoginMixin, RoutineMixin, ShuatuMixin, JJCMixin, D
         self.send_move_method("skip", to_id)
 
     def RestartTask(self):
-        self.send_move_method("normalrestart")
+        self.send_move_method("normalrestart", None)
 
     def RunTasks(self, tasks: dict, continue_=True, max_retry=3,
                  first_init_home=True, rec_addr="rec"):

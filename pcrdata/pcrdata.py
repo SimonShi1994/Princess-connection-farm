@@ -503,6 +503,8 @@ class PCRData:
         return need
 
     def calc_rankup_equip(self, chara_id, old_rank, old_zb, new_rank, new_zb):
+        if 'rank' not in self.CInfo[chara_id]:
+            return "FUCK"
         ranks = self.CInfo[chara_id]['rank']
         need_zb = []
 
@@ -596,4 +598,5 @@ class PCRData:
 
 if __name__ == "__main__":
     # debug
+    pcr = PCRData()
     pass
