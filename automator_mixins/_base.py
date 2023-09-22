@@ -353,7 +353,7 @@ class BaseMixin:
             return at
 
     @DEBUG_RECORD
-    def send_move_method(self, method, msg):
+    def send_move_method(self, method, msg=None):
         """
         给主线程发送一条消息
         :param method: 处理方法

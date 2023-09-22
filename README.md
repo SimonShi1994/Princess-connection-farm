@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20230916
+# Princess connection 公主连结农场脚本v2.8.20230921
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -307,7 +307,22 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2023/09/21 By TheAutumnOfRice
+
+- BUG修复
+  - 针对“姬塔”从数据库中消失的奇妙问题，在刷图规划中增加了对出错角色的跳过机制。
+  - 修复了刷图时不停按“下一图”的问题。
+  - 将重启当前任务的命令改为`restarttask`避免与`restart`命令冲突
+- 功能更新
+  - 设置角色追踪时，支持Rank.0表示裸装。
+
+2023/09/18 By PPF
+
+- 惯例更新
+  - 复刻活动`快乐变身 双生天使`
+
 2023/09/16 By PPF
+
 - 惯例更新
   - 主线`50`图
 

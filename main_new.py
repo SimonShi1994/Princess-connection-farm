@@ -40,7 +40,7 @@ PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
 
-script_version = "Ver 2.8.20230916"
+script_version = "Ver 2.8.20230921"
 
 
 
@@ -783,7 +783,7 @@ if __name__ == "__main__":
                         print("pause_after_task [-d (device_id)] 在当前任务结束后暂停任务")
                     print("task [-d (device_id)] 查看某个device当前的task列表")
                     print("skip [-d (device_id)] [-t (task_id)] 跳过当前任务；若指定-t，则跳转到指定任务（通过task查看ID）")
-                    print("restart [-d (device_id)] 重开当前任务")
+                    print("restarttask [-d (device_id)] 重开当前任务")
                     print("!!!________FOR DEBUG________!!!")
                     # print("last_screen [-d (device_id)] 监视某一个设备的最后一次截图")
                     print("u2rec [-d (device_id)] 查看某个device的u2运行记录")
@@ -834,7 +834,8 @@ if __name__ == "__main__":
                 if to_id is not None:
                     to_id = int(to_id)
                 SCH.pcr.skip_task(to_id, device)
-            elif order == "restart":
+
+            elif order == "restarttask":
                 assert SCH is not None, "当前无运行的Schedule！"
                 argv = cmds[1:]
                 device_id = get_arg(argv, "-d", None)
