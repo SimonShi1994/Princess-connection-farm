@@ -7,6 +7,12 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20231217": Map20221130,
+        "20231130": Map20231130,
+        "20231118": Map20221031,
+        "20231031": Map20231031,
+        "20231018": Map20220930,
+        "20230930": Map20230930,
         "20230917": Map20220831,
         "20230831": Map20230831,
         "20230818": Map20220731,
@@ -70,6 +76,47 @@ N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
 
+class Map20231130(HuodongMapBase):
+    NAME = "公主圣诞节快乐！舞动的少女与真情点心"
+    XY11 = (158, 243)
+    XY_VH_BOSS = (789, 280)
+    HARD_COORD = {
+        1: (91, 386),
+        2: (187, 209),
+        3: (271, 357),
+        4: (411, 429),
+        5: (596, 346),
+    }
+
+class Map20231031(HuodongMapBase):
+    N_slice = 2
+    N1 = 9
+    NAME = "魔法少女外传 黑暗世界"
+    XY11 = (157, 360)
+    XY21 = (116, 312)
+    XY_VH_BOSS = (835, 295)
+    HARD_COORD = {
+        1: (89, 388),
+        2: (375, 404),
+        3: (429, 245),
+        4: (540, 329),
+        5: (682, 227),
+    }
+
+class Map20230930(HuodongMapBase):
+    N_slice = 2
+    N1 = 12
+    NAME = "万圣节救援队·紧急出动！捕获毛茸茸大作战"
+    XY11 = (189, 293)
+    XY21 = (218, 268)
+    XY_VH_BOSS = (838, 291)
+    HARD_COORD = {
+        1: (111, 287),
+        2: (259, 367),
+        3: (374, 224),
+        4: (575, 306),
+        5: (714, 223),
+    }
 
 class Map20230831(HuodongMapBase):
     N_slice = 2
