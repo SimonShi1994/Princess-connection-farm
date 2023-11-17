@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20231115
+# Princess connection 公主连结农场脚本v2.8.20231116
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -190,6 +190,17 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 ## :taxi:使用方式&帮助
 
+- **Q:** 第一次使用，完全不懂怎么上手？
+
+  **A:** 请阅读下列新手方法
+
+  [Schedule使用方法](docs/introduce_to_schedule.md)
+
+  [如何接入打码平台](docs/如何接入打码平台.md)
+
+  [如何使用开关模块](docs/switch_guide.md)
+
+  [CONFIG配置文件解读](docs/INI文件配置解读.md)
 - **Q:** 卡在登陆页面，脚本点击不对
 
   **A:** 环境配置完成后，检查模拟器分辨率为540*960和DPI为240。确认无误
@@ -198,7 +209,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
   **A:** 蓝叠模拟器默认使用实体键盘，需开启虚拟键盘，蓝叠 5 国际版 Nougat x64 步骤：前往“设置”-“语言和输入法”-“实体键盘”，开启“显示虚拟键盘”。
 
-- **Q:** 如何配置登录模式？
+- **Q:** 如何不重复输入“用户名和密码”而是选择一个已经登陆过的账号直接登录，以跳过验证码？
 
   **A:** 目前有`切换记录|switch`，`自动填充|autofill`，`手动登录|manual`三种登陆方法，详见：
 
@@ -206,9 +217,12 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 - **Q:** 脚本任务报错，提示OCRXXX
 
-  **A:** 使用OCR相关的服务，必须启动`app.py`。使用2021-01-23后的版本程序默认自动启动app。另外app.py服务默认占用5000端口，请确保该端口未被其他程序使用。（可在`app.py`中更改）
+  **A:** 使用OCR相关的服务，必须启动`app.py`
+  。使用2021-01-23后的版本程序默认自动启动app。另外app.py服务默认占用5000端口，请确保该端口未被其他程序使用。（可在`app.py`
+  中更改）
 
-  **app.py启动失败？** 手动运行`python app.py`查看是否缺失依赖或者下载模型失败等原因，~~或许是你依赖没装，指requirements.txt没有打开并选择安装哪一个OCR~~
+  **app.py启动失败？** 手动运行`python app.py`查看是否缺失依赖或者下载模型失败等原因，~~
+  或许是你依赖没装，指requirements.txt没有打开并选择安装哪一个OCR~~
 
 - **Q:** 本地OCR1安装失败
 
@@ -236,17 +250,21 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
   **A:** 可能模拟器没有安装 ATX ，请在打开模拟器后，在控制台里输入init进行初始化模拟器环境。**还有问题加群问**
 
-- **Q:** 第一次使用，完全不懂怎么上手？
+- **Q:** 为什么XXX脚本报错不能使用了
 
-  **A:** 请阅读下列新手方法
+  **A:** 很多上古脚本（比如新号的初始化）目前已经没有开发者使用了，因此即使出现问题，可能也需要你自己来解决了。但你可以随时在群里询问与脚本开发相关的问题，开发者会热心回答你的疑问。
 
-  [Schedule使用方法](docs/introduce_to_schedule.md)
+- **Q:** 我是用XX模拟器，但是无法连接。
 
-  [如何接入打码平台](docs/如何接入打码平台.md)
+  **A:** 理论上，只要adb devices检查到的设备，都会在first/continue后自动连接，你可以在running_input开启时输入device查看连接状况，或者使用reconnect命令重新尝试连接。
+  如果你需要自定义连接逻辑，可以参考[源代码](core/initializer.py)中_connect函数，对其进行修改。
 
-  [如何使用开关模块](docs/switch_guide.md)
+- **Q:** **如何正确高效地反馈问题**
 
-  [CONFIG配置文件解读](docs/INI文件配置解读.md)
+  **A:** 参考[CONFIG配置文件](docs/INI文件配置解读.md)，打开debug，打开running_input，打开trace_exception_for_debug。
+  在开启running_input时，你可以在代码运行时输入指令进行调试。常见的指令包括device（查看当前连接的设备），task（查看任务列表），state（查看任务进行的状态），
+  queue（查看等待执行的队列），pause/resume（暂停，继续脚本），restarttask（重开当前任务）,skip（跳转任务）等等。你可以输入help查看所有支持的调试命令。
+  如果这些还无法帮助你自行判断问题，你可以将debug信息与模拟器状态一起录屏，在群里询问，从而尽可能高效地传达信息。
 
 - **Q:** 想用的功能没人维护，代码又看不懂，怎么上手？
 
@@ -262,16 +280,24 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
   [手把手教你写自定义任务](sample_customtask/sample_task.py)
 
+- **Q:** 新图更新了，有没有自力更生添加坐标/图片资源的方法？
+
+  **A:**
+  你可以参考img命令，它会手把手教你更新新图的图号/Rank/坐标。如果需要更新活动图，请参考[活动图坐标管理代码](scenes/huodong/huodong_manager.py)
+  。如果需要使用自动推图功能，需
+  要使用data命令进入数据中心，再使用update更新数据库。如果下载失败，你可能需要使用梯子，并给代码设置proxy，[可以参考这里的设置方法](https://stackoverflow.com/questions/8287628/proxies-with-python-requests-module)。
+
 - **Q:** 感觉看完还是不会使用，怎么办？
 
   **A:**  建议加群后虚心问问聪明的群友，哪里不会问哪里，更详细的使用方法会陆续更新，我们也会尽快简化使用方式及上线WebGUI控制版本，敬请期待！也欢迎大家入群交流讨论。↓↓
-
 
 ## :warning:额外说明
 
 1. 请不要用于商业用途。代码交流和bug反馈请加群加qq群 1130884619
 
-   ![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
+**反馈问题前，请先仔细阅读上方的Q/A部分，看看有没有能帮到你的地方？**
+
+![image](https://s1.ax1x.com/2020/06/26/NsXjh9.png)
 
 2. 感谢[CyiceK](https://github.com/1076472672) 、[Dr-Bluemond](https://github.com/Dr-Bluemond)
    、[TheAutumnOfRice](https://github.com/TheAutumnOfRice) 、[UVJkiNTQ](https://github.com/UVJkiNTQ)、[0x114514BB](https://github.com/0x114514BB)
@@ -307,10 +333,11 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
-2023/10/14 By SilentSelene
+2023/11/16 By SilentSelene, TheAutumnOfRice
 
 - 惯例更新
   - 主线`52`图
+  - Rank 23图标
 
 2023/10/14 By PPF
 
