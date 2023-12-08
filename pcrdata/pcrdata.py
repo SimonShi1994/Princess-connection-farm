@@ -115,7 +115,7 @@ def get_equip_id_name():
 
 
 def get_chara_id_name():
-    out = cur.execute("select unit_id,unit_name from unit_data where comment<>'' and unit_id < 400000").fetchall()
+    out = cur.execute("select unit_id ,unit_name from unit_data where comment<>'' and unit_id < 400000 and start_time > 2020").fetchall()
     CHARA_ID = {}
     ID_CHARA = {}
     for id, nam in out:

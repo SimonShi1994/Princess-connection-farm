@@ -110,7 +110,9 @@ class EnhanceMixin(ShuatuBaseMixin):
 
                             # 不能直接提升rank情况下：
                             # 先做升级动作
-                            if ers == 3 or ecb.get_char_lv_status() is True:
+                            # if ers == 3 or ecb.get_char_lv_status() is True:
+                            # 由于上限突破加入，技能等级一直有红点，不再使用一键升级
+                            if ers == 3:
                                 time.sleep(1)
                                 self.click_btn(JUESE_BTN["zdqh_1"], until_appear=JUESE_BTN["zdqh_ok"])
                                 self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
