@@ -40,8 +40,7 @@ PCR: Optional[PCRInitializer] = None
 SCH: Optional[Schedule] = None
 last_schedule = ""
 
-script_version = "Ver 2.8.20231116"
-
+script_version = "Ver 2.8.20231207"
 
 
 def GetLastSchedule():

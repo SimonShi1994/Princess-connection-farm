@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20231116
+# Princess connection 公主连结农场脚本v2.8.20231207
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -332,6 +332,18 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2023/12/07 By UVJkiNTQ
+
+- Bug修复
+  - 修复因为等级上限+10导致的自动强化错误
+  - 去除了Rank奖励图标导致角色BOX识别率降低的影响
+  - 修复了data数据中单个角色获取错误id的情况
+
+2023/11/29 By TheAutumnOfRice
+
+- Bug修复
+  - 补传Rank23图标
 
 2023/11/16 By SilentSelene, TheAutumnOfRice
 
