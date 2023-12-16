@@ -7,6 +7,10 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20240207": Map20240207,
+        "20240131": Map20240131,
+        "20240118": Map20221231,
+        "20231231": Map20231231,
         "20231217": Map20221130,
         "20231130": Map20231130,
         "20231118": Map20221031,
@@ -75,6 +79,73 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+class Map20240207(HuodongMapBase):
+    N_slice = 2
+    N1 = 10
+    NAME = "Re:member 吾愿所织的未来后篇"
+    XY11 = (119, 185)
+    XY21 = (165, 291)
+    XY_VH_BOSS = (839, 299)
+    HARD_COORD = {
+        1: (104, 274),
+        2: (268, 396),
+        3: (417, 237),
+        4: (506, 369),
+        5: (674, 262),
+    }
+
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去后篇”：点它
+        if self.is_exists(HUODONG_BTN["hou"]):
+            self.click_btn(HUODONG_BTN["hou"], until_appear=HUODONG_BTN["qian"])    
+
+class Map20240131(HuodongMapBase):
+    N_slice = 4
+    N1 = 6
+    N2 = 9
+    N3 = 12
+    NAME = "Re:member 吾愿所织的未来前篇"
+    XY11 = (142, 367)
+    XY21 = (212, 301)
+    XY31 = (228, 292)
+    XY41 = (187, 334)
+    XY_VH_BOSS = (835, 270)
+    HARD_COORD = {
+        1: (121, 276),
+        2: (280, 208),
+        3: (429, 245),
+        4: (522, 373),
+        5: (651, 251),
+    }
+    
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去前篇”：点它
+        if self.is_exists(HUODONG_BTN["qian"]):
+            self.click_btn(HUODONG_BTN["qian"], until_appear=HUODONG_BTN["hou"])
+
+class Map20231231(HuodongMapBase):
+    N_slice = 4
+    N1 = 5
+    N2 = 8
+    N3 = 11
+    NAME = "新年美食记忆·雪菲的大作战"
+    XY11 = (160, 299)
+    XY21 = (212, 301)
+    XY31 = (198, 297)
+    XY41 = (158, 270)
+    XY_VH_BOSS = (837, 262)
+    HARD_COORD = {
+        1: (121, 282),
+        2: (284, 214),
+        3: (431, 235),
+        4: (527, 348),
+        5: (653, 214),
+    }
 
 class Map20231130(HuodongMapBase):
     NAME = "公主圣诞节快乐！舞动的少女与真情点心"
