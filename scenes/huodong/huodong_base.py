@@ -61,6 +61,8 @@ class HuodongMapBase(ZhuXianBase):
     XY11 = None  # Normal(1,1)的坐标，用于刷1-1
     XY21 = None
     XY31 = None
+    XY41 = None
+
     HARD_Legacy = False
     HARD_COORD = None  # 大号刷Hard用坐标
     XY_HARD_BOSS = None
@@ -70,6 +72,7 @@ class HuodongMapBase(ZhuXianBase):
     N1 = 15
     N2 = 15
     N3 = 15
+    N4 = 15
     XINLAI = True
 
     def __init__(self, a):
@@ -187,19 +190,25 @@ class HuodongMapBase(ZhuXianBase):
         XY11 = MAP._check_coord(MAP.XY11)
         if N_slice >= 2:
             XY21 = MAP._check_coord(MAP.XY21)
-        if N_slice == 3:
+        if N_slice >= 3:
             XY31 = MAP._check_coord(MAP.XY31)
+        if N_slice >= 4:
+            XY41 = MAP._check_coord(MAP.XY41)
         N1 = MAP._check_constant(MAP.N1)
         if N_slice >= 2:
             N2 = MAP._check_constant(MAP.N2)
-        if N_slice == 3:
+        if N_slice >= 3:
             N3 = MAP._check_constant(MAP.N3)
+        if N_slice >= 4:
+            N4 = MAP._check_constant(MAP.N4)
         # 函数内参数，第一次根据要求选编队，后续就不用选了，减少用时
         first_time = True
 
         # 推图大循环
         # 初始化Normal分片计数器,bool,T代表完成，F代表未完成
-        if N_slice == 3:
+        if N_slice >= 4:
+            n4 = False
+        if N_slice >= 3:
             n3 = False
         if N_slice >= 2:
             n2 = False
@@ -225,6 +234,9 @@ class HuodongMapBase(ZhuXianBase):
                     if n2 is True:
                         MAP.go_right(1)
                         now = 3
+                    if n3 is True:
+                        MAP.go_right(1)
+                        now = 4
             else:
                 MAP.goto_hd_hard()
             MAP.to_leftdown()
@@ -239,6 +251,10 @@ class HuodongMapBase(ZhuXianBase):
                 elif now is 3:
                     fi = MAP.click_xy_and_open_fightinfo(*XY31, typ=FightInfoBase)
                     max_tu = N3 - N2
+                    a = fi.to_last_map(max_tu=max_tu)
+                elif now is 4:
+                    fi = MAP.click_xy_and_open_fightinfo(*XY41, typ=FightInfoBase)
+                    max_tu = N4 - N3
                     a = fi.to_last_map(max_tu=max_tu)
                 else:
                     max_tu = N1
@@ -263,10 +279,16 @@ class HuodongMapBase(ZhuXianBase):
                             break
                         else:
                             continue
-                    else:
-                        # now is 3:
+                    elif now is 3:
                         n3 = True
                         if N_slice == 3:
+                            break
+                        else:
+                            continue
+                    else:
+                        # now is 4:
+                        n4 = True
+                        if N_slice == 4:
                             break
                         else:
                             continue

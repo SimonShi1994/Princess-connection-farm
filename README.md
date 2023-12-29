@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20231216
+# Princess connection 公主连结农场脚本v2.8.20231229
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -333,6 +333,12 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2023/12/29 By UVJkiNTQ
+
+- Bug修复
+  - 活动`新年美食记忆·雪菲的大作战`日期及代码兼容修复（4分片活动）
+  - 回滚自动强化`s8`的修改。请使用该功能的玩家注意，当角色碎片足够等级上限突破+10的时候，请自行突破后再使用该功能。
+
 2023/12/16 By SilentSelene
 
 - 惯例更新
@@ -343,7 +349,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 2023/12/07 By UVJkiNTQ
 
 - Bug修复
-  - 修复因为等级上限+10导致的自动强化错误
+  - 修复因为等级上限+10导致的自动强化`s8`错误
   - 去除了Rank奖励图标导致角色BOX识别率降低的影响
   - 修复了data数据中单个角色获取错误id的情况
 
