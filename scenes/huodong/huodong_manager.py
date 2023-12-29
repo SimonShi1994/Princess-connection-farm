@@ -10,7 +10,7 @@ def get_huodong_by_code(code: str):
         "20240207": Map20240207,
         "20240131": Map20240131,
         "20240118": Map20221231,
-        "20231231": Map20231231,
+        "20231229": Map20231229,
         "20231217": Map20221130,
         "20231130": Map20231130,
         "20231118": Map20221031,
@@ -128,7 +128,7 @@ class Map20240131(HuodongMapBase):
         if self.is_exists(HUODONG_BTN["qian"]):
             self.click_btn(HUODONG_BTN["qian"], until_appear=HUODONG_BTN["hou"])
 
-class Map20231231(HuodongMapBase):
+class Map20231229(HuodongMapBase):
     N_slice = 4
     N1 = 5
     N2 = 8
