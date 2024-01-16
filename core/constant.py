@@ -1469,6 +1469,7 @@ ZHUXIAN_ID = {
     51: p(img="img/zhuxian/51L.bmp", at=(62, 59, 157, 76)),
     52: p(img="img/zhuxian/52L.bmp", at=(62, 57, 181, 77)),
     53: p(img="img/zhuxian/53L.bmp", at=(61, 57, 179, 77)),
+    54: p(img="img/zhuxian/54L.bmp", at=(63, 59, 196, 75)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1548,6 +1549,9 @@ ZHUXIAN_PNATJ_ID = {
     52: p(img="img/zhuxian/52R.bmp", at=(195, 59, 233, 79)),
     53: p(img="img/zhuxian/53R.bmp", at=(197, 59, 233, 76)),
 }
+ZHUXIAN_TTDSSA_ID = {
+    54: p(img="img/zhuxian/54R.bmp", at=(217, 60, 250, 74)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
@@ -1567,6 +1571,7 @@ ZHUXIAN_SECOND_ID = {
     (48, 49): ZHUXIAN_ASTHY_ID,
     (50, 51): ZHUXIAN_NLYJ_ID,
     (52, 53): ZHUXIAN_PNATJ_ID,
+    (54, ): ZHUXIAN_TTDSSA_ID,
 }
 
 NORMAL_COORD = {
