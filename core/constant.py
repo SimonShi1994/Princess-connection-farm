@@ -1228,7 +1228,7 @@ HARD_COORD = {
         1: p(200, 235, name="H54-1"),
         2: p(485, 317, name="H54-2"),
         3: p(758, 282, name="H54-3"),
-    },    
+    },
     55: {
         1: p(200, 239, name="H55-1"),
         2: p(487, 319, name="H55-2"),
@@ -1238,7 +1238,7 @@ HARD_COORD = {
         1: p(200, 235, name="H56-1"),
         2: p(487, 315, name="H56-2"),
         3: p(758, 284, name="H56-3"),
-    },    
+    },
     57: {
         1: p(204, 237, name="H57-1"),
         2: p(487, 315, name="H57-2"),
@@ -1248,7 +1248,7 @@ HARD_COORD = {
         1: p(202, 241, name="H58-1"),
         2: p(489, 313, name="H58-2"),
         3: p(758, 286, name="H58-3"),
-    },    
+    },
 }
 
 VH_COORD = {
@@ -1321,27 +1321,27 @@ VH_COORD = {
         1: p(177, 231, name="VH31-1"),
         2: p(487, 338, name="VH31-2"),
         3: p(781, 334, name="VH31-3"),
-    },  
+    },
     32: {
         1: p(181, 344, name="VH32-1"),
         2: p(483, 239, name="VH32-2"),
         3: p(781, 338, name="VH32-3"),
-    }, 
+    },
     33: {
         1: p(177, 222, name="VH33-1"),
         2: p(485, 361, name="VH33-2"),
         3: p(781, 255, name="VH33-3"),
-    },  
+    },
     34: {
         1: p(183, 357, name="VH34-1"),
         2: p(491, 245, name="VH34-2"),
         3: p(775, 305, name="VH34-3"),
-    },  
+    },
     35: {
         1: p(196, 228, name="VH34-1"),
         2: p(469, 317, name="VH34-2"),
         3: p(758, 336, name="VH34-3"),
-    },  
+    },
     63: {
         1: p(200, 239, name="VH63-1"),
         2: p(487, 315, name="VH63-2"),
@@ -1351,12 +1351,12 @@ VH_COORD = {
         1: p(202, 239, name="VH64-1"),
         2: p(487, 311, name="VH64-2"),
         3: p(760, 282, name="VH64-3"),
-    },  
+    },
     65: {
         1: p(200, 235, name="VH65-1"),
         2: p(489, 313, name="VH65-2"),
         3: p(760, 276, name="VH65-3"),
-    },                              
+    },
 }
 
 MAOXIAN_BTN = {
@@ -1469,6 +1469,7 @@ ZHUXIAN_ID = {
     51: p(img="img/zhuxian/51L.bmp", at=(62, 59, 157, 76)),
     52: p(img="img/zhuxian/52L.bmp", at=(62, 57, 181, 77)),
     53: p(img="img/zhuxian/53L.bmp", at=(61, 57, 179, 77)),
+    54: p(img="img/zhuxian/54L.bmp", at=(60, 56, 196, 77)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1548,6 +1549,10 @@ ZHUXIAN_PNATJ_ID = {
     52: p(img="img/zhuxian/52R.bmp", at=(195, 59, 233, 79)),
     53: p(img="img/zhuxian/53R.bmp", at=(197, 59, 233, 76)),
 }
+ZHUXIAN_TTDSHA_ID = {
+    54: p(img="img/zhuxian/54R.bmp", at=(213, 60, 252, 77)),
+    # 55: p(img="img/zhuxian/55R.bmp", at=(197, 59, 233, 76)),
+}
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
@@ -1567,6 +1572,7 @@ ZHUXIAN_SECOND_ID = {
     (48, 49): ZHUXIAN_ASTHY_ID,
     (50, 51): ZHUXIAN_NLYJ_ID,
     (52, 53): ZHUXIAN_PNATJ_ID,
+    (54, 55): ZHUXIAN_TTDSHA_ID,
 }
 
 NORMAL_COORD = {
@@ -2682,7 +2688,7 @@ NORMAL_COORD = {
             2: p(202, 189, name="55-2"),
             1: p(160, 365, name="55-1"),
         }
-    }, 
+    },
     56: {
         "right": {
             14: p(841, 326, name="56-14"),
@@ -2763,7 +2769,7 @@ NORMAL_COORD = {
             2: p(239, 330, name="59-2"),
             1: p(138, 259, name="59-1"),
         },
-    },  
+    },
     60: {
         "right": {
             14: p(822, 278, name="60-14"),
@@ -2783,7 +2789,7 @@ NORMAL_COORD = {
             2: p(299, 375, name="60-2"),
             1: p(179, 390, name="60-1"),
         },
-    },                  
+    },
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),
