@@ -234,9 +234,10 @@ class HuodongMapBase(ZhuXianBase):
                     if n2 is True:
                         MAP.go_right(1)
                         now = 3
-                    if n3 is True:
-                        MAP.go_right(1)
-                        now = 4
+                    if N_slice >= 3:
+                        if n3 is True:
+                            MAP.go_right(1)
+                            now = 4
             else:
                 MAP.goto_hd_hard()
             MAP.to_leftdown()
