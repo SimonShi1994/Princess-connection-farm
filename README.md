@@ -340,6 +340,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 - Bug修复
   - 活动`Re:member 吾愿所织的未来`前篇坐标修复
   - 活动框架的一个逻辑bug
+  - 替换了已失效的干炸里脊数据库，新数据源来自 [pcr-tool](https://github.com/wthee/pcr-tool)
 
 2023/12/29 By UVJkiNTQ
 
