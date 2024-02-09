@@ -10,7 +10,7 @@ def update():
         os.makedirs("pcrdata/data")
 
     print("正在下载最新数据包……")
-    re = requests.get("https://redive.estertion.win/db/redive_cn.db.br")
+    re = requests.get("https://wthee.xyz/db/redive_cn.db.br")
     db = brotli.decompress(re.content)
     with open("pcrdata/data.db", "wb") as f:
         f.write(db)
@@ -20,7 +20,7 @@ def update():
 import os
 
 if not os.path.exists("pcrdata/data.db"):
-    print("[!] 未找到干炸里脊数据库，更新中……")
+    print("[!] 未找到数据库，更新中……")
     try:
         update()
     except Exception as e:
@@ -304,7 +304,7 @@ class PCRData:
         try:
             self.EQU_ID, self.ID_EQU = get_equip_id_name()
         except Exception as e:
-            print("[!] 获取数据产生错误：", e, "试图重新更新干炸里脊数据库……")
+            print("[!] 获取数据产生错误：", e, "试图重新更新数据库……")
             update()
             self.EQU_ID, self.ID_EQU = get_equip_id_name()
         self.ITEM_ID, self.ID_ITEM = get_item_id_name()
