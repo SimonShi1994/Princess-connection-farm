@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20240210": Map20240210,
         "20240207": Map20240207,
         "20240131": Map20240131,
         "20240118": Map20221231,
@@ -79,6 +80,20 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20240210(HuodongMapBase):
+    N_slice = 1
+    NAME = "情相连 心相系"
+    XY11 = (158, 193)
+    XY_VH_BOSS = (837, 304)
+    HARD_COORD = {
+        1: (112, 323),
+        2: (271, 205),
+        3: (360, 389),
+        4: (535, 395),
+        5: (647, 235),
+    }
 
 class Map20240207(HuodongMapBase):
     N_slice = 2
