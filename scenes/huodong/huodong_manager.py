@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20240216": Map20240216,
         "20240210": Map20240210,
         "20240207": Map20240207,
         "20240131": Map20240131,
@@ -84,7 +85,7 @@ N1： Normal图如果分段，第1段最后一图的图号
 
 class Map20240210(HuodongMapBase):
     N_slice = 1
-    NAME = "情相连 心相系"
+    NAME = "情相连 心相系前篇"
     XY11 = (158, 193)
     XY_VH_BOSS = (837, 304)
     HARD_COORD = {
@@ -94,6 +95,35 @@ class Map20240210(HuodongMapBase):
         4: (535, 395),
         5: (647, 235),
     }
+
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去前篇”：点它
+        if self.is_exists(HUODONG_BTN["qian"]):
+            self.click_btn(HUODONG_BTN["qian"], until_appear=HUODONG_BTN["hou"])
+
+
+class Map20240216(HuodongMapBase):
+    N_slice = 1
+    NAME = "情相连 心相系后篇"
+    XY11 = (96, 208)
+    XY_VH_BOSS = (876, 309)
+    HARD_COORD = {
+        1: (71, 263),
+        2: (221, 361),
+        3: (348, 214),
+        4: (486, 396),
+        5: (679, 308),
+    }
+
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去后篇”：点它
+        if self.is_exists(HUODONG_BTN["hou"]):
+            self.click_btn(HUODONG_BTN["hou"], until_appear=HUODONG_BTN["qian"])
+
 
 class Map20240207(HuodongMapBase):
     N_slice = 2
