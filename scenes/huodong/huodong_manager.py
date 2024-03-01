@@ -105,7 +105,7 @@ class Map20240229(HuodongMapBase):
     N_slice = 2
     N1 = 10
     NAME = "Sweet tiny stage!新人女演员与小小淑女"
-    XY11 = (237, 195)
+    XY11 = (279, 195)
     XY21 = (152, 390)
     XY_VH_BOSS = (812, 282)
     HARD_COORD = {
