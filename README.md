@@ -333,6 +333,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2024/03/01 By 0x114514BB
+
+- 惯例更新
+  - Rank 24图标
+- Bug修复
+  - 活动`Sweet tiny stage!新人女演员与小小淑女`坐标修复
+
 2024/02/29 By SilentSelene
 
 - 惯例更新
