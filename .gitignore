@@ -31,7 +31,6 @@ xls/
 PCRError/
 pcrdata/data.db
 ocrfix/
-poetry.lock
 rank_window.bmp
 zhuxian_title.bmp
 
