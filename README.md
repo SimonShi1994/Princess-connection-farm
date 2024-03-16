@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20240301
+# Princess connection 公主连结农场脚本v2.8.20240316
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -127,7 +127,7 @@
 
 ##### 方法2-传统pip install
 
-- 需要 3.11>Python **64位**版本>3.6（安装时记得把带有**PATH**字母选项的勾上）
+- 需要 3.11>Python **64位**版本>=3.8（安装时记得把带有**PATH**字母选项的勾上）
 
   **3.8以上请取消掉`requirements.txt`中所有的版本限制，需注意Pillow版本支持范围（9.2）。本地OCR1在3.8以上无法使用！！！**
 
@@ -333,6 +333,17 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2024/03/16 By 0x114514BB
+
+- 惯例更新
+  - 主线`56`图
+  - 数据库更新
+- Bug修复
+  - 主线`52`图 困难模式下无法识别
+- 杂项
+  - 更新依赖`requirement.txt`和`pyproject.toml`
+  - **注意**：从此版本开始脚本将取消对Python 3.7版本的支持，请尽快更新Python版本。
+
 2024/03/01 By 0x114514BB
 
 - 惯例更新
@@ -347,7 +358,7 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 2024/2/18 By UVJkiNTQ
 - 惯例更新
-  - 主线`54`图
+  - 主线`55`图
 
 2024/2/17 By UVJkiNTQ
 - 惯例更新
