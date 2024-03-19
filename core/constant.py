@@ -372,6 +372,8 @@ HUODONG_BTN = {
     "hou": p(662, 106, img="img/huodong/hou.bmp", at=(656, 99, 669, 113)),
     "qian": p(662, 106, img="img/huodong/qian.bmp", at=(655, 99, 669, 113)),
     "shadow_exchange": p(828, 397, img="img/huodong/shadow_exchange.bmp", at=(779, 385, 877, 410)),
+    "hdtbzj": p(477, 145, img="img/huodong/hdtbzj.bmp", at=(409, 132, 546, 159)),
+    "qwjq": p(591, 369, img="img/huodong/qwjq.bmp", at=(534, 352, 648, 387)),
 }
 
 HANGHUI_BTN = {

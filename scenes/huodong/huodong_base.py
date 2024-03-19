@@ -738,20 +738,24 @@ class HuodongMenu(PCRSceneBase):
         self.initPC = self.clear_map
 
     def clear_map(self, screen):
+        # a 信赖度解锁：如果是推图，则到地图页面跳出。如果是扫荡，则在结算页面跳出。
         a = self.img_where_all(img="img/ui/quxiao2.bmp", screen=screen, at=(300, 270, 439, 450))
-        # 信赖度解锁：如果是推图，则到地图页面跳出。如果是扫荡，则在结算页面跳出。
+        # b 剧情解锁，记录解锁等
         b = self.img_where_all(img="img/ui/close_btn_1.bmp", screen=screen, at=(365, 266, 593, 516))
-        # 剧情解锁，记录解锁等
+        # c 活动特别章节：牛皮藓窗，fclick不可关闭
+        c = self.img_where_all(img=HUODONG_BTN["hdtbzj"], screen=screen, at=(409, 70, 546, 159))
         if len(a) > 0:
             self.click(int(a[0]), int(a[1]))
         elif len(b) > 0:
             self.click(int(b[0]), int(b[1]))
+        elif len(c) > 0:
+            self.click_btn(HUODONG_BTN["qwjq"])
         elif self.is_exists(MAIN_BTN["karin_middle"], screen=screen):
             self.chulijiaocheng(None)
             self._a.restart_this_task()
         elif self.is_exists(HUODONG_BTN["shadow_help"], screen=screen):
+            # c 窗口fclick无法退出 不应执行restart this task
             self.fclick(1, 1)
-            self._a.restart_this_task()
         elif self.is_exists(JUQING_BTN["shadow_caidanyuan"], screen=screen):
             self._a.guojuqing(story_type="huodong")
             self._a.restart_this_task()
