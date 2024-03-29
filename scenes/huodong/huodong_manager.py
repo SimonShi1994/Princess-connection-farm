@@ -7,8 +7,8 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
-        "20240411": Map20230331,
-        "20240331": Map20240331,
+        "20240415": Map20230331,
+        "20240329": Map20240329,
         "20240311": Map20230228,
         "20240229": Map20240229,
         "20240216": Map20240216,
@@ -86,10 +86,10 @@ N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
 
-class Map20240331(HuodongMapBase):
+class Map20240329(HuodongMapBase):
     N_slice = 2
     N1 = 4
-    NAME = "宝物拿来!隐身怪盗团"
+    NAME = "交出宝物!神出鬼没的怪盗"
     XY11 = (243, 251)
     XY21 = (107, 373)
     XY_VH_BOSS = (868, 270)

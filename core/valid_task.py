@@ -723,7 +723,7 @@ VALID_TASK = ValidTask() \
     .add("d2", "dixiacheng", "地下城非OCR版本", "小号地下城借人换mana",
          [TaskParam("skip", bool, "跳过战斗", "设置为True时，第一层不打直接撤退。\n设置为False时，打完第一层。", False)]) \
     .add("d5", "shuatuDD_OCR", "通关地下城OCR", "【适合大号，借人可能有BUG】通用的打通地下城函数",
-         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5,6,7"),
+         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5,6,7,8"),
           TaskParam("mode", int, "模式", "mode 0：不打Boss，用队伍1只打小关\n"
                                        "mode 1：打Boss，用队伍1打小关，用队伍[1,2,3,4,5...]打Boss\n"
                                        "mode 2：打Boss，用队伍1打小关，用队伍[2,3,4,5...]打Boss\n"
@@ -754,7 +754,7 @@ VALID_TASK = ValidTask() \
                                                  '        B12Y,B12Y,B12Y,B12Y,AZ,AZ', default=""),
           ]) \
     .add("d6", "dixiacheng_skip", "地下城跳过战斗", "一键刷地下城并跳过战斗（要求通关）", 
-         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5,6,7"),]) \
+         [TaskParam("dxc_id", int, "地下城图号", "刷哪个地下城。\n目前支持:1,3,4,5,6,7,8"),]) \
     .add("j1", "doJJC", "竞技场", "竞技场白给脚本") \
     .add("j2", "doPJJC", "公主竞技场", "公主竞技场白给脚本") \
     .add('r1', "gonghuizhijia", "家园领取", "收取公会之家的奖励",
@@ -802,7 +802,7 @@ VALID_TASK = ValidTask() \
     .add("r10-n", "shengjidiaocha_new", "圣迹调查新版", "进行圣迹调查（可选关）",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli",
                     inputbox=TeamOrderInputer),
-          TaskParam("tu_order", list, "图号", "只包含1~3的列表，表示圣迹调查图号，每个均刷5次。",
+          TaskParam("tu_order", list, "图号", "只包含1~4的列表，表示圣迹调查图号，每个均刷5次。",
                     inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~3的整数"))
           ]) \
     .add("r11", "shouqunvshenji", "收取女神祭", "收取女神祭") \
