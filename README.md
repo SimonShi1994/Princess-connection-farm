@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20240319
+# Princess connection 公主连结农场脚本v2.8.20240329
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -332,6 +332,14 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2024/03/29 By 0x114514BB
+
+- 惯例更新
+  - 地下城EX5
+  - 圣迹调查4
+- Bug修复
+  - 活动`交出宝物!神出鬼没的怪盗`日期更新
 
 2024/03/19 By 0x114514BB
 
