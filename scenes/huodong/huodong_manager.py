@@ -7,7 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
-        "20240415": Map20230331,
+        "20240418": Map20230331,
         "20240329": Map20240329,
         "20240311": Map20230228,
         "20240229": Map20240229,
