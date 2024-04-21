@@ -27,7 +27,7 @@ class HanghuiMixin(ToolsMixin):
         # self.find_img('img/liwu.bmp', elseclick=[(131, 533)], elsedelay=self.change_time,
         #               at=(891, 413, 930, 452))  # 回首页
         # self.d.click(693, 436)
-        self.find_img('img/hanghui.bmp', elseclick=[(693, 436)], elsedelay=2)  # 锁定进入行会
+        self.find_img('img/hanghui.bmp', elseclick=[(688, 38)], elsedelay=2)  # 锁定进入行会
         self.lock_no_img('img/zhandou_ok.jpg', elseclick=[(239, 351)], retry=5, side_check=self.juqing_kkr)
         while True:  # 6-17修改：减少opencv使用量提高稳定性
             if self.is_exists('img/zhiyuansheding.bmp'):
@@ -266,7 +266,7 @@ class HanghuiMixin(ToolsMixin):
         # 进入行会
         out = self.lock_img(PCRelement(img='img/zhiyuansheding.bmp', at=(16, 338, 159, 380)),
                             ifclick=[(230, 351), (1, 1)],
-                            elseclick=[(1, 1), (688, 432)],
+                            elseclick=[(1, 1), (688, 38)],
                             elsedelay=8, retry=6, is_raise=False)
         if not out:
             self.log.write_log("error", "无法进入行会")

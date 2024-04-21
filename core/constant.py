@@ -58,7 +58,7 @@ START_UI = {
     "wenzidianji": p(img="img/ui/wenzidianji.bmp"),
     "yanzhengshibai": p(img="img/ui/yanzhengshibai.bmp"),
     "xieyihuakuai": p(img="img/ui/xieyi_slide.bmp", at=(708, 124, 825, 364)),
-    "gouxuan": p(340, 430, img="img/ui/gouxuan.bmp", at=(273, 407, 308, 440)),  # 同意协议勾选
+    "gouxuan": p(291, 421, img="img/ui/gouxuan.bmp", at=(278, 404, 305, 439)),  # 同意协议勾选
 }
 
 HAOYOU_BTN = {
@@ -91,7 +91,7 @@ MAIN_BTN = {
     # 主页
     "zhuye": p(131, 533, name="我的主页"),
     # 行会按钮 
-    "hanghui": p(688, 402, img="img/home/hanghui_btn.bmp", at=(677, 419, 702, 441), name="行会"),
+    "hanghui": p(688, 38, name="行会"),
     # 角色
     "juese": p(213, 507),
     # 剧情
@@ -1483,6 +1483,7 @@ ZHUXIAN_ID = {
     54: p(img="img/zhuxian/54L.bmp", at=(60, 56, 196, 77)),
     55: p(img="img/zhuxian/55L.bmp", at=(61, 57, 196, 77)),
     56: p(img="img/zhuxian/56L.bmp", at=(62, 59, 195, 74)),
+    57: p(img="img/zhuxian/57L.bmp", at=(60, 56, 194, 75)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1568,7 +1569,7 @@ ZHUXIAN_TTDSHA_ID = {
 }
 ZHUXIAN_ALKSSD_ID = {
     56: p(img="img/zhuxian/56R.bmp", at=(214, 61, 251, 74)),
-    # 57:
+    57: p(img="img/zhuxian/57R.bmp", at=(214, 61, 250, 76)),
 }
 
 ZHUXIAN_SECOND_ID = {
@@ -1591,7 +1592,7 @@ ZHUXIAN_SECOND_ID = {
     (50, 51): ZHUXIAN_NLYJ_ID,
     (52, 53): ZHUXIAN_PNATJ_ID,
     (54, 55): ZHUXIAN_TTDSHA_ID,
-    (56,): ZHUXIAN_ALKSSD_ID,
+    (56, 57): ZHUXIAN_ALKSSD_ID,
 }
 
 NORMAL_COORD = {
@@ -2731,22 +2732,22 @@ NORMAL_COORD = {
     },
     57: {
         "right": {
-            14: p(822, 303, name="57-14"),
-            13: p(669, 346, name="57-13"),
-            12: p(725, 237, name="57-12"),
-            11: p(572, 230, name="57-11"),
-            10: p(553, 351, name="57-10"),
-            9: p(431, 346, name="57-9"),
-            8: p(318, 338, name="57-8"),
+            14: p(824, 284, name="57-14"),
+            13: p(668, 347, name="57-13"),
+            12: p(729, 231, name="57-12"),
+            11: p(573, 228, name="57-11"),
+            10: p(556, 350, name="57-10"),
+            9: p(436, 347, name="57-9"),
+            8: p(320, 338, name="57-8"),
         },
         "left": {
-            7: p(800, 230, name="57-7"),
-            6: p(661, 206, name="57-6"),
-            5: p(543, 245, name="57-5"),
-            4: p(560, 359, name="57-4"),
-            3: p(454, 404, name="57-3"),
-            2: p(342, 363, name="57-2"),
-            1: p(227, 411, name="57-1"),
+            7: p(801, 228, name="57-7"),
+            6: p(663, 205, name="57-6"),
+            5: p(541, 242, name="57-5"),
+            4: p(565, 354, name="57-4"),
+            3: p(453, 404, name="57-3"),
+            2: p(342, 360, name="57-2"),
+            1: p(226, 408, name="57-1"),
         },
     },
     58: {
