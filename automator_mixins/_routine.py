@@ -351,7 +351,7 @@ class RoutineMixin(ShuatuBaseMixin):
             return
         self.lock_home()
 
-        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(616, 434), elsedelay=5)
+        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(688, 430), elsedelay=5)
         self.lock_img(SHOP_BTN["tongchang"], elseclick=SHOP_BTN["tongchang"], elsedelay=1)
 
         if qianghuashi:
@@ -381,7 +381,7 @@ class RoutineMixin(ShuatuBaseMixin):
         
         # 进入商店
         self.lock_home()
-        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(616, 434), elsedelay=5)
+        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(688, 430), elsedelay=5)
 
         if self.is_exists(SHOP_BTN["xianding_locked"]):
             self.log.write_log("info", "限定商店未开启，跳过任务")
