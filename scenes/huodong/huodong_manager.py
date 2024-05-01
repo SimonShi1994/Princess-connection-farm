@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20240430": Map20240430,
         "20240418": Map20230331,
         "20240329": Map20240329,
         "20240311": Map20230228,
@@ -85,6 +86,21 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20240430(HuodongMapBase):
+    N_slice = 1
+    NAME = "海盗逸话 海盗岛被诅咒的遗宝"
+    XY11 = (137, 257)
+    XY_VH_BOSS = (870, 284)
+    HARD_COORD = {
+        1: (88, 316),
+        2: (245, 214),
+        3: (315, 407),
+        4: (533, 401),
+        5: (645, 212),
+    }
+
 
 class Map20240329(HuodongMapBase):
     N_slice = 2

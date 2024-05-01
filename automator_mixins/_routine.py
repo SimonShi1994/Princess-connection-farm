@@ -351,7 +351,7 @@ class RoutineMixin(ShuatuBaseMixin):
             return
         self.lock_home()
 
-        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(616, 434), elsedelay=5)
+        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(688, 430), elsedelay=5)
         self.lock_img(SHOP_BTN["tongchang"], elseclick=SHOP_BTN["tongchang"], elsedelay=1)
 
         if qianghuashi:
@@ -381,7 +381,7 @@ class RoutineMixin(ShuatuBaseMixin):
         
         # 进入商店
         self.lock_home()
-        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(616, 434), elsedelay=5)
+        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(688, 430), elsedelay=5)
 
         if self.is_exists(SHOP_BTN["xianding_locked"]):
             self.log.write_log("info", "限定商店未开启，跳过任务")
@@ -641,7 +641,6 @@ class RoutineMixin(ShuatuBaseMixin):
             self.log.write_log("info", "今天已经探索过！")
             return
         T = self.get_zhuye().goto_maoxian().goto_tansuo()
-
         def tansuo_fun(m):
             if m == "J":
                 J = T.goto_jingyan()
@@ -658,6 +657,7 @@ class RoutineMixin(ShuatuBaseMixin):
                         J.back()
                         return
                     P = B.shua(team_order, zhiyuan_mode)
+
                     while True:
                         out = P.check()
                         if isinstance(out, P.TanSuoMenu):
@@ -669,6 +669,9 @@ class RoutineMixin(ShuatuBaseMixin):
                                 J.back()
                                 return
                             break
+
+                        elif isinstance(out, P.MaoXian):
+                            return
                 else:
                     # 不可以
                     J.back()
