@@ -333,6 +333,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2024/05/01 By UVJkiNTQ
+
+- 惯例更新
+  - 活动`海盗逸话 海盗岛被诅咒的遗宝`
+- 版本更新修复
+  - 尝试性修复 探索 卡住的问题
+
 2024/04/21 By UVJkiNTQ
 
 - 惯例更新

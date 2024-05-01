@@ -641,7 +641,6 @@ class RoutineMixin(ShuatuBaseMixin):
             self.log.write_log("info", "今天已经探索过！")
             return
         T = self.get_zhuye().goto_maoxian().goto_tansuo()
-
         def tansuo_fun(m):
             if m == "J":
                 J = T.goto_jingyan()
@@ -658,6 +657,7 @@ class RoutineMixin(ShuatuBaseMixin):
                         J.back()
                         return
                     P = B.shua(team_order, zhiyuan_mode)
+
                     while True:
                         out = P.check()
                         if isinstance(out, P.TanSuoMenu):
@@ -669,6 +669,9 @@ class RoutineMixin(ShuatuBaseMixin):
                                 J.back()
                                 return
                             break
+
+                        elif isinstance(out, P.MaoXian):
+                            return
                 else:
                     # 不可以
                     J.back()
