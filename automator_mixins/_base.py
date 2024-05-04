@@ -623,13 +623,35 @@ class BaseMixin:
         :param screen: 若设置为None，则重新截图；否则使用screen为截图
         :return: 是否存在
         """
+        result = self.img_where(img, threshold, at, screen, is_black, black_threshold,
+                                method, preprocess, apply_screen)
+        return result is not False
+
+
+    @DEBUG_RECORD
+    def img_where(self, img, threshold=0.84, at=None, screen=None, is_black=False,
+                  black_threshold=1500, method=cv2.TM_CCOEFF_NORMED, preprocess=PreProcesses(), apply_screen=True):
+        """
+        判断一个图片是否存在, 存在则返回坐标，不存在返回False
+        :param black_threshold: 判断暗点的阈值
+        :param is_black: 是否判断为暗色图片（多用于检测点击按钮后颜色变暗）灰色返回Ture,默认需要配合at，否则自行调整阈值
+        :param method:
+        :param img:
+            一个字符串，表示图片的地址；或者为PCRelement类型。
+            当img为PCRelement时，如果at参数为None，则会使用img.at。
+        :param threshold: 判定阈值
+        :param at: 搜素范围
+        :param screen: 若设置为None，则重新截图；否则使用screen为截图
+        :return: 存在则返回坐标，不存在返回False
+        """
         if screen is None:
             screen = self.getscreen()
         img, at = self._get_img_at(img, at)
         img = preprocess(img)
         if apply_screen:
             screen = preprocess(screen)
-        return UIMatcher.img_where(screen, img, threshold, at, method, is_black, black_threshold) is not False
+
+        return UIMatcher.img_where(screen, img, threshold, at, method, is_black, black_threshold)
 
     @DEBUG_RECORD
     def img_prob(self, img, at=None, screen=None, method=cv2.TM_CCOEFF_NORMED, preprocess=PreProcesses(),

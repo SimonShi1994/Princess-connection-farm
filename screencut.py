@@ -218,7 +218,7 @@ class AutomatorDebuger(Automator):
                 y2, y1 = plt.ylim()
                 x1, x2, y1, y2 = int(x1), int(x2), int(y1), int(y2)
                 addr = e.get()
-                if verbose: print(f"{os.path.split(addr)[:-4]}: p({(x1 + x2) // 2},{(y1 + y2) // 2},img=\"{addr}\",at=({x1},{y1},{x2},{y2})),")
+                if verbose: print(f"\"{os.path.split(addr)[-1].replace('.bmp', '')}\": p({(x1 + x2) // 2}, {(y1 + y2) // 2}, img=\"{addr}\", at=({x1}, {y1}, {x2}, {y2})),")
                 img.cut(x1, y1, x2, y2).save(addr)
                 try:
                     img.cut(x1, y1, x2, y2).save(addr)

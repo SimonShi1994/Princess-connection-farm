@@ -92,6 +92,7 @@ class ToolsMixin(BaseMixin):
                 break
             if self.is_exists(MAIN_BTN["xiazai"], screen=screen_shot_):
                 self.click(MAIN_BTN["xiazai"])
+                # TODO: 2024-5-2 更改进入数据下载的逻辑 配合Scene
             if self.is_exists(MAIN_BTN["tiaoguo"], screen=screen_shot_):
                 self.click(893, 39, post_delay=0.5)  # 跳过
                 continue
@@ -169,6 +170,7 @@ class ToolsMixin(BaseMixin):
         self.lock_home()
 
     def setting(self):
+
         def dragdown():
             time.sleep(1)
             obj = self.d.touch.down(855, 400)
@@ -179,75 +181,107 @@ class ToolsMixin(BaseMixin):
             time.sleep(1)
 
         self.lock_home()
+
         self.click_btn(MAIN_BTN["zhucaidan"], until_appear=MAIN_BTN["setting_pic"])
         self.click_btn(MAIN_BTN["setting_pic"])
         time.sleep(1)
-        # 系统
-        self.click(709, 398)  # 不下载语音
-        dragdown()
-        dragdown()
-        dragdown()
-        self.click(709, 421)  # 借助战不加好友
-        dragdown()
-        dragdown()
-        self.click(483, 421)  # 显示品级确认
-        dragdown()
-        self.click(484, 226)  # 显示一键升级
-        time.sleep(0.5)
-        self.click(484, 349)  # 提示家具升级
-        dragdown()
-        self.click(709, 152)  # 关闭活动结束提示
-        time.sleep(0.5)
-        self.click(709, 275)  # 关闭外传
-        dragdown()
-        self.click(481, 144)  # 保存外传数据，减少换号下载
-        time.sleep(0.5)
-        self.click(707, 396)  # 呼出队伍星级不同，不提示
-        time.sleep(0.5)
-        dragdown()
-        self.click(709, 244)  # 更改选择框
-        dragdown()
-        self.click(709, 321)  # 好感度播放设定，关
-        time.sleep(0.5)
-        dragdown()
-        self.click(709, 129)  # 好感度确认， 关
-        self.click(484, 254)  # 商店默认跳普通
-        self.click(708, 383)  # 不播放团队战动画
-        dragdown()
-        dragdown()
-        time.sleep(1)
-        self.click(711, 270)
-        self.click(709, 398)
-        time.sleep(1)
 
-        # 战斗
-        self.click(769, 87)  # 战斗tab
-        time.sleep(1)
-        self.click(710, 226)  # 关闭技能动画
-        time.sleep(0.5)
-        self.click(710, 349)  # 低帧率
-        dragdown()
-        dragdown()
-        dragdown()
-        dragdown()
-        self.click(484, 172)  # 4倍速
-        time.sleep(0.5)
-        self.click(709, 299)  # 露娜塔战斗确认
-        time.sleep(0.5)
-        self.click(709, 427)  # 露娜塔跳过
-        dragdown()
-        self.click(709, 252)  # 多个目标动画
-        time.sleep(0.5)
-        self.click(709, 376)  # 快速开始，提示关
-        dragdown()
-        time.sleep(0.5)
-        self.click(107, 167)  # 双场跳过
-        self.click(483, 355)  # UB快速
-        time.sleep(0.5)
+        ## 系统
+        self.click(150,88, post_delay=0.5)
 
-        self.click(479, 479)  # 关闭
-        self.click(95, 516)
-        self.lock_home()
+        self.click(90,164, post_delay=1) # > 所有
+        self.click(256,313) # 屏幕方向自动
+        dragdown() 
+        dragdown()
+        self.click(702,193, post_delay=0.3) # 外传不显示
+        self.click(479,317) # 一键扫荡 显示
+        dragdown()
+        self.click(704,274) # 玛娜溢出 不显示
+        # time.sleep(0.3)
+        # self.click(479,400) # 刷取次数 最小 (为了兼容旧代码)
+        dragdown()
+        self.click(479,268) # 剧情播放自动选择
+        dragdown()
+
+        self.click(90,197, post_delay=1)  # > 商店
+        self.click(477,280, post_delay=0.3) # 按数量排序
+        self.click(479,408) # 限定商店存在时不自动打开
+        dragdown()
+        self.click(707,206, post_delay=0.3) # 大师商店最大(这个没写罢)
+
+        self.click(69,305, post_delay=1)  # > 工会之家
+
+        self.click(477,278, post_delay=0.3) # 显示家具升级
+
+        self.click(702,406) # 不显示小游戏
+        dragdown()
+        self.click(705,226, post_delay=0.3) # 不播放大家的日历
+        
+        self.click(115,322, post_delay=1) # > 支援、好友
+        self.click(704,307) # 不显示好友的头像设定
+        dragdown()
+        self.click(705,175, post_delay=0.3) # 不显示非好友助战的好友申请弹窗
+        self.click(702,305, post_delay=0.3) # 不显示支援mana超500w
+        # self.click(702,305) # 后续可改成显示并自动领取mana
+
+        self.click(98,400, post_delay=1)  # > 数据
+        self.click(704,301) # 不下载语音
+        dragdown()
+        self.click(705,137, post_delay=0.3) # 标准版视频
+        self.click(705,320) # 标准版桌面动画
+        dragdown()
+        self.click(705,171, post_delay=0.3) # 不保存高清数据
+        self.click(707,322) # 3x 扭蛋播放标准版动画
+        dragdown()
+        self.click(481,382, post_delay=0.3) # 外传故事保存数据
+
+
+        ## 战斗
+        self.click(367,84, pre_delay=0.5, post_delay=0.5)
+
+        self.click(94,170, post_delay=1) # > 所有
+
+        self.click(481,290, post_delay=0.3) # 开启SET
+        self.click(702,417) # SET触发后保持SET
+        dragdown()
+        self.click(702,220) # 不播放技能动画
+        # self.click(477,344) # 帧率不动
+        dragdown()
+        self.click(481,202, post_delay=0.3) # 继承战斗参数
+        self.click(705,348) # 不播放多目标动画
+        dragdown()
+        self.click(481,154, post_delay=0.3) # 开启快速选择阵容的确认窗口
+        self.click(479,324, post_delay=0.3) # 高速UB动画
+        self.click(704,433) # 关闭通关的boss对话
+        dragdown()
+
+        self.click(100,210, post_delay=1) # > 队伍编组
+        self.click(477,280, post_delay=0.3) # 显示无法编组通知
+        self.click(479,404) # 允许同名编组
+        dragdown()
+        self.click(479,230, post_delay=0.3) # 显示各种星设置窗口
+        self.click(479,357)
+        dragdown()
+        self.click(477,204) # 显示呼出队伍时更改星的选择框
+
+
+        self.click(96,293, post_delay=1) # > 团队战
+        self.click(705,284) # 关闭讨伐动画
+        dragdown()
+        dragdown()
+        dragdown()
+
+        # self.click(104,313) # > 露娜塔
+        # time.sleep(1)
+
+        self.click(104,392, post_delay=1) # > 竞技场
+        self.click(105,363) # 全跳
+        
+        ## 角色
+        self.click(587,86, pre_delay=0.5, post_delay=0.5)
+        self.click(84,251, post_delay=1) # > 好感度
+        self.click(705,286, post_delay=0.3) # 跳过动画
+        self.click(705,413, post_delay=0.3) # 不显示
 
     def zanting(self):
         TimeoutMsgBox("暂停", desc=f"{self.address}暂停中\n账号：{self.account}", join=True, geo="200x60")

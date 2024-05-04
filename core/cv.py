@@ -1,6 +1,7 @@
 # import matplotlib.pylab as plt
 import os
 import pathlib
+import time
 
 import cv2
 import numpy as np
@@ -96,18 +97,25 @@ class UIMatcher:
         # plt.show()
         return zhongxings, max_vals
 
+
     @staticmethod
-    def matchTemplate(screen, template, method):
+    def matchTemplate(screen, template, method, mask=None):
         """
         为了使用sq这个1-SQDIRR_NORMED，没办法再封装一层吧。
         之后可以开发更多match映射方法。
         """
+        # 事实上MASK只在TM_CCORR_NORMED下有效
+        #if mask is not None and method not in [cv2.TM_SQDIFF, cv2.TM_CCORR_NORMED]:
+        if mask is not None:
+            print("debug", "带掩膜的模板匹配，将自动切换方法至cv2.TM_CCORR_NORMED")
+            method = cv2.TM_CCORR_NORMED
+
         if method == "sq":
-            ans = cv2.matchTemplate(screen, template, cv2.TM_SQDIFF_NORMED)
+            ans = cv2.matchTemplate(screen, template, cv2.TM_SQDIFF_NORMED, mask=mask) if isinstance(mask, np.ndarray) else cv2.matchTemplate(screen, template, cv2.TM_SQDIFF_NORMED)
             ans = 1 - ans
             return ans
         else:
-            ans = cv2.matchTemplate(screen, template, method)
+            ans = cv2.matchTemplate(screen, template, method, mask=mask) if isinstance(mask, np.ndarray) else cv2.matchTemplate(screen, template, method)
             return ans
 
     @classmethod
@@ -130,20 +138,29 @@ class UIMatcher:
                 exit(-1)
         if screen.mean() < 1:  # 纯黑色与任何图相关度为1
             return 0
-        template = cls._get_template(template_path)
-        prob = UIMatcher.matchTemplate(screen, template, method).max()
+        template, mask = cls._get_template(template_path)
+        prob = UIMatcher.matchTemplate(screen, template, method, mask=mask).max()
         return prob
 
     @classmethod
-    def _get_template(cls, template_path):
+    def _get_template(cls, template_path: str):
         if isinstance(template_path, np.ndarray):
-            return template_path
-        if not use_template_cache or template_path not in cls.template_cache:
+            return template_path, None
+        if template_path not in cls.template_cache:
             template = cv2.imread(template_path)
-            cls.template_cache[template_path] = template
+            
+            mask_path = template_path.replace('.', '.mask.')
+            if(os.path.isfile(mask_path)):
+                mask = cv2.imread(mask_path)
+                if debug:
+                    cls._log.write_log('debug', "Mask found at {mask_path}".format(mask_path))                
+            else:
+                mask = None
+            
+            cls.template_cache[template_path] = (template, mask)
         else:
-            template = cls.template_cache[template_path]
-        return template
+            template, mask = cls.template_cache[template_path]
+        return template, mask
 
     @staticmethod
     def img_cut(screen, at):
@@ -151,7 +168,7 @@ class UIMatcher:
             x1, y1, x2, y2 = at
             screen = screen[y1:y2 + 1, x1:x2 + 1]
         except:
-            UIMatcher._log.write_log(level='error', message="检测区域填写错误")
+            print('error', "检测区域填写错误")
             exit(-1)
         return screen
 
@@ -163,14 +180,14 @@ class UIMatcher:
         if isinstance(screen, str):
             screen = cv2.imread(screen)
         screen = cls.AutoRotateClockWise90(screen)
-        template = cls._get_template(template_path)
+        template, mask = cls._get_template(template_path)
         th, tw = template.shape[:2]  # rows->h, cols->w
         if at is not None:
             x1, y1, x2, y2 = at
         else:
             x1, y1, x2, y2 = 0, 0, 959, 539
         screen = cls.img_cut(screen, (x1, y1, x2, y2))
-        res = UIMatcher.matchTemplate(screen, template, method)
+        res = UIMatcher.matchTemplate(screen, template, method, mask=mask)
         l = []
         for i in range(res.shape[0]):
             for j in range(res.shape[1]):
@@ -192,14 +209,14 @@ class UIMatcher:
         if isinstance(screen, str):
             screen = cv2.imread(screen)
         screen = cls.AutoRotateClockWise90(screen)
-        template = cls._get_template(template_path)
+        template, mask = cls._get_template(template_path)
         th, tw = template.shape[:2]  # rows->h, cols->w
         if at is not None:
             x1, y1, x2, y2 = at
         else:
             x1, y1, x2, y2 = 0, 0, 959, 539
         screen = cls.img_cut(screen, (x1, y1, x2, y2))
-        res = UIMatcher.matchTemplate(screen, template, method)
+        res = UIMatcher.matchTemplate(screen, template, method, mask=mask)
         l = []
         for i in range(res.shape[0]):
             for j in range(res.shape[1]):
@@ -260,15 +277,15 @@ class UIMatcher:
             x1, y1 = 0, 0
 
         # 缓存未命中时从源文件读取
-        template = cls._get_template(template_path)
+        template, mask = cls._get_template(template_path)
 
         # 全黑直接返回False
-        _, black_num, _, _ = cls.find_gaoliang(screen)
-        if black_num >= 518400:
-            return False
+        # _, black_num, _, _ = cls.find_gaoliang(screen)
+        # if black_num >= 518400:
+        #     return False
 
         th, tw = template.shape[:2]  # rows->h, cols->w
-        res = UIMatcher.matchTemplate(screen, template, method)
+        res = UIMatcher.matchTemplate(screen, template, method, mask)
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
         if max_val >= threshold:
 
@@ -406,7 +423,7 @@ class UIMatcher:
                     return item.stem
         return None
 
-
+# Pre Process Need To Change
 class PreProcesses:
     def __init__(self):
         self.pp = []
@@ -429,7 +446,7 @@ class PreProcesses:
 
     def __call__(self, img):
         if len(self.pp) > 0:
-            img = UIMatcher._get_template(img)
+            img, _ = UIMatcher._get_template(img)
         for p in self.pp:
             img = p(img)
         return img

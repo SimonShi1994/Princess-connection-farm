@@ -173,6 +173,7 @@ def create_MInfo():
 
     11AAABBB - N-AAA-BBB关
     12AAABBB - H-AAA-BBB关
+    13AAABBB - VH-AAA-BBB关
     18001BBB - 调查BBB等级
     """
     out = cur.execute("select quest_id,quest_name,stamina,team_exp from quest_data")
@@ -384,9 +385,13 @@ class PCRData:
             EQUIP_PROB[key].sort(reverse=True)
         return EQUIP_PROB
 
-    def get_max_normal_or_hard_ID(self):
-        keys = [i for i in self.MInfo.keys() if str(i).startswith("12")]
+    def get_max_normal_ID(self):
+        keys = [i for i in self.MInfo.keys() if str(i).startswith("11")]
         return (max(keys) // 1000) % 100
+
+    def get_max_hard_ID(self):
+        keys = [i for i in self.MInfo.keys() if str(i).startswith("12")]
+        return (max(keys) // 1000) % 100, (max(keys) % 1000)
 
     def get_max_vh_ID(self):
         keys = [i for i in self.MInfo.keys() if str(i).startswith("13")]

@@ -1054,6 +1054,16 @@ VALID_TASK = ValidTask() \
                     inputbox=team_order_inputer),
           TaskParam("get_zhiyuan", bool, "是否支援", "是否需要选择第一个支援位来支援"),
           TaskParam("if_full", int, "借人换下的角色位置", "借人换下的角色位置，一般与选队伍推图配合使用")]) \
+    .add("s13", "auto_advance", "自动推图", "使用自动推图，推主线", 
+         [TaskParam("mode", int, "推什么图", "0 - Normal; 1 - Hard, 2 - VH"),
+          TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
+          TaskParam("buy_tili", int, "推图所用体力", "本任务中最多购买几次体力", 0),
+          TaskParam("lose_action", str, "推图失败时",
+                    desc="推图失败后执行的操作",
+                    default="exit",
+                    inputbox=StrChooseInputer(dict(do="再次推图", exit="终止刷图", skip="跳过该图",
+                                                   upgrade="尝试升级，若仍然失败则终止推图。（队伍只能为zhanli/juese/xingshu/shoucang））"))),
+         ]) \
     .add("hd01", "tui_hd_map_normal", "推活动普通图", "用于推N1-15。",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),

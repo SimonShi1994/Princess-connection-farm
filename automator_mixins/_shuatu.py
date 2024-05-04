@@ -1729,6 +1729,70 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.shuatu_daily_ocr(NMap, daily_tili=daily_tili, xianding=xianding, not_three_star_action="skip",
                               can_not_enter_action="skip", zero_star_action="skip", var=var)
 
+    def auto_advance(self, mode=0, team_order="zhanli", buy_tili=0, lose_action="exit"):
+        """
+        自动推图推主线
+        mode: 0-N, 1-H, 2-VH, 3-全推
+        buy_tili：所用体力
+        其他参数见shuatu_dailt_ocr
+        """
+        S = None
+        if mode == 0:
+            S = self.get_zhuye().goto_maoxian().goto_normal().clear_initFC()
+        elif mode == 1:
+            S = self.get_zhuye().goto_maoxian().goto_hard().clear_initFC()
+        elif mode == 2:
+            S = self.get_zhuye().goto_maoxian().goto_vh().clear_initFC()
+        elif mode == 3:
+            self.auto_advance(0, team_order, buy_tili, lose_action)
+            self.auto_advance(1, team_order, buy_tili, lose_action)
+            self.auto_advance(2, team_order, buy_tili, lose_action)
+        
+        self.check_ocr_running()  # 必须要OCR！
+        self.select_most_right()
+
+        next_level_pos = None
+        for _ in range(5):
+            next_level_pos = self.img_where(MAOXIAN_BTN["next_level"], threshold=0.965)
+            if next_level_pos:
+                x, y = next_level_pos
+                # TODO: 这里的结构应该改成 shuatu base enter_next_level
+                S = S.click_xy_and_open_fightinfo(x, y + 90)
+                if not S:
+                    S = S.click_xy_and_open_fightinfo(x, y + 50)
+                if isinstance(S, FightInfoZhuXian):
+                    # 找自动，打勾，
+                    if S.can_auto_advance():
+                        S.set_auto_advance()
+                        BZ = S.goto_tiaozhan()
+                        out = BZ.select_team_with_zhiyuan(team_order)
+                        # if(select_result == 'return'):
+                        #     self.lock_home()
+                        #     return 'return'
+                        F = BZ.goto_fight(buy_tili)
+                        During = F.get_during()
+                        F.set_auto(1, screen=self.last_screen)
+                        F.set_speed(2, max_level=2, screen=self.last_screen)
+                        state = {"flag": None}
+                        last_time = time.time()
+                        # TODO: 还没写完
+                        time_max = 3600
+                        time_wait = 0
+                        while time_wait < time_max:
+                            time.sleep(1)
+                        
+                    else:
+                        self.log.write_log("error", f"该关卡无法自动推进，放弃刷图")
+                    # 
+        
+        if not next_level_pos:
+            self.log.write_log("info", f"找不到下一关，放弃刷图")
+                
+        self.lock_home()
+
+
+    ## 以下为活动和外传部分
+
     def dahaohuodong_hard(self, tu_order=[], code="current", entrance_ind="auto", var=None):
         """
         大号刷活动Hard图，要求已经手动通过关。

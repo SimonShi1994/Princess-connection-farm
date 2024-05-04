@@ -1,6 +1,7 @@
-from core.constant import FIGHT_BTN, DXC_ELEMENT
+from core.constant import FIGHT_BTN, MAOXIAN_BTN, DXC_ELEMENT
 from scenes.fight.fightbianzu_base import FightBianZuBase
 from scenes.fight.fighting_zhuxian import FightingZhuXian
+from scenes.fight.auto_advance_settings import AutoAdvanceSettings
 from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
 
 
@@ -30,10 +31,22 @@ class FightBianZuZhuXian(FightBianZuBase):
         super().__init__(*args,**kwargs)
         self.scene_name="FightBianZuZhuXian"
 
-    def goto_fight(self) -> "FightingZhuXian":
-        # 前往战斗开始！
-        out=self.goto(AfterEnterTiaoZhan, self.fun_click(FIGHT_BTN["zhandoukaishi"]))
-        if isinstance(out,ZhiYuanQueRen):
-            return out.ok()
-        else:
-            return out
+    def goto_fight(self, buy_ap=False) -> "FightingZhuXian":
+        # 前往战斗开始！ (自动编组需要买体力)
+
+        if self.is_exists(FIGHT_BTN["zhandoukaishi"]):
+            out = self.goto(AfterEnterTiaoZhan, self.fun_click(FIGHT_BTN["zhandoukaishi"]))
+            if isinstance(out, ZhiYuanQueRen):
+                return out.ok()
+            elif isinstance(out, AutoAdvanceSettings):
+                return out.goto_fight(buy_ap)
+            else:
+                return out
+        elif self.is_exists(MAOXIAN_BTN["auto_advance_next"]):
+            # 自动编组 借不了支援
+            AAS = self.goto(AutoAdvanceSettings, self.fun_click(MAOXIAN_BTN["auto_advance_next"]))
+            if isinstance(AAS, AutoAdvanceSettings):
+                return AAS.goto_fight(buy_ap)
+            else:
+                return False
+        

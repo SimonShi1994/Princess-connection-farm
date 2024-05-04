@@ -50,19 +50,20 @@ def LoadPCRData() -> "PCRData":
     if not os.path.exists("pcrdata/data.dat"):
         return None
     try:
-        data = pickle.load(open("pcrdata/data.dat", "rb"))
-        try:
-            JSNameWow = WowSearch(data.C_ID)
-            JSNameWow.parse()
-        except Exception as e:
-            print("角色搜索模块加载失败！", e)
-            JSNameWow = None
-        try:
-            ZBNameWow = WowSearch(data.EQU_ID)
-            ZBNameWow.parse()
-        except Exception as e:
-            print("角色搜索模块加载失败！", e)
-            ZBNameWow = None
+        with open("pcrdata/data.dat", "rb") as db_file:
+            data = pickle.load(db_file)
+            try:
+                JSNameWow = WowSearch(data.C_ID)
+                JSNameWow.parse()
+            except Exception as e:
+                print("角色搜索模块加载失败！", e)
+                JSNameWow = None
+            try:
+                ZBNameWow = WowSearch(data.EQU_ID)
+                ZBNameWow.parse()
+            except Exception as e:
+                print("角色搜索模块加载失败！", e)
+                ZBNameWow = None
 
         return data
     except Exception as e:
@@ -1045,7 +1046,8 @@ def XLS_INPUT(_all=False):
 
 
 def ShowDatasetTop():
-    print("当前数据库中最高图号：", f"N/H{data.get_max_normal_or_hard_ID()}",
+    print("当前数据库中最高图号：", f"N{data.get_max_normal_ID()}",
+          f"H{'-'.join([str(i) for i in data.get_max_hard_ID()])}",
           f"VH{'-'.join([str(i) for i in data.get_max_vh_ID()])}")
     print("当前数据库中最高跟踪：", '-'.join([str(i) for i in data.get_max_track()]))
 
