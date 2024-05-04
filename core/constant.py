@@ -58,7 +58,7 @@ START_UI = {
     "wenzidianji": p(img="img/ui/wenzidianji.bmp"),
     "yanzhengshibai": p(img="img/ui/yanzhengshibai.bmp"),
     "xieyihuakuai": p(img="img/ui/xieyi_slide.bmp", at=(708, 124, 825, 364)),
-    "gouxuan": p(340, 430, img="img/ui/gouxuan.bmp", at=(273, 407, 308, 440)),  # 同意协议勾选
+    "gouxuan": p(291, 421, img="img/ui/gouxuan.bmp", at=(278, 404, 305, 439)),  # 同意协议勾选
     "downloading_logo": p(713, 486, img="img/ui/downloading_logo.bmp", at=(610, 481, 816, 491)), # 首页带logo的数据下载
 }
 
