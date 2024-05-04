@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20240421
+# Princess connection 公主连结农场脚本v2.8.20240505
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
@@ -332,6 +332,22 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2024/05/05 By 0x114514BB
+
+- 功能更新
+  - 添加了快速添加配置指引（beta）`quick_setup.py`，脚本正确性待测试，文档待补充
+  - `t10`，设置初始化重写，适配新版
+  - `j1`, `j2` ，竞技场白给脚本入口修复
+  - `s13`, 主线自动推图（alpha），该功能将在未来更新中完成
+- BUG修复
+  - `DataCenter`显示图号错误
+- 框架更新
+  - cv: 模板匹配现支持掩膜(mask)
+- Scene更新
+  - 买体力（尚未实现买多管）
+  - 自动战斗设置
+  - 进入游戏前的数据下载
 
 2024/05/01 By UVJkiNTQ
 

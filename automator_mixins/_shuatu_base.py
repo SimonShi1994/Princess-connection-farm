@@ -1939,4 +1939,12 @@ class ShuatuBaseMixin(FightBaseMixin):
                     self.goLeft()
             all_cnt += 1
         raise Exception("可能不存在的图号！")
+    
+    @DEBUG_RECORD
+    def enter_next_level(self):
+        """
+        自动检测下一关并点击进入
+
+        """
+        pass
 

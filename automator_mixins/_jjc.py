@@ -14,7 +14,8 @@ class JJCMixin(FightBaseMixin):
         # 进入jjc
         self.lock_home()
         self.click_btn(MAIN_BTN["maoxian"], until_appear=MAIN_BTN["zhuxian"])
-        self.lock_img(JJC_BTN["list"], elseclick=[MAIN_BTN["zdjjc"], (1, 290)], elsedelay=2)
+        self.lock_img(JJC_BTN["arena"], elseclick=[MAIN_BTN["arena"], (1, 290)], elsedelay=1)
+        self.lock_img(JJC_BTN["list"], elseclick=[JJC_BTN["arena_pos"], (1, 290)], elsedelay=1)
         self.click_btn(JJC_BTN["shouqu"], until_appear=JJC_BTN["shouqu_ok"],
                        elsedelay=4, retry=2, side_check=self.right_kkr)
         for _ in range(5):
@@ -45,7 +46,8 @@ class JJCMixin(FightBaseMixin):
     def doPJJC(self):
         self.lock_home()
         self.click_btn(MAIN_BTN["maoxian"], until_appear=MAIN_BTN["zhuxian"])
-        self.lock_img(JJC_BTN["plist"], elseclick=[MAIN_BTN["gzjjc"], (1, 290)], elsedelay=2)
+        self.lock_img(JJC_BTN["arena"], elseclick=[MAIN_BTN["arena"], (1, 290)], elsedelay=1)
+        self.lock_img(JJC_BTN["plist"], elseclick=[JJC_BTN["p_aren_pos"], (1, 290)], elsedelay=1)
         self.click_btn(JJC_BTN["shouqu"], until_appear=JJC_BTN["shouqu_ok"],
                        elsedelay=4, retry=2, side_check=self.right_kkr)
         for _ in range(5):

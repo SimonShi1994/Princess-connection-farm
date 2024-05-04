@@ -59,6 +59,7 @@ START_UI = {
     "yanzhengshibai": p(img="img/ui/yanzhengshibai.bmp"),
     "xieyihuakuai": p(img="img/ui/xieyi_slide.bmp", at=(708, 124, 825, 364)),
     "gouxuan": p(291, 421, img="img/ui/gouxuan.bmp", at=(278, 404, 305, 439)),  # 同意协议勾选
+    "downloading_logo": p(713, 486, img="img/ui/downloading_logo.bmp", at=(610, 481, 816, 491)), # 首页带logo的数据下载
 }
 
 HAOYOU_BTN = {
@@ -159,8 +160,8 @@ MAIN_BTN = {
     "tansuo_back": p(30, 32),
     "tansuo_saodangok2": p(472, 478, img="img/tansuo/jrtssy.bmp", at=(412, 462, 539, 487)),
     "jrtssy2": p(829, 491, img="img/tansuo/jrtssy2.bmp", at=(756, 472, 900, 506)),
-    "zdjjc": p(578, 402),
-    "gzjjc": p(820, 395),
+    "arena": p(578, 402),
+    "battle_stagium": p(820, 395),
 
     # 圣迹调查 （可能不用了）
     # "shengjiguanqia": p(570, 261, img="img/shengji/shengji.bmp", at=(520, 220, 597, 297)),  # 圣迹调查
@@ -207,6 +208,10 @@ JJC_BTN = {
     "xyb": p(img="img/jjc/xyb.bmp", at=(794, 474, 857, 503)),
     "pxyb": p(img="img/jjc/pxyb.bmp", at=(774, 476, 844, 505)),
     "dwbz": p(img="img/jjc/dwbz.bmp", at=(431, 24, 524, 51)),  # 队伍编组
+    "arena": p(594, 174, img="img/jjc/arena.bmp", at=(543, 132, 646, 217)), # jjc
+    "p_arena": p(801, 178, img="img/jjc/princess_arena.bmp", at=(755, 141, 848, 216)), # pjjc
+    "arena_pos": p(594, 174), # jjc
+    "p_arena_pos": p(801, 178), # pjjc
 
 }
 JUQING_BTN = {
@@ -1424,6 +1429,26 @@ MAOXIAN_BTN = {
 
     "suoxumana": p(79, 458, img="img/maoxian/suoxumana.bmp", at=(40, 450, 118, 467)),
     "kkr_qianbao": p(465, 258, img="img/maoxian/kkr_qianbao.bmp", at=(405, 248, 525, 269)),
+
+    "next_level": p(img="img/maoxian/next_level_tplt.bmp"),
+    
+    "auto_advance":  p(753, 291, img="img/maoxian/auto_advance.bmp", at=(682, 279, 824, 303)),
+    "auto_advance_on": p(724, 335, img="img/maoxian/auto_advance_on.bmp", at=(688, 307, 760, 363)),
+    "auto_advance_off": p(724, 338, img="img/maoxian/auto_advance_off.bmp", at=(686, 308, 762, 368)),
+    "to_set_auto_advance": p(836, 412, img="img/maoxian/to_set_auto_advance.bmp", at=(766, 403, 907, 421)),
+    "auto_advance_next": p(832, 448, img="img/maoxian/auto_advance_next.bmp", at=(762, 404, 903, 493)),
+    "auto_advance_settings_title": p(488, 42, img="img/maoxian/auto_advance_settings_title.bmp", at=(416, 29, 560, 56)),
+    "without_buy_ap": p(482, 477, img="img/maoxian/without_buy_ap.bmp", at=(398, 464, 566, 491)),
+    "auto_advance_buy_ap": p(697, 477, img="img/maoxian/auto_advance_buy_ap.bmp", at=(637, 462, 758, 492)),
+    "auto_advance_fight": p(588, 479, img="img/maoxian/auto_advance_fight.bmp", at=(531, 464, 645, 495)),
+
+    "auto_advance_mainline_feature": p(161, 324, img="img/maoxian/auto_advance_mainline_feature.bmp", at=(37, 311, 286, 338)),
+    "auto_advance_event_feature": p(195, 223, img="img/maoxian/auto_advance_event_feature.bmp", at=(40, 209, 350, 238)),
+    
+    "buy_ap_title": p(479, 44, img="img/maoxian/buy_ap_title.bmp", at=(428, 28, 531, 60)),
+    "buy_ap_confirm": p(587, 477, img="img/maoxian/buy_ap_confirm.bmp", at=(551, 458, 624, 497)),
+    "buy_ap_success_title": p(478, 150, img="img/maoxian/buy_ap_success_title.bmp", at=(426, 131, 531, 170)),
+    "buy_ap_success_confirm": p(478, 369),
 }
 
 ZHUXIAN_ID = {

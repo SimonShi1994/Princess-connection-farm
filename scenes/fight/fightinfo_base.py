@@ -170,6 +170,19 @@ class FightInfoBase(PCRMsgBoxBase):
     def is_threestar(self, screen=None):
         # 判断是不是三星
         return self.get_upperright_stars(screen) == 3
+    
+    def can_auto_advance(self, screen=None):
+        return self.is_exists(MAOXIAN_BTN["auto_advance"], screen=screen)
+    
+    def set_auto_advance(self, auto_on=True):
+        out = False
+        if not self.can_auto_advance():
+            return False
+        if auto_on:
+            out = self.lock_img(MAOXIAN_BTN["auto_advance_on"], elseclick=(720, 335), retry=3)
+        else:
+            out = self.lock_img(MAOXIAN_BTN["auto_advance_off"], elseclick=(720, 335), retry=3)
+        return out
 
     def buy_cishu(self):
         # 尝试买次数，必须要求剩余挑战次数=0！！！
