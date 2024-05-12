@@ -1,7 +1,7 @@
 import time
 
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN, FIGHT_BTN, SHOP_BTN
+from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN, FIGHT_BTN, SHOP_BTN, MAOXIAN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.pcr_checker import RetryNow, PCRRetry, LockMaxRetryError
@@ -835,3 +835,69 @@ class RoutineMixin(ShuatuBaseMixin):
         self.fclick(1, 1)
         self.start_shuatu()
         self.lock_home()
+
+    def kokkoro_schedule(self, buy_mana=False):
+        self.lock_home()
+
+        self.click_btn(MAIN_BTN["schedule"], until_appear=MAIN_BTN["kokkoro_schedule_feat"])
+        time.sleep(5)
+        
+        if self.is_exists(MAIN_BTN["start_schedule"], threshold=0.98):
+            self.click_btn(MAIN_BTN["start_schedule"])
+
+            # checking possible buttons
+            while True:
+
+                # 领取工会之家道具和双场币 无提示窗
+                # 地下城 扫荡 -取消 -蓝色确认
+                # 经验/玛娜探索 -取消 -蓝色/白色确认
+                # 普通扭蛋 收取道具 -白色关闭
+                # 特殊情况1 双场没打，显示跳过失败，点白色确认
+                # 总结：点蓝色确认 白色确认 白色关闭
+
+                time.sleep(2)
+                screen = self.getscreen()
+                if self.is_exists(MAIN_BTN["buy_mana_confirm_title"]):
+                    if buy_mana:
+                        self.click(590,367)
+                    else:
+                        self.click(372,366)
+                    continue
+
+                # 处理扫荡窗口
+                f1 = self.is_exists(MAOXIAN_BTN["saodang_tiaoguo"], screen=screen)
+                f2 = self.is_exists(MAOXIAN_BTN["saodang_ok2"], screen=screen)
+                f3 = self.is_exists(MAOXIAN_BTN["saodang_tiaoguo"], is_black=True, screen=screen)
+                f4 = self.is_exists(MAIN_BTN["tansuo_saodangok2"], screen=screen)
+                if f1 or f2 or f3 or f4:
+                    self.click(473, 475)
+                    continue
+
+                # 处理关闭
+                if self.is_exists(MAIN_BTN["guanbi"], threshold=0.97, screen=screen):
+                    self.click_btn(MAIN_BTN["guanbi"])
+                    continue
+
+                # 处理白色确认
+                if self.is_exists(MAIN_BTN["confirm_schedule"], screen=screen):
+                    self.click_img(screen, MAIN_BTN["confirm_schedule"])
+                    continue
+
+                # 处理蓝色确认  
+                if self.is_exists(MAIN_BTN["confirm_schedule_blue"], screen=screen):
+                    self.click_img(screen, MAIN_BTN["confirm_schedule_blue"])
+                if self.is_exists(MAIN_BTN["schedule_stamp"], screen=screen):
+                    if self.is_exists(MAIN_BTN["start_schedule"], threshold=0.98):
+                        # 不买mana也算任务没完成的，忽略不管。 
+                        # self.restart_this_task()
+                        break
+                    elif self.is_exists(MAIN_BTN["schedule_finish"], threshold=0.98):
+                        self.log.write_log("info", "日常已完成")
+                        break
+                        
+        else:
+            self.log.write_log("warning", "无法清日程表，可能已清理完或者发生错误！")
+
+        self.fclick(1, 1)
+        self.lock_home()
+
