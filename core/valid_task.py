@@ -815,6 +815,8 @@ VALID_TASK = ValidTask() \
           TaskParam("tu_order", list, "图号", "只包含1~2的列表，表示神殿调查图号，每个均刷5次。",
                     inputbox=ListInputer(convert=lambda x: int(x), desc="一行一个1~2的整数"))
           ]) \
+    .add("r13", "kokkoro_schedule", "可可萝日程表", "完成可可萝日程表", 
+         [TaskParam("buy_mana", bool, "是否购买mana", "是否根据日程设置购买mana", False)]) \
     .add("f1", "tianjiahaoyou", "添加好友", "按照ID添加好友。", [
     TaskParam("friend_id", str, "好友ID", "要添加的好友的数字ID")]) \
     .add("f2", "tongguoshenqing", "通过申请", "处理全部的好友申请，可以指定按前缀过滤。",

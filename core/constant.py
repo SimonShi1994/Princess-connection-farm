@@ -114,6 +114,23 @@ MAIN_BTN = {
     "liwu": p(908, 432, img="img/home/liwu.bmp", at=(891, 417, 927, 448)),
     # 任务
     "renwu": p(837, 432),
+    # 日程表
+    "schedule": p(762, 432),
+    # 可可萝日程表的特征
+    "kokkoro_schedule_feat": p(479, 118, img="img/home/kokkoro_schedule_feat.bmp", at=(348, 96, 610, 140)),
+    # 一键自动日程表
+    "start_schedule": p(659, 476, img="img/home/start_schedule.bmp", at=(613, 463, 705, 490)),
+    # 可可萝日程表 购买mana标题
+    "buy_mana_confirm_title": p(478, 146, img="img/home/buy_mana_confirm_title.bmp", at=(430, 132, 527, 160)),
+    # 日程表 确认 大范围
+    "confirm_schedule": p(587, 370, img="img/ui/queren.bmp", at=(199, 283, 742, 526)),
+    # 日程表 确认 大范围
+    "confirm_schedule_blue": p(587, 370, img="img/ui/queren_blue.bmp", at=(199, 283, 742, 526)),
+    # 可可萝日程表 已完成的特征1
+    "schedule_stamp": p(726, 406, img="img/home/schedule_stamp.bmp", at=(699, 381, 753, 432)),
+    # 可可萝日程表 已完成的特征2
+    "schedule_finish": p(659, 476, img="img/home/schedule_finish.bmp", at=(615, 462, 704, 491)),
+        
     # 体力购买
     "tili_plus": p(320, 31),
     # 体力购买ok

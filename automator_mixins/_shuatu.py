@@ -1776,7 +1776,9 @@ class ShuatuMixin(ShuatuBaseMixin):
                         state = {"flag": None}
                         last_time = time.time()
                         # TODO: 还没写完
-                        time_max = 3600
+                        # 999体 99次Normal 49次Hard 49次VH
+                        # 从消耗体力推测需要推的关卡数量
+                        time_max = 2400
                         time_wait = 0
                         while time_wait < time_max:
                             time.sleep(1)

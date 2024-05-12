@@ -303,6 +303,7 @@ def make_it_as_juese_as_possible(title: str):
     title = title.replace("唉", "咲")
     title = title.rstrip("的记忆碎片")
     title = title.rstrip("的纯净记忆碎片")
+    title = title.replace("&", "＆")
     return title
 
 

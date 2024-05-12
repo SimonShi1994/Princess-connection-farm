@@ -47,7 +47,7 @@ class JJCMixin(FightBaseMixin):
         self.lock_home()
         self.click_btn(MAIN_BTN["maoxian"], until_appear=MAIN_BTN["zhuxian"])
         self.lock_img(JJC_BTN["arena"], elseclick=[MAIN_BTN["arena"], (1, 290)], elsedelay=1)
-        self.lock_img(JJC_BTN["plist"], elseclick=[JJC_BTN["p_aren_pos"], (1, 290)], elsedelay=1)
+        self.lock_img(JJC_BTN["plist"], elseclick=[JJC_BTN["p_arena_pos"], (1, 290)], elsedelay=1)
         self.click_btn(JJC_BTN["shouqu"], until_appear=JJC_BTN["shouqu_ok"],
                        elsedelay=4, retry=2, side_check=self.right_kkr)
         for _ in range(5):
