@@ -38,16 +38,11 @@ def find_all_files(base):
             yield fullname
 
 def get_daily_tplt() -> dict:
-  tasks = [ {"type":"h6","sortflag":1},
-            {"type":"r1","auto_update":False},
-            {"type":"r2"},
-            {"type":"r6","times":3,"limit_today":True},
-            {"type":"r9-ocr","mode":0,"team_order":"1-1"},
+  tasks = [ {"type":"r13","buy_mana":False},
             {"type":"r10-n","team_order":"1-1","tu_order":[2,3,4]},
             {"type":"r12-n","team_order":"1-1","tu_order":[2]},
             {"type":"j1"},
             {"type":"j2"},
-            {"type":"d6","dxc_id":7},
             {"type":"hd06","tu_order":[1,3,5],"code":"current","entrance_ind":"auto"},
             {"type":"hd04","team_order":"none","code":"current","entrance_ind":"auto"},
             {"type":"hd09","code":"current","entrance_ind":"auto"},
@@ -151,7 +146,7 @@ if __name__ == "__main__":
           Choice("清日常", data=False),
           Choice("农场", data=True),
       ],
-  ).prompt()
+  ).prompt().data
 
   '''
 
@@ -267,18 +262,18 @@ if __name__ == "__main__":
 
   print("------ 账号登记完毕 ------")
 
-  print(account_list)
-  print(password_list)
-  print(bili_id_list)
+  # print(account_list)
+  # print(password_list)
+  # print(bili_id_list)
 
-  input("1234")
+  # input("1234")
 
   '''
 
   ------ 推荐任务模板 ------
   '''
-  print("我们准备了一套推荐任务模板\n[daily=日常, quest=主线推图, event=活动推图, setting=配置初始化]")
-  is_using_default_tplt = ConfirmPrompt("是否使用推荐的任务模板? 如不使用，仅写入setting模板。\n", default_choice=True).prompt()
+  print("我们准备了一套推荐任务模板\n[daily=日常, quest=主线推图, event=活动推图, settings=配置初始化]")
+  is_using_default_tplt = ConfirmPrompt("是否使用推荐的任务模板? 如不使用，仅写入settings模板。\n", default_choice=True).prompt()
 
   if os.path.exists("rec"):
     if ConfirmPrompt("为避免运行错误，需要删除当日运行记录，是否继续？", default_choice=True).prompt():
@@ -396,30 +391,11 @@ if __name__ == "__main__":
 
   
   AutomatorRecorder.setschedule("settings", {"schedules": schedule_dict_settings})
-
-  print("配置生成完毕，请根据自身需要修改任务。\n如需对日常任务进行修改，请运行`python main_new.py`后，\nEdit > task -e daily")
-
-
-  # 扫描目录
-
-
-  '''
-
-  # 是否使用推荐的任务模板? [daily=日常, main=主线推图, event=活动推图]
-  - 是
-  - 否
-
-  # 配置生成完毕，请根据自身需要修改任务。
-  # 如需对日常任务进行修改，请运行`python main_new.py`后，
-  # Edit > task -e daily
-  # 
-
-  # 即将启动脚本，对游戏内设置进行自动优化
-    是否同意？
-  - 同意
-  - 非常同意
-    
-
+  if os.path.exists("bind_schedule.txt"):
+    os.remove("bind_schedule.txt")
+  print("配置生成完毕，请根据自身需要修改任务。\n如需对日常任务进行修改，请运行`python main_new.py`后，\nedit -> task -e daily")
+  print("\n接下来你可以输入：\n（1）python main_new.py\n（2）bind settings\n（3）first\n正常情况下，脚本将对游戏内设置进行自动优化。")
+  print("可绑定计划为：daily-清日常, quest-主线推图，event-活动推图，settings-优化设置。")
   '''
 
   is_run_at_once: Choice[int] = ListPrompt(
@@ -432,4 +408,6 @@ if __name__ == "__main__":
   ).prompt().data
 
   if is_run_at_once !=2:
-    exec(open('main_new.py').read())
+    exec(open('main_new.py', encoding='utf-8').read())
+
+  '''
