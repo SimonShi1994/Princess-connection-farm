@@ -1336,8 +1336,7 @@ class Schedule:
         else:
             pcr_log(f"schedule_{self.name}").write_log(level, content)
 
-    @staticmethod
-    def is_complete(rec):
+    def is_complete(self, rec):
         """
         判断记录Rec是否已经全部完成
         :param rec: 存档目录
@@ -1350,6 +1349,10 @@ class Schedule:
             rs = AutomatorRecorder(acc, rec).get_run_status()
             if not rs["finished"] or rs["error"] is not None:
                 return False
+        if not parsed:
+            os.makedirs(rec, exist_ok=True)
+            self.log("警告：解析任务失败，请检查配置是否正确。")
+            self.log(f"Batch记录：\n{AutomatorRecorder.getbatch(bat)}")
         with open(os.path.join(rec, "_fin"), "w") as f:
             f.write("出现这个文件表示该文件夹内的记录已经刷完。")
         return True
@@ -1488,7 +1491,7 @@ class Schedule:
             if diff < 8 * 3600 + 60:
                 return False
         if "last_schedule" in cond:
-            # 前置子计划鸣潮必须完成
+            # 判断条件：前置子计划必须完成
             status = self.get_status(last_state=True)
             for sub in status:
                 if sub["name"] == cond["last_schedule"] and sub["status"] != "fin":
@@ -1496,7 +1499,7 @@ class Schedule:
 
         if "_last_rec" in cond:
             # 前置batch条件
-            if not Schedule.is_complete(cond["_last_rec"]):
+            if not Schedule("").is_complete(cond["_last_rec"]):
                 return False
         return True
 
