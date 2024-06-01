@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20240531": Map20240531,
         "20240430": Map20240430,
         "20240418": Map20230331,
         "20240329": Map20240329,
@@ -86,6 +87,19 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+class Map20240531(HuodongMapBase):
+    N_slice = 1
+    NAME = "Enjoy&Refresh 性格迥异的女子露营"
+    XY11 = (162, 394)
+    XY_VH_BOSS = (833, 315)
+    HARD_COORD = {
+        1: (113, 295),
+        2: (258, 377),
+        3: (475, 233),
+        4: (580, 340),
+        5: (713, 228),
+    }
 
 
 class Map20240430(HuodongMapBase):

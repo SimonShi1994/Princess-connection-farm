@@ -838,11 +838,12 @@ class RoutineMixin(ShuatuBaseMixin):
 
     def kokkoro_schedule(self, buy_mana=False):
         self.lock_home()
-
         self.click_btn(MAIN_BTN["schedule"], until_appear=MAIN_BTN["kokkoro_schedule_feat"])
         time.sleep(5)
         
-        if self.is_exists(MAIN_BTN["start_schedule"], threshold=0.98):
+        if self.is_exists(MAIN_BTN["schedule_finish"], threshold=0.92, is_black=True, black_threshold=1300):
+            self.log.write_log("info", "日常已完成")
+        elif self.is_exists(MAIN_BTN["start_schedule"], threshold=0.975):
             self.click_btn(MAIN_BTN["start_schedule"])
 
             # checking possible buttons
@@ -887,12 +888,12 @@ class RoutineMixin(ShuatuBaseMixin):
                 if self.is_exists(MAIN_BTN["confirm_schedule_blue"], screen=screen):
                     self.click_img(screen, MAIN_BTN["confirm_schedule_blue"])
                 if self.is_exists(MAIN_BTN["schedule_stamp"], screen=screen):
-                    if self.is_exists(MAIN_BTN["start_schedule"], threshold=0.98):
+                    if self.is_exists(MAIN_BTN["schedule_finish"], threshold=0.92, is_black=True, black_threshold=1300):
+                        self.log.write_log("info", "日常已完成")
+                        break
+                    elif self.is_exists(MAIN_BTN["start_schedule"], threshold=0.92):
                         # 不买mana也算任务没完成的，忽略不管。 
                         # self.restart_this_task()
-                        break
-                    elif self.is_exists(MAIN_BTN["schedule_finish"], threshold=0.98):
-                        self.log.write_log("info", "日常已完成")
                         break
                         
         else:

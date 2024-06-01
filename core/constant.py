@@ -250,6 +250,12 @@ JUQING_BTN = {
     "rong": p(595, 193, img="img/juqing/rong.bmp", at=(588, 185, 603, 202)),  # 新内容的“容”
     "return": p(31, 30, img="img/huodong/return.bmp", at=(15, 21, 47, 40)),
     "jiesuotiaojian": p(480, 86, img="img/juqing/jiesuotiaojian.bmp", at=(434, 72, 526, 100)),
+    "juqing_unlock": p(366,433,img="img/juqing/juqing_unlock.bmp", at=(315,418,418,449)),
+    "unlock_title": p(476,150,img="img/juqing/unlock_title.bmp",at=(386,133,567,167)),
+    "unlock_ok": p(589, 370, img="img/hanghui/hanghui_ok.bmp", at=(557, 354, 620, 385)),
+    "2_9_jiesuozhong": p(829,94,img="img/juqing/2_9_jiesuozhong.bmp",at=(753,85,905,103)),
+    "1_1_block": p(589,161,img="img/juqing/1_1_block.bmp",at=(467,71,711,251)),
+    "chap15_block": p(606, 120, img="img/juqing/chap15_block.bmp", at=(470, 75, 743, 366))
 }
 
 LIWU_BTN = {
