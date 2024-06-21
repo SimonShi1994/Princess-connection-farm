@@ -1499,7 +1499,7 @@ class Schedule:
 
         if "_last_rec" in cond:
             # 前置batch条件
-            if not Schedule("").is_complete(cond["_last_rec"]):
+            if not self.is_complete(cond["_last_rec"]):
                 return False
         return True
 
