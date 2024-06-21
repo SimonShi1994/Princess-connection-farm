@@ -703,6 +703,7 @@ class HuodongMapBase(ZhuXianBase):
         fb: FightBianZuHuoDong = self.goto(FightBianZuHuoDong, self.fun_click(FIGHT_BTN["tiaozhan2"]))
         fb.select_team(team_order)
         zd = fb.goto_zhandou()
+        zd.set_auto(1, max_retry=3)
         zd.auto_and_fast(1)
         during = zd.get_during()
         after = None
