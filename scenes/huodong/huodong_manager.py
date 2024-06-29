@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20240628": Map20240628,
         "20240618": Map20230531,
         "20240531": Map20240531,
         "20240430": Map20240430,
@@ -88,6 +89,22 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20240628(HuodongMapBase):
+    N_slice = 2
+    NAME = "破晓之星夏日游戏 闪耀于夏天海边的三份思念"
+    XY11 = (147, 229)
+    XY12 = (154, 183)
+    XY_VH_BOSS = (864, 290)
+    HARD_COORD = {
+        1: (90, 230),
+        2: (237, 319),
+        3: (374, 237),
+        4: (462, 363),
+        5: (688, 330),
+    }
+
 
 class Map20240531(HuodongMapBase):
     N_slice = 1
