@@ -93,9 +93,10 @@ N1： Normal图如果分段，第1段最后一图的图号
 
 class Map20240628(HuodongMapBase):
     N_slice = 2
+    N1 = 5
     NAME = "破晓之星夏日游戏 闪耀于夏天海边的三份思念"
     XY11 = (147, 229)
-    XY12 = (154, 183)
+    XY21 = (154, 183)
     XY_VH_BOSS = (864, 290)
     HARD_COORD = {
         1: (90, 230),
