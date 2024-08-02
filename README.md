@@ -2,6 +2,7 @@
 
 # Princess connection 公主连结农场脚本v2.8.20240802
 
+
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
 
 ## :bookmark_tabs:简介
