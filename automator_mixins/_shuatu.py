@@ -354,7 +354,6 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.continueDo9(142, 267)  # 1-1
         self.lock_home()
 
-
     @staticmethod
     def parse_tu_str(tustr: str):
         strs = tustr.split("-")
@@ -1457,7 +1456,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                     TZ = M.goto_tiaozhan()
                     # 设置支援
                     select_result = TZ.select_team_with_zhiyuan(team_order, zhiyuan_mode)
-                    if(select_result == 'return'):
+                    if (select_result == 'return'):
                         self.lock_home()
                         return 'return'
                     # 进入战斗
@@ -1720,7 +1719,8 @@ class ShuatuMixin(ShuatuBaseMixin):
                 continue
             c = out_map[i]
             if int(a) > MAX_MAP:
-                self.log.write_log("warning", f"刷图规划中含有无法刷的图：{a}-{b}，跳过该图！你可以设置max_tu参数来避免这种情况。")
+                self.log.write_log("warning",
+                                   f"刷图规划中含有无法刷的图：{a}-{b}，跳过该图！你可以设置max_tu参数来避免这种情况。")
                 continue
             NMap += [f"{a}-{b}-{c}"]
         # print("Will be shua:", NMap)
@@ -1747,7 +1747,7 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.auto_advance(0, team_order, buy_tili, lose_action)
             self.auto_advance(1, team_order, buy_tili, lose_action)
             self.auto_advance(2, team_order, buy_tili, lose_action)
-        
+
         self.check_ocr_running()  # 必须要OCR！
         self.select_most_right()
 
@@ -1782,16 +1782,15 @@ class ShuatuMixin(ShuatuBaseMixin):
                         time_wait = 0
                         while time_wait < time_max:
                             time.sleep(1)
-                        
+
                     else:
                         self.log.write_log("error", f"该关卡无法自动推进，放弃刷图")
                     # 
-        
+
         if not next_level_pos:
             self.log.write_log("info", f"找不到下一关，放弃刷图")
-                
-        self.lock_home()
 
+        self.lock_home()
 
     ## 以下为活动和外传部分
 
@@ -1880,7 +1879,8 @@ class ShuatuMixin(ShuatuBaseMixin):
         MAP.exchange_tfz(reset=reset)
         self.lock_home()
 
-    def shua_hd_boss(self, team_order="none", code="current", entrance_ind="auto", once=False, boss_type=None, var=None):
+    def shua_hd_boss(self, team_order="none", code="current", entrance_ind="auto", once=False, boss_type=None,
+                     var=None):
         """
         打活动Boss，team_order见shuatu_daily_ocr。
         code: 见scenes/huodng/huodong_manager.py
@@ -1898,7 +1898,7 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
 
     def tui_hd_map(self, diff="N", team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
-                   if_full=0,if_auto=True, var=None):
+                   if_full=0, if_auto=True, var=None):
 
         self.lock_home()
         # 体力检查
@@ -1911,19 +1911,19 @@ class ShuatuMixin(ShuatuBaseMixin):
             self.lock_home()
             return
         self.log.write_log("debug", f"类型：{type(MAP)}")
-        MAP.tui_hd_map(diff=diff, team_order=team_order, get_zhiyuan=get_zhiyuan, if_full=if_full,if_auto=if_auto)
+        MAP.tui_hd_map(diff=diff, team_order=team_order, get_zhiyuan=get_zhiyuan, if_full=if_full, if_auto=if_auto)
         self.fclick(1, 1)
         self.lock_home()
 
     def tui_hd_map_normal(self, team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
-                          if_full=0,if_auto=True, var=None):
+                          if_full=0, if_auto=True, var=None):
         self.tui_hd_map(diff="N", team_order=team_order, code=code, entrance_ind=entrance_ind, get_zhiyuan=get_zhiyuan,
-                        if_full=if_full,if_auto=if_auto)
+                        if_full=if_full, if_auto=if_auto)
 
     def tui_hd_map_hard(self, team_order="none", code="current", entrance_ind="auto", get_zhiyuan=False,
-                        if_full=0,if_auto=True, var=None):
+                        if_full=0, if_auto=True, var=None):
         self.tui_hd_map(diff="H", team_order=team_order, code=code, entrance_ind=entrance_ind, get_zhiyuan=get_zhiyuan,
-                        if_full=if_full,if_auto=if_auto)
+                        if_full=if_full, if_auto=if_auto)
 
     def shua_hd_map_normal(self, code="current", entrance_ind="auto", map_id=1, cishu="max", var=None):
 
@@ -1978,10 +1978,10 @@ class ShuatuMixin(ShuatuBaseMixin):
         if code == "08" or code == "12":
             self.log.write_log("error", f"由于场景限制，暂不支持外传08和外传12的自动推图！")
             return
-        
+
         def check_wz_menu(code):
             sPossibleWZEnteringScene: PCRSceneBase = self.get_zhuye().goto_zhucaidan().goto_waizhuan()
-            if(sPossibleWZEnteringScene.scene_name != "WZ_Gallery"):
+            if (sPossibleWZEnteringScene.scene_name != "WZ_Gallery"):
                 self.log.write_log("error", f"外传未解锁！请先通关主线3-2!")
                 # todo：外层return
                 self.lock_home()
@@ -2054,16 +2054,16 @@ class ShuatuMixin(ShuatuBaseMixin):
                     if fi:
                         a = fi.to_last_map(max_tu=max_tu)
                     else:
-                        raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}"+
-                                            "的错误，可能坐标存在偏移！")
+                        raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Normal图分段{now}" +
+                                           "的错误，可能坐标存在偏移！")
                 else:
                     # Hard难度
                     fi = MAP.click_xy_and_open_fightinfo(*HXY1, typ=FightInfoBase)
                     if fi:
                         a = fi.to_last_map(max_tu=5)
                     else:
-                        raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Hard图"+
-                                            "的错误，可能坐标存在偏移！")
+                        raise RuntimeError(f"出现了进不了外传{code}[{Menu.NAME}]Hard图" +
+                                           "的错误，可能坐标存在偏移！")
 
                 if a == "finish" and fi.get_upperright_stars() == 3:
                     if diff == "N":
@@ -2092,7 +2092,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
                 else:
                     st = fi.easy_shoushua(team_order=team_order, one_tili=10, max_speed=2, get_zhiyuan=get_zhiyuan,
-                                              if_full=if_full)  # 打完默认回fi
+                                          if_full=if_full)  # 打完默认回fi
                     if st == 1 or st == 3:
                         self.stop_shuatu()
                         self.fclick(1, 1)
@@ -2100,7 +2100,6 @@ class ShuatuMixin(ShuatuBaseMixin):
                     if first_time:
                         first_time = False
                         continue
-
 
                     time.sleep(3)
                     self.fclick(1, 1)
@@ -2261,8 +2260,8 @@ class ShuatuMixin(ShuatuBaseMixin):
             time.sleep(1)
 
         if not check_wz_menu(code):
-            return 
-        
+            return
+
         self.fclick(1, 1)
         time.sleep(1)
         boss_count = self.img_where_all(img=WZ_BTN["boss_pass"].img, at=(673, 78, 806, 376), threshold=0.8)
@@ -2286,4 +2285,53 @@ class ShuatuMixin(ShuatuBaseMixin):
         self.lock_home()
         self.get_zhuye().goto_zhucaidan().goto_waizhuan().goto_wz_menu(code)
         get_liwu()
+        self.lock_home()
+
+    def yijiansaodang(self, times=3):
+        self.lock_home()
+        self.get_zhuye().goto_maoxian().goto_zhuxian()
+        self.lock_img(MAOXIAN_BTN["saodangquan"])
+        self.click_btn(MAOXIAN_BTN["saodangquan"], until_appear=MAOXIAN_BTN["guankayilan"])
+        if times != 3:
+            self.fclick(731, 410)
+            self.fclick(731, 410)
+            i = 1
+            while True:
+                if i < times:
+
+                    if self.is_exists(FIGHT_BTN["tilibuzu"]):
+                        break
+                    self.click(882, 410)
+                    time.sleep(0.2)
+                    i += 1
+                    continue
+                else:
+                    break
+        if self.is_exists(FIGHT_BTN["no_tili_2"], threshold=0.9):
+            self.log.write_log("warning", "扫荡体力不足，跳过")
+            self.skip_this_task()
+        self.click_btn(FIGHT_BTN["yijiansaodang"], until_disappear=FIGHT_BTN["quxiao"])
+        self.lock_no_img(FIGHT_BTN["quxiao"])
+        time.sleep(0.5)
+
+        while True:
+            sc = self.getscreen()
+            # 挑战次数不足
+            if self.is_exists(FIGHT_BTN["yijianhuifu"]):
+                self.click_btn(FIGHT_BTN["buhuifu"])
+                print("111")
+                continue
+
+            if self.is_exists(FIGHT_BTN["yijiansaodangqueren"]):
+                self.click_img(screen=sc, img="img/queren.jpg")
+                print("222")
+                break
+            # 体力不足，部分关卡不能进行
+            if self.is_exists(FIGHT_BTN["yijiansaodangqueren2"]):
+                self.click_img(screen=sc, img="img/queren.jpg")
+
+                print("333")
+                continue
+        self.click_btn(FIGHT_BTN["tiaozhan_saodang"], until_appear=FIGHT_BTN["saodangjieguo"])
+        time.sleep(5)
         self.lock_home()
