@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20240830": Map20240830,
         "20240818": Map20230731,
         "20240731": Map20230731,
         "20240718": Map20230630,
@@ -92,6 +93,23 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20240830(HuodongMapBase):
+    N_slice = 2
+    N1 = 6
+    NAME = "真步真步奇妙之旅！旅行的少女与世界尽头的大树"
+    XY11 = (149,335)
+    XY21 = (173,394)
+    XY_VH_BOSS = (843,290)
+    HARD_COORD = {
+        1: (86,210),
+        2: (167,392),
+        3: (400,384),
+        4: (525,239),
+        5: (657,319),
+    }
+
 
 
 class Map20240731(HuodongMapBase):
