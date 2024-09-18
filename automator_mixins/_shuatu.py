@@ -2319,18 +2319,14 @@ class ShuatuMixin(ShuatuBaseMixin):
             # 挑战次数不足
             if self.is_exists(FIGHT_BTN["yijianhuifu"]):
                 self.click_btn(FIGHT_BTN["buhuifu"])
-                print("111")
                 continue
 
             if self.is_exists(FIGHT_BTN["yijiansaodangqueren"]):
                 self.click_img(screen=sc, img="img/queren.jpg")
-                print("222")
                 break
             # 体力不足，部分关卡不能进行
             if self.is_exists(FIGHT_BTN["yijiansaodangqueren2"]):
                 self.click_img(screen=sc, img="img/queren.jpg")
-
-                print("333")
                 continue
         self.click_btn(FIGHT_BTN["tiaozhan_saodang"], until_appear=FIGHT_BTN["saodangjieguo"])
         time.sleep(5)
