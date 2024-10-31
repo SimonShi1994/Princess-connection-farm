@@ -102,7 +102,7 @@ MAIN_BTN = {
     # 地下城
     "dxc": p(935, 77, img="img/home/dxc.bmp", at=(814, 68, 943, 201)),
     # 主线关卡
-    "zhuxian": p(500, 90, img="img/home/zhuxian.bmp", at=(526, 117, 587, 186)),
+    "zhuxian": p(561, 202, img="img/home/zhuxian.bmp", at=(521, 192, 601, 212)),
     # 公会之家
     "gonghuizhijia": p(617, 530),
     # 扭蛋

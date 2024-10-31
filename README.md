@@ -334,6 +334,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2024/10/31 By UVJkiNTQ
+
+- 惯例更新
+  - 活动`部落精神 高举之剑与荣耀之桥`
+- BUG修复
+  - 修复主线按钮变化带来的问题
+
 2024/09/30 By UVJkiNTQ
 
 - 惯例更新
