@@ -231,8 +231,6 @@ class CharBianZu(FightBianZuBase):
         self.click_btn(JUESE_BTN["save_team"])
 
 
-
-
 class CharBase(SevenBTNMixin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -383,7 +381,7 @@ class CharZhuangBei(CharBase):
             screen = self.getscreen()
         fc = [69, 123, 247]  # G B R:红点
         bc = [243, 247, 239]  # G B R:面板白
-        xcor = 645
+        xcor = 615
         ycor = 60
         a = self.check_color(fc, bc, xcor, ycor, color_type="gbr", screen=screen)
         return a
@@ -403,17 +401,7 @@ class CharZhuangBei(CharBase):
         #         5-槽位没满，没库存;
         if screen is None:
             screen = self.getscreen()
-        if self.is_exists(JUESE_BTN["yjzb_off"], method="sq", threshold=0.95, screen=screen):
-            if self.is_exists(JUESE_BTN["reachable"].img, at=(71, 136, 435, 349)):
-                return 5
-            else:
-                if self.is_exists(JUESE_BTN["red_small"].img, at=(95,90,437,309)):
-                    return 1
-                else:
-                    return 0
-        if self.is_exists(JUESE_BTN["yjzb"], screen=screen):
-            # 有装备可穿
-            return 3
+        # 判断1：先升rank
         if self.is_exists(JUESE_BTN["rank_on"], screen=screen):
             if self.is_exists(JUESE_BTN["yjzb"], screen=screen):
                 # 没穿满，但可以升rank
@@ -421,6 +409,18 @@ class CharZhuangBei(CharBase):
             else:
                 # 穿满了，可升rank
                 return 2
+        # 判断2：再看装备是否能穿
+        if self.is_exists(JUESE_BTN["red_small"], at=(287, 313, 309, 339)):
+            # 有装备可穿
+            return 3
+        if self.is_exists(JUESE_BTN["reachable"].img, at=(71, 136, 435, 349)):
+            return 5
+        # 判断3: 穿满再看强化状态
+        if self.is_exists(JUESE_BTN["red_small"].img, at=(372, 89, 437, 300)) \
+                or self.is_exists(JUESE_BTN["red_small"].img, at=(101, 89, 176, 292)):
+            return 1
+        else:
+            return 0
 
     def get_rank(self, screen=None):
         if screen is None:
@@ -611,7 +611,7 @@ class CharKaihua(CharBase):
             return False
 
         self.click_btn(JUESE_BTN["do_kaihua"], until_appear=JUESE_BTN["kaihua_confirm"])
-        self.click(402, 230) # MAX
+        self.click(402, 230)  # MAX
         time.sleep(0.5)
         self.click_btn(JUESE_BTN["kaihua_confirm"], until_disappear=JUESE_BTN["kaihua_confirm"])
         self.lock_img(JUESE_BTN["kaihua_complete"], side_check=kh_sideclick)  # 加速加速
