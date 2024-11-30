@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20241129": Map20241129,
         "20241118": Map20231031,
         "20241031": Map20241031,
         "20241017": Map20230930,
@@ -99,6 +100,20 @@ N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
 
+
+class Map20241129(HuodongMapBase):
+    N_slice = 1
+    NAME = "快乐进行时 幸福的双子天使与圣诞夜礼物"
+    XY11 = (188, 369)
+    XY_VH_BOSS = (835, 301)
+    HARD_COORD = {
+        1: (60, 248),
+        2: (142, 369),
+        3: (375, 400),
+        4: (500, 223),
+        5: (646, 336),
+    }
+    XINLAI = False
 
 class Map20241031(HuodongMapBase):
     N_slice = 2
