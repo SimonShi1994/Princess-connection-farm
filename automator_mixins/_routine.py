@@ -1,7 +1,8 @@
 import time
 
 from core.MoveRecord import movevar
-from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN, FIGHT_BTN, SHOP_BTN, MAOXIAN_BTN
+from core.constant import MAIN_BTN, JIAYUAN_BTN, NIUDAN_BTN, LIWU_BTN, RENWU_BTN, FIGHT_BTN, SHOP_BTN, MAOXIAN_BTN, \
+    TANXIAN_BTN
 from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.pcr_checker import RetryNow, PCRRetry, LockMaxRetryError
@@ -901,4 +902,47 @@ class RoutineMixin(ShuatuBaseMixin):
 
         self.fclick(1, 1)
         self.lock_home()
+
+    def tanxian_oneclick(self):
+        self.lock_home()
+        self.get_zhuye().goto_maoxian().goto_tanxian()
+        # 处理event
+        while True:
+            counter = 0
+            if self.is_exists(TANXIAN_BTN["event_notice"], threshold=0.7):
+                self.click(TANXIAN_BTN["event_notice"])
+                counter += 1
+                if counter >=4:
+                    # 避免死循环
+                    self.log.write_log("warning", "event识别有问题，跳出")
+                    break
+                time.sleep(1)
+                if self.is_exists(TANXIAN_BTN["event_map"].img, method="sq"):
+                    r_list = self.img_where_all(TANXIAN_BTN["event_map"].img, method="sq")
+                    self.fclick(r_list[0] - 10, r_list[1] - 55)
+                    while True:
+                        time.sleep(5)
+                        if self.is_exists(TANXIAN_BTN["skip"]):
+                            self.click_btn(TANXIAN_BTN["skip"])
+                            self.fclick(1, 1)
+                            continue
+                        else:
+                            time.sleep(8)
+                            break
+                continue
+            else:
+                self.log.write_log("info","无事件")
+                break
+        # 处理一键归来&出发
+        if self.is_exists(TANXIAN_BTN["team_notice"]):
+            self.click_btn(TANXIAN_BTN["team_notice"])
+            self.click_btn(TANXIAN_BTN["confirm_back"])
+            self.click_btn(TANXIAN_BTN["tiaoguowanbi"])
+            self.click_btn(TANXIAN_BTN["chongxinchufa"])
+            self.click_btn(TANXIAN_BTN["chufa"])
+        else:
+            self.log.write_log("info", "未发现完成的队伍")
+        self.fclick(1, 1)
+        self.lock_home()
+
 
