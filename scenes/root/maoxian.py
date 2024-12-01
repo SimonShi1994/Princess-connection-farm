@@ -116,3 +116,9 @@ class MaoXian(SevenBTNMixin):
         MAP(self._a).enter_huodong(xx, yy)
 
         return self.goto(MAP, gotofun=None)
+
+    def goto_tanxian(self) -> "TanXianMenu":
+        from scenes.maoxian.tanxian import TanXianMenu
+        return self.goto(TanXianMenu, self.fun_click(MAOXIAN_BTN["tanxian"]))
+
+        pass

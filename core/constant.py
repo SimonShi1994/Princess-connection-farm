@@ -1485,6 +1485,20 @@ MAOXIAN_BTN = {
     "buy_ap_success_confirm": p(478, 369),
     "saodangquan": p(918, 141, img="img/saodangquan.bmp", at=(902, 126, 935, 156)),
     "guankayilan": p(481, 42, img="img/maoxian/guankayilan.bmp", at=(437, 28, 526, 57)),
+    "tanxian": p(560, 319, img="img/maoxian/tanxian.bmp", at=(539, 308, 582, 330)),
+}
+
+TANXIAN_BTN = {
+    "tanxian_logo": p(70, 29, img="img/tanxian/tanxian_logo.bmp", at=(1, 5, 139, 54)),
+    "event_notice": p(938, 213, img="img/tanxian/event_notice.bmp", at=(923, 196, 953, 230)),
+    "event_map": p(img="img/tanxian/event_map.bmp"),
+    "skip": p(900, 39, img="img/tanxian/skip.bmp", at=(877, 25, 923, 53)),
+    "team_notice": p(918, 82, img="img/tanxian/team_notice.bmp", at=(892, 67, 945, 98)),
+    "confirm_back": p(589, 476, img="img/tanxian/confirm_back.bmp", at=(521, 461, 657, 492)),
+    "tiaoguowanbi": p(820, 493, img="img/tanxian/tiaoguowanbi.bmp", at=(772, 478, 868, 508)),
+    "chongxinchufa": p(822, 492, img="img/tanxian/chongxinchufa.bmp", at=(777, 477, 868, 507)),
+    "chufa": p(811, 477, img="img/tanxian/chufa.bmp", at=(783, 461, 839, 493)),
+
 }
 
 ZHUXIAN_ID = {

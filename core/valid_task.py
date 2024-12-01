@@ -817,6 +817,7 @@ VALID_TASK = ValidTask() \
           ]) \
     .add("r13", "kokkoro_schedule", "可可萝日程表", "完成可可萝日程表", 
          [TaskParam("buy_mana", bool, "是否购买mana", "是否根据日程设置购买mana", False)]) \
+    .add("r14", "tanxian_oneclick", "探险收取及重新出发", "探险日常及Event处理，请关闭探险进入时的弹窗并编组完成首次三个任务") \
     .add("f1", "tianjiahaoyou", "添加好友", "按照ID添加好友。", [
     TaskParam("friend_id", str, "好友ID", "要添加的好友的数字ID")]) \
     .add("f2", "tongguoshenqing", "通过申请", "处理全部的好友申请，可以指定按前缀过滤。",
