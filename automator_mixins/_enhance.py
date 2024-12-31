@@ -74,7 +74,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                         # 装备级等级强化
                         while True:
                             time.sleep(1)
-                            ers = ecb.get_equip_status()
+                            ers = ecb.get_equip_status(char=i)
                             now_rank = ecb.get_rank()
                             if debug:
                                 self.log.write_log('debug', "等级装备强化任务开始")
@@ -110,9 +110,8 @@ class EnhanceMixin(ShuatuBaseMixin):
 
                             # 不能直接提升rank情况下：
                             # 先做升级动作
-                            if ers == 3:
-                                # or ecb.get_char_lv_status() is True:
-                            # 由于上限突破加入，技能等级一直有红点，请自行进行突破后再使用
+                            if ers == 3 or ecb.get_char_lv_status() is True:
+                                # 由于上限突破加入，技能等级一直有红点，请自行进行突破后再使用
                                 time.sleep(1)
                                 self.click_btn(JUESE_BTN["zdqh_1"], until_appear=JUESE_BTN["zdqh_ok"])
                                 self.click_btn(JUESE_BTN["zdqh_ok"], until_appear=JUESE_BTN["equip_selected"])
@@ -151,7 +150,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                         # 支援
                                         if getzhiyuan:
                                             r = fi.easy_shoushua(team_order, check_cishu=True, max_speed=1,
-                                                             get_zhiyuan=True, if_full=is_full)
+                                                                 get_zhiyuan=True, if_full=is_full)
                                             if r == 2:
                                                 break
                                             if r == 3:
@@ -165,7 +164,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                             continue
                                         else:
                                             r = fi.easy_shoushua(team_order, check_cishu=True, max_speed=1,
-                                                             get_zhiyuan=False)
+                                                                 get_zhiyuan=False)
                                             if r == 2:
                                                 break
                                             if r == 3:
@@ -231,7 +230,6 @@ class EnhanceMixin(ShuatuBaseMixin):
                                     continue
                                 else:
                                     break
-
 
                         # 解决部分卡推荐强化菜单的问题
                         time.sleep(0.5)
@@ -324,7 +322,7 @@ class EnhanceMixin(ShuatuBaseMixin):
                                 self.fclick(1, 1)
                             continue
                         if self.is_exists(JUESE_BTN["unlock"]):
-                            self.log.write_log("debug","开花准备完毕")
+                            self.log.write_log("debug", "开花准备完毕")
                             self.click_btn(JUESE_BTN["unlock"], until_appear=JUESE_BTN["fight6"])
                             self.click_btn(JUESE_BTN["fight6"])
                             fi = FightInfoBase(self)

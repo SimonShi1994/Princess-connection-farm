@@ -7,6 +7,8 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20241231": Map20241231,
+        "20241216": Map20231130,
         "20241129": Map20241129,
         "20241118": Map20231031,
         "20241031": Map20241031,
@@ -99,6 +101,21 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+class Map20241231(HuodongMapBase):
+    N_slice = 1
+    NAME = "温泉忘年奇谭 为新年的日出干杯"
+    XY11 = (127, 413)
+    XY_VH_BOSS = (825, 297)
+    HARD_COORD = {
+        1: (70, 382),
+        2: (198, 198),
+        3: (408, 235),
+        4: (512, 379),
+        5: (630, 218),
+    }
+    XINLAI = False
 
 
 class Map20241129(HuodongMapBase):

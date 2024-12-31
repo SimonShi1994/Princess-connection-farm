@@ -396,7 +396,7 @@ class CharZhuangBei(CharBase):
         a = self.check_color(fc, bc, xcor, ycor, color_type="gbr", screen=screen)
         return a
 
-    def get_equip_status(self, screen=None):
+    def get_equip_status(self, screen=None, char="该角色"):
         # 返回值： 0-槽位满了强化也满了 1-槽位满了没强化满; 2-槽位满了，可升Rank; 3-槽位没满，有库存;4-槽位没满，有库存，还能升rank;
         #         5-槽位没满，没库存;
         if screen is None:
@@ -410,17 +410,20 @@ class CharZhuangBei(CharBase):
                 # 穿满了，可升rank
                 return 2
         # 判断2：再看装备是否能穿
-        if self.is_exists(JUESE_BTN["red_small"], at=(287, 313, 309, 339)):
-            # 有装备可穿
+        if self.is_exists(JUESE_BTN["red_small"], at=(283, 300, 312, 329)):
+            # 有库存，装备有红点
             return 3
         if self.is_exists(JUESE_BTN["reachable"].img, at=(71, 136, 435, 349)):
+            # 没有库存，可以获得
+            if self.is_exists(JUESE_BTN["red_small"].img, at=(602, 49, 627, 70)):
+                self.log.write_log("info", char+"可以进行角色等级界限突破")
             return 5
         # 判断3: 穿满再看强化状态
-        if self.is_exists(JUESE_BTN["red_small"].img, at=(372, 89, 437, 300)) \
-                or self.is_exists(JUESE_BTN["red_small"].img, at=(101, 89, 176, 292)):
+        if self.is_exists(JUESE_BTN["red_small"].img, at=(419, 404, 438, 423)):
             return 1
         else:
             return 0
+
 
     def get_rank(self, screen=None):
         if screen is None:
