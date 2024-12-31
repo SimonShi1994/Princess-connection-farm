@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20241201
+# Princess connection 公主连结农场脚本v2.8.20241231
 
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
@@ -333,6 +333,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2024/12/31 By UVJkiNTQ
+新年快乐！
+
+- 惯例更新
+  - 活动`温泉忘年奇谭 为新年的日出干杯`
+
 2024/12/01 By UVJkiNTQ
 
 - 功能更新
