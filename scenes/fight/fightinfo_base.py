@@ -308,54 +308,68 @@ class FightInfoBase(PCRMsgBoxBase):
         if get_zhiyuan:
             T.get_zhiyuan(if_full=if_full)
         F = T.goto_fight()
-        if if_auto:
-            F.set_auto(1)
-        else:
-            F.set_auto(0)
-        F.set_speed(max_speed, max_speed, self.last_screen)
         D = F.get_during()
-        while True:
-            out = D.check()
-            if isinstance(out, D.FightingWinZhuXian):
-                self.log.write_log("info", f"战胜了！")
-                out.next()
-                A = out.get_after()
-                while True:
-                    out = A.check()
-                    if isinstance(out, A.FightingWinZhuXian2):
-                        out.next()
-                        return 0
-                    elif isinstance(out, A.XianDingShangDianBox):
-                        out.Cancel()
-                    elif isinstance(out, A.LevelUpBox):
-                        out.OK()
-                        self.start_shuatu()
-                    elif isinstance(out, A.LoveUpScene):
-                        out.skip()
-                    elif isinstance(out, A.TuanDuiZhanBox):
-                        out.OK()
-                    elif isinstance(out, A.AfterFightKKR):
-                        out.skip()
-                        self._a.restart_this_task()
-                    elif isinstance(out, A.ChaoChuShangXianBox):
-                        out.OK()
-                    elif isinstance(out, A.HaoYouMsg):
-                        out.exit_with_off()
-            elif isinstance(out, D.FightingLoseZhuXian):
-                self.log.write_log("info", f"战败了！")
-                out.exit(self.fun_click(814, 493))
-                return 1
-            elif isinstance(out, D.FightingDialog):
-                out.skip()
-            elif isinstance(out, D.LoveUpScene):
-                out.skip()
-            elif isinstance(out, D.HaoYouMsg):
-                out.exit_with_off()
-            elif isinstance(out, D.TuanDuiZhanBox):
-                out.OK()
-            elif isinstance(out, D.LevelUpBox):
-                out.OK()
-                self.start_shuatu()
+        if T.is_auto_advance:
+            self.log.write_log("info", f"自动推进中...")
+            while True:
+                out = D.check()
+                if isinstance(out,D.AutoAdvanceStopBox):
+                    self.log.write_log("info", f"意外停止！")
+                    out.OK()
+                    self._a.restart_this_task()
+                elif isinstance(out,D.AutoAdvanceEndBox):
+                    self.log.write_log("info", f"自动推进完成！")
+                    out.OK()
+                    out.next()
+                    return 0
+        else:
+            if if_auto:
+                F.set_auto(1)
+            else:
+                F.set_auto(0)
+            F.set_speed(max_speed, max_speed, self.last_screen)        
+            while True:
+                out = D.check()
+                if isinstance(out, D.FightingWinZhuXian):
+                    self.log.write_log("info", f"战胜了！")
+                    out.next()
+                    A = out.get_after()
+                    while True:
+                        out = A.check()
+                        if isinstance(out, A.FightingWinZhuXian2):
+                            out.next()
+                            return 0
+                        elif isinstance(out, A.XianDingShangDianBox):
+                            out.Cancel()
+                        elif isinstance(out, A.LevelUpBox):
+                            out.OK()
+                            self.start_shuatu()
+                        elif isinstance(out, A.LoveUpScene):
+                            out.skip()
+                        elif isinstance(out, A.TuanDuiZhanBox):
+                            out.OK()
+                        elif isinstance(out, A.AfterFightKKR):
+                            out.skip()
+                            self._a.restart_this_task()
+                        elif isinstance(out, A.ChaoChuShangXianBox):
+                            out.OK()
+                        elif isinstance(out, A.HaoYouMsg):
+                            out.exit_with_off()
+                elif isinstance(out, D.FightingLoseZhuXian):
+                    self.log.write_log("info", f"战败了！")
+                    out.exit(self.fun_click(814, 493))
+                    return 1
+                elif isinstance(out, D.FightingDialog):
+                    out.skip()
+                elif isinstance(out, D.LoveUpScene):
+                    out.skip()
+                elif isinstance(out, D.HaoYouMsg):
+                    out.exit_with_off()
+                elif isinstance(out, D.TuanDuiZhanBox):
+                    out.OK()
+                elif isinstance(out, D.LevelUpBox):
+                    out.OK()
+                    self.start_shuatu()
 
     def easy_saodang(self,
                      target_cishu: Union[int, str] = "max",
