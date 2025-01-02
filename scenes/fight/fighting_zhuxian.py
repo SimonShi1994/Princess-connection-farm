@@ -137,6 +137,8 @@ class DuringFightingZhuXian(PossibleSceneList):
         self.FightingDialog = FightingDialog
         self.HaoYouMsg = HaoYouMsg
         self.TuanDuiZhanBox = TuanDuiZhanBox
+        self.AutoAdvanceStopBox = AutoAdvanceStopBox
+        self.AutoAdvanceEndBox = AutoAdvanceEndBox
 
         scene_list = [
             self.KKRQianBao(a),
@@ -147,6 +149,8 @@ class DuringFightingZhuXian(PossibleSceneList):
             FightingDialog(a),
             HaoYouMsg(a),
             TuanDuiZhanBox(a),
+            AutoAdvanceStopBox(a),
+            AutoAdvanceEndBox(a)
         ]
         super().__init__(a, scene_list, double_check=0)
 
@@ -261,3 +265,25 @@ class FightingLoseZhuXian(FightingLoseBase):
 
     def goto_zhuxian(self, zhuxian_type):
         return self.goto(zhuxian_type, self.fun_click(806, 489))  # 前往主线关卡
+    
+class AutoAdvanceStopBox(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "AutoAdvanceStopBox"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["auto_advance_stop"])
+
+    def OK(self):
+        self.click_btn(MAOXIAN_BTN["auto_advance_confirm"]) 
+
+class AutoAdvanceEndBox(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "AutoAdvanceEndBox"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["auto_advance_end"])
+
+    def OK(self):
+        self.click_btn(MAOXIAN_BTN["auto_advance_confirm"]) 
+        
+    def next(self):
+        time.sleep(5)
+        self.click(829, 485, post_delay=1)     

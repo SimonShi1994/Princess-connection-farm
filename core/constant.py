@@ -626,7 +626,8 @@ FIGHT_BTN = {
     "menu": p(img="img/fight/menu.bmp", at=(871, 18, 928, 32)),
     "qwjsyl": p(576, 495, img="img/fight/qwjsyl.bmp", at=(392, 457, 948, 528)),  # 前往角色一览
     "win": p(img="img/fight/win.bmp", at=(400, 6, 551, 127)),  # 过关的帽子
-    "zhandoukaishi": p(834, 453, img="img/fight/zhandoukaishi.bmp", at=(761, 431, 911, 472)),
+    # "zhandoukaishi": p(834, 453, img="img/fight/zhandoukaishi.bmp", at=(761, 431, 911, 472)),
+    "zhandoukaishi": p(848, 451, img="img/fight/zhandoukaishi.bmp", at=(789, 433, 907, 469)),
     "duiwubianzu": p(img="img/fight/duiwubianzu.bmp", at=(433, 31, 520, 53)),
     "xuanguan_quxiao": p(665, 455, img="img/ui/quxiao2.bmp", at=(597, 440, 736, 470)),  # 选关界面（选择使用扫荡券）右下角的取消
     "upperright_stars":  # “挑战”页面右上角的星星位置
@@ -1469,11 +1470,15 @@ MAOXIAN_BTN = {
     "auto_advance_on": p(724, 335, img="img/maoxian/auto_advance_on.bmp", at=(688, 307, 760, 363)),
     "auto_advance_off": p(724, 338, img="img/maoxian/auto_advance_off.bmp", at=(686, 308, 762, 368)),
     "to_set_auto_advance": p(836, 412, img="img/maoxian/to_set_auto_advance.bmp", at=(766, 403, 907, 421)),
-    "auto_advance_next": p(832, 448, img="img/maoxian/auto_advance_next.bmp", at=(762, 404, 903, 493)),
+    # "auto_advance_next": p(832, 448, img="img/maoxian/auto_advance_next.bmp", at=(762, 404, 903, 493)),
+    "auto_advance_next": p(843, 439, img="img/maoxian/auto_advance_next.bmp", at=(777, 404, 909, 475)),
     "auto_advance_settings_title": p(488, 42, img="img/maoxian/auto_advance_settings_title.bmp", at=(416, 29, 560, 56)),
     "without_buy_ap": p(482, 477, img="img/maoxian/without_buy_ap.bmp", at=(398, 464, 566, 491)),
     "auto_advance_buy_ap": p(697, 477, img="img/maoxian/auto_advance_buy_ap.bmp", at=(637, 462, 758, 492)),
     "auto_advance_fight": p(588, 479, img="img/maoxian/auto_advance_fight.bmp", at=(531, 464, 645, 495)),
+    "auto_advance_stop": p(479, 146, img="img/maoxian/auto_advance_stop.bmp", at=(411, 133, 548, 159)),
+    "auto_advance_end": p(479, 145, img="img/maoxian/auto_advance_end.bmp", at=(413, 133, 545, 158)),
+    "auto_advance_confirm": p(477, 369, img="img/maoxian/auto_advance_confirm.bmp", at=(455, 358, 499, 380)),
 
     "auto_advance_mainline_feature": p(161, 324, img="img/maoxian/auto_advance_mainline_feature.bmp",
                                        at=(37, 311, 286, 338)),
