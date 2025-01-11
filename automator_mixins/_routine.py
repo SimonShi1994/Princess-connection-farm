@@ -905,43 +905,36 @@ class RoutineMixin(ShuatuBaseMixin):
 
     def tanxian_oneclick(self):
         self.lock_home()
-        self.get_zhuye().goto_maoxian().goto_tanxian()
-        # 处理event
-        while True:
-            counter = 0
-            if self.is_exists(TANXIAN_BTN["event_notice"], threshold=0.7):
-                self.click(TANXIAN_BTN["event_notice"])
-                counter += 1
-                if counter >=4:
-                    # 避免死循环
-                    self.log.write_log("warning", "event识别有问题，跳出")
-                    break
-                time.sleep(1)
-                if self.is_exists(TANXIAN_BTN["event_map"].img, method="sq"):
-                    r_list = self.img_where_all(TANXIAN_BTN["event_map"].img, method="sq")
-                    self.fclick(r_list[0] - 10, r_list[1] - 55)
-                    while True:
-                        time.sleep(5)
-                        if self.is_exists(TANXIAN_BTN["skip"]):
-                            self.click_btn(TANXIAN_BTN["skip"])
-                            self.fclick(1, 1)
-                            continue
+        TX = self.get_zhuye().goto_maoxian().goto_tanxian()   
+        if TX is not None:
+            back_done, event_done = False, False
+            while True:
+                # 队伍一览出现的话就先处理,不然先处理event
+                out = TX.check()
+                if isinstance(out, TX.TeamViewBack):
+                    out.confirm_back()
+                    back_done = True
+                if isinstance(out, TX.TanXianMenu) and not event_done:
+                    out.handle_event() 
+                    event_done = True
+                    if not back_done:
+                        # 队伍没出发的话会返回None
+                        TV = out.goto_teamview()
+                        if TV is not None:
+                            while True:              
+                                out2 = TV.check()                        
+                                if isinstance(out2, TV.TeamViewBack):
+                                    break
+                                if isinstance(out2, TV.TeamViewNoBack):
+                                    self.log.write_log("info","没有队伍归来")
+                                    out2.close()
+                                    back_done = True
+                                    break
                         else:
-                            time.sleep(8)
-                            break
-                continue
-            else:
-                self.log.write_log("info","无事件")
-                break
-        # 处理一键归来&出发
-        if self.is_exists(TANXIAN_BTN["team_notice"]):
-            self.click_btn(TANXIAN_BTN["team_notice"])
-            self.click_btn(TANXIAN_BTN["confirm_back"])
-            self.click_btn(TANXIAN_BTN["tiaoguowanbi"])
-            self.click_btn(TANXIAN_BTN["chongxinchufa"])
-            self.click_btn(TANXIAN_BTN["chufa"])
-        else:
-            self.log.write_log("info", "未发现完成的队伍")
+                           back_done = True
+                if back_done and event_done:
+                    self.log.write_log("info","探险处理完毕!")
+                    break
         self.fclick(1, 1)
         self.lock_home()
 
