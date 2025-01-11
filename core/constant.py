@@ -1495,15 +1495,23 @@ MAOXIAN_BTN = {
 
 TANXIAN_BTN = {
     "tanxian_logo": p(70, 29, img="img/tanxian/tanxian_logo.bmp", at=(1, 5, 139, 54)),
-    "event_notice": p(938, 213, img="img/tanxian/event_notice.bmp", at=(923, 196, 953, 230)),
+    # "event_notice": p(938, 213, img="img/tanxian/event_notice.bmp", at=(923, 196, 953, 230)),
+    "event_notice": p(926, 216, img="img/tanxian/event_notice.bmp", at=(921, 197, 932, 235)),
     "event_map": p(img="img/tanxian/event_map.bmp"),
+    "event_map_sp": p(img="img/tanxian/event_map_sp.bmp"),
+    "event_map_white": p(img="img/tanxian/event_map_white.bmp"),
     "skip": p(900, 39, img="img/tanxian/skip.bmp", at=(877, 25, 923, 53)),
+    "skip2": p(873, 53, img="img/tanxian/skip.bmp", at=(858, 44, 889, 63)),
     "team_notice": p(918, 82, img="img/tanxian/team_notice.bmp", at=(892, 67, 945, 98)),
+    "team_view": p(919, 91, img="img/tanxian/team_view.bmp", at=(905, 80, 934, 103)),
+    "team_view_off": p(919, 93, img="img/tanxian/team_view_off.bmp", at=(907, 82, 931, 105)),
     "confirm_back": p(589, 476, img="img/tanxian/confirm_back.bmp", at=(521, 461, 657, 492)),
     "tiaoguowanbi": p(820, 493, img="img/tanxian/tiaoguowanbi.bmp", at=(772, 478, 868, 508)),
     "chongxinchufa": p(822, 492, img="img/tanxian/chongxinchufa.bmp", at=(777, 477, 868, 507)),
     "chufa": p(811, 477, img="img/tanxian/chufa.bmp", at=(783, 461, 839, 493)),
-
+    "adventure_dest": p(95, 450, img="img/tanxian/adventure_dest.bmp", at=(53, 442, 137, 459)),
+    "have_team_back": p(474, 77, img="img/tanxian/have_team_back.bmp", at=(421, 68, 527, 86)),
+    "no_team_back": p(474, 76, img="img/tanxian/no_team_back.bmp", at=(379, 67, 569, 86)),
 }
 
 ZHUXIAN_ID = {

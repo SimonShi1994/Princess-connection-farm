@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20250102
+# Princess connection 公主连结农场脚本v2.8.20250111
 
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
@@ -333,6 +333,13 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2025/01/11 By SilentSelene
+
+- 功能优化
+  - 对探索收益并重新出发进行优化，现在能够处理特殊事件，并且不需要在设置中关闭弹窗，但仍然需要自行完成首次出发
+- 惯例更新
+  - 复刻活动`新年美食记忆·雪菲的大作战`
 
 2025/01/02 By SilentSelene
 

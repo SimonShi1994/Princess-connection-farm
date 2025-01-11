@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from scenes.zhuxian.zhuxian_vh import ZhuXianVH
     from scenes.zhuxian.zhuxian_base import ZhuXianBase
     from scenes.maoxian.tansuo import TanSuoMenu
+    from scenes.maoxian.tanxian import AfterGotoTanXian
     from scenes.dxc.dxc_select import DXCSelectA, DXCSelectB
     from scenes.maoxian.diaocha import DiaoChaMenu
 
@@ -117,8 +118,9 @@ class MaoXian(SevenBTNMixin):
 
         return self.goto(MAP, gotofun=None)
 
-    def goto_tanxian(self) -> "TanXianMenu":
-        from scenes.maoxian.tanxian import TanXianMenu
-        return self.goto(TanXianMenu, self.fun_click(MAOXIAN_BTN["tanxian"]))
+    def goto_tanxian(self) -> "AfterGotoTanXian":
+        self.click_btn(MAOXIAN_BTN["tanxian"])
+        from scenes.maoxian.tanxian import AfterGotoTanXian
+        return AfterGotoTanXian(self._a)
 
         pass
