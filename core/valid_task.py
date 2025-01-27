@@ -1068,7 +1068,8 @@ VALID_TASK = ValidTask() \
                                                    upgrade="尝试升级，若仍然失败则终止推图。（队伍只能为zhanli/juese/xingshu/shoucang））"))),
          ]) \
     .add("s14", "yijiansaodang", "使用自带的关卡扫荡", "需要预先选定要扫荡的主线图",
-         [TaskParam("times", int, "扫荡几次", "扫荡几次，默认3", 3)]) \
+         [TaskParam("times", int, "扫荡几次", "扫荡几次，默认3", 3),
+          TaskParam("slot", int, "使用哪组预设（1~7）", "预设", 1)]) \
     .add("hd01", "tui_hd_map_normal", "推活动普通图", "用于推N1-15。",
          [TaskParam("team_order", str, "选择队伍", "选择什么队伍来推图", default="zhanli", inputbox=TeamOrderInputer),
           TaskParam("get_zhiyuan", bool, "是否借支援", "是否借人推图", False),
