@@ -2287,11 +2287,22 @@ class ShuatuMixin(ShuatuBaseMixin):
         get_liwu()
         self.lock_home()
 
-    def yijiansaodang(self, times=3):
+    def yijiansaodang(self, times=3, slot=1):
+        dict = {
+            1: (109, 82),
+            2: (221, 81),
+            3: (346, 82),
+            4: (460, 80),
+            5: (577, 80),
+            6: (696, 80),
+            7: (814, 80),
+        }
         self.lock_home()
         self.get_zhuye().goto_maoxian().goto_zhuxian()
         self.lock_img(MAOXIAN_BTN["saodangquan"])
         self.click_btn(MAOXIAN_BTN["saodangquan"], until_appear=MAOXIAN_BTN["guankayilan"])
+        if slot != 1:
+            self.fclick(dict[slot][0], dict[slot][1])
         if times != 3:
             self.fclick(731, 410)
             self.fclick(731, 410)
