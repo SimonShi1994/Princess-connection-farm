@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20250127": Map20250127,
         "20250116": Map20231229,
         "20241231": Map20241231,
         "20241216": Map20231130,
@@ -102,6 +103,22 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+
+
+class Map20250127(HuodongMapBase):
+    N_slice = 1
+    NAME = "解放伊甸园 在终将再会的未来"
+    XY11 = (163, 373)
+    XY_VH_BOSS = (825, 297)
+    HARD_COORD = {
+        1: (60, 247),
+        2: (139, 371),
+        3: (377, 403),
+        4: (506, 236),
+        5: (836, 281),
+    }
+    XINLAI = False
 
 
 class Map20241231(HuodongMapBase):
