@@ -1491,6 +1491,7 @@ MAOXIAN_BTN = {
     "saodangquan": p(918, 141, img="img/saodangquan.bmp", at=(902, 126, 935, 156)),
     "guankayilan": p(481, 42, img="img/maoxian/guankayilan.bmp", at=(437, 28, 526, 57)),
     "tanxian": p(560, 319, img="img/maoxian/tanxian.bmp", at=(539, 308, 582, 330)),
+    "story_dialog": p(480, 131, img="img/maoxian/story_dialog.bmp", at=(468, 119, 492, 143)),
 }
 
 TANXIAN_BTN = {
@@ -1576,6 +1577,7 @@ ZHUXIAN_ID = {
     59: p(img="img/zhuxian/59L.bmp", at=(60, 56, 179, 77)),
     60: p(img="img/zhuxian/60L.bmp", at=(59, 55, 181, 77)),
     61: p(img="img/zhuxian/61L.bmp", at=(61, 57, 175, 74)),
+    62: p(img="img/zhuxian/62L.bmp", at=(62, 58, 176, 75)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -2930,8 +2932,28 @@ NORMAL_COORD = {
             3: p(370, 356, name="61-3"),
             2: p(275, 187, name="61-2"),
             1: p(164, 408, name="61-1"),
-        },
+        },      
     },
+    62: {
+        "right": {
+            14: p(854, 324, name="62-14"),
+            13: p(744, 228, name="62-13"),
+            12: p(674, 359, name="62-12"),
+            11: p(603, 247, name="62-11"),
+            10: p(525, 348, name="62-10"),
+            9: p(421, 247, name="62-9"),
+            8: p(413, 361, name="62-8"),
+        },
+        "left": {
+            7: p(642, 222, name="62-7"),
+            6: p(704, 328, name="62-6"),
+            5: p(570, 297, name="62-5"),
+            4: p(498, 206, name="62-4"),
+            3: p(411, 262, name="62-3"),
+            2: p(324, 189, name="62-2"),
+            1: p(189, 216, name="62-1"),
+        },
+    },    
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),

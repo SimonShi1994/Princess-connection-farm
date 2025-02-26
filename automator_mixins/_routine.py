@@ -807,7 +807,7 @@ class RoutineMixin(ShuatuBaseMixin):
         """
         self.lock_home()
         # enter
-        self.click(541, 427)
+        self.click(616, 427)
         time.sleep(2)
         self.fclick(1, 1)
         self.fclick(1, 1)
