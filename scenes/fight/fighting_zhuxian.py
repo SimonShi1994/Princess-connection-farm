@@ -139,6 +139,7 @@ class DuringFightingZhuXian(PossibleSceneList):
         self.TuanDuiZhanBox = TuanDuiZhanBox
         self.AutoAdvanceStopBox = AutoAdvanceStopBox
         self.AutoAdvanceEndBox = AutoAdvanceEndBox
+        self.StoryDialog = StoryDialog
 
         scene_list = [
             self.KKRQianBao(a),
@@ -150,7 +151,8 @@ class DuringFightingZhuXian(PossibleSceneList):
             HaoYouMsg(a),
             TuanDuiZhanBox(a),
             AutoAdvanceStopBox(a),
-            AutoAdvanceEndBox(a)
+            AutoAdvanceEndBox(a),
+            StoryDialog(a)
         ]
         super().__init__(a, scene_list, double_check=0)
 
@@ -178,7 +180,7 @@ class LoveUpScene(PCRMsgBoxBase):
 class FightingDialog(PCRMsgBoxBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.scene_name = "LoveUpScene"
+        self.scene_name = "FightingDialog"
         self.feature = self.dialog_feature
 
     def dialog_feature(self, screen):
@@ -186,6 +188,18 @@ class FightingDialog(PCRMsgBoxBase):
 
     def skip(self):
         self.exit(self.fun_click(1, 1), interval=0.2)
+
+class StoryDialog(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "StoryDialog"
+        self.feature = self.dialog_feature
+
+    def dialog_feature(self, screen):
+        return self._a.is_exists(MAOXIAN_BTN["story_dialog"], screen=screen, method="sq", threshold=0.95)
+
+    def skip(self):
+        self.exit(self.fun_click(1, 1), interval=0.2)    
 
 
 class FightingWinZhuXian(FightingWinBase):

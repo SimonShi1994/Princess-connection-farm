@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20250204
+# Princess connection 公主连结农场脚本v2.8.20250226
 
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
@@ -333,6 +333,15 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2025/02/26 By SilentSelene
+
+- 惯例更新
+  - 活动`猫与粗点心咖啡厅 欢迎来到甜食党咖啡店`
+  - 主线`62`图
+- 功能优化
+  - 活动自动推图增加对话框和剧情框处理
+  - 女神庆典图标错位修复
 
 2025/02/04 By UVJkiNTQ
 - 惯例更新

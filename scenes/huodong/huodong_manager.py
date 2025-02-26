@@ -7,6 +7,7 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20250226": Map20250226,
         "20250210": Map20240207,
         "20250205": Map20240131,
         "20250203": Map20250203,
@@ -107,6 +108,19 @@ N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
 
+class Map20250226(HuodongMapBase):
+    N_slice = 1
+    NAME = "猫与粗点心咖啡厅 欢迎来到甜食党咖啡店"
+    XY11 = (131, 373)
+    XY_VH_BOSS = (835, 276)
+    HARD_COORD = {
+        1: (59, 245),
+        2: (140, 371),
+        3: (373, 400),
+        4: (531, 278),
+        5: (692, 206),
+    }
+    XINLAI = True
 
 class Map20250203(HuodongMapBase):
     N_slice = 2
@@ -378,7 +392,7 @@ class Map20240131(HuodongMapBase):
     N3 = 12
     NAME = "Re:member 吾愿所织的未来前篇"
     XY11 = (142, 367)
-    XY21 = (212, 301)
+    XY21 = (191, 260)
     XY31 = (228, 292)
     XY41 = (187, 334)
     XY_VH_BOSS = (835, 270)

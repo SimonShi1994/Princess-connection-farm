@@ -321,7 +321,11 @@ class FightInfoBase(PCRMsgBoxBase):
                     self.log.write_log("info", f"自动推进完成！")
                     out.OK()
                     out.next()
-                    return 0
+                    return 1
+                elif isinstance(out, D.StoryDialog):
+                    out.skip()
+                elif isinstance(out, D.FightingDialog):
+                    out.skip()
         else:
             if if_auto:
                 F.set_auto(1)
@@ -370,6 +374,8 @@ class FightInfoBase(PCRMsgBoxBase):
                 elif isinstance(out, D.LevelUpBox):
                     out.OK()
                     self.start_shuatu()
+                elif isinstance(out, D.StoryDialog):
+                    out.skip()
 
     def easy_saodang(self,
                      target_cishu: Union[int, str] = "max",
