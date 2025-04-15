@@ -13,7 +13,7 @@ from core.pcr_checker import PCRRetry, LockTimeoutError, RetryNow, ContinueNow
 from core.pcr_config import force_as_ocr_as_possible, debug
 from core.valid_task import ShuatuToTuple
 from scenes.fight.fightinfo_base import FightInfoBase
-from scenes.fight.fightinfo_zhuxian import FightInfoZhuXian, FightInfoZhuXianNormal
+from scenes.fight.fightinfo_zhuxian import AfterGotoFightInfoScene, FightInfoZhuXian, FightInfoZhuXianNormal, FightInfoZhuxianSP
 from scenes.fight.fighting_zhuxian import AfterFightingWin
 from scenes.huodong.huodong_base import HuodongMapBase, HuodongMenu, FightBianZuHuoDong
 from scenes.waizhuan.wz_base import WZ_MapBase, WZ_Menu
@@ -1276,10 +1276,87 @@ class ShuatuMixin(ShuatuBaseMixin):
                     return "continue" ：跳过这关，不刷。
                     return "return"：结束刷图
                 """
+
+                def jiesuan(next: AfterFightingWin):
+                    while True:
+                        if time.time() - last_time > 120:
+                            raise LockTimeoutError("在结算页面超时！")
+                        out = next.check()
+                        if out is None:
+                            break
+                        if isinstance(out, next.KKRQianBao):
+                            out.set_and_ok()
+                        if isinstance(out, next.XianDingShangDianBox):
+                            # 限定商店
+                            if xianding:
+                                out.buy_all()
+                            else:
+                                out.Cancel()
+                        if isinstance(out, next.TuanDuiZhanBox):
+                            out.OK()
+                        if isinstance(out, next.LevelUpBox):
+                            out.OK()
+                            self.start_shuatu()  # 体力又有了！
+                        if isinstance(out, next.ChaoChuShangXianBox):
+                            out.OK()
+                        if isinstance(out, next.AfterFightKKR):
+                            out.skip()
+                            # 再次进图
+                            self.get_zhuye().goto_maoxian().goto_zhuxian()
+                            break
+                        if isinstance(out, next.FightingWinZhuXian2):
+                            # 外出后可能还有Box，需要小心谨慎
+                            out.next()
+                        if isinstance(out, next.AfterFightReward):
+                            # 结算
+                            out.OK()
+                            break
+                
+                def handle_lose(lose_action):
+                    if lose_action == "exit":
+                        self.log.write_log("info", f"战败于{m}{a}-{b}，结束刷图！")
+                        self.lock_home()
+                        return "return"
+                    elif lose_action == "skip":
+                        self.log.write_log("info", f"战败于{m}{a}-{b}，跳过该图！")
+                        return "continue"
+                    elif lose_action == "upgrade":
+                        if var["upgraded"] is False:
+                            self.log.write_log("info", f"战败于{m}{a}-{b}，尝试升级角色再次刷图！")
+                            if team_order not in ['zhanli', 'dengji', 'xingshu', 'shoucang']:
+                                self.log.write_log("error",
+                                                f"战败自动升级中，team_order只能为zhanli/dengji/xingshu/shoucang！终止刷图。")
+                                self.lock_home()
+                                return "return"
+
+                            self.auto_upgrade(buy_tili=upgrade_kwargs.setdefault("buy_tili", daily_tili),
+                                            buy_sucai=upgrade_kwargs.setdefault("buy_sucai", True),
+                                            do_rank=upgrade_kwargs.setdefault("do_rank", True),
+                                            do_shuatu=upgrade_kwargs.setdefault("do_shuatu", True),
+                                            do_kaihua=upgrade_kwargs.setdefault("do_kaihua", True),
+                                            do_zhuanwu=upgrade_kwargs.setdefault("do_zhuanwu", False),
+                                            count=upgrade_kwargs.setdefault("count", 5),
+                                            sortby=upgrade_kwargs.setdefault("sortby", team_order),
+                                            getzhiyuan=True if zhiyuan_mode != 0 else False, var=var)
+
+                            var["upgraded"] = True
+                            record_ds(ds)
+                            mv.save()
+                            self.log.write_log("info", "自动升级结束，重新尝试刷图。")
+                            self.restart_this_task()
+                        else:
+                            self.log.write_log("info", f"战败于{m}{a}-{b}，已经升级过角色还打不过，放弃啦。")
+                            self.lock_home()
+                            return "return"
+
+                    else:
+                        self.log.write_log("info", f"战败于{m}{a}-{b}，重试该图！")
+                        raise RetryNow("DOIT")
+
                 nonlocal t  # 该关剩余次数
                 if t == 0:
                     return "continue"  # 这关不用再刷了。
-                M: FightInfoZhuXian = S.click_xy_and_open_fightinfo(x, y)
+                M: AfterGotoFightInfoScene = S.click_xy_and_open_fightinfo(x, y, typ=AfterGotoFightInfoScene)
                 if M is None:
                     if can_not_enter_action == "exit":
                         self.log.write_log("info", f"无法进入图{m}{a}-{b}！结束刷图。")
@@ -1288,171 +1365,249 @@ class ShuatuMixin(ShuatuBaseMixin):
                         return "return"
                     elif can_not_enter_action == "skip":
                         self.log.write_log("info", f"无法进入图{m}{a}-{b}！跳过该图。")
-                        return "continue"
+                        return "continue"  
                 S.clear_initFC()  # 清除可可罗的检测
-                if m in ['H', 'VH']:
-                    # 碎片目标检测
-                    if tg != inf:
-                        first_cnt = M.get_first_item_count()
-                        if first_cnt >= tg:
-                            self.log.write_log("info", f"图{m}{a}-{b}已经有{first_cnt}/{tg}个目标碎片，不刷啦！")
-                            return "continue"
-                sc = self.getscreen()
-                stars = M.get_upperright_stars(sc)
-                if debug: self.log.write_log("debug", f"星数：{stars}")
-                if stars == 3:
-                    # 可以扫荡
-                    # 次数判断：对Hard图
-                    max_cishu = t  # 目标：刷t次
-                    if m in ["H", "VH"]:
-                        cishu = M.get_cishu(sc)
-                        if cishu == 0:
-                            # 不能扫荡，没有次数
-                            if ori_t > 3:
-                                # 试图买次数
-                                cishu_return = M.buy_cishu()
-                                if cishu_return:
-                                    # 购买成功
-                                    cishu = 3
+                if isinstance(M, FightInfoZhuXian):
+                    if m in ['H', 'VH']:
+                        # 碎片目标检测
+                        if tg != inf:
+                            first_cnt = M.get_first_item_count()
+                            if first_cnt >= tg:
+                                self.log.write_log("info", f"图{m}{a}-{b}已经有{first_cnt}/{tg}个目标碎片，不刷啦！")
+                                return "continue"
+                    sc = self.getscreen()
+                    stars = M.get_upperright_stars(sc)
+                    if debug: self.log.write_log("debug", f"星数：{stars}")
+                    if stars == 3:
+                        # 可以扫荡
+                        # 次数判断：对Hard图
+                        max_cishu = t  # 目标：刷t次
+                        if m in ["H", "VH"]:
+                            cishu = M.get_cishu(sc)
+                            if cishu == 0:
+                                # 不能扫荡，没有次数
+                                if ori_t > 3:
+                                    # 试图买次数
+                                    cishu_return = M.buy_cishu()
+                                    if cishu_return:
+                                        # 购买成功
+                                        cishu = 3
+                                        ds[mode][f"{a}-{b}"] = 3
+                                        record_ds(ds)
+                                    else:
+                                        # 购买失败，可能已经买过了
+                                        ds[mode][f"{a}-{b}"] = 6
+                                        record_ds(ds)
+                                        self.fclick(1, 1)
+                                        self.log.write_log("info", f"{m}{a}-{b}已经买过次数，不能再刷更多了！")
+                                        return "continue"
+                                else:
                                     ds[mode][f"{a}-{b}"] = 3
                                     record_ds(ds)
-                                else:
-                                    # 购买失败，可能已经买过了
-                                    ds[mode][f"{a}-{b}"] = 6
-                                    record_ds(ds)
                                     self.fclick(1, 1)
-                                    self.log.write_log("info", f"{m}{a}-{b}已经买过次数，不能再刷更多了！")
+                                    self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
                                     return "continue"
-                            else:
-                                ds[mode][f"{a}-{b}"] = 3
-                                record_ds(ds)
+                            max_cishu = min(cishu, max_cishu)
+                        self._zdzb_info = ""  # 记录失败原因
+                        # 扫荡券判断：最多还能扫荡几次
+                        quan = M.get_saodangquan(sc)
+                        if quan < max_cishu:
+                            self._zdzb_info = "noquan"
+                            if quan == 0:
+                                self.log.write_log("warning", "已经没有扫荡券了！终止刷图。")
+                                self.lock_home()
+                                return "return"
+                            self.log.write_log("warning", f"扫荡券可能不足，只能支持刷{quan}次了。")
+                            max_cishu = quan
+
+                        # 体力判断：最多还能进行几次
+                        left_tili = M.get_tili_left(sc)
+                        one_tili = LoadPCRData().get_map_tili(mode, a, b)
+                        max_cishu_tili = floor(left_tili / one_tili)
+                        bought_tili = False
+                        while max_cishu_tili < max_cishu:
+                            # 体力不足：可以选择买体力倒是。
+                            if ds["buy_tili"] < daily_tili:
+                                # 可以！买体力！
                                 self.fclick(1, 1)
+                                bought_tili = True
+                                S.goto_buytili().OK().OK()
+                                ds["buy_tili"] += 1
+                                record_ds(ds)
+                                self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{daily_tili}")
+                                left_tili += 120
+                                max_cishu_tili = floor(left_tili / one_tili)
+                            else:
+                                # 已经……买不动了
+                                if daily_tili > 0:
+                                    self.log.write_log("info", f"已经消耗完全部的买体力次数了。")
+                                self._zdzb_info = "notili"
+                                if max_cishu_tili == 0:
+                                    self.log.write_log("info", "已经一点体力都不剩了！终止刷图。")
+                                    self.stop_shuatu()
+                                    self.lock_home()
+                                    return "return"
+                                else:
+                                    self.log.write_log("info", f"剩下的体力只够刷{max_cishu_tili}次了！")
+                                break
+                        if bought_tili:
+                            # 买过体力之后要重新进图
+                            S.click_xy_and_open_fightinfo(x, y)
+                        max_cishu = min(max_cishu, max_cishu_tili)
+                        # 扫荡
+                        true_cishu = max_cishu
+                        M.set_saodang_cishu(true_cishu, one_tili=one_tili, left_tili=left_tili, sc=self.last_screen)
+                        SD = M.goto_saodang()  # 扫荡确认
+                        SD = SD.OK()  # 扫荡结果
+                        # 记录
+                        ds[mode][f"{a}-{b}"] += true_cishu
+                        record_ds(ds)
+                        MsgList = SD.OK()  # 扫荡后的一系列MsgBox
+                        MsgList.exit_all(xianding)  # 退出全部
+                        # 扫荡结束
+                        # 保险起见
+                        self.fclick(1, 1)
+                        if true_cishu < t:
+                            self.log.write_log("info", f"{m}{a}-{b}刷图剩余次数：{t - true_cishu}")
+                            t -= true_cishu
+                            raise ContinueNow("DOIT")
+                        else:
+                            self.log.write_log("info", f"{m}{a}-{b}刷图成功！")
+                    else:
+                        # 特判
+                        if stars == 0:
+                            if zero_star_action == "exit":
+                                self.log.write_log("info", f"{m}{a}-{b}尚未通关，终止刷图！")
+                                self.lock_home()
+                                return "return"
+                            elif zero_star_action == "skip":
+                                self.log.write_log("info", f"{m}{a}-{b}尚未通关，跳过刷图！")
+                                for _ in range(6):
+                                    self.click(1, 1)
+                                return "continue"
+                        if stars < 3:
+                            if not_three_star_action == "exit":
+                                self.log.write_log("info", f"{m}{a}-{b}尚未三星，终止刷图！")
+                                self.lock_home()
+                                return "return"
+                            elif not_three_star_action == "skip":
+                                self.log.write_log("info", f"{m}{a}-{b}尚未三星，跳过刷图！")
+                                for _ in range(6):
+                                    self.click(1, 1)
+                                return "continue"
+                        # 次数判断：对Hard图
+                        if m in ["H", "VH"]:
+                            cishu = M.get_cishu(sc)
+                            if cishu == 0:
+                                # 不能扫荡，没有次数
+                                ds["hard"][f"{a}-{b}"] = 3
+                                record_ds(ds)
+                                for _ in range(6):
+                                    self.click(1, 1)
                                 self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
                                 return "continue"
-                        max_cishu = min(cishu, max_cishu)
-                    self._zdzb_info = ""  # 记录失败原因
-                    # 扫荡券判断：最多还能扫荡几次
-                    quan = M.get_saodangquan(sc)
-                    if quan < max_cishu:
-                        self._zdzb_info = "noquan"
-                        if quan == 0:
-                            self.log.write_log("warning", "已经没有扫荡券了！终止刷图。")
-                            self.lock_home()
-                            return "return"
-                        self.log.write_log("warning", f"扫荡券可能不足，只能支持刷{quan}次了。")
-                        max_cishu = quan
-
-                    # 体力判断：最多还能进行几次
-                    left_tili = M.get_tili_left(sc)
-                    one_tili = LoadPCRData().get_map_tili(mode, a, b)
-                    max_cishu_tili = floor(left_tili / one_tili)
-                    bought_tili = False
-                    while max_cishu_tili < max_cishu:
-                        # 体力不足：可以选择买体力倒是。
-                        if ds["buy_tili"] < daily_tili:
-                            # 可以！买体力！
-                            self.fclick(1, 1)
-                            bought_tili = True
-                            S.goto_buytili().OK().OK()
-                            ds["buy_tili"] += 1
-                            record_ds(ds)
-                            self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{daily_tili}")
-                            left_tili += 120
-                            max_cishu_tili = floor(left_tili / one_tili)
-                        else:
-                            # 已经……买不动了
-                            if daily_tili > 0:
-                                self.log.write_log("info", f"已经消耗完全部的买体力次数了。")
-                            self._zdzb_info = "notili"
-                            if max_cishu_tili == 0:
+                        # 体力判断：至少得有一次体力，否则就买
+                        left_tili = M.get_tili_left(sc)
+                        one_tili = LoadPCRData().get_map_tili(mode, a, b)
+                        bought_tili = False
+                        if left_tili < one_tili:
+                            # 体力不足：可以选择买体力倒是。
+                            if ds["buy_tili"] < daily_tili:
+                                # 可以！买体力！
+                                for _ in range(6):
+                                    self.click(1, 1)
+                                bought_tili = True
+                                S.goto_buytili().OK().OK()
+                                ds["buy_tili"] += 1
+                                record_ds(ds)
+                                self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{daily_tili}")
+                            else:
+                                # 已经……买不动了
                                 self.log.write_log("info", "已经一点体力都不剩了！终止刷图。")
                                 self.stop_shuatu()
                                 self.lock_home()
                                 return "return"
-                            else:
-                                self.log.write_log("info", f"剩下的体力只够刷{max_cishu_tili}次了！")
-                            break
-                    if bought_tili:
-                        # 买过体力之后要重新进图
-                        S.click_xy_and_open_fightinfo(x, y)
-                    max_cishu = min(max_cishu, max_cishu_tili)
-                    # 扫荡
-                    true_cishu = max_cishu
-                    M.set_saodang_cishu(true_cishu, one_tili=one_tili, left_tili=left_tili, sc=self.last_screen)
-                    SD = M.goto_saodang()  # 扫荡确认
-                    SD = SD.OK()  # 扫荡结果
-                    # 记录
-                    ds[mode][f"{a}-{b}"] += true_cishu
-                    record_ds(ds)
-                    MsgList = SD.OK()  # 扫荡后的一系列MsgBox
-                    MsgList.exit_all(xianding)  # 退出全部
-                    # 扫荡结束
-                    # 保险起见
-                    self.fclick(1, 1)
-                    if true_cishu < t:
-                        self.log.write_log("info", f"{m}{a}-{b}刷图剩余次数：{t - true_cishu}")
-                        t -= true_cishu
-                        raise ContinueNow("DOIT")
-                    else:
-                        self.log.write_log("info", f"{m}{a}-{b}刷图成功！")
-                else:
-                    # 特判
-                    if stars == 0:
-                        if zero_star_action == "exit":
-                            self.log.write_log("info", f"{m}{a}-{b}尚未通关，终止刷图！")
+                        if bought_tili:
+                            # 买过体力之后要重新进图
+                            S.click_xy_and_open_fightinfo(x, y)
+                        # 体力次数都够了，进入挑战
+                        TZ = M.goto_tiaozhan()
+                        # 设置支援
+                        select_result = TZ.select_team_with_zhiyuan(team_order, zhiyuan_mode)
+                        if (select_result == 'return'):
                             self.lock_home()
-                            return "return"
-                        elif zero_star_action == "skip":
-                            self.log.write_log("info", f"{m}{a}-{b}尚未通关，跳过刷图！")
-                            for _ in range(6):
-                                self.click(1, 1)
-                            return "continue"
-                    if stars < 3:
-                        if not_three_star_action == "exit":
-                            self.log.write_log("info", f"{m}{a}-{b}尚未三星，终止刷图！")
-                            self.lock_home()
-                            return "return"
-                        elif not_three_star_action == "skip":
-                            self.log.write_log("info", f"{m}{a}-{b}尚未三星，跳过刷图！")
-                            for _ in range(6):
-                                self.click(1, 1)
-                            return "continue"
-                    # 次数判断：对Hard图
-                    if m in ["H", "VH"]:
-                        cishu = M.get_cishu(sc)
-                        if cishu == 0:
-                            # 不能扫荡，没有次数
-                            ds["hard"][f"{a}-{b}"] = 3
+                            return 'return'
+                        # 进入战斗
+                        F = TZ.goto_fight()
+                        During = F.get_during()
+                        F.set_auto(1, screen=self.last_screen)
+                        F.set_set(1, screen=self.last_screen)
+                        F.set_speed(2, max_level=2, screen=self.last_screen)
+                        state = {"flag": None}
+                        last_time = time.time()
+
+                        while True:
+                            if time.time() - last_time > 300:
+                                # TOO LONG
+                                raise LockTimeoutError("战斗超时！")
+                            time.sleep(1)
+                            out = During.check()
+                            if out is None:
+                                continue
+                            if isinstance(out, During.KKRQianBao):
+                                out.set_and_ok()
+                            if isinstance(out, During.LoveUpScene):
+                                out.skip()
+                            if isinstance(out, During.LevelUpBox):
+                                out.OK()
+                            if isinstance(out, During.FightingLoseZhuXian):
+                                state["flag"] = "lose"
+                                out.goto_zhuxian(type(S))
+                                break
+                            if isinstance(out, During.FightingWinZhuXian):
+                                state["flag"] = "win"
+                                state["star"] = out.get_star()
+                                state["next"] = out.get_after()
+                                out.next()
+                                break
+                            if isinstance(out, During.TuanDuiZhanBox):
+                                out.OK()
+                            if isinstance(out, During.FightingDialog):
+                                out.skip()
+                            if isinstance(out, During.HaoYouMsg):
+                                out.exit_with_off()
+                            if isinstance(out, During.AutoAdvanceEndBox):                         
+                                out.OK()
+                                state["flag"] = "win"
+                                state["next"] = out.get_after()
+                                break
+                            if isinstance(out,During.AutoAdvanceStopBox):
+                                out.OK()
+                        if state["flag"] == "win":
+                            # 记录
+                            ds[mode][f"{a}-{b}"] += 1
                             record_ds(ds)
-                            for _ in range(6):
-                                self.click(1, 1)
-                            self.log.write_log("info", f"{m}{a}-{b}已经不能再刷更多了！")
-                            return "continue"
-                    # 体力判断：至少得有一次体力，否则就买
-                    left_tili = M.get_tili_left(sc)
-                    one_tili = LoadPCRData().get_map_tili(mode, a, b)
-                    bought_tili = False
-                    if left_tili < one_tili:
-                        # 体力不足：可以选择买体力倒是。
-                        if ds["buy_tili"] < daily_tili:
-                            # 可以！买体力！
-                            for _ in range(6):
-                                self.click(1, 1)
-                            bought_tili = True
-                            S.goto_buytili().OK().OK()
-                            ds["buy_tili"] += 1
-                            record_ds(ds)
-                            self.log.write_log("info", f"体力不足，购买体力{ds['buy_tili']}/{daily_tili}")
+                        if state["flag"] == "win" and state["star"] < 3 and win_without_threestar_is_lose:
+                            self.log.write_log("info", f"没有三星通关（{state['star']}/3），算作失败！")
+                            state["flag"] = "lose"
+                            next = state["next"]
+                            jiesuan(next)
+                        if state["flag"] == "lose":
+                            return handle_lose(lose_action)
                         else:
-                            # 已经……买不动了
-                            self.log.write_log("info", "已经一点体力都不剩了！终止刷图。")
-                            self.stop_shuatu()
-                            self.lock_home()
-                            return "return"
-                    if bought_tili:
-                        # 买过体力之后要重新进图
-                        S.click_xy_and_open_fightinfo(x, y)
-                    # 体力次数都够了，进入挑战
+                            # 战胜了！
+                            self.log.write_log("info", f"战胜了{m}{a}-{b} ({state['star']}/3)！")
+                            last_time = time.time()
+                            next = state["next"]
+                            jiesuan(next)
+                            # 开init
+                            S.set_initFC()
+                            # 手刷结束
+                            t -= 1
+                        raise ContinueNow("DOIT")  # 把t次刷完
+                elif isinstance(M, FightInfoZhuxianSP):
+                    if M.is_clear():
+                        return 'continue'
                     TZ = M.goto_tiaozhan()
                     # 设置支援
                     select_result = TZ.select_team_with_zhiyuan(team_order, zhiyuan_mode)
@@ -1463,41 +1618,10 @@ class ShuatuMixin(ShuatuBaseMixin):
                     F = TZ.goto_fight()
                     During = F.get_during()
                     F.set_auto(1, screen=self.last_screen)
+                    F.set_set(1, screen=self.last_screen)
                     F.set_speed(2, max_level=2, screen=self.last_screen)
                     state = {"flag": None}
                     last_time = time.time()
-
-                    def jiesuan(next: AfterFightingWin):
-                        while True:
-                            if time.time() - last_time > 120:
-                                raise LockTimeoutError("在结算页面超时！")
-                            out = next.check()
-                            if out is None:
-                                break
-                            if isinstance(out, next.KKRQianBao):
-                                out.set_and_ok()
-                            if isinstance(out, next.XianDingShangDianBox):
-                                # 限定商店
-                                if xianding:
-                                    out.buy_all()
-                                else:
-                                    out.Cancel()
-                            if isinstance(out, next.TuanDuiZhanBox):
-                                out.OK()
-                            if isinstance(out, next.LevelUpBox):
-                                out.OK()
-                                self.start_shuatu()  # 体力又有了！
-                            if isinstance(out, next.ChaoChuShangXianBox):
-                                out.OK()
-                            if isinstance(out, next.AfterFightKKR):
-                                out.skip()
-                                # 再次进图
-                                self.get_zhuye().goto_maoxian().goto_zhuxian()
-                                break
-                            if isinstance(out, next.FightingWinZhuXian2):
-                                # 外出后可能还有Box，需要小心谨慎
-                                out.next()
-
                     while True:
                         if time.time() - last_time > 300:
                             # TOO LONG
@@ -1506,24 +1630,15 @@ class ShuatuMixin(ShuatuBaseMixin):
                         out = During.check()
                         if out is None:
                             continue
-                        if isinstance(out, During.KKRQianBao):
-                            out.set_and_ok()
-                        if isinstance(out, During.LoveUpScene):
-                            out.skip()
-                        if isinstance(out, During.LevelUpBox):
-                            out.OK()
                         if isinstance(out, During.FightingLoseZhuXian):
                             state["flag"] = "lose"
                             out.goto_zhuxian(type(S))
                             break
                         if isinstance(out, During.FightingWinZhuXian):
                             state["flag"] = "win"
-                            state["star"] = out.get_star()
                             state["next"] = out.get_after()
                             out.next()
                             break
-                        if isinstance(out, During.TuanDuiZhanBox):
-                            out.OK()
                         if isinstance(out, During.FightingDialog):
                             out.skip()
                         if isinstance(out, During.HaoYouMsg):
@@ -1532,54 +1647,11 @@ class ShuatuMixin(ShuatuBaseMixin):
                         # 记录
                         ds[mode][f"{a}-{b}"] += 1
                         record_ds(ds)
-                    if state["flag"] == "win" and state["star"] < 3 and win_without_threestar_is_lose:
-                        self.log.write_log("info", f"没有三星通关（{state['star']}/3），算作失败！")
-                        state["flag"] = "lose"
-                        next = state["next"]
-                        jiesuan(next)
                     if state["flag"] == "lose":
-                        if lose_action == "exit":
-                            self.log.write_log("info", f"战败于{m}{a}-{b}，结束刷图！")
-                            self.lock_home()
-                            return "return"
-                        elif lose_action == "skip":
-                            self.log.write_log("info", f"战败于{m}{a}-{b}，跳过该图！")
-                            return "continue"
-                        elif lose_action == "upgrade":
-                            if var["upgraded"] is False:
-                                self.log.write_log("info", f"战败于{m}{a}-{b}，尝试升级角色再次刷图！")
-                                if team_order not in ['zhanli', 'dengji', 'xingshu', 'shoucang']:
-                                    self.log.write_log("error",
-                                                       f"战败自动升级中，team_order只能为zhanli/dengji/xingshu/shoucang！终止刷图。")
-                                    self.lock_home()
-                                    return "return"
-
-                                self.auto_upgrade(buy_tili=upgrade_kwargs.setdefault("buy_tili", daily_tili),
-                                                  buy_sucai=upgrade_kwargs.setdefault("buy_sucai", True),
-                                                  do_rank=upgrade_kwargs.setdefault("do_rank", True),
-                                                  do_shuatu=upgrade_kwargs.setdefault("do_shuatu", True),
-                                                  do_kaihua=upgrade_kwargs.setdefault("do_kaihua", True),
-                                                  do_zhuanwu=upgrade_kwargs.setdefault("do_zhuanwu", False),
-                                                  count=upgrade_kwargs.setdefault("count", 5),
-                                                  sortby=upgrade_kwargs.setdefault("sortby", team_order),
-                                                  getzhiyuan=True if zhiyuan_mode != 0 else False, var=var)
-
-                                var["upgraded"] = True
-                                record_ds(ds)
-                                mv.save()
-                                self.log.write_log("info", "自动升级结束，重新尝试刷图。")
-                                self.restart_this_task()
-                            else:
-                                self.log.write_log("info", f"战败于{m}{a}-{b}，已经升级过角色还打不过，放弃啦。")
-                                self.lock_home()
-                                return "return"
-
-                        else:
-                            self.log.write_log("info", f"战败于{m}{a}-{b}，重试该图！")
-                            raise RetryNow("DOIT")
+                        return handle_lose(lose_action)
                     else:
                         # 战胜了！
-                        self.log.write_log("info", f"战胜了{m}{a}-{b} ({state['star']}/3)！")
+                        self.log.write_log("info", f"战胜了{m}{a}-{b}！")
                         last_time = time.time()
                         next = state["next"]
                         jiesuan(next)
@@ -1974,7 +2046,6 @@ class ShuatuMixin(ShuatuBaseMixin):
 
     def tui_wz(self, code="01", team_order="none", if_full=2, get_zhiyuan=False):
         self.lock_home()
-
         if code == "08" or code == "12":
             self.log.write_log("error", f"由于场景限制，暂不支持外传08和外传12的自动推图！")
             return

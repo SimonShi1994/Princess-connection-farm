@@ -334,6 +334,16 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2025/04/15 By SilentSelene
+
+- 惯例更新
+  - 活动`连结这片碧蓝 直至少女到达天际`
+  - 主线`63`图
+  - 提前增加了一些H图和VH图的坐标
+- 功能优化
+  - 探险检测event可能会点到庆典图标，现改为点击屏幕中间
+  - 主线手动推图时增加对S图的处理
+
 2025/02/26 By SilentSelene
 
 - 惯例更新

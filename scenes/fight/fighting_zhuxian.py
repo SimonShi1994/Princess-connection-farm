@@ -226,6 +226,7 @@ class AfterFightingWin(PossibleSceneList):
         self.FightingWinZhuXian2 = FightingWinZhuXian2
         self.HaoYouMsg = HaoYouMsg
         self.LoveUpScene = LoveUpScene
+        self.AfterFightReward = AfterFightReward
 
         scene_list = [
             self.KKRQianBao(a),
@@ -237,6 +238,7 @@ class AfterFightingWin(PossibleSceneList):
             HaoYouMsg(a),
             FightingWinZhuXian2(a),
             AfterFightKKR(a),  # kkr剧情跳脸
+            AfterFightReward(a),  # 63图以后的SP和EX战斗奖励窗口
         ]
         super().__init__(a, scene_list, double_check=3)
 
@@ -271,6 +273,15 @@ class FightingWinZhuXian2(FightingWinBase):
         time.sleep(5)
         self.click(829, 485, post_delay=1)
 
+class AfterFightReward(PCRMsgBoxBase):
+    # 63图以后的SP和EX战斗奖励窗口
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "AfterFightReward"
+        self.feature = self.fun_feature_exist(MAOXIAN_BTN["reward"])    
+        
+    def OK(self):
+        self.click_btn(MAOXIAN_BTN["close"]) 
 
 class FightingLoseZhuXian(FightingLoseBase):
     def __init__(self, *args, **kwargs):
@@ -300,4 +311,7 @@ class AutoAdvanceEndBox(PCRMsgBoxBase):
         
     def next(self):
         time.sleep(5)
-        self.click(829, 485, post_delay=1)     
+        self.click(829, 485, post_delay=1) 
+
+    def get_after(self):
+        return AfterFightingWin(self._a)        
