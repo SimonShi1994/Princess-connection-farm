@@ -134,7 +134,8 @@ MAIN_BTN = {
     # 体力购买
     "tili_plus": p(320, 31),
     # 体力购买ok
-    "tili_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
+    # "tili_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
+    "tili_ok": p(587, 477, img="img/ui/queren_blue.bmp", at=(560, 460, 615, 494)),
     # 体力购买完成ok
     "tili_ok2": p(480, 369, img="img/ui/queren.bmp", at=(382, 351, 578, 390)),
 
@@ -563,6 +564,8 @@ FIGHT_BTN = {
     "speed_1": p(910, 490, img="img/fight/speed_1.bmp", at=(894, 476, 932, 511)),
     "speed_0": p(910, 490, img="img/fight/speed_0.bmp", at=(895, 478, 928, 510)),
     "speed_2": p(911, 495, img="img/fight/speed_2.bmp", at=(893, 477, 931, 511)),
+    "set_on": p(914, 343, img="img/fight/set_on.bmp", at=(897, 327, 931, 360)),
+    "set_off": p(913, 342, img="img/fight/set_off.bmp", at=(897, 326, 930, 359)),
     "empty": {
         # 并不是包住整个格子的，只取了其中的一部分
         # 地下城中，各自下面有进度条，因此格子会上移。
@@ -638,6 +641,7 @@ FIGHT_BTN = {
         },
     "tiaozhan": p(839, 456, img="img/ui/tiaozhan.bmp", at=(788, 444, 889, 467)),
     "tiaozhan2": p(839, 453, img="img/ui/tiaozhan2.bmp", at=(814, 440, 865, 466)),
+    "tiaozhan_sp": p(790, 457, img="img/ui/tiaozhan.bmp", at=(756, 439, 824, 475)),
     # 应对周年庆UI变动，删除xiayibu2 的 at=(785, 477, 870, 505)
     "xiayibu2": p(829, 490, img="img/ui/xiayibu2.bmp"),  # 短的下一步，用于“战利品”界面
     # 应对周年庆UI变动，删除xiayibu 的 at=(729, 465, 939, 521)
@@ -666,6 +670,8 @@ FIGHT_BTN = {
     "quxiao": p(582, 477, img="img/fight/quxiao.bmp", at=(560, 464, 605, 491)),
     "no_tili_2": p(438, 401, img="img/fight/no_tili_2.bmp", at=(409, 382, 467, 420)),
     "saodangjieguo": p(478, 42, img="img/fight/saodangjieguo.bmp", at=(432, 26, 524, 59)),
+    "quest_content": p(89, 279, img="img/fight/quest_content.bmp", at=(71, 260, 108, 298)),
+    "clear": p(556, 177, img="img/fight/clear.bmp", at=(525, 168, 588, 186)),
 }
 
 SHOP_BTN = {
@@ -1299,6 +1305,61 @@ HARD_COORD = {
         2: p(489, 313, name="H58-2"),
         3: p(758, 286, name="H58-3"),
     },
+    63: {
+        1: p(200, 237, name="H63-1"),
+        2: p(487, 315, name="H63-2"),
+        3: p(754, 276, name="H63-3"),
+    }, 
+    64: {
+        1: p(208, 235, name="H64-1"),
+        2: p(491, 311, name="H64-2"),
+        3: p(756, 286, name="H64-3"),
+    },
+    65: {
+        1: p(196, 241, name="H65-1"),
+        2: p(483, 319, name="H65-2"),
+        3: p(756, 286, name="H65-3"),
+    },       
+    66: {
+        1: p(202, 237, name="H66-1"),
+        2: p(491, 313, name="H66-2"),
+        3: p(758, 282, name="H66-3"),
+    },
+    67: {
+        1: p(235, 351, name="H67-1"),
+        2: p(483, 317, name="H67-2"),
+        3: p(698, 274, name="H67-3"),
+    },  
+    68: {
+        1: p(419, 361, name="H68-1"),
+        2: p(587, 293, name="H68-2"),
+        3: p(762, 334, name="H68-3"),
+    }, 
+    69: {
+        1: p(181, 290, name="H69-1"),
+        2: p(483, 218, name="H69-2"),
+        3: p(740, 328, name="H69-3"),
+    },  
+    70: {
+        1: p(177, 291, name="H70-1"),
+        2: p(481, 216, name="H70-2"),
+        3: p(742, 328, name="H70-3"),
+    }, 
+    71: {
+        1: p(243, 392, name="H71-1"),
+        2: p(481, 214, name="H71-2"),
+        3: p(742, 320, name="H71-3"),
+    },  
+    72: {
+        1: p(233, 270, name="H72-1"),
+        2: p(483, 320, name="H72-2"),
+        3: p(709, 237, name="H72-3"),
+    }, 
+    73: {
+        1: p(177, 290, name="H73-1"),
+        2: p(479, 220, name="H73-2"),
+        3: p(727, 222, name="H73-3"),
+    },                       
 }
 
 VH_COORD = {
@@ -1407,6 +1468,16 @@ VH_COORD = {
         2: p(489, 313, name="VH65-2"),
         3: p(760, 276, name="VH65-3"),
     },
+    67: {
+        1: p(233, 346, name="VH67-1"),
+        2: p(483, 317, name="VH67-2"),
+        3: p(700, 272, name="VH67-3"),
+    },  
+    68: {
+        1: p(419, 357, name="VH68-1"),
+        2: p(585, 286, name="VH68-2"),
+        3: p(760, 324, name="VH68-3"),
+    },      
 }
 
 MAOXIAN_BTN = {
@@ -1434,8 +1505,10 @@ MAOXIAN_BTN = {
     "zaicitiaozhan": p(658, 489, img="img/maoxian/zaicitiaozhan.bmp", at=(592, 475, 723, 505)),
     "chongshi_ok": p(590, 370, img="img/ui/ok_btn_1.bmp", at=(488, 346, 692, 394)),
     "no_tili": p(img="img/maoxian/no_tili.bmp", at=(429, 242, 518, 287)),
-    "buytili_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
-    "buytili_quxiao": p(371, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
+    # "buytili_ok": p(587, 370, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
+    "buytili_ok": p(587, 477, img="img/ui/queren_blue.bmp", at=(560, 460, 615, 494)),
+    # "buytili_quxiao": p(371, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
+    "buytili_quxiao": p(370, 476, img="img/ui/quxiao.bmp", at=(336, 462, 404, 491)),
     "buytili_ok2": p(480, 369, img="img/ui/queren.bmp", at=(382, 351, 578, 390)),
     "tlhf": p(img="img/maoxian/tlhf.bmp", at=(434, 137, 524, 157)),
     "tili_success": p(img="img/maoxian/tili_success.bmp", at=(262, 274, 404, 335)),
@@ -1492,6 +1565,8 @@ MAOXIAN_BTN = {
     "guankayilan": p(481, 42, img="img/maoxian/guankayilan.bmp", at=(437, 28, 526, 57)),
     "tanxian": p(560, 319, img="img/maoxian/tanxian.bmp", at=(539, 308, 582, 330)),
     "story_dialog": p(480, 131, img="img/maoxian/story_dialog.bmp", at=(468, 119, 492, 143)),
+    "reward": p(474, 77, img="img/maoxian/reward.bmp", at=(413, 68, 535, 86)),
+    "close": p(477, 471, img="img/ui/close_btn_1.bmp", at=(456, 460, 498, 482)),
 }
 
 TANXIAN_BTN = {
@@ -1578,6 +1653,7 @@ ZHUXIAN_ID = {
     60: p(img="img/zhuxian/60L.bmp", at=(59, 55, 181, 77)),
     61: p(img="img/zhuxian/61L.bmp", at=(61, 57, 175, 74)),
     62: p(img="img/zhuxian/62L.bmp", at=(62, 58, 176, 75)),
+    63: p(img="img/zhuxian/63L.bmp", at=(62, 58, 196, 75)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1674,6 +1750,10 @@ ZHUXIAN_KWDST_ID = {
     61: p(img="img/zhuxian/61R.bmp", at=(192, 59, 229, 76)),
 }
 
+ZHUXIAN_APLYJD_ID = {
+    63: p(img="img/zhuxian/63R.bmp", at=(215, 60, 250, 75)),
+}
+
 ZHUXIAN_SECOND_ID = {
     (18, 19): ZHUXIAN_XXXYY_ID,
     (20, 21): ZHUXIAN_KSTLYSL_ID,
@@ -1697,6 +1777,7 @@ ZHUXIAN_SECOND_ID = {
     (56, 57): ZHUXIAN_ALKSSD_ID,
     (58, 59): ZHUXIAN_KLSML_ID,
     (60, 61): ZHUXIAN_KWDST_ID,
+    (63,): ZHUXIAN_APLYJD_ID,
 }
 
 NORMAL_COORD = {
@@ -2953,7 +3034,28 @@ NORMAL_COORD = {
             2: p(324, 189, name="62-2"),
             1: p(189, 216, name="62-1"),
         },
-    },    
+    },
+    63: {
+        "right": {
+            15: p(744, 340, name="63-10"),
+            14: p(640, 226, name="63-S5"),
+            13: p(531, 274, name="63-9"),
+            12: p(609, 351, name="63-S4"),
+            11: p(444, 351, name="63-8"),
+            10: p(419, 218, name="63-7"),
+            9: p(338, 303, name="63-6"),
+        },
+        "left": {
+            8: p(887, 200, name="63-5"),
+            7: p(752, 299, name="63-S3"),
+            6: p(874, 340, name="63-4"),
+            5: p(653, 380, name="63-S2"),
+            4: p(436, 406, name="63-3"),
+            3: p(547, 344, name="63-S1"),
+            2: p(632, 264, name="63-2"),
+            1: p(545, 173, name="63-1"),
+        },
+    },      
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),

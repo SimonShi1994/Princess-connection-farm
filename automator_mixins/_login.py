@@ -64,6 +64,8 @@ class LoginMixin(ToolsMixin):
         if self.d(resourceId="com.bilibili.priconne:id/tv_gsc_record_item_name").exists():
             ids = self.d.xpath('//*[@resource-id="com.bilibili.priconne:id/tv_gsc_record_item_name"]').all()
             return [i.text for i in ids]
+        else:
+            return []
 
     @DEBUG_RECORD
     def do_login_precheck(self, is_autofill=True, is_switch=False):

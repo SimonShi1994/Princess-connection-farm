@@ -7,6 +7,9 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20250415": Map20250415,
+        "20250331": Map20250331,
+        "20250316": Map20240229,
         "20250226": Map20250226,
         "20250210": Map20240207,
         "20250205": Map20240131,
@@ -107,6 +110,36 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+
+class Map20250415(HuodongMapBase):
+    N_slice = 2
+    N1 = 5
+    NAME = "连结这片碧蓝 直至少女到达天际"
+    XY11 = (146, 319)
+    XY21 = (218, 350)
+    XY_VH_BOSS = (845, 297)
+    HARD_COORD = {
+        1: (86, 311),
+        2: (249, 230),
+        3: (305, 392),
+        4: (525, 396),
+        5: (696, 255),
+    }
+    XINLAI = False
+
+class Map20250331(HuodongMapBase):
+    N_slice = 1
+    NAME = "Dears欢迎回来与我回来了的约定"
+    XY11 = (165, 278)
+    XY_VH_BOSS = (845, 303)
+    HARD_COORD = {
+        1: (150, 410),
+        2: (349, 413),
+        3: (462, 228),
+        4: (520, 398),
+        5: (663, 266),
+    }
+    XINLAI = False
 
 class Map20250226(HuodongMapBase):
     N_slice = 1

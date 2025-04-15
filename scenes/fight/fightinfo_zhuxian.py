@@ -1,6 +1,20 @@
+import time
 from DataCenter import LoadPCRData
+from core.constant import FIGHT_BTN
+from scenes.fight.fightbianzu_zhuxian import FightBianZuZhuXian
 from scenes.fight.fightinfo_base import FightInfoBase
+from scenes.scene_base import PCRMsgBoxBase, PossibleSceneList
 
+class AfterGotoFightInfoScene(PossibleSceneList):
+    def __init__(self, a):
+        msgbox_list = [
+            FightInfoZhuXian(a),
+            FightInfoZhuxianSP(a),
+
+        ]
+        self.FightInfoZhuXian = FightInfoZhuXian
+        self.FightInfoZhuxianSP = FightInfoZhuxianSP
+        super().__init__(a,msgbox_list)    
 
 class FightInfoZhuXian(FightInfoBase):
     def __init__(self, *args, **kwargs):
@@ -30,6 +44,22 @@ class FightInfoZhuXianNormal(FightInfoZhuXian):
             return False
         else:
             return True
+
+class FightInfoZhuxianSP(PCRMsgBoxBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.scene_name = "FightInfoZhuxianSP"
+        self.feature = self.fun_feature_exist(FIGHT_BTN["quest_content"])
+        
+    def goto_tiaozhan(self) -> FightBianZuZhuXian:
+        return self.goto(FightBianZuZhuXian, self.fun_click(FIGHT_BTN["tiaozhan_sp"]))
+
+    def is_clear(self, screen=None):
+        time.sleep(1)
+        if screen is None:
+            screen = self.getscreen()
+        return self.is_exists(FIGHT_BTN["clear"])          
+
 
 
 

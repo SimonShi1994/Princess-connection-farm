@@ -19,6 +19,11 @@ class FightingBase(PCRSceneBase):
             screen = self.getscreen()
         self._a.set_fight_speed(level, max_level, screen, max_retry)
 
+    def set_set(self, set, screen=None, max_retry=3):
+        if screen is None:
+            screen = self.getscreen()
+        self._a.set_fight_set(set, screen, max_retry)        
+
     def auto_and_fast(self, max_speed):
         self.set_auto(1, self.last_screen)
         self.set_speed(max_speed, max_speed, self.last_screen)

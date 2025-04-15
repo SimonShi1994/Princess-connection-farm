@@ -468,6 +468,8 @@ class PCRData:
         if mode == "veryhard":
             return 20
         mid = self.get_map_id(mode, A, B)
+        if mid not in self.MInfo:
+            return 10
         return self.MInfo[mid]['tili']
 
     def calc_equip_decompose(self, equip_id, num=1, store={}, copy=True):

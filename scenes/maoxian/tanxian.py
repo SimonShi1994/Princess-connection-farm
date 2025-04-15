@@ -1,5 +1,6 @@
 import time
 from core.constant import MAIN_BTN, DXC_ELEMENT, TANXIAN_BTN
+from core.pcr_checker import LockTimeoutError
 from scenes.scene_base import PCRSceneBase, PossibleSceneList
 from ..root.seven_btn import SevenBTNMixin
 
@@ -22,49 +23,25 @@ class TanXianMenu(SevenBTNMixin):
         self.initFC = lambda FC: FC.getscreen().add_sidecheck(self._a.juqing_kkr)
     
     def handle_event(self):
+        counter = 0
         while True:
-            time.sleep(5)
-            counter = 0
+            time.sleep(5)       
             if self.is_exists(TANXIAN_BTN["event_notice"], threshold=0.7):     
                 self.click(TANXIAN_BTN["event_notice"])
                 counter += 1
-                if counter >=4:
+                if counter > 6:
                     # 避免死循环
                     self.log.write_log("warning", "event识别有问题，跳出")
                     return
-                time.sleep(1)
-                r_list = self.img_where_all(TANXIAN_BTN["event_map"].img, method="sq")
-                if len(r_list) == 0:
-                    # 特殊事件,数量太少没怎么测过
-                    self.log.write_log("info", "有特殊事件")
-                    event_sp_pos = self.img_where_all(TANXIAN_BTN["event_map_sp"].img, method="sq")
-                    if len(event_sp_pos) > 0:
-                        self.fclick(event_sp_pos[0] - 10, event_sp_pos[1] - 55)
-                        while True:
-                            time.sleep(3)
-                            # 有些特殊事件有跳过
-                            if self.click_skip():
-                                break 
-                            # 没跳过的选第一个选项   
-                            lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp")
-                            if len(lst) > 0:
-                                self.click(int(lst[0]), int(lst[1]))
-                                break
-                    else:
-                        # 以后会出的另一种事件
-                        event_white_pos = self.img_where_all(TANXIAN_BTN["event_map_white"].img, method="sq")
-                        if len(event_white_pos) > 0:
-                            self.fclick(event_white_pos[0] - 10, event_white_pos[1] - 55)
-                            while True:
-                                time.sleep(3)
-                                if self.click_skip():
-                                    break 
-                else:
-                    self.fclick(r_list[0] - 10, r_list[1] - 55)
-                    while True:
-                        time.sleep(3)
-                        if self.click_skip():
-                            break
+                time.sleep(2)
+                self.lock_no_img(TANXIAN_BTN["adventure_dest"], elseclick=(480, 270), elsedelay=1)
+                last_time = time.time()
+                while True:
+                    if time.time() - last_time > 90:
+                        raise LockTimeoutError("事件处理超时！")
+                    time.sleep(1)
+                    if self.click_skip():
+                        break
                 self.lock_img(TANXIAN_BTN["adventure_dest"], elseclick=(1, 1), elsedelay=1)        
                 continue
             else:
@@ -73,6 +50,10 @@ class TanXianMenu(SevenBTNMixin):
         self.log.write_log("info","event处理完毕!") 
 
     def click_skip(self):
+        lst = self.img_where_all(img="img/juqing/xuanzezhi_1.bmp")
+        if len(lst) > 0:
+            self.click(int(lst[0]), int(lst[1]))
+            return True
         if self.is_exists(TANXIAN_BTN["skip"]):
             self.click_btn(TANXIAN_BTN["skip"])
             return True

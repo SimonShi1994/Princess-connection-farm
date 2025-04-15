@@ -252,6 +252,54 @@ class FightBaseMixin(ToolsMixin):
                 raise ContinueNow()
 
         return fun()
+    
+    @DEBUG_RECORD
+    def get_fight_set(self, screen=None, max_retry=3) -> int:
+        """
+        获取当前是否开着set
+        :param: screen 第一次检测用的截图
+        :param max_retry: 最大重试次数
+        :return:
+            -1：识别失败
+            0：未开
+            1：开了
+        """
+        SET_DICT = {
+            0: FIGHT_BTN["set_off"],
+            1: FIGHT_BTN["set_on"],
+        }
+        out = self.check_dict_id(SET_DICT, screen, max_retry=max_retry)
+        if out is None:
+            return -1
+        else:
+            return out
+        
+    @DEBUG_RECORD
+    def set_fight_set(self, set, screen=None, max_retry=3) -> bool:
+        """
+        调节set开关
+        :param set: 0：关闭 1：开启
+        :param: screen 第一次检测用的截图
+        :param max_retry: 最大重试次数
+        :return:
+            True 设置成功
+            False 可能未设置成功
+        """
+
+        @PCRRetry(delay=0.5, max_retry=max_retry, raise_return=False)
+        def fun():
+            nonlocal screen
+            out = self.get_fight_set(screen, 3)
+            if out == -1:
+                raise RetryNow()
+            if out == set:
+                return True
+            else:
+                self.click(FIGHT_BTN["set_on"], post_delay=1.5)  # 避免涟漪影响
+                screen = self.getscreen()
+                raise ContinueNow()
+
+        return fun()        
 
     @DEBUG_RECORD
     def set_fight_team(self, bianzu, duiwu):
