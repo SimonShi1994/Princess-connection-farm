@@ -161,12 +161,12 @@ class ZhuXianBase(SevenBTNMixin):
 
 
     def Drag_Right(self):
-        self._a.d.touch.down(600, 120).sleep(0.1).move(200, 120).sleep(0.2).up(200, 120)
+        self._a.d.touch.down(700, 120).sleep(0.1).move(200, 120).sleep(0.2).up(200, 120)
         # self.d.drag(600, 270, 200, 270, 0.1)  # 拖拽到最右
         time.sleep(self._a.change_time)
 
     def Drag_Left(self):
-        self._a.d.touch.down(200, 120).sleep(0.1).move(600, 120).sleep(0.2).up(600, 120)
+        self._a.d.touch.down(200, 120).sleep(0.1).move(700, 120).sleep(0.2).up(700, 120)
         # self.d.drag(200, 270, 600, 270, 0.1)  # 拖拽到最左
         time.sleep(self._a.change_time)
 

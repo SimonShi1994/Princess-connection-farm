@@ -1629,6 +1629,14 @@ class ShuatuBaseMixin(FightBaseMixin):
         at = (x - size, y - size, x + size, y + size)
         if self.is_exists(MAOXIAN_BTN["lock"], screen=screen, at=at):
             return True
+    
+    def _exist_hard(self, x, y, screen=None):
+        at = (x - 60, y + 30, x + 30, y + 60)
+        try:
+            self.ocr_int(*at, screen_shot=screen)
+            return True
+        except Exception as e:
+            return False
 
     @DEBUG_RECORD
     def get_next_normal_id(self):
@@ -1688,7 +1696,7 @@ class ShuatuBaseMixin(FightBaseMixin):
             cnt = 0
             for i in range(1, len(use_dict[tu])+1):
                 x, y = use_dict[tu][i]
-                if self._exist_lock(x, y, screen=sc):
+                if not self._exist_hard(x, y, screen=sc) or self._exist_lock(x, y, screen=sc):
                     cnt += 1
             return cnt
 

@@ -1,4 +1,5 @@
 from core.constant import MAIN_BTN
+from scenes.caravan.caravan import AfterGoToCaravan, CaravanMenu, FirstEnterCaravan
 from scenes.root.seven_btn import SevenBTNMixin
 from scenes.scene_base import PossibleSceneList
 
@@ -13,6 +14,13 @@ class WoDeZhuYe(SevenBTNMixin):
 
         self.initFC = None
         self.feature = feature
+    
+    def goto_caravan(self) -> "CaravanMenu":
+        out = self.goto(AfterGoToCaravan, gotofun=self.fun_click(MAIN_BTN["caravan"]))
+        if isinstance(out, FirstEnterCaravan):
+            return out.skip()
+        if isinstance(out, CaravanMenu):
+            return out
 
 
 class ZhuYePossibleMsgBox(PossibleSceneList):

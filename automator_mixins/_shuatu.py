@@ -1539,6 +1539,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             return 'return'
                         # 进入战斗
                         F = TZ.goto_fight()
+                        is_auto_advance = TZ.is_auto_advance
                         During = F.get_during()
                         F.set_auto(1, screen=self.last_screen)
                         F.set_set(1, screen=self.last_screen)
@@ -1547,7 +1548,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                         last_time = time.time()
 
                         while True:
-                            if time.time() - last_time > 300:
+                            if time.time() - last_time > 600:
                                 # TOO LONG
                                 raise LockTimeoutError("战斗超时！")
                             time.sleep(1)
@@ -1564,7 +1565,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                                 state["flag"] = "lose"
                                 out.goto_zhuxian(type(S))
                                 break
-                            if isinstance(out, During.FightingWinZhuXian):
+                            if isinstance(out, During.FightingWinZhuXian) and not is_auto_advance:
                                 state["flag"] = "win"
                                 state["star"] = out.get_star()
                                 state["next"] = out.get_after()
@@ -1579,6 +1580,7 @@ class ShuatuMixin(ShuatuBaseMixin):
                             if isinstance(out, During.AutoAdvanceEndBox):                         
                                 out.OK()
                                 state["flag"] = "win"
+                                state["star"] = 3
                                 state["next"] = out.get_after()
                                 break
                             if isinstance(out,During.AutoAdvanceStopBox):
@@ -1663,7 +1665,7 @@ class ShuatuMixin(ShuatuBaseMixin):
 
             self.fclick(1, 1)
             cmd = DOIT()
-            self.fclick(1, 1)
+            self.fclick(1, 1, 10)
             if cmd == "continue":
                 continue
             elif cmd == "return":

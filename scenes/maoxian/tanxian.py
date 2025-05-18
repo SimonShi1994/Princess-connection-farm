@@ -29,7 +29,7 @@ class TanXianMenu(SevenBTNMixin):
             if self.is_exists(TANXIAN_BTN["event_notice"], threshold=0.7):     
                 self.click(TANXIAN_BTN["event_notice"])
                 counter += 1
-                if counter > 6:
+                if counter > 9:
                     # 避免死循环
                     self.log.write_log("warning", "event识别有问题，跳出")
                     return

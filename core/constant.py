@@ -116,6 +116,8 @@ MAIN_BTN = {
     "renwu": p(837, 432),
     # 日程表
     "schedule": p(762, 432),
+    # 驾车游
+    "caravan": p(616, 435),
     # 可可萝日程表的特征
     "kokkoro_schedule_feat": p(479, 118, img="img/home/kokkoro_schedule_feat.bmp", at=(348, 96, 610, 140)),
     # 一键自动日程表
@@ -895,6 +897,76 @@ DXC_ELEMENT = {
     "d1_queren_blue": p(588, 371, img="img/ui/queren_blue.bmp"),
     "sheding": p(478, 443, img="img/dxc/sheding.bmp"),
 }
+CARAVAN_BTN = {
+    # 丢骰子
+    "peko_dice": p(884, 373, img="img/caravan/peko_dice.bmp", at=(834, 352, 934, 395)),
+    # 食用料理
+    "dish": p(739, 401, img="img/caravan/dish.bmp", at=(702, 379, 776, 424)),   
+    # 里程币
+    "mile": p(665, 23, img="img/caravan/mile.bmp", at=(656, 14, 675, 32)),
+    # 持有的料理
+    "dish_list": p(483, 42, img="img/caravan/dish_list.bmp", at=(429, 30, 538, 54)),
+    # 食用
+    "eat": p(393, 282, img="img/caravan/eat.bmp", at=(374, 272, 412, 293)),
+    # 食用确认
+    "eat_confirm": p(479, 42, img="img/caravan/eat_confirm.bmp", at=(437, 29, 522, 55)),
+    # 确认食用(效果覆盖时出现)
+    "confirm_eat": p(478, 42, img="img/caravan/confirm_eat.bmp", at=(435, 30, 522, 54)),
+    # 游戏
+    "game": p(77, 53, img="img/caravan/game.bmp", at=(26, 15, 129, 92)),
+    # 开始游戏
+    "game_start": p(858, 490, img="img/caravan/game_start.bmp", at=(830, 480, 886, 501)),
+    # 距离检查点
+    "goal_distance": p(img="img/caravan/goal_distance.bmp"),
+    # 事件跳过
+    "skip": p(898, 38, img="img/caravan/skip.bmp", at=(869, 25, 927, 52)),
+    # 里程商店
+    "mile_shop": p(478, 39, img="img/caravan/mile_shop.bmp", at=(438, 29, 519, 50)),
+    # 一键购买
+    "buy_all": p(816, 473, img="img/caravan/buy_all.bmp", at=(775, 461, 858, 485)),
+    # 购买完毕
+    "finish_buying": p(478, 42, img="img/caravan/finish_buying.bmp", at=(435, 30, 522, 55)),
+    # 全选
+    "select_all": p(764, 125, img="img/caravan/select_all.bmp", at=(745, 116, 783, 135)),
+    # 游戏暂停
+    "pause": p(912, 28, img="img/caravan/pause.bmp", at=(894, 17, 930, 40)),
+    # 结果
+    "game_result": p(794, 47, img="img/caravan/game_result.bmp", at=(784, 33, 805, 62)),
+    # 里程扭蛋
+    "gacha": p(482, 42, img="img/caravan/gacha.bmp", at=(439, 30, 526, 54)),
+    # 持有里程
+    "holding_mile": p(309, 322, img="img/caravan/holding_mile.bmp", at=(267, 311, 351, 333)),
+    # 料理and宝藏
+    "slot": p(480, 72, img="img/caravan/slot.bmp", at=(431, 62, 530, 83)),
+    # 确认投掷骰子
+    "throw_dice": p(588, 368, img="img/caravan/throw_dice.bmp", at=(556, 356, 621, 381)),
+    # 一键出售
+    "sell_all": p(476, 478, img="img/caravan/sell_all.bmp", at=(433, 466, 519, 490)),
+    # 出售确认
+    "sell_confirm": p(479, 42, img="img/caravan/sell_confirm.bmp", at=(436, 30, 522, 54)),
+    # 出售完毕
+    "finish_selling": p(478, 42, img="img/caravan/finish_selling.bmp", at=(437, 31, 520, 53)),
+    # 鉴定结果
+    "result": p(478, 42, img="img/caravan/result.bmp", at=(430, 30, 527, 55)),
+    # 结算
+    "summary": p(90, 88, img="img/caravan/summary.bmp", at=(54, 49, 127, 127)),
+}
+CARAVAN_GACHA_POS = {
+    1: p(200, 382),
+    2: p(471, 386),
+    3: p(756, 382),
+}
+CARAVAN_GACHA_COST = {
+    1: 0,
+    2: 1500,
+    3: 3000,
+}
+CARAVAN_SELL_DISH_POS = {
+    1: p(450, 164),
+    2: p(884, 166),
+    3: p(450, 344),
+    4: p(884, 344),
+}
 DXC_NUM = {
     # 没有OCR用此来检测层数
     1: {
@@ -1510,7 +1582,7 @@ MAOXIAN_BTN = {
     # "buytili_quxiao": p(371, 370, img="img/ui/quxiao.bmp", at=(274, 352, 468, 388)),
     "buytili_quxiao": p(370, 476, img="img/ui/quxiao.bmp", at=(336, 462, 404, 491)),
     "buytili_ok2": p(480, 369, img="img/ui/queren.bmp", at=(382, 351, 578, 390)),
-    "tlhf": p(img="img/maoxian/tlhf.bmp", at=(434, 137, 524, 157)),
+    "tlhf": p(478, 42, img="img/maoxian/tlhf.bmp", at=(436, 30, 521, 55)),
     "tili_success": p(img="img/maoxian/tili_success.bmp", at=(262, 274, 404, 335)),
     "no_cishu": p(img="img/maoxian/no_cishu.bmp", at=(400, 229, 541, 289)),
     "chaochushangxian": p(img="img/maoxian/chaochushangxian.bmp", at=(343, 207, 602, 232)),
@@ -1653,7 +1725,9 @@ ZHUXIAN_ID = {
     60: p(img="img/zhuxian/60L.bmp", at=(59, 55, 181, 77)),
     61: p(img="img/zhuxian/61L.bmp", at=(61, 57, 175, 74)),
     62: p(img="img/zhuxian/62L.bmp", at=(62, 58, 176, 75)),
-    63: p(img="img/zhuxian/63L.bmp", at=(62, 58, 196, 75)),
+    63: p(img="img/zhuxian/63L.bmp", at=(63, 59, 196, 74)),
+    64: p(img="img/zhuxian/64L.bmp", at=(63, 58, 196, 74)),
+    65: p(img="img/zhuxian/65L.bmp", at=(62, 59, 160, 75)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -1750,8 +1824,13 @@ ZHUXIAN_KWDST_ID = {
     61: p(img="img/zhuxian/61R.bmp", at=(192, 59, 229, 76)),
 }
 
-ZHUXIAN_APLYJD_ID = {
-    63: p(img="img/zhuxian/63R.bmp", at=(215, 60, 250, 75)),
+ZHUXIAN_DNHHJD_ID = {
+    63: p(img="img/zhuxian/63R.bmp", at=(215, 59, 249, 74)),
+    64: p(img="img/zhuxian/64R.bmp", at=(217, 59, 250, 75)),
+}
+
+ZHUXIAN_BFCB_ID = {
+    65: p(img="img/zhuxian/65R.bmp", at=(179, 58, 233, 76)),
 }
 
 ZHUXIAN_SECOND_ID = {
@@ -1777,7 +1856,8 @@ ZHUXIAN_SECOND_ID = {
     (56, 57): ZHUXIAN_ALKSSD_ID,
     (58, 59): ZHUXIAN_KLSML_ID,
     (60, 61): ZHUXIAN_KWDST_ID,
-    (63,): ZHUXIAN_APLYJD_ID,
+    (63, 64): ZHUXIAN_DNHHJD_ID,
+    (65,): ZHUXIAN_BFCB_ID,
 }
 
 NORMAL_COORD = {
@@ -3054,8 +3134,46 @@ NORMAL_COORD = {
             3: p(547, 344, name="63-S1"),
             2: p(632, 264, name="63-2"),
             1: p(545, 173, name="63-1"),
+        },      
+    },    
+    64: {
+        "right": {
+            14: p(632, 189, name="64-10"),
+            13: p(514, 216, name="64-S4"),
+            12: p(576, 324, name="64-9"),
+            11: p(425, 311, name="64-S3"),
+            10: p(376, 175, name="64-8"),
+            9: p(311, 286, name="64-7"),
+            8: p(218, 175, name="64-6"),
         },
-    },      
+        "left": {
+            7: p(829, 191, name="64-5"),
+            6: p(829, 326, name="64-S2"),
+            5: p(734, 280, name="64-4"),
+            4: p(647, 379, name="64-S1"),
+            3: p(678, 179, name="64-3"),
+            2: p(601, 276, name="64-2"),
+            1: p(452, 330, name="64-1"),
+        },
+    },   
+    65: {
+        "right": {
+            12: p(584, 266, name="65-10"),
+            11: p(365, 197, name="65-9"),
+            10: p(206, 311, name="65-8"),
+            9: p(249, 179, name="65-7"),
+            8: p(121, 226, name="65-6"),
+        },
+        "left": {
+            7: p(537, 303, name="65-5"),
+            6: p(539, 160, name="65-S2"),
+            5: p(431, 220, name="65-4"),
+            4: p(427, 342, name="65-S1"),
+            3: p(324, 170, name="65-3"),
+            2: p(258, 305, name="65-2"),
+            1: p(154, 382, name="65-1"),
+        },
+    },        
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),
