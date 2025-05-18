@@ -7,6 +7,8 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20250515": Map20250515,
+        "20250430": Map20250430,
         "20250415": Map20250415,
         "20250331": Map20250331,
         "20250316": Map20240229,
@@ -110,6 +112,38 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+class Map20250515(HuodongMapBase):
+    N_slice = 2
+    N1 = 5
+    NAME = "排干大间海水大作战 秘密主义者与禁断之海"
+    XY11 = (107, 276)
+    XY21 = (138, 181)
+    XY_VH_BOSS = (752, 210)
+    HARD_COORD = {
+        1: (65, 218),
+        2: (105, 404),
+        3: (293, 226),
+        4: (388, 411),
+        5: (460, 235),
+    }
+    XINLAI = False
+
+
+
+class Map20250430(HuodongMapBase):
+    N_slice = 1
+    NAME = "吸血鬼传闻 夜与美的盛宴"
+    XY11 = (138, 363)
+    XY_VH_BOSS = (825, 251)
+    HARD_COORD = {
+        1: (86, 293),
+        2: (191, 400),
+        3: (332, 228),
+        4: (514, 231),
+        5: (616, 319),
+    }
+    XINLAI = False
+
 
 class Map20250415(HuodongMapBase):
     N_slice = 2

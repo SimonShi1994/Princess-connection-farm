@@ -8,6 +8,8 @@ from core.cv import UIMatcher
 from core.pcr_checker import RetryNow, PCRRetry, LockMaxRetryError
 from core.pcr_config import force_as_ocr_as_possible
 from core.utils import diff_6hour, diff_5_12hour, diffday
+from scenes.caravan.caravan import CaravanMenu, FirstEnterCaravan
+from scenes.caravan.caravan_event import *
 from ._shuatu_base import ShuatuBaseMixin
 
 
@@ -846,6 +848,7 @@ class RoutineMixin(ShuatuBaseMixin):
             self.log.write_log("info", "日常已完成")
         elif self.is_exists(MAIN_BTN["start_schedule"], threshold=0.975):
             self.click_btn(MAIN_BTN["start_schedule"])
+            last_time = time.time()
 
             # checking possible buttons
             while True:
@@ -856,6 +859,9 @@ class RoutineMixin(ShuatuBaseMixin):
                 # 普通扭蛋 收取道具 -白色关闭
                 # 特殊情况1 双场没打，显示跳过失败，点白色确认
                 # 总结：点蓝色确认 白色确认 白色关闭
+                if time.time() - last_time > 90:
+                    self.log.write_log("warning", "日程表处理时间过长，跳过！")
+                    break
 
                 time.sleep(2)
                 screen = self.getscreen()
@@ -936,6 +942,57 @@ class RoutineMixin(ShuatuBaseMixin):
                     self.log.write_log("info","探险处理完毕!")
                     break
         self.fclick(1, 1)
+        self.lock_home()
+    
+    def caravan(self, eat_dish=False, buy_shop=False, gacha=1):
+        self.lock_home()
+        Car = self.get_zhuye().goto_caravan()          
+        time.sleep(3)
+        while Car.have_dice():
+            if eat_dish:   
+                if self.is_exists(CARAVAN_BTN["dish"], is_black=True, black_threshold=2500):
+                    self.log.write_log("info", "没有料理了！")
+                else:        
+                    eat_confirm = Car.goto_dishmenu().eat_first()
+                    if eat_confirm is not None:
+                        eat_confirm.ok()          
+            dice = Car.throw_dice()
+            last_time = time.time()
+            while True:
+                time.sleep(1)
+                if time.time() - last_time > 90:
+                    raise Exception("投骰子处理时间过长！")                
+                out = dice.check()
+                if out is None:
+                    self.click(1, 1)
+                if isinstance(out, ConfirmThrowDice):
+                    out.confirm()
+                if isinstance(out, Fork):
+                    out.select_fork()            
+                if isinstance(out, Event):
+                    out.skip()
+                if isinstance(out, MileShop):
+                    if buy_shop:
+                        out.buy_all()
+                    out.close()
+                if isinstance(out, Game):
+                    out.goto_gaming()
+                if isinstance(out, Gaming):
+                    out.play()
+                if isinstance(out, GameResult):
+                    out.next()
+                if isinstance(out, Gacha):
+                    out.do_gacha(gacha)
+                if isinstance(out, Slot):
+                    out.next()
+                if isinstance(out, DishOverflow):
+                    out.sell_all()
+                if isinstance(out, GoalTreasure):
+                    out.next()
+                if isinstance(out, GoalSummary):
+                    out.close()
+                if isinstance(out, CaravanMenu):
+                    break                               
         self.lock_home()
 
 

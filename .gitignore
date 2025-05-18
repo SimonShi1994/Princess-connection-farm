@@ -34,6 +34,8 @@ ocrfix/
 poetry.lock
 rank_window.bmp
 zhuxian_title.bmp
+test.bmp
+CanNotEnter*.bmp
 
 # 测试用文件夹
 /test/
