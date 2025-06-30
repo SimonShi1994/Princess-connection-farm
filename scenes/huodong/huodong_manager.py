@@ -7,6 +7,9 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20250630": Map20250630,
+        "20250615": Map20240731,
+        "20250530": Map20250530,
         "20250515": Map20250515,
         "20250430": Map20250430,
         "20250415": Map20250415,
@@ -112,6 +115,36 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+class Map20250630(HuodongMapBase):
+    N_slice = 1
+    NAME = "魔法师的青春日常 魔法学院与奇迹之钟"
+    XY11 = (187, 380)
+    XY_VH_BOSS = (835, 278)
+    HARD_COORD = {
+        1: (105, 270),
+        2: (264, 402),
+        3: (434, 390),
+        4: (496, 228),
+        5: (645, 278),
+    }
+    XINLAI = False 
+
+class Map20250530(HuodongMapBase):
+    N_slice = 2
+    N1 = 9
+    NAME = "战栗幽奇海岸 夏日度假村惊悚怪谈"
+    XY11 = (107, 332)
+    XY21 = (167, 204)
+    XY_VH_BOSS = (835, 309)
+    HARD_COORD = {
+        1: (113, 330),
+        2: (237, 187),
+        3: (433, 231),
+        4: (549, 313),
+        5: (684, 224),
+    }
+    XINLAI = True
+
 class Map20250515(HuodongMapBase):
     N_slice = 2
     N1 = 5
