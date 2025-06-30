@@ -1,17 +1,4 @@
-'''
-Description: 
-Author: clm
-Date: 2025-05-16 15:01:44
-LastEditors: clm
-LastEditTime: 2025-05-18 13:06:03
-'''
-'''
-Description: 
-Author: clm
-Date: 2025-05-16 15:01:44
-LastEditors: clm
-LastEditTime: 2025-05-16 16:23:07
-'''
+from typing import Union
 from core.constant import CARAVAN_BTN, MAIN_BTN
 from scenes.caravan.caravan_event import *
 from scenes.root.seven_btn import SevenBTNMixin
@@ -52,9 +39,9 @@ class CaravanMenu(SevenBTNMixin):
     def goto_dishmenu(self) -> "CaravanDishMenu":
         return self.goto(CaravanDishMenu, gotofun=self.fun_click(CARAVAN_BTN["dish"]), use_in_feature_only=True)
     
-    def throw_dice(self) -> "AfterThrowDice":
+    def throw_dice(self, buy_shop, gacha) -> "AfterThrowDice":
         self.click_btn(CARAVAN_BTN["peko_dice"])
-        return AfterThrowDice(self._a)
+        return AfterThrowDice(self._a, buy_shop, gacha)
 
 class CaravanDishMenu(PCRSceneBase):
     def __init__(self, *args, **kwargs):
@@ -88,8 +75,8 @@ class EatConfirm(PCRSceneBase):
         self.lock_img(CARAVAN_BTN["peko_dice"], elseclick=(1, 1), elsedelay=1)
 
 class AfterThrowDice(PossibleSceneList):
-    def __init__(self, a):
-        self.ConfirmThrowDice = ConfirmThrowDice(a)
+    def __init__(self, a, buy_shop, gacha):
+        self.ConfirmThrowDice = ConfirmThrowDice
         self.Fork = Fork
         self.Gacha = Gacha
         self.MileShop = MileShop
@@ -105,8 +92,8 @@ class AfterThrowDice(PossibleSceneList):
         scene_list = [
             ConfirmThrowDice(a),
             Fork(a),
-            Gacha(a),
-            MileShop(a),
+            Gacha(a, gacha),
+            MileShop(a, buy_shop),
             Game(a),
             Gaming(a),
             GameResult(a),
@@ -118,6 +105,9 @@ class AfterThrowDice(PossibleSceneList):
             CaravanMenu(a),
         ]
         super().__init__(a, scene_list, double_check=0.)
+        
+    def check(self, double_check=None, check_double_scene=None, timeout=None, max_retry=None, no_scene_feature=None) -> Union["CaravanEvent", "CaravanMenu"]:
+        return super().check(double_check, check_double_scene, timeout, max_retry, no_scene_feature)
 
 class AfterGoToCaravan(PossibleSceneList):
     def __init__(self, a):

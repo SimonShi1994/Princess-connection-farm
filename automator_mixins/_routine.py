@@ -956,7 +956,7 @@ class RoutineMixin(ShuatuBaseMixin):
                     eat_confirm = Car.goto_dishmenu().eat_first()
                     if eat_confirm is not None:
                         eat_confirm.ok()          
-            dice = Car.throw_dice()
+            dice = Car.throw_dice(buy_shop, gacha)
             last_time = time.time()
             while True:
                 time.sleep(1)
@@ -965,34 +965,10 @@ class RoutineMixin(ShuatuBaseMixin):
                 out = dice.check()
                 if out is None:
                     self.click(1, 1)
-                if isinstance(out, ConfirmThrowDice):
-                    out.confirm()
-                if isinstance(out, Fork):
-                    out.select_fork()            
-                if isinstance(out, Event):
-                    out.skip()
-                if isinstance(out, MileShop):
-                    if buy_shop:
-                        out.buy_all()
-                    out.close()
-                if isinstance(out, Game):
-                    out.goto_gaming()
-                if isinstance(out, Gaming):
-                    out.play()
-                if isinstance(out, GameResult):
-                    out.next()
-                if isinstance(out, Gacha):
-                    out.do_gacha(gacha)
-                if isinstance(out, Slot):
-                    out.next()
-                if isinstance(out, DishOverflow):
-                    out.sell_all()
-                if isinstance(out, GoalTreasure):
-                    out.next()
-                if isinstance(out, GoalSummary):
-                    out.close()
+                if isinstance(out, CaravanEvent):
+                    out.handle() 
                 if isinstance(out, CaravanMenu):
-                    break                               
+                    break                             
         self.lock_home()
 
 
