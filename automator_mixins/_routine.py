@@ -398,6 +398,50 @@ class RoutineMixin(ShuatuBaseMixin):
         ts["buyexp"] = time.time()
         self.AR.set("time_status", ts)
         self.lock_home()
+        
+    def buyExpTimes(self, times, qianghuashi=False, var={}):
+        def reset_shop():
+            self.lock_img(SHOP_BTN["reset_confirm"], elseclick=(574, 439), elsedelay=1)
+            self.lock_no_img(SHOP_BTN["reset_confirm"], elseclick=(590, 369), elsedelay=1)
+        
+        mv = movevar(var)
+        if "cur" in var:
+            self.log.write_log("info", f"断点恢复：已经购买了{var['cur']}次经验，即将购买剩余{times - var['cur']}次。")
+        else:
+            var.setdefault("cur", 0)
+                    
+        # 进入商店
+        self.lock_home()
+
+        self.lock_no_img(MAIN_BTN["liwu"], elseclick=(688, 430), elsedelay=5)
+        self.lock_img(SHOP_BTN["tongchang"], elseclick=SHOP_BTN["tongchang"], elsedelay=1)
+
+        if qianghuashi:
+            self.click(700, 120, post_delay=0.5)
+        else:
+            self.click(332, 120, post_delay=0.5)
+        if self.is_exists(SHOP_BTN["select_all"],is_black=True,black_threshold=250):
+            reset_shop()
+        while var["cur"] < times:
+            at = (764, 15, 916, 37)
+            mana = self.ocr_int(*at)
+            if mana < 4800000:
+                self.log.write_log("info", "没法全买了,结束吧")
+                break
+
+            self.click(860, 124, post_delay=0.5)
+            self.click(791, 436, post_delay=1)
+            self.click(593, 471, post_delay=0.5)
+            self.lock_img(SHOP_BTN["buy_finish"])
+            self.lock_no_img(SHOP_BTN["buy_finish"], elseclick=(478, 480), elsedelay=1)
+            reset_shop()
+            var["cur"] += 1
+            mv.save()
+            time.sleep(2)
+            
+        del var["cur"]
+        mv.save()
+        self.lock_home()        
 
     def buyXDShop(self, buy_exp=True, buy_equip=True):
         # 不检测diffday，直接检测限定商店为空/为满/无物可买
