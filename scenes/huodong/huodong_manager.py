@@ -7,6 +7,10 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20250829": Map20250829,
+        "20250814": Map20250814,
+        "20250730": Map20250730,
+        "20250715": Map20250715,
         "20250630": Map20250630,
         "20250615": Map20240731,
         "20250530": Map20250530,
@@ -115,6 +119,65 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+class Map20250829(HuodongMapBase):
+    N_slice = 2
+    N1 = 7
+    NAME = "迎春梦想家们!新年陨石岁岁平安!?"
+    XY11 = (90, 334)
+    XY21 = (156, 268)
+    XY_VH_BOSS = (661, 191)
+    HARD_COORD = {
+        1: (92, 251),
+        2: (177, 406),
+        3: (363, 400),
+        4: (512, 317),
+        5: (748, 319),
+    }
+    XINLAI = False 
+   
+class Map20250814(HuodongMapBase):
+    N_slice = 1
+    N1 = 10
+    NAME = "Cry·Baby Christmas 为谁存在的幸福之日"
+    XY11 = (160, 278)
+    XY_VH_BOSS = (829, 291)
+    HARD_COORD = {
+        1: (102, 375),
+        2: (282, 413),
+        3: (434, 367),
+        4: (539, 220),
+        5: (644, 338),
+    }
+    XINLAI = False 
+
+class Map20250730(HuodongMapBase):
+    N_slice = 1
+    NAME = "Criminal Rookie 天使们的悖论"
+    XY11 = (169, 210)
+    XY_VH_BOSS = (827, 276)
+    HARD_COORD = {
+        1: (111, 197),
+        2: (224, 361),
+        3: (429, 384),
+        4: (545, 231),
+        5: (661, 311),
+    }
+    XINLAI = False 
+    
+class Map20250715(HuodongMapBase):
+    N_slice = 1
+    NAME = "浪漫萨拉萨莉亚 沙漠的新娘与不可思议的神灯"
+    XY11 = (148, 386)
+    XY_VH_BOSS = (837, 299)
+    HARD_COORD = {
+        1: (150, 402),
+        2: (353, 408),
+        3: (462, 231),
+        4: (525, 392),
+        5: (665, 259),
+    }
+    XINLAI = False 
+    
 class Map20250630(HuodongMapBase):
     N_slice = 1
     NAME = "魔法师的青春日常 魔法学院与奇迹之钟"

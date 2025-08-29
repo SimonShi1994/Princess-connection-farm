@@ -469,8 +469,9 @@ class PCRData:
             return 20
         mid = self.get_map_id(mode, A, B)
         if mid not in self.MInfo:
-            return 10
-        return self.MInfo[mid]['tili']
+            return 20 if mode == "hard" else 10
+        stamina = self.MInfo[mid]['tili']
+        return stamina if stamina > 0 else 10
 
     def calc_equip_decompose(self, equip_id, num=1, store={}, copy=True):
         """

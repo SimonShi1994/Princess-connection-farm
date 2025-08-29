@@ -1,6 +1,6 @@
  <img src="webclient/src/assets/logo.jpg" width = "80%" height = "80%" alt="LOGO" align=center />
 
-# Princess connection 公主连结农场脚本v2.8.20250630
+# Princess connection 公主连结农场脚本v2.8.20250829
 
 
 ![](https://img.shields.io/badge/license-GPL--3.0-blue)![](https://img.shields.io/badge/opencv-2.0-blue)![](https://img.shields.io/badge/UIAutomator-2-blue)
@@ -333,6 +333,17 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 
 <details>
 <summary>更新日志（点击展开）</summary>
+
+2025/08/29 By SilentSelene
+
+- 惯例更新
+  - 活动更新
+  - 主线`67,68`图
+- 功能优化
+  - 每个模拟器启动间隔三秒以免报错
+  - 驾车游添加伙伴事件处理
+  - 扭蛋界面增加对精选角色的处理
+  - 探险增加宝塔的处理
 
 2025/06/30 By SilentSelene
 

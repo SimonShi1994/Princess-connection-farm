@@ -40,6 +40,7 @@ class CaravanMenu(SevenBTNMixin):
         return self.goto(CaravanDishMenu, gotofun=self.fun_click(CARAVAN_BTN["dish"]), use_in_feature_only=True)
     
     def throw_dice(self, buy_shop, gacha) -> "AfterThrowDice":
+        self.lock_img(CARAVAN_BTN["peko_dice"], elseclick=(1, 1), elsedelay=1)
         self.click_btn(CARAVAN_BTN["peko_dice"])
         return AfterThrowDice(self._a, buy_shop, gacha)
 
@@ -89,6 +90,9 @@ class AfterThrowDice(PossibleSceneList):
         self.GoalTreasure = GoalTreasure
         self.GoalSummary = GoalSummary
         self.CaravanMenu = CaravanMenu
+        self.AddDiceEvent = AddDiceEvent
+        self.SelectDiceEvent = SelectDiceEvent
+        self.RerollDiceEvent = RerollDiceEvent
         scene_list = [
             ConfirmThrowDice(a),
             Fork(a),
@@ -103,6 +107,9 @@ class AfterThrowDice(PossibleSceneList):
             GoalTreasure(a),
             GoalSummary(a),
             CaravanMenu(a),
+            AddDiceEvent(a),
+            SelectDiceEvent(a),
+            RerollDiceEvent(a)
         ]
         super().__init__(a, scene_list, double_check=0.)
         

@@ -44,6 +44,12 @@ class TanXianMenu(SevenBTNMixin):
                         break
                 self.lock_img(TANXIAN_BTN["adventure_dest"], elseclick=(1, 1), elsedelay=1)        
                 continue
+            elif self.is_exists(TANXIAN_BTN["event_notice_sp"], threshold=0.7):
+                self.click(TANXIAN_BTN["event_notice_sp"]) 
+                time.sleep(2)
+                self.lock_no_img(TANXIAN_BTN["adventure_dest"], elseclick=(480, 270), elsedelay=1)
+                self.lock_img(TANXIAN_BTN["adventure_dest"], elseclick=[TANXIAN_BTN["skip2"], (218,333)])
+                                  
             else:
                 self.log.write_log("info","无事件")  
                 break 

@@ -169,6 +169,36 @@ class RoutineMixin(ShuatuBaseMixin):
                             self.log.write_log("info", "设定附奖完成。")
                             self.restart_this_task()  # 一次性弹窗的终极解决方案
                             # self.register_precheck("skip_note", tiaoguo_tishi)
+                            
+                if self.is_exists(NIUDAN_BTN["jingxuanjuesexuanze"]):
+                    # 精选角色选择
+                    at = (525, 189, 692, 435)
+                    r = self.img_where_all(NIUDAN_BTN["xuanze"].img, at=at)
+                    s = self.img_where_all(NIUDAN_BTN["xuanzezhong"].img, at=at)
+                    if len(s) > 0:
+                        # 找到已选择
+                        self.log.write_log("info", "已精选角色。")
+                    else:
+                        if len(r) == 0:
+                            # 没找到已选择，但也找不到可选
+                            self.log.write_log("warning", "无法指定精选角色。")
+                        else:
+                            # 指定设定
+                            if select == 1:
+                                xcor = r[0]
+                                ycor = r[1]
+                                self.click(xcor, ycor)
+
+                            if select == 2:
+                                xcor = r[3]
+                                ycor = r[4]
+                                self.click(xcor, ycor)
+                            time.sleep(1)
+                            self.click(586, 478)    
+                            self.lock_img(NIUDAN_BTN["jingxuanjuesexuanze"].img, at=(413, 134, 544, 159))
+                            self.click(590, 371)
+                            self.log.write_log("info", "设定精选角色完成。")
+                            self.restart_this_task()
                 self.fclick(1, 1)
                 time.sleep(2)
 
@@ -955,7 +985,8 @@ class RoutineMixin(ShuatuBaseMixin):
                 else:        
                     eat_confirm = Car.goto_dishmenu().eat_first()
                     if eat_confirm is not None:
-                        eat_confirm.ok()          
+                        eat_confirm.ok()        
+            time.sleep(1)
             dice = Car.throw_dice(buy_shop, gacha)
             last_time = time.time()
             while True:

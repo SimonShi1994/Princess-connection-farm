@@ -97,15 +97,22 @@ class MaoXian(SevenBTNMixin):
         # 点击活动图标
         if entrance_ind == "auto":
             for _ in range(10):
-                L = self.img_where_all(HUODONG_BTN["jqhd"].img, threshold=0.8)
-                M = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8)
-                time.sleep(0.2)
-                if len(L) > 0:
-                    xx, yy = L[0], L[1]
-                    break
-                elif len(M) > 0:
-                    xx, yy = M[0], M[1]
-                    break
+                if code != "current":
+                    M = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8)
+                    time.sleep(0.2)
+                    if len(M) > 0:
+                        xx, yy = M[0], M[1]
+                        break
+                else:
+                    L = self.img_where_all(HUODONG_BTN["jqhd"].img, threshold=0.8)
+                    M = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8)
+                    time.sleep(0.2)
+                    if len(L) > 0:
+                        xx, yy = L[0], L[1]
+                        break
+                    elif len(M) > 0:
+                        xx, yy = M[0], M[1]
+                        break
             else:
                 self.log.write_log("error", "未找到活动图标")
                 self._a.lock_home()
