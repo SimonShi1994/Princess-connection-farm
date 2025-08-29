@@ -71,6 +71,7 @@ class LauncherBase(metaclass=ABCMeta):
     def start_all(self, adb_restart_fun=None):
         for i in emulator_id:
             self.launch(i, False)
+            time.sleep(3) # 启动太快会报错，延时3秒
         self.wait_for_all(adb_restart_fun=adb_restart_fun)
 
     def quit_all(self):

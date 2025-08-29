@@ -345,7 +345,7 @@ NIUDAN_BTN = {
     "chiyoushu": p(528, 413, img="img/niudan/chiyoushu.bmp", at=(505, 405, 552, 422)),
     "xuanzezhong": p(604, 262, img="img/niudan/xuanzezhong.bmp", at=(577, 251, 632, 274)),
     "qianwangjiaohuan": p(479, 441, img="img/niudan/qianwangjiaohuan.bmp", at=(413, 426, 545, 456)),
-
+    "jingxuanjuesexuanze": p(479, 42, img="img/niudan/jingxuanjuesexuanze.bmp", at=(417, 31, 542, 53)),
 }
 
 HUODONG_BTN = {
@@ -704,7 +704,9 @@ SHOP_BTN = {
     "fanhui": p(30, 29, img="img/ui/fanhui.bmp", at=(16, 16, 45, 43)),
     "middle_kkr": p(img="img/girl/kkr_middle.bmp", at=(430, 311, 531, 339)),
     "quanbujiechu": p(596, 437, img="img/shop/quanbujiechu.bmp", at=(563, 427, 630, 447)),
-
+    "buy_finish": p(478, 42, img="img/shop/buy_finish.bmp", at=(436, 31, 521, 54)),
+    "reset_confirm": p(479, 146, img="img/shop/reset_confirm.bmp", at=(436, 135, 522, 157)),
+    "select_all": p(859, 125, img="img/shop/select_all.bmp", at=(843, 117, 875, 133)),
 }
 
 JUESE_BTN = {
@@ -950,6 +952,12 @@ CARAVAN_BTN = {
     "result": p(478, 42, img="img/caravan/result.bmp", at=(430, 30, 527, 55)),
     # 结算
     "summary": p(90, 88, img="img/caravan/summary.bmp", at=(54, 49, 127, 127)),
+    # 伙伴增加骰子
+    "add_dice": p(620, 314, img="img/caravan/add_dice.bmp", at=(574, 272, 667, 356)),
+    # 伙伴选骰子
+    "or": p(479, 389, img="img/caravan/or.bmp", at=(450, 372, 508, 407)),
+    # 重投骰子
+    "reroll": p(623, 386, img="img/caravan/reroll.bmp", at=(574, 345, 673, 428)),
 }
 CARAVAN_GACHA_POS = {
     1: p(200, 382),
@@ -1645,6 +1653,7 @@ TANXIAN_BTN = {
     "tanxian_logo": p(70, 29, img="img/tanxian/tanxian_logo.bmp", at=(1, 5, 139, 54)),
     # "event_notice": p(938, 213, img="img/tanxian/event_notice.bmp", at=(923, 196, 953, 230)),
     "event_notice": p(926, 216, img="img/tanxian/event_notice.bmp", at=(921, 197, 932, 235)),
+    "event_notice_sp": p(929, 214, img="img/tanxian/event_notice_sp.bmp", at=(923, 197, 935, 231)),
     "event_map": p(img="img/tanxian/event_map.bmp"),
     "event_map_sp": p(img="img/tanxian/event_map_sp.bmp"),
     "event_map_white": p(img="img/tanxian/event_map_white.bmp"),
@@ -1729,6 +1738,8 @@ ZHUXIAN_ID = {
     64: p(img="img/zhuxian/64L.bmp", at=(63, 58, 196, 74)),
     65: p(img="img/zhuxian/65L.bmp", at=(62, 59, 160, 75)),
     66: p(img="img/zhuxian/66.bmp", at=(62, 57, 196, 76)),
+    67: p(img="img/zhuxian/67.bmp", at=(62, 57, 160, 75)),
+    68: p(img="img/zhuxian/68.bmp", at=(63, 58, 159, 75)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -3197,7 +3208,47 @@ NORMAL_COORD = {
             2: p(150, 282, name="66-2"),
             1: p(260, 181, name="66-1"),
         },
-    },           
+    },    
+    67: {
+        "right": {
+            14: p(603, 336, name="67-10"),
+            13: p(673, 231, name="67-S4"),
+            12: p(572, 187, name="67-S3"),
+            11: p(475, 228, name="67-9"),
+            10: p(498, 342, name="67-8"),
+            9: p(396, 371, name="67-7"),
+            8: p(355, 247, name="67-6"),
+        },
+        "left": {
+            7: p(708, 367, name="67-5"),
+            6: p(623, 218, name="67-S2"),
+            5: p(511, 278, name="67-S1"),
+            4: p(420, 284, name="67-4"),
+            3: p(453, 400, name="67-3"),
+            2: p(354, 367, name="67-2"),
+            1: p(242, 406, name="67-1"),
+        },
+    },  
+    68: {
+        "right": {
+            14: p(810, 313, name="68-10"),
+            13: p(682, 322, name="68-S4"),
+            12: p(585, 220, name="68-S3"),
+            11: p(551, 350, name="68-9"),
+            10: p(481, 197, name="68-8"),
+            9: p(402, 336, name="68-7"),
+            8: p(316, 243, name="68-6"),
+        },
+        "left": {
+            7: p(642, 266, name="68-5"),
+            6: p(603, 386, name="68-S2"),
+            5: p(508, 264, name="68-S1"),
+            4: p(493, 396, name="68-4"),
+            3: p(405, 259, name="68-3"),
+            2: p(374, 392, name="68-2"),
+            1: p(241, 276, name="68-1"),
+    },                 
+        },
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),

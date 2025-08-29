@@ -219,3 +219,48 @@ class GoalSummary(CaravanEvent):
     
     def handle(self):
         self.click(478, 476)
+
+class AddDiceEvent(CaravanEvent):
+    def __init__(self, a):
+        super().__init__(a)
+        self.scene_name = "AddDiceEvent"
+        self.feature = self.fun_feature_exist(CARAVAN_BTN["add_dice"])
+    
+    def handle(self):
+        self.click_btn(CARAVAN_BTN["add_dice"])
+class SelectDiceEvent(CaravanEvent):
+    def __init__(self, a):
+        super().__init__(a)
+        self.scene_name = "SelectDiceEvent"
+    
+        def feature(screen):
+           return self.is_exists(CARAVAN_BTN["or"], screen=screen) and not self.is_exists(CARAVAN_BTN["reroll"], screen=screen)
+       
+        self.feature = feature
+    
+    def handle(self):
+        time.sleep(1)   
+        left_point = self.ocr_int(304, 354, 373, 428)
+        right_point = self.ocr_int(591, 352, 650, 426)
+        if left_point >= right_point:
+            self.click(338, 387)
+        else:
+            self.click(617, 395)
+
+class RerollDiceEvent(CaravanEvent):
+    def __init__(self, a):
+        super().__init__(a)
+        self.scene_name = "RerollDiceEvent"
+        self.feature = self.fun_feature_exist(CARAVAN_BTN["reroll"])
+    
+    def handle(self):
+        time.sleep(1)
+        # 吃了料理锁定了点数没法重投
+        if self.is_exists(CARAVAN_BTN["reroll"], is_black=True, black_threshold=2000):
+            self.click(338, 387)
+            return
+        point = self.ocr_int(304, 354, 373, 428)
+        if point <= 3:        
+            self.click_btn(CARAVAN_BTN["reroll"])
+        else:
+            self.click(338, 387)
