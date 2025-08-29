@@ -122,6 +122,7 @@ N1： Normal图如果分段，第1段最后一图的图号
 class Map20250829(HuodongMapBase):
     N_slice = 2
     N1 = 7
+    N2 = 10
     NAME = "迎春梦想家们!新年陨石岁岁平安!?"
     XY11 = (90, 334)
     XY21 = (156, 268)
@@ -317,7 +318,7 @@ class Map20250127(HuodongMapBase):
 
 
 class Map20241231(HuodongMapBase):
-    N_slice = 2
+    N_slice = 1
     NAME = "温泉忘年奇谭 为新年的日出干杯"
     XY11 = (127, 413)
     XY_VH_BOSS = (825, 297)
