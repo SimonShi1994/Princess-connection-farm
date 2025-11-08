@@ -90,25 +90,27 @@ MAIN_BTN = {
     # 下载
     "xiazai": p(584, 369, img="img/home/xiazai.bmp", at=(564, 356, 615, 382)),
     # 主页
-    "zhuye": p(131, 533, name="我的主页"),
+    "zhuye": p(80, 533, name="我的主页"),
     # 行会按钮 
     "hanghui": p(688, 38, name="行会"),
     # 角色
-    "juese": p(213, 507),
+    "juese": p(191, 507),
+    # 强化
+    "qianghua": p(309, 510),
     # 剧情
-    "juqing": p(342, 510),
+    "juqing": p(425, 510),
     # 冒险按钮
-    "maoxian": p(480, 515, img="img/home/maoxian.bmp", at=(421, 447, 535, 535)),
+    "maoxian": p(535, 515, img="img/home/maoxian.bmp", at=(421, 447, 535, 535)),
     # 地下城
     "dxc": p(935, 77, img="img/home/dxc.bmp", at=(814, 68, 943, 201)),
     # 主线关卡
-    "zhuxian": p(561, 202, img="img/home/zhuxian.bmp", at=(521, 192, 601, 212)),
+    "zhuxian": p(561, 207, img="img/home/zhuxian.bmp", at=(521, 197, 601, 217)),
     # 公会之家
-    "gonghuizhijia": p(617, 530),
+    "gonghuizhijia": p(653, 530),
     # 扭蛋
-    "niudan": p(753, 514),
+    "niudan": p(767, 514),
     # 主菜单
-    "zhucaidan": p(877, 515),
+    "zhucaidan": p(880, 515),
 
     # 礼物
     "liwu": p(908, 432, img="img/home/liwu.bmp", at=(891, 417, 927, 448)),
@@ -165,15 +167,15 @@ MAIN_BTN = {
     "exp_bar": p(at=(78, 23, 178, 31), fc=(106, 205, 176), bc=(94, 125, 146)),
     "speaker_box": p(img="img/ui/speaker_box.bmp", at=(182, 395, 209, 409)),  # 有人说话时名字左上角的红色
     "setting_pic": p(158, 225, img="img/home/setting.bmp", at=(55, 181, 198, 224)),
-    "tansuo": p(738, 137),
+    "tansuoanddiaocha": p(738, 137),
 
     # 换号确认
     "huidaobiaotihuamian": p(165, 409),
     "changeacc_queren": p(587, 369, img="img/ui/queren_blue.bmp", at=(560, 355, 614, 384)),
     "querenhuamian_title": p(img="img/home/querenhuamian_title.bmp", at=(437, 131, 522, 159)),
     # 探索
-    "jingyanzhiguanqia": p(591, 237, img="img/tansuo/jingyan.bmp", at=(529, 160, 605, 236)),  # 经验值关卡
-    "managuanqia": p(801, 221),  # 玛娜关卡
+    "jingyanzhiguanqia": p(637, 112, img="img/tansuo/jingyan.bmp", at=(601, 79, 673, 145)),  # 经验值关卡
+    "managuanqia": p(810, 156),  # 玛娜关卡
     "tansuo_zero": p(img="img/tansuo/zero.bmp", at=(654, 433, 678, 448)),
     "tansuo_sytzcs": p(img="img/tansuo/sytzcs.bmp", at=(485, 432, 575, 452)),
     "tansuo_clock": p(725, 439, img="img/tansuo/clock.bmp", at=(716, 430, 734, 448)),
@@ -190,9 +192,9 @@ MAIN_BTN = {
     "kailu_middle": p(img="img/girl/kailu_middle.bmp", at=(616, 303, 685, 336)),
 
     # 调查本
-    "diaocha": p(740, 275),
-    "shengjidiaocha": p(572, 202, img="img/diaocha/shengjidiaocha.bmp", at=(528, 133, 628, 260)),
-    "shendiandiaocha": p(814, 213),
+    # "diaocha": p(740, 275),
+    "shengjidiaocha": p(625, 307, img="img/diaocha/shengjidiaocha.bmp", at=(605, 287, 645, 328)),
+    "shendiandiaocha": p(816, 352),
     "shengji_title": p(img="img/diaocha/shengji_title.bmp", at=(61, 11, 163, 47)),
     "shendian_title": p(img="img/diaocha/shendian_title.bmp", at=(62, 12, 161, 44)),
 
@@ -215,7 +217,7 @@ MAIN_BTN = {
         1: p(409, 424),
         2: p(320, 421),
         3: p(243, 420),
-    }
+    },
 }
 JJC_BTN = {
     "list": p(img="img/jjc/list.bmp", at=(821, 77, 888, 103)),  # 列表更新
@@ -294,7 +296,7 @@ JIAYUAN_BTN = {
     "jy_dengjitisheng2": p(img="img/jiayuan/jy_dengjitisheng2.bmp", at=(488, 445, 552, 506)),
     "dengjitisheng": p(589, 431, img="img/jiayuan/dengjitisheng.bmp", at=(491, 410, 682, 452)),
     "xinxi": p(img="img/jiayuan/xinxi.bmp"),
-    "zhuye": p(img="img/jiayuan/wodezhuye.bmp", at=(47, 488, 130, 537)),
+    "zhuye": p(img="img/jiayuan/wodezhuye.bmp", at=(50, 501, 116, 536)),
     "caidan": p(899, 135, img="img/jiayuan/caidan.bmp", at=(885, 118, 913, 152)),
     "wanfa": p(717, 414, img="img/jiayuan/wanfa.bmp", at=(692, 386, 743, 443)),
     "wallet_locked": p(635, 412, img="img/jiayuan/kkr_wallet_locked.bmp", at=(594, 371, 676, 453)),
@@ -387,7 +389,7 @@ HUODONG_BTN = {
     "reset_confirm2": p(590, 368, img="img/huodong/chongzhiqueren2.bmp", at=(557, 352, 624, 384)),
     "liwu": p(911, 424, img="img/huodong/liwu.bmp", at=(896, 411, 926, 438)),
     "wanchengqingkuang": p(558, 452, img="img/huodong/wanchengqingkuang.bmp", at=(527, 443, 590, 462)),
-    "minus_on": p(630, 374, img="img/huodong/minus_on.bmp", at=(599, 349, 661, 400)),
+    "minus_on": p(677, 372, img="img/huodong/minus_on.bmp", at=(655, 350, 700, 395)),
     "nboss_en": p(738, 154, img="img/huodong/nboss_en.bmp", at=(706, 142, 770, 167)),
     "hboss_en": p(738, 217, img="img/huodong/hboss_en.bmp", at=(714, 205, 762, 230)),
     "vhboss_en": p(738, 252, img="img/huodong/vhboss_en.bmp", at=(705, 240, 771, 265)),
@@ -591,7 +593,7 @@ FIGHT_BTN = {
     "cat_star": p(731, 139, name="星数"),
     "cat_shoucang": p(729, 250, name="收藏"),
     "cat_ok": p(587, 478, img="img/ui/queren_blue.bmp", at=(559, 463, 613, 492)),  # 分类界面：OK
-    "my_team": p(867, 88),  # 我的队伍
+    "my_team": p(886, 88, img="img/fight/my_team.bmp", at=(873, 78, 900, 98)),  # 我的队伍
     "team_h": {
         # 编组1，编组2，。。。，编组5
         1: p(123, 87),
@@ -838,6 +840,32 @@ JUESE_BTN = {
     "shuxingzhitisheng": p(477, 89, img="img/juese/shuxingzhitisheng.bmp", at=(418, 71, 537, 108)),
 
 }
+
+ENHANCEMENT_BTN = {
+    # 强化详情
+    "enhancement_detail": p(141, 389, img="img/enhancement/enhancement_detail.bmp", at=(108, 381, 174, 398)),
+    # 强化等级特征    
+    "fire": p(356, 147, img="img/enhancement/fire.bmp", at=(336, 126, 377, 169)),
+    # 属性等级
+    "level_unselected": p(409, 71, img="img/enhancement/level_unselected.bmp", at=(379, 64, 439, 79)),
+    # 一键强化
+    "enhance_oneclick": p(824, 437, img="img/enhancement/enhance_oneclick.bmp", at=(783, 425, 865, 449)),
+    # 确认
+    "confirm": p(587, 476, img="img/enhancement/confirm.bmp", at=(564, 465, 610, 488)),
+    # 属性技能
+    "skill_unselected": p(611, 71, img="img/enhancement/skill_unselected.bmp", at=(579, 60, 643, 82)),
+    # 一键强化图标
+    "enhance_oneclick_icon": p(758, 427, img="img/enhancement/enhance_oneclick_icon.bmp", at=(737, 412, 780, 443)),
+    # 大师技能
+    "masterskill_unselected": p(818, 70, img="img/enhancement/masterskill_unselected.bmp", at=(787, 61, 849, 80)),
+    # 碎片
+    "shard": p(478, 27, img="img/enhancement/shard.bmp", at=(469, 18, 487, 37)),
+    # 大师碎片
+    "masterskill_shard": p(506, 27, img="img/enhancement/masterskill_shard.bmp", at=(497, 19, 516, 36)),
+
+    
+}
+
 MAX_DXC = 6  # 一共出了多少个地下城关
 
 DXC_ELEMENT = {
@@ -901,9 +929,10 @@ DXC_ELEMENT = {
 }
 CARAVAN_BTN = {
     # 丢骰子
-    "peko_dice": p(884, 373, img="img/caravan/peko_dice.bmp", at=(834, 352, 934, 395)),
+    "peko_dice": p(881, 348, img="img/caravan/peko_dice.bmp", at=(835, 328, 928, 369)),
+    "peko_dice_triple": p(881, 365, img="img/caravan/peko_dice_triple.bmp", at=(834, 333, 929, 398)),
     # 食用料理
-    "dish": p(739, 401, img="img/caravan/dish.bmp", at=(702, 379, 776, 424)),   
+    "dish": p(749, 372, img="img/caravan/dish.bmp", at=(719, 347, 780, 397)),   
     # 里程币
     "mile": p(665, 23, img="img/caravan/mile.bmp", at=(656, 14, 675, 32)),
     # 持有的料理
@@ -958,6 +987,12 @@ CARAVAN_BTN = {
     "or": p(479, 389, img="img/caravan/or.bmp", at=(450, 372, 508, 407)),
     # 重投骰子
     "reroll": p(623, 386, img="img/caravan/reroll.bmp", at=(574, 345, 673, 428)),
+    # 投掷一个
+    "dice_unselected": p(765, 439, img="img/caravan/dice_unselected.bmp", at=(727, 427, 803, 452)),
+    # 投掷三个
+    "dice_selected": p(765, 440, img="img/caravan/dice_selected.bmp", at=(729, 427, 802, 453)),
+    # 抽奖结果
+    "lottery": p(481, 42, img="img/caravan/lottery.bmp", at=(438, 31, 524, 53)),
 }
 CARAVAN_GACHA_POS = {
     1: p(200, 382),
@@ -1643,7 +1678,7 @@ MAOXIAN_BTN = {
     "buy_ap_success_confirm": p(478, 369),
     "saodangquan": p(918, 141, img="img/saodangquan.bmp", at=(902, 126, 935, 156)),
     "guankayilan": p(481, 42, img="img/maoxian/guankayilan.bmp", at=(437, 28, 526, 57)),
-    "tanxian": p(560, 319, img="img/maoxian/tanxian.bmp", at=(539, 308, 582, 330)),
+    "tanxian": p(560, 319, img="img/maoxian/tanxian.bmp", at=(536, 312, 584, 334)),
     "story_dialog": p(480, 131, img="img/maoxian/story_dialog.bmp", at=(468, 119, 492, 143)),
     "reward": p(474, 77, img="img/maoxian/reward.bmp", at=(413, 68, 535, 86)),
     "close": p(477, 471, img="img/ui/close_btn_1.bmp", at=(456, 460, 498, 482)),
@@ -1740,6 +1775,7 @@ ZHUXIAN_ID = {
     66: p(img="img/zhuxian/66.bmp", at=(62, 57, 196, 76)),
     67: p(img="img/zhuxian/67.bmp", at=(62, 57, 160, 75)),
     68: p(img="img/zhuxian/68.bmp", at=(63, 58, 159, 75)),
+    69: p(img="img/zhuxian/69.bmp", at=(62, 58, 160, 75)),
 }
 
 MAX_MAP = max(ZHUXIAN_ID)
@@ -3247,8 +3283,28 @@ NORMAL_COORD = {
             3: p(405, 259, name="68-3"),
             2: p(374, 392, name="68-2"),
             1: p(241, 276, name="68-1"),
-    },                 
+        },                 
+    },
+    69: {
+        "right": {
+            14: p(688, 363, name="69-10"),
+            13: p(551, 377, name="69-S4"),
+            12: p(465, 253, name="69-S3"),
+            11: p(373, 367, name="69-9"),
+            10: p(270, 326, name="69-8"),
+            9: p(345, 199, name="69-7"),
+            8: p(227, 200, name="69-6"),
         },
+        "left": {
+            7: p(767, 189, name="69-5"),
+            6: p(673, 305, name="69-S2"),
+            5: p(558, 243, name="69-S1"),
+            4: p(469, 307, name="69-4"),
+            3: p(380, 379, name="69-3"),
+            2: p(264, 386, name="69-2"),
+            1: p(150, 344, name="69-1"),
+        },
+    },    
 }
 RANKS_DICT = {
     1: p(img="img/ranks/1.bmp", at=(217, 110, 275, 135)),

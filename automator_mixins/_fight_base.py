@@ -312,7 +312,7 @@ class FightBaseMixin(ToolsMixin):
         """
         assert bianzu in [1, 2, 3, 4, 5]
         assert duiwu in [1, 2, 3, 8, 9, 10]
-        self.click_btn(FIGHT_BTN["my_team"], until_disappear=FIGHT_BTN["zhandoukaishi"])
+        self.click_btn(FIGHT_BTN["my_team"])
         self.click(FIGHT_BTN["team_h"][bianzu], pre_delay=1, post_delay=1)
         if duiwu < 4:
             self.lock_img(FIGHT_BTN["shengxu"], elseclick=(825, 84))

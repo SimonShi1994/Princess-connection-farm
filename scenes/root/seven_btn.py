@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from scenes.root.maoxian import MaoXian
     from scenes.root.gonghuizhijia import GongHuiZhiJia
     from scenes.root.zhucaidan import ZhuCaiDan
+    from scenes.root.enhancement import EnhancementLevel
 
 class SevenBTNMixin(PCRSceneBase):
 
@@ -28,6 +29,12 @@ class SevenBTNMixin(PCRSceneBase):
             self.click(MAIN_BTN["juese"])
             self.fclick(268, 20)
         return self.goto(CharMenu,gotofun)  # Type:JueSe
+    
+    def goto_enhancement(self)->"EnhancementLevel":
+        from scenes.root.enhancement import EnhancementLevel
+        def gotofun():
+            self.click(MAIN_BTN["qianghua"])
+        return self.goto(EnhancementLevel, gotofun)  
 
     def goto_maoxian(self)->"MaoXian":
 

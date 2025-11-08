@@ -334,6 +334,18 @@ Tips:QQPush机器人经常换号 ~~Wechat在4月底将全部弃用，转Wework~~
 <details>
 <summary>更新日志（点击展开）</summary>
 
+2025/11/08 By SilentSelene
+
+- 惯例更新
+  - 活动更新
+  - 主线`69`图
+- 功能优化
+  - 部分UI变动调整
+  - 探险增加超时重启
+  - 驾车游增加骰子模式调整
+- 功能更新
+  - `r16`,自动进行属性强化
+
 2025/08/29 By SilentSelene
 
 - 功能更新

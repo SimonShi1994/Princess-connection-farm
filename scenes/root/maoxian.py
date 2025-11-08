@@ -64,7 +64,7 @@ class MaoXian(SevenBTNMixin):
 
     def goto_tansuo(self) -> "TanSuoMenu":
         from scenes.maoxian.tansuo import TanSuoMenu
-        return self.goto(TanSuoMenu, self.fun_click(MAIN_BTN["tansuo"]))
+        return self.goto(TanSuoMenu, self.fun_click(MAIN_BTN["tansuoanddiaocha"]))
 
     def goto_dxc(self) -> Union["DXCSelectA", "DXCSelectB"]:
         from scenes.dxc.dxc_select import PossibleDXCMenu, DXCSelectA, DXCSelectB, DXCKKR, DXCJuQing
@@ -83,7 +83,7 @@ class MaoXian(SevenBTNMixin):
 
     def goto_diaocha(self) -> "DiaoChaMenu":
         from scenes.maoxian.diaocha import DiaoChaMenu
-        return self.goto(DiaoChaMenu, self.fun_click(MAIN_BTN["diaocha"]))
+        return self.goto(DiaoChaMenu, self.fun_click(MAIN_BTN["tansuoanddiaocha"]))
 
     def goto_huodong(self, code: str, entrance_ind: Union[str, int] = "auto") -> Union["HuodongMapBase", bool]:
         # 进入活动图，冒险->寻找活动按钮，若发现normal，则结束；否则chulijiaocheng，再进入一次，保证进入Map界面。
@@ -97,22 +97,21 @@ class MaoXian(SevenBTNMixin):
         # 点击活动图标
         if entrance_ind == "auto":
             for _ in range(10):
-                if code != "current":
-                    M = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8)
-                    time.sleep(0.2)
-                    if len(M) > 0:
-                        xx, yy = M[0], M[1]
-                        break
-                else:
-                    L = self.img_where_all(HUODONG_BTN["jqhd"].img, threshold=0.8)
-                    M = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8)
-                    time.sleep(0.2)
-                    if len(L) > 0:
+                L = self.img_where_all(HUODONG_BTN["jqhd"].img, threshold=0.8)
+                M = self.img_where_all(HUODONG_BTN["fuke"].img, threshold=0.8)    
+                time.sleep(0.2)
+                if len(L) > 0 and len(M) > 0:
+                    if code == "current":
                         xx, yy = L[0], L[1]
-                        break
-                    elif len(M) > 0:
+                    else:
                         xx, yy = M[0], M[1]
-                        break
+                    break
+                elif len(L) > 0:
+                    xx, yy = L[0], L[1]
+                    break
+                elif len(M) > 0:
+                    xx, yy = M[0], M[1]
+                    break                
             else:
                 self.log.write_log("error", "未找到活动图标")
                 self._a.lock_home()

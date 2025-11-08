@@ -1,19 +1,18 @@
 from core.MoveRecord import MoveRestartException
 from core.constant import MAIN_BTN, DXC_ELEMENT
 from core.pcr_checker import LockMaxRetryError, ContinueNow
+from scenes.maoxian.tansuo import TanSuoMenu
 from ..fight.fightinfo_base import FightInfoBase
 from ..root.seven_btn import SevenBTNMixin
 
 
-class DiaoChaMenu(SevenBTNMixin):
+class DiaoChaMenu(TanSuoMenu):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.scene_name = "DiaoChaMenu"
-        self.feature = self.fun_feature_exist(MAIN_BTN["shengjidiaocha"])
-        self.initFC = lambda FC: FC.getscreen().add_sidecheck(self._a.juqing_kkr)
 
     def goto_shengji(self) -> "ShengJiDiaoCha":
-        return self.goto(ShengJiDiaoCha, gotofun=self.fun_click(MAIN_BTN["jingyanzhiguanqia"]),
+        return self.goto(ShengJiDiaoCha, gotofun=self.fun_click(MAIN_BTN["shengjidiaocha"]),
                          use_in_feature_only=False)
 
     def goto_shendian(self) -> "ShenDianDiaoCha":
