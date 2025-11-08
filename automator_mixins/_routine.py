@@ -7,6 +7,7 @@ from core.constant import USER_DEFAULT_DICT as UDD
 from core.cv import UIMatcher
 from core.pcr_checker import RetryNow, PCRRetry, LockMaxRetryError
 from core.pcr_config import force_as_ocr_as_possible
+from core.safe_u2 import timeout
 from core.utils import diff_6hour, diff_5_12hour, diffday
 from scenes.caravan.caravan import CaravanMenu, FirstEnterCaravan
 from scenes.caravan.caravan_event import *
@@ -983,6 +984,7 @@ class RoutineMixin(ShuatuBaseMixin):
         self.fclick(1, 1)
         self.lock_home()
 
+    @timeout(300, "探险处理时间过长，超过5分钟！")
     def tanxian_oneclick(self):
         self.lock_home()
         TX = self.get_zhuye().goto_maoxian().goto_tanxian()   
@@ -1018,32 +1020,34 @@ class RoutineMixin(ShuatuBaseMixin):
         self.fclick(1, 1)
         self.lock_home()
     
-    def caravan(self, eat_dish=False, buy_shop=False, gacha=1):
+    def caravan(self, eat_dish=False, buy_shop=False, gacha=1, mode=0):
         self.lock_home()
-        Car = self.get_zhuye().goto_caravan()          
+        Car = self.get_zhuye().goto_caravan(buy_shop, gacha)          
         time.sleep(3)
+        Car.set_dice_mode(mode)
         while Car.have_dice():
             if eat_dish:   
-                if self.is_exists(CARAVAN_BTN["dish"], is_black=True, black_threshold=2500):
+                if self.is_exists(CARAVAN_BTN["dish"], is_black=True, black_threshold=2400):
                     self.log.write_log("info", "没有料理了！")
                 else:        
                     eat_confirm = Car.goto_dishmenu().eat_first()
                     if eat_confirm is not None:
                         eat_confirm.ok()        
             time.sleep(1)
-            dice = Car.throw_dice(buy_shop, gacha)
-            last_time = time.time()
-            while True:
-                time.sleep(1)
-                if time.time() - last_time > 90:
-                    raise Exception("投骰子处理时间过长！")                
-                out = dice.check()
-                if out is None:
-                    self.click(1, 1)
-                if isinstance(out, CaravanEvent):
-                    out.handle() 
-                if isinstance(out, CaravanMenu):
-                    break                             
+            Car.throw_dice(buy_shop, gacha)                          
+        self.lock_home()
+        
+    def enhance_oneclick(self):
+        self.lock_home()
+        EN = self.get_zhuye().goto_enhancement()
+        if EN is not None:
+            EN.enhance_one_click()
+            time.sleep(1)
+            SK = EN.goto_skill()
+            SK.enhance_one_click()
+            time.sleep(5)
+            MS = SK.goto_masterskill()
+            MS.enhance_one_click()
         self.lock_home()
 
 

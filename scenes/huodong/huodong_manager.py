@@ -7,6 +7,10 @@ from scenes.huodong.huodong_base import HuodongMapBase
 
 def get_huodong_by_code(code: str):
     HUODONG_CODE = {
+        "20251030": Map20251030,
+        "20251013": Map20251013,
+        "20250922": Map20250922,
+        "20250915": Map20250915,
         "20250829": Map20250829,
         "20250814": Map20250814,
         "20250730": Map20250730,
@@ -119,6 +123,77 @@ N_slice： Normal图切了几段
 N1： Normal图如果分段，第1段最后一图的图号
     ...
 '''
+class Map20251030(HuodongMapBase):
+    N1 = 10
+    NAME = "冷酷火爆新兵训练营 魔鬼教官与鞭子与糖果"
+    XY11 = (115, 320)
+    XY_VH_BOSS = (800, 293)
+    HARD_COORD = {
+        1: (90, 305),
+        2: (256, 185),
+        3: (425, 222),
+        4: (487, 384),
+        5: (620, 243),
+    }
+    XINLAI = False
+
+class Map20251013(HuodongMapBase):
+    N_slice = 2
+    N1 = 7
+    N2 = 10
+    NAME = "寒冬的盛夏与神圣学院的问题儿童"
+    XY11 = (74, 375)
+    XY21 = (156, 373)
+    XY_VH_BOSS = (872, 282)
+    HARD_COORD = {
+        1: (104, 377),
+        2: (301, 382),
+        3: (440, 257),
+        4: (585, 230),
+        5: (704, 324),
+    }
+    XINLAI = False
+
+class Map20250922(HuodongMapBase):
+    N1 = 10
+    NAME = "I Wish 紧紧握住这双手 后篇"
+    XY11 = (127, 382)
+    XY_VH_BOSS = (798, 295)
+    HARD_COORD = {
+        1: (96, 350),
+        2: (227, 241),
+        3: (299, 392),
+        4: (481, 392),
+        5: (630, 245),
+    }
+
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去后篇”：点它
+        if self.is_exists(HUODONG_BTN["hou"]):
+            self.click_btn(HUODONG_BTN["hou"], until_appear=HUODONG_BTN["qian"]) 
+            
+class Map20250915(HuodongMapBase):
+    NAME = "I Wish 紧紧握住这双手 前篇"
+    XY11 = (227, 191)
+    N1 = 10
+    XY_VH_BOSS = (841, 293)
+    HARD_COORD = {
+        1: (102, 202),
+        2: (229, 293),
+        3: (398, 231),
+        4: (568, 334),
+        5: (717, 228),
+    }
+
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去前篇”：点它
+        if self.is_exists(HUODONG_BTN["qian"]):
+            self.click_btn(HUODONG_BTN["qian"], until_appear=HUODONG_BTN["hou"])
+
 class Map20250829(HuodongMapBase):
     N_slice = 2
     N1 = 7
@@ -300,6 +375,13 @@ class Map20250203(HuodongMapBase):
         5: (699, 259),
     }
     XINLAI = False
+    
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去后篇”：点它
+        if self.is_exists(HUODONG_BTN["hou"]):
+            self.click_btn(HUODONG_BTN["hou"], until_appear=HUODONG_BTN["qian"])     
 
 
 class Map20250127(HuodongMapBase):
@@ -315,6 +397,13 @@ class Map20250127(HuodongMapBase):
         5: (836, 281),
     }
     XINLAI = False
+    
+    def enter_huodong(self, xx, yy):
+        super().enter_huodong(xx, yy)
+        time.sleep(2)
+        # 检测到“去前篇”：点它
+        if self.is_exists(HUODONG_BTN["qian"]):
+            self.click_btn(HUODONG_BTN["qian"], until_appear=HUODONG_BTN["hou"])    
 
 
 class Map20241231(HuodongMapBase):

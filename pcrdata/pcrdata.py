@@ -312,7 +312,7 @@ class PCRData:
         self.MInfo = create_MInfo()
         self.WInfo = create_wave_info()
         self.RInfo = create_reward_info()
-        self.QRInfo = create_quest_reward_info()
+        # self.QRInfo = create_quest_reward_info()
         self.EInfo = create_equip_info(self.ID_EQU)
 
         get_craft_info(self.EInfo)

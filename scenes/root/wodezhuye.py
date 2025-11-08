@@ -15,10 +15,10 @@ class WoDeZhuYe(SevenBTNMixin):
         self.initFC = None
         self.feature = feature
     
-    def goto_caravan(self) -> "CaravanMenu":
+    def goto_caravan(self, buy_shop, gacha) -> "CaravanMenu":
         out = self.goto(AfterGoToCaravan, gotofun=self.fun_click(MAIN_BTN["caravan"]))
         if isinstance(out, FirstEnterCaravan):
-            return out.skip()
+            return out.skip(buy_shop, gacha)
         if isinstance(out, CaravanMenu):
             return out
 

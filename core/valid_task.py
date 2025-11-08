@@ -824,7 +824,9 @@ VALID_TASK = ValidTask() \
     .add("r15", "caravan", "驾车游", "进行驾车游",
          [TaskParam("eat_dish", bool, "投骰子前是否食用料理", "True/False", False),
           TaskParam("buy_shop", bool, "碰到商店是否购买", "True/False", False),
-          TaskParam("gacha", int, "碰到扭蛋抽第几个", "1-3的整数", 1)]) \
+          TaskParam("gacha", int, "碰到扭蛋抽第几个", "1-3的整数", 1),
+          TaskParam("mode", int, "掷骰子的模式(有时间挂机还是单个比较好)，0为单个，1为三连", "0-1的整数", 0)]) \
+    .add("r16", "enhance_oneclick", "自动进行属性强化", "自动进行属性强化") \
     .add("f1", "tianjiahaoyou", "添加好友", "按照ID添加好友。", [
     TaskParam("friend_id", str, "好友ID", "要添加的好友的数字ID")]) \
     .add("f2", "tongguoshenqing", "通过申请", "处理全部的好友申请，可以指定按前缀过滤。",

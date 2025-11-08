@@ -1410,7 +1410,7 @@ class BaseMixin:
                 time.sleep(3)
             elif self.click_img(screen_shot_, 'img/juqing/tiaoguo_2.bmp'):
                 time.sleep(3)
-            elif self.click_img(screen_shot_, 'img/zhuye.jpg', at=(46, 496, 123, 537)):
+            elif self.click_img(screen_shot_, 'img/zhuye.bmp', at=(50, 499, 112, 533)):
                 for _ in range(5):
                     self.click(MAIN_BTN["zhuye"])  # Speed  Up CLick
             elif self.click_img(screen_shot_, 'img/juqing/caidanyuan.bmp', at=(898, 23, 939, 62)):

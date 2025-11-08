@@ -209,7 +209,7 @@ class GoalTreasure(CaravanEvent):
         self.feature = self.fun_feature_exist(CARAVAN_BTN["result"])
     
     def handle(self):
-        self.click(478, 476)
+        self.exit(self.fun_click(478, 476))
 
 class GoalSummary(CaravanEvent):
     def __init__(self, a):
@@ -218,7 +218,16 @@ class GoalSummary(CaravanEvent):
         self.feature = self.fun_feature_exist(CARAVAN_BTN["summary"])
     
     def handle(self):
-        self.click(478, 476)
+        self.exit(self.fun_click(478, 476))
+        
+class GoalLottery(CaravanEvent):
+    def __init__(self, a):
+        super().__init__(a)
+        self.scene_name = "GoalLottery"
+        self.feature = self.fun_feature_exist(CARAVAN_BTN["lottery"])
+    
+    def handle(self):
+        self.exit(self.fun_click(478, 476))      
 
 class AddDiceEvent(CaravanEvent):
     def __init__(self, a):
