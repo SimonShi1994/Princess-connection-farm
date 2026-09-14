@@ -1,8 +1,8 @@
 > ⚠️ 本仓库已停止维护（2026-01-30）  
 > 由于游戏系统版本演进以及维护者个人原因，本项目将不再更新或修复问题，并将在近期归档。如需继续维护或使用，请 fork 本仓库。详情见下文“停止维护说明”。
 
-其他可用项目（参考）：
-https://github.com/miaoyu2233/Rino_PCRautomation
+>其他可用项目（参考）：
+>https://github.com/miaoyu2233/Rino_PCRautomation
 ---
  
 告别信 — 关于本项目停止维护的说明
